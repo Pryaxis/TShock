@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terraria", "Terraria.csproj", "{1528EA3F-A6D2-49F6-BF75-7A842CF4D97B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terraria1.01Content", "..\Terraria1.01\Terraria1.01\Terraria1.01Content\Terraria1.01Content.contentproj", "{24FAE99F-FC05-421C-AC19-9E48DAE0E7DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1528EA3F-A6D2-49F6-BF75-7A842CF4D97B}.Debug|x86.ActiveCfg = Debug|x86
+		{1528EA3F-A6D2-49F6-BF75-7A842CF4D97B}.Debug|x86.Build.0 = Debug|x86
+		{1528EA3F-A6D2-49F6-BF75-7A842CF4D97B}.Release|x86.ActiveCfg = Release|x86
+		{1528EA3F-A6D2-49F6-BF75-7A842CF4D97B}.Release|x86.Build.0 = Release|x86
+		{24FAE99F-FC05-421C-AC19-9E48DAE0E7DD}.Debug|x86.ActiveCfg = Debug|x86
+		{24FAE99F-FC05-421C-AC19-9E48DAE0E7DD}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
