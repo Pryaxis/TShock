@@ -1044,7 +1044,7 @@
                                                 return;
                                             }
                                             ShankShock.NewNPC((int)ShankShock.NPCList.EYE, x, y, this.whoAmI);
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned an eater of worlds!");
+                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned an eye!");
                                             return;
                                         }
                                         if (str9 == "/invade")
