@@ -9,7 +9,7 @@ namespace Terraria
 {
 	class ShankShock
 	{
-        private static int version = 1;
+        private static int version = 2;
         private static bool shownVersion = false;
 
         public static bool enableGuide = true;
