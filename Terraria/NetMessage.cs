@@ -71,6 +71,13 @@
             }
             ShankShock.showmotd(plr);
             ShankShock.showUpdateMinder(plr);
+            if (ShankShock.isAdmin(Main.player[plr].name))
+            {
+                if (!ShankShock.shownOneTimeInvasionMinder && ShankShock.infinateInvasion)
+                {
+                    ShankShock.sendMessage(plr, "You must run /invade to start the infinite invasion.", new float[] { 255, 0, 0 });
+                }
+            }
             if (ShankShock.permaPvp)
             {
                 Main.player[plr].hostile = true;

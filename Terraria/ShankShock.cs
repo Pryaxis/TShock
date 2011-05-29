@@ -24,6 +24,7 @@ namespace Terraria
         public static bool permaPvp = false;
         private static string saveDir = "./tshock/";
         public static int killCount = 0;
+        public static bool shownOneTimeInvasionMinder = false;
 
         public static string tileWhitelist = "";
         private static bool banTnt = false;
