@@ -4861,17 +4861,28 @@
                 this.knockBackResist = 0.5f;
                 this.value = 250f;
             }
-            if (this.type == 0x16 && ShankShock.enableGuide == true)
+            if (this.type == 0x16)
             {
                 this.townNPC = true;
-                this.friendly = true;
-                this.name = "Guide";
+                if (ShankShock.killGuide)
+                {
+                    this.friendly = false;
+                    this.damage = 0;
+                    this.defense = 0;
+                    this.lifeMax = 1;
+                    this.name = "(Stupid) Guide";
+                }
+                else
+                {
+                    this.friendly = true;
+                    this.damage = 10;
+                    this.defense = 100;
+                    this.lifeMax = 250;
+                    this.name = "Guide";
+                }
                 this.width = 0x12;
                 this.height = 40;
                 this.aiStyle = 7;
-                this.damage = 10;
-                this.defense = 100;
-                this.lifeMax = 250;
                 this.soundHit = 1;
                 this.soundKilled = 1;
                 this.knockBackResist = 0.5f;

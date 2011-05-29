@@ -12,7 +12,7 @@ namespace Terraria
         private static double version = 2;
         private static bool shownVersion = false;
 
-        public static bool enableGuide = true;
+        public static bool killGuide = true;
         public static int invasionMultiplier = 1;
         public static int defaultMaxSpawns = 4;
         public static int defaultSpawnRate = 700;
@@ -260,7 +260,7 @@ namespace Terraria
             string[] configuration = config.Split(',');
             try
             {
-                enableGuide = Convert.ToBoolean(configuration[0]);
+                killGuide = Convert.ToBoolean(configuration[0]);
                 invasionMultiplier = Convert.ToInt32(configuration[1]);
                 defaultMaxSpawns = Convert.ToInt32(configuration[2]);
                 defaultSpawnRate = Convert.ToInt32(configuration[3]);
