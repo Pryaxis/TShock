@@ -9,7 +9,7 @@ namespace Terraria
 {
 	class ShankShock
 	{
-        private static string version = "1";
+        private static int version = 1;
         private static bool shownVersion = false;
 
         public static bool enableGuide = true;
@@ -48,10 +48,13 @@ namespace Terraria
                     {
                         string updateVersion = client.DownloadString("http://shankshock.com/tshock.txt");
                         string[] changes = updateVersion.Split(',');
-                        float[] color = { 255, 255, 0 };
-                        if (updateVersion != version)
+                        float[] color = { 255, 255, 000 };
+                        Console.WriteLine(changes.Length);
+                        Console.WriteLine(changes[0]);
+                        Console.WriteLine(changes[1]);
+                        if (Convert.ToInt32(changes[0]) > version)
                         {
-                            sendMessage(ply, "This server is out of date. Version " + updateVersion + " is out.", color);
+                            sendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
                             sendMessage(ply, changes[1], color);
                         }
                     }
