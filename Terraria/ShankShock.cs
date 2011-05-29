@@ -9,7 +9,7 @@ namespace Terraria
 {
 	class ShankShock
 	{
-        private static double version = 2;
+        private static double version = 2.1;
         private static bool shownVersion = false;
 
         public static bool killGuide = true;
@@ -242,7 +242,7 @@ namespace Terraria
             if (!System.IO.File.Exists(saveDir +"bans.txt")) { createFile(saveDir + "bans.txt"); }
             if (!System.IO.File.Exists(saveDir +"cheaters.txt")) { createFile(saveDir + "cheaters.txt"); }
             if (!System.IO.File.Exists(saveDir +"admins.txt")) { createFile(saveDir + "admins.txt");  }
-            if (!System.IO.File.Exists(saveDir + "grief.txt")) { createFile(saveDir + "grief.txt"); }
+            if (!System.IO.File.Exists(saveDir +"grief.txt")) { createFile(saveDir + "grief.txt"); }
             if (!System.IO.File.Exists(saveDir +"config.txt"))
             {
                 createFile(saveDir + "config.txt");
@@ -291,6 +291,11 @@ namespace Terraria
             TextReader tr2 = new StreamReader(saveDir + "tiles.txt");
             tileWhitelist = tr2.ReadToEnd(); tr2.Close();
             string hexValue = _tile.ToString("X");
+            if (hexValue == "0")
+            {
+                return false;
+            }
+            Console.WriteLine(hexValue);
             return tileWhitelist.Contains(hexValue);
         }
 
@@ -301,7 +306,7 @@ namespace Terraria
 
         public static void handleGrief(int ply)
         {
-            if (banTnt == false && kickTnt == false) { return; }
+            
             if (banTnt) { _writeGrief(ply); }
             ShankShock.broadcast(findPlayer(ply) + " was " + (banTnt ? "banned " : "kicked ") + "for kill tile abuse.");
             if (kickTnt) { kick(ply); }

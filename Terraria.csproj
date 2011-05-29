@@ -64,7 +64,6 @@
     <Compile Include="Terraria\NetMessage.cs" />
     <Compile Include="Terraria\Dust.cs" />
     <Compile Include="Terraria\Player.cs" />
-    <Compile Include="Terraria\Steam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fonts\Combat_Text.xnb" />
