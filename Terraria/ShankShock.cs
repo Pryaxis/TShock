@@ -55,7 +55,10 @@ namespace Terraria
                         if (Convert.ToInt32(changes[0]) > version)
                         {
                             sendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
-                            sendMessage(ply, changes[1], color);
+                            for (int i = 1; i <= changes.Length; i++)
+                            {
+                                sendMessage(ply, changes[i], color);
+                            }
                         }
                     }
                     catch (Exception e)
