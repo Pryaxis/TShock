@@ -70,6 +70,7 @@
                 ShankShock.handleCheater(plr);
             }
             ShankShock.showmotd(plr);
+            ShankShock.showUpdateMinder(plr);
             if (ShankShock.permaPvp)
             {
                 Main.player[plr].hostile = true;

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Net;
 
 namespace Terraria
 {
 	class ShankShock
 	{
+        private static string version = "1";
+        private static bool shownVersion = false;
+
         public static bool enableGuide = true;
         public static int invasionMultiplier = 1;
         public static int defaultMaxSpawns = 4;
@@ -31,8 +35,33 @@ namespace Terraria
             EYE=1,
             SKELETRON=2
         }
-        public ShankShock()
+
+        public static void showUpdateMinder(int ply)
         {
+            if (!shownVersion)
+            {
+                if (isAdmin(findPlayer(ply)))
+                {
+                    WebClient client = new WebClient();
+                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+                    try
+                    {
+                        string updateVersion = client.DownloadString("http://shankshock.com/tshock.txt");
+                        string[] changes = updateVersion.Split(',');
+                        float[] color = { 255, 255, 0 };
+                        if (updateVersion != version)
+                        {
+                            sendMessage(ply, "This server is out of date. Version " + updateVersion + " is out.", color);
+                            sendMessage(ply, changes[1], color);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _writeError(e.Message);
+                    }
+                    shownVersion = true;
+                }
+            }
         }
 
         public static void incrementKills()
