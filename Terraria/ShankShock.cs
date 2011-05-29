@@ -9,7 +9,7 @@ namespace Terraria
 {
 	class ShankShock
 	{
-        private static int version = 2;
+        private static double version = 2;
         private static bool shownVersion = false;
 
         public static bool enableGuide = true;
@@ -52,7 +52,7 @@ namespace Terraria
                         Console.WriteLine(changes.Length);
                         Console.WriteLine(changes[0]);
                         Console.WriteLine(changes[1]);
-                        if (Convert.ToInt32(changes[0]) > version)
+                        if (Convert.ToDouble(changes[0]) > version)
                         {
                             sendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
                             for (int i = 1; i <= changes.Length; i++)
