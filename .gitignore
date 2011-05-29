@@ -38,3 +38,5 @@
 ehthumbs.db
 Icon?
 Thumbs.db
+/bin
+/obj
