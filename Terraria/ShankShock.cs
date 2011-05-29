@@ -49,9 +49,6 @@ namespace Terraria
                         string updateVersion = client.DownloadString("http://shankshock.com/tshock.txt");
                         string[] changes = updateVersion.Split(',');
                         float[] color = { 255, 255, 000 };
-                        Console.WriteLine(changes.Length);
-                        Console.WriteLine(changes[0]);
-                        Console.WriteLine(changes[1]);
                         if (Convert.ToDouble(changes[0]) > version)
                         {
                             sendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
