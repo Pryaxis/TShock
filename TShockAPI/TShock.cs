@@ -62,6 +62,12 @@ namespace TShockAPI
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
+        }
+
+        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
 
