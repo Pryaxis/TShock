@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Terraria\Game.ico</ApplicationIcon>
+    <ApplicationIcon>lbolt.ico</ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -71,6 +71,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lbolt.ico" />
     <Content Include="Terraria\Game.ico" />
     <Content Include="Terraria\GameThumbnail.png" />
   </ItemGroup>
