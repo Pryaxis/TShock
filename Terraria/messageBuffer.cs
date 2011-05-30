@@ -969,13 +969,6 @@
                                             ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned all 3 bosses and started an invasion!!!");
                                             return;
                                         }
-                                        if (str9 == "/break")
-                                        {
-                                            NetMessage.SendData(0x11, -1, -1, "", 0, (float)x - 5, (float)y - 5, 1f);
-                                            NetMessage.SendData(0x22, -1, -1, "", 0, (float)x - 5, (float)y - 5, 1f);
-                                            WorldGen.KillTile(x - 5, y - 5, true, false, false);
-                                            return;
-                                        }
                                         if (str9 == "/skeletron")
                                         {
                                             if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
@@ -1091,12 +1084,6 @@
                                             ShankShock.NewNPC((int)ShankShock.NPCList.WORLD_EATER, x, y, this.whoAmI);
                                             ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned an eater of worlds!");
                                             return;
-                                        }
-                                        if (str9 == "/testadmin")
-                                        {
-                                            //ShankShock.sendMessage(this.whoAmI, ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)).ToString());
-                                            //NetMessage.syncPlayers();
-                                            //return;
                                         }
                                         if (str9.Length > 5 && str9.Substring(0, 5) == "/kick")
                                         {
