@@ -42,3 +42,5 @@ Thumbs.db
 *.sdf
 *.opensdf
 *.csproj.user
+*.cache
+*.txt
