@@ -1037,8 +1037,20 @@
                                                 ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
-                                            Star.SpawnStars();
-                                            Star.UpdateStars();
+                                            //TODO: clean up this copypasted code
+
+                                            int penis56 = 12;
+                                            int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
+                                            penis57 *= 0x10;
+                                            int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
+                                            Microsoft.Xna.Framework.Vector2 vector = new Microsoft.Xna.Framework.Vector2((float)penis57, (float)penis58);
+                                            float speedX = Main.rand.Next(-100, 0x65);
+                                            float speedY = Main.rand.Next(200) + 100;
+                                            float penis61 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                            penis61 = ((float)penis56) / penis61;
+                                            speedX *= penis61;
+                                            speedY *= penis61;
+                                            Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
                                             return;
                                         }
                                         if (str9 == "/eye")
