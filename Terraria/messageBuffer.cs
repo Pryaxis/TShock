@@ -956,9 +956,9 @@
                                         //TODO: Clean this shit up
                                         if (str9 == "/hardcore")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
 
@@ -967,7 +967,7 @@
                                                 ShankShock.NewNPC(i, x, y, this.whoAmI);
                                             }
                                             Main.startInv();
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned all 3 bosses and started an invasion!!!");
+                                            ShankShock.Broadcast(ShankShock.FindPlayer(this.whoAmI) + " has spawned all 3 bosses and started an invasion!!!");
                                             return;
                                         }
                                         if (str9 == "/off")
@@ -982,34 +982,34 @@
                                         }
                                         if (str9 == "/skeletron")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             ShankShock.NewNPC((int)ShankShock.NPCList.SKELETRON, x, y, this.whoAmI);
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned Skeletor!");
+                                            ShankShock.Broadcast(ShankShock.FindPlayer(this.whoAmI) + " has spawned Skeletor!");
                                             return;
                                         }
                                         if (str9 == "/reload")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
 
-                                            ShankShock.sendMessage(this.whoAmI, "Reloaded the server configuration files.");
+                                            ShankShock.SendMessage(this.whoAmI, "Reloaded the server configuration files.");
                                             return;
                                         }
                                         if (str9 == "/bloodmoon")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " turned on blood moon.");
+                                            ShankShock.Broadcast(ShankShock.FindPlayer(this.whoAmI) + " turned on blood moon.");
                                             Main.bloodMoon = true;
                                             Main.time = 0;
                                             Main.dayTime = false;
@@ -1020,9 +1020,9 @@
                                         }
                                         if (str9 == "/dropmeteor")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             WorldGen.spawnMeteor = false;
@@ -1031,9 +1031,9 @@
                                         }
                                         if (str9 == "/star")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             Star.SpawnStars();
@@ -1042,20 +1042,20 @@
                                         }
                                         if (str9 == "/eye")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             ShankShock.NewNPC((int)ShankShock.NPCList.EYE, x, y, this.whoAmI);
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned an eye!");
+                                            ShankShock.Broadcast(ShankShock.FindPlayer(this.whoAmI) + " has spawned an eye!");
                                             return;
                                         }
                                         if (str9 == "/invade")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             Main.startInv();
@@ -1063,12 +1063,12 @@
                                         }
                                         if (str9 == ("/help"))
                                         {
-                                            ShankShock.sendMessage(this.whoAmI, "TShock Commands:");
-                                            ShankShock.sendMessage(this.whoAmI, "/who - Who's online?");
-                                            ShankShock.sendMessage(this.whoAmI, "/me - Talk in 3rd person");
-                                            ShankShock.sendMessage(this.whoAmI, "/p - Talk in party chat");
-                                            ShankShock.sendMessage(this.whoAmI, "/kick | /ban | /eater | /hardcore");
-                                            ShankShock.sendMessage(this.whoAmI, "/invade | /dropmeteor | /bloodmoon | /eye");
+                                            ShankShock.SendMessage(this.whoAmI, "TShock Commands:");
+                                            ShankShock.SendMessage(this.whoAmI, "/who - Who's online?");
+                                            ShankShock.SendMessage(this.whoAmI, "/me - Talk in 3rd person");
+                                            ShankShock.SendMessage(this.whoAmI, "/p - Talk in party chat");
+                                            ShankShock.SendMessage(this.whoAmI, "/kick | /ban | /eater | /hardcore");
+                                            ShankShock.SendMessage(this.whoAmI, "/invade | /dropmeteor | /bloodmoon | /eye");
                                             return;
 
                                         }
@@ -1082,47 +1082,47 @@
                                         if (str9 == "/kc")
                                         {
                                             if (!ShankShock.infinateInvasion) { return; }
-                                            ShankShock.sendMessage(this.whoAmI, "Goblin kill count to date: " + ShankShock.killCount, new float[] { 255, 0, 0 });
+                                            ShankShock.SendMessage(this.whoAmI, "Goblin kill count to date: " + ShankShock.killCount, new float[] { 255, 0, 0 });
                                             return;
                                         }
                                         if (str9 == "/eater")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI)))
                                             {
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             ShankShock.NewNPC((int)ShankShock.NPCList.WORLD_EATER, x, y, this.whoAmI);
-                                            ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned an eater of worlds!");
+                                            ShankShock.Broadcast(ShankShock.FindPlayer(this.whoAmI) + " has spawned an eater of worlds!");
                                             return;
                                         }
                                         if (str9.Length > 5 && str9.Substring(0, 5) == "/kick")
                                         {
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI))){
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI))){
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             string plStr = str9.Remove(0, 5).Trim();
-                                            if (!(ShankShock.findPlayer(plStr) == -1 || plStr == ""))
+                                            if (!(ShankShock.FindPlayer(plStr) == -1 || plStr == ""))
                                             {
-                                                ShankShock.kick(ShankShock.findPlayer(plStr));
-                                                ShankShock.broadcast(plStr + " has been kicked.");
+                                                ShankShock.Kick(ShankShock.FindPlayer(plStr));
+                                                ShankShock.Broadcast(plStr + " has been kicked.");
                                                 return;
                                             }
-                                            ShankShock.sendMessage(this.whoAmI, "Player doesn't exist.");
+                                            ShankShock.SendMessage(this.whoAmI, "Player doesn't exist.");
                                             return;
                                         }
                                         if (str9.Length > 4 && str9.Substring(0, 4) == "/ban"){
-                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI))){
-                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                            if (!ShankShock.IsAdmin(ShankShock.FindPlayer(this.whoAmI))){
+                                                ShankShock.SendMessage(this.whoAmI, "You aren't allowed to do that.");
                                                 return;
                                             }
                                             string plStr = str9.Remove(0, 4).Trim();
-                                            if (!(ShankShock.findPlayer(plStr) == -1 || plStr == ""))
+                                            if (!(ShankShock.FindPlayer(plStr) == -1 || plStr == ""))
                                             {
-                                                ShankShock._writeban(ShankShock.findPlayer(plStr));
-                                                ShankShock.kick(ShankShock.findPlayer(plStr));
-                                                ShankShock.broadcast(plStr + " has been banned.");
+                                                ShankShock._writeban(ShankShock.FindPlayer(plStr));
+                                                ShankShock.Kick(ShankShock.FindPlayer(plStr));
+                                                ShankShock.Broadcast(plStr + " has been banned.");
                                                 return;
                                             }
                                         }
@@ -1781,7 +1781,7 @@
                     switch (num50) //
                     {
                         case 0:
-                            if (!ShankShock.tileOnWhitelist(Main.tile[num51, num52].type))
+                            if (!ShankShock.TileOnWhitelist(Main.tile[num51, num52].type))
                             {
                                 Main.player[this.whoAmI].breakTicks += 1;
                             }
@@ -1793,7 +1793,7 @@
                             break;
 
                         case 2:
-                            if (!ShankShock.tileOnWhitelist(Main.tile[num51, num52].type))
+                            if (!ShankShock.TileOnWhitelist(Main.tile[num51, num52].type))
                             {
                                 Main.player[this.whoAmI].breakTicks += 1;
                             }
@@ -1805,7 +1805,7 @@
                             break;
 
                         case 4:
-                            if (!ShankShock.tileOnWhitelist(Main.tile[num51, num52].type))
+                            if (!ShankShock.TileOnWhitelist(Main.tile[num51, num52].type))
                             {
                                 Main.player[this.whoAmI].breakTicks += 1;
                             }

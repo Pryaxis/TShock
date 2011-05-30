@@ -340,7 +340,7 @@
                         {
                             serverSock[k].statusText = string.Concat(new object[] { "(", serverSock[k].tcpClient.Client.RemoteEndPoint, ") ", serverSock[k].name, " requested world information" });
                             String s = serverSock[k].tcpClient.Client.RemoteEndPoint.ToString();
-                            if (ShankShock.checkBanned(s) || ShankShock.checkCheat(s) || !ShankShock.onWhitelist(s) || ShankShock.checkGrief(s))
+                            if (ShankShock.CheckBanned(s) || ShankShock.CheckCheat(s) || !ShankShock.OnWhitelist(s) || ShankShock.CheckGreif(s))
                             {
                                 serverSock[k].statusText = "b;ah";
                                 serverSock[k].statusText2 = "blah2";
@@ -359,10 +359,10 @@
                                     if (!(Main.player[i].breakTicks <= 0))
                                     {
                                         Main.player[i].breakTicks -= 1f;
-                                        Console.WriteLine(ShankShock.findPlayer(i) + " breakTicks: " + Main.player[i].breakTicks);
+                                        Console.WriteLine(ShankShock.FindPlayer(i) + " breakTicks: " + Main.player[i].breakTicks);
                                         if (Main.player[i].breakTicks >= 5)
                                         {
-                                            ShankShock.handleGrief(i);
+                                            ShankShock.HandleGrief(i);
 
                                         }
                                     }
