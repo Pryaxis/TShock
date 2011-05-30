@@ -73,7 +73,7 @@ namespace TShockAPI
                 if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
                 {
                     string plStr = msg.Remove(0, 5).Trim();
-                    if (FindPlayer(plStr) == -1 || plStr == "")
+                    if (!(FindPlayer(plStr) == -1 || plStr == ""))
                     {
                         Kick(FindPlayer(plStr), "You were kicked.");
                         Broadcast(plStr + " was kicked by " + FindPlayer(ply));
@@ -101,7 +101,7 @@ namespace TShockAPI
 
         void OnPreInit()
         {
-
+            SetupConfig();
         }
 
         void OnPostInit()
