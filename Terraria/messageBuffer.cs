@@ -1014,6 +1014,7 @@
                                             Main.time = 0;
                                             Main.dayTime = false;
                                             Main.UpdateT();
+                                            NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                                             NetMessage.syncPlayers();
                                             
                                             return;
