@@ -34,3 +34,10 @@ Icon?
 Thumbs.db
 /bin
 /obj
+
+
+# Visual Studio shit Motherfucka #
+##################################
+*.suo
+*.sdf
+*.opensdf
