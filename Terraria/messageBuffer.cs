@@ -953,6 +953,7 @@
                                         string str9 = str7.ToLower();
                                         int x = (int)Main.player[this.whoAmI].position.X;
                                         int y = (int)Main.player[this.whoAmI].position.Y;
+                                        //TODO: Clean this shit up
                                         if (str9 == "/hardcore")
                                         {
                                             if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
@@ -967,6 +968,16 @@
                                             }
                                             Main.startInv();
                                             ShankShock.broadcast(ShankShock.findPlayer(this.whoAmI) + " has spawned all 3 bosses and started an invasion!!!");
+                                            return;
+                                        }
+                                        if (str9 == "/off")
+                                        {
+                                            if (!ShankShock.isAdmin(ShankShock.findPlayer(this.whoAmI)))
+                                            {
+                                                ShankShock.sendMessage(this.whoAmI, "You aren't allowed to do that.");
+                                                return;
+                                            }
+                                            Netplay.disconnect = true;
                                             return;
                                         }
                                         if (str9 == "/skeletron")
