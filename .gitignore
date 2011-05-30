@@ -6,6 +6,8 @@
 *.exe
 *.o
 *.so
+/bin/*
+/obj/*
 
 # Packages #
 ############
@@ -32,8 +34,6 @@
 ehthumbs.db
 Icon?
 Thumbs.db
-/bin
-/obj
 
 
 # Visual Studio shit Motherfucka #
@@ -44,3 +44,4 @@ Thumbs.db
 *.cache
 *.txt
 *.pdb
+*.csproj.user

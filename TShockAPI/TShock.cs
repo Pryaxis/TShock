@@ -63,6 +63,16 @@ namespace TShockAPI
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
+        }
+
+        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            if (id == 0x1e && permaPvp)
+            {
+                e.Handled = true;
+
+            }
         }
 
         /*
@@ -330,15 +340,15 @@ namespace TShockAPI
 
         public static void HandleCheater(int ply)
         {
-            string cheater = ShankShock.FindPlayer(ply);
-            string ip = ShankShock.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string cheater = FindPlayer(ply);
+            string ip = GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
-            _writecheater(ply);
+            WriteCheater(ply);
             if (!kickCheater) { return; }
             Netplay.serverSock[ply].kill = true;
             Netplay.serverSock[ply].Reset();
             NetMessage.syncPlayers();
-            ShankShock.Broadcast(cheater + " was " + (banCheater ? "banned " : "kicked ") + "for cheating.");
+            Broadcast(cheater + " was " + (banCheater ? "banned " : "kicked ") + "for cheating.");
 
         }
 
@@ -441,7 +451,7 @@ namespace TShockAPI
                         }
                         catch (Exception e)
                         {
-                            _writeError(e.Message);
+                            WriteError(e.Message);
                         }
                     }
                 }
@@ -449,5 +459,50 @@ namespace TShockAPI
             }
             tr.Close();
         }
+
+        public static T Clamp<T>(T value, T max, T min)
+    where T : System.IComparable<T>
+        {
+            T result = value;
+            if (value.CompareTo(max) > 0)
+                result = max;
+            if (value.CompareTo(min) < 0)
+                result = min;
+            return result;
+        } 
+
+        public static void WriteCheater(int ply)
+        {
+            string ip = GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string cheaters = "";
+            TextReader tr = new StreamReader(saveDir + "cheaters.txt");
+            cheaters = tr.ReadToEnd();
+            tr.Close();
+            if (cheaters.Contains(Main.player[ply].name) && cheaters.Contains(ip)) { return; }
+            TextWriter sw = new StreamWriter(saveDir + "cheaters.txt", true);
+            sw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
+            sw.Close();
+        }
+
+        private static string GetPlayers()
+        {
+            string str = "";
+            for (int i = 0; i < 8; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    if (str == "")
+                    {
+                        str = str + Main.player[i].name;
+                    }
+                    else
+                    {
+                        str = str + ", " + Main.player[i].name;
+                    }
+                }
+            }
+            return str;
+        }
+
     }
 }
