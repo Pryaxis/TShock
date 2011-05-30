@@ -62,11 +62,18 @@ namespace TShockAPI
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
         }
 
         /*
          * Hooks:
          * */
+
+        void OnGreetPlayer(int who, HandledEventArgs e)
+        {
+            e.Handled = true;
+            ShowMOTD(who);
+        }
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
@@ -381,6 +388,42 @@ namespace TShockAPI
         private static void CreateFile(string file)
         {
             using (FileStream fs = File.Create(file)) { }
+        }
+
+        public static void ShowMOTD(int ply)
+        {
+            string foo = "";
+            TextReader tr = new StreamReader(saveDir + "motd.txt");
+            while ((foo = tr.ReadLine()) != null)
+            {
+                foo = foo.Replace("%map%", Main.worldName);
+                foo = foo.Replace("%players%", GetPlayers());
+                if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
+                {
+                    string possibleColor = foo.Substring(0, 13);
+                    foo = foo.Remove(0, 13);
+                    float[] pC = { 0, 0, 0 };
+                    possibleColor = possibleColor.Replace("%", "");
+                    string[] pCc = possibleColor.Split(',');
+                    if (pCc.Length == 3)
+                    {
+                        try
+                        {
+                            pC[0] = Clamp(Convert.ToInt32(pCc[0]), 255, 0);
+                            pC[1] = Clamp(Convert.ToInt32(pCc[1]), 255, 0);
+                            pC[2] = Clamp(Convert.ToInt32(pCc[2]), 255, 0);
+                            SendMessage(ply, foo, pC);
+                            continue;
+                        }
+                        catch (Exception e)
+                        {
+                            _writeError(e.Message);
+                        }
+                    }
+                }
+                SendMessage(ply, foo);
+            }
+            tr.Close();
         }
     }
 }
