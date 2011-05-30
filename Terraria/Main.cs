@@ -384,7 +384,7 @@
         {
             this.graphics = new GraphicsDeviceManager(this);
             base.Content.RootDirectory = "Content";
-            ShankShock.setupConfiguration();
+            ShankShock.SetupConfig();
         }
 
         public static double CalculateDamage(int Damage, int Defense)

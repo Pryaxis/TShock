@@ -5946,7 +5946,7 @@
                 }
                 if (ShankShock.infinateInvasion)
                 {
-                    ShankShock.incrementKills();
+                    ShankShock.IncrementKills();
                 }
             }
             return dmg;
