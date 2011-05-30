@@ -46,3 +46,7 @@ Thumbs.db
 *.csproj.user
 *.cache
 *.txt
+<<<<<<< HEAD
+=======
+*.pdb
+>>>>>>> ef60c83b40be0a7948d3cb0381cc6e4526a9b2d6
