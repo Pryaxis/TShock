@@ -34,6 +34,13 @@ namespace TShockAPI
         private static bool banTnt = false;
         private static bool kickTnt = false;
 
+        public enum NPCList : int
+        {
+            WORLD_EATER = 0,
+            EYE = 1,
+            SKELETRON = 2
+        }
+
         public override Version Version
         {
             get { return new Version(0, 1); }
@@ -117,6 +124,8 @@ namespace TShockAPI
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
             if (Main.netMode != 2) { return; }
+            int x = Main.player[ply].position.X;
+            int y = Main.player[ply].position.Y;
             if (IsAdmin(ply))
             {
                 if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
@@ -144,7 +153,85 @@ namespace TShockAPI
                 if (msg == "/off")
                 {
                     Netplay.disconnect = true;
+                    handler.Handled = true;
                 }
+
+                if (msg == "/reload")
+                {
+                    SetupConfig();
+                    handler.Handled = true;
+                }
+
+                if (msg == "/dropmeteor")
+                {
+                    WorldGen.spawnMeteor = false;
+                    WorldGen.dropMeteor();
+                    handler.Handled = true;
+                }
+
+                if (msg == "/star")
+                {
+                    int penis56 = 12;
+                    int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
+                    penis57 *= 0x10;
+                    int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
+                    Microsoft.Xna.Framework.Vector2 vector = new Microsoft.Xna.Framework.Vector2((float)penis57, (float)penis58);
+                    float speedX = Main.rand.Next(-100, 0x65);
+                    float speedY = Main.rand.Next(200) + 100;
+                    float penis61 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                    penis61 = ((float)penis56) / penis61;
+                    speedX *= penis61;
+                    speedY *= penis61;
+                    Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
+                    handler.Handled = true;
+                }
+                if (msg == "/bloodmoon")
+                {
+                    Broadcast(FindPlayer(ply) + " turned on blood moon.");
+                    Main.bloodMoon = true;
+                    Main.time = 0;
+                    Main.dayTime = false;
+                    //Main.UpdateT();
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    handler.Handled = true;                        
+                }
+                if (msg == "/eater")
+                {
+                    NewNPC((int)NPCList.WORLD_EATER, x, y, ply);
+                    Broadcast(FindPlayer(ply) + " has spawned an eater of worlds!");
+                    handler.Handled = true;
+                }
+                if (msg == "/eye")
+                {
+                    NewNPC((int)NPCList.EYE, x, y, ply);
+                    Broadcast(FindPlayer(ply) + " has spawned an eye!");
+                    handler.Handled = true;
+                }
+                if (msg == "/skeletron")
+                {
+                    NewNPC((int)NPCList.SKELETRON, x, y, ply);
+                    Broadcast(FindPlayer(ply) + " has spawned skeletron!");
+                    handler.Handled = true;
+                }
+                if (msg == "/hardcore")
+                {
+                    for (int i = 0; i <= 2; i++)
+                    {
+                        NewNPC(i, x, y, ply);
+                    }
+                    Broadcast(FindPlayer(ply) + " has spawned all 3 bosses!");
+                    handler.Handled = true;
+                }
+            }
+            if (msg == "/help")
+            {
+                SendMessage(ply, "TShock Commands:");
+                SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor");
+                SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore");
+                SendMessage(ply, "Terraria commands:");
+                SendMessage(ply, "/playing, /p, /me");
+                handler.Handled = true;
             }
         }
 
@@ -544,6 +631,31 @@ namespace TShockAPI
                 }
             }
             return str;
+        }
+
+        public static void NewNPC(int type, int x, int y, int target)
+        {
+
+            switch (type)
+            {
+                case 0: //World Eater
+                    WorldGen.shadowOrbSmashed = true;
+                    WorldGen.shadowOrbCount = 3;
+                    int w = NPC.NewNPC(x, y, 13, 1);
+                    Main.npc[w].target = target;
+                    break;
+                case 1: //Eye
+                    Main.time = 4861;
+                    Main.dayTime = false;
+                    WorldGen.spawnEye = true;
+                    break;
+                case 2: //Skeletron
+                    int enpeecee = NPC.NewNPC(x, y, 0x23, 0);
+                    Main.npc[enpeecee].netUpdate = true;
+                    break;
+
+            }
+
         }
     }
 }
