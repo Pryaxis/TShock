@@ -71,8 +71,18 @@ namespace TShockAPI
 
         void OnGreetPlayer(int who, HandledEventArgs e)
         {
+            int plr = who; //legacy support
             e.Handled = true;
             ShowMOTD(who);
+            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
+            {
+                HandleCheater(plr);
+            }
+            if (permaPvp)
+            {
+                Main.player[who].hostile = true;
+                NetMessage.SendData(30, -1, -1, "", who);
+            }
         }
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
@@ -316,6 +326,20 @@ namespace TShockAPI
                 }
             }
             return pl;
+        }
+
+        public static void HandleCheater(int ply)
+        {
+            string cheater = ShankShock.FindPlayer(ply);
+            string ip = ShankShock.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+
+            _writecheater(ply);
+            if (!kickCheater) { return; }
+            Netplay.serverSock[ply].kill = true;
+            Netplay.serverSock[ply].Reset();
+            NetMessage.syncPlayers();
+            ShankShock.Broadcast(cheater + " was " + (banCheater ? "banned " : "kicked ") + "for cheating.");
+
         }
 
         public static string FindPlayer(int ply)
