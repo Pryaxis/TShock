@@ -14,7 +14,7 @@ namespace TShockAPI
     {
         public static string saveDir = "./tshock/";
 
-        public abstract Version Version
+        public override Version Version
         {
             get { return new Version(0, 1); }
         }
