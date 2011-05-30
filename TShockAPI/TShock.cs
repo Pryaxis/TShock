@@ -124,8 +124,13 @@ namespace TShockAPI
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
             if (Main.netMode != 2) { return; }
+<<<<<<< HEAD
             int x = (int) Main.player[ply].position.X;
             int y = (int) Main.player[ply].position.Y;
+=======
+            int x = (int)Main.player[ply].position.X;
+            int y = (int)Main.player[ply].position.Y;
+>>>>>>> a4cf86f85300a81a3eab772d8735dcd7c6747010
             if (IsAdmin(ply))
             {
                 if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
