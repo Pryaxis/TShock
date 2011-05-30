@@ -56,23 +56,13 @@ namespace TShockAPI
 
         public TShock(Main game) : base (game)
         {
-            GameHooks.OnPreInitialize += OnPreInit;
-            GameHooks.OnPostInitialize += OnPostInit;
-            GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
-            GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
-            ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
-            ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
-            NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
-            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
-        }
-
-        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
-        {
-            if (id == 0x1e && permaPvp)
-            {
-                e.Handled = true;
-
-            }
+                GameHooks.OnPreInitialize += OnPreInit;
+                GameHooks.OnPostInitialize += OnPostInit;
+                GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
+                GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
+                ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
+                ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+                NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
         }
 
         /*
@@ -82,7 +72,6 @@ namespace TShockAPI
         void OnGreetPlayer(int who, HandledEventArgs e)
         {
             int plr = who; //legacy support
-            e.Handled = true;
             ShowMOTD(who);
             if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
             {
@@ -93,6 +82,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
+            e.Handled = true;
         }
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
