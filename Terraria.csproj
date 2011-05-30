@@ -40,6 +40,7 @@
     <Compile Include="Terraria\ShankShock.cs" />
     <Compile Include="Terraria\Projectile.cs" />
     <Compile Include="Terraria\Cloud.cs" />
+    <Compile Include="Terraria\ShankShockCommandProcessor.cs" />
     <Compile Include="Terraria\Star.cs" />
     <Compile Include="Terraria\CombatText.cs" />
     <Compile Include="Terraria\ServerSock.cs" />
