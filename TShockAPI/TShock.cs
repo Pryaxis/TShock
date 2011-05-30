@@ -13,9 +13,9 @@ namespace TShockAPI
 {
     public class TShock : TerrariaPlugin
     {
+        private uint[] tileThreshold = new uint[Main.maxPlayers];
+
         public static string saveDir = "./tshock/";
-        private static double version = 3;
-        private static bool shownVersion = false;
 
         public static bool killGuide = true;
         public static int invasionMultiplier = 1;
@@ -56,18 +56,45 @@ namespace TShockAPI
 
         public TShock(Main game) : base (game)
         {
-                GameHooks.OnPreInitialize += OnPreInit;
-                GameHooks.OnPostInitialize += OnPostInit;
-                GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
-                GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
-                ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
-                ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
-                NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            GameHooks.OnPreInitialize += OnPreInit;
+            GameHooks.OnPostInitialize += OnPostInit;
+            GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
+            GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
+            ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
+            NetHooks.OnPreGetData += GetData;
+            ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
         }
 
         /*
          * Hooks:
          * */
+
+        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            if (id == 0x1e && permaPvp)
+            {
+                e.Handled = true;
+
+            }
+        }
+
+        void GetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            int n = 5;
+            byte[] buf = msg.readBuffer;
+            if (id == 17)
+            {
+                byte type = buf[n];
+                n++;
+                if (type == 0)
+                {
+                    tileThreshold[msg.whoAmI]++;
+                }
+            }
+            return;
+        }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
         {
@@ -144,7 +171,22 @@ namespace TShockAPI
 
         void OnUpdate(GameTime time)
         {
-
+            for (uint i = 0; i < Main.maxPlayers; i++)
+            {
+                if (tileThreshold[i] >= 5)
+                {
+                    if (Main.player[i] != null)
+                    {
+                        WriteGrief((int)i);
+                        Kick((int)i, "Fuck you bomb spam or some other fucking shit");
+                    }
+                    tileThreshold[i] = 0;
+                }
+                else if (tileThreshold[i] > 0)
+                {
+                    tileThreshold[i]--;
+                }
+            }
         }
 
         /*
@@ -333,6 +375,7 @@ namespace TShockAPI
             string cheater = FindPlayer(ply);
             string ip = GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
+            WriteGrief(ply);
             WriteCheater(ply);
             if (!kickCheater) { return; }
             Netplay.serverSock[ply].kill = true;
@@ -451,7 +494,7 @@ namespace TShockAPI
         }
 
         public static T Clamp<T>(T value, T max, T min)
-    where T : System.IComparable<T>
+            where T : System.IComparable<T>
         {
             T result = value;
             if (value.CompareTo(max) > 0)
@@ -477,7 +520,7 @@ namespace TShockAPI
         private static string GetPlayers()
         {
             string str = "";
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active)
                 {
@@ -493,6 +536,5 @@ namespace TShockAPI
             }
             return str;
         }
-
     }
 }

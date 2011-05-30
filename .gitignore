@@ -6,8 +6,10 @@
 *.exe
 *.o
 *.so
-/bin/*
-/obj/*
+*/bin/*
+*/obj/*
+bin/*
+obj/*
 
 # Packages #
 ############
@@ -41,7 +43,17 @@ Thumbs.db
 *.suo
 *.sdf
 *.opensdf
+<<<<<<< HEAD
+*.csproj.user
+=======
+>>>>>>> 3ccdba9f51710ccb56e021dd10e53eea3614f21f
 *.cache
 *.txt
+<<<<<<< HEAD
+=======
 *.pdb
+<<<<<<< HEAD
+>>>>>>> ef60c83b40be0a7948d3cb0381cc6e4526a9b2d6
+=======
 *.csproj.user
+>>>>>>> 3ccdba9f51710ccb56e021dd10e53eea3614f21f
