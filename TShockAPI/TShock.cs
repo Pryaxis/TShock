@@ -12,6 +12,8 @@ namespace TShockAPI
 {
     public class TShock : TerrariaPlugin
     {
+        private uint[] tileThreshold = new uint[Main.maxPlayers];
+
         public static string saveDir = "./tshock/";
 
         public override Version Version
@@ -41,11 +43,28 @@ namespace TShockAPI
             GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
+            NetHooks.OnPreGetData += GetData;
         }
 
         /*
          * Hooks:
          * */
+
+        void GetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            int n = 5;
+            byte[] buf = msg.readBuffer;
+            if (id == 17)
+            {
+                byte type = buf[n];
+                n++;
+                if (type == 0)
+                {
+                    tileThreshold[msg.whoAmI]++;
+                }
+            }
+            return;
+        }
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
@@ -92,7 +111,22 @@ namespace TShockAPI
 
         void OnUpdate(GameTime time)
         {
-
+            for (uint i = 0; i < Main.maxPlayers; i++)
+            {
+                if (tileThreshold[i] >= 5)
+                {
+                    if (Main.player[i] != null)
+                    {
+                        WriteGrief((int)i);
+                        Kick((int)i, "Fuck you bomb spam or some other fucking shit");
+                    }
+                    tileThreshold[i] = 0;
+                }
+                else if (tileThreshold[i] > 0)
+                {
+                    tileThreshold[i]--;
+                }
+            }
         }
 
         /*
