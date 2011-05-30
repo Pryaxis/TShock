@@ -472,6 +472,20 @@ namespace Terraria
             return false;
         }
 
+        public static bool IsAdmin(int ply)
+        {
+            string remoteEndPoint = Convert.ToString((Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string[] remoteEndPointIP = remoteEndPoint.Split(':');
+            TextReader tr = new StreamReader(saveDir + "admins.txt");
+            string adminlist = tr.ReadToEnd();
+            tr.Close();
+            if (adminlist.Contains(remoteEndPointIP[0]))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static string GetRealIP(string mess)
         {
             return mess.Split(':')[0];
