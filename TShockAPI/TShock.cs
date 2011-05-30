@@ -7,6 +7,7 @@ using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TShockAPI
 {
@@ -60,7 +61,9 @@ namespace TShockAPI
             GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
+            ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
         }
+
 
         /*
          * Hooks:
@@ -94,6 +97,16 @@ namespace TShockAPI
             }
         }
 
+
+        void OnJoin(int ply, AllowEventArgs handler)
+        {
+            string ip = GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
+            if (CheckBanned(ip) || CheckCheat(ip) || CheckGreif(ip))
+            {
+                Kick(ply, "Your account has been disabled.");
+            }
+        }
+
         void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
         {
             
@@ -106,7 +119,7 @@ namespace TShockAPI
 
         void OnPostInit()
         {
-
+            
         }
 
         void OnUpdate(GameTime time)
@@ -117,6 +130,43 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
+
+        public static bool CheckGreif(String ip)
+        {
+            ip = GetRealIP(ip);
+            if (!banTnt) { return false; }
+            TextReader tr = new StreamReader(saveDir + "grief.txt");
+            string list = tr.ReadToEnd();
+            tr.Close();
+
+            return list.Contains(ip);
+        }
+
+        public static bool CheckCheat(String ip)
+        {
+            ip = GetRealIP(ip);
+            if (!banCheater) { return false; }
+            TextReader tr = new StreamReader(saveDir + "cheaters.txt");
+            string trr = tr.ReadToEnd();
+            tr.Close();
+            if (trr.Contains(ip))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool CheckBanned(String p)
+        {
+            String ip = p.Split(':')[0];
+            TextReader tr = new StreamReader(saveDir + "bans.txt");
+            string banlist = tr.ReadToEnd();
+            tr.Close();
+            banlist = banlist.Trim();
+            if (banlist.Contains(ip))
+                return true;
+            return false;
+        }
 
         private static void KeepTilesUpToDate()
         {
