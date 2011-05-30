@@ -73,15 +73,16 @@ namespace TShockAPI
 
         void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
         {
+            if (Main.netMode != 2) { return; }
             if (id == 0x1e && permaPvp)
             {
                 e.Handled = true;
-
             }
         }
 
         void GetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
         {
+            if (Main.netMode != 2) { return; }
             int n = 5;
             byte[] buf = msg.readBuffer;
             if (id == 17)
@@ -98,6 +99,7 @@ namespace TShockAPI
 
         void OnGreetPlayer(int who, HandledEventArgs e)
         {
+            if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             ShowMOTD(who);
             if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
@@ -114,6 +116,7 @@ namespace TShockAPI
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
+            if (Main.netMode != 2) { return; }
             if (IsAdmin(ply))
             {
                 if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
@@ -137,12 +140,18 @@ namespace TShockAPI
                     }
                     handler.Handled = true;
                 }
+
+                if (msg == "/off")
+                {
+                    Netplay.disconnect = true;
+                }
             }
         }
 
 
         void OnJoin(int ply, AllowEventArgs handler)
         {
+            if (Main.netMode != 2) { return; }
             string ip = GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
             if (CheckBanned(ip) || CheckCheat(ip) || CheckGreif(ip))
             {
@@ -166,11 +175,11 @@ namespace TShockAPI
 
         void OnPostInit()
         {
-            
         }
 
         void OnUpdate(GameTime time)
         {
+            if (Main.netMode != 2) { return; }
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
                 if (tileThreshold[i] >= 5)
@@ -178,7 +187,7 @@ namespace TShockAPI
                     if (Main.player[i] != null)
                     {
                         WriteGrief((int)i);
-                        Kick((int)i, "Fuck you bomb spam or some other fucking shit");
+                        Kick((int)i, "Kill tile abuse detected.");
                     }
                     tileThreshold[i] = 0;
                 }
