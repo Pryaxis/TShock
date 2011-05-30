@@ -111,6 +111,10 @@ namespace TShockAPI
             {
                 Kick(ply, "Your account has been disabled.");
             }
+            if (!OnWhitelist(ip))
+            {
+                Kick(ply, "Not on whitelist.");
+            }
         }
 
         void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
@@ -136,6 +140,16 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
+
+        public static bool OnWhitelist(string ip)
+        {
+            if (!enableWhitelist) { return true; }
+            if (!System.IO.File.Exists(saveDir + "whitelist.txt")) { CreateFile(saveDir + "whitelist.txt"); TextWriter tw = new StreamWriter(saveDir + "whitelist.txt"); tw.WriteLine("127.0.0.1"); tw.Close(); }
+            TextReader tr = new StreamReader(saveDir + "whitelist.txt");
+            string whitelist = tr.ReadToEnd();
+            ip = GetRealIP(ip);
+            if (whitelist.Contains(ip)) { return true; } else { return false; }
+        }
 
         public static bool CheckGreif(String ip)
         {
