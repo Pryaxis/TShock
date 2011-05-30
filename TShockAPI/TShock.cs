@@ -62,14 +62,7 @@ namespace TShockAPI
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
-            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
         }
-
-        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
 
         /*
          * Hooks:
@@ -226,6 +219,7 @@ namespace TShockAPI
             if (!System.IO.File.Exists(saveDir + "cheaters.txt")) { CreateFile(saveDir + "cheaters.txt"); }
             if (!System.IO.File.Exists(saveDir + "admins.txt")) { CreateFile(saveDir + "admins.txt"); }
             if (!System.IO.File.Exists(saveDir + "grief.txt")) { CreateFile(saveDir + "grief.txt"); }
+            if (!System.IO.File.Exists(saveDir + "whitelist.txt")) { CreateFile(saveDir + "whitelist.txt"); }
             if (!System.IO.File.Exists(saveDir + "config.txt"))
             {
                 CreateFile(saveDir + "config.txt");
