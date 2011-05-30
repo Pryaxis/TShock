@@ -92,8 +92,8 @@ namespace TShockAPI
                 {
                     tileThreshold[msg.whoAmI]++;
                 }
+                e.Handled = true;
             }
-            return;
         }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
