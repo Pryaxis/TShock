@@ -63,7 +63,17 @@ namespace TShockAPI
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
             NetHooks.OnPreGetData += GetData;
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
-            //NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
+        }
+
+        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        {
+            if (id == 0x1e && permaPvp)
+            {
+                e.Handled = true;
+
+            }
         }
 
         /*
@@ -366,6 +376,7 @@ namespace TShockAPI
             string ip = GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
             WriteGrief(ply);
+            WriteCheater(ply);
             if (!kickCheater) { return; }
             Netplay.serverSock[ply].kill = true;
             Netplay.serverSock[ply].Reset();
@@ -491,6 +502,19 @@ namespace TShockAPI
             if (value.CompareTo(min) < 0)
                 result = min;
             return result;
+        } 
+
+        public static void WriteCheater(int ply)
+        {
+            string ip = GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string cheaters = "";
+            TextReader tr = new StreamReader(saveDir + "cheaters.txt");
+            cheaters = tr.ReadToEnd();
+            tr.Close();
+            if (cheaters.Contains(Main.player[ply].name) && cheaters.Contains(ip)) { return; }
+            TextWriter sw = new StreamWriter(saveDir + "cheaters.txt", true);
+            sw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
+            sw.Close();
         }
 
         private static string GetPlayers()
