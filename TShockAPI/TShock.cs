@@ -25,10 +25,10 @@ namespace TShockAPI
         public static bool banCheater = true;
         public static int serverPort = 7777;
         public static bool enableWhitelist = false;
-        public static bool infinateInvasion = false;
+        public static bool infiniteInvasion = false;
         public static bool permaPvp = false;
         public static int killCount = 0;
-        public static bool shownOneTimeInvasionMinder = false;
+        public static bool startedInvasion = false;
 
         public static string tileWhitelist = "";
         private static bool banTnt = false;
@@ -77,9 +77,10 @@ namespace TShockAPI
             GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
             GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
-            NetHooks.OnPreGetData += GetData;
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnPreGetData += GetData;
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NpcHooks.OnStrikeNpc += new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
         }
 
         public override void DeInitialize()
@@ -89,14 +90,27 @@ namespace TShockAPI
             GameHooks.OnUpdate -= new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
             GameHooks.OnLoadContent -= new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat -= new Action<int, string, HandledEventArgs>(OnChat);
-            NetHooks.OnPreGetData -= GetData;
             ServerHooks.OnJoin -= new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnPreGetData -= GetData;
             NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
+            NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
         }
 
         /*
          * Hooks:
          * */
+
+        void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
+        {
+            if (infiniteInvasion)
+            {
+                IncrementKills();
+                if (Main.invasionSize < 10)
+                {
+                    Main.invasionSize = 20000000;
+                }
+            }
+        }
 
         void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
         {
@@ -109,7 +123,6 @@ namespace TShockAPI
 
         void GetData(GetDataEventArgs e)
         {
-            
             if (Main.netMode != 2) { return; }
             int n = 5;
             byte[] buf = e.Msg.readBuffer;
@@ -121,6 +134,12 @@ namespace TShockAPI
                 {
                     tileThreshold[e.Msg.whoAmI]++;
                 }
+                e.Handled = true;
+            }
+            if (e.MsgID == 0x1e)
+            {
+                Main.player[e.Msg.whoAmI].hostile = true;
+                NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
                 e.Handled = true;
             }
         }
@@ -138,6 +157,10 @@ namespace TShockAPI
             {
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
+            }
+            if (IsAdmin(who) && infiniteInvasion && !startedInvasion)
+            {
+                StartInvasion();
             }
             e.Handled = true;
         }
@@ -245,11 +268,17 @@ namespace TShockAPI
                     Broadcast(FindPlayer(ply) + " has spawned all 3 bosses!");
                     handler.Handled = true;
                 }
+                if (msg == "/invade")
+                {
+                    Broadcast(Main.player[ply].name + " started an invasion.");
+                    StartInvasion();
+                    handler.Handled = true;
+                }
             }
             if (msg == "/help")
             {
                 SendMessage(ply, "TShock Commands:");
-                SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor");
+                SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
                 SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore");
                 SendMessage(ply, "Terraria commands:");
                 SendMessage(ply, "/playing, /p, /me");
@@ -264,7 +293,7 @@ namespace TShockAPI
             string ip = GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
             if (CheckBanned(ip) || CheckCheat(ip) || CheckGreif(ip))
             {
-                Kick(ply, "Your account has been disabled.");
+                Kick(ply, "You are banned.");
             }
             if (!OnWhitelist(ip))
             {
@@ -310,6 +339,74 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
+
+        public static void StartInvasion()
+        {
+            Main.invasionType = 1;
+            if (infiniteInvasion)
+            {
+                Main.invasionSize = 20000000;
+            }
+            else
+            {
+                Main.invasionSize = 100 + (invasionMultiplier * activePlayers());
+            }
+
+            Main.invasionWarn = 0;
+            if (new Random().Next(2) == 0)
+            {
+                Main.invasionX = 0.0;
+            }
+            else
+            {
+                Main.invasionX = Main.maxTilesX;
+            }
+        }
+
+        public static void IncrementKills()
+        {
+            killCount++;
+            Random r = new Random();
+            int random = r.Next(5);
+            if (killCount % 100 == 0)
+            {
+                switch (random)
+                {
+                    case 0:
+                        Broadcast("You call that a lot? " + killCount + " goblins killed!");
+                        break;
+                    case 1:
+                        Broadcast("Fatality! " + killCount + " goblins killed!");
+                        break;
+                    case 2:
+                        Broadcast("Number of 'noobs' killed to date: " + killCount);
+                        break;
+                    case 3:
+                        Broadcast("Duke Nukem would be proud. " + killCount + " goblins killed.");
+                        break;
+                    case 4:
+                        Broadcast("You call that a lot? " + killCount + " goblins killed!");
+                        break;
+                    case 5:
+                        Broadcast(killCount + " copies of Call of Duty smashed.");
+                        break;
+                }
+
+            }
+        }
+
+        public static int activePlayers()
+        {
+            int num = 0;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    num++;
+                }
+            }
+            return num;
+        }
 
         public static bool OnWhitelist(string ip)
         {
@@ -422,11 +519,11 @@ namespace TShockAPI
                 banCheater = Convert.ToBoolean(configuration[5]);
                 serverPort = Convert.ToInt32(configuration[6]);
                 enableWhitelist = Convert.ToBoolean(configuration[7]);
-                infinateInvasion = Convert.ToBoolean(configuration[8]);
+                infiniteInvasion = Convert.ToBoolean(configuration[8]);
                 permaPvp = Convert.ToBoolean(configuration[9]);
                 kickTnt = Convert.ToBoolean(configuration[10]);
                 banTnt = Convert.ToBoolean(configuration[11]);
-                if (infinateInvasion)
+                if (infiniteInvasion)
                 {
                     //Main.startInv();
                 }
