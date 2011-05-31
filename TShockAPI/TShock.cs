@@ -58,7 +58,7 @@ namespace TShockAPI
 
         public override string Author
         {
-            get { return "nicatronTg, High, Mav, and Zach"; }
+            get { return "The TShock Team"; }
         }
 
         public override string Description
@@ -279,6 +279,46 @@ namespace TShockAPI
                     StartInvasion();
                     handler.Handled = true;
                 }
+                if (msg.Length > 9 && msg.Substring(0, 9) == "/password")
+                {
+                    string passwd = msg.Remove(0, 9).Trim();
+                    Netplay.password = passwd;
+                    SendMessage(ply, "Server password changed to: " + passwd);
+                    handler.Handled = true;
+                }
+                if (msg == "/save")
+                {
+                    WorldGen.saveWorld();
+                    SendMessage(ply, "World saved.");
+                    handler.Handled = true;
+                }
+                if (msg == "/spawn")
+                {
+                    Teleport(ply, Main.player[ply].SpawnX * 16, Main.player[ply].SpawnY * 16);
+                    SendMessage(ply, "Teleported to your spawnpoint.");
+                    handler.Handled = true;
+                }
+                if (msg.Length > 3 && msg.Substring(0, 3) == "/tp")
+                {
+                    string player = msg.Remove(0, 3).Trim();
+                    if (!(FindPlayer(player) == -1) && !(player == ""))
+                    {
+                        Teleport(ply, (int) Main.player[FindPlayer(player)].position.X, (int) Main.player[FindPlayer(player)].position.Y);
+                        SendMessage(ply, "Teleported to " + player);
+                        handler.Handled = true;
+                    }
+                }
+                if (msg.Length > 7 && msg.Substring(0, 7) == "/tphere")
+                {
+                    string player = msg.Remove(0, 7).Trim();
+                    if (!(FindPlayer(player) == -1) && !(player == ""))
+                    {
+                        Teleport(FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
+                        SendMessage(FindPlayer(player), "You were teleported to " + FindPlayer(ply) + ".");
+                        SendMessage(ply, "You brought " + player + " here.");
+                        handler.Handled = true;
+                    }
+                }
             }
             if (msg == "/help")
             {
@@ -344,6 +384,21 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
+
+        public static void Teleport(int ply, int x, int y)
+        {
+            Main.player[ply].position.X = x;
+            Main.player[ply].position.Y = y - 0x2a;
+            NetMessage.SendData(0x0d, 0, -1, "", ply);
+        }
+
+
+        public static void Teleport(int ply, float x, float y)
+        {
+            Main.player[ply].position.X = x;
+            Main.player[ply].position.Y = y - 0x2a;
+            NetMessage.SendData(0x0d, 0, -1, "", ply);
+        }
 
         public static void StartInvasion()
         {
