@@ -9,7 +9,7 @@ namespace Terraria
 {
 	class ShankShock
 	{
-        private static double version = 3;
+        private static double version = 4;
         private static bool shownVersion = false;
 
         public static bool killGuide = true;
@@ -308,8 +308,7 @@ namespace Terraria
         {
             
             if (banTnt) { _writeGrief(ply); }
-            ShankShock.Broadcast(FindPlayer(ply) + " was " + (banTnt ? "banned " : "kicked ") + "for kill tile abuse.");
-            if (kickTnt) { Kick(ply); }
+            if (kickTnt) { ShankShock.Broadcast(FindPlayer(ply) + " was " + (banTnt ? "banned " : "kicked ") + "for kill tile abuse."); Kick(ply); }
         }
 
         private static void _writeGrief(int ply)

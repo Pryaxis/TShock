@@ -610,6 +610,11 @@
                     Main.player[num7].shoeColor.B = this.readBuffer[index];
                     index++;
                     string text = Encoding.ASCII.GetString(this.readBuffer, index, (length - index) + start);
+                    text = text.Replace("\\", "");
+                    if (text == "" || text == " ")
+                    {
+                        text = "mingebag";
+                    }
                     Main.player[num7].name = text;
                     if (Main.netMode == 2)
                     {
@@ -1082,7 +1087,7 @@
                                             ShankShock.SendMessage(this.whoAmI, "/p - Talk in party chat");
                                             if (ShankShock.IsAdmin(this.whoAmI))
                                             {
-                                                ShankShock.SendMessage(this.whoAmI, "/kick | /ban | /eater | /hardcore");
+                                                ShankShock.SendMessage(this.whoAmI, "/kick | /ban | /eater | /hardcore | /skeletron");
                                                 ShankShock.SendMessage(this.whoAmI, "/invade | /dropmeteor | /bloodmoon | /eye");
                                             }
                                             return;
