@@ -124,17 +124,22 @@ namespace TShockAPI
         void GetData(GetDataEventArgs e)
         {
             if (Main.netMode != 2) { return; }
-            int n = 5;
-            byte[] buf = e.Msg.readBuffer;
             if (e.MsgID == 17)
             {
-                byte type = buf[n];
-                n++;
-                if (type == 0)
+                byte type;
+                int x = 0;
+                int y = 0;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    type = br.ReadByte();
+                    x = br.ReadInt32();
+                    y = br.ReadInt32();
+                }
+                if (type == 0 && !TileOnWhitelist(Main.tile[x, y].type))
                 {
                     tileThreshold[e.Msg.whoAmI]++;
                 }
-                e.Handled = true;
+                return;
             }
             if (e.MsgID == 0x1e)
             {
@@ -775,6 +780,20 @@ namespace TShockAPI
 
             }
 
+        }
+
+        public static bool TileOnWhitelist(byte tile)
+        {
+            int _tile = (int)tile;
+            TextReader tr2 = new StreamReader(saveDir + "tiles.txt");
+            tileWhitelist = tr2.ReadToEnd(); tr2.Close();
+            string hexValue = _tile.ToString("X");
+            if (hexValue == "0")
+            {
+                return false;
+            }
+            Console.WriteLine(hexValue);
+            return tileWhitelist.Contains(hexValue);
         }
     }
 }
