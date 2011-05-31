@@ -46,6 +46,11 @@ namespace TShockAPI
             get { return new Version(0, 1); }
         }
 
+        public override Version APIVersion
+        {
+            get { return new Version(1, 1); }
+        }
+
         public override string Name
         {
             get { return "TShock"; }
@@ -63,6 +68,10 @@ namespace TShockAPI
 
         public TShock(Main game) : base (game)
         {
+        }
+
+        public override void Initialize()
+        {
             GameHooks.OnPreInitialize += OnPreInit;
             GameHooks.OnPostInitialize += OnPostInit;
             GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
@@ -71,7 +80,18 @@ namespace TShockAPI
             NetHooks.OnPreGetData += GetData;
             ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
-            NetHooks.OnPreGetData += new NetHooks.GetDataD(OnPreGetData);
+        }
+
+        public override void DeInitialize()
+        {
+            GameHooks.OnPreInitialize -= OnPreInit;
+            GameHooks.OnPostInitialize -= OnPostInit;
+            GameHooks.OnUpdate -= new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
+            GameHooks.OnLoadContent -= new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
+            ServerHooks.OnChat -= new Action<int, string, HandledEventArgs>(OnChat);
+            NetHooks.OnPreGetData -= GetData;
+            ServerHooks.OnJoin -= new Action<int, AllowEventArgs>(OnJoin);
+            NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
         }
 
         /*
@@ -87,18 +107,19 @@ namespace TShockAPI
             }
         }
 
-        void GetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        void GetData(GetDataEventArgs e)
         {
+            
             if (Main.netMode != 2) { return; }
             int n = 5;
-            byte[] buf = msg.readBuffer;
-            if (id == 17)
+            byte[] buf = e.Msg.readBuffer;
+            if (e.MsgID == 17)
             {
                 byte type = buf[n];
                 n++;
                 if (type == 0)
                 {
-                    tileThreshold[msg.whoAmI]++;
+                    tileThreshold[e.Msg.whoAmI]++;
                 }
                 e.Handled = true;
             }
