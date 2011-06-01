@@ -389,6 +389,28 @@ namespace TShockAPI
                         }
                     }
                 }
+                if (msg.StartsWith("/heal"))
+                {
+                    var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    int player = ply;
+                    if (args.Length == 2)
+                        player = Tools.FindPlayer((args[1].TrimEnd('"')).TrimStart('"'));
+                    if (player != ply)
+                    {
+                        Tools.SendMessage(ply, string.Format("You just healed {0}", (args[1].TrimEnd('"')).TrimStart('"')));
+                        Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
+                    }
+                    else
+                        Tools.SendMessage(ply, "You just got healed!");
+                    for (int i = 0; i < 20; i++)
+                    {
+                        int itemid = Item.NewItem(1, 1, 1, 1, 58);
+                        Main.item[itemid].position.X = (float)x;
+                        Main.item[itemid].position.Y = (float)y;
+                        NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
+                    }
+                    handler.Handled = true;
+                }
             }
             if (msg == "/help")
             {
