@@ -304,6 +304,20 @@ namespace TShockAPI
                         handler.Handled = true;
                     }
                 }
+                if (msg.Length > 9 && msg.Substring(0,9) == "/spawnmob")
+                {
+                    string args = msg.Remove(0, 9).Trim();
+                    int type = 0;
+                    if (int.TryParse(args, out type))
+                    {
+                        if (type >= 1 && type <= 43)
+                        {
+                            var npcid = NPC.NewNPC(x, y, type, 0);
+                            Tools.Broadcast("NPC " + type.ToString() + " spawned with ID " + npcid.ToString());
+                            handler.Handled = true;
+                        }
+                    }
+                }
             }
             if (msg == "/help")
             {
