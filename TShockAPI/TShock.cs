@@ -407,7 +407,7 @@ namespace TShockAPI
                         float[] color = { 255, 255, 000 };
                         if (Convert.ToDouble(changes[0]) > version)
                         {
-                            SendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
+                            SendMessage(ply, "This server is out of date.");
                             for (int i = 1; i <= changes.Length; i++)
                             {
                                 SendMessage(ply, changes[i], color);
