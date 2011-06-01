@@ -22,7 +22,7 @@ namespace TShockAPI
 
         public override Version Version
         {
-            get { return new Version(0, 1); }
+            get { return new Version(1, 1); }
         }
 
         public override Version APIVersion
@@ -283,7 +283,6 @@ namespace TShockAPI
                 if (msg.Length > 3 && msg.Substring(0, 3) == "/tp")
                 {
                     string player = msg.Remove(0, 3).Trim();
-                    if (!(Tools.FindPlayer(player) == -1) && !(player == ""))
                         if (Tools.FindPlayer(player) != -1 && player != "")
                         {
                             Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
@@ -294,7 +293,6 @@ namespace TShockAPI
                 if (msg.Length > 7 && msg.Substring(0, 7) == "/tphere")
                 {
                     string player = msg.Remove(0, 7).Trim();
-                    if (!(Tools.FindPlayer(player) == -1) && !(player == ""))
                         if (Tools.FindPlayer(player) != -1 && player != "")
                         {
                             Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
@@ -342,6 +340,7 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "TShock Commands:");
                 Tools.SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
                 Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore");
+                Tools.SendMessage(ply, "/password, /save, /item, /spawnmob, /tp, /tphere");
                 Tools.SendMessage(ply, "Terraria commands:");
                 Tools.SendMessage(ply, "/playing, /p, /me");
                 handler.Handled = true;
