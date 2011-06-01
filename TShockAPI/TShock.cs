@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
+using System.Text.RegularExpressions;
 
 namespace TShockAPI
 {
@@ -22,7 +23,7 @@ namespace TShockAPI
 
         public override Version Version
         {
-            get { return new Version(1, 1); }
+            get { return new Version(1, 2); }
         }
 
         public override Version APIVersion
@@ -301,45 +302,136 @@ namespace TShockAPI
                             handler.Handled = true;
                         }
                 }
-                if (msg.Length > 9 && msg.Substring(0, 9) == "/spawnmob")
+                if (msg.StartsWith("/spawnmob"))
                 {
-                    string args = msg.Remove(0, 9).Trim();
-                    int type = 0;
-                    if (int.TryParse(args, out type))
+                    var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    if (args.Length >= 2 && args.Length <= 3)
                     {
+                        for (int i = 1; i < args.Length; i++)
+                            args[i] = ((args[i].TrimEnd('"')).TrimStart('"'));
+                        string inputtype = "";
+                        int amount = 1;
+                        int npcid = -1;
+                        int type = -1;
+                        inputtype = args[1];
+                        if (args.Length == 3)
+                            int.TryParse(args[2], out amount);
+
+                        if (!int.TryParse(inputtype, out type))
+                            type = GetNPCID(inputtype);
                         if (type >= 1 && type <= 43)
                         {
-                            var npcid = NPC.NewNPC(x, y, type, 0);
-                            Tools.Broadcast("NPC " + type.ToString() + " spawned with ID " + npcid.ToString());
+                            for (int i = 0; i < amount; i++)
+                                npcid = NPC.NewNPC(x, y, type, 0);
+                            Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
                             handler.Handled = true;
                         }
                     }
                 }
-                //ATM it just drops the item. Trying to find out can I update the player's inventory directly.
-                if (msg.StartsWith("/item") && msg.Split(' ').Length == 2) 
+                if (msg.StartsWith("/item"))
                 {
-                    var args = msg.Split(' ')[1];
-                    int type = 0;
-                    if (int.TryParse(args, out type))
+                    var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
+                    if (args.Length >= 2)
                     {
+                        args = ((args.TrimEnd('"')).TrimStart('"'));
+                        int type = 0;
+                        if (!int.TryParse(args, out type))
+                            type = GetItemID(args);
                         if (type >= 1 && type <= 235)
                         {
-                            int id = Item.NewItem(0, 0, 0, 0, type, 1, true);
-                            Main.item[id].position.X = (float)x;
-                            Main.item[id].position.Y = (float)y;
-                            Main.item[id].stack = Main.item[id].maxStack;
-                            NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                            Tools.SendMessage(ply, "Spawned " + Main.item[id].name + ".");
-                            handler.Handled = true;
+                            for (int i = 0; i < 40; i++)
+                            {
+                                if (!Main.player[ply].inventory[i].active)
+                                {
+                                    Main.player[ply].inventory[i].SetDefaults(type);
+                                    Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
+                                    Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
+                                    UpdateInventories();
+                                    handler.Handled = true;
+                                    break;
+                                }
+                            }
                         }
                     }
+                }
+                if (msg.StartsWith("/give"))
+                {
+                    var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    if (args.Length == 3)
+                    {
+                        for (int i = 1; i < args.Length; i++)
+                            args[i] = ((args[i].TrimEnd('"')).TrimStart('"'));
+                        int type = 0;
+                        int player = -1;
+                        if (!int.TryParse(args[1], out type))
+                            type = GetItemID(args[1]);
+                        if (type >= 1 && type <= 235)
+                        {
+                            player = Tools.FindPlayer(args[2]);
+                            if (player != -1)
+                            {
+                                for (int i = 0; i < 40; i++)
+                                {
+                                    if (!Main.player[player].inventory[i].active)
+                                    {
+                                        Main.player[player].inventory[i].SetDefaults(type);
+                                        Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
+                                        Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
+                                        Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
+                                        UpdateInventories();
+                                        handler.Handled = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (msg.StartsWith("/heal"))
+                {
+                    var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    int player = ply;
+                    if (args.Length == 2)
+                        player = Tools.FindPlayer((args[1].TrimEnd('"')).TrimStart('"'));
+                    if (player != ply)
+                    {
+                        Tools.SendMessage(ply, string.Format("You just healed {0}", (args[1].TrimEnd('"')).TrimStart('"')));
+                        Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
+                    }
+                    else
+                        Tools.SendMessage(ply, "You just got healed!");
+                    for (int i = 0; i < 20; i++)
+                    {
+                        int itemid = Item.NewItem(1, 1, 1, 1, 58);
+                        Main.item[itemid].position.X = (float)x;
+                        Main.item[itemid].position.Y = (float)y;
+                        NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
+                    }
+                    handler.Handled = true;
+                }
+                if (msg == "/butcher")
+                {
+                    int killcount = 0;
+                    for (int i = 0; i < Main.npc.Length; i++)
+                    {
+                        if (Main.npc[i].townNPC || !Main.npc[i].active)
+                            continue;
+                        else
+                        {
+                            Main.npc[i].StrikeNPC(99999, 90f, 1);
+                            NetMessage.SendData(28, -1, -1, "", i, (float)99999, 90f, 1);
+                            killcount++;
+                        }
+                    }
+                    Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
+                    handler.Handled = true;
                 }
             }
             if (msg == "/help")
             {
                 Tools.SendMessage(ply, "TShock Commands:");
                 Tools.SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
-                Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore");
+                Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore, /give");
                 Tools.SendMessage(ply, "/password, /save, /item, /spawnmob, /tp, /tphere");
                 Tools.SendMessage(ply, "Terraria commands:");
                 Tools.SendMessage(ply, "/playing, /p, /me");
@@ -506,6 +598,56 @@ namespace TShockAPI
                         break;
                 }
             }
+        }
+
+        public static void UpdateInventories()
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                for (int j = 0; j < 44; j++)
+                {
+                    for (int h = 0; h < Main.player.Length; h++)
+                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, (float)j, 0f, 0f);
+                }
+            }
+        }
+
+        //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
+        public static int GetNPCID(string name, bool exact = false)
+        {
+            NPC npc = new NPC();
+            for (int i = 1; i <= 43; i++)
+            {
+                if (exact)
+                {
+                    //Method #1 - must be exact match, allows support for different coloured slimes
+                    npc.SetDefaults(name);
+                    if (npc.name == name)
+                        return i;
+                }
+                else
+                {
+                    //Method #2 - allows impartial matching
+                    name = name.ToLower();
+                    npc.SetDefaults(i);
+                    if (npc.name.ToLower().StartsWith(name))
+                        return i;
+                }
+            }
+            return -1;
+        }
+
+        public static int GetItemID(string name)
+        {
+            Item item = new Item();
+            name = name.ToLower();
+            for (int i = 1; i <= 235; i++)
+            {
+                item.SetDefaults(i);
+                if (item.name.ToLower().StartsWith(name))
+                    return i;
+            }
+            return -1;
         }
     }
 }
