@@ -317,7 +317,6 @@ namespace TShockAPI
                         }
                     }
                 }
-                //ATM it just drops the item. Trying to find out can I update the player's inventory directly.
                 if (msg.StartsWith("/item") && msg.Split(' ').Length == 2) 
                 {
                     var args = msg.Split(' ')[1];
@@ -326,13 +325,47 @@ namespace TShockAPI
                     {
                         if (type >= 1 && type <= 235)
                         {
-                            int id = Item.NewItem(0, 0, 0, 0, type, 1, true);
-                            Main.item[id].position.X = (float)x;
-                            Main.item[id].position.Y = (float)y;
-                            Main.item[id].stack = Main.item[id].maxStack;
-                            NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                            Tools.SendMessage(ply, "Spawned " + Main.item[id].name + ".");
-                            handler.Handled = true;
+                            for (int i = 0; i < 40; i++)
+                            {
+                                if (!Main.player[ply].inventory[i].active)
+                                {
+                                    Main.player[ply].inventory[i].SetDefaults(type);
+                                    Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
+                                    Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
+                                    UpdateInventories();
+                                    handler.Handled = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (msg.StartsWith("/give") && msg.Split(' ').Length == 3)
+                {
+                    var args = msg.Split(' ');
+                    int type = 0;
+                    int player = -1;
+                    if (int.TryParse(args[1], out type))
+                    {
+                        if (type >= 1 && type <= 235)
+                        {
+                            player = Tools.FindPlayer(args[2]);
+                            if (player != -1)
+                            {
+                                for (int i = 0; i < 40; i++)
+                                {
+                                    if (!Main.player[player].inventory[i].active)
+                                    {
+                                        Main.player[player].inventory[i].SetDefaults(type);
+                                        Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
+                                        Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
+                                        Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
+                                        UpdateInventories();
+                                        handler.Handled = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -505,6 +538,18 @@ namespace TShockAPI
                     case 5:
                         Tools.Broadcast(ConfigurationManager.killCount + " copies of Call of Duty smashed.");
                         break;
+                }
+            }
+        }
+
+        public static void UpdateInventories()
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                for (int j = 0; j < 44; j++)
+                {
+                    for (int h = 0; h < Main.player.Length; h++)
+                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, (float)j, 0f, 0f);
                 }
             }
         }
