@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Net;
+using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Net;
-using TShockAPI;
 
 namespace TShockAPI
 {
@@ -50,7 +45,8 @@ namespace TShockAPI
             get { return "The administration modification of the future."; }
         }
 
-        public TShock(Main game) : base (game)
+        public TShock(Main game)
+            : base(game)
         {
         }
 
@@ -84,7 +80,7 @@ namespace TShockAPI
          * Hooks:
          * */
 
-        void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
+        private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {
             if (ConfigurationManager.infiniteInvasion)
             {
@@ -96,7 +92,7 @@ namespace TShockAPI
             }
         }
 
-        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
+        private void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
         {
             if (Main.netMode != 2) { return; }
             if (id == 0x1e && ConfigurationManager.permaPvp)
@@ -105,7 +101,7 @@ namespace TShockAPI
             }
         }
 
-        void GetData(GetDataEventArgs e)
+        private void GetData(GetDataEventArgs e)
         {
             if (Main.netMode != 2) { return; }
             if (e.MsgID == 17)
@@ -133,7 +129,7 @@ namespace TShockAPI
             }
         }
 
-        void OnGreetPlayer(int who, HandledEventArgs e)
+        private void OnGreetPlayer(int who, HandledEventArgs e)
         {
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
@@ -155,11 +151,11 @@ namespace TShockAPI
             e.Handled = true;
         }
 
-        void OnChat(int ply, string msg, HandledEventArgs handler)
+        private void OnChat(int ply, string msg, HandledEventArgs handler)
         {
             if (Main.netMode != 2) { return; }
-            int x = (int) Main.player[ply].position.X;
-            int y = (int) Main.player[ply].position.Y;
+            int x = (int)Main.player[ply].position.X;
+            int y = (int)Main.player[ply].position.Y;
 
             if (Tools.IsAdmin(ply))
             {
@@ -229,7 +225,7 @@ namespace TShockAPI
                     //Main.UpdateT();
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    handler.Handled = true;                        
+                    handler.Handled = true;
                 }
                 if (msg == "/eater")
                 {
@@ -286,7 +282,7 @@ namespace TShockAPI
                 if (msg.Length > 3 && msg.Substring(0, 3) == "/tp")
                 {
                     string player = msg.Remove(0, 3).Trim();
-                    if (!(Tools.FindPlayer(player) == -1) && !(player == ""))
+                    if (Tools.FindPlayer(player) != -1 && player != "")
                     {
                         Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
                         Tools.SendMessage(ply, "Teleported to " + player);
@@ -296,7 +292,7 @@ namespace TShockAPI
                 if (msg.Length > 7 && msg.Substring(0, 7) == "/tphere")
                 {
                     string player = msg.Remove(0, 7).Trim();
-                    if (!(Tools.FindPlayer(player) == -1) && !(player == ""))
+                    if (Tools.FindPlayer(player) != -1 && player != "")
                     {
                         Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
                         Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
@@ -316,8 +312,7 @@ namespace TShockAPI
             }
         }
 
-
-        void OnJoin(int ply, AllowEventArgs handler)
+        private void OnJoin(int ply, AllowEventArgs handler)
         {
             if (Main.netMode != 2) { return; }
             string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
@@ -331,21 +326,20 @@ namespace TShockAPI
             }
         }
 
-        void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
+        private void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
         {
-            
         }
 
-        void OnPreInit()
+        private void OnPreInit()
         {
             FileTools.SetupConfig();
         }
 
-        void OnPostInit()
+        private void OnPostInit()
         {
         }
 
-        void OnUpdate(GameTime time)
+        private void OnUpdate(GameTime time)
         {
             if (Main.netMode != 2) { return; }
             for (uint i = 0; i < Main.maxPlayers; i++)
@@ -402,22 +396,15 @@ namespace TShockAPI
             }
         }
 
-
-        public static void Teleport(int ply, int x, int y)
-        {
-            Main.player[ply].velocity = new Vector2(0, 0);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-        }
-
-
         public static void Teleport(int ply, float x, float y)
         {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
+            int oldx = Main.player[ply].SpawnX;
+            int oldy = Main.player[ply].SpawnY;
+            Main.player[ply].SpawnX = (int)(x / 16);
+            Main.player[ply].SpawnY = (int)((y - 0x2a) / 16);
+            NetMessage.SendData(0xC, -1, -1, "", ply);
+            Main.player[ply].SpawnX = oldx;
+            Main.player[ply].SpawnY = oldy;
         }
 
         public static void StartInvasion()
@@ -471,7 +458,6 @@ namespace TShockAPI
                         Tools.Broadcast(ConfigurationManager.killCount + " copies of Call of Duty smashed.");
                         break;
                 }
-
             }
         }
     }
