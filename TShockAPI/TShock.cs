@@ -8,6 +8,7 @@ using TerrariaAPI;
 using TerrariaAPI.Hooks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Net;
 
 namespace TShockAPI
 {
@@ -16,6 +17,10 @@ namespace TShockAPI
         private uint[] tileThreshold = new uint[Main.maxPlayers];
 
         public static string saveDir = "./tshock/";
+
+        public static int version = 10;
+
+        public static bool shownVersion = false;
 
         public static bool killGuide = true;
         public static int invasionMultiplier = 1;
@@ -153,6 +158,7 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
+            ShowUpdateReminder(who);
             ShowMOTD(who);
             if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
             {
@@ -385,6 +391,38 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
+
+        public static void ShowUpdateReminder(int ply)
+        {
+            if (!shownVersion)
+            {
+                if (IsAdmin(FindPlayer(ply)))
+                {
+                    WebClient client = new WebClient();
+                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+                    try
+                    {
+                        string updateVersion = client.DownloadString("http://shankshock.com/tshock.txt");
+                        string[] changes = updateVersion.Split(',');
+                        float[] color = { 255, 255, 000 };
+                        if (Convert.ToDouble(changes[0]) > version)
+                        {
+                            SendMessage(ply, "This server is out of date. Version " + changes[0] + " is out.", color);
+                            for (int i = 1; i <= changes.Length; i++)
+                            {
+                                SendMessage(ply, changes[i], color);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        WriteError(e.Message);
+                    }
+                    shownVersion = true;
+                }
+            }
+        }
+
 
         public static void Teleport(int ply, int x, int y)
         {
