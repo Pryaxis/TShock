@@ -319,70 +319,38 @@ namespace TShockAPI
                         if (args.Length == 3)
                             int.TryParse(args[2], out amount);
 
-                        if (int.TryParse(inputtype, out type))
-                        {
-                            if (type >= 1 && type <= 43)
-                            {
-                                for (int i = 0; i < amount; i++)
-                                    npcid = NPC.NewNPC(x, y, type, 0);
-                                Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
-                                handler.Handled = true;
-                            }
-                        }
-                        else
-                        {
+                        if (!int.TryParse(inputtype, out type))
                             type = GetNPCID(inputtype);
-                            if (type > 0)
-                            {
-                                for (int i = 0; i < amount; i++)
-                                    npcid = NPC.NewNPC(x, y, type, 0);
-                                Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
-                                handler.Handled = true;
-                            }
+                        if (type >= 1 && type <= 43)
+                        {
+                            for (int i = 0; i < amount; i++)
+                                npcid = NPC.NewNPC(x, y, type, 0);
+                            Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
+                            handler.Handled = true;
                         }
                     }
                 }
-                if (msg.StartsWith("/item")) 
+                if (msg.StartsWith("/item"))
                 {
                     var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
                     if (args.Length >= 2)
                     {
                         args = ((args.TrimEnd('"')).TrimStart('"'));
                         int type = 0;
-                        if (int.TryParse(args, out type))
-                        {
-                            if (type >= 1 && type <= 235)
-                            {
-                                for (int i = 0; i < 40; i++)
-                                {
-                                    if (!Main.player[ply].inventory[i].active)
-                                    {
-                                        Main.player[ply].inventory[i].SetDefaults(type);
-                                        Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
-                                        Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
-                                        UpdateInventories();
-                                        handler.Handled = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
+                        if (!int.TryParse(args, out type))
                             type = GetItemID(args);
-                            if (type != -1)
+                        if (type >= 1 && type <= 235)
+                        {
+                            for (int i = 0; i < 40; i++)
                             {
-                                for (int i = 0; i < 40; i++)
+                                if (!Main.player[ply].inventory[i].active)
                                 {
-                                    if (!Main.player[ply].inventory[i].active)
-                                    {
-                                        Main.player[ply].inventory[i].SetDefaults(type);
-                                        Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
-                                        Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
-                                        UpdateInventories();
-                                        handler.Handled = true;
-                                        break;
-                                    }
+                                    Main.player[ply].inventory[i].SetDefaults(type);
+                                    Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
+                                    Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
+                                    UpdateInventories();
+                                    handler.Handled = true;
+                                    break;
                                 }
                             }
                         }
@@ -397,49 +365,24 @@ namespace TShockAPI
                             args[i] = ((args[i].TrimEnd('"')).TrimStart('"'));
                         int type = 0;
                         int player = -1;
-                        if (int.TryParse(args[1], out type))
-                        {
-                            if (type >= 1 && type <= 235)
-                            {
-                                player = Tools.FindPlayer(args[2]);
-                                if (player != -1)
-                                {
-                                    for (int i = 0; i < 40; i++)
-                                    {
-                                        if (!Main.player[player].inventory[i].active)
-                                        {
-                                            Main.player[player].inventory[i].SetDefaults(type);
-                                            Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
-                                            Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
-                                            Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
-                                            UpdateInventories();
-                                            handler.Handled = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
+                        if (!int.TryParse(args[1], out type))
                             type = GetItemID(args[1]);
-                            if (type != -1)
+                        if (type >= 1 && type <= 235)
+                        {
+                            player = Tools.FindPlayer(args[2]);
+                            if (player != -1)
                             {
-                                player = Tools.FindPlayer(args[2]);
-                                if (player != -1)
+                                for (int i = 0; i < 40; i++)
                                 {
-                                    for (int i = 0; i < 40; i++)
+                                    if (!Main.player[player].inventory[i].active)
                                     {
-                                        if (!Main.player[player].inventory[i].active)
-                                        {
-                                            Main.player[player].inventory[i].SetDefaults(type);
-                                            Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
-                                            Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
-                                            Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
-                                            UpdateInventories();
-                                            handler.Handled = true;
-                                            break;
-                                        }
+                                        Main.player[player].inventory[i].SetDefaults(type);
+                                        Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
+                                        Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
+                                        Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
+                                        UpdateInventories();
+                                        handler.Handled = true;
+                                        break;
                                     }
                                 }
                             }
@@ -451,7 +394,8 @@ namespace TShockAPI
             {
                 Tools.SendMessage(ply, "TShock Commands:");
                 Tools.SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
-                Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore");
+                Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore, /give");
+                Tools.SendMessage(ply, "/password, /save, /item, /spawnmob, /tp, /tphere");
                 Tools.SendMessage(ply, "Terraria commands:");
                 Tools.SendMessage(ply, "/playing, /p, /me");
                 handler.Handled = true;
