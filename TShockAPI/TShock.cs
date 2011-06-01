@@ -15,15 +15,13 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static int version = 10;
+        public static Version VersionNum = new Version(1, 2, 0, 1);
 
         public static bool shownVersion = false;
 
-        public static string tileWhitelist = "";
-
         public override Version Version
         {
-            get { return new Version(1, 2); }
+            get { return VersionNum; }
         }
 
         public override Version APIVersion
@@ -134,7 +132,6 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
-            ShowUpdateReminder(who);
             Tools.ShowMOTD(who);
             if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
             {
@@ -149,6 +146,7 @@ namespace TShockAPI
             {
                 StartInvasion();
             }
+            ShowUpdateReminder(who);
             e.Handled = true;
         }
 
@@ -502,13 +500,14 @@ namespace TShockAPI
                     client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
                     try
                     {
-                        string updateVersion = client.DownloadString("http://shankshock.com/tshock.txt");
-                        string[] changes = updateVersion.Split(',');
+                        string updateString = client.DownloadString("http://shankshock.com/tshock-update.txt");
+                        string[] changes = updateString.Split(',');
+                        Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]), Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
                         float[] color = { 255, 255, 000 };
-                        if (Convert.ToDouble(changes[0]) > version)
+                        if (VersionNum.CompareTo(updateVersion) < 0)
                         {
                             Tools.SendMessage(ply, "This server is out of date.");
-                            for (int i = 1; i <= changes.Length; i++)
+                            for (int i = 4; i <= changes.Length; i++)
                             {
                                 Tools.SendMessage(ply, changes[i], color);
                             }
