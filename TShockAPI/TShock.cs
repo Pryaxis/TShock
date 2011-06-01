@@ -135,7 +135,7 @@ namespace TShockAPI
                     x = br.ReadInt32();
                     y = br.ReadInt32();
                 }
-                if (type == 0 && !TileOnWhitelist(Main.tile[x, y].type))
+                if (type == 0 && Main.tileSolid[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                 {
                     tileThreshold[e.Msg.whoAmI]++;
                 }
@@ -303,7 +303,7 @@ namespace TShockAPI
                     string player = msg.Remove(0, 3).Trim();
                     if (!(FindPlayer(player) == -1) && !(player == ""))
                     {
-                        Teleport(ply, (int) Main.player[FindPlayer(player)].position.X, (int) Main.player[FindPlayer(player)].position.Y);
+                        Teleport(ply, Main.player[FindPlayer(player)].position.X, Main.player[FindPlayer(player)].position.Y);
                         SendMessage(ply, "Teleported to " + player);
                         handler.Handled = true;
                     }
@@ -365,6 +365,7 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
+                if (Main.player[i].active == false) { continue; }
                 if (tileThreshold[i] >= 5)
                 {
                     if (Main.player[i] != null)
@@ -376,7 +377,7 @@ namespace TShockAPI
                 }
                 else if (tileThreshold[i] > 0)
                 {
-                    tileThreshold[i]--;
+                    tileThreshold[i] = 0;
                 }
             }
         }
@@ -387,9 +388,11 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
+            Main.player[ply].velocity = new Vector2(0, 0);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x0d, 0, -1, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
         }
 
 
@@ -397,7 +400,7 @@ namespace TShockAPI
         {
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x0d, 0, -1, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
         }
 
         public static void StartInvasion()
