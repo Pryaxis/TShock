@@ -317,6 +317,25 @@ namespace TShockAPI
                         }
                     }
                 }
+                //ATM it just drops the item. Trying to find out can I update the player's inventory directly.
+                if (msg.StartsWith("/item") && msg.Split(' ').Length == 2) 
+                {
+                    var args = msg.Split(' ')[1];
+                    int type = 0;
+                    if (int.TryParse(args, out type))
+                    {
+                        if (type >= 1 && type <= 235)
+                        {
+                            int id = Item.NewItem(0, 0, 0, 0, type, 1, true);
+                            Main.item[id].position.X = (float)x;
+                            Main.item[id].position.Y = (float)y;
+                            Main.item[id].stack = Main.item[id].maxStack;
+                            NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
+                            Tools.SendMessage(ply, "Spawned " + Main.item[id].name + ".");
+                            handler.Handled = true;
+                        }
+                    }
+                }
             }
             if (msg == "/help")
             {
