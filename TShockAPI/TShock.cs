@@ -411,6 +411,23 @@ namespace TShockAPI
                     }
                     handler.Handled = true;
                 }
+                if (msg == "/butcher")
+                {
+                    int killcount = 0;
+                    for (int i = 0; i < Main.npc.Length; i++)
+                    {
+                        if (Main.npc[i].townNPC || !Main.npc[i].active)
+                            continue;
+                        else
+                        {
+                            Main.npc[i].StrikeNPC(99999, 90f, 1);
+                            NetMessage.SendData(28, -1, -1, "", ply, (float)99999, 90f, 1);
+                            killcount++;
+                        }
+                    }
+                    Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
+                    handler.Handled = true;
+                }
             }
             if (msg == "/help")
             {
