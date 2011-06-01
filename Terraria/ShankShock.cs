@@ -106,7 +106,7 @@ namespace Terraria
             if (!System.IO.File.Exists(saveDir +"whitelist.txt")) { CreateFile(saveDir + "whitelist.txt"); TextWriter tw = new StreamWriter(saveDir + "whitelist.txt"); tw.WriteLine("127.0.0.1"); tw.Close(); }
             TextReader tr = new StreamReader(saveDir + "whitelist.txt");
             string whitelist = tr.ReadToEnd();
-            ip = GetRealIP(ip);
+            ip = Tools.GetRealIP(ip);
             if (whitelist.Contains(ip)) { return true; } else { return false; }
         }
 
@@ -314,7 +314,7 @@ namespace Terraria
         private static void _writeGrief(int ply)
         {
             TextWriter tw = new StreamWriter(saveDir + "grief.txt", true);
-            tw.WriteLine("[" + Main.player[ply].name + "] [" + GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString()) + "]");
+            tw.WriteLine("[" + Main.player[ply].name + "] [" + Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString()) + "]");
             tw.Close();
         }
 
@@ -337,7 +337,7 @@ namespace Terraria
 
         public static void _writeban(int ply)
         {
-            string ip = ShankShock.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
             TextWriter tw = new StreamWriter(saveDir + "bans.txt", true);
             tw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
             tw.Close();
@@ -345,7 +345,7 @@ namespace Terraria
 
         public static void _writecheater(int ply)
         {
-            string ip = ShankShock.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
             string cheaters = "";
             TextReader tr = new StreamReader(saveDir + "cheaters.txt");
             cheaters = tr.ReadToEnd();
@@ -366,7 +366,7 @@ namespace Terraria
         public static void HandleCheater(int ply)
         {
             string cheater = ShankShock.FindPlayer(ply);
-            string ip = ShankShock.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
             _writecheater(ply);
             if (!kickCheater) { return; }
@@ -379,7 +379,7 @@ namespace Terraria
 
         public static bool CheckGreif(String ip)
         {
-            ip = GetRealIP(ip);
+            ip = Tools.GetRealIP(ip);
             if (!banTnt) { return false; }
             TextReader tr = new StreamReader(saveDir + "grief.txt");
             string list = tr.ReadToEnd();
@@ -390,7 +390,7 @@ namespace Terraria
 
         public static bool CheckCheat(String ip)
         {
-            ip = GetRealIP(ip);
+            ip = Tools.GetRealIP(ip);
             if (!banCheater) { return false; }
             TextReader tr = new StreamReader(saveDir + "cheaters.txt");
             string trr = tr.ReadToEnd();
@@ -483,11 +483,6 @@ namespace Terraria
                 return true;
             }
             return false;
-        }
-
-        public static string GetRealIP(string mess)
-        {
-            return mess.Split(':')[0];
         }
 	}
 }
