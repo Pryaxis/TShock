@@ -24,30 +24,31 @@ namespace TShockAPI
         }
         public static void InitCommands()
         {
-            TShock.commandList.Add("kick", new CommandDelegate(Kick));
-            TShock.commandList.Add("ban", new CommandDelegate(Ban));
-            TShock.commandList.Add("off", new CommandDelegate(Off));
-            TShock.commandList.Add("reload", new CommandDelegate(Reload));
-            TShock.commandList.Add("dropmeteor", new CommandDelegate(DropMeteor));
-            TShock.commandList.Add("star", new CommandDelegate(Star));
-            TShock.commandList.Add("bloodmoon", new CommandDelegate(Bloodmoon));
-            TShock.commandList.Add("eater", new CommandDelegate(Eater));
-            TShock.commandList.Add("eye", new CommandDelegate(Eye));
-            TShock.commandList.Add("skeletron", new CommandDelegate(Skeletron));
-            TShock.commandList.Add("hardcore", new CommandDelegate(Hardcore));
-            TShock.commandList.Add("invade", new CommandDelegate(Invade));
-            TShock.commandList.Add("password", new CommandDelegate(Password));
-            TShock.commandList.Add("save", new CommandDelegate(Save));
-            TShock.commandList.Add("spawn", new CommandDelegate(Spawn));
-            TShock.commandList.Add("tp", new CommandDelegate(TP));
-            TShock.commandList.Add("tphere", new CommandDelegate(TPHere));
-            TShock.commandList.Add("spawnmob", new CommandDelegate(SpawnMob));
-            TShock.commandList.Add("item", new CommandDelegate(Item));
-            TShock.commandList.Add("give", new CommandDelegate(Give));
-            TShock.commandList.Add("heal", new CommandDelegate(Heal));
-            TShock.commandList.Add("butcher", new CommandDelegate(Butcher));
-            TShock.commandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
-            TShock.commandList.Add("spawnrate", new CommandDelegate(SpawnRate));
+            TShock.admincommandList.Add("kick", new CommandDelegate(Kick));
+            TShock.admincommandList.Add("ban", new CommandDelegate(Ban));
+            TShock.admincommandList.Add("off", new CommandDelegate(Off));
+            TShock.admincommandList.Add("reload", new CommandDelegate(Reload));
+            TShock.admincommandList.Add("dropmeteor", new CommandDelegate(DropMeteor));
+            TShock.admincommandList.Add("star", new CommandDelegate(Star));
+            TShock.admincommandList.Add("bloodmoon", new CommandDelegate(Bloodmoon));
+            TShock.admincommandList.Add("eater", new CommandDelegate(Eater));
+            TShock.admincommandList.Add("eye", new CommandDelegate(Eye));
+            TShock.admincommandList.Add("skeletron", new CommandDelegate(Skeletron));
+            TShock.admincommandList.Add("hardcore", new CommandDelegate(Hardcore));
+            TShock.admincommandList.Add("invade", new CommandDelegate(Invade));
+            TShock.admincommandList.Add("password", new CommandDelegate(Password));
+            TShock.admincommandList.Add("save", new CommandDelegate(Save));
+            TShock.admincommandList.Add("spawn", new CommandDelegate(Spawn));
+            TShock.admincommandList.Add("tp", new CommandDelegate(TP));
+            TShock.admincommandList.Add("tphere", new CommandDelegate(TPHere));
+            TShock.admincommandList.Add("spawnmob", new CommandDelegate(SpawnMob));
+            TShock.admincommandList.Add("item", new CommandDelegate(Item));
+            TShock.admincommandList.Add("give", new CommandDelegate(Give));
+            TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
+            TShock.admincommandList.Add("butcher", new CommandDelegate(Butcher));
+            TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
+            TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
+            TShock.commandList.Add("help", new CommandDelegate(Help));
         }
         #region Command Methods
         public static void Kick(CommandArgs args)
@@ -327,6 +328,43 @@ namespace TShockAPI
             int amount = Convert.ToInt32(args.Message.Remove(0, 10));
             NPC.spawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
+        }
+        public static void Help(CommandArgs args)
+        {
+            int ply = args.PlayerID;
+            var commands = TShock.commandList;
+            if (Tools.IsAdmin(ply))
+                commands = TShock.admincommandList;
+            Tools.SendMessage(ply, "TShock Commands:");
+            int h = 1;
+            int i = 0;
+            string tempstring = "";
+            int page = 1;
+            if (args.Message.Split(' ').Length == 2)
+                int.TryParse(args.Message.Split(' ')[1], out page);
+            if (commands.Count > (20 * (page - 1)))
+            {
+                for (int j = (20 * (page - 1)); j < commands.Count; j++)
+                {
+                    if (i == 3) break;
+                    if ((h - 1) % 5 == 0 && (h - 1) != 0)
+                    {
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ','}));
+                        tempstring = "";
+                        i++;
+                        h++;
+                    }
+                    else
+                    {
+                        tempstring += "/" + commands.Keys.ElementAt(j) + ", ";
+                        h++;
+                    }
+                }
+            }
+            if (commands.Count > (20 * page))
+                Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands");
+            Tools.SendMessage(ply, "Terraria commands:");
+            Tools.SendMessage(ply, "/playing, /p, /me");
         }
         #endregion
     }

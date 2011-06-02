@@ -20,6 +20,8 @@ namespace TShockAPI
 
         public static bool shownVersion = false;
 
+        public static Dictionary<string, Commands.CommandDelegate> admincommandList = new Dictionary<string, Commands.CommandDelegate>();
+
         public static Dictionary<string, Commands.CommandDelegate> commandList = new Dictionary<string, Commands.CommandDelegate>();
 
         public override Version Version
@@ -165,11 +167,16 @@ namespace TShockAPI
             //{
             if (msg.StartsWith("/"))
             {
-                if (Tools.IsAdmin(ply))
+                Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
+                if (msg.StartsWith("/help"))
                 {
-                    Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
+                    commandList["help"].Invoke(args);
+                    handler.Handled = true;
+                }
+                else if (Tools.IsAdmin(ply))
+                {
                     Commands.CommandDelegate command;
-                    if (commandList.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
+                    if (admincommandList.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
                         command.Invoke(args);
                     else
                         Tools.SendMessage(ply, "Invalid command! Try /help.", new float[] { 255f, 0f, 0f });
@@ -181,6 +188,7 @@ namespace TShockAPI
                     handler.Handled = true;
                 }
             }
+            #region Old code
             /*if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
             {
                 string plStr = msg.Remove(0, 5).Trim();
@@ -461,7 +469,8 @@ namespace TShockAPI
                 handler.Handled = true;
             }*/
             //}
-            if (msg == "/help")
+            #endregion
+            /*if (msg == "/help")
             {
                 Tools.SendMessage(ply, "TShock Commands:");
                 Tools.SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
@@ -470,7 +479,7 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "Terraria commands:");
                 Tools.SendMessage(ply, "/playing, /p, /me");
                 handler.Handled = true;
-            }
+            }*/
         }
 
         void OnJoin(int ply, AllowEventArgs handler)
