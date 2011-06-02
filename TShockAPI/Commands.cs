@@ -57,18 +57,33 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
             {
-                Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
-                Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
+                if (!Tools.IsAdmin(Tools.FindPlayer(plStr)))
+                {
+                    Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
+                    Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
+                }
+                else
+                    Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
             }
+            else
+                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
         public static void Ban(CommandArgs args)
         {
             string plStr = args.Message.Remove(0, 4).Trim();
+            int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
             {
-                FileTools.WriteBan(Tools.FindPlayer(plStr));
-                Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
+                if (!Tools.IsAdmin(Tools.FindPlayer(plStr)))
+                {
+                    FileTools.WriteBan(Tools.FindPlayer(plStr));
+                    Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
+                }
+                else
+                    Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
             }
+            else
+                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
         public static void Off(CommandArgs args)
         {
@@ -178,6 +193,8 @@ namespace TShockAPI
                 TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
                 Tools.SendMessage(ply, "Teleported to " + player);
             }
+            else
+                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
         public static void TPHere(CommandArgs args)
         {
@@ -189,6 +206,8 @@ namespace TShockAPI
                 Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
                 Tools.SendMessage(ply, "You brought " + player + " here.");
             }
+            else
+                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
         public static void SpawnMob(CommandArgs args)
         {
@@ -216,11 +235,14 @@ namespace TShockAPI
                     Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));;
                 }
             }
+            else
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", new float[] { 255f, 0f, 0f });
         }
         public static void Item(CommandArgs args)
         {
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
             int ply = args.PlayerID;
+            bool flag = false;
             if (msgargs.Length >= 2)
             {
                 msgargs = ((msgargs.TrimEnd('"')).TrimStart('"'));
@@ -237,16 +259,24 @@ namespace TShockAPI
                             Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
                             Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
                             TShock.UpdateInventories();
+                            flag = true;
                             break;
                         }
+                        if (!flag)
+                            Tools.SendMessage(args.PlayerID, "You don't have free slots!", new float[] { 255f, 0f, 0f });
                     }
                 }
+                else
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new float[] { 255f, 0f, 0f });
             }
+            else
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /item <item name/id>", new float[] { 255f, 0f, 0f });
         }
         public static void Give(CommandArgs args)
         {
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             int ply = args.PlayerID;
+            bool flag = false;
             if (msgargs.Length == 3)
             {
                 for (int i = 1; i < msgargs.Length; i++)
@@ -269,12 +299,21 @@ namespace TShockAPI
                                 Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.player[player].inventory[i].name));
                                 Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
                                 TShock.UpdateInventories();
+                                flag = true;
                                 break;
                             }
                         }
+                        if (!flag)
+                            Tools.SendMessage(args.PlayerID, "Player does not have free slots!", new float[] { 255f, 0f, 0f });
                     }
+                    else
+                        Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
                 }
+                else
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new float[] { 255f, 0f, 0f });
             }
+            else
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /give <item type/id> <player>", new float[] { 255f, 0f, 0f });
         }
         public static void Heal(CommandArgs args)
         {
