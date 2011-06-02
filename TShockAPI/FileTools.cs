@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using Terraria;
+using System.Web;
 
 namespace TShockAPI
 {
@@ -77,10 +75,6 @@ namespace TShockAPI
         public static void SetupConfig()
         {
             if (!System.IO.Directory.Exists(saveDir)) { System.IO.Directory.CreateDirectory(saveDir); }
-            if (System.IO.File.Exists(saveDir + "tiles.txt"))
-            {
-                System.IO.File.Delete(saveDir + "tiles.txt");
-            }
             if (!System.IO.File.Exists(saveDir + "motd.txt"))
             {
                 FileTools.CreateFile(saveDir + "motd.txt");
@@ -95,41 +89,8 @@ namespace TShockAPI
             if (!System.IO.File.Exists(saveDir + "admins.txt")) { FileTools.CreateFile(saveDir + "admins.txt"); }
             if (!System.IO.File.Exists(saveDir + "grief.txt")) { FileTools.CreateFile(saveDir + "grief.txt"); }
             if (!System.IO.File.Exists(saveDir + "whitelist.txt")) { FileTools.CreateFile(saveDir + "whitelist.txt"); }
-            if (!System.IO.File.Exists(saveDir + "config.txt"))
-            {
-                FileTools.CreateFile(saveDir + "config.txt");
-                TextWriter tw = new StreamWriter(saveDir + "config.txt");
-                tw.WriteLine("true,50,4,700,true,true,7777,false,false,false,false,false");
-                tw.Close();
-            }
-            TextReader tr = new StreamReader(saveDir + "config.txt");
-            string config = tr.ReadToEnd();
-            config = config.Replace("\n", "");
-            config = config.Replace("\r", "");
-            config = config.Replace(" ", "");
-            tr.Close();
-            string[] configuration = config.Split(',');
-            try
-            {
-                ConfigurationManager.invasionMultiplier = Convert.ToInt32(configuration[1]);
-                ConfigurationManager.defaultMaxSpawns = Convert.ToInt32(configuration[2]);
-                ConfigurationManager.defaultSpawnRate = Convert.ToInt32(configuration[3]);
-                ConfigurationManager.kickCheater = Convert.ToBoolean(configuration[4]);
-                ConfigurationManager.banCheater = Convert.ToBoolean(configuration[5]);
-                ConfigurationManager.serverPort = Convert.ToInt32(configuration[6]);
-                ConfigurationManager.enableWhitelist = Convert.ToBoolean(configuration[7]);
-                ConfigurationManager.infiniteInvasion = Convert.ToBoolean(configuration[8]);
-                ConfigurationManager.permaPvp = Convert.ToBoolean(configuration[9]);
-                ConfigurationManager.kickTnt = Convert.ToBoolean(configuration[10]);
-                ConfigurationManager.banTnt = Convert.ToBoolean(configuration[11]);
-                NPC.defaultMaxSpawns = ConfigurationManager.defaultMaxSpawns;
-                NPC.defaultSpawnRate = ConfigurationManager.defaultSpawnRate;
-            }
-            catch (Exception e)
-            {
-                FileTools.WriteError(e.Message);
-            }
-
+            ConfigurationManager.WriteJsonConfiguration();
+            ConfigurationManager.ReadJsonConfiguration();
             Netplay.serverPort = ConfigurationManager.serverPort;
         }
         /// <summary>

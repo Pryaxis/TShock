@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace TShockAPI
 {
@@ -28,6 +30,55 @@ namespace TShockAPI
             WORLD_EATER = 0,
             EYE = 1,
             SKELETRON = 2
+        }
+
+        public static void ReadJsonConfiguration()
+        {
+            TextReader tr = new StreamReader(FileTools.saveDir + "config.json");
+            ConfigFile cfg = JsonConvert.DeserializeObject<ConfigFile>(tr.ReadToEnd());
+            tr.Close();
+            
+            invasionMultiplier = cfg.InvasionMultiplier;
+            defaultMaxSpawns = cfg.DefaultMaximumSpawns;
+            defaultSpawnRate = cfg.DefaultSpawnRate;
+            serverPort = cfg.ServerPort;
+            enableWhitelist = cfg.EnableWhitelist;
+            infiniteInvasion = cfg.InfiniteInvasion;
+            permaPvp = cfg.AlwaysPvP;
+            kickCheater = cfg.KickSaveEditors;
+            banCheater = cfg.BanSaveEditors;
+            banTnt = cfg.BanKillTileAbusers;
+            kickTnt = cfg.KickKillTileAbusers;
+        }
+
+        public static void WriteJsonConfiguration()
+        {
+            if (System.IO.File.Exists(FileTools.saveDir + "config.json"))
+            {
+                return;
+            }
+            else
+            {
+                FileTools.CreateFile(FileTools.saveDir + "config.json");
+            }
+
+            ConfigFile cfg = new ConfigFile();
+            cfg.InvasionMultiplier = 50;
+            cfg.DefaultMaximumSpawns = 4;
+            cfg.DefaultSpawnRate = 700;
+            cfg.ServerPort = 7777;
+            cfg.EnableWhitelist = false;
+            cfg.InfiniteInvasion = false;
+            cfg.AlwaysPvP = false;
+            cfg.KickSaveEditors = false;
+            cfg.BanSaveEditors = false;
+            cfg.BanKillTileAbusers = true;
+            cfg.KickKillTileAbusers = true;
+
+            string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
+            TextWriter tr = new StreamWriter(FileTools.saveDir + "config.json");
+            tr.Write(json);
+            tr.Close();
         }
     }
 }
