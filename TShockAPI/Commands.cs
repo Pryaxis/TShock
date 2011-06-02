@@ -48,6 +48,7 @@ namespace TShockAPI
             TShock.admincommandList.Add("butcher", new CommandDelegate(Butcher));
             TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
             TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
+            TShock.admincommandList.Add("time", new CommandDelegate(Time));
             TShock.commandList.Add("help", new CommandDelegate(Help));
         }
         #region Command Methods
@@ -324,10 +325,12 @@ namespace TShockAPI
             int player = ply;
             if (msgargs.Length == 2)
                 player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
-            if (player != ply)
+            if (player != ply && player >= 0)
             {
                 Tools.SendMessage(ply, string.Format("You just healed {0}", (msgargs[1].TrimEnd('"')).TrimStart('"')));
                 Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
+                x = (int)Main.player[player].position.X;
+                y = (int)Main.player[player].position.Y;
             }
             else
                 Tools.SendMessage(ply, "You just got healed!");
@@ -410,6 +413,33 @@ namespace TShockAPI
             { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
             Tools.SendMessage(ply, "Terraria commands:");
             Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
+        }
+        public static void Time(CommandArgs args)
+        {
+            var arg = args.Message.Split(' ');
+            if (arg.Length == 2)
+            {
+                if (arg[1] == "day")
+                {
+                    Main.time = 0;
+                    Main.dayTime = true;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to day.");
+                }
+                else if (arg[1] == "night")
+                {
+                    Main.time = 0;
+                    Main.dayTime = false;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
+                }
+                else
+                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
+            }
+            else
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
         }
         #endregion
     }
