@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
-using System.Text.RegularExpressions;
 
 namespace TShockAPI
 {
@@ -91,15 +91,6 @@ namespace TShockAPI
             }
         }
 
-        void OnPreGetData(byte id, messageBuffer msg, int idx, int length, HandledEventArgs e)
-        {
-            if (Main.netMode != 2) { return; }
-            if (id == 0x1e && ConfigurationManager.permaPvp)
-            {
-                e.Handled = true;
-            }
-        }
-
         void GetData(GetDataEventArgs e)
         {
             if (Main.netMode != 2) { return; }
@@ -124,6 +115,16 @@ namespace TShockAPI
             {
                 Main.player[e.Msg.whoAmI].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
+                e.Handled = true;
+            }
+            if (e.MsgID == 0x0A) //SendSection
+            {
+                Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                e.Handled = true;
+            }
+            if (e.MsgID == 0x17) //Npc Data
+            {
+                Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
                 e.Handled = true;
             }
         }
@@ -281,23 +282,23 @@ namespace TShockAPI
                 if (msg.Length > 3 && msg.Substring(0, 3) == "/tp")
                 {
                     string player = msg.Remove(0, 3).Trim();
-                        if (Tools.FindPlayer(player) != -1 && player != "")
-                        {
-                            Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
-                            Tools.SendMessage(ply, "Teleported to " + player);
-                            handler.Handled = true;
-                        }
+                    if (Tools.FindPlayer(player) != -1 && player != "")
+                    {
+                        Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
+                        Tools.SendMessage(ply, "Teleported to " + player);
+                        handler.Handled = true;
+                    }
                 }
                 if (msg.Length > 7 && msg.Substring(0, 7) == "/tphere")
                 {
                     string player = msg.Remove(0, 7).Trim();
-                        if (Tools.FindPlayer(player) != -1 && player != "")
-                        {
-                            Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
-                            Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
-                            Tools.SendMessage(ply, "You brought " + player + " here.");
-                            handler.Handled = true;
-                        }
+                    if (Tools.FindPlayer(player) != -1 && player != "")
+                    {
+                        Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
+                        Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
+                        Tools.SendMessage(ply, "You brought " + player + " here.");
+                        handler.Handled = true;
+                    }
                 }
                 if (msg.StartsWith("/spawnmob"))
                 {
