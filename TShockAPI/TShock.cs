@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 3, 0, 1);
+        public static Version VersionNum = new Version(1, 4, 0, 0);
 
         public static bool shownVersion = false;
 
