@@ -210,8 +210,6 @@ namespace TShockAPI
             int x = (int)Main.player[ply].position.X;
             int y = (int)Main.player[ply].position.Y;
 
-            //if (Tools.IsAdmin(ply))
-            //{
             if (msg.StartsWith("/"))
             {
                 Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);

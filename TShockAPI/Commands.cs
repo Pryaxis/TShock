@@ -51,6 +51,7 @@ namespace TShockAPI
             TShock.admincommandList.Add("time", new CommandDelegate(Time));
             TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
+            TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
@@ -266,9 +267,9 @@ namespace TShockAPI
                             flag = true;
                             break;
                         }
-                        if (!flag)
-                            Tools.SendMessage(args.PlayerID, "You don't have free slots!", new float[] { 255f, 0f, 0f });
                     }
+                    if (!flag)
+                        Tools.SendMessage(args.PlayerID, "You don't have free slots!", new float[] { 255f, 0f, 0f });
                 }
                 else
                     Tools.SendMessage(args.PlayerID, "Invalid item type!", new float[] { 255f, 0f, 0f });
@@ -452,17 +453,18 @@ namespace TShockAPI
             {
                 int player = -1;
                 player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
-                //Main.player[player].KillMe(99999, 1);
                 Tools.SendMessage(args.PlayerID, "You just killed " + Tools.FindPlayer(player) + "!");
                 Tools.SendMessage(player, Tools.FindPlayer(args.PlayerID) + " just killed you!");
                 TShock.KillMe(player);
             }
             else
             {
-                //Main.player[args.PlayerID].KillMe(99999, 1);
                 Tools.SendMessage(args.PlayerID, "You just suicided.");
                 TShock.KillMe(args.PlayerID);
             }
+        }
+        public static void Slap(CommandArgs args)
+        {
         }
         #endregion
     }
