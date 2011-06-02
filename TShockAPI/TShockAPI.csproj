@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="Tools.cs" />
