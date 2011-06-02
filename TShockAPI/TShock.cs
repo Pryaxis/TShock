@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
@@ -23,6 +22,8 @@ namespace TShockAPI
         public static Dictionary<string, Commands.CommandDelegate> admincommandList = new Dictionary<string, Commands.CommandDelegate>();
 
         public static Dictionary<string, Commands.CommandDelegate> commandList = new Dictionary<string, Commands.CommandDelegate>();
+
+        static bool[] BlacklistTiles;
 
         public override Version Version
         {
@@ -47,6 +48,52 @@ namespace TShockAPI
         public override string Description
         {
             get { return "The administration modification of the future."; }
+        }
+
+        static TShock()
+        {
+            #region Blacklisted tiles
+
+            BlacklistTiles = new bool[0x80];
+            BlacklistTiles[0] = true;
+            BlacklistTiles[1] = true;
+            BlacklistTiles[2] = true;
+            BlacklistTiles[6] = true;
+            BlacklistTiles[7] = true;
+            BlacklistTiles[8] = true;
+            BlacklistTiles[9] = true;
+            BlacklistTiles[22] = true;
+            BlacklistTiles[23] = true;
+            BlacklistTiles[25] = true;
+            BlacklistTiles[30] = true;
+            BlacklistTiles[37] = true;
+            BlacklistTiles[38] = true;
+            BlacklistTiles[39] = true;
+            BlacklistTiles[40] = true;
+            BlacklistTiles[41] = true;
+            BlacklistTiles[43] = true;
+            BlacklistTiles[44] = true;
+            BlacklistTiles[45] = true;
+            BlacklistTiles[46] = true;
+            BlacklistTiles[47] = true;
+            BlacklistTiles[53] = true;
+            BlacklistTiles[54] = true;
+            BlacklistTiles[56] = true;
+            BlacklistTiles[57] = true;
+            BlacklistTiles[58] = true;
+            BlacklistTiles[59] = true;
+            BlacklistTiles[60] = true;
+            BlacklistTiles[63] = true;
+            BlacklistTiles[64] = true;
+            BlacklistTiles[65] = true;
+            BlacklistTiles[66] = true;
+            BlacklistTiles[67] = true;
+            BlacklistTiles[68] = true;
+            BlacklistTiles[70] = true;
+            BlacklistTiles[75] = true;
+            BlacklistTiles[76] = true;
+
+            #endregion Blacklisted tiles
         }
 
         public TShock(Main game)
@@ -111,7 +158,7 @@ namespace TShockAPI
                     x = br.ReadInt32();
                     y = br.ReadInt32();
                 }
-                if (type == 0 && Main.tileSolid[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
+                if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                 {
                     tileThreshold[e.Msg.whoAmI]++;
                 }
@@ -188,298 +235,6 @@ namespace TShockAPI
                     handler.Handled = true;
                 }
             }
-            #region Old code
-            /*if (msg.Length > 5 && msg.Substring(0, 5) == "/kick")
-            {
-                string plStr = msg.Remove(0, 5).Trim();
-                if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
-                {
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
-                    Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
-                }
-                handler.Handled = true;
-            }
-
-            if (msg.Length > 4 && msg.Substring(0, 4) == "/ban")
-            {
-                string plStr = msg.Remove(0, 4).Trim();
-                if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
-                {
-                    FileTools.WriteBan(Tools.FindPlayer(plStr));
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
-                }
-                handler.Handled = true;
-            }
-
-            if (msg == "/off")
-            {
-                Netplay.disconnect = true;
-                handler.Handled = true;
-            }
-
-            if (msg == "/reload")
-            {
-                FileTools.SetupConfig();
-                handler.Handled = true;
-            }
-
-            if (msg == "/dropmeteor")
-            {
-                WorldGen.spawnMeteor = false;
-                WorldGen.dropMeteor();
-                handler.Handled = true;
-            }
-
-            if (msg == "/star")
-            {
-                int penis56 = 12;
-                int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
-                penis57 *= 0x10;
-                int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-                Microsoft.Xna.Framework.Vector2 vector = new Microsoft.Xna.Framework.Vector2((float)penis57, (float)penis58);
-                float speedX = Main.rand.Next(-100, 0x65);
-                float speedY = Main.rand.Next(200) + 100;
-                float penis61 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                penis61 = ((float)penis56) / penis61;
-                speedX *= penis61;
-                speedY *= penis61;
-                Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
-                handler.Handled = true;
-            }
-            if (msg == "/bloodmoon")
-            {
-                Tools.Broadcast(Tools.FindPlayer(ply) + " turned on blood moon.");
-                Main.bloodMoon = true;
-                Main.time = 0;
-                Main.dayTime = false;
-                NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                NetMessage.syncPlayers();
-                handler.Handled = true;
-                handler.Handled = true;
-            }
-            if (msg == "/eater")
-            {
-                Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
-                Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eater of worlds!");
-                handler.Handled = true;
-            }
-            if (msg == "/eye")
-            {
-                Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
-                Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eye!");
-                handler.Handled = true;
-            }
-            if (msg == "/skeletron")
-            {
-                Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
-                Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned skeletron!");
-                handler.Handled = true;
-            }
-            if (msg == "/hardcore")
-            {
-                for (int i = 0; i <= 2; i++)
-                {
-                    Tools.NewNPC(i, x, y, ply);
-                }
-                Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned all 3 bosses!");
-                handler.Handled = true;
-            }
-            if (msg == "/invade")
-            {
-                Tools.Broadcast(Main.player[ply].name + " started an invasion.");
-                StartInvasion();
-                handler.Handled = true;
-            }
-            if (msg.Length > 9 && msg.Substring(0, 9) == "/password")
-            {
-                string passwd = msg.Remove(0, 9).Trim();
-                Netplay.password = passwd;
-                Tools.SendMessage(ply, "Server password changed to: " + passwd);
-                handler.Handled = true;
-            }
-            if (msg == "/save")
-            {
-                WorldGen.saveWorld();
-                Tools.SendMessage(ply, "World saved.");
-                handler.Handled = true;
-            }
-            if (msg == "/spawn")
-            {
-                Teleport(ply, Main.player[ply].SpawnX * 16, Main.player[ply].SpawnY * 16);
-                Tools.SendMessage(ply, "Teleported to your spawnpoint.");
-                handler.Handled = true;
-            }
-            if (msg.Length > 3 && msg.Substring(0, 3) == "/tp")
-            {
-                string player = msg.Remove(0, 3).Trim();
-                if (Tools.FindPlayer(player) != -1 && player != "")
-                {
-                    Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
-                    Tools.SendMessage(ply, "Teleported to " + player);
-                    handler.Handled = true;
-                }
-            }
-            if (msg.Length > 7 && msg.Substring(0, 7) == "/tphere")
-            {
-                string player = msg.Remove(0, 7).Trim();
-                if (Tools.FindPlayer(player) != -1 && player != "")
-                {
-                    Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
-                    Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
-                    Tools.SendMessage(ply, "You brought " + player + " here.");
-                    handler.Handled = true;
-                }
-            }
-            if (msg.StartsWith("/spawnmob"))
-            {
-                var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (args.Length >= 2 && args.Length <= 3)
-                {
-                    for (int i = 1; i < args.Length; i++)
-                        args[i] = ((args[i].TrimEnd('"')).TrimStart('"'));
-                    string inputtype = "";
-                    int amount = 1;
-                    int npcid = -1;
-                    int type = -1;
-                    inputtype = args[1];
-                    if (args.Length == 3)
-                        int.TryParse(args[2], out amount);
-
-                    if (!int.TryParse(inputtype, out type))
-                        type = GetNPCID(inputtype);
-                    if (type >= 1 && type <= 43)
-                    {
-                        for (int i = 0; i < amount; i++)
-                            npcid = NPC.NewNPC(x, y, type, 0);
-                        Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
-                        handler.Handled = true;
-                    }
-                }
-            }
-            if (msg.StartsWith("/item"))
-            {
-                var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
-                if (args.Length >= 2)
-                {
-                    args = ((args.TrimEnd('"')).TrimStart('"'));
-                    int type = 0;
-                    if (!int.TryParse(args, out type))
-                        type = GetItemID(args);
-                    if (type >= 1 && type <= 235)
-                    {
-                        for (int i = 0; i < 40; i++)
-                        {
-                            if (!Main.player[ply].inventory[i].active)
-                            {
-                                Main.player[ply].inventory[i].SetDefaults(type);
-                                Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
-                                Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
-                                UpdateInventories();
-                                handler.Handled = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (msg.StartsWith("/give"))
-            {
-                var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (args.Length == 3)
-                {
-                    for (int i = 1; i < args.Length; i++)
-                        args[i] = ((args[i].TrimEnd('"')).TrimStart('"'));
-                    int type = 0;
-                    int player = -1;
-                    if (!int.TryParse(args[1], out type))
-                        type = GetItemID(args[1]);
-                    if (type >= 1 && type <= 235)
-                    {
-                        player = Tools.FindPlayer(args[2]);
-                        if (player != -1)
-                        {
-                            for (int i = 0; i < 40; i++)
-                            {
-                                if (!Main.player[player].inventory[i].active)
-                                {
-                                    Main.player[player].inventory[i].SetDefaults(type);
-                                    Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
-                                    Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", args[2], Main.player[player].inventory[i].name));
-                                    Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
-                                    UpdateInventories();
-                                    handler.Handled = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (msg.StartsWith("/heal"))
-            {
-                var args = Regex.Split(msg, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                int player = ply;
-                if (args.Length == 2)
-                    player = Tools.FindPlayer((args[1].TrimEnd('"')).TrimStart('"'));
-                if (player != ply)
-                {
-                    Tools.SendMessage(ply, string.Format("You just healed {0}", (args[1].TrimEnd('"')).TrimStart('"')));
-                    Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
-                }
-                else
-                    Tools.SendMessage(ply, "You just got healed!");
-                for (int i = 0; i < 20; i++)
-                {
-                    int itemid = Item.NewItem(1, 1, 1, 1, 58);
-                    Main.item[itemid].position.X = (float)x;
-                    Main.item[itemid].position.Y = (float)y;
-                    NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
-                }
-                handler.Handled = true;
-            }
-            if (msg == "/butcher")
-            {
-                int killcount = 0;
-                for (int i = 0; i < Main.npc.Length; i++)
-                {
-                    if (Main.npc[i].townNPC || !Main.npc[i].active)
-                        continue;
-                    else
-                    {
-                        Main.npc[i].StrikeNPC(99999, 90f, 1);
-                        NetMessage.SendData(28, -1, -1, "", i, (float)99999, 90f, 1);
-                        killcount++;
-                    }
-                }
-                Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
-                handler.Handled = true;
-            }
-            if (msg.Length > 10 && msg.Substring(0, 10) == "/maxspawns")
-            {
-                int amount = Convert.ToInt32(msg.Remove(0, 10));
-                NPC.maxSpawns = amount;
-                Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
-                handler.Handled = true;
-            }
-            if (msg.Length > 10 && msg.Substring(0, 10) == "/spawnrate")
-            {
-                int amount = Convert.ToInt32(msg.Remove(0, 10));
-                NPC.spawnRate = amount;
-                Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
-                handler.Handled = true;
-            }*/
-            //}
-            #endregion
-            /*if (msg == "/help")
-            {
-                Tools.SendMessage(ply, "TShock Commands:");
-                Tools.SendMessage(ply, "/kick, /ban, /reload, /off, /dropmeteor, /invade");
-                Tools.SendMessage(ply, "/star, /skeletron, /eye, /eater, /hardcore, /give");
-                Tools.SendMessage(ply, "/password, /save, /item, /spawnmob, /tp, /tphere");
-                Tools.SendMessage(ply, "Terraria commands:");
-                Tools.SendMessage(ply, "/playing, /p, /me");
-                handler.Handled = true;
-            }*/
         }
 
         void OnJoin(int ply, AllowEventArgs handler)
