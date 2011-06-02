@@ -465,6 +465,37 @@ namespace TShockAPI
         }
         public static void Slap(CommandArgs args)
         {
+            var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+            for (int i = 0; i < msgargs.Length; i++)
+                msgargs[i] = (msgargs[i].TrimStart('"')).TrimEnd('"');
+            if (msgargs.Length == 1)
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
+            else if (msgargs.Length == 2)
+            {
+                int player = Tools.FindPlayer(msgargs[1]);
+                if (player == -1)
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
+                else
+                {
+                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(1, 20)), (float)5, (float)0);
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for 5 damage.");
+                }
+            }
+            else if (msgargs.Length == 3)
+            {
+                int player = Tools.FindPlayer(msgargs[1]);
+                int damage = 5;
+                int.TryParse(msgargs[2], out damage);
+                if (player == -1)
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
+                else
+                {
+                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(1, 40)), (float)damage, (float)0);
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " + damage.ToString() + " damage.");
+                }
+            }
+            else
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
         }
         #endregion
     }
