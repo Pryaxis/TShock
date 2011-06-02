@@ -347,9 +347,14 @@ namespace TShockAPI
                 for (int j = (20 * (page - 1)); j < commands.Count; j++)
                 {
                     if (i == 3) break;
+                    if (j == commands.Count - 1)
+                    {
+                        tempstring += "/" + commands.Keys.ElementAt(j) + ", ";
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
+                    }
                     if ((h - 1) % 5 == 0 && (h - 1) != 0)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ','}));
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
                         tempstring = "";
                         i++;
                         h++;
@@ -362,9 +367,9 @@ namespace TShockAPI
                 }
             }
             if (commands.Count > (20 * page))
-                Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands");
+            { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
             Tools.SendMessage(ply, "Terraria commands:");
-            Tools.SendMessage(ply, "/playing, /p, /me");
+            Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
         }
         #endregion
     }
