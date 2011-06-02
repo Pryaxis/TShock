@@ -44,11 +44,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Terraria">
-      <HintPath>.\Terraria.exe</HintPath>
+    <Reference Include="TerrariaServer">
+      <HintPath>.\TerrariaServer.exe</HintPath>
     </Reference>
-    <Reference Include="TerrariaAPI">
-      <HintPath>.\TerrariaAPI.dll</HintPath>
+    <Reference Include="TerrariaServerAPI">
+      <HintPath>.\TerrariaServerAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
