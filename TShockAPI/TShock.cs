@@ -187,7 +187,7 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200)
+            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
             {
                 Tools.HandleCheater(plr);
             }
@@ -210,30 +210,19 @@ namespace TShockAPI
             int x = (int)Main.player[ply].position.X;
             int y = (int)Main.player[ply].position.Y;
 
-            //if (Tools.IsAdmin(ply))
-            //{
             if (msg.StartsWith("/"))
             {
                 Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
-                if (msg.StartsWith("/help"))
-                {
-                    commandList["help"].Invoke(args);
-                    handler.Handled = true;
-                }
-                else if (Tools.IsAdmin(ply))
-                {
-                    Commands.CommandDelegate command;
-                    if (admincommandList.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
-                        command.Invoke(args);
-                    else
-                        Tools.SendMessage(ply, "Invalid command! Try /help.", new float[] { 255f, 0f, 0f });
-                    handler.Handled = true;
-                }
-                else if (!Tools.IsAdmin(ply) && msg != "/help")
-                {
-                    Tools.SendMessage(ply, "You don't have permissions to do that!", new float[] { 255f, 0f, 0f });
-                    handler.Handled = true;
-                }
+                var commands = commandList;
+                if (Tools.IsAdmin(ply))
+                    commands = admincommandList;
+
+                Commands.CommandDelegate command;
+                if (commands.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
+                    command.Invoke(args);
+                else
+                    Tools.SendMessage(ply, "Invalid command or no permissions! Try /help.", new float[] { 255f, 0f, 0f });
+                handler.Handled = true;
             }
         }
 
@@ -422,6 +411,18 @@ namespace TShockAPI
             }
         }
 
+        public static void KillMe(int plr)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+                NetMessage.SendData(44, i, -1, "", plr, (float)1, (float)9999999, (float)0);
+        }
+
+        public static void SendDataAll(int type, int ignore = -1, string text = "", int num = 0, float f1 = 0f, float f2 = 0f, float f3 = 0f)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+                NetMessage.SendData(type, i, ignore, text, num, f1, f2, f3);
+        }
+
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
         public static int GetNPCID(string name, bool exact = false)
         {
@@ -458,6 +459,16 @@ namespace TShockAPI
                     return i;
             }
             return -1;
+        }
+
+        public static bool CheckInventory(int plr)
+        {
+            for (int i = 0; i < 44; i++)
+            {
+                if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
+                    return true;
+            }
+            return false;
         }
     }
 }
