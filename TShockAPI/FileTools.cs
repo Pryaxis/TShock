@@ -7,7 +7,7 @@ namespace TShockAPI
 {
     class FileTools
     {
-        public static string saveDir = "./tshock/";
+        public static string SaveDir = "./tshock/";
         public static void CreateFile(string file)
         {
             using (FileStream fs = File.Create(file)) { }
@@ -20,11 +20,11 @@ namespace TShockAPI
         {
             string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
             string cheaters = "";
-            TextReader tr = new StreamReader(saveDir + "cheaters.txt");
+            TextReader tr = new StreamReader(SaveDir + "cheaters.txt");
             cheaters = tr.ReadToEnd();
             tr.Close();
             if (cheaters.Contains(Main.player[ply].name) && cheaters.Contains(ip)) { return; }
-            TextWriter sw = new StreamWriter(saveDir + "cheaters.txt", true);
+            TextWriter sw = new StreamWriter(SaveDir + "cheaters.txt", true);
             sw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
             sw.Close();
         }
@@ -35,7 +35,7 @@ namespace TShockAPI
         public static void WriteBan(int ply)
         {
             string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-            TextWriter tw = new StreamWriter(saveDir + "bans.txt", true);
+            TextWriter tw = new StreamWriter(SaveDir + "bans.txt", true);
             tw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
             tw.Close();
         }
@@ -45,7 +45,7 @@ namespace TShockAPI
         /// <param name="ply">int player</param>
         public static void WriteGrief(int ply)
         {
-            TextWriter tw = new StreamWriter(saveDir + "grief.txt", true);
+            TextWriter tw = new StreamWriter(SaveDir + "grief.txt", true);
             tw.WriteLine("[" + Main.player[ply].name + "] [" + Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString()) + "]");
             tw.Close();
         }
@@ -55,16 +55,16 @@ namespace TShockAPI
         /// <param name="err">string message</param>
         public static void WriteError(string err)
         {
-            if (System.IO.File.Exists(saveDir + "errors.txt"))
+            if (System.IO.File.Exists(SaveDir + "errors.txt"))
             {
-                TextWriter tw = new StreamWriter(saveDir + "errors.txt", true);
+                TextWriter tw = new StreamWriter(SaveDir + "errors.txt", true);
                 tw.WriteLine(err);
                 tw.Close();
             }
             else
             {
-                FileTools.CreateFile(saveDir + "errors.txt");
-                TextWriter tw = new StreamWriter(saveDir + "errors.txt", true);
+                FileTools.CreateFile(SaveDir + "errors.txt");
+                TextWriter tw = new StreamWriter(SaveDir + "errors.txt", true);
                 tw.WriteLine(err);
                 tw.Close();
             }
@@ -74,21 +74,21 @@ namespace TShockAPI
         /// </summary>
         public static void SetupConfig()
         {
-            if (!System.IO.Directory.Exists(saveDir)) { System.IO.Directory.CreateDirectory(saveDir); }
-            if (!System.IO.File.Exists(saveDir + "motd.txt"))
+            if (!System.IO.Directory.Exists(SaveDir)) { System.IO.Directory.CreateDirectory(SaveDir); }
+            if (!System.IO.File.Exists(SaveDir + "motd.txt"))
             {
-                FileTools.CreateFile(saveDir + "motd.txt");
-                TextWriter tw = new StreamWriter(saveDir + "motd.txt");
+                FileTools.CreateFile(SaveDir + "motd.txt");
+                TextWriter tw = new StreamWriter(SaveDir + "motd.txt");
                 tw.WriteLine("This server is running TShock. Type /help for a list of commands.");
                 tw.WriteLine("%255,000,000%Current map: %map%");
                 tw.WriteLine("Current players: %players%");
                 tw.Close();
             }
-            if (!System.IO.File.Exists(saveDir + "bans.txt")) { FileTools.CreateFile(saveDir + "bans.txt"); }
-            if (!System.IO.File.Exists(saveDir + "cheaters.txt")) { FileTools.CreateFile(saveDir + "cheaters.txt"); }
-            if (!System.IO.File.Exists(saveDir + "admins.txt")) { FileTools.CreateFile(saveDir + "admins.txt"); }
-            if (!System.IO.File.Exists(saveDir + "grief.txt")) { FileTools.CreateFile(saveDir + "grief.txt"); }
-            if (!System.IO.File.Exists(saveDir + "whitelist.txt")) { FileTools.CreateFile(saveDir + "whitelist.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "bans.txt")) { FileTools.CreateFile(SaveDir + "bans.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "cheaters.txt")) { FileTools.CreateFile(SaveDir + "cheaters.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "admins.txt")) { FileTools.CreateFile(SaveDir + "admins.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "grief.txt")) { FileTools.CreateFile(SaveDir + "grief.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); }
             ConfigurationManager.WriteJsonConfiguration();
             ConfigurationManager.ReadJsonConfiguration();
             Netplay.serverPort = ConfigurationManager.serverPort;
@@ -101,7 +101,7 @@ namespace TShockAPI
         public static bool CheckBanned(String p)
         {
             String ip = p.Split(':')[0];
-            TextReader tr = new StreamReader(saveDir + "bans.txt");
+            TextReader tr = new StreamReader(SaveDir + "bans.txt");
             string banlist = tr.ReadToEnd();
             tr.Close();
             banlist = banlist.Trim();
@@ -117,11 +117,11 @@ namespace TShockAPI
         public static bool OnWhitelist(string ip)
         {
             if (!ConfigurationManager.enableWhitelist) { return true; }
-            if (!System.IO.File.Exists(saveDir + "whitelist.txt")) { FileTools.CreateFile(saveDir + "whitelist.txt"); TextWriter tw = new StreamWriter(saveDir + "whitelist.txt"); tw.WriteLine("127.0.0.1"); tw.Close(); }
-            TextReader tr = new StreamReader(saveDir + "whitelist.txt");
+            if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); TextWriter tw = new StreamWriter(SaveDir + "whitelist.txt"); tw.WriteLine("127.0.0.1"); tw.Close(); }
+            TextReader tr = new StreamReader(SaveDir + "whitelist.txt");
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
-            if (whitelist.Contains(ip)) { return true; } else { return false; }
+            return whitelist.Contains(ip);
         }
         /// <summary>
         /// Tells if the user is on grief.txt
@@ -132,7 +132,7 @@ namespace TShockAPI
         {
             ip = Tools.GetRealIP(ip);
             if (!ConfigurationManager.banTnt) { return false; }
-            TextReader tr = new StreamReader(saveDir + "grief.txt");
+            TextReader tr = new StreamReader(SaveDir + "grief.txt");
             string list = tr.ReadToEnd();
             tr.Close();
 
@@ -143,7 +143,7 @@ namespace TShockAPI
         {
             ip = Tools.GetRealIP(ip);
             if (!ConfigurationManager.banCheater) { return false; }
-            TextReader tr = new StreamReader(saveDir + "cheaters.txt");
+            TextReader tr = new StreamReader(SaveDir + "cheaters.txt");
             string trr = tr.ReadToEnd();
             tr.Close();
             if (trr.Contains(ip))

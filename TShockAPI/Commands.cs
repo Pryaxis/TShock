@@ -77,6 +77,7 @@ namespace TShockAPI
         public static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
+            Tools.SendMessage(args.PlayerID, "Configuration reload complete. Some changes may require server restart.");
         }
         public static void DropMeteor(CommandArgs args)
         {

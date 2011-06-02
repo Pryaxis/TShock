@@ -34,7 +34,7 @@ namespace TShockAPI
 
         public static void ReadJsonConfiguration()
         {
-            TextReader tr = new StreamReader(FileTools.saveDir + "config.json");
+            TextReader tr = new StreamReader(FileTools.SaveDir + "config.json");
             ConfigFile cfg = JsonConvert.DeserializeObject<ConfigFile>(tr.ReadToEnd());
             tr.Close();
             
@@ -53,13 +53,13 @@ namespace TShockAPI
 
         public static void WriteJsonConfiguration()
         {
-            if (System.IO.File.Exists(FileTools.saveDir + "config.json"))
+            if (System.IO.File.Exists(FileTools.SaveDir + "config.json"))
             {
                 return;
             }
             else
             {
-                FileTools.CreateFile(FileTools.saveDir + "config.json");
+                FileTools.CreateFile(FileTools.SaveDir + "config.json");
             }
 
             ConfigFile cfg = new ConfigFile();
@@ -76,7 +76,7 @@ namespace TShockAPI
             cfg.KickKillTileAbusers = true;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
-            TextWriter tr = new StreamWriter(FileTools.saveDir + "config.json");
+            TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");
             tr.Write(json);
             tr.Close();
         }

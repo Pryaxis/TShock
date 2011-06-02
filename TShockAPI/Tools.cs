@@ -179,7 +179,7 @@ namespace TShockAPI
         {
             string remoteEndPoint = Convert.ToString((Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
             string[] remoteEndPointIP = remoteEndPoint.Split(':');
-            TextReader tr = new StreamReader(FileTools.saveDir + "admins.txt");
+            TextReader tr = new StreamReader(FileTools.SaveDir + "admins.txt");
             string adminlist = tr.ReadToEnd();
             tr.Close();
             if (adminlist.Contains(remoteEndPointIP[0]))
@@ -197,7 +197,7 @@ namespace TShockAPI
         {
             string remoteEndPoint = Convert.ToString((Netplay.serverSock[Tools.FindPlayer(ply)].tcpClient.Client.RemoteEndPoint));
             string[] remoteEndPointIP = remoteEndPoint.Split(':');
-            TextReader tr = new StreamReader(FileTools.saveDir + "admins.txt");
+            TextReader tr = new StreamReader(FileTools.SaveDir + "admins.txt");
             string adminlist = tr.ReadToEnd();
             tr.Close();
             if (adminlist.Contains(remoteEndPointIP[0]))
@@ -242,7 +242,7 @@ namespace TShockAPI
         public static void ShowMOTD(int ply)
         {
             string foo = "";
-            TextReader tr = new StreamReader(FileTools.saveDir + "motd.txt");
+            TextReader tr = new StreamReader(FileTools.SaveDir + "motd.txt");
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);
