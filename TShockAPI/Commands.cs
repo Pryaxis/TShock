@@ -365,14 +365,16 @@ namespace TShockAPI
         public static void MaxSpawns(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = 4;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int.TryParse(args.Message.Remove(0, 10), out amount);
             NPC.maxSpawns = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
         }
         public static void SpawnRate(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = 700;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int.TryParse(args.Message.Remove(0, 10), out amount);
             NPC.spawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
         }
@@ -490,7 +492,7 @@ namespace TShockAPI
                     Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
                 else
                 {
-                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(1, 40)), (float)damage, (float)0);
+                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(-1, 1)), (float)damage, (float)0);
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " + damage.ToString() + " damage.");
                 }
             }
