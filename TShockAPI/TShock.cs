@@ -426,7 +426,17 @@ namespace TShockAPI
                 }
                 if (msg.Length > 10 && msg.Substring(0, 10) == "/maxspawns")
                 {
-                    
+                    int amount = Convert.ToInt32(msg.Remove(0, 10));
+                    NPC.maxSpawns = amount;
+                    Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
+                    handler.Handled = true;
+                }
+                if (msg.Length > 10 && msg.Substring(0, 10) == "/spawnrate")
+                {
+                    int amount = Convert.ToInt32(msg.Remove(0, 10));
+                    NPC.spawnRate = amount;
+                    Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
+                    handler.Handled = true;
                 }
             }
             if (msg == "/help")
