@@ -215,25 +215,16 @@ namespace TShockAPI
             if (msg.StartsWith("/"))
             {
                 Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
-                if (msg.StartsWith("/help"))
-                {
-                    commandList["help"].Invoke(args);
-                    handler.Handled = true;
-                }
-                else if (Tools.IsAdmin(ply))
-                {
-                    Commands.CommandDelegate command;
-                    if (admincommandList.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
-                        command.Invoke(args);
-                    else
-                        Tools.SendMessage(ply, "Invalid command! Try /help.", new float[] { 255f, 0f, 0f });
-                    handler.Handled = true;
-                }
-                else if (!Tools.IsAdmin(ply) && msg != "/help")
-                {
-                    Tools.SendMessage(ply, "You don't have permissions to do that!", new float[] { 255f, 0f, 0f });
-                    handler.Handled = true;
-                }
+                var commands = commandList;
+                if (Tools.IsAdmin(ply))
+                    commands = admincommandList;
+
+                Commands.CommandDelegate command;
+                if (commands.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
+                    command.Invoke(args);
+                else
+                    Tools.SendMessage(ply, "Invalid command or no permissions! Try /help.", new float[] { 255f, 0f, 0f });
+                handler.Handled = true;
             }
         }
 
@@ -284,6 +275,7 @@ namespace TShockAPI
                     tileThreshold[i] = 0;
                 }
             }
+            //writestuff();
         }
 
         /*
@@ -422,6 +414,12 @@ namespace TShockAPI
             }
         }
 
+        public static void KillMe(int plr)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+                NetMessage.SendData(44, i, -1, "", plr, (float)1, (float)9999999, (float)0);
+        }
+
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
         public static int GetNPCID(string name, bool exact = false)
         {
@@ -468,6 +466,30 @@ namespace TShockAPI
                     return true;
             }
             return false;
+        }
+
+        public static void writestuff()
+        {
+            NPC npc = new NPC();
+            string[] npclist = new string[44];
+            int h = 0;
+            for (int i = 1; i < 44; i++)
+            {
+                npc.SetDefaults(i);
+                //npclist[h++] = string.Format("{0} - {1} - {2} - {3} - {4} - {5} - {6} - {7}", i, npc.name, npc.townNPC, npc.boss, npc.noGravity, npc.lifeMax, npc.damage, npc.defense);
+                npclist[h++] = string.Format("{0}\t-\t{1}\t-\t{2}\t-\t{3}\t-\t{4}\t-\t{5}\t-\t{6}\t-\t{7}", i, npc.name, npc.townNPC, npc.boss, npc.noGravity, npc.lifeMax, npc.damage, npc.defense);
+            }
+            File.WriteAllLines("npclist.txt", npclist);
+            Item item = new Item();
+            string[] itemlist = new string[236];
+            h = 0;
+            for (int i = 1; i < 236; i++)
+            {
+                item.SetDefaults(i);
+                //itemlist[h++] = string.Format("{0} - {1} - {2} - {3}", i, item.name, item.maxStack, item.rare);
+                itemlist[h++] = string.Format("{0}\t-\t{1}\t-\t{2}\t-\t{3}", i, item.name, item.maxStack, item.rare);
+            }
+            File.WriteAllLines("itemlist.txt", itemlist);
         }
     }
 }

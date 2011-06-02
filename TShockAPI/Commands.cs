@@ -49,7 +49,10 @@ namespace TShockAPI
             TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
             TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
             TShock.admincommandList.Add("time", new CommandDelegate(Time));
+            TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
+            TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("help", new CommandDelegate(Help));
+            TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
         #region Command Methods
         public static void Kick(CommandArgs args)
@@ -440,6 +443,26 @@ namespace TShockAPI
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
+        }
+        public static void Kill(CommandArgs args)
+        {
+            bool isadmin = Tools.IsAdmin(args.PlayerID);
+            var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+            if (msgargs.Length == 2 && isadmin)
+            {
+                int player = -1;
+                player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
+                //Main.player[player].KillMe(99999, 1);
+                Tools.SendMessage(args.PlayerID, "You just killed " + Tools.FindPlayer(player) + "!");
+                Tools.SendMessage(player, Tools.FindPlayer(args.PlayerID) + " just killed you!");
+                TShock.KillMe(player);
+            }
+            else
+            {
+                //Main.player[args.PlayerID].KillMe(99999, 1);
+                Tools.SendMessage(args.PlayerID, "You just suicided.");
+                TShock.KillMe(args.PlayerID);
+            }
         }
         #endregion
     }
