@@ -122,6 +122,8 @@ namespace TShockAPI
                 ConfigurationManager.permaPvp = Convert.ToBoolean(configuration[9]);
                 ConfigurationManager.kickTnt = Convert.ToBoolean(configuration[10]);
                 ConfigurationManager.banTnt = Convert.ToBoolean(configuration[11]);
+                NPC.defaultMaxSpawns = ConfigurationManager.defaultMaxSpawns;
+                NPC.defaultSpawnRate = ConfigurationManager.defaultSpawnRate;
             }
             catch (Exception e)
             {

@@ -41,39 +41,6 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics" />
     <Reference Include="Microsoft.Xna.Framework.Xact" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Terraria\ShankShock.cs" />
-    <Compile Include="Terraria\Projectile.cs" />
-    <Compile Include="Terraria\Cloud.cs" />
-    <Compile Include="Terraria\ShankShockCommandProcessor.cs" />
-    <Compile Include="Terraria\Star.cs" />
-    <Compile Include="Terraria\CombatText.cs" />
-    <Compile Include="Terraria\ServerSock.cs" />
-    <Compile Include="Terraria\ClientSock.cs" />
-    <Compile Include="Terraria\Netplay.cs" />
-    <Compile Include="Terraria\ChatLine.cs" />
-    <Compile Include="Terraria\Main.cs" />
-    <Compile Include="Terraria\Program.cs" />
-    <Compile Include="Terraria\WorldGen.cs" />
-    <Compile Include="Terraria\Sign.cs" />
-    <Compile Include="Terraria\LiquidBuffer.cs" />
-    <Compile Include="Terraria\Liquid.cs" />
-    <Compile Include="Terraria\Lighting.cs" />
-    <Compile Include="Terraria\Recipe.cs" />
-    <Compile Include="Terraria\NPC.cs" />
-    <Compile Include="Terraria\Gore.cs" />
-    <Compile Include="Terraria\Tile.cs" />
-    <Compile Include="Terraria\Item.cs" />
-    <Compile Include="Terraria\Chest.cs" />
-    <Compile Include="Terraria\Collision.cs" />
-    <Compile Include="Terraria\messageBuffer.cs" />
-    <Compile Include="Terraria\NetMessage.cs" />
-    <Compile Include="Terraria\Dust.cs" />
-    <Compile Include="Terraria\Player.cs" />
     <Reference Include="System.Drawing" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="lbolt.ico" />
-    <Content Include="Terraria\Game.ico" />
-    <Content Include="Terraria\GameThumbnail.png" />
   </ItemGroup>
 </Project>
