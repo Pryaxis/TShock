@@ -574,6 +574,7 @@ namespace TShockAPI
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
             NetMessage.SendData(0x0d, -1, -1, "", ply);
+            UpdatePlayers();
         }
 
         public static void Teleport(int ply, float x, float y)
@@ -588,6 +589,7 @@ namespace TShockAPI
             NetMessage.SendData(0xC, -1, -1, "", ply);
             Main.player[ply].SpawnX = oldx;
             Main.player[ply].SpawnY = oldy;
+            UpdatePlayers();
         }
 
         public static void StartInvasion()
@@ -653,6 +655,15 @@ namespace TShockAPI
                     for (int h = 0; h < Main.player.Length; h++)
                         NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, (float)j, 0f, 0f);
                 }
+            }
+        }
+
+        public static void UpdatePlayers()
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                for (int h = 0; h < Main.player.Length; h++)
+                    NetMessage.SendData(0x0d, i, -1, "", h);
             }
         }
 
