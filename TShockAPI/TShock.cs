@@ -221,7 +221,6 @@ namespace TShockAPI
                     Main.bloodMoon = true;
                     Main.time = 0;
                     Main.dayTime = false;
-                    //Main.UpdateT();
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     handler.Handled = true;
@@ -423,6 +422,10 @@ namespace TShockAPI
                     }
                     Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
                     handler.Handled = true;
+                }
+                if (msg.Length > 10 && msg.Substring(0, 10) == "/maxspawns")
+                {
+                    
                 }
             }
             if (msg == "/help")
