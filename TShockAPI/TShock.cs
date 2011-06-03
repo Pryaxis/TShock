@@ -187,7 +187,7 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
+            if ((Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr)) && !Tools.IsAdmin(plr))
             {
                 Tools.HandleCheater(plr);
             }
@@ -325,6 +325,7 @@ namespace TShockAPI
         {
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
+            NetMessage.SendData(0x14, -1, -1, "", 10, x, y);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
             int oldx = Main.player[ply].SpawnX;
             int oldy = Main.player[ply].SpawnY;

@@ -10,6 +10,7 @@ namespace TShockAPI
     public class Commands
     {
         public delegate void CommandDelegate(CommandArgs args);
+
         public struct CommandArgs
         {
             public string Message;
@@ -22,6 +23,7 @@ namespace TShockAPI
                 Message = message; PlayerX = x; PlayerY = y; PlayerID = id;
             }
         }
+
         public static void InitCommands()
         {
             TShock.admincommandList.Add("kick", new CommandDelegate(Kick));
@@ -55,6 +57,7 @@ namespace TShockAPI
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
+
         #region Command Methods
         public static void Kick(CommandArgs args)
         {
@@ -73,6 +76,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
+
         public static void Ban(CommandArgs args)
         {
             string plStr = args.Message.Remove(0, 4).Trim();
@@ -90,20 +94,24 @@ namespace TShockAPI
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
+
         public static void Off(CommandArgs args)
         {
             Netplay.disconnect = true;
         }
+
         public static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
             Tools.SendMessage(args.PlayerID, "Configuration reload complete. Some changes may require server restart.");
         }
+
         public static void DropMeteor(CommandArgs args)
         {
             WorldGen.spawnMeteor = false;
             WorldGen.dropMeteor();
         }
+
         public static void Star(CommandArgs args)
         {
             int penis56 = 12;
@@ -119,6 +127,7 @@ namespace TShockAPI
             speedY *= penis61;
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
         }
+
         public static void Bloodmoon(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -129,6 +138,7 @@ namespace TShockAPI
             NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
             NetMessage.syncPlayers();
         }
+
         public static void Eater(CommandArgs args)
         {
             int x = args.PlayerX;
@@ -137,6 +147,7 @@ namespace TShockAPI
             Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eater of worlds!");
         }
+
         public static void Eye(CommandArgs args)
         {
             int x = args.PlayerX;
@@ -153,6 +164,7 @@ namespace TShockAPI
             Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned skeletron!");
         }
+
         public static void Hardcore(CommandArgs args)
         {
             int x = args.PlayerX;
@@ -164,12 +176,14 @@ namespace TShockAPI
             }
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned all 3 bosses!");
         }
+
         public static void Invade(CommandArgs args)
         {
             int ply = args.PlayerID;
             Tools.Broadcast(Main.player[ply].name + " started an invasion.");
             TShock.StartInvasion();
         }
+
         public static void Password(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -177,18 +191,21 @@ namespace TShockAPI
             Netplay.password = passwd;
             Tools.SendMessage(ply, "Server password changed to: " + passwd);
         }
+
         public static void Save(CommandArgs args)
         {
             int ply = args.PlayerID;
             WorldGen.saveWorld();
             Tools.SendMessage(ply, "World saved.");
         }
+
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.player[ply].SpawnX * 16, Main.player[ply].SpawnY * 16);
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
         }
+
         public static void TP(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -201,6 +218,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
+
         public static void TPHere(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -214,6 +232,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
+
         public static void SpawnMob(CommandArgs args)
         {
             int x = args.PlayerX;
@@ -243,6 +262,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", new float[] { 255f, 0f, 0f });
         }
+
         public static void Item(CommandArgs args)
         {
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
@@ -277,6 +297,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /item <item name/id>", new float[] { 255f, 0f, 0f });
         }
+
         public static void Give(CommandArgs args)
         {
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -320,6 +341,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /give <item type/id> <player>", new float[] { 255f, 0f, 0f });
         }
+
         public static void Heal(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -346,6 +368,7 @@ namespace TShockAPI
                 NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
             }
         }
+
         public static void Butcher(CommandArgs args)
         {
             int killcount = 0;
@@ -362,6 +385,7 @@ namespace TShockAPI
             }
             Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
         }
+
         public static void MaxSpawns(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -370,6 +394,7 @@ namespace TShockAPI
             NPC.maxSpawns = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
         }
+
         public static void SpawnRate(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -378,6 +403,7 @@ namespace TShockAPI
             NPC.spawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
         }
+
         public static void Help(CommandArgs args)
         {
             int ply = args.PlayerID;
@@ -420,6 +446,7 @@ namespace TShockAPI
             Tools.SendMessage(ply, "Terraria commands:");
             Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
         }
+
         public static void Time(CommandArgs args)
         {
             var arg = args.Message.Split(' ');
@@ -447,6 +474,7 @@ namespace TShockAPI
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
         }
+
         public static void Kill(CommandArgs args)
         {
             bool isadmin = Tools.IsAdmin(args.PlayerID);
@@ -465,6 +493,7 @@ namespace TShockAPI
                 TShock.KillMe(args.PlayerID);
             }
         }
+
         public static void Slap(CommandArgs args)
         {
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
