@@ -49,3 +49,7 @@ Thumbs.db
 *.csproj.user
 */_ReSharper*/*
 *.user
+
+#Template Bat file#
+###################
+myass.bat
