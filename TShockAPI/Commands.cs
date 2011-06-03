@@ -202,7 +202,7 @@ namespace TShockAPI
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.player[ply].SpawnX * 16, Main.player[ply].SpawnY * 16);
+            TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2, Main.spawnTileY * 16 - this.height);
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
         }
 
