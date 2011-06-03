@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using Terraria;
 
@@ -18,6 +15,7 @@ namespace TShockAPI
         {
             return mess.Split(':')[0];
         }
+
         /// <summary>
         /// Used for some places where a list of players might be used.
         /// </summary>
@@ -41,6 +39,7 @@ namespace TShockAPI
             }
             return str;
         }
+
         /// <summary>
         /// It's a clamp function
         /// </summary>
@@ -59,6 +58,7 @@ namespace TShockAPI
                 result = min;
             return result;
         }
+
         /// <summary>
         /// Broadcasts a message to all players
         /// </summary>
@@ -70,6 +70,7 @@ namespace TShockAPI
                 SendMessage(i, msg);
             }
         }
+
         /// <summary>
         /// Sends a message out to a single player
         /// </summary>
@@ -80,6 +81,7 @@ namespace TShockAPI
         {
             NetMessage.SendData(0x19, ply, -1, msg, 255, color[0], color[1], color[2]);
         }
+
         /// <summary>
         /// Sends a green message to a player
         /// </summary>
@@ -89,6 +91,7 @@ namespace TShockAPI
         {
             NetMessage.SendData(0x19, ply, -1, message, 255, 0f, 255f, 0f);
         }
+
         /// <summary>
         /// The number of active players on the server.
         /// </summary>
@@ -105,6 +108,7 @@ namespace TShockAPI
             }
             return num;
         }
+
         /// <summary>
         /// Finds the name of the player of the int given
         /// </summary>
@@ -123,6 +127,7 @@ namespace TShockAPI
             }
             return pl;
         }
+
         /// <summary>
         /// Gets the given player's name
         /// </summary>
@@ -139,6 +144,7 @@ namespace TShockAPI
             }
             return "null";
         }
+
         /// <summary>
         /// Creates an NPC
         /// </summary>
@@ -148,7 +154,6 @@ namespace TShockAPI
         /// <param name="target">int player that the npc targets</param>
         public static void NewNPC(int type, int x, int y, int target)
         {
-
             switch (type)
             {
                 case 0: //World Eater
@@ -166,10 +171,9 @@ namespace TShockAPI
                     int enpeecee = NPC.NewNPC(x, y, 0x23, 0);
                     Main.npc[enpeecee].netUpdate = true;
                     break;
-
             }
-
         }
+
         /// <summary>
         /// Finds a player, reads admins.txt, and determines if their IP address is on that list.
         /// </summary>
@@ -188,6 +192,7 @@ namespace TShockAPI
             }
             return false;
         }
+
         /// <summary>
         /// Finds a player based on their name, reads admins.txt, and determines if thier IP address is on that list.
         /// </summary>
@@ -206,6 +211,7 @@ namespace TShockAPI
             }
             return false;
         }
+
         /// <summary>
         /// Kicks a player from the server.
         /// </summary>
@@ -214,8 +220,6 @@ namespace TShockAPI
         public static void Kick(int ply, string reason)
         {
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-            Netplay.serverSock[ply].kill = true;
-            NetMessage.syncPlayers();
         }
 
         /// <summary>
@@ -257,6 +261,7 @@ namespace TShockAPI
                 Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for greifing.");
             }
         }
+
         /// <summary>
         /// Shows a MOTD to the player
         /// </summary>
@@ -296,6 +301,7 @@ namespace TShockAPI
             }
             tr.Close();
         }
-        public Tools() { } 
+
+        public Tools() { }
     }
 }
