@@ -282,9 +282,16 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
             string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
-            if (FileTools.CheckBanned(ip) || FileTools.CheckCheat(ip) || FileTools.CheckGreif(ip))
+            if (FileTools.CheckBanned(ip))
             {
                 Tools.Kick(ply, "You are banned.");
+            } else if (FileTools.CheckCheat(ip))
+            {
+                Tools.Kick(ply, "You were flagged for cheating.");
+            }
+            else if (FileTools.CheckGreif(ip))
+            {
+                Tools.Kick(ply, "You were flagged for kill tile abuse.");
             }
             if (!FileTools.OnWhitelist(ip))
             {
