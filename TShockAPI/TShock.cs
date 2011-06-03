@@ -265,10 +265,10 @@ namespace TShockAPI
                 {
                     if (!players[e.Msg.whoAmI].IsAdmin())
                     {
-                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
                         {
                             int i = e.Msg.whoAmI;
-                            if (ConfigurationManager.banTnt)
+                            if (ConfigurationManager.banBoom)
                                 FileTools.WriteGrief((int)i);
                             Tools.Kick((int)i, "Explosives was thrown.");
                             Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
