@@ -64,7 +64,7 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 5).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
+            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
@@ -74,6 +74,8 @@ namespace TShockAPI
                 else
                     Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
             }
+            else if (Tools.FindPlayer(plStr) == -2)
+                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
@@ -82,7 +84,7 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 4).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
+            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
@@ -92,6 +94,8 @@ namespace TShockAPI
                 else
                     Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
             }
+            else if (Tools.FindPlayer(plStr) == -2)
+                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
