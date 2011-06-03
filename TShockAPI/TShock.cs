@@ -317,7 +317,7 @@ namespace TShockAPI
         {
             if (!shownVersion)
             {
-                if (Tools.IsAdmin(Tools.FindPlayer(ply)))
+                if (TShock.players[ply].IsAdmin())
                 {
                     WebClient client = new WebClient();
                     client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
