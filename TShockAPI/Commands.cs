@@ -233,7 +233,7 @@ namespace TShockAPI
 
                 if (!int.TryParse(inputtype, out type))
                     type = TShock.GetNPCID(inputtype);
-                if (type >= 1 && type <= 43)
+                if (type >= 1 && type <= 45)
                 {
                     for (int i = 0; i < amount; i++)
                         npcid = NPC.NewNPC(x, y, type, 0);
@@ -254,7 +254,7 @@ namespace TShockAPI
                 int type = 0;
                 if (!int.TryParse(msgargs, out type))
                     type = TShock.GetItemID(msgargs);
-                if (type >= 1 && type <= 235)
+                if (type >= 1 && type <= 238)
                 {
                     for (int i = 0; i < 40; i++)
                     {
@@ -290,7 +290,7 @@ namespace TShockAPI
                 int player = -1;
                 if (!int.TryParse(msgargs[1], out type))
                     type = TShock.GetItemID(msgargs[1]);
-                if (type >= 1 && type <= 235)
+                if (type >= 1 && type <= 238)
                 {
                     player = Tools.FindPlayer(msgargs[2]);
                     if (player != -1)
