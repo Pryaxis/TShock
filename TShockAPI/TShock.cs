@@ -199,10 +199,13 @@ namespace TShockAPI
                     life = br.ReadInt16();
                     maxLife = br.ReadInt16();
                 }
-                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                if (players[ply].syncHP)
                 {
-                    Tools.HandleCheater(ply);
+                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                        Tools.HandleCheater(ply);
                 }
+                else
+                    players[ply].syncHP = true;
             }
             else if (e.MsgID == 0x2a)
             {
@@ -214,10 +217,13 @@ namespace TShockAPI
                     life = br.ReadInt16();
                     maxLife = br.ReadInt16();
                 }
-                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                if (players[ply].syncMP)
                 {
-                    Tools.HandleCheater(ply);
+                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                        Tools.HandleCheater(ply);
                 }
+                else
+                    players[ply].syncMP = true;
             }
             else if (e.MsgID == 0x19)
             {
@@ -257,13 +263,17 @@ namespace TShockAPI
                 }
                 if (type == 29 || type == 28)
                 {
-                    if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                    if (!players[e.Msg.whoAmI].IsAdmin())
                     {
-                        int i = e.Msg.whoAmI;
-                        if (ConfigurationManager.banTnt)
-                            FileTools.WriteGrief((int)i);
-                        Tools.Kick((int)i, "Explosives was thrown.");
-                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
+                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        {
+                            int i = e.Msg.whoAmI;
+                            if (ConfigurationManager.banTnt)
+                                FileTools.WriteGrief((int)i);
+                            Tools.Kick((int)i, "Explosives was thrown.");
+                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
+                            e.Handled = true;
+                        }
                     }
                 }
             }
@@ -326,7 +336,7 @@ namespace TShockAPI
             }
             else if (FileTools.Checkgrief(ip))
             {
-                Tools.Kick(ply, "You were flagged for griefing (either kill tile abuse or explosives).");
+                Tools.Kick(ply, "You were flagged for griefing.");
             }
             if (!FileTools.OnWhitelist(ip))
             {
