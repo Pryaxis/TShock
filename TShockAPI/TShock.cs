@@ -232,6 +232,41 @@ namespace TShockAPI
                     Tools.HandleCheater(ply);
                 }
             }
+            else if (e.MsgID == 0x1B)
+            {
+                Int16 ident;
+                float posx;
+                float posy;
+                float velx;
+                float vely;
+                float knockback;
+                Int16 dmg;
+                byte owner;
+                byte type;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    ident = br.ReadInt16();
+                    posx = br.ReadSingle();
+                    posy = br.ReadSingle();
+                    velx = br.ReadSingle();
+                    vely = br.ReadSingle();
+                    knockback = br.ReadSingle();
+                    dmg = br.ReadInt16();
+                    owner = br.ReadByte();
+                    type = br.ReadByte();
+                }
+                if (type == 29 || type == 28)
+                {
+                    if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                    {
+                        int i = e.Msg.whoAmI;
+                        if (ConfigurationManager.banTnt)
+                            FileTools.WriteGrief((int)i);
+                        Tools.Kick((int)i, "Explosives was thrown.");
+                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
+                    }
+                }
+            }
         }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
@@ -289,9 +324,9 @@ namespace TShockAPI
             {
                 Tools.Kick(ply, "You were flagged for cheating.");
             }
-            else if (FileTools.CheckGreif(ip))
+            else if (FileTools.Checkgrief(ip))
             {
-                Tools.Kick(ply, "You were flagged for kill tile abuse.");
+                Tools.Kick(ply, "You were flagged for griefing (either kill tile abuse or explosives).");
             }
             if (!FileTools.OnWhitelist(ip))
             {
@@ -323,9 +358,13 @@ namespace TShockAPI
                 {
                     if (Main.player[i] != null)
                     {
-                        FileTools.WriteGrief((int)i);
-                        Tools.Kick((int)i, "Kill tile abuse detected.");
-                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        {
+                            if (ConfigurationManager.banTnt)
+                                FileTools.WriteGrief((int)i);
+                            Tools.Kick((int)i, "Kill tile abuse detected.");
+                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                        }
                     }
                     players[i].tileThreshold = 0;
                 }

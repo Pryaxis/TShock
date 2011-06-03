@@ -128,7 +128,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        public static bool CheckGreif(String ip)
+        public static bool Checkgrief(String ip)
         {
             ip = Tools.GetRealIP(ip);
             if (!ConfigurationManager.banTnt) { return false; }

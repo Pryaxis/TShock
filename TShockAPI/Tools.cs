@@ -254,10 +254,10 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Adds someone to greifers.txt
+        /// Adds someone to griefers.txt
         /// </summary>
         /// <param name="ply">int player</param>
-        public static void HandleGreifer(int ply)
+        public static void HandleGriefer(int ply)
         {
             if (!TShock.players[ply].IsAdmin())
             {
@@ -269,7 +269,7 @@ namespace TShockAPI
                 Netplay.serverSock[ply].kill = true;
                 Netplay.serverSock[ply].Reset();
                 NetMessage.syncPlayers();
-                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for greifing.");
+                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banGriefer ? "banned " : "kicked ") + "for griefing.");
             }
         }
 

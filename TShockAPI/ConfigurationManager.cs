@@ -27,6 +27,9 @@ namespace TShockAPI
         public static bool banGriefer = true;
         public static bool banTnt = false;
         public static bool kickTnt = false;
+        public static bool banBoom = true;
+        public static bool kickBoom = true;
+
         public enum NPCList : int
         {
             WORLD_EATER = 0,
@@ -53,6 +56,8 @@ namespace TShockAPI
             banGriefer = cfg.BanGriefers;
             banTnt = cfg.BanKillTileAbusers;
             kickTnt = cfg.KickKillTileAbusers;
+            banBoom = cfg.BanExplosives;
+            kickBoom = cfg.KickExplosives;
         }
 
         public static void WriteJsonConfiguration()
@@ -80,6 +85,8 @@ namespace TShockAPI
             cfg.BanGriefers = banGriefer;
             cfg.BanKillTileAbusers = true;
             cfg.KickKillTileAbusers = true;
+            cfg.BanExplosives = true;
+            cfg.KickExplosives = true;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");
