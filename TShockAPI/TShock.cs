@@ -212,6 +212,19 @@ namespace TShockAPI
                     Tools.HandleCheater(ply);
                 }
             }
+            else if (e.MsgID == 0x19)
+            {
+                byte ply;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    ply = br.ReadByte();
+                }
+                if (e.Msg.whoAmI != ply)
+                {
+                    //fuck you faggot
+                    Tools.HandleCheater(ply);
+                }
+            }
         }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
