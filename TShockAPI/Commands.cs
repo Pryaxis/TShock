@@ -260,10 +260,16 @@ namespace TShockAPI
                     {
                         if (!Main.player[ply].inventory[i].active)
                         {
-                            Main.player[ply].inventory[i].SetDefaults(type);
-                            Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
-                            Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
-                            TShock.UpdateInventories();
+                            //Main.player[ply].inventory[i].SetDefaults(type);
+                            //Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
+                            int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
+                            Main.item[id].position.X = (float)args.PlayerX;
+                            Main.item[id].position.Y = (float)args.PlayerY;
+                            Main.item[id].stack = Main.item[id].maxStack;
+                            //TShock.SendDataAll(21, -1, "", id);
+                            NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
+                            Tools.SendMessage(ply, "Got some " + Main.item[id].name + ".");
+                            //TShock.UpdateInventories();
                             flag = true;
                             break;
                         }
@@ -299,11 +305,17 @@ namespace TShockAPI
                         {
                             if (!Main.player[player].inventory[i].active)
                             {
-                                Main.player[player].inventory[i].SetDefaults(type);
-                                Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
-                                Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.player[player].inventory[i].name));
-                                Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
-                                TShock.UpdateInventories();
+                                //Main.player[player].inventory[i].SetDefaults(type);
+                                //Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
+                                int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
+                                Main.item[id].position.X = Main.player[player].position.X;
+                                Main.item[id].position.Y = Main.player[player].position.Y;
+                                Main.item[id].stack = Main.item[id].maxStack;
+                                //TShock.SendDataAll(21, -1, "", id);
+                                NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
+                                Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.item[id].name));
+                                Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.item[id].name));
+                                //TShock.UpdateInventories();
                                 flag = true;
                                 break;
                             }
