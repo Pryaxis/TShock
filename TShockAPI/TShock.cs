@@ -182,6 +182,21 @@ namespace TShockAPI
                 Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
                 e.Handled = true;
             }
+            else if (e.MsgID == 0x10)
+            {
+                byte ply;
+                Int16 life, maxLife;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    ply = br.ReadByte();
+                    life = br.ReadInt16();
+                    maxLife = br.ReadInt16();
+                }
+                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                {
+                    Tools.HandleCheater(ply);
+                }
+            }
         }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
