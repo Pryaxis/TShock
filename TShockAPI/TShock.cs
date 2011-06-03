@@ -164,19 +164,19 @@ namespace TShockAPI
                 }
                 return;
             }
-            if (e.MsgID == 0x1e)
+            else if (e.MsgID == 0x1e)
             {
                 Main.player[e.Msg.whoAmI].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
                 e.Handled = true;
             }
-            if (e.MsgID == 0x0A) //SendSection
+            else if (e.MsgID == 0x0A) //SendSection
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
                 e.Handled = true;
             }
-            if (e.MsgID == 0x17) //Npc Data
+            else if (e.MsgID == 0x17) //Npc Data
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
