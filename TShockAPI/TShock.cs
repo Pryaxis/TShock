@@ -173,11 +173,13 @@ namespace TShockAPI
             if (e.MsgID == 0x0A) //SendSection
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
                 e.Handled = true;
             }
             if (e.MsgID == 0x17) //Npc Data
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
                 e.Handled = true;
             }
         }
@@ -265,6 +267,7 @@ namespace TShockAPI
                     {
                         FileTools.WriteGrief((int)i);
                         Tools.Kick((int)i, "Kill tile abuse detected.");
+                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
                     }
                     tileThreshold[i] = 0;
                 }
@@ -428,7 +431,7 @@ namespace TShockAPI
         public static int GetNPCID(string name, bool exact = false)
         {
             NPC npc = new NPC();
-            for (int i = 1; i <= 43; i++)
+            for (int i = 1; i <= 45; i++)
             {
                 if (exact)
                 {
@@ -453,7 +456,7 @@ namespace TShockAPI
         {
             Item item = new Item();
             name = name.ToLower();
-            for (int i = 1; i <= 235; i++)
+            for (int i = 1; i <= 238; i++)
             {
                 item.SetDefaults(i);
                 if (item.name.ToLower().StartsWith(name))
@@ -464,11 +467,11 @@ namespace TShockAPI
 
         public static bool CheckInventory(int plr)
         {
-            for (int i = 0; i < 44; i++)
+            /*for (int i = 0; i < 44; i++)
             {
                 if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
                     return true;
-            }
+            }*/
             return false;
         }
     }

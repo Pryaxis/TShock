@@ -71,7 +71,7 @@ namespace TShockAPI
                     Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
-                    Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
             }
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
@@ -252,7 +252,7 @@ namespace TShockAPI
 
                 if (!int.TryParse(inputtype, out type))
                     type = TShock.GetNPCID(inputtype);
-                if (type >= 1 && type <= 43)
+                if (type >= 1 && type <= 45)
                 {
                     for (int i = 0; i < amount; i++)
                         npcid = NPC.NewNPC(x, y, type, 0);
@@ -274,16 +274,22 @@ namespace TShockAPI
                 int type = 0;
                 if (!int.TryParse(msgargs, out type))
                     type = TShock.GetItemID(msgargs);
-                if (type >= 1 && type <= 235)
+                if (type >= 1 && type <= 238)
                 {
                     for (int i = 0; i < 40; i++)
                     {
                         if (!Main.player[ply].inventory[i].active)
                         {
-                            Main.player[ply].inventory[i].SetDefaults(type);
-                            Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
-                            Tools.SendMessage(ply, "Got some " + Main.player[ply].inventory[i].name + ".");
-                            TShock.UpdateInventories();
+                            //Main.player[ply].inventory[i].SetDefaults(type);
+                            //Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
+                            int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
+                            Main.item[id].position.X = (float)args.PlayerX;
+                            Main.item[id].position.Y = (float)args.PlayerY;
+                            Main.item[id].stack = Main.item[id].maxStack;
+                            //TShock.SendDataAll(21, -1, "", id);
+                            NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
+                            Tools.SendMessage(ply, "Got some " + Main.item[id].name + ".");
+                            //TShock.UpdateInventories();
                             flag = true;
                             break;
                         }
@@ -311,7 +317,7 @@ namespace TShockAPI
                 int player = -1;
                 if (!int.TryParse(msgargs[1], out type))
                     type = TShock.GetItemID(msgargs[1]);
-                if (type >= 1 && type <= 235)
+                if (type >= 1 && type <= 238)
                 {
                     player = Tools.FindPlayer(msgargs[2]);
                     if (player != -1)
@@ -320,11 +326,17 @@ namespace TShockAPI
                         {
                             if (!Main.player[player].inventory[i].active)
                             {
-                                Main.player[player].inventory[i].SetDefaults(type);
-                                Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
-                                Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.player[player].inventory[i].name));
-                                Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.player[player].inventory[i].name));
-                                TShock.UpdateInventories();
+                                //Main.player[player].inventory[i].SetDefaults(type);
+                                //Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
+                                int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
+                                Main.item[id].position.X = Main.player[player].position.X;
+                                Main.item[id].position.Y = Main.player[player].position.Y;
+                                Main.item[id].stack = Main.item[id].maxStack;
+                                //TShock.SendDataAll(21, -1, "", id);
+                                NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
+                                Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.item[id].name));
+                                Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.item[id].name));
+                                //TShock.UpdateInventories();
                                 flag = true;
                                 break;
                             }
