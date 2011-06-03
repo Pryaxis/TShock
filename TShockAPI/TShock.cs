@@ -11,7 +11,7 @@ namespace TShockAPI
 {
     public class TShock : TerrariaPlugin
     {
-        uint[] tileThreshold = new uint[Main.maxPlayers];
+        TSPlayer[] players = new TSPlayer[Main.maxPlayers];
 
         public static string saveDir = "./tshock/";
 
@@ -160,7 +160,7 @@ namespace TShockAPI
                 }
                 if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                 {
-                    tileThreshold[e.Msg.whoAmI]++;
+                    players[e.Msg.whoAmI].tileThreshold++;
                 }
                 return;
             }
@@ -240,6 +240,7 @@ namespace TShockAPI
             {
                 Tools.Kick(ply, "Not on whitelist.");
             }
+            players[ply] = new TSPlayer(ply);
         }
 
         void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
@@ -261,7 +262,7 @@ namespace TShockAPI
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false) { continue; }
-                if (tileThreshold[i] >= 5)
+                if (players[i].tileThreshold >= 5)
                 {
                     if (Main.player[i] != null)
                     {
@@ -269,11 +270,11 @@ namespace TShockAPI
                         Tools.Kick((int)i, "Kill tile abuse detected.");
                         Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
                     }
-                    tileThreshold[i] = 0;
+                    players[i].tileThreshold = 0;
                 }
-                else if (tileThreshold[i] > 0)
+                else if (players[i].tileThreshold > 0)
                 {
-                    tileThreshold[i] = 0;
+                    players[i].tileThreshold = 0;
                 }
             }
         }
