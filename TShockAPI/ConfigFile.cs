@@ -15,8 +15,10 @@ namespace TShockAPI
         public bool EnableWhitelist = false;
         public bool InfiniteInvasion = false;
         public bool AlwaysPvP = false;
-        public bool KickSaveEditors = true;
-        public bool BanSaveEditors = true;
+        public bool KickCheaters = true;
+        public bool BanCheaters = true;
+        public bool KickGriefers = true;
+        public bool BanGriefers = true;
         public bool BanKillTileAbusers = false;
         public bool KickKillTileAbusers = false;
     }

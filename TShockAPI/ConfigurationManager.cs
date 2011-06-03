@@ -23,6 +23,8 @@ namespace TShockAPI
         public static bool startedInvasion = false;
         public static bool kickCheater = true;
         public static bool banCheater = true;
+        public static bool kickGriefer = true;
+        public static bool banGriefer = true;
         public static bool banTnt = false;
         public static bool kickTnt = false;
         public enum NPCList : int
@@ -45,8 +47,10 @@ namespace TShockAPI
             enableWhitelist = cfg.EnableWhitelist;
             infiniteInvasion = cfg.InfiniteInvasion;
             permaPvp = cfg.AlwaysPvP;
-            kickCheater = cfg.KickSaveEditors;
-            banCheater = cfg.BanSaveEditors;
+            kickCheater = cfg.KickCheaters;
+            banCheater = cfg.BanCheaters;
+            kickGriefer = cfg.KickGriefers;
+            banGriefer = cfg.BanGriefers;
             banTnt = cfg.BanKillTileAbusers;
             kickTnt = cfg.KickKillTileAbusers;
         }
@@ -70,8 +74,10 @@ namespace TShockAPI
             cfg.EnableWhitelist = false;
             cfg.InfiniteInvasion = false;
             cfg.AlwaysPvP = false;
-            cfg.KickSaveEditors = false;
-            cfg.BanSaveEditors = false;
+            cfg.KickCheaters = kickCheater;
+            cfg.BanCheaters = banCheater;
+            cfg.KickGriefers = kickGriefer;
+            cfg.BanGriefers = banGriefer;
             cfg.BanKillTileAbusers = true;
             cfg.KickKillTileAbusers = true;
 

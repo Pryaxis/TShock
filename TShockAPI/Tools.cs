@@ -219,7 +219,7 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Determines what to do with someone listed in cheaters.txt
+        /// Adds someone to cheaters.txt
         /// </summary>
         /// <param name="ply">int player</param>
         public static void HandleCheater(int ply)
@@ -229,13 +229,32 @@ namespace TShockAPI
                 string cheater = Tools.FindPlayer(ply);
                 string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
-                FileTools.WriteGrief(ply);
                 FileTools.WriteCheater(ply);
                 if (!ConfigurationManager.kickCheater) { return; }
                 Netplay.serverSock[ply].kill = true;
                 Netplay.serverSock[ply].Reset();
                 NetMessage.syncPlayers();
                 Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for cheating.");
+            }
+        }
+
+        /// <summary>
+        /// Adds someone to greifers.txt
+        /// </summary>
+        /// <param name="ply">int player</param>
+        public static void HandleGreifer(int ply)
+        {
+            if (!TShock.players[ply].IsAdmin())
+            {
+                string cheater = Tools.FindPlayer(ply);
+                string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+
+                FileTools.WriteGrief(ply);
+                if (!ConfigurationManager.kickGriefer) { return; }
+                Netplay.serverSock[ply].kill = true;
+                Netplay.serverSock[ply].Reset();
+                NetMessage.syncPlayers();
+                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for greifing.");
             }
         }
         /// <summary>
