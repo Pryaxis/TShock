@@ -11,7 +11,7 @@ namespace TShockAPI
 {
     public class TShock : TerrariaPlugin
     {
-        TSPlayer[] players = new TSPlayer[Main.maxPlayers];
+        public static TSPlayer[] players = new TSPlayer[Main.maxPlayers];
 
         public static string saveDir = "./tshock/";
 
@@ -228,7 +228,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (Tools.IsAdmin(who) && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
+            if (TShock.players[who].IsAdmin() && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
             {
                 StartInvasion();
             }
@@ -246,7 +246,7 @@ namespace TShockAPI
             {
                 Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
                 var commands = commandList;
-                if (Tools.IsAdmin(ply))
+                if (TShock.players[ply].IsAdmin())
                     commands = admincommandList;
 
                 Commands.CommandDelegate command;

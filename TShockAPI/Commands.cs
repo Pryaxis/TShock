@@ -65,7 +65,7 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
             {
-                if (!Tools.IsAdmin(Tools.FindPlayer(plStr)))
+                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
                     Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
                     Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
@@ -83,7 +83,7 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
             {
-                if (!Tools.IsAdmin(Tools.FindPlayer(plStr)))
+                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
                     FileTools.WriteBan(Tools.FindPlayer(plStr));
                     Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
@@ -420,7 +420,7 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             var commands = TShock.commandList;
-            if (Tools.IsAdmin(ply))
+            if (TShock.players[ply].IsAdmin())
                 commands = TShock.admincommandList;
             Tools.SendMessage(ply, "TShock Commands:");
             int h = 1;
@@ -489,7 +489,7 @@ namespace TShockAPI
 
         public static void Kill(CommandArgs args)
         {
-            bool isadmin = Tools.IsAdmin(args.PlayerID);
+            bool isadmin = TShock.players[args.PlayerID].IsAdmin(); ;
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             if (msgargs.Length == 2 && isadmin)
             {
