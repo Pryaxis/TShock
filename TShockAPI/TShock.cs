@@ -189,7 +189,7 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            if ((Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr)) && !Tools.IsAdmin(plr))
+            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
             {
                 Tools.HandleCheater(plr);
             }

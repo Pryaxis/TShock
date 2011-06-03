@@ -224,16 +224,19 @@ namespace TShockAPI
         /// <param name="ply">int player</param>
         public static void HandleCheater(int ply)
         {
-            string cheater = Tools.FindPlayer(ply);
-            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
+            if (!Tools.IsAdmin(ply))
+            {
+                string cheater = Tools.FindPlayer(ply);
+                string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
 
-            FileTools.WriteGrief(ply);
-            FileTools.WriteCheater(ply);
-            if (!ConfigurationManager.kickCheater) { return; }
-            Netplay.serverSock[ply].kill = true;
-            Netplay.serverSock[ply].Reset();
-            NetMessage.syncPlayers();
-            Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for cheating.");
+                FileTools.WriteGrief(ply);
+                FileTools.WriteCheater(ply);
+                if (!ConfigurationManager.kickCheater) { return; }
+                Netplay.serverSock[ply].kill = true;
+                Netplay.serverSock[ply].Reset();
+                NetMessage.syncPlayers();
+                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for cheating.");
+            }
         }
         /// <summary>
         /// Shows a MOTD to the player
