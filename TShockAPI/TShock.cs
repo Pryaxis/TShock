@@ -149,18 +149,16 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             if (e.MsgID == 17)
             {
-                byte type;
-                int x = 0;
-                int y = 0;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    type = br.ReadByte();
-                    x = br.ReadInt32();
-                    y = br.ReadInt32();
-                }
-                if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
-                {
-                    players[e.Msg.whoAmI].tileThreshold++;
+                    byte type = br.ReadByte();
+                    int x = br.ReadInt32();
+                    int y = br.ReadInt32();
+
+                    if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
+                    {
+                        players[e.Msg.whoAmI].tileThreshold++;
+                    }
                 }
                 return;
             }
@@ -181,6 +179,15 @@ namespace TShockAPI
                 Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
                 e.Handled = true;
+            }
+            else if (e.MsgID == 0x0D) //Update Player
+            {
+                byte plr = e.Msg.readBuffer[e.Index];
+                if (plr != e.Msg.whoAmI)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "Update Player abuse");
+                    e.Handled = true;
+                }
             }
             else if (e.MsgID == 0x10)
             {
