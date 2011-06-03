@@ -54,6 +54,7 @@ namespace TShockAPI
             TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
+            TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
@@ -96,6 +97,12 @@ namespace TShockAPI
         }
 
         public static void Off(CommandArgs args)
+        {
+            WorldGen.saveWorld();
+            Netplay.disconnect = true;
+        }
+
+        public static void OffNoSave(CommandArgs args)
         {
             Netplay.disconnect = true;
         }

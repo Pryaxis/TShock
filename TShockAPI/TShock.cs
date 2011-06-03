@@ -312,7 +312,7 @@ namespace TShockAPI
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false) { continue; }
-                if (players[i].tileThreshold >= 5)
+                if (players[i].tileThreshold >= 20)
                 {
                     if (Main.player[i] != null)
                     {
