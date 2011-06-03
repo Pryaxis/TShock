@@ -78,7 +78,7 @@ namespace TShockAPI
         /// <param name="color">Float containing red, blue, and green color values</param>
         public static void SendMessage(int ply, string msg, float[] color)
         {
-            NetMessage.SendData(0x19, ply, -1, msg, 8, color[0], color[1], color[2]);
+            NetMessage.SendData(0x19, ply, -1, msg, 255, color[0], color[1], color[2]);
         }
         /// <summary>
         /// Sends a green message to a player
@@ -87,7 +87,7 @@ namespace TShockAPI
         /// <param name="message">string message</param>
         public static void SendMessage(int ply, string message)
         {
-            NetMessage.SendData(0x19, ply, -1, message, 8, 0f, 255f, 0f);
+            NetMessage.SendData(0x19, ply, -1, message, 255, 0f, 255f, 0f);
         }
         /// <summary>
         /// The number of active players on the server.
