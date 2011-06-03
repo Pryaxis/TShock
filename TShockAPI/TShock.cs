@@ -173,11 +173,13 @@ namespace TShockAPI
             if (e.MsgID == 0x0A) //SendSection
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
                 e.Handled = true;
             }
             if (e.MsgID == 0x17) //Npc Data
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
                 e.Handled = true;
             }
         }
@@ -265,6 +267,7 @@ namespace TShockAPI
                     {
                         FileTools.WriteGrief((int)i);
                         Tools.Kick((int)i, "Kill tile abuse detected.");
+                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
                     }
                     tileThreshold[i] = 0;
                 }
