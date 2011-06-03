@@ -466,11 +466,11 @@ namespace TShockAPI
 
         public static bool CheckInventory(int plr)
         {
-            for (int i = 0; i < 44; i++)
+            /*for (int i = 0; i < 44; i++)
             {
                 if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
                     return true;
-            }
+            }*/
             return false;
         }
     }
