@@ -448,9 +448,9 @@ namespace TShockAPI
             int page = 1;
             if (args.Message.Split(' ').Length == 2)
                 int.TryParse(args.Message.Split(' ')[1], out page);
-            if (commands.Count > (20 * (page - 1)))
+            if (commands.Count > (15 * (page - 1)))
             {
-                for (int j = (20 * (page - 1)); j < commands.Count; j++)
+                for (int j = (15 * (page - 1)); j < commands.Count; j++)
                 {
                     if (i == 3) break;
                     if (j == commands.Count - 1)
@@ -461,7 +461,7 @@ namespace TShockAPI
                     if ((h - 1) % 5 == 0 && (h - 1) != 0)
                     {
                         Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
-                        tempstring = "";
+                        tempstring = "/" + commands.Keys.ElementAt(j) + ", ";
                         i++;
                         h++;
                     }
@@ -472,7 +472,7 @@ namespace TShockAPI
                     }
                 }
             }
-            if (commands.Count > (20 * page))
+            if (commands.Count > (15 * page))
             { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
             Tools.SendMessage(ply, "Terraria commands:");
             Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
