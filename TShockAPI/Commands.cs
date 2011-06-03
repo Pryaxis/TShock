@@ -180,8 +180,16 @@ namespace TShockAPI
         public static void Invade(CommandArgs args)
         {
             int ply = args.PlayerID;
-            Tools.Broadcast(Main.player[ply].name + " started an invasion.");
-            TShock.StartInvasion();
+            if (Main.invasionSize <= 0)
+            {
+                Tools.Broadcast(Main.player[ply].name + " has started an invasion.");
+                TShock.StartInvasion();
+            }
+            else
+            {
+                Tools.Broadcast(Main.player[ply].name + " has ended an invasion.");
+                Main.invasionSize = 0;
+            }
         }
 
         public static void Password(CommandArgs args)
@@ -202,7 +210,7 @@ namespace TShockAPI
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.player[ply].SpawnX * 16, Main.player[ply].SpawnY * 16);
+            TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2, Main.spawnTileY * 16 - Main.player[ply].height);
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
         }
 
