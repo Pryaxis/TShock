@@ -52,7 +52,7 @@ namespace TShockAPI
 
         static TShock()
         {
-            Tools.LoadGroups();
+            //Tools.LoadGroups();
             #region Blacklisted tiles
 
             BlacklistTiles = new bool[0x80];
@@ -425,6 +425,7 @@ namespace TShockAPI
                     Tools.Kick(ply, "Not on whitelist.");
                 }
                 players[ply] = new TSPlayer(ply);
+                players[ply].group = Tools.GetGroupForIP(ip);
             }
             catch (Exception ex)
             {

@@ -26,6 +26,11 @@ namespace TShockAPI
             return Terraria.Main.player[player];
         }
 
+        public int GetPlayerID()
+        {
+            return player;
+        }
+
         public bool IsAdmin()
         {
             if (adminSet)

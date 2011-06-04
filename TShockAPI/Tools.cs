@@ -373,6 +373,7 @@ namespace TShockAPI
                         }
                     }
                 }
+                groups.Add(group);
             }
         }
 
@@ -403,6 +404,31 @@ namespace TShockAPI
 
             //sigh :(, ok, you fucked up the config files, congrats.
             return null;
+        }
+
+        /// <summary>
+        /// Returns a Group for a ip from users.txt
+        /// </summary>
+        /// <param name="ply">string ip</param>
+        public static Group GetGroupForIP(string ip)
+        {
+            ip = GetRealIP(ip);
+
+            StreamReader sr = new StreamReader("users.txt");
+            string data = sr.ReadToEnd();
+            data = data.Replace("\r", "");
+            string[] lines = data.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] args = lines[i].Split(' ');
+                if (args[0].Equals(ip))
+                {
+                    return GetGroup(args[1]);
+                }
+            }
+
+            return GetGroup("default");
         }
 
         public Tools() { }

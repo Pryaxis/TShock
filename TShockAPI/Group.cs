@@ -35,6 +35,10 @@ namespace TShockAPI
 
         public virtual bool HasPermission(string permission)
         {
+            if (permission.Equals(""))
+            {
+                return true;
+            }
             if (negatedPermissions.Contains(permission))
             {
                 return false;

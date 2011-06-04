@@ -10,6 +10,7 @@ namespace TShockAPI
     public class Commands
     {
         public delegate void CommandDelegate(CommandArgs args);
+        public static Command[] commands;
 
         public struct CommandArgs
         {
@@ -21,6 +22,37 @@ namespace TShockAPI
             public CommandArgs(string message, int x, int y, int id)
             {
                 Message = message; PlayerX = x; PlayerY = y; PlayerID = id;
+            }
+        }
+
+        public class Command
+        {
+            private string name;
+            private string permission;
+            CommandDelegate command;
+
+            public Command(string cmdName, string permissionNeeded, CommandDelegate cmd)
+            {
+                name = cmdName;
+                permission = permissionNeeded;
+                command = cmd;
+            }
+
+            public bool Run(string msg, TSPlayer ply)
+            {
+                if (!ply.group.HasPermission(permission))
+                {
+                    return false;
+                }
+
+                CommandArgs args = new CommandArgs();
+                args.Message = msg;
+                args.PlayerX = (int)ply.GetPlayer().position.X;
+                args.PlayerY = (int)ply.GetPlayer().position.Y;
+                args.PlayerID = ply.GetPlayerID();
+
+                command(args);
+                return true;
             }
         }
 
