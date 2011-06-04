@@ -7,7 +7,7 @@ namespace TShockAPI
 {
     class Tools
     {
-        private static List<Group> groups;
+        private static List<Group> groups = new List<Group>();
 
         /// <summary>
         /// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -418,7 +418,7 @@ namespace TShockAPI
         {
             ip = GetRealIP(ip);
 
-            StreamReader sr = new StreamReader("users.txt");
+            StreamReader sr = new StreamReader(FileTools.SaveDir + "users.txt");
             string data = sr.ReadToEnd();
             data = data.Replace("\r", "");
             string[] lines = data.Split('\n');
@@ -427,6 +427,10 @@ namespace TShockAPI
             {
                 string[] args = lines[i].Split(' ');
                 if (args.Length < 2)
+                {
+                    continue;
+                }
+                if (lines[i].StartsWith("#"))
                 {
                     continue;
                 }

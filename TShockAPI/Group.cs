@@ -76,7 +76,7 @@ namespace TShockAPI
         {
         }
 
-        new public virtual bool HasPermission(string permission)
+        public override bool HasPermission(string permission)
         {
             return true;
         }

@@ -10,7 +10,7 @@ namespace TShockAPI
     public class Commands
     {
         public delegate void CommandDelegate(CommandArgs args);
-        public static List<Command> commands;
+        public static List<Command> commands = new List<Command>();
 
         public struct CommandArgs
         {
