@@ -70,6 +70,7 @@ namespace TShockAPI
             {
                 SendMessage(i, msg);
             }
+            Log.Info("Broadcast: " + msg);
         }
 
         /// <summary>
@@ -81,6 +82,7 @@ namespace TShockAPI
         public static void SendMessage(int ply, string msg, float[] color)
         {
             NetMessage.SendData(0x19, ply, -1, msg, 255, color[0], color[1], color[2]);
+            Log.Info("Said: " + msg + " - To: " + Tools.FindPlayer(ply));
         }
 
         /// <summary>
@@ -91,6 +93,7 @@ namespace TShockAPI
         public static void SendMessage(int ply, string message)
         {
             NetMessage.SendData(0x19, ply, -1, message, 255, 0f, 255f, 0f);
+            Log.Info("Said: " + message + " - To: " + Tools.FindPlayer(ply));
         }
 
         /// <summary>
@@ -231,6 +234,7 @@ namespace TShockAPI
         public static void Kick(int ply, string reason)
         {
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
+            Log.Info("Kicked " + Tools.FindPlayer(ply) + " for : " + reason);
         }
 
         /// <summary>

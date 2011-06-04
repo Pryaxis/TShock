@@ -103,6 +103,8 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.Error, true);
+            Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
             GameHooks.OnPostInitialize += OnPostInit;
             GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
@@ -113,7 +115,9 @@ namespace TShockAPI
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc += new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
             ServerHooks.OnCommand += new ServerHooks.CommandD(ServerHooks_OnCommand);
+            Log.Info("Hooks initialized");
             Commands.InitCommands();
+            Log.Info("Commands initialized");
         }
 
         void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
@@ -129,6 +133,7 @@ namespace TShockAPI
             GameHooks.OnLoadContent -= new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
             ServerHooks.OnChat -= new Action<int, string, HandledEventArgs>(OnChat);
             ServerHooks.OnJoin -= new Action<int, AllowEventArgs>(OnJoin);
+            ServerHooks.OnCommand -= new ServerHooks.CommandD(ServerHooks_OnCommand);
             NetHooks.OnPreGetData -= GetData;
             NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
