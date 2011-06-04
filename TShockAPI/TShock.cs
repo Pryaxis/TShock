@@ -137,8 +137,6 @@ namespace TShockAPI
             NetHooks.OnPreGetData -= GetData;
             NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
-            ConfigurationManager.WriteJsonConfiguration();
-            Log.Info("Shutting down...");
         }
 
         /*
@@ -178,10 +176,20 @@ namespace TShockAPI
                         int y = br.ReadInt32();
                         byte typetile = br.ReadByte();
 
+                        if (type == 0 || type == 1)
+                            if (ConfigurationManager.spawnProtect)
+                                if (!players[e.Msg.whoAmI].IsAdmin())
+                                {
+                                    var flag = CheckSpawn(x, y);
+                                    if (flag)
+                                    {
+                                        Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                        e.Handled = true;
+                                    }
+                                }
+
                         if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
-                        {
                             players[e.Msg.whoAmI].tileThreshold++;
-                        }
                     }
                     return;
                 }
@@ -331,6 +339,30 @@ namespace TShockAPI
                         Tools.HandleGriefer(e.Msg.whoAmI);
                         e.Handled = true;
                     }
+                }
+                else if (e.MsgID == 0x30)
+                {
+                    int x;
+                    int y;
+                    byte liquid;
+                    bool lava;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        x = br.ReadInt32();
+                        y = br.ReadInt32();
+                        liquid = br.ReadByte();
+                        lava = br.ReadBoolean();
+                    }
+                    if (ConfigurationManager.spawnProtect)
+                        if (!players[e.Msg.whoAmI].IsAdmin())
+                        {
+                            var flag = CheckSpawn(x, y);
+                            if (flag)
+                            {
+                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                e.Handled = true;
+                            }
+                        }
                 }
             }
             catch (Exception ex)
@@ -682,6 +714,17 @@ namespace TShockAPI
                     return true;
             }
             return false;
+        }
+
+        public static bool CheckSpawn(int x, int y)
+        {
+            Vector2 tile = new Vector2((float)x, (float)y);
+            Vector2 spawn = new Vector2((float)Main.spawnTileX, (float)Main.spawnTileY);
+            var distance = Vector2.Distance(spawn, tile);
+            if (distance > 5)
+                return false;
+            else
+                return true;
         }
     }
 }
