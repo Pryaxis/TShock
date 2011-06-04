@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Terraria;
+using System.Collections.Generic;
 
 namespace TShockAPI
 {
@@ -116,7 +117,7 @@ namespace TShockAPI
         /// <returns>int player</returns>
         public static int FindPlayer(string ply)
         {
-            int pl = -1;
+            /*int pl = -1;
             for (int i = 0; i < Main.player.Length; i++)
             {
                 if ((ply.ToLower()) == Main.player[i].name.ToLower())
@@ -125,7 +126,17 @@ namespace TShockAPI
                     break;
                 }
             }
-            return pl;
+            return pl;*/
+            List<int> found = new List<int>();
+            for (int i = 0; i < Main.player.Length; i++)
+                if (Main.player[i].name.ToLower().Contains(ply.ToLower()))
+                    found.Add(i);
+            if (found.Count == 1)
+                return found[0];
+            else if (found.Count > 1)
+                return -2;
+            else
+                return -1;
         }
 
         /// <summary>
@@ -243,10 +254,10 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Adds someone to greifers.txt
+        /// Adds someone to griefers.txt
         /// </summary>
         /// <param name="ply">int player</param>
-        public static void HandleGreifer(int ply)
+        public static void HandleGriefer(int ply)
         {
             if (!TShock.players[ply].IsAdmin())
             {
@@ -258,7 +269,7 @@ namespace TShockAPI
                 Netplay.serverSock[ply].kill = true;
                 Netplay.serverSock[ply].Reset();
                 NetMessage.syncPlayers();
-                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for greifing.");
+                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banGriefer ? "banned " : "kicked ") + "for griefing.");
             }
         }
 

@@ -54,6 +54,7 @@ namespace TShockAPI
             TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
+            TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
@@ -63,7 +64,7 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 5).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
+            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
@@ -73,6 +74,8 @@ namespace TShockAPI
                 else
                     Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
             }
+            else if (Tools.FindPlayer(plStr) == -2)
+                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
@@ -81,7 +84,7 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 4).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || plStr == ""))
+            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
@@ -91,11 +94,19 @@ namespace TShockAPI
                 else
                     Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
             }
+            else if (Tools.FindPlayer(plStr) == -2)
+                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
             else
                 Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
 
         public static void Off(CommandArgs args)
+        {
+            WorldGen.saveWorld();
+            Netplay.disconnect = true;
+        }
+
+        public static void OffNoSave(CommandArgs args)
         {
             Netplay.disconnect = true;
         }
@@ -437,9 +448,9 @@ namespace TShockAPI
             int page = 1;
             if (args.Message.Split(' ').Length == 2)
                 int.TryParse(args.Message.Split(' ')[1], out page);
-            if (commands.Count > (20 * (page - 1)))
+            if (commands.Count > (15 * (page - 1)))
             {
-                for (int j = (20 * (page - 1)); j < commands.Count; j++)
+                for (int j = (15 * (page - 1)); j < commands.Count; j++)
                 {
                     if (i == 3) break;
                     if (j == commands.Count - 1)
@@ -450,7 +461,7 @@ namespace TShockAPI
                     if ((h - 1) % 5 == 0 && (h - 1) != 0)
                     {
                         Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
-                        tempstring = "";
+                        tempstring = "/" + commands.Keys.ElementAt(j) + ", ";
                         i++;
                         h++;
                     }
@@ -461,7 +472,7 @@ namespace TShockAPI
                     }
                 }
             }
-            if (commands.Count > (20 * page))
+            if (commands.Count > (15 * page))
             { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
             Tools.SendMessage(ply, "Terraria commands:");
             Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });

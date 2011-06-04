@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 5, 0, 0);
+        public static Version VersionNum = new Version(1, 5, 0, 1);
 
         public static bool shownVersion = false;
 
@@ -199,14 +199,14 @@ namespace TShockAPI
                     life = br.ReadInt16();
                     maxLife = br.ReadInt16();
                 }
-                if (!players[ply].firstTimeHealth)
-                {
-                    players[ply].firstTimeHealth = true;
-                }
                 if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                {
-                    Tools.HandleCheater(ply);
-                }
+                    if (players[ply].syncHP)
+                    {
+                        if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                            Tools.HandleCheater(ply);
+                    }
+                    else
+                        players[ply].syncHP = true;
             }
             else if (e.MsgID == 0x2a)
             {
@@ -218,14 +218,14 @@ namespace TShockAPI
                     mana = br.ReadInt16();
                     maxmana = br.ReadInt16();
                 }
-                if (!players[ply].firstTimeMana)
-                {
-                    players[ply].firstTimeMana = true;
-                }
-                else if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                {
-                    Tools.HandleCheater(ply);
-                }
+                if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                    if (players[ply].syncMP)
+                    {
+                        if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                            Tools.HandleCheater(ply);
+                    }
+                    else
+                        players[ply].syncMP = true;
             }
             else if (e.MsgID == 0x19)
             {
@@ -238,6 +238,45 @@ namespace TShockAPI
                 {
                     //fuck you faggot
                     Tools.HandleCheater(ply);
+                }
+            }
+            else if (e.MsgID == 0x1B)
+            {
+                Int16 ident;
+                float posx;
+                float posy;
+                float velx;
+                float vely;
+                float knockback;
+                Int16 dmg;
+                byte owner;
+                byte type;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    ident = br.ReadInt16();
+                    posx = br.ReadSingle();
+                    posy = br.ReadSingle();
+                    velx = br.ReadSingle();
+                    vely = br.ReadSingle();
+                    knockback = br.ReadSingle();
+                    dmg = br.ReadInt16();
+                    owner = br.ReadByte();
+                    type = br.ReadByte();
+                }
+                if (type == 29 || type == 28)
+                {
+                    if (!players[e.Msg.whoAmI].IsAdmin())
+                    {
+                        if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
+                        {
+                            int i = e.Msg.whoAmI;
+                            if (ConfigurationManager.banBoom)
+                                FileTools.WriteGrief((int)i);
+                            Tools.Kick((int)i, "Explosives was thrown.");
+                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
+                            e.Handled = true;
+                        }
+                    }
                 }
             }
         }
@@ -290,9 +329,16 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
             string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
-            if (FileTools.CheckBanned(ip) || FileTools.CheckCheat(ip) || FileTools.CheckGreif(ip))
+            if (FileTools.CheckBanned(ip))
             {
                 Tools.Kick(ply, "You are banned.");
+            } else if (FileTools.CheckCheat(ip))
+            {
+                Tools.Kick(ply, "You were flagged for cheating.");
+            }
+            else if (FileTools.Checkgrief(ip))
+            {
+                Tools.Kick(ply, "You were flagged for griefing.");
             }
             if (!FileTools.OnWhitelist(ip))
             {
@@ -320,13 +366,17 @@ namespace TShockAPI
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false) { continue; }
-                if (players[i].tileThreshold >= 5)
+                if (players[i].tileThreshold >= 20)
                 {
                     if (Main.player[i] != null)
                     {
-                        FileTools.WriteGrief((int)i);
-                        Tools.Kick((int)i, "Kill tile abuse detected.");
-                        Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        {
+                            if (ConfigurationManager.banTnt)
+                                FileTools.WriteGrief((int)i);
+                            Tools.Kick((int)i, "Kill tile abuse detected.");
+                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                        }
                     }
                     players[i].tileThreshold = 0;
                 }
