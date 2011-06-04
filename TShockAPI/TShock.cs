@@ -364,6 +364,8 @@ namespace TShockAPI
                             }
                         }
                 }
+                else if (e.MsgID == 0x22) // Client only KillTile
+                    e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
             }
             catch (Exception ex)
             {
