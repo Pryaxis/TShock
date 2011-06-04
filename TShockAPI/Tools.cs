@@ -323,6 +323,35 @@ namespace TShockAPI
         {
             groups = new List<Group>();
             groups.Add(new SuperAdminGroup("superadmin"));
+
+            StreamReader sr = new StreamReader(FileTools.SaveDir + "groups.txt");
+            string data = sr.ReadToEnd();
+            data = data.Replace('\r', new char());
+            string[] lines = data.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] args = lines[i].Split(' ');
+                string name = args[0];
+                string parent = args[1];
+                Group group;
+                if (parent.Equals("null"))
+                {
+                    group = new Group(name);
+                    groups.Add(group);
+                }
+                else
+                {
+                    for (int j = 0; j < groups.Count; j++)
+                    {
+                        if (groups[j].GetName().Equals(parent))
+                        {
+                            group = new Group(name, groups[j]);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
