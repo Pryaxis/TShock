@@ -112,7 +112,13 @@ namespace TShockAPI
             NetHooks.OnPreGetData += GetData;
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc += new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
+            ServerHooks.OnCommand += new ServerHooks.CommandD(ServerHooks_OnCommand);
             Commands.InitCommands();
+        }
+
+        void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
+        {
+            
         }
 
         public override void DeInitialize()
@@ -164,7 +170,18 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x1e)
             {
-                Main.player[e.Msg.whoAmI].hostile = true;
+                byte id;
+                bool pvp;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    id = br.ReadByte();
+                    pvp = br.ReadBoolean();
+                }
+                Main.player[e.Msg.whoAmI].hostile = pvp;
+                if (id != e.Msg.whoAmI)
+                    Main.player[e.Msg.whoAmI].hostile = true;
+                if (ConfigurationManager.permaPvp)
+                    Main.player[e.Msg.whoAmI].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
                 e.Handled = true;
             }
@@ -574,11 +591,11 @@ namespace TShockAPI
 
         public static bool CheckInventory(int plr)
         {
-            /*for (int i = 0; i < 44; i++)
+            for (int i = 0; i < 44; i++)
             {
                 if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
                     return true;
-            }*/
+            }
             return false;
         }
     }
