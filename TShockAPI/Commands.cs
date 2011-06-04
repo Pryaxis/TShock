@@ -10,7 +10,7 @@ namespace TShockAPI
     public class Commands
     {
         public delegate void CommandDelegate(CommandArgs args);
-        public static Command[] commands;
+        public static List<Command> commands;
 
         public struct CommandArgs
         {
@@ -58,37 +58,35 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
-            TShock.admincommandList.Add("kick", new CommandDelegate(Kick));
-            TShock.admincommandList.Add("ban", new CommandDelegate(Ban));
-            TShock.admincommandList.Add("off", new CommandDelegate(Off));
-            TShock.admincommandList.Add("reload", new CommandDelegate(Reload));
-            TShock.admincommandList.Add("dropmeteor", new CommandDelegate(DropMeteor));
-            TShock.admincommandList.Add("star", new CommandDelegate(Star));
-            TShock.admincommandList.Add("bloodmoon", new CommandDelegate(Bloodmoon));
-            TShock.admincommandList.Add("eater", new CommandDelegate(Eater));
-            TShock.admincommandList.Add("eye", new CommandDelegate(Eye));
-            TShock.admincommandList.Add("skeletron", new CommandDelegate(Skeletron));
-            TShock.admincommandList.Add("hardcore", new CommandDelegate(Hardcore));
-            TShock.admincommandList.Add("invade", new CommandDelegate(Invade));
-            TShock.admincommandList.Add("password", new CommandDelegate(Password));
-            TShock.admincommandList.Add("save", new CommandDelegate(Save));
-            TShock.admincommandList.Add("spawn", new CommandDelegate(Spawn));
-            TShock.admincommandList.Add("tp", new CommandDelegate(TP));
-            TShock.admincommandList.Add("tphere", new CommandDelegate(TPHere));
-            TShock.admincommandList.Add("spawnmob", new CommandDelegate(SpawnMob));
-            TShock.admincommandList.Add("item", new CommandDelegate(Item));
-            TShock.admincommandList.Add("give", new CommandDelegate(Give));
-            TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
-            TShock.admincommandList.Add("butcher", new CommandDelegate(Butcher));
-            TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
-            TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
-            TShock.admincommandList.Add("time", new CommandDelegate(Time));
-            TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
-            TShock.admincommandList.Add("help", new CommandDelegate(Help));
-            TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
-            TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
-            TShock.commandList.Add("help", new CommandDelegate(Help));
-            TShock.commandList.Add("kill", new CommandDelegate(Kill));
+            commands.Add(new Command("kick", "kick", new CommandDelegate(Kick)));
+            commands.Add(new Command("ban", "ban", new CommandDelegate(Ban)));
+            commands.Add(new Command("off", "power", new CommandDelegate(Off)));
+            commands.Add(new Command("reload", "cfg", new CommandDelegate(Reload)));
+            commands.Add(new Command("dropmetor", "causeevents", new CommandDelegate(DropMeteor)));
+            commands.Add(new Command("star", "causeevents", new CommandDelegate(Star)));
+            commands.Add(new Command("bloodmoon", "causeevents", new CommandDelegate(Bloodmoon)));
+            commands.Add(new Command("eater", "spawnboss", new CommandDelegate(Eater)));
+            commands.Add(new Command("eye", "spawnboss", new CommandDelegate(Eye)));
+            commands.Add(new Command("skeletron", "spawnboss", new CommandDelegate(Skeletron)));
+            commands.Add(new Command("hardcore", "cfg", new CommandDelegate(Hardcore)));
+            commands.Add(new Command("invade", "causeevents", new CommandDelegate(Invade)));
+            commands.Add(new Command("password", "cfg", new CommandDelegate(Password)));
+            commands.Add(new Command("save", "cfg", new CommandDelegate(Save)));
+            commands.Add(new Command("spawn", "tp", new CommandDelegate(Spawn)));
+            commands.Add(new Command("tp", "tp", new CommandDelegate(TP)));
+            commands.Add(new Command("tphere", "tp", new CommandDelegate(TPHere)));
+            commands.Add(new Command("spawnmob", "spawnmob", new CommandDelegate(SpawnMob)));
+            commands.Add(new Command("item", "cheat", new CommandDelegate(Item)));
+            commands.Add(new Command("give", "cheat", new CommandDelegate(Give)));
+            commands.Add(new Command("heal", "cheat", new CommandDelegate(Heal)));
+            commands.Add(new Command("butcher", "cheat", new CommandDelegate(Butcher)));
+            commands.Add(new Command("maxspawns", "cfg", new CommandDelegate(MaxSpawns)));
+            commands.Add(new Command("spawnrate", "cfg", new CommandDelegate(SpawnRate)));
+            commands.Add(new Command("time", "cfg", new CommandDelegate(Time)));
+            commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
+            commands.Add(new Command("help", "", new CommandDelegate(Help)));
+            commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
+            commands.Add(new Command("off-nosave", "power", new CommandDelegate(OffNoSave)));
         }
 
         #region Command Methods
