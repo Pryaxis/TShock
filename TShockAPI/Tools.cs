@@ -319,18 +319,22 @@ namespace TShockAPI
             tr.Close();
         }
 
-        private static void LoadGroups()
+        public static void LoadGroups()
         {
             groups = new List<Group>();
             groups.Add(new SuperAdminGroup("superadmin"));
 
             StreamReader sr = new StreamReader(FileTools.SaveDir + "groups.txt");
             string data = sr.ReadToEnd();
-            data = data.Replace('\r', new char());
+            data = data.Replace("\r", "");
             string[] lines = data.Split('\n');
 
             for (int i = 0; i < lines.Length; i++)
             {
+                if (lines[i].StartsWith("#"))
+                {
+                    continue;
+                }
                 string[] args = lines[i].Split(' ');
                 string name = args[0];
                 string parent = args[1];

@@ -52,6 +52,7 @@ namespace TShockAPI
 
         static TShock()
         {
+            Tools.LoadGroups();
             #region Blacklisted tiles
 
             BlacklistTiles = new bool[0x80];

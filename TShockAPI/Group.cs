@@ -33,7 +33,7 @@ namespace TShockAPI
             return parent;
         }
 
-        public bool HasPermission(string permission)
+        public virtual bool HasPermission(string permission)
         {
             if (negatedPermissions.Contains(permission))
             {
@@ -62,7 +62,7 @@ namespace TShockAPI
         {
         }
 
-        new public bool HasPermission(string permission)
+        new public virtual bool HasPermission(string permission)
         {
             return true;
         }
