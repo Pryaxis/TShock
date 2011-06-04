@@ -176,6 +176,7 @@ namespace TShockAPI
                         byte type = br.ReadByte();
                         int x = br.ReadInt32();
                         int y = br.ReadInt32();
+                        byte typetile = br.ReadByte();
 
                         if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                         {
@@ -327,7 +328,8 @@ namespace TShockAPI
                     }
                     if (id != e.Msg.whoAmI)
                     {
-                        Tools.HandleCheater(e.Msg.whoAmI);
+                        Tools.HandleGriefer(e.Msg.whoAmI);
+                        e.Handled = true;
                     }
                 }
             }
