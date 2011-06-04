@@ -8,6 +8,9 @@ namespace TShockAPI
     public class TSPlayer
     {
         public uint tileThreshold;
+        public bool firstTimeHealth;
+        public bool firstTimeMana;
+
         private int player;
         private bool admin;
         private bool adminSet;

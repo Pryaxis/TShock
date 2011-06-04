@@ -199,6 +199,10 @@ namespace TShockAPI
                     life = br.ReadInt16();
                     maxLife = br.ReadInt16();
                 }
+                if (!players[ply].firstTimeHealth)
+                {
+                    players[ply].firstTimeHealth = true;
+                }
                 if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                 {
                     Tools.HandleCheater(ply);
@@ -207,14 +211,18 @@ namespace TShockAPI
             else if (e.MsgID == 0x2a)
             {
                 byte ply;
-                Int16 life, maxLife;
+                Int16 mana, maxmana;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
                     ply = br.ReadByte();
-                    life = br.ReadInt16();
-                    maxLife = br.ReadInt16();
+                    mana = br.ReadInt16();
+                    maxmana = br.ReadInt16();
                 }
-                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                if (!players[ply].firstTimeMana)
+                {
+                    players[ply].firstTimeMana = true;
+                }
+                else if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
                 {
                     Tools.HandleCheater(ply);
                 }
