@@ -245,7 +245,7 @@ namespace TShockAPI
         /// <param name="ply">int player</param>
         public static void HandleCheater(int ply)
         {
-            if (!TShock.players[ply].IsAdmin())
+            if (!TShock.players[ply].group.HasPermission("ignorecheatdetection"))
             {
                 string cheater = Tools.FindPlayer(ply);
                 string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
