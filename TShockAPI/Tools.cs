@@ -326,15 +326,15 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Shows a MOTD to the player
+        /// Returns a Group from the name of the group
         /// </summary>
-        /// <param name="ply">int player</param>
-        public static Group GetGroup(string name)
+        /// <param name="ply">string groupName</param>
+        public static Group GetGroup(string groupName)
         {
             //first attempt on cached groups
             for (int i = 0; i < groups.Count; i++)
             {
-                if (groups[i].GetName().Equals(name))
+                if (groups[i].GetName().Equals(groupName))
                 {
                     return groups[i];
                 }
@@ -344,7 +344,7 @@ namespace TShockAPI
 
             for (int i = 0; i < groups.Count; i++)
             {
-                if (groups[i].GetName().Equals(name))
+                if (groups[i].GetName().Equals(groupName))
                 {
                     return groups[i];
                 }
