@@ -103,7 +103,7 @@ namespace TShockAPI
 
         public override void Initialize()
         {
-            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.Error, true);
+            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
             GameHooks.OnPostInitialize += OnPostInit;
