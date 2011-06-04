@@ -321,6 +321,8 @@ namespace TShockAPI
 
         private static void LoadGroups()
         {
+            groups = new List<Group>();
+            groups.Add(new SuperAdminGroup("superadmin"));
         }
 
         /// <summary>

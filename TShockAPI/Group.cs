@@ -9,11 +9,18 @@ namespace TShockAPI
     {
         private string name;
         private Group parent = null;
+        private List<string> permissions = new List<string>();
+        private List<string> negatedPermissions = new List<string>();
 
         public Group(string groupName, Group parentGroup = null)
         {
             name = groupName;
             parent = parentGroup;
+        }
+
+        public Group()
+        {
+            throw new System.Exception("Called Group constructor with no parameters");
         }
 
         public string GetName()
@@ -28,7 +35,35 @@ namespace TShockAPI
 
         public bool HasPermission(string permission)
         {
-            //TODO: implement this
+            if (negatedPermissions.Contains(permission))
+            {
+                return false;
+            }
+            else if (permissions.Contains(permission))
+            {
+                return true;
+            }
+            else if (parent != null)
+            {
+                //inception
+                return parent.HasPermission(permission);
+            }
+            return false;
+        }
+    }
+
+    public class SuperAdminGroup : Group
+    {
+        public SuperAdminGroup(string groupName, Group parentGroup = null) : base(groupName, parentGroup)
+        {
+        }
+
+        public SuperAdminGroup() : base()
+        {
+        }
+
+        new public bool HasPermission(string permission)
+        {
             return true;
         }
     }
