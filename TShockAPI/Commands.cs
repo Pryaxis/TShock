@@ -74,7 +74,7 @@ namespace TShockAPI
         {
             commands.Add(new Command("kick", "kick", new CommandDelegate(Kick)));
             commands.Add(new Command("ban", "ban", new CommandDelegate(Ban)));
-            commands.Add(new Command("off", "power", new CommandDelegate(Off)));
+            commands.Add(new Command("off", "maintenance", new CommandDelegate(Off)));
             commands.Add(new Command("reload", "cfg", new CommandDelegate(Reload)));
             commands.Add(new Command("dropmetor", "causeevents", new CommandDelegate(DropMeteor)));
             commands.Add(new Command("star", "causeevents", new CommandDelegate(Star)));
@@ -100,7 +100,7 @@ namespace TShockAPI
             commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
             commands.Add(new Command("help", "", new CommandDelegate(Help)));
             commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
-            commands.Add(new Command("off-nosave", "power", new CommandDelegate(OffNoSave)));
+            commands.Add(new Command("off-nosave", "maintenance", new CommandDelegate(OffNoSave)));
         }
 
         #region Command Methods
@@ -557,20 +557,14 @@ namespace TShockAPI
 
         public static void Kill(CommandArgs args)
         {
-            bool isadmin = TShock.players[args.PlayerID].IsAdmin(); ;
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-            if (msgargs.Length == 2 && isadmin)
+            if (msgargs.Length == 2)
             {
                 int player = -1;
                 player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
                 Tools.SendMessage(args.PlayerID, "You just killed " + Tools.FindPlayer(player) + "!");
                 Tools.SendMessage(player, Tools.FindPlayer(args.PlayerID) + " just killed you!");
                 TShock.KillMe(player);
-            }
-            else
-            {
-                Tools.SendMessage(args.PlayerID, "You just suicided.");
-                TShock.KillMe(args.PlayerID);
             }
         }
 

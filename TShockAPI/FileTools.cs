@@ -89,7 +89,6 @@ namespace TShockAPI
             }
             if (!System.IO.File.Exists(SaveDir + "bans.txt")) { FileTools.CreateFile(SaveDir + "bans.txt"); }
             if (!System.IO.File.Exists(SaveDir + "cheaters.txt")) { FileTools.CreateFile(SaveDir + "cheaters.txt"); }
-            if (!System.IO.File.Exists(SaveDir + "admins.txt")) { FileTools.CreateFile(SaveDir + "admins.txt"); }
             if (!System.IO.File.Exists(SaveDir + "grief.txt")) { FileTools.CreateFile(SaveDir + "grief.txt"); }
             if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); }
             if (!System.IO.File.Exists(SaveDir + "groups.txt")) 

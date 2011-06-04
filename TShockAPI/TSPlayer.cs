@@ -13,8 +13,6 @@ namespace TShockAPI
         public Group group;
 
         private int player;
-        private bool admin;
-        private bool adminSet;
 
         public TSPlayer(int ply)
         {
@@ -29,17 +27,6 @@ namespace TShockAPI
         public int GetPlayerID()
         {
             return player;
-        }
-
-        public bool IsAdmin()
-        {
-            if (adminSet)
-            {
-                return admin;
-            }
-            admin = Tools.IsAdmin(player);
-            adminSet = true;
-            return admin;
         }
     }
 }

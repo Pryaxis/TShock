@@ -290,7 +290,7 @@ namespace TShockAPI
                 }
                 if (type == 29 || type == 28)
                 {
-                    if (!players[e.Msg.whoAmI].IsAdmin())
+                    if (!players[e.Msg.whoAmI].group.HasPermission("ignoregriefdetection"))
                     {
                         if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
                         {
@@ -338,7 +338,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (TShock.players[who].IsAdmin() && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
+            if (TShock.players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
             {
                 StartInvasion();
             }
@@ -452,7 +452,7 @@ namespace TShockAPI
         {
             if (!shownVersion)
             {
-                if (TShock.players[ply].IsAdmin())
+                if (TShock.players[ply].group.HasPermission("maintenance"))
                 {
                     WebClient client = new WebClient();
                     client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");

@@ -191,44 +191,6 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Finds a player, reads admins.txt, and determines if their IP address is on that list.
-        /// </summary>
-        /// <param name="ply">int player</param>
-        /// <returns>true/false</returns>
-        public static bool IsAdmin(int ply)
-        {
-            string remoteEndPoint = Convert.ToString((Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-            string[] remoteEndPointIP = remoteEndPoint.Split(':');
-            TextReader tr = new StreamReader(FileTools.SaveDir + "admins.txt");
-            string adminlist = tr.ReadToEnd();
-            tr.Close();
-            if (adminlist.Contains(remoteEndPointIP[0]))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Finds a player based on their name, reads admins.txt, and determines if thier IP address is on that list.
-        /// </summary>
-        /// <param name="ply"></param>
-        /// <returns></returns>
-        public static bool IsAdmin(string ply)
-        {
-            string remoteEndPoint = Convert.ToString((Netplay.serverSock[Tools.FindPlayer(ply)].tcpClient.Client.RemoteEndPoint));
-            string[] remoteEndPointIP = remoteEndPoint.Split(':');
-            TextReader tr = new StreamReader(FileTools.SaveDir + "admins.txt");
-            string adminlist = tr.ReadToEnd();
-            tr.Close();
-            if (adminlist.Contains(remoteEndPointIP[0]))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Kicks a player from the server.
         /// </summary>
         /// <param name="ply">int player</param>
@@ -265,7 +227,7 @@ namespace TShockAPI
         /// <param name="ply">int player</param>
         public static void HandleGriefer(int ply)
         {
-            if (!TShock.players[ply].IsAdmin())
+            if (!TShock.players[ply].group.HasPermission("ignoregriefdetection"))
             {
                 string cheater = Tools.FindPlayer(ply);
                 string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
