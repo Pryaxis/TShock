@@ -721,7 +721,7 @@ namespace TShockAPI
             Vector2 tile = new Vector2((float)x, (float)y);
             Vector2 spawn = new Vector2((float)Main.spawnTileX, (float)Main.spawnTileY);
             var distance = Vector2.Distance(spawn, tile);
-            if (distance > 5)
+            if (distance > (float)ConfigurationManager.spawnProtectRadius)
                 return false;
             else
                 return true;
