@@ -377,21 +377,27 @@ namespace TShockAPI
 
                 if (msg.StartsWith("/"))
                 {
-                    Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
-                    var commands = commandList;
-                    if (TShock.players[ply].IsAdmin())
-                        commands = admincommandList;
-
-                    Commands.CommandDelegate command;
-                    if (commands.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
+                    //Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
+                    Commands.Command cmd = null;
+                    for (int i = 0; i < Commands.commands.Count; i++)
                     {
-                        Log.Info(Tools.FindPlayer(ply) + " executed " + msg);
-                        command.Invoke(args);
+                        if (Commands.commands[i].Name().Equals(msg.Split(' ')[0].TrimStart('/')))
+                        {
+                            cmd = Commands.commands[i];
+                        }
+                    }
+
+                    if (cmd == null)
+                    {
+                        Tools.SendMessage(ply, "That command does not exist, try /help", new float[] { 255, 0, 0 });
                     }
                     else
                     {
-                        Log.Info(Tools.FindPlayer(ply) + " tried to execute " + msg);
-                        Tools.SendMessage(ply, "Invalid command or no permissions! Try /help.", new float[] { 255f, 0f, 0f });
+                        if (!cmd.Run(msg, players[ply]))
+                        {
+                            Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() + " that s/he did not have access to!");
+                            Tools.SendMessage(ply, "YOU DO NOT HAVE ACCESS TO THAT COMMAND YOU LITTLE SHIT!", new float[] { 255, 0, 0 });
+                        }
                     }
                     handler.Handled = true;
                 }

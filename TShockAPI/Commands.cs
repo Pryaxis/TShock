@@ -54,6 +54,11 @@ namespace TShockAPI
                 command(args);
                 return true;
             }
+
+            public string Name()
+            {
+                return name;
+            }
         }
 
         public static void InitCommands()
