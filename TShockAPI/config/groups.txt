@@ -3,10 +3,12 @@
 #if there is no parent, put null instead
 #groups inherit permissions from their parents
 #put a ! before a permission to negate it
-#currently avaliable permissions: kick ban ignorecheatdetection
 #Do not remove the group default
 #Do not name a group SuperAdmin, that is hard-coded into the code, it grants total permissions
 #ALWAYS DECLARE A GROUP'S PARENT BEFORE YOU DECLARE THE GROUP
+
+#currently avaliable permissions: kick ban ignorecheatdetection power cfg causeevents spawnboss tp spawnmob cheat kill pvpfun
+
 default null kill
 newadmin default kick
 admin newadmin ban causeevents spawnboss spawnmob tp

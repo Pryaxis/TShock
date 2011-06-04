@@ -336,6 +336,10 @@ namespace TShockAPI
                     continue;
                 }
                 string[] args = lines[i].Split(' ');
+                if (args.Length < 2)
+                {
+                    continue;
+                }
                 string name = args[0];
                 string parent = args[1];
                 Group group = null;
@@ -422,6 +426,10 @@ namespace TShockAPI
             for (int i = 0; i < lines.Length; i++)
             {
                 string[] args = lines[i].Split(' ');
+                if (args.Length < 2)
+                {
+                    continue;
+                }
                 if (args[0].Equals(ip))
                 {
                     return GetGroup(args[1]);
