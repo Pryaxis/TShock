@@ -260,7 +260,7 @@ namespace TShockAPI
                         else
                             players[ply].syncMP = true;
                 }
-                else if (e.MsgID == 0x19)
+                else if (e.MsgID == 0x19) // Chat Text
                 {
                     byte ply;
                     using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
@@ -273,7 +273,7 @@ namespace TShockAPI
                         Tools.HandleCheater(ply);
                     }
                 }
-                else if (e.MsgID == 0x1B)
+                else if (e.MsgID == 0x1B) // New Projectile
                 {
                     Int16 ident;
                     float posx;
@@ -310,6 +310,24 @@ namespace TShockAPI
                                 e.Handled = true;
                             }
                         }
+                    }
+                }
+                else if (e.MsgID == 0x2C) // KillMe
+                {
+                    byte id;
+                    byte hitdirection;
+                    short dmg;
+                    bool pvp;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        id = br.ReadByte();
+                        hitdirection = br.ReadByte();
+                        dmg = br.ReadInt16();
+                        pvp = br.ReadBoolean();
+                    }
+                    if (id != e.Msg.whoAmI)
+                    {
+                        Tools.HandleCheater(e.Msg.whoAmI);
                     }
                 }
             }
