@@ -103,6 +103,14 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            try
+            {
+                FileTools.SetupConfig();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -471,14 +479,6 @@ namespace TShockAPI
 
         void OnPreInit()
         {
-            try
-            {
-                FileTools.SetupConfig();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
         }
 
         void OnPostInit()

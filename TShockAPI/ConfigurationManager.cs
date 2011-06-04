@@ -66,6 +66,10 @@ namespace TShockAPI
 
         public static void WriteJsonConfiguration()
         {
+            if (!System.IO.Directory.Exists(FileTools.SaveDir))
+            {
+                System.IO.Directory.CreateDirectory(FileTools.SaveDir);
+            }
             if (System.IO.File.Exists(FileTools.SaveDir + "config.json"))
             {
                 return;
