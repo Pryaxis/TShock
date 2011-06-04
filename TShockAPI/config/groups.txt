@@ -1,0 +1,12 @@
+#Format
+#name parent permisson1 permission2 permissionN
+#if there is no parent, put null instead
+#groups inherit permissions from their parents
+#put a ! before a permission to negate it
+#currently avaliable permissions: kick ban ignorecheatdetection
+#Do not remove the group default
+#Do not name a group SuperAdmin, that is hard-coded into the code, it grants total permissions
+default null
+admin default kick ban
+trustedadmin admin ignorecheatdetection
+newadmin admin !ban

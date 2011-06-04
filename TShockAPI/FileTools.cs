@@ -152,6 +152,7 @@ namespace TShockAPI
             }
             return false;
         }
+
         public FileTools() { }
     }
 }

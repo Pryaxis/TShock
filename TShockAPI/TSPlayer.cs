@@ -10,6 +10,7 @@ namespace TShockAPI
         public uint tileThreshold;
         public bool syncHP = false;
         public bool syncMP = false;
+        public Group group;
 
         private int player;
         private bool admin;

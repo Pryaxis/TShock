@@ -7,6 +7,8 @@ namespace TShockAPI
 {
     class Tools
     {
+        private static List<Group> groups;
+
         /// <summary>
         /// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
         /// </summary>
@@ -315,6 +317,39 @@ namespace TShockAPI
                 Tools.SendMessage(ply, foo);
             }
             tr.Close();
+        }
+
+        private static void LoadGroups()
+        {
+        }
+
+        /// <summary>
+        /// Shows a MOTD to the player
+        /// </summary>
+        /// <param name="ply">int player</param>
+        public static Group GetGroup(string name)
+        {
+            //first attempt on cached groups
+            for (int i = 0; i < groups.Count; i++)
+            {
+                if (groups[i].GetName().Equals(name))
+                {
+                    return groups[i];
+                }
+            }
+            //shit, it didnt work, reload and try again
+            LoadGroups();
+
+            for (int i = 0; i < groups.Count; i++)
+            {
+                if (groups[i].GetName().Equals(name))
+                {
+                    return groups[i];
+                }
+            }
+
+            //sigh :(, ok, you fucked up the config files, congrats.
+            return null;
         }
 
         public Tools() { }

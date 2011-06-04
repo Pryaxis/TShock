@@ -44,7 +44,6 @@ Thumbs.db
 *.sdf
 *.opensdf
 *.cache
-*.txt
 *.pdb
 *.csproj.user
 */_ReSharper*/*
