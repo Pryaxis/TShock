@@ -1,0 +1,3 @@
+Documentation, NPC lists, Spawn lists, and more can be found on GitHub at:
+
+https://github.com/TShock/TShock/wiki
