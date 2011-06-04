@@ -379,6 +379,7 @@ namespace TShockAPI
                 }
                 groups.Add(group);
             }
+            sr.Close();
         }
 
         /// <summary>
@@ -439,7 +440,7 @@ namespace TShockAPI
                     return GetGroup(args[1]);
                 }
             }
-
+            sr.Close();
             return GetGroup("default");
         }
 

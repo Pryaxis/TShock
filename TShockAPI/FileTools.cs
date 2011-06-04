@@ -2,6 +2,7 @@
 using System.IO;
 using Terraria;
 using System.Web;
+using System.Runtime.InteropServices;
 
 namespace TShockAPI
 {
@@ -49,6 +50,7 @@ namespace TShockAPI
             tw.WriteLine("[" + Main.player[ply].name + "] [" + Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString()) + "]");
             tw.Close();
         }
+
         /// <summary>
         /// Writes an error message to errors.txt
         /// </summary>
@@ -69,6 +71,7 @@ namespace TShockAPI
                 tw.Close();
             }
         }
+
         /// <summary>
         /// Sets up the configuration file for all variables, and creates any missing files.
         /// </summary>
@@ -89,8 +92,20 @@ namespace TShockAPI
             if (!System.IO.File.Exists(SaveDir + "admins.txt")) { FileTools.CreateFile(SaveDir + "admins.txt"); }
             if (!System.IO.File.Exists(SaveDir + "grief.txt")) { FileTools.CreateFile(SaveDir + "grief.txt"); }
             if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); }
-            if (!System.IO.File.Exists(SaveDir + "groups.txt")) { FileTools.CreateFile(SaveDir + "groups.txt"); }
-            if (!System.IO.File.Exists(SaveDir + "users.txt")) { FileTools.CreateFile(SaveDir + "users.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "groups.txt")) 
+            { 
+                FileTools.CreateFile(SaveDir + "groups.txt");
+                StreamWriter sw = new StreamWriter(SaveDir + "groups.txt");
+                sw.Write(Resources.groups);
+                sw.Close();
+            }
+            if (!System.IO.File.Exists(SaveDir + "users.txt"))
+            {
+                FileTools.CreateFile(SaveDir + "users.txt");
+                StreamWriter sw = new StreamWriter(SaveDir + "users.txt");
+                sw.Write(Resources.users);
+                sw.Close();
+            }
             ConfigurationManager.WriteJsonConfiguration();
             ConfigurationManager.ReadJsonConfiguration();
             Netplay.serverPort = ConfigurationManager.serverPort;
