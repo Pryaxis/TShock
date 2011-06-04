@@ -59,6 +59,15 @@ namespace TShockAPI
             {
                 return name;
             }
+
+            public bool CanRun(TSPlayer ply)
+            {
+                if (!ply.group.HasPermission(permission))
+                {
+                    return false;
+                }
+                return true;
+            }
         }
 
         public static void InitCommands()
@@ -101,7 +110,7 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
+                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetokick"))
                 {
                     Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
                     Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
@@ -121,7 +130,7 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
+                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetoban"))
                 {
                     FileTools.WriteBan(Tools.FindPlayer(plStr));
                     Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
@@ -473,9 +482,6 @@ namespace TShockAPI
         public static void Help(CommandArgs args)
         {
             int ply = args.PlayerID;
-            var commands = TShock.commandList;
-            if (TShock.players[ply].IsAdmin())
-                commands = TShock.admincommandList;
             Tools.SendMessage(ply, "TShock Commands:");
             int h = 1;
             int i = 0;
@@ -483,31 +489,39 @@ namespace TShockAPI
             int page = 1;
             if (args.Message.Split(' ').Length == 2)
                 int.TryParse(args.Message.Split(' ')[1], out page);
-            if (commands.Count > (15 * (page - 1)))
+            List<Command> cmdlist = new List<Command>();
+            for(int j = 0; j < commands.Count; j++)
             {
-                for (int j = (15 * (page - 1)); j < commands.Count; j++)
+                if(commands[j].CanRun(TShock.players[args.PlayerID]))
+                {
+                    cmdlist.Add(commands[j]);
+                }
+            }
+            if (cmdlist.Count > (15 * (page - 1)))
+            {
+                for (int j = (15 * (page - 1)); j < cmdlist.Count; j++)
                 {
                     if (i == 3) break;
-                    if (j == commands.Count - 1)
+                    if (j == cmdlist.Count - 1)
                     {
-                        tempstring += "/" + commands.Keys.ElementAt(j) + ", ";
+                        tempstring += "/" + cmdlist[j].Name() + ", ";
                         Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
                     }
                     if ((h - 1) % 5 == 0 && (h - 1) != 0)
                     {
                         Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
-                        tempstring = "/" + commands.Keys.ElementAt(j) + ", ";
+                        tempstring = "/" + cmdlist[j].Name() + ", ";
                         i++;
                         h++;
                     }
                     else
                     {
-                        tempstring += "/" + commands.Keys.ElementAt(j) + ", ";
+                        tempstring += "/" + cmdlist[j].Name() + ", ";
                         h++;
                     }
                 }
             }
-            if (commands.Count > (15 * page))
+            if (cmdlist.Count > (15 * page))
             { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
             Tools.SendMessage(ply, "Terraria commands:");
             Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
