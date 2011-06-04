@@ -216,31 +216,33 @@ namespace TShockAPI
                     life = br.ReadInt16();
                     maxLife = br.ReadInt16();
                 }
-                if (players[ply].syncHP)
-                {
-                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                        Tools.HandleCheater(ply);
-                }
-                else
-                    players[ply].syncHP = true;
+                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                    if (players[ply].syncHP)
+                    {
+                        if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                            Tools.HandleCheater(ply);
+                    }
+                    else
+                        players[ply].syncHP = true;
             }
             else if (e.MsgID == 0x2a)
             {
                 byte ply;
-                Int16 life, maxLife;
+                Int16 mana, maxmana;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
                     ply = br.ReadByte();
-                    life = br.ReadInt16();
-                    maxLife = br.ReadInt16();
+                    mana = br.ReadInt16();
+                    maxmana = br.ReadInt16();
                 }
-                if (players[ply].syncMP)
-                {
-                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                        Tools.HandleCheater(ply);
-                }
-                else
-                    players[ply].syncMP = true;
+                if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                    if (players[ply].syncMP)
+                    {
+                        if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                            Tools.HandleCheater(ply);
+                    }
+                    else
+                        players[ply].syncMP = true;
             }
             else if (e.MsgID == 0x19)
             {

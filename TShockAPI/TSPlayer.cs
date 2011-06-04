@@ -8,11 +8,12 @@ namespace TShockAPI
     public class TSPlayer
     {
         public uint tileThreshold;
+        public bool syncHP = false;
+        public bool syncMP = false;
+
         private int player;
         private bool admin;
         private bool adminSet;
-        public bool syncHP = false;
-        public bool syncMP = false;
 
         public TSPlayer(int ply)
         {
