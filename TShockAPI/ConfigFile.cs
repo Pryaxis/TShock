@@ -23,5 +23,6 @@ namespace TShockAPI
         public bool KickKillTileAbusers = false;
         public bool BanExplosives = true;
         public bool KickExplosives = true;
+        public bool SpawnProtection = true;
     }
 }
