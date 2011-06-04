@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 5, 0, 1);
+        public static Version VersionNum = new Version(1, 6, 0, 0);
 
         public static bool shownVersion = false;
 
@@ -104,6 +104,14 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            try
+            {
+                FileTools.SetupConfig();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -138,8 +146,6 @@ namespace TShockAPI
             NetHooks.OnPreGetData -= GetData;
             NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
-            ConfigurationManager.WriteJsonConfiguration();
-            Log.Info("Shutting down...");
         }
 
         /*
@@ -168,6 +174,18 @@ namespace TShockAPI
                     byte type = br.ReadByte();
                     int x = br.ReadInt32();
                     int y = br.ReadInt32();
+                    byte typetile = br.ReadByte();
+                    if (type == 0 || type == 1)
+                        if (ConfigurationManager.spawnProtect)
+                            if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                            {
+                                var flag = CheckSpawn(x, y);
+                                if (flag)
+                                {
+                                    Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                    e.Handled = true;
+                                }
+                            }
 
                     if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                     {
@@ -192,6 +210,7 @@ namespace TShockAPI
                     Main.player[e.Msg.whoAmI].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
                 e.Handled = true;
+                return;
             }
             else if (e.MsgID == 0x0A) //SendSection
             {
@@ -303,6 +322,30 @@ namespace TShockAPI
                         }
                     }
                 }
+            }
+            else if (e.MsgID == 0x30)
+            {
+                int x;
+                int y;
+                byte liquid;
+                bool lava;
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    x = br.ReadInt32();
+                    y = br.ReadInt32();
+                    liquid = br.ReadByte();
+                    lava = br.ReadBoolean();
+                }
+                if (ConfigurationManager.spawnProtect)
+                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    {
+                        var flag = CheckSpawn(x, y);
+                        if (flag)
+                        {
+                            Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                            e.Handled = true;
+                        }
+                    }
             }
             else if (e.MsgID == 0x2C) // KillMe
             {
@@ -639,6 +682,17 @@ namespace TShockAPI
                     return true;
             }
             return false;
+        }
+
+        public static bool CheckSpawn(int x, int y)
+        {
+            Vector2 tile = new Vector2((float)x, (float)y);
+            Vector2 spawn = new Vector2((float)Main.spawnTileX, (float)Main.spawnTileY);
+            var distance = Vector2.Distance(spawn, tile);
+            if (distance > (float)ConfigurationManager.spawnProtectRadius)
+                return false;
+            else
+                return true;
         }
     }
 }

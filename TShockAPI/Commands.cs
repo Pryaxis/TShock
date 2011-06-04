@@ -101,6 +101,7 @@ namespace TShockAPI
             commands.Add(new Command("help", "", new CommandDelegate(Help)));
             commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
             commands.Add(new Command("off-nosave", "maintenance", new CommandDelegate(OffNoSave)));
+            commands.Add(new Command("protectspawn", "cfg", new CommandDelegate(ProtectSpawn)));
         }
 
         #region Command Methods
@@ -601,6 +602,12 @@ namespace TShockAPI
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
+        }
+
+        public static void ProtectSpawn(CommandArgs args)
+        {
+            ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
+            Tools.SendMessage(args.PlayerID, "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
         }
         #endregion
     }

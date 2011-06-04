@@ -8,11 +8,12 @@
 #ALWAYS DECLARE A GROUP'S PARENT BEFORE YOU DECLARE THE GROUP
 
 #currently avaliable permissions: kick ban ignorecheatdetection 
-#power cfg causeevents spawnboss tp 
+#maintenance cfg causeevents spawnboss tp 
 #spawnmob cheat kill pvpfun 
-#immunetoban immunetokick
+#immunetoban immunetokick editspawn
+#ignoregriefdetection
 
 default null
-newadmin default kick
+newadmin default kick editspawn
 admin newadmin ban causeevents spawnboss spawnmob tp immunetokick kill
-trustedadmin admin ignorecheatdetection power cfg cheat pvpfun ignorecheatdetection immunetoban
+trustedadmin admin ignorecheatdetection maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection
