@@ -89,6 +89,8 @@ namespace TShockAPI
             if (!System.IO.File.Exists(SaveDir + "admins.txt")) { FileTools.CreateFile(SaveDir + "admins.txt"); }
             if (!System.IO.File.Exists(SaveDir + "grief.txt")) { FileTools.CreateFile(SaveDir + "grief.txt"); }
             if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "groups.txt")) { FileTools.CreateFile(SaveDir + "groups.txt"); }
+            if (!System.IO.File.Exists(SaveDir + "users.txt")) { FileTools.CreateFile(SaveDir + "users.txt"); }
             ConfigurationManager.WriteJsonConfiguration();
             ConfigurationManager.ReadJsonConfiguration();
             Netplay.serverPort = ConfigurationManager.serverPort;
