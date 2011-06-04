@@ -137,6 +137,8 @@ namespace TShockAPI
             NetHooks.OnPreGetData -= GetData;
             NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
+            ConfigurationManager.WriteJsonConfiguration();
+            Log.Info("Shutting down...");
         }
 
         /*
@@ -145,228 +147,270 @@ namespace TShockAPI
 
         void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {
-            if (ConfigurationManager.infiniteInvasion)
+            try
             {
-                IncrementKills();
-                if (Main.invasionSize < 10)
+                if (ConfigurationManager.infiniteInvasion)
                 {
-                    Main.invasionSize = 20000000;
+                    IncrementKills();
+                    if (Main.invasionSize < 10)
+                    {
+                        Main.invasionSize = 20000000;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                FileTools.WriteError(ex.ToString());
             }
         }
 
         void GetData(GetDataEventArgs e)
         {
-            if (Main.netMode != 2) { return; }
-            if (e.MsgID == 17)
+            try
             {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                if (Main.netMode != 2) { return; }
+                if (e.MsgID == 17)
                 {
-                    byte type = br.ReadByte();
-                    int x = br.ReadInt32();
-                    int y = br.ReadInt32();
-
-                    if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                     {
-                        players[e.Msg.whoAmI].tileThreshold++;
+                        byte type = br.ReadByte();
+                        int x = br.ReadInt32();
+                        int y = br.ReadInt32();
+
+                        if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
+                        {
+                            players[e.Msg.whoAmI].tileThreshold++;
+                        }
                     }
+                    return;
                 }
-                return;
-            }
-            else if (e.MsgID == 0x1e)
-            {
-                byte id;
-                bool pvp;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                else if (e.MsgID == 0x1e)
                 {
-                    id = br.ReadByte();
-                    pvp = br.ReadBoolean();
-                }
-                Main.player[e.Msg.whoAmI].hostile = pvp;
-                if (id != e.Msg.whoAmI)
-                    Main.player[e.Msg.whoAmI].hostile = true;
-                if (ConfigurationManager.permaPvp)
-                    Main.player[e.Msg.whoAmI].hostile = true;
-                NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
-                e.Handled = true;
-            }
-            else if (e.MsgID == 0x0A) //SendSection
-            {
-                Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
-                Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
-                e.Handled = true;
-            }
-            else if (e.MsgID == 0x17) //Npc Data
-            {
-                Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
-                Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
-                e.Handled = true;
-            }
-            else if (e.MsgID == 0x0D) //Update Player
-            {
-                byte plr = e.Msg.readBuffer[e.Index];
-                if (plr != e.Msg.whoAmI)
-                {
-                    Tools.Kick(e.Msg.whoAmI, "Update Player abuse");
+                    byte id;
+                    bool pvp;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        id = br.ReadByte();
+                        pvp = br.ReadBoolean();
+                    }
+                    Main.player[e.Msg.whoAmI].hostile = pvp;
+                    if (id != e.Msg.whoAmI)
+                        Main.player[e.Msg.whoAmI].hostile = true;
+                    if (ConfigurationManager.permaPvp)
+                        Main.player[e.Msg.whoAmI].hostile = true;
+                    NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
                     e.Handled = true;
                 }
-            }
-            else if (e.MsgID == 0x10)
-            {
-                byte ply;
-                Int16 life, maxLife;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                else if (e.MsgID == 0x0A) //SendSection
                 {
-                    ply = br.ReadByte();
-                    life = br.ReadInt16();
-                    maxLife = br.ReadInt16();
+                    Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                    Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
+                    e.Handled = true;
                 }
-                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                    if (players[ply].syncHP)
+                else if (e.MsgID == 0x17) //Npc Data
+                {
+                    Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                    Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
+                    e.Handled = true;
+                }
+                else if (e.MsgID == 0x0D) //Update Player
+                {
+                    byte plr = e.Msg.readBuffer[e.Index];
+                    if (plr != e.Msg.whoAmI)
                     {
-                        if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                            Tools.HandleCheater(ply);
+                        Tools.Kick(e.Msg.whoAmI, "Update Player abuse");
+                        e.Handled = true;
                     }
-                    else
-                        players[ply].syncHP = true;
-            }
-            else if (e.MsgID == 0x2a)
-            {
-                byte ply;
-                Int16 mana, maxmana;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    ply = br.ReadByte();
-                    mana = br.ReadInt16();
-                    maxmana = br.ReadInt16();
                 }
-                if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                    if (players[ply].syncMP)
+                else if (e.MsgID == 0x10)
+                {
+                    byte ply;
+                    Int16 life, maxLife;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                     {
-                        if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                            Tools.HandleCheater(ply);
+                        ply = br.ReadByte();
+                        life = br.ReadInt16();
+                        maxLife = br.ReadInt16();
                     }
-                    else
-                        players[ply].syncMP = true;
-            }
-            else if (e.MsgID == 0x19)
-            {
-                byte ply;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    ply = br.ReadByte();
-                }
-                if (e.Msg.whoAmI != ply)
-                {
-                    //fuck you faggot
-                    Tools.HandleCheater(ply);
-                }
-            }
-            else if (e.MsgID == 0x1B)
-            {
-                Int16 ident;
-                float posx;
-                float posy;
-                float velx;
-                float vely;
-                float knockback;
-                Int16 dmg;
-                byte owner;
-                byte type;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    ident = br.ReadInt16();
-                    posx = br.ReadSingle();
-                    posy = br.ReadSingle();
-                    velx = br.ReadSingle();
-                    vely = br.ReadSingle();
-                    knockback = br.ReadSingle();
-                    dmg = br.ReadInt16();
-                    owner = br.ReadByte();
-                    type = br.ReadByte();
-                }
-                if (type == 29 || type == 28)
-                {
-                    if (!players[e.Msg.whoAmI].IsAdmin())
-                    {
-                        if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
+                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                        if (players[ply].syncHP)
                         {
-                            int i = e.Msg.whoAmI;
-                            if (ConfigurationManager.banBoom)
-                                FileTools.WriteGrief((int)i);
-                            Tools.Kick((int)i, "Explosives was thrown.");
-                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
-                            e.Handled = true;
+                            if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                                Tools.HandleCheater(ply);
+                        }
+                        else
+                            players[ply].syncHP = true;
+                }
+                else if (e.MsgID == 0x2a)
+                {
+                    byte ply;
+                    Int16 mana, maxmana;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        ply = br.ReadByte();
+                        mana = br.ReadInt16();
+                        maxmana = br.ReadInt16();
+                    }
+                    if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                        if (players[ply].syncMP)
+                        {
+                            if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                                Tools.HandleCheater(ply);
+                        }
+                        else
+                            players[ply].syncMP = true;
+                }
+                else if (e.MsgID == 0x19)
+                {
+                    byte ply;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        ply = br.ReadByte();
+                    }
+                    if (e.Msg.whoAmI != ply)
+                    {
+                        //fuck you faggot
+                        Tools.HandleCheater(ply);
+                    }
+                }
+                else if (e.MsgID == 0x1B)
+                {
+                    Int16 ident;
+                    float posx;
+                    float posy;
+                    float velx;
+                    float vely;
+                    float knockback;
+                    Int16 dmg;
+                    byte owner;
+                    byte type;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        ident = br.ReadInt16();
+                        posx = br.ReadSingle();
+                        posy = br.ReadSingle();
+                        velx = br.ReadSingle();
+                        vely = br.ReadSingle();
+                        knockback = br.ReadSingle();
+                        dmg = br.ReadInt16();
+                        owner = br.ReadByte();
+                        type = br.ReadByte();
+                    }
+                    if (type == 29 || type == 28)
+                    {
+                        if (!players[e.Msg.whoAmI].IsAdmin())
+                        {
+                            if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
+                            {
+                                int i = e.Msg.whoAmI;
+                                if (ConfigurationManager.banBoom)
+                                    FileTools.WriteGrief((int)i);
+                                Tools.Kick((int)i, "Explosives was thrown.");
+                                Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
+                                e.Handled = true;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                FileTools.WriteError(ex.ToString());
             }
         }
 
         void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2) { return; }
-            int plr = who; //legacy support
-            Tools.ShowMOTD(who);
-            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
+            try
             {
-                Tools.HandleCheater(plr);
+                if (Main.netMode != 2) { return; }
+                int plr = who; //legacy support
+                Tools.ShowMOTD(who);
+                if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
+                {
+                    Tools.HandleCheater(plr);
+                }
+                if (ConfigurationManager.permaPvp)
+                {
+                    Main.player[who].hostile = true;
+                    NetMessage.SendData(30, -1, -1, "", who);
+                }
+                if (TShock.players[who].IsAdmin() && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
+                {
+                    StartInvasion();
+                }
+                ShowUpdateReminder(who);
+                e.Handled = true;
             }
-            if (ConfigurationManager.permaPvp)
+            catch (Exception ex)
             {
-                Main.player[who].hostile = true;
-                NetMessage.SendData(30, -1, -1, "", who);
+                FileTools.WriteError(ex.ToString());
             }
-            if (TShock.players[who].IsAdmin() && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
-            {
-                StartInvasion();
-            }
-            ShowUpdateReminder(who);
-            e.Handled = true;
         }
 
         void OnChat(int ply, string msg, HandledEventArgs handler)
         {
-            if (Main.netMode != 2) { return; }
-            int x = (int)Main.player[ply].position.X;
-            int y = (int)Main.player[ply].position.Y;
-
-            if (msg.StartsWith("/"))
+            try
             {
-                Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
-                var commands = commandList;
-                if (TShock.players[ply].IsAdmin())
-                    commands = admincommandList;
+                if (Main.netMode != 2) { return; }
+                int x = (int)Main.player[ply].position.X;
+                int y = (int)Main.player[ply].position.Y;
 
-                Commands.CommandDelegate command;
-                if (commands.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
-                    command.Invoke(args);
-                else
-                    Tools.SendMessage(ply, "Invalid command or no permissions! Try /help.", new float[] { 255f, 0f, 0f });
-                handler.Handled = true;
+                if (msg.StartsWith("/"))
+                {
+                    Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
+                    var commands = commandList;
+                    if (TShock.players[ply].IsAdmin())
+                        commands = admincommandList;
+
+                    Commands.CommandDelegate command;
+                    if (commands.TryGetValue(msg.Split(' ')[0].TrimStart('/'), out command))
+                    {
+                        Log.Info(Tools.FindPlayer(ply) + " executed " + msg);
+                        command.Invoke(args);
+                    }
+                    else
+                    {
+                        Log.Info(Tools.FindPlayer(ply) + " tried to execute " + msg);
+                        Tools.SendMessage(ply, "Invalid command or no permissions! Try /help.", new float[] { 255f, 0f, 0f });
+                    }
+                    handler.Handled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileTools.WriteError(ex.ToString());
             }
         }
 
         void OnJoin(int ply, AllowEventArgs handler)
         {
-            if (Main.netMode != 2) { return; }
-            string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
-            if (FileTools.CheckBanned(ip))
+            try
             {
-                Tools.Kick(ply, "You are banned.");
-            } else if (FileTools.CheckCheat(ip))
-            {
-                Tools.Kick(ply, "You were flagged for cheating.");
+                if (Main.netMode != 2) { return; }
+                string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
+                if (FileTools.CheckBanned(ip))
+                {
+                    Tools.Kick(ply, "You are banned.");
+                }
+                else if (FileTools.CheckCheat(ip))
+                {
+                    Tools.Kick(ply, "You were flagged for cheating.");
+                }
+                else if (FileTools.Checkgrief(ip))
+                {
+                    Tools.Kick(ply, "You were flagged for griefing.");
+                }
+                if (!FileTools.OnWhitelist(ip))
+                {
+                    Tools.Kick(ply, "Not on whitelist.");
+                }
+                players[ply] = new TSPlayer(ply);
             }
-            else if (FileTools.Checkgrief(ip))
+            catch (Exception ex)
             {
-                Tools.Kick(ply, "You were flagged for griefing.");
+                FileTools.WriteError(ex.ToString());
             }
-            if (!FileTools.OnWhitelist(ip))
-            {
-                Tools.Kick(ply, "Not on whitelist.");
-            }
-            players[ply] = new TSPlayer(ply);
         }
 
         void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
@@ -375,7 +419,14 @@ namespace TShockAPI
 
         void OnPreInit()
         {
-            FileTools.SetupConfig();
+            try
+            {
+                FileTools.SetupConfig();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         void OnPostInit()
@@ -384,28 +435,35 @@ namespace TShockAPI
 
         void OnUpdate(GameTime time)
         {
-            if (Main.netMode != 2) { return; }
-            for (uint i = 0; i < Main.maxPlayers; i++)
+            try
             {
-                if (Main.player[i].active == false) { continue; }
-                if (players[i].tileThreshold >= 20)
+                if (Main.netMode != 2) { return; }
+                for (uint i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Main.player[i] != null)
+                    if (Main.player[i].active == false) { continue; }
+                    if (players[i].tileThreshold >= 20)
                     {
-                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        if (Main.player[i] != null)
                         {
-                            if (ConfigurationManager.banTnt)
-                                FileTools.WriteGrief((int)i);
-                            Tools.Kick((int)i, "Kill tile abuse detected.");
-                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                            if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                            {
+                                if (ConfigurationManager.banTnt)
+                                    FileTools.WriteGrief((int)i);
+                                Tools.Kick((int)i, "Kill tile abuse detected.");
+                                Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                            }
                         }
+                        players[i].tileThreshold = 0;
                     }
-                    players[i].tileThreshold = 0;
+                    else if (players[i].tileThreshold > 0)
+                    {
+                        players[i].tileThreshold = 0;
+                    }
                 }
-                else if (players[i].tileThreshold > 0)
-                {
-                    players[i].tileThreshold = 0;
-                }
+            }
+            catch (Exception ex)
+            {
+                FileTools.WriteError(ex.ToString());
             }
         }
 
