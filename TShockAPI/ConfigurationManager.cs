@@ -29,6 +29,8 @@ namespace TShockAPI
         public static bool kickTnt = false;
         public static bool banBoom = true;
         public static bool kickBoom = true;
+        public static bool spawnProtect = true;
+        public static int spawnProtectRadius = 5;
 
         public enum NPCList : int
         {
@@ -58,6 +60,8 @@ namespace TShockAPI
             kickTnt = cfg.KickKillTileAbusers;
             banBoom = cfg.BanExplosives;
             kickBoom = cfg.KickExplosives;
+            spawnProtect = cfg.SpawnProtection;
+            spawnProtectRadius = cfg.SpawnProtectionRadius;
         }
 
         public static void WriteJsonConfiguration()
@@ -87,6 +91,8 @@ namespace TShockAPI
             cfg.KickKillTileAbusers = true;
             cfg.BanExplosives = true;
             cfg.KickExplosives = true;
+            cfg.SpawnProtection = true;
+            cfg.SpawnProtectionRadius = 5;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");

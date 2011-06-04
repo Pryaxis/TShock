@@ -55,6 +55,7 @@ namespace TShockAPI
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
             TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
+            TShock.admincommandList.Add("protectspawn", new CommandDelegate(ProtectSpawn));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
@@ -558,6 +559,12 @@ namespace TShockAPI
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
+        }
+
+        public static void ProtectSpawn(CommandArgs args)
+        {
+            ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
+            Tools.SendMessage(args.PlayerID, "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
         }
         #endregion
     }
