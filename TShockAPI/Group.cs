@@ -50,6 +50,16 @@ namespace TShockAPI
             }
             return false;
         }
+
+        public void NegatePermission(string permission)
+        {
+            negatedPermissions.Add(permission);
+        }
+
+        public void AddPermission(string permission)
+        {
+            permissions.Add(permission);
+        }
     }
 
     public class SuperAdminGroup : Group

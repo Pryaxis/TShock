@@ -60,7 +60,6 @@
     <Compile Include="FileTools.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="Permission.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="TShock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

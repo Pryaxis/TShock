@@ -338,11 +338,10 @@ namespace TShockAPI
                 string[] args = lines[i].Split(' ');
                 string name = args[0];
                 string parent = args[1];
-                Group group;
+                Group group = null;
                 if (parent.Equals("null"))
                 {
                     group = new Group(name);
-                    groups.Add(group);
                 }
                 else
                 {
@@ -352,6 +351,25 @@ namespace TShockAPI
                         {
                             group = new Group(name, groups[j]);
                             break;
+                        }
+                    }
+                }
+                if (group == null)
+                {
+                    throw new System.Exception("Something in the groups.txt is fucked up");
+                }
+                else
+                {
+                    for (int j = 2; j < args.Length; j++)
+                    {
+                        string permission = args[j];
+                        if (permission.StartsWith("!"))
+                        {
+                            group.NegatePermission(args[j].Replace("!", ""));
+                        }
+                        else
+                        {
+                            group.AddPermission(args[j]);
                         }
                     }
                 }
