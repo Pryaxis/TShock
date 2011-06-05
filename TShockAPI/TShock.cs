@@ -570,17 +570,22 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
-            Main.player[ply].velocity = new Vector2(0, 0);
+            /*Main.player[ply].velocity = new Vector2(0, 0);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
             NetMessage.SendData(0x0d, -1, -1, "", ply);
-            UpdatePlayers();
+            UpdatePlayers();*/
+            Main.player[ply].position.X = (float)x;
+            Main.player[ply].position.Y = (float)y;
+            NetMessage.SendData(0x0d, -1, ply, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
+            NetMessage.syncPlayers();
         }
 
         public static void Teleport(int ply, float x, float y)
         {
-            Main.player[ply].position.X = x;
+            /*Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
             NetMessage.SendData(0x14, -1, -1, "", 10, x, y);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
@@ -591,7 +596,12 @@ namespace TShockAPI
             NetMessage.SendData(0xC, -1, -1, "", ply);
             Main.player[ply].SpawnX = oldx;
             Main.player[ply].SpawnY = oldy;
-            UpdatePlayers();
+            UpdatePlayers();*/
+            Main.player[ply].position.X = x;
+            Main.player[ply].position.Y = y;
+            NetMessage.SendData(0x0d, -1, ply, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
+            NetMessage.syncPlayers();
         }
 
         public static void StartInvasion()
