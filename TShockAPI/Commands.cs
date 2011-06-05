@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Terraria;
@@ -100,10 +101,11 @@ namespace TShockAPI
             commands.Add(new Command("protectspawn", "editspawn", new CommandDelegate(ProtectSpawn)));
             commands.Add(new Command("debug-config", "cfg", new CommandDelegate(DebugConfiguration)));
             commands.Add(new Command("playing", "", new CommandDelegate(Playing)));
+            commands.Add(new Command("auth", "", new CommandDelegate(AuthToken)));
             //TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
             //TShock.admincommandList.Add("playing", new CommandDelegate(Playing));
             //TShock.commandList.Add("help", new CommandDelegate(Help));
-            //TShock.commandList.Add("playing", new CommandDelegate(Playing));
+            //TShock.commandList.Add("playing", new CommandDelegate(Playing)););
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
@@ -312,6 +314,20 @@ namespace TShockAPI
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2, Main.spawnTileY * 16 - Main.player[ply].height);
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
+        }
+
+        public static void AuthToken(CommandArgs args)
+        {
+            if (ConfigurationManager.authToken == 0)
+                return;
+            int givenCode = Convert.ToInt32(args.Message.Remove(0, 5));
+            if (givenCode == ConfigurationManager.authToken)
+            {
+                TextWriter tw = new StreamWriter(FileTools.SaveDir + "users.txt", true);
+                tw.WriteLine(Tools.GetRealIP(Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) + " superadmin");
+                Tools.SendMessage(args.PlayerID, "SuperAdmin authenticated. Please re-connect using the same IP.");
+                ConfigurationManager.authToken = 0;
+            }
         }
 
         public static void TP(CommandArgs args)

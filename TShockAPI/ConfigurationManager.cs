@@ -32,6 +32,7 @@ namespace TShockAPI
         public static bool spawnProtect = true;
         public static int spawnProtectRadius = 5;
         public static string distributationAgent = "facepunch";
+        public static int authToken = 0;
 
         public enum NPCList : int
         {
@@ -79,10 +80,7 @@ namespace TShockAPI
                 return;
             }
             else
-            {
                 FileTools.CreateFile(FileTools.SaveDir + "config.json");
-            }
-
             ConfigFile cfg = new ConfigFile();
             cfg.InvasionMultiplier = 50;
             cfg.DefaultMaximumSpawns = 4;

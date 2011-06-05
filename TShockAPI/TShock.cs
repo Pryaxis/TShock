@@ -15,9 +15,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 7, 0, 0);
+        public static Version VersionNum = new Version(1, 8, 0, 0);
 
-        public static string VersionCodename = "Facepunch";
+        public static string VersionCodename = "Fuck the wiki!";
 
         public static bool shownVersion = false;
  
@@ -111,6 +111,14 @@ namespace TShockAPI
                 Console.WriteLine(ex.ToString());
             }
             Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." + Version.Revision + " (" + VersionCodename + ") now running.");
+            if (!System.IO.File.Exists(FileTools.SaveDir + "auth.lck"))
+            {
+                Random r = new Random((int)System.DateTime.Now.ToBinary());
+                ConfigurationManager.authToken = r.Next(100000, 10000000);
+                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + ConfigurationManager.authToken);
+                Console.WriteLine("This token will only display ONCE.");
+                FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
+            }
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -484,7 +492,6 @@ namespace TShockAPI
 
         void OnPreInit()
         {
-            FileTools.SetupConfig();
         }
 
         void OnPostInit()
