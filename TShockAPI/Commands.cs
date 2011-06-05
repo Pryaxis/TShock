@@ -268,7 +268,7 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             string player = args.Message.Remove(0, 3).Trim();
-            if (Tools.FindPlayer(player) != -1 && player != "")
+            if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
                 Tools.SendMessage(ply, "Teleported to " + player);
@@ -281,7 +281,7 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             string player = args.Message.Remove(0, 7).Trim();
-            if (Tools.FindPlayer(player) != -1 && player != "")
+            if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
                 Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
