@@ -15,7 +15,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 6, 0, 0);
+        public static Version VersionNum = new Version(1, 7, 0, 0);
+
+        public static string VersionCodename = "Facepunch";
 
         public static bool shownVersion = false;
 
@@ -112,6 +114,7 @@ namespace TShockAPI
             {
                 Console.WriteLine(ex.ToString());
             }
+            Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." + Version.Revision + " (" + VersionCodename + ") now running.");
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -190,9 +193,10 @@ namespace TShockAPI
                     if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                     {
                         players[e.Msg.whoAmI].tileThreshold++;
+                        players[e.Msg.whoAmI].tilesDestroyed.Add(new Position((float)x, (float)y), Main.tile[x, y]);
                     }
+                    return;
                 }
-                return;
             }
             else if (e.MsgID == 0x1e)
             {
@@ -262,14 +266,16 @@ namespace TShockAPI
                     mana = br.ReadInt16();
                     maxmana = br.ReadInt16();
                 }
-                if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                    if (players[ply].syncMP)
-                    {
-                        if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                 if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                 {
+                        if (players[ply].syncMP)
+                        {
                             Tools.HandleCheater(ply);
-                    }
-                    else
-                        players[ply].syncMP = true;
+                            Log.Info(Tools.FindPlayer(ply) + " had increased max mana by more than 20 or increased mana more than max");
+                        }
+                        else
+                            players[ply].syncMP = true;
+                 }
             }
             else if (e.MsgID == 0x19) // Chat Text
             {
@@ -281,6 +287,7 @@ namespace TShockAPI
                 if (e.Msg.whoAmI != ply)
                 {
                     //fuck you faggot
+                    Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
                     Tools.HandleCheater(ply);
                 }
             }
@@ -323,6 +330,26 @@ namespace TShockAPI
                     }
                 }
             }
+            else if (e.MsgID == 0x2C) // KillMe
+            {
+                byte id;
+                    byte hitdirection;
+                    short dmg;
+                    bool pvp;
+                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                    {
+                        id = br.ReadByte();
+                        hitdirection = br.ReadByte();
+                        dmg = br.ReadInt16();
+                        pvp = br.ReadBoolean();
+                    }
+                    if (id != e.Msg.whoAmI)
+                    {
+                        Tools.HandleGriefer(e.Msg.whoAmI);
+                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to execute KillMe on someone else.");
+                        e.Handled = true;
+                    }
+            }
             else if (e.MsgID == 0x30)
             {
                 int x;
@@ -337,6 +364,7 @@ namespace TShockAPI
                     lava = br.ReadBoolean();
                 }
                 if (ConfigurationManager.spawnProtect)
+                {
                     if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                     {
                         var flag = CheckSpawn(x, y);
@@ -346,23 +374,10 @@ namespace TShockAPI
                             e.Handled = true;
                         }
                     }
-            }
-            else if (e.MsgID == 0x2C) // KillMe
-            {
-                byte id;
-                byte hitdirection;
-                short dmg;
-                bool pvp;
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    id = br.ReadByte();
-                    hitdirection = br.ReadByte();
-                    dmg = br.ReadInt16();
-                    pvp = br.ReadBoolean();
                 }
-                if (id != e.Msg.whoAmI)
+                else if (e.MsgID == 0x22) // Client only KillTile
                 {
-                    Tools.HandleCheater(e.Msg.whoAmI);
+                    e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
                 }
             }
         }
@@ -431,6 +446,11 @@ namespace TShockAPI
             {
                 Tools.Kick(ply, "You are banned.");
             }
+            else if (Tools.FindPlayer(ply).Length > 32)
+            {
+                Tools.Kick(ply, "Your name was too long.");
+                Tools.Broadcast(ip + " was kicked because their name exceeded 32 characters.");
+            }
             else if (FileTools.CheckCheat(ip))
             {
                 Tools.Kick(ply, "You were flagged for cheating.");
@@ -476,9 +496,14 @@ namespace TShockAPI
                                 FileTools.WriteGrief((int)i);
                             Tools.Kick((int)i, "Kill tile abuse detected.");
                             Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                            RevertKillTile((int)i);
+                        }
+                        else if (players[i].tileThreshold > 0)
+                        {
+                            players[i].tileThreshold = 0;
+                            players[i].tilesDestroyed.Clear();
                         }
                     }
-                    players[i].tileThreshold = 0;
                 }
                 else if (players[i].tileThreshold > 0)
                 {
@@ -525,17 +550,22 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
-            Main.player[ply].velocity = new Vector2(0, 0);
+            /*Main.player[ply].velocity = new Vector2(0, 0);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
             NetMessage.SendData(0x0d, -1, -1, "", ply);
-            UpdatePlayers();
+            UpdatePlayers();*/
+            Main.player[ply].position.X = (float)x;
+            Main.player[ply].position.Y = (float)y;
+            NetMessage.SendData(0x0d, -1, ply, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
+            NetMessage.syncPlayers();
         }
 
         public static void Teleport(int ply, float x, float y)
         {
-            Main.player[ply].position.X = x;
+            /*Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y - 0x2a;
             NetMessage.SendData(0x14, -1, -1, "", 10, x, y);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
@@ -546,7 +576,12 @@ namespace TShockAPI
             NetMessage.SendData(0xC, -1, -1, "", ply);
             Main.player[ply].SpawnX = oldx;
             Main.player[ply].SpawnY = oldy;
-            UpdatePlayers();
+            UpdatePlayers();*/
+            Main.player[ply].position.X = x;
+            Main.player[ply].position.Y = y;
+            NetMessage.SendData(0x0d, -1, ply, "", ply);
+            NetMessage.SendData(0x0d, -1, -1, "", ply);
+            NetMessage.syncPlayers();
         }
 
         public static void StartInvasion()
@@ -679,7 +714,10 @@ namespace TShockAPI
             for (int i = 0; i < 44; i++)
             {
                 if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
+                {
+                    Log.Info(Tools.FindPlayer(plr) + " had " + Main.player[plr].inventory[i].stack.ToString() + " of " + Main.player[plr].inventory[i].name + " which has a max stack of " + Main.player[plr].inventory[i].maxStack.ToString());
                     return true;
+                }
             }
             return false;
         }
@@ -693,6 +731,26 @@ namespace TShockAPI
                 return false;
             else
                 return true;
+        }
+
+        public class Position
+        {
+            public float X;
+            public float Y;
+            public Position(float x, float y) { X = x; Y = y; }
+        }
+
+        public static void RevertKillTile(int ply)
+        {
+            Tile[] tiles = new Tile[players[ply].tilesDestroyed.Count];
+            players[ply].tilesDestroyed.Values.CopyTo(tiles, 0);
+            Position[] positions = new Position[players[ply].tilesDestroyed.Count];
+            players[ply].tilesDestroyed.Keys.CopyTo(positions, 0);
+            for (int i = (players[ply].tilesDestroyed.Count - 1); i >= 0; i--)
+            {
+                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
+                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
+            }
         }
     }
 }

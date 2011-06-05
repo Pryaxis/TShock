@@ -101,20 +101,66 @@ namespace TShockAPI
             commands.Add(new Command("help", "", new CommandDelegate(Help)));
             commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
             commands.Add(new Command("off-nosave", "maintenance", new CommandDelegate(OffNoSave)));
-            commands.Add(new Command("protectspawn", "cfg", new CommandDelegate(ProtectSpawn)));
+            commands.Add(new Command("protectspawn", "editspawn", new CommandDelegate(ProtectSpawn)));
+            commands.Add(new Command("debug-config", "cfg", new CommandDelegate(DebugConfiguration)));
+            commands.Add(new Command("playing", "", new CommandDelegate(Playing)));
+            //TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
+            //TShock.admincommandList.Add("playing", new CommandDelegate(Playing));
+            //TShock.commandList.Add("help", new CommandDelegate(Help));
+            //TShock.commandList.Add("playing", new CommandDelegate(Playing));
+            if (ConfigurationManager.distributationAgent != "terraria-online")
+            {
+                TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
+                TShock.admincommandList.Add("item", new CommandDelegate(Item));
+                TShock.admincommandList.Add("give", new CommandDelegate(Give));
+                TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
+
+            }
         }
 
         #region Command Methods
+
+        public static void Playing(CommandArgs args)
+        {
+            Tools.SendMessage(args.PlayerID, Tools.GetPlayers());
+        }
+
+        public static void DebugConfiguration(CommandArgs args)
+        {
+            int ply = args.PlayerID;
+            Tools.SendMessage(ply, "TShock Config:");
+            string lineOne = "";
+            lineOne += "KickCheater : " + ConfigurationManager.kickCheater + ", ";
+            lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
+            lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
+            lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
+            Tools.SendMessage(ply, lineOne, new float[] { 255f, 255f, 0f });
+            string lineTwo = "";
+            lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
+            lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
+            lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
+            lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
+            Tools.SendMessage(ply, lineTwo, new float[] { 255f, 255f, 0f });
+            string lineThree = "";
+            lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
+            lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
+            lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
+            lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
+            lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
+            Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f});
+        }
+
         public static void Kick(CommandArgs args)
         {
             string plStr = args.Message.Remove(0, 5).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
+            int player = Tools.FindPlayer(plStr);
+            if (!(player == -1 || player == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetokick"))
                 {
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
-                    Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
+                    Tools.Kick(player, "You were kicked.");
+                    Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
                     Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
@@ -129,12 +175,14 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 4).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
+            int player = Tools.FindPlayer(plStr);
+            if (!(player == -1 || player == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetoban"))
                 {
-                    FileTools.WriteBan(Tools.FindPlayer(plStr));
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
+                    FileTools.WriteBan(player);
+                    Tools.Kick(player, "You were banned.");
+                    Tools.Broadcast(Tools.FindPlayer(ply) + " banned " + Tools.FindPlayer(player) + "!");
                 }
                 else
                     Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
@@ -274,7 +322,7 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             string player = args.Message.Remove(0, 3).Trim();
-            if (Tools.FindPlayer(player) != -1 && player != "")
+            if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
                 Tools.SendMessage(ply, "Teleported to " + player);
@@ -287,7 +335,7 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             string player = args.Message.Remove(0, 7).Trim();
-            if (Tools.FindPlayer(player) != -1 && player != "")
+            if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
                 Tools.SendMessage(Tools.FindPlayer(player), "You were teleported to " + Tools.FindPlayer(ply) + ".");
@@ -465,18 +513,18 @@ namespace TShockAPI
         public static void MaxSpawns(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = 4;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
             int.TryParse(args.Message.Remove(0, 10), out amount);
-            NPC.maxSpawns = amount;
+            NPC.defaultSpawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
         }
 
         public static void SpawnRate(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = 700;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
             int.TryParse(args.Message.Remove(0, 10), out amount);
-            NPC.spawnRate = amount;
+            NPC.defaultSpawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
         }
 
