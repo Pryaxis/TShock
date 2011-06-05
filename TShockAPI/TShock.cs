@@ -17,7 +17,7 @@ namespace TShockAPI
 
         public static Version VersionNum = new Version(1, 7, 0, 0);
 
-        public static string VersionCodename = "Bugless Beast";
+        public static string VersionCodename = "Facepunch";
 
         public static bool shownVersion = false;
 
