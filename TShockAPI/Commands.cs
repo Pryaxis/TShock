@@ -90,14 +90,10 @@ namespace TShockAPI
             commands.Add(new Command("tp", "tp", new CommandDelegate(TP)));
             commands.Add(new Command("tphere", "tp", new CommandDelegate(TPHere)));
             commands.Add(new Command("spawnmob", "spawnmob", new CommandDelegate(SpawnMob)));
-            commands.Add(new Command("item", "cheat", new CommandDelegate(Item)));
-            commands.Add(new Command("give", "cheat", new CommandDelegate(Give)));
-            commands.Add(new Command("heal", "cheat", new CommandDelegate(Heal)));
             commands.Add(new Command("butcher", "cheat", new CommandDelegate(Butcher)));
             commands.Add(new Command("maxspawns", "cfg", new CommandDelegate(MaxSpawns)));
             commands.Add(new Command("spawnrate", "cfg", new CommandDelegate(SpawnRate)));
             commands.Add(new Command("time", "cfg", new CommandDelegate(Time)));
-            commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
             commands.Add(new Command("help", "", new CommandDelegate(Help)));
             commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
             commands.Add(new Command("off-nosave", "maintenance", new CommandDelegate(OffNoSave)));
@@ -110,10 +106,10 @@ namespace TShockAPI
             //TShock.commandList.Add("playing", new CommandDelegate(Playing));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
-                TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
-                TShock.admincommandList.Add("item", new CommandDelegate(Item));
-                TShock.admincommandList.Add("give", new CommandDelegate(Give));
-                TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
+                commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
+                commands.Add(new Command("item", "cheat", new CommandDelegate(Item)));
+                commands.Add(new Command("give", "cheat", new CommandDelegate(Give)));
+                commands.Add(new Command("heal", "cheat", new CommandDelegate(Heal)));
 
             }
         }

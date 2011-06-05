@@ -20,11 +20,7 @@ namespace TShockAPI
         public static string VersionCodename = "Facepunch";
 
         public static bool shownVersion = false;
-
-        public static Dictionary<string, Commands.CommandDelegate> admincommandList = new Dictionary<string, Commands.CommandDelegate>();
-
-        public static Dictionary<string, Commands.CommandDelegate> commandList = new Dictionary<string, Commands.CommandDelegate>();
-        
+ 
         static bool[] BlacklistTiles;
 
         public override Version Version
