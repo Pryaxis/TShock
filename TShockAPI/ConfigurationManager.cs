@@ -31,7 +31,7 @@ namespace TShockAPI
         public static bool kickBoom = true;
         public static bool spawnProtect = true;
         public static int spawnProtectRadius = 5;
-        public static ConfigFile config = null;
+        public static string distributationAgent = "facepunch";
 
         public enum NPCList : int
         {
@@ -46,8 +46,6 @@ namespace TShockAPI
             ConfigFile cfg = JsonConvert.DeserializeObject<ConfigFile>(tr.ReadToEnd());
             tr.Close();
 
-            config = cfg;
-            
             invasionMultiplier = cfg.InvasionMultiplier;
             defaultMaxSpawns = cfg.DefaultMaximumSpawns;
             defaultSpawnRate = cfg.DefaultSpawnRate;
@@ -65,6 +63,7 @@ namespace TShockAPI
             kickBoom = cfg.KickExplosives;
             spawnProtect = cfg.SpawnProtection;
             spawnProtectRadius = cfg.SpawnProtectionRadius;
+            distributationAgent = cfg.DistributationAgent;
             Terraria.NPC.maxSpawns = defaultMaxSpawns;
             Terraria.NPC.defaultSpawnRate = defaultSpawnRate;
         }

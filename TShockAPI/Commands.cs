@@ -44,14 +44,11 @@ namespace TShockAPI
             TShock.admincommandList.Add("tp", new CommandDelegate(TP));
             TShock.admincommandList.Add("tphere", new CommandDelegate(TPHere));
             TShock.admincommandList.Add("spawnmob", new CommandDelegate(SpawnMob));
-            TShock.admincommandList.Add("item", new CommandDelegate(Item));
-            TShock.admincommandList.Add("give", new CommandDelegate(Give));
-            TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
             TShock.admincommandList.Add("butcher", new CommandDelegate(Butcher));
             TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
             TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
             TShock.admincommandList.Add("time", new CommandDelegate(Time));
-            TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
+
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
             TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
@@ -59,6 +56,14 @@ namespace TShockAPI
             TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
+            if (ConfigurationManager.distributationAgent != "terraria-online")
+            {
+                TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
+                TShock.admincommandList.Add("item", new CommandDelegate(Item));
+                TShock.admincommandList.Add("give", new CommandDelegate(Give));
+                TShock.admincommandList.Add("heal", new CommandDelegate(Heal));
+
+            }
         }
 
         #region Command Methods

@@ -25,5 +25,6 @@ namespace TShockAPI
         public bool KickExplosives = true;
         public bool SpawnProtection = true;
         public int SpawnProtectionRadius = 5;
+        public string DistributationAgent = "facepunch";
     }
 }
