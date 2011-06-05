@@ -12,9 +12,10 @@
 #maintenance cfg causeevents spawnboss tp 
 #spawnmob cheat kill pvpfun 
 #immunetoban immunetokick editspawn
-#ignoregriefdetection
+#ignoregriefdetection reservedslot
 
 default null
-newadmin default kick editspawn
+vip null reservedslot
+newadmin default kick editspawn reservedslot
 admin newadmin ban causeevents spawnboss spawnmob tp immunetokick kill
 trustedadmin admin ignorecheatdetection maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection
