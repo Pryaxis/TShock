@@ -1,54 +1,18 @@
 ﻿using System;
 using System.IO;
-using Terraria;
-using System.Web;
 using System.Runtime.InteropServices;
+using System.Web;
+using Terraria;
 
 namespace TShockAPI
 {
     class FileTools
     {
         public static string SaveDir = "./tshock/";
+
         public static void CreateFile(string file)
         {
             using (FileStream fs = File.Create(file)) { }
-        }
-        /// <summary>
-        /// Adds a 'cheater' to cheaters.txt
-        /// </summary>
-        /// <param name="ply">You should know what this does by now.</param>
-        public static void WriteCheater(int ply)
-        {
-            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-            string cheaters = "";
-            TextReader tr = new StreamReader(SaveDir + "cheaters.txt");
-            cheaters = tr.ReadToEnd();
-            tr.Close();
-            if (cheaters.Contains(Main.player[ply].name) && cheaters.Contains(ip)) { return; }
-            TextWriter sw = new StreamWriter(SaveDir + "cheaters.txt", true);
-            sw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
-            sw.Close();
-        }
-        /// <summary>
-        /// Writes a 'banned idiot' to the ban list
-        /// </summary>
-        /// <param name="ply"></param>
-        public static void WriteBan(int ply)
-        {
-            string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-            TextWriter tw = new StreamWriter(SaveDir + "bans.txt", true);
-            tw.WriteLine("[" + Main.player[ply].name + "] " + "[" + ip + "]");
-            tw.Close();
-        }
-        /// <summary>
-        /// Writes a tnt user to grief.txt
-        /// </summary>
-        /// <param name="ply">int player</param>
-        public static void WriteGrief(int ply)
-        {
-            TextWriter tw = new StreamWriter(SaveDir + "grief.txt", true);
-            tw.WriteLine("[" + Main.player[ply].name + "] [" + Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString()) + "]");
-            tw.Close();
         }
 
         /// <summary>
@@ -91,8 +55,8 @@ namespace TShockAPI
             if (!System.IO.File.Exists(SaveDir + "cheaters.txt")) { FileTools.CreateFile(SaveDir + "cheaters.txt"); }
             if (!System.IO.File.Exists(SaveDir + "grief.txt")) { FileTools.CreateFile(SaveDir + "grief.txt"); }
             if (!System.IO.File.Exists(SaveDir + "whitelist.txt")) { FileTools.CreateFile(SaveDir + "whitelist.txt"); }
-            if (!System.IO.File.Exists(SaveDir + "groups.txt")) 
-            { 
+            if (!System.IO.File.Exists(SaveDir + "groups.txt"))
+            {
                 FileTools.CreateFile(SaveDir + "groups.txt");
                 StreamWriter sw = new StreamWriter(SaveDir + "groups.txt");
                 sw.Write(Resources.groups);
@@ -109,22 +73,7 @@ namespace TShockAPI
             ConfigurationManager.ReadJsonConfiguration();
             Netplay.serverPort = ConfigurationManager.serverPort;
         }
-        /// <summary>
-        /// Checks if a user is banned
-        /// </summary>
-        /// <param name="p">string ip</param>
-        /// <returns>true/false</returns>
-        public static bool CheckBanned(String p)
-        {
-            String ip = p.Split(':')[0];
-            TextReader tr = new StreamReader(SaveDir + "bans.txt");
-            string banlist = tr.ReadToEnd();
-            tr.Close();
-            banlist = banlist.Trim();
-            if (banlist.Contains(ip))
-                return true;
-            return false;
-        }
+
         /// <summary>
         /// Tells if a user is on the whitelist
         /// </summary>
@@ -138,35 +87,6 @@ namespace TShockAPI
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
             return whitelist.Contains(ip);
-        }
-        /// <summary>
-        /// Tells if the user is on grief.txt
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <returns></returns>
-        public static bool Checkgrief(String ip)
-        {
-            ip = Tools.GetRealIP(ip);
-            if (!ConfigurationManager.banTnt) { return false; }
-            TextReader tr = new StreamReader(SaveDir + "grief.txt");
-            string list = tr.ReadToEnd();
-            tr.Close();
-
-            return list.Contains(ip);
-        }
-
-        public static bool CheckCheat(String ip)
-        {
-            ip = Tools.GetRealIP(ip);
-            if (!ConfigurationManager.banCheater) { return false; }
-            TextReader tr = new StreamReader(SaveDir + "cheaters.txt");
-            string trr = tr.ReadToEnd();
-            tr.Close();
-            if (trr.Contains(ip))
-            {
-                return true;
-            }
-            return false;
         }
 
         public FileTools() { }

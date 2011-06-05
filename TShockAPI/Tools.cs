@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using System.Collections.Generic;
 
 namespace TShockAPI
 {
@@ -17,6 +17,16 @@ namespace TShockAPI
         public static string GetRealIP(string mess)
         {
             return mess.Split(':')[0];
+        }
+
+        /// <summary>
+        /// Gets the IP from a player index
+        /// </summary>
+        /// <param name="plr">Player Index</param>
+        /// <returns>IP</returns>
+        public static string GetPlayerIP(int plr)
+        {
+            return GetRealIP(Netplay.serverSock[plr].tcpClient.Client.RemoteEndPoint.ToString());
         }
 
         /// <summary>
@@ -199,46 +209,6 @@ namespace TShockAPI
         {
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
             Log.Info("Kicked " + Tools.FindPlayer(ply) + " for : " + reason);
-        }
-
-        /// <summary>
-        /// Adds someone to cheaters.txt
-        /// </summary>
-        /// <param name="ply">int player</param>
-        public static void HandleCheater(int ply)
-        {
-            if (!TShock.players[ply].group.HasPermission("ignorecheatdetection"))
-            {
-                string cheater = Tools.FindPlayer(ply);
-                string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-
-                FileTools.WriteCheater(ply);
-                if (!ConfigurationManager.kickCheater) { return; }
-                Netplay.serverSock[ply].kill = true;
-                Netplay.serverSock[ply].Reset();
-                NetMessage.syncPlayers();
-                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banCheater ? "banned " : "kicked ") + "for cheating.");
-            }
-        }
-
-        /// <summary>
-        /// Adds someone to griefers.txt
-        /// </summary>
-        /// <param name="ply">int player</param>
-        public static void HandleGriefer(int ply)
-        {
-            if (!TShock.players[ply].group.HasPermission("ignoregriefdetection"))
-            {
-                string cheater = Tools.FindPlayer(ply);
-                string ip = Tools.GetRealIP(Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint));
-
-                FileTools.WriteGrief(ply);
-                if (!ConfigurationManager.kickGriefer) { return; }
-                Netplay.serverSock[ply].kill = true;
-                Netplay.serverSock[ply].Reset();
-                NetMessage.syncPlayers();
-                Tools.Broadcast(cheater + " was " + (ConfigurationManager.banGriefer ? "banned " : "kicked ") + "for griefing.");
-            }
         }
 
         /// <summary>

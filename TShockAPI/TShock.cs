@@ -23,6 +23,8 @@ namespace TShockAPI
 
         static bool[] BlacklistTiles;
 
+        public static BanManager Bans = new BanManager(Path.Combine(saveDir, "bans.txt"));
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -127,6 +129,8 @@ namespace TShockAPI
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            Bans.LoadBans();
+
             Log.Info("Hooks initialized");
             Commands.InitCommands();
             Log.Info("Commands initialized");
@@ -134,10 +138,14 @@ namespace TShockAPI
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (Main.worldPathName != null)
+            if (e.IsTerminating)
             {
-                Main.worldPathName += ".crash";
-                WorldGen.saveWorld();
+                if (Main.worldPathName != null)
+                {
+                    Main.worldPathName += ".crash";
+                    WorldGen.saveWorld();
+                }
+                DeInitialize();
             }
             Log.Error(e.ExceptionObject.ToString());
         }
@@ -148,6 +156,8 @@ namespace TShockAPI
 
         public override void DeInitialize()
         {
+            Bans.SaveBans();
+
             GameHooks.OnPreInitialize -= OnPreInit;
             GameHooks.OnPostInitialize -= OnPostInit;
             GameHooks.OnUpdate -= new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
@@ -258,7 +268,7 @@ namespace TShockAPI
                         if (players[ply].syncHP)
                         {
                             if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                                Tools.HandleCheater(ply);
+                                TShock.Ban(ply, "Cheater");
                         }
                         else
                         {
@@ -279,7 +289,7 @@ namespace TShockAPI
                     {
                         if (players[ply].syncMP)
                         {
-                            Tools.HandleCheater(ply);
+                            TShock.Ban(ply, "Cheater");
                             Log.Info(Tools.FindPlayer(ply) +
                                      " had increased max mana by more than 20 or increased mana more than max");
                         }
@@ -300,7 +310,7 @@ namespace TShockAPI
                     {
                         //fuck you faggot
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
-                        Tools.HandleCheater(ply);
+                        TShock.Ban(ply, "Faking Chat");
                     }
                 }
             }
@@ -326,7 +336,7 @@ namespace TShockAPI
                             {
                                 int i = e.Msg.whoAmI;
                                 if (ConfigurationManager.banBoom)
-                                    FileTools.WriteGrief((int)i);
+                                    TShock.Ban(i, "Explosives");
                                 Tools.Kick((int)i, "Explosives were thrown.");
                                 Tools.Broadcast(Main.player[i].name + " was " +
                                                 (ConfigurationManager.banBoom ? "banned" : "kicked") +
@@ -348,7 +358,7 @@ namespace TShockAPI
 
                     if (id != e.Msg.whoAmI)
                     {
-                        Tools.HandleGriefer(e.Msg.whoAmI);
+                        TShock.Ban(e.Msg.whoAmI, "Griefer");
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) +
                                  " was kicked for trying to execute KillMe on someone else.");
                         e.Handled = true;
@@ -391,7 +401,7 @@ namespace TShockAPI
             Tools.ShowMOTD(who);
             if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
             {
-                Tools.HandleCheater(plr);
+                TShock.Ban(plr, "Cheater");
             }
             if (ConfigurationManager.permaPvp)
             {
@@ -444,33 +454,22 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
 
-            int count = 1;
-            for (int i = 0; i < Main.player.Length; i++)
-                count += Main.player[i].active ? 1 : 0;
-
-            if (count > ConfigurationManager.maxSlots)
+            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots)
             {
                 Tools.Kick(ply, "Server is full");
                 return;
             }
 
-            string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
-            if (FileTools.CheckBanned(ip))
+            string ip = Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString());
+            var ban = Bans.GetBanByIp(ip);
+            if (ban != null)
             {
-                Tools.Kick(ply, "You are banned.");
+                Tools.Kick(ply, "You are banned: " + ban.Reason);
             }
             else if (Tools.FindPlayer(ply).Length > 32)
             {
                 Tools.Kick(ply, "Your name was too long.");
                 Tools.Broadcast(ip + " was kicked because their name exceeded 32 characters.");
-            }
-            else if (FileTools.CheckCheat(ip))
-            {
-                Tools.Kick(ply, "You were flagged for cheating.");
-            }
-            else if (FileTools.Checkgrief(ip))
-            {
-                Tools.Kick(ply, "You were flagged for griefing.");
             }
             if (!FileTools.OnWhitelist(ip))
             {
@@ -513,7 +512,7 @@ namespace TShockAPI
                         if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
                         {
                             if (ConfigurationManager.banTnt)
-                                FileTools.WriteGrief((int)i);
+                                TShock.Ban((int)i, "Explosives");
                             Tools.Kick((int)i, "Kill tile abuse detected.");
                             Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
                             RevertKillTile((int)i);
@@ -570,12 +569,6 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
-            /*Main.player[ply].velocity = new Vector2(0, 0);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            UpdatePlayers();*/
             Main.player[ply].position.X = (float)x;
             Main.player[ply].position.Y = (float)y;
             NetMessage.SendData(0x0d, -1, ply, "", ply);
@@ -585,18 +578,6 @@ namespace TShockAPI
 
         public static void Teleport(int ply, float x, float y)
         {
-            /*Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y - 0x2a;
-            NetMessage.SendData(0x14, -1, -1, "", 10, x, y);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            int oldx = Main.player[ply].SpawnX;
-            int oldy = Main.player[ply].SpawnY;
-            Main.player[ply].SpawnX = (int)(x / 16);
-            Main.player[ply].SpawnY = (int)((y - 0x2a) / 16);
-            NetMessage.SendData(0xC, -1, -1, "", ply);
-            Main.player[ply].SpawnX = oldx;
-            Main.player[ply].SpawnY = oldy;
-            UpdatePlayers();*/
             Main.player[ply].position.X = x;
             Main.player[ply].position.Y = y;
             NetMessage.SendData(0x0d, -1, ply, "", ply);
@@ -745,6 +726,11 @@ namespace TShockAPI
                 return false;
             else
                 return true;
+        }
+
+        public static void Ban(int plr, string reason = "")
+        {
+            Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
         }
 
         public class Position

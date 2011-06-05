@@ -171,23 +171,23 @@ namespace TShockAPI
         public static void Ban(CommandArgs args)
         {
             string plStr = args.Message.Remove(0, 4).Trim();
-            int ply = args.PlayerID;
+            int adminplr = args.PlayerID;
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
             {
                 if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetoban"))
                 {
-                    FileTools.WriteBan(player);
+                    TShock.Bans.AddBan(Tools.GetPlayerIP(player), Main.player[player].name);
                     Tools.Kick(player, "You were banned.");
-                    Tools.Broadcast(Tools.FindPlayer(ply) + " banned " + Tools.FindPlayer(player) + "!");
+                    Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + "!");
                 }
                 else
-                    Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(adminplr, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
             }
             else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(adminplr, "More than one player matched!", new float[] { 255f, 0f, 0f });
             else
-                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(adminplr, "Invalid player!", new float[] { 255f, 0f, 0f });
         }
 
         public static void Off(CommandArgs args)
