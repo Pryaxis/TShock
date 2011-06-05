@@ -84,7 +84,7 @@ namespace TShockAPI
 
             String text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) + " - " + caller + message;
 
-            Console.WriteLine(text);
+            //Console.WriteLine(text);
 
             if (!MayWriteType(level))
             {
