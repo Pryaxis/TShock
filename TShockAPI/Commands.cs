@@ -48,14 +48,15 @@ namespace TShockAPI
             TShock.admincommandList.Add("maxspawns", new CommandDelegate(MaxSpawns));
             TShock.admincommandList.Add("spawnrate", new CommandDelegate(SpawnRate));
             TShock.admincommandList.Add("time", new CommandDelegate(Time));
-
             TShock.admincommandList.Add("help", new CommandDelegate(Help));
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
             TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
             TShock.admincommandList.Add("protectspawn", new CommandDelegate(ProtectSpawn));
             TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
+            TShock.admincommandList.Add("playing", new CommandDelegate(Playing));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
+            TShock.commandList.Add("playing", new CommandDelegate(Playing));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 TShock.admincommandList.Add("kill", new CommandDelegate(Kill));
@@ -67,6 +68,11 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void Playing(CommandArgs args)
+        {
+            Tools.SendMessage(args.PlayerID, Tools.GetPlayers());
+        }
 
         public static void DebugConfiguration(CommandArgs args)
         {
