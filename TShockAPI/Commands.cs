@@ -105,7 +105,7 @@ namespace TShockAPI
                 if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
                 {
                     Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
-                    Tools.Broadcast(plStr + " was kicked by " + Tools.FindPlayer(ply));
+                    Tools.Broadcast(Tools.FindPlayer(Tools.FindPlayer(plStr)) + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
                     Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
@@ -126,6 +126,7 @@ namespace TShockAPI
                 {
                     FileTools.WriteBan(Tools.FindPlayer(plStr));
                     Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
+                    Tools.Broadcast(Tools.FindPlayer(ply) + " banned " + Tools.FindPlayer(Tools.FindPlayer(plStr)) + "!");
                 }
                 else
                     Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
