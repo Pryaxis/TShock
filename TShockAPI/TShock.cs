@@ -454,13 +454,16 @@ namespace TShockAPI
         {
             if (Main.netMode != 2) { return; }
 
-            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots)
+            string ip = Tools.GetPlayerIP(ply); ;
+            players[ply] = new TSPlayer(ply);
+            players[ply].group = Tools.GetGroupForIP(ip);
+
+            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots && !players[ply].group.HasPermission("reservedslot"))
             {
                 Tools.Kick(ply, "Server is full");
                 return;
             }
 
-            string ip = Tools.GetRealIP(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint.ToString());
             var ban = Bans.GetBanByIp(ip);
             if (ban != null)
             {
