@@ -421,18 +421,18 @@ namespace TShockAPI
         public static void MaxSpawns(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = 4;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
             int.TryParse(args.Message.Remove(0, 10), out amount);
-            NPC.maxSpawns = amount;
+            NPC.defaultSpawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the maximum spawns to: " + amount);
         }
 
         public static void SpawnRate(CommandArgs args)
         {
             int ply = args.PlayerID;
-            int amount = 700;//Convert.ToInt32(args.Message.Remove(0, 10));
+            int amount = Convert.ToInt32(args.Message.Remove(0, 10));
             int.TryParse(args.Message.Remove(0, 10), out amount);
-            NPC.spawnRate = amount;
+            NPC.defaultSpawnRate = amount;
             Tools.Broadcast(Tools.FindPlayer(ply) + " changed the spawn rate to: " + amount);
         }
 

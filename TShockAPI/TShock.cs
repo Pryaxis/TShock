@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 5, 0, 1);
+        public static Version VersionNum = new Version(1, 6, 0, 0);
 
         public static bool shownVersion = false;
 
@@ -103,6 +103,14 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            try
+            {
+                FileTools.SetupConfig();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -364,8 +372,11 @@ namespace TShockAPI
                             }
                         }
                 }
+<<<<<<< HEAD
                 else if (e.MsgID == 0x22) // Client only KillTile
                     e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
+=======
+>>>>>>> master
             }
             catch (Exception ex)
             {
@@ -473,14 +484,6 @@ namespace TShockAPI
 
         void OnPreInit()
         {
-            try
-            {
-                FileTools.SetupConfig();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
         }
 
         void OnPostInit()
