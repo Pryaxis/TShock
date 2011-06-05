@@ -100,12 +100,13 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 5).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
+            int player = Tools.FindPlayer(plStr);
+            if (!(player == -1 || player == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
+                if (!TShock.players[player].IsAdmin())
                 {
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were kicked.");
-                    Tools.Broadcast(Tools.FindPlayer(Tools.FindPlayer(plStr)) + " was kicked by " + Tools.FindPlayer(ply));
+                    Tools.Kick(player, "You were kicked.");
+                    Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
                     Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
@@ -120,13 +121,14 @@ namespace TShockAPI
         {
             string plStr = args.Message.Remove(0, 4).Trim();
             int ply = args.PlayerID;
-            if (!(Tools.FindPlayer(plStr) == -1 || Tools.FindPlayer(plStr) == -2 || plStr == ""))
+            int player = Tools.FindPlayer(plStr);
+            if (!(player == -1 || player == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].IsAdmin())
+                if (!TShock.players[player].IsAdmin())
                 {
-                    FileTools.WriteBan(Tools.FindPlayer(plStr));
-                    Tools.Kick(Tools.FindPlayer(plStr), "You were banned.");
-                    Tools.Broadcast(Tools.FindPlayer(ply) + " banned " + Tools.FindPlayer(Tools.FindPlayer(plStr)) + "!");
+                    FileTools.WriteBan(player);
+                    Tools.Kick(player, "You were banned.");
+                    Tools.Broadcast(Tools.FindPlayer(ply) + " banned " + Tools.FindPlayer(player) + "!");
                 }
                 else
                     Tools.SendMessage(ply, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
