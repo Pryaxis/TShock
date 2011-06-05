@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BanManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="ConfigurationManager.cs" />
@@ -88,7 +89,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)\myass.bat</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)\myass.bat"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
