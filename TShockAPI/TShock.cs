@@ -738,8 +738,11 @@ namespace TShockAPI
         {
             for (int i = 0; i < 44; i++)
             {
-                if (Main.player[plr].inventory[i].stack > 255)
+                if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
+                {
+                    Log.Info(Tools.FindPlayer(plr) + " had " + Main.player[plr].inventory[i].stack.ToString() + " of " + Main.player[plr].inventory[i].name + " which has a max stack of " + Main.player[plr].inventory[i].maxStack.ToString());
                     return true;
+                }
             }
             return false;
         }
