@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace TShockAPI
@@ -33,6 +33,7 @@ namespace TShockAPI
         public static int spawnProtectRadius = 5;
         public static string distributationAgent = "facepunch";
         public static int authToken = 0;
+        public static int maxSlots = 8;
 
         public enum NPCList : int
         {
@@ -65,6 +66,7 @@ namespace TShockAPI
             spawnProtect = cfg.SpawnProtection;
             spawnProtectRadius = cfg.SpawnProtectionRadius;
             distributationAgent = cfg.DistributationAgent;
+            maxSlots = cfg.MaxSlots;
             Terraria.NPC.maxSpawns = defaultMaxSpawns;
             Terraria.NPC.defaultSpawnRate = defaultSpawnRate;
         }
@@ -99,6 +101,7 @@ namespace TShockAPI
             cfg.KickExplosives = true;
             cfg.SpawnProtection = true;
             cfg.SpawnProtectionRadius = 5;
+            cfg.MaxSlots = maxSlots;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");

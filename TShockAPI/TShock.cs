@@ -443,6 +443,17 @@ namespace TShockAPI
         void OnJoin(int ply, AllowEventArgs handler)
         {
             if (Main.netMode != 2) { return; }
+
+            int count = 1;
+            for (int i = 0; i < Main.player.Length; i++)
+                count += Main.player[i].active ? 1 : 0;
+
+            if (count > ConfigurationManager.maxSlots)
+            {
+                Tools.Kick(ply, "Server is full");
+                return;
+            }
+
             string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
             if (FileTools.CheckBanned(ip))
             {
@@ -672,12 +683,6 @@ namespace TShockAPI
         {
             for (int i = 0; i < Main.player.Length; i++)
                 NetMessage.SendData(44, i, -1, "", plr, (float)1, (float)9999999, (float)0);
-        }
-
-        public static void SendDataAll(int type, int ignore = -1, string text = "", int num = 0, float f1 = 0f, float f2 = 0f, float f3 = 0f)
-        {
-            for (int i = 0; i < Main.player.Length; i++)
-                NetMessage.SendData(type, i, ignore, text, num, f1, f2, f3);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)

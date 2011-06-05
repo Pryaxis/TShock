@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Terraria;
 using System.Text.RegularExpressions;
+using Terraria;
 
 namespace TShockAPI
 {
@@ -112,7 +112,6 @@ namespace TShockAPI
                 commands.Add(new Command("item", "cheat", new CommandDelegate(Item)));
                 commands.Add(new Command("give", "cheat", new CommandDelegate(Give)));
                 commands.Add(new Command("heal", "cheat", new CommandDelegate(Heal)));
-
             }
         }
 
@@ -145,7 +144,7 @@ namespace TShockAPI
             lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
             lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
             lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
-            Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f});
+            Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f });
         }
 
         public static void Kick(CommandArgs args)
@@ -262,6 +261,7 @@ namespace TShockAPI
             Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eye!");
         }
+
         public static void Skeletron(CommandArgs args)
         {
             int x = args.PlayerX;
@@ -385,7 +385,7 @@ namespace TShockAPI
                 {
                     for (int i = 0; i < amount; i++)
                         npcid = NPC.NewNPC(x, y, type, 0);
-                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));;
+                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount)); ;
                 }
             }
             else
@@ -556,9 +556,9 @@ namespace TShockAPI
             if (args.Message.Split(' ').Length == 2)
                 int.TryParse(args.Message.Split(' ')[1], out page);
             List<Command> cmdlist = new List<Command>();
-            for(int j = 0; j < commands.Count; j++)
+            for (int j = 0; j < commands.Count; j++)
             {
-                if(commands[j].CanRun(TShock.players[args.PlayerID]))
+                if (commands[j].CanRun(TShock.players[args.PlayerID]))
                 {
                     cmdlist.Add(commands[j]);
                 }
@@ -648,7 +648,7 @@ namespace TShockAPI
                     Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
                 else
                 {
-                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(1, 20)), (float)5, (float)0);
+                    NetMessage.SendData(26, -1, -1, "", player, (float)((new Random()).Next(1, 20)), (float)5, (float)0);
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for 5 damage.");
                 }
             }
@@ -661,7 +661,7 @@ namespace TShockAPI
                     Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
                 else
                 {
-                    TShock.SendDataAll(26, -1, "", player, (float)((new Random()).Next(-1, 1)), (float)damage, (float)0);
+                    NetMessage.SendData(26, -1, -1, "", player, (float)((new Random()).Next(-1, 1)), (float)damage, (float)0);
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " + damage.ToString() + " damage.");
                 }
             }
@@ -674,6 +674,7 @@ namespace TShockAPI
             ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
             Tools.SendMessage(args.PlayerID, "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
         }
-        #endregion
+
+        #endregion Command Methods
     }
 }

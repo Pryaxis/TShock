@@ -8,6 +8,7 @@ namespace TShockAPI
     class ConfigFile
     {
         public ConfigFile() { }
+
         public int InvasionMultiplier = 1;
         public int DefaultMaximumSpawns = 4;
         public int DefaultSpawnRate = 700;
@@ -26,5 +27,6 @@ namespace TShockAPI
         public bool SpawnProtection = true;
         public int SpawnProtectionRadius = 5;
         public string DistributationAgent = "facepunch";
+        public int MaxSlots = 8;
     }
 }
