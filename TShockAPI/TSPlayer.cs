@@ -8,6 +8,7 @@ namespace TShockAPI
     public class TSPlayer
     {
         public uint tileThreshold;
+        public Dictionary<TShock.Position, Terraria.Tile> tilesDestroyed = new Dictionary<TShock.Position, Terraria.Tile>();
         public bool syncHP = false;
         public bool syncMP = false;
 

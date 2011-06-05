@@ -200,7 +200,10 @@ namespace TShockAPI
                                 }
 
                         if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
+                        {
                             players[e.Msg.whoAmI].tileThreshold++;
+                            players[e.Msg.whoAmI].tilesDestroyed.Add(new Position((float)x, (float)y), Main.tile[x, y]);
+                        }
                     }
                     return;
                 }
@@ -510,6 +513,7 @@ namespace TShockAPI
                                     FileTools.WriteGrief((int)i);
                                 Tools.Kick((int)i, "Kill tile abuse detected.");
                                 Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
+                                RevertKillTile((int)i);
                             }
                         }
                         players[i].tileThreshold = 0;
@@ -732,6 +736,26 @@ namespace TShockAPI
                 return false;
             else
                 return true;
+        }
+
+        public class Position
+        {
+            public float X;
+            public float Y;
+            public Position(float x, float y) { X = x; Y = y; }
+        }
+
+        public static void RevertKillTile(int ply)
+        {
+            Tile[] tiles = new Tile[players[ply].tilesDestroyed.Count];
+            players[ply].tilesDestroyed.Values.CopyTo(tiles, 0);
+            Position[] positions = new Position[players[ply].tilesDestroyed.Count];
+            players[ply].tilesDestroyed.Keys.CopyTo(positions, 0);
+            for (int i = (players[ply].tilesDestroyed.Count - 1); i >= 0; i--)
+            {
+                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
+                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
+            }
         }
     }
 }
