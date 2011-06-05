@@ -95,9 +95,9 @@ namespace TShockAPI
             Tools.SendMessage(ply, lineTwo, new float[] { 255f, 255f, 0f });
             string lineThree = "";
             lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
-            lineThree += "SpawnProtect : " + ConfigurationManager.spawnProtect + ", ";
-            lineThree += "SpawnProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
-            lineThree += "DefaultMaxSpawns : " + ConfigurationManager.defaultMaxSpawns + ", ";
+            lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
+            lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
+            lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
             lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
             Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f});
         }

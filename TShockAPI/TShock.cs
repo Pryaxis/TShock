@@ -459,6 +459,11 @@ namespace TShockAPI
             {
                 if (Main.netMode != 2) { return; }
                 string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
+                if (Tools.FindPlayer(ply).Length > 32)
+                {
+                    Tools.Kick(ply, "Your name was too long.");
+                    Tools.Broadcast(ip + " was kicked because their name exceeded 32 characters.");
+                }
                 if (FileTools.CheckBanned(ip))
                 {
                     Tools.Kick(ply, "You are banned.");
@@ -733,7 +738,7 @@ namespace TShockAPI
         {
             for (int i = 0; i < 44; i++)
             {
-                if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
+                if (Main.player[plr].inventory[i].stack > 255)
                     return true;
             }
             return false;
