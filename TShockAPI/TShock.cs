@@ -448,13 +448,16 @@ namespace TShockAPI
             for (int i = 0; i < Main.player.Length; i++)
                 count += Main.player[i].active ? 1 : 0;
 
-            if (count > ConfigurationManager.maxSlots)
+            string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
+            players[ply] = new TSPlayer(ply);
+            players[ply].group = Tools.GetGroupForIP(ip);
+
+            if (count > ConfigurationManager.maxSlots && ! players[ply].group.HasPermission("reservedslot"))
             {
                 Tools.Kick(ply, "Server is full");
                 return;
             }
 
-            string ip = Tools.GetRealIP((Convert.ToString(Netplay.serverSock[ply].tcpClient.Client.RemoteEndPoint)));
             if (FileTools.CheckBanned(ip))
             {
                 Tools.Kick(ply, "You are banned.");
@@ -476,8 +479,6 @@ namespace TShockAPI
             {
                 Tools.Kick(ply, "Not on whitelist.");
             }
-            players[ply] = new TSPlayer(ply);
-            players[ply].group = Tools.GetGroupForIP(ip);
         }
 
         void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
