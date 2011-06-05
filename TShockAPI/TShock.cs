@@ -15,7 +15,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 6, 0, 0);
+        public static Version VersionNum = new Version(1, 7, 0, 0);
+
+        public static string VersionCodename = "Bugless Beast";
 
         public static bool shownVersion = false;
 
@@ -111,6 +113,7 @@ namespace TShockAPI
             {
                 Console.WriteLine(ex.ToString());
             }
+            Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." + Version.Revision + " (" + VersionCodename + ") now running.");
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
