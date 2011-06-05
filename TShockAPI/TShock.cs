@@ -255,8 +255,8 @@ namespace TShockAPI
                     if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                         if (players[ply].syncHP)
                         {
-                            if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                                Tools.HandleCheater(ply);
+                            Tools.HandleCheater(ply);
+                            Log.Info(Tools.FindPlayer(ply) + " had increased max life by more than 20 or increased life more than max");
                         }
                         else
                             players[ply].syncHP = true;
@@ -274,8 +274,8 @@ namespace TShockAPI
                     if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
                         if (players[ply].syncMP)
                         {
-                            if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                                Tools.HandleCheater(ply);
+                            Tools.HandleCheater(ply);
+                            Log.Info(Tools.FindPlayer(ply) + " had increased max mana by more than 20 or increased mana more than max");
                         }
                         else
                             players[ply].syncMP = true;
@@ -290,6 +290,7 @@ namespace TShockAPI
                     if (e.Msg.whoAmI != ply)
                     {
                         //fuck you faggot
+                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
                         Tools.HandleCheater(ply);
                     }
                 }
@@ -348,6 +349,7 @@ namespace TShockAPI
                     if (id != e.Msg.whoAmI)
                     {
                         Tools.HandleGriefer(e.Msg.whoAmI);
+                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to execute KillMe on someone else.");
                         e.Handled = true;
                     }
                 }
