@@ -62,6 +62,9 @@ namespace TShockAPI
             kickBoom = cfg.KickExplosives;
             spawnProtect = cfg.SpawnProtection;
             spawnProtectRadius = cfg.SpawnProtectionRadius;
+
+            Terraria.NPC.maxSpawns = defaultMaxSpawns;
+            Terraria.NPC.defaultSpawnRate = defaultSpawnRate;
         }
 
         public static void WriteJsonConfiguration()
