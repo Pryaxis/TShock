@@ -133,6 +133,9 @@ namespace TShockAPI
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            #if DEBUG
+                System.Diagnostics.Debugger.Break();
+            #endif
             if (Main.worldPathName != null)
             {
                 Main.worldPathName += ".crash";
