@@ -331,6 +331,7 @@ namespace TShockAPI
                 tw.WriteLine(Tools.GetRealIP(Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) + " superadmin");
                 Tools.SendMessage(args.PlayerID, "SuperAdmin authenticated. Please re-connect using the same IP.");
                 ConfigurationManager.authToken = 0;
+                tw.Close();
             }
         }
 

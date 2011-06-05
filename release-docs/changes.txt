@@ -1,6 +1,10 @@
 For the full list of changes, please take a look at GitHub:
 https://github.com/TShock/TShock/commits/master
 
+Changes in API release 1.8.0.0:
+ - Added permissions system for managing different levels of admins
+ - Fixed spawnrate and max spawns
+
 Changes in API release 1.6.0.0:
  - Added spawn protection
  - Fixed numerous bugs
