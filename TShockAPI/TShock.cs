@@ -335,7 +335,7 @@ namespace TShockAPI
                                 int i = e.Msg.whoAmI;
                                 if (ConfigurationManager.banBoom)
                                     FileTools.WriteGrief((int)i);
-                                Tools.Kick((int)i, "Explosives was thrown.");
+                                Tools.Kick((int)i, "Explosives were thrown.");
                                 Tools.Broadcast(Main.player[i].name + " was " +
                                                 (ConfigurationManager.banBoom ? "banned" : "kicked") +
                                                 " for throwing an explosive device.");
