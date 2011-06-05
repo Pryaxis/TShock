@@ -3,6 +3,10 @@ https://github.com/TShock/TShock/commits/master
 
 Changes in API release 1.8.0.0:
  - Added permissions system for managing different levels of admins
+ -- Added one time auth system for new permissions. When you start the server and load the map, you get a one time auth code. Use /auth <code> to become superadmin.
+ - Check the wiki on Github for more information on Permissions.
+ - Fixed BanExplosives not doing anything.
+ - All ban lists have been consolidated into one file, where reasons, IPs, and player names are stored together.
  - Fixed spawnrate and max spawns
 
 Changes in API release 1.6.0.0:
