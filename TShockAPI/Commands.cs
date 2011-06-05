@@ -193,6 +193,10 @@ namespace TShockAPI
 
         public static void Off(CommandArgs args)
         {
+            for (int player = 0; player < Main.maxPlayers; player++)
+            {
+                Tools.Kick(player, "server shutting down");
+            }
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }
