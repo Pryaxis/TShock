@@ -126,14 +126,26 @@ namespace TShockAPI
             NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
             NpcHooks.OnStrikeNpc += new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
             ServerHooks.OnCommand += new ServerHooks.CommandD(ServerHooks_OnCommand);
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             Log.Info("Hooks initialized");
             Commands.InitCommands();
             Log.Info("Commands initialized");
         }
 
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (Main.worldPathName != null)
+            {
+                Main.worldPathName += ".crash";
+                WorldGen.saveWorld();
+            }
+            Log.Error(e.ExceptionObject.ToString());
+        }
+
         void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
         {
-            
         }
 
         public override void DeInitialize()
@@ -762,6 +774,7 @@ namespace TShockAPI
         {
             public float X;
             public float Y;
+
             public Position(float x, float y) { X = x; Y = y; }
         }
 
