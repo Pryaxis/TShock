@@ -20,7 +20,7 @@ namespace TShockAPI
         public static string VersionCodename = "Facepunch";
 
         public static bool shownVersion = false;
- 
+
         static bool[] BlacklistTiles;
 
         public override Version Version
@@ -51,6 +51,7 @@ namespace TShockAPI
         static TShock()
         {
             //Tools.LoadGroups();
+
             #region Blacklisted tiles
 
             BlacklistTiles = new bool[0x80];
@@ -133,9 +134,6 @@ namespace TShockAPI
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            #if DEBUG
-                System.Diagnostics.Debugger.Break();
-            #endif
             if (Main.worldPathName != null)
             {
                 Main.worldPathName += ".crash";
@@ -211,21 +209,20 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x1e)
             {
-                byte id;
-                bool pvp;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    id = br.ReadByte();
-                    pvp = br.ReadBoolean();
+                    int id = br.ReadByte();
+                    bool pvp = br.ReadBoolean();
+
+                    Main.player[e.Msg.whoAmI].hostile = pvp;
+                    if (id != e.Msg.whoAmI)
+                        Main.player[e.Msg.whoAmI].hostile = true;
+                    if (ConfigurationManager.permaPvp)
+                        Main.player[e.Msg.whoAmI].hostile = true;
+                    NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
+                    e.Handled = true;
+                    return;
                 }
-                Main.player[e.Msg.whoAmI].hostile = pvp;
-                if (id != e.Msg.whoAmI)
-                    Main.player[e.Msg.whoAmI].hostile = true;
-                if (ConfigurationManager.permaPvp)
-                    Main.player[e.Msg.whoAmI].hostile = true;
-                NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
-                e.Handled = true;
-                return;
             }
             else if (e.MsgID == 0x0A) //SendSection
             {
@@ -250,145 +247,139 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x10)
             {
-                byte ply;
-                Int16 life, maxLife;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    ply = br.ReadByte();
-                    life = br.ReadInt16();
-                    maxLife = br.ReadInt16();
-                }
-                if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                    if (players[ply].syncHP)
+                    byte ply = br.ReadByte();
+                    short life = br.ReadInt16();
+                    short maxLife = br.ReadInt16();
+
+                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                     {
-                        if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                            Tools.HandleCheater(ply);
+                        if (players[ply].syncHP)
+                        {
+                            if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
+                                Tools.HandleCheater(ply);
+                        }
+                        else
+                        {
+                            players[ply].syncHP = true;
+                        }
                     }
-                    else
-                        players[ply].syncHP = true;
+                }
             }
             else if (e.MsgID == 0x2a)
             {
-                byte ply;
-                Int16 mana, maxmana;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    ply = br.ReadByte();
-                    mana = br.ReadInt16();
-                    maxmana = br.ReadInt16();
-                }
-                 if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                 {
+                    byte ply = br.ReadByte();
+                    short mana = br.ReadInt16();
+                    short maxmana = br.ReadInt16();
+
+                    if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
+                    {
                         if (players[ply].syncMP)
                         {
                             Tools.HandleCheater(ply);
-                            Log.Info(Tools.FindPlayer(ply) + " had increased max mana by more than 20 or increased mana more than max");
+                            Log.Info(Tools.FindPlayer(ply) +
+                                     " had increased max mana by more than 20 or increased mana more than max");
                         }
                         else
+                        {
                             players[ply].syncMP = true;
-                 }
+                        }
+                    }
+                }
             }
             else if (e.MsgID == 0x19) // Chat Text
             {
-                byte ply;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    ply = br.ReadByte();
-                }
-                if (e.Msg.whoAmI != ply)
-                {
-                    //fuck you faggot
-                    Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
-                    Tools.HandleCheater(ply);
+                    byte ply = br.ReadByte();
+
+                    if (e.Msg.whoAmI != ply)
+                    {
+                        //fuck you faggot
+                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
+                        Tools.HandleCheater(ply);
+                    }
                 }
             }
             else if (e.MsgID == 0x1B) // New Projectile
             {
-                Int16 ident;
-                float posx;
-                float posy;
-                float velx;
-                float vely;
-                float knockback;
-                Int16 dmg;
-                byte owner;
-                byte type;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    ident = br.ReadInt16();
-                    posx = br.ReadSingle();
-                    posy = br.ReadSingle();
-                    velx = br.ReadSingle();
-                    vely = br.ReadSingle();
-                    knockback = br.ReadSingle();
-                    dmg = br.ReadInt16();
-                    owner = br.ReadByte();
-                    type = br.ReadByte();
-                }
-                if (type == 29 || type == 28)
-                {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("ignoregriefdetection"))
+                    short ident = br.ReadInt16();
+                    float posx = br.ReadSingle();
+                    float posy = br.ReadSingle();
+                    float velx = br.ReadSingle();
+                    float vely = br.ReadSingle();
+                    float knockback = br.ReadSingle();
+                    short dmg = br.ReadInt16();
+                    byte owner = br.ReadByte();
+                    byte type = br.ReadByte();
+
+                    if (type == 29 || type == 28)
                     {
-                        if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
+                        if (!players[e.Msg.whoAmI].group.HasPermission("ignoregriefdetection"))
                         {
-                            int i = e.Msg.whoAmI;
-                            if (ConfigurationManager.banBoom)
-                                FileTools.WriteGrief((int)i);
-                            Tools.Kick((int)i, "Explosives was thrown.");
-                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banBoom ? "banned" : "kicked") + " for throwing an explosive device.");
-                            e.Handled = true;
+                            if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
+                            {
+                                int i = e.Msg.whoAmI;
+                                if (ConfigurationManager.banBoom)
+                                    FileTools.WriteGrief((int)i);
+                                Tools.Kick((int)i, "Explosives was thrown.");
+                                Tools.Broadcast(Main.player[i].name + " was " +
+                                                (ConfigurationManager.banBoom ? "banned" : "kicked") +
+                                                " for throwing an explosive device.");
+                                e.Handled = true;
+                            }
                         }
                     }
                 }
             }
             else if (e.MsgID == 0x2C) // KillMe
             {
-                byte id;
-                    byte hitdirection;
-                    short dmg;
-                    bool pvp;
-                    using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                    {
-                        id = br.ReadByte();
-                        hitdirection = br.ReadByte();
-                        dmg = br.ReadInt16();
-                        pvp = br.ReadBoolean();
-                    }
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    byte id = br.ReadByte();
+                    byte hitdirection = br.ReadByte();
+                    short dmg = br.ReadInt16();
+                    bool pvp = br.ReadBoolean();
+
                     if (id != e.Msg.whoAmI)
                     {
                         Tools.HandleGriefer(e.Msg.whoAmI);
-                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to execute KillMe on someone else.");
+                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) +
+                                 " was kicked for trying to execute KillMe on someone else.");
                         e.Handled = true;
                     }
+                }
             }
             else if (e.MsgID == 0x30)
             {
-                int x;
-                int y;
-                byte liquid;
-                bool lava;
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    x = br.ReadInt32();
-                    y = br.ReadInt32();
-                    liquid = br.ReadByte();
-                    lava = br.ReadBoolean();
-                }
-                if (ConfigurationManager.spawnProtect)
-                {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    int x = br.ReadInt32();
+                    int y = br.ReadInt32();
+                    byte liquid = br.ReadByte();
+                    bool lava = br.ReadBoolean();
+
+                    if (ConfigurationManager.spawnProtect)
                     {
-                        var flag = CheckSpawn(x, y);
-                        if (flag)
+                        if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                         {
-                            Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
-                            e.Handled = true;
+                            var flag = CheckSpawn(x, y);
+                            if (flag)
+                            {
+                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                e.Handled = true;
+                            }
                         }
                     }
-                }
-                else if (e.MsgID == 0x22) // Client only KillTile
-                {
-                    e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
+                    else if (e.MsgID == 0x22) // Client only KillTile
+                    {
+                        e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
+                    }
                 }
             }
         }
