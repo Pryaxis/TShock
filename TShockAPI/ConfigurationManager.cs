@@ -31,6 +31,7 @@ namespace TShockAPI
         public static bool kickBoom = true;
         public static bool spawnProtect = true;
         public static int spawnProtectRadius = 5;
+        public static ConfigFile config = null;
 
         public enum NPCList : int
         {
@@ -44,6 +45,8 @@ namespace TShockAPI
             TextReader tr = new StreamReader(FileTools.SaveDir + "config.json");
             ConfigFile cfg = JsonConvert.DeserializeObject<ConfigFile>(tr.ReadToEnd());
             tr.Close();
+
+            config = cfg;
             
             invasionMultiplier = cfg.InvasionMultiplier;
             defaultMaxSpawns = cfg.DefaultMaximumSpawns;

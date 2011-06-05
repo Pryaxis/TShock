@@ -56,11 +56,41 @@ namespace TShockAPI
             TShock.admincommandList.Add("slap", new CommandDelegate(Slap));
             TShock.admincommandList.Add("off-nosave", new CommandDelegate(OffNoSave));
             TShock.admincommandList.Add("protectspawn", new CommandDelegate(ProtectSpawn));
+            TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
             TShock.commandList.Add("help", new CommandDelegate(Help));
             TShock.commandList.Add("kill", new CommandDelegate(Kill));
         }
 
         #region Command Methods
+
+        public static void DebugConfiguration(CommandArgs args)
+        {
+            int ply = args.PlayerID;
+            var commands = TShock.commandList;
+            if (TShock.players[ply].IsAdmin())
+                commands = TShock.admincommandList;
+            Tools.SendMessage(ply, "TShock Config:");
+            string lineOne = "";
+            lineOne += "KickCheater : " + ConfigurationManager.kickCheater + ", ";
+            lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
+            lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
+            lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
+            Tools.SendMessage(ply, lineOne, new float[] { 255f, 255f, 0f });
+            string lineTwo = "";
+            lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
+            lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
+            lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
+            lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
+            Tools.SendMessage(ply, lineTwo, new float[] { 255f, 255f, 0f });
+            string lineThree = "";
+            lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
+            lineThree += "SpawnProtect : " + ConfigurationManager.spawnProtect + ", ";
+            lineThree += "SpawnProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
+            lineThree += "DefaultMaxSpawns : " + ConfigurationManager.defaultMaxSpawns + ", ";
+            lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
+            Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f});
+        }
+
         public static void Kick(CommandArgs args)
         {
             string plStr = args.Message.Remove(0, 5).Trim();
