@@ -517,10 +517,12 @@ namespace TShockAPI
                             }
                         }
                         players[i].tileThreshold = 0;
+                        players[i].tilesDestroyed.Clear();
                     }
                     else if (players[i].tileThreshold > 0)
                     {
                         players[i].tileThreshold = 0;
+                        players[i].tilesDestroyed.Clear();
                     }
                 }
             }
