@@ -143,14 +143,17 @@ namespace TShockAPI
             lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
             lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
             lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
-            Tools.SendMessage(ply, lineTwo, new[] {255f, 255f, 0f});
+            Tools.SendMessage(ply, lineTwo, new[] { 255f, 255f, 0f });
             string lineThree = "";
             lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
             lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
             lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
             lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
-            lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
-            Tools.SendMessage(ply, lineThree, new[] {255f, 255f, 0f});
+            lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate;
+            Tools.SendMessage(ply, lineThree, new[] { 255f, 255f, 0f });
+            string lineFour = "";
+            lineFour += "MaxSlots : " + ConfigurationManager.maxSlots + ", ";
+            Tools.SendMessage(ply, lineFour, new[] { 255f, 255f, 0f });
         }
 
         public static void Kick(CommandArgs args)
