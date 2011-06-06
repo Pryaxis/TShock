@@ -10,8 +10,6 @@ namespace TShockAPI
         public bool syncHP;
         public bool syncMP;
         public Group group;
-        public int lavaCount = 0;
-        public int waterCount = 0;
         private int player;
 
         public TSPlayer(int ply)
