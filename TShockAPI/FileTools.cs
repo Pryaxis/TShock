@@ -57,14 +57,6 @@ namespace TShockAPI
             {
                 CreateFile(SaveDir + "bans.txt");
             }
-            if (!File.Exists(SaveDir + "cheaters.txt"))
-            {
-                CreateFile(SaveDir + "cheaters.txt");
-            }
-            if (!File.Exists(SaveDir + "grief.txt"))
-            {
-                CreateFile(SaveDir + "grief.txt");
-            }
             if (!File.Exists(SaveDir + "whitelist.txt"))
             {
                 CreateFile(SaveDir + "whitelist.txt");
