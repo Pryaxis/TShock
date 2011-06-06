@@ -209,12 +209,12 @@ namespace TShockAPI
                     byte typetile = br.ReadByte();
                     if (type == 1 || type == 3)
                     {
-                        int plyX = Math.Abs((int) Main.player[e.Msg.whoAmI].position.X);
-                        int plyY = Math.Abs((int) Main.player[e.Msg.whoAmI].position.Y);
-                        int realX = Math.Abs(x*16);
-                        int realY = Math.Abs(y*16);
+                        int plyX = Math.Abs((int) Main.player[e.Msg.whoAmI].position.X/16);
+                        int plyY = Math.Abs((int) Main.player[e.Msg.whoAmI].position.Y/16);
+                        int tileX = Math.Abs(x/16);
+                        int tileY = Math.Abs(y/16);
 
-                        if ((plyX - realX > 6) || (plyY - realY > 6))
+                        if ((plyX - tileX > 6) || (plyY - tileY > 6))
                             TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
                             Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place blocks.");
                             e.Handled = true;
@@ -420,10 +420,10 @@ namespace TShockAPI
                     byte liquid = br.ReadByte();
                     bool lava = br.ReadBoolean();
 
-                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X);
-                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y);
-                    int realX = Math.Abs(x * 16);
-                    int realY = Math.Abs(y * 16);
+                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X/16);
+                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y/16);
+                    int tileX = Math.Abs(x);
+                    int tileY = Math.Abs(y);
 
                     for (int i = 0; i < 44; i++)
                     {
@@ -443,7 +443,7 @@ namespace TShockAPI
                         TShock.Ban(e.Msg.whoAmI, "Placing water they didn't have.");
                         e.Handled = true;
                     }
-                    if ((plyX - realX > 6) || (plyY - realY > 6))
+                    if ((plyX - tileX > 6) || (plyY - tileY > 6))
                         TShock.Ban(e.Msg.whoAmI, "Placing impossible to place liquid.");
                         Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place liquid.");
                         e.Handled = true;
