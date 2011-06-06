@@ -565,6 +565,8 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
+
+            ConfigurationManager.maxSlots = Main.maxPlayers - 1;
         }
 
         private void OnUpdate(GameTime time)
