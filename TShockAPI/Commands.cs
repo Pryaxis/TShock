@@ -158,7 +158,7 @@ namespace TShockAPI
 
         public static void Kick(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 5).Trim();
+            string plStr = args.Message.Remove(0, 5).Trim().TrimEnd('"').TrimStart('"');
             int ply = args.PlayerID;
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
@@ -179,7 +179,7 @@ namespace TShockAPI
 
         public static void Ban(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 4).Trim();
+            string plStr = args.Message.Remove(0, 4).Trim().TrimEnd('"').TrimStart('"');
             int adminplr = args.PlayerID;
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
@@ -354,7 +354,7 @@ namespace TShockAPI
         public static void TP(CommandArgs args)
         {
             int ply = args.PlayerID;
-            string player = args.Message.Remove(0, 3).Trim();
+            string player = args.Message.Remove(0, 3).Trim().TrimEnd('"').TrimStart('"');
             if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X,
@@ -368,7 +368,7 @@ namespace TShockAPI
         public static void TPHere(CommandArgs args)
         {
             int ply = args.PlayerID;
-            string player = args.Message.Remove(0, 7).Trim();
+            string player = args.Message.Remove(0, 7).Trim().TrimEnd('"').TrimStart('"');
             if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
                 TShock.Teleport(Tools.FindPlayer(player), Main.player[ply].position.X, Main.player[ply].position.Y);
