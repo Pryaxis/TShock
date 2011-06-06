@@ -15,9 +15,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 8, 0, 0);
+        public static Version VersionNum = new Version(1, 9, 0, 0);
 
-        public static string VersionCodename = "Fuck the wiki!";
+        public static string VersionCodename = "Squashing Bugs";
 
         public static bool shownVersion = false;
 
@@ -399,9 +399,15 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            if (Main.player[plr].statLifeMax > 400 || Main.player[plr].statManaMax > 200 || Main.player[plr].statLife > 400 || Main.player[plr].statMana > 200 || CheckInventory(plr))
+            CheckInventory(who);
+            if (HackedHealth(who) && ConfigurationManager.kickCheater && ConfigurationManager.banCheater)
             {
-                TShock.Ban(plr, "Cheater");
+                TShock.Ban(who, "Hacked health.");
+                Tools.Broadcast(Tools.FindPlayer(who) + " was banned for hacked health.");
+            } else if (HackedHealth(who) && ConfigurationManager.kickCheater && (!ConfigurationManager.banCheater))
+            {
+                Tools.Kick(who, "Hacked health.");
+                Tools.Broadcast(Tools.FindPlayer(who) + " was kicked for hacked health.");
             }
             if (ConfigurationManager.permaPvp)
             {
@@ -443,7 +449,7 @@ namespace TShockAPI
                     if (!cmd.Run(msg, players[ply]))
                     {
                         Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() + " that s/he did not have access to!");
-                        Tools.SendMessage(ply, "YOU DO NOT HAVE ACCESS TO THAT COMMAND YOU LITTLE SHIT!", new float[] { 255, 0, 0 });
+                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] { 255, 0, 0 });
                     }
                 }
                 handler.Handled = true;
@@ -706,7 +712,11 @@ namespace TShockAPI
             }
             return -1;
         }
-
+        /// <summary>
+        /// Stop fucking enabling this as a ban reason. Holy fucking hell, it doesn't fucking work.
+        /// </summary>
+        /// <param name="plr"></param>
+        /// <returns></returns>
         public static bool CheckInventory(int plr)
         {
             for (int i = 0; i < 44; i++)
@@ -755,6 +765,19 @@ namespace TShockAPI
                 Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
                 NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
             }
+        }
+
+        public static bool HackedHealth(int ply)
+        {
+            if (Main.player[ply].statManaMax > 200)
+                return true;
+            if (Main.player[ply].statMana > 200)
+                return true;
+            if (Main.player[ply].statLifeMax > 400)
+                return true;
+            if (Main.player[ply].statLife > 400)
+                return true;
+            return false;
         }
     }
 }
