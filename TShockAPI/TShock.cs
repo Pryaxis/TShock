@@ -15,9 +15,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 8, 0, 1);
+        public static Version VersionNum = new Version(1, 8, 0, 2);
 
-        public static string VersionCodename = "Squashing Bugs";
+        public static string VersionCodename = "SPACEEE";
 
         public static bool shownVersion = false;
 
@@ -118,14 +118,14 @@ namespace TShockAPI
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
             GameHooks.OnPostInitialize += OnPostInit;
-            GameHooks.OnUpdate += new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
-            GameHooks.OnLoadContent += new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
-            ServerHooks.OnChat += new Action<int, string, HandledEventArgs>(OnChat);
-            ServerHooks.OnJoin += new Action<int, AllowEventArgs>(OnJoin);
+            GameHooks.OnUpdate += OnUpdate;
+            GameHooks.OnLoadContent += OnLoadContent;
+            ServerHooks.OnChat += OnChat;
+            ServerHooks.OnJoin += OnJoin;
             NetHooks.OnPreGetData += GetData;
-            NetHooks.OnGreetPlayer += new NetHooks.GreetPlayerD(OnGreetPlayer);
-            NpcHooks.OnStrikeNpc += new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
-            ServerHooks.OnCommand += new ServerHooks.CommandD(ServerHooks_OnCommand);
+            NetHooks.OnGreetPlayer += OnGreetPlayer;
+            NpcHooks.OnStrikeNpc += NpcHooks_OnStrikeNpc;
+            ServerHooks.OnCommand += ServerHooks_OnCommand;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -135,7 +135,11 @@ namespace TShockAPI
             Commands.InitCommands();
             Log.Info("Commands initialized");
         }
-
+        /// <summary>
+        /// Handles exceptions that we didn't catch or that Red fucked up
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.IsTerminating)
@@ -149,7 +153,11 @@ namespace TShockAPI
             }
             Log.Error(e.ExceptionObject.ToString());
         }
-
+        /// <summary>
+        /// When a server command is run.
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="e"></param>
         void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
         {
         }
@@ -160,14 +168,14 @@ namespace TShockAPI
 
             GameHooks.OnPreInitialize -= OnPreInit;
             GameHooks.OnPostInitialize -= OnPostInit;
-            GameHooks.OnUpdate -= new Action<Microsoft.Xna.Framework.GameTime>(OnUpdate);
-            GameHooks.OnLoadContent -= new Action<Microsoft.Xna.Framework.Content.ContentManager>(OnLoadContent);
-            ServerHooks.OnChat -= new Action<int, string, HandledEventArgs>(OnChat);
-            ServerHooks.OnJoin -= new Action<int, AllowEventArgs>(OnJoin);
-            ServerHooks.OnCommand -= new ServerHooks.CommandD(ServerHooks_OnCommand);
+            GameHooks.OnUpdate -= OnUpdate;
+            GameHooks.OnLoadContent -= OnLoadContent;
+            ServerHooks.OnChat -= OnChat;
+            ServerHooks.OnJoin -= OnJoin;
+            ServerHooks.OnCommand -= ServerHooks_OnCommand;
             NetHooks.OnPreGetData -= GetData;
-            NetHooks.OnGreetPlayer -= new NetHooks.GreetPlayerD(OnGreetPlayer);
-            NpcHooks.OnStrikeNpc -= new NpcHooks.StrikeNpcD(NpcHooks_OnStrikeNpc);
+            NetHooks.OnGreetPlayer -= OnGreetPlayer;
+            NpcHooks.OnStrikeNpc -= NpcHooks_OnStrikeNpc;
         }
 
         /*
@@ -262,13 +270,20 @@ namespace TShockAPI
                     byte ply = br.ReadByte();
                     short life = br.ReadInt16();
                     short maxLife = br.ReadInt16();
-
+                    
                     if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                     {
                         if (players[ply].syncHP)
                         {
                             if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                                TShock.Ban(ply, "Cheater");
+                                if (ConfigurationManager.banCheater)
+                                {
+                                    TShock.Ban(ply, "Abnormal life increase");
+                                    Tools.Broadcast(Tools.FindPlayer(ply) + " was banned because they gained an abnormal amount of health.");
+                                }
+                                else if (ConfigurationManager.kickCheater)
+                                    Tools.Kick(ply, "Abnormal life increase");
+                            Tools.Broadcast(Tools.FindPlayer(ply) + " was kicked because they gained an abnormal amount of health.");
                         }
                         else
                         {
