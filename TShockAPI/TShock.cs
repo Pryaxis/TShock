@@ -304,7 +304,13 @@ namespace TShockAPI
                     {
                         if (players[ply].syncMP)
                         {
-                            TShock.Ban(ply, "Cheater");
+                            if (ConfigurationManager.banCheater)
+                            {
+                                TShock.Ban(ply, "Abnormal mana increase");
+                                Tools.Broadcast(Tools.FindPlayer(ply) + " was banned because they gained an abnormal amount of mana.");
+                            }
+                            else if (ConfigurationManager.kickCheater)
+                                Tools.Kick(ply, "Abnormal mana increase");
                             Log.Info(Tools.FindPlayer(ply) +
                                      " had increased max mana by more than 20 or increased mana more than max");
                         }
