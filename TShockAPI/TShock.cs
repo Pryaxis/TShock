@@ -405,6 +405,9 @@ namespace TShockAPI
                     byte direction = br.ReadByte();
                     Int16 damage = br.ReadInt16();
                     byte pvp = br.ReadByte();
+
+                    if (!Main.player[playerid].hostile)
+                        e.Handled = true;
                 }
             }
             else if (e.MsgID == 0x30)
