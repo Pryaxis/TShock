@@ -292,7 +292,7 @@ namespace TShockAPI
                                     if (ConfigurationManager.banCheater)
                                         Ban(ply, "Abnormal life increase");
                                     Tools.Kick(ply, "Abnormal life increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") +
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of health.");
                                     e.Handled = true;
                                 }
@@ -325,7 +325,7 @@ namespace TShockAPI
                                     if (ConfigurationManager.banCheater)
                                         Ban(ply, "Abnormal mana increase");
                                     Tools.Kick(ply, "Abnormal mana increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") +
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of mana.");
                                     e.Handled = true;
                                 }
@@ -447,7 +447,7 @@ namespace TShockAPI
                     if (ConfigurationManager.banCheater)
                         Ban(who, "Hacked health.");
                     Tools.Kick(who, "Hacked health.");
-                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + " for hacked health.");
+                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") + " for hacked health.");
                 }
             }
             if (ConfigurationManager.permaPvp)
