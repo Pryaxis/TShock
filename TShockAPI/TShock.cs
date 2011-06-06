@@ -360,7 +360,7 @@ namespace TShockAPI
                     byte owner = br.ReadByte();
                     byte type = br.ReadByte();
 
-                    if (type == 29 || type == 28)
+                    if (type == 29 || type == 28 || type == 30)
                     {
                         if (!players[e.Msg.whoAmI].group.HasPermission("ignoregriefdetection"))
                         {
@@ -395,6 +395,16 @@ namespace TShockAPI
                                  " was kicked for trying to execute KillMe on someone else.");
                         e.Handled = true;
                     }
+                }
+            }
+            else if (e.MsgID == 0x1b) //PlayerDamage
+            {
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    byte playerid = br.ReadByte();
+                    byte direction = br.ReadByte();
+                    Int16 damage = br.ReadInt16();
+                    byte pvp = br.ReadByte();
                 }
             }
             else if (e.MsgID == 0x30)
