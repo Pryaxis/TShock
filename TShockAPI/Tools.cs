@@ -215,9 +215,9 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void Kick(int ply, string reason)
         {
-            string playerName = FindPlayer(ply);
+            string displayName = FindPlayer(ply).Equals("") ? GetPlayerIP(ply) : FindPlayer(ply); 
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-            Log.Info("Kicked " + playerName + " for : " + reason);
+            Log.Info("Kicked " + displayName + " for : " + reason);
         }
 
         /// <summary>
