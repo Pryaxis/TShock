@@ -86,7 +86,7 @@ namespace TShockAPI
             commands.Add(new Command("eater", "spawnboss", Eater));
             commands.Add(new Command("eye", "spawnboss", Eye));
             commands.Add(new Command("skeletron", "spawnboss", Skeletron));
-            commands.Add(new Command("hardcore", "cfg", Hardcore));
+            commands.Add(new Command("hardcore", "spawnboss", Hardcore));
             commands.Add(new Command("invade", "causeevents", Invade));
             commands.Add(new Command("password", "cfg", Password));
             commands.Add(new Command("save", "cfg", Save));
