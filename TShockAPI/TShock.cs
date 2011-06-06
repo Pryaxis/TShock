@@ -219,7 +219,7 @@ namespace TShockAPI
                                 if (flag)
                                 {
                                     Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
-                                                      new[] {255f, 0f, 0f});
+                                                      new[] { 255f, 0f, 0f });
                                     e.Handled = true;
                                 }
                             }
@@ -292,8 +292,9 @@ namespace TShockAPI
                                     if (ConfigurationManager.banCheater)
                                         Ban(ply, "Abnormal life increase");
                                     Tools.Kick(ply, "Abnormal life increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + 
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of health.");
+                                    e.Handled = true;
                                 }
                             }
                         }
@@ -324,8 +325,9 @@ namespace TShockAPI
                                     if (ConfigurationManager.banCheater)
                                         Ban(ply, "Abnormal mana increase");
                                     Tools.Kick(ply, "Abnormal mana increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + 
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of mana.");
+                                    e.Handled = true;
                                 }
                             }
                         }
@@ -346,6 +348,7 @@ namespace TShockAPI
                     {
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
                         Ban(ply, "Faking Chat");
+                        e.Handled = true;
                     }
                 }
             }
@@ -429,7 +432,7 @@ namespace TShockAPI
                             var flag = CheckSpawn(x, y);
                             if (flag)
                             {
-                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] {255f, 0f, 0f});
+                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
                                 e.Handled = true;
                             }
                         }
@@ -481,8 +484,8 @@ namespace TShockAPI
             {
                 return;
             }
-            int x = (int) Main.player[ply].position.X;
-            int y = (int) Main.player[ply].position.Y;
+            int x = (int)Main.player[ply].position.X;
+            int y = (int)Main.player[ply].position.Y;
 
             if (msg.StartsWith("/"))
             {
@@ -498,7 +501,7 @@ namespace TShockAPI
 
                 if (cmd == null)
                 {
-                    Tools.SendMessage(ply, "That command does not exist, try /help", new float[] {255, 0, 0});
+                    Tools.SendMessage(ply, "That command does not exist, try /help", new float[] { 255, 0, 0 });
                 }
                 else
                 {
@@ -506,7 +509,7 @@ namespace TShockAPI
                     {
                         Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() +
                                  " that s/he did not have access to!");
-                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] {255, 0, 0});
+                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] { 255, 0, 0 });
                     }
                 }
                 handler.Handled = true;
@@ -562,7 +565,7 @@ namespace TShockAPI
         {
             if (!File.Exists(FileTools.SaveDir + "auth.lck"))
             {
-                Random r = new Random((int) DateTime.Now.ToBinary());
+                Random r = new Random((int)DateTime.Now.ToBinary());
                 ConfigurationManager.authToken = r.Next(100000, 10000000);
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
                                   ConfigurationManager.authToken);
@@ -592,12 +595,12 @@ namespace TShockAPI
                         if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
                         {
                             if (ConfigurationManager.banTnt)
-                                Ban((int) i, "Explosives");
-                            Tools.Kick((int) i, "Kill tile abuse detected.");
+                                Ban((int)i, "Explosives");
+                            Tools.Kick((int)i, "Kill tile abuse detected.");
                             Tools.Broadcast(Main.player[i].name + " was " +
                                             (ConfigurationManager.banTnt ? "banned" : "kicked") +
                                             " for kill tile abuse.");
-                            RevertKillTile((int) i);
+                            RevertKillTile((int)i);
                         }
                         else if (players[i].tileThreshold > 0)
                         {
@@ -632,7 +635,7 @@ namespace TShockAPI
                         string[] changes = updateString.Split(',');
                         Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
                                                             Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
-                        float[] color = {255, 255, 000};
+                        float[] color = { 255, 255, 000 };
                         if (VersionNum.CompareTo(updateVersion) < 0)
                         {
                             Tools.SendMessage(ply, "This server is out of date.");
@@ -678,7 +681,7 @@ namespace TShockAPI
             }
             else
             {
-                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier*Tools.activePlayers());
+                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier * Tools.activePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -697,7 +700,7 @@ namespace TShockAPI
             ConfigurationManager.killCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (ConfigurationManager.killCount%100 == 0)
+            if (ConfigurationManager.killCount % 100 == 0)
             {
                 switch (random)
                 {
@@ -748,7 +751,7 @@ namespace TShockAPI
         public static void KillMe(int plr)
         {
             for (int i = 0; i < Main.player.Length; i++)
-                NetMessage.SendData(44, i, -1, "", plr, 1, 9999999, (float) 0);
+                NetMessage.SendData(44, i, -1, "", plr, 1, 9999999, (float)0);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
@@ -825,8 +828,8 @@ namespace TShockAPI
             players[ply].tilesDestroyed.Keys.CopyTo(positions, 0);
             for (int i = (players[ply].tilesDestroyed.Count - 1); i >= 0; i--)
             {
-                Main.tile[(int) positions[i].X, (int) positions[i].Y] = tiles[i];
-                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float) 0);
+                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
+                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
             }
         }
 
