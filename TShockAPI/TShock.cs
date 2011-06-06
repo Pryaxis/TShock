@@ -399,7 +399,6 @@ namespace TShockAPI
             if (Main.netMode != 2) { return; }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            CheckInventory(who);
             if (HackedHealth(who) && ConfigurationManager.kickCheater && ConfigurationManager.banCheater)
             {
                 TShock.Ban(who, "Hacked health.");
@@ -711,23 +710,6 @@ namespace TShockAPI
                     return i;
             }
             return -1;
-        }
-        /// <summary>
-        /// Stop fucking enabling this as a ban reason. Holy fucking hell, it doesn't fucking work.
-        /// </summary>
-        /// <param name="plr"></param>
-        /// <returns></returns>
-        public static bool CheckInventory(int plr)
-        {
-            for (int i = 0; i < 44; i++)
-            {
-                if (Main.player[plr].inventory[i].stack > Main.player[plr].inventory[i].maxStack)
-                {
-                    Log.Info(Tools.FindPlayer(plr) + " had " + Main.player[plr].inventory[i].stack.ToString() + " of " + Main.player[plr].inventory[i].name + " which has a max stack of " + Main.player[plr].inventory[i].maxStack.ToString());
-                    return true;
-                }
-            }
-            return false;
         }
 
         public static bool CheckSpawn(int x, int y)
