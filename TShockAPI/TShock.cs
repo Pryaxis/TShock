@@ -199,10 +199,6 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            if (Main.netMode != 2)
-            {
-                return;
-            }
             if (e.MsgID == 17)
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
@@ -211,7 +207,20 @@ namespace TShockAPI
                     int x = br.ReadInt32();
                     int y = br.ReadInt32();
                     byte typetile = br.ReadByte();
+                    if (type == 1 || type == 3)
+                    {
+                        int plyX = Math.Abs((int) Main.player[e.Msg.whoAmI].position.X);
+                        int plyY = Math.Abs((int) Main.player[e.Msg.whoAmI].position.Y);
+                        int realX = Math.Abs(x*16);
+                        int realY = Math.Abs(y*16);
+
+                        if ((plyX - realX > 6) || (plyY - realY > 6))
+                            TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
+                            Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place blocks.");
+                            e.Handled = true;
+                    }
                     if (type == 0 || type == 1)
+
                         if (ConfigurationManager.spawnProtect)
                             if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                             {
@@ -411,6 +420,34 @@ namespace TShockAPI
                     byte liquid = br.ReadByte();
                     bool lava = br.ReadBoolean();
 
+                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X);
+                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y);
+                    int realX = Math.Abs(x * 16);
+                    int realY = Math.Abs(y * 16);
+
+                    for (int i = 0; i < 44; i++)
+                    {
+                        if (Main.player[e.Msg.whoAmI].inventory[i].name == "Lava Bucket")
+                            TShock.players[e.Msg.whoAmI].lavaCount++;
+                        else if (Main.player[e.Msg.whoAmI].inventory[i].name == "Water Bucket")
+                            TShock.players[e.Msg.whoAmI].waterCount++;
+                    }
+
+                    if (lava && TShock.players[e.Msg.whoAmI].lavaCount <= 0)
+                    {
+                        TShock.Ban(e.Msg.whoAmI, "Placing lava they didn't have.");
+                        e.Handled = true;
+                    }
+                    else if (!lava && TShock.players[e.Msg.whoAmI].waterCount <= 0)
+                    {
+                        TShock.Ban(e.Msg.whoAmI, "Placing water they didn't have.");
+                        e.Handled = true;
+                    }
+                    if ((plyX - realX > 6) || (plyY - realY > 6))
+                        TShock.Ban(e.Msg.whoAmI, "Placing impossible to place liquid.");
+                        Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place liquid.");
+                        e.Handled = true;
+
                     if (ConfigurationManager.spawnProtect)
                     {
                         if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
@@ -423,11 +460,11 @@ namespace TShockAPI
                             }
                         }
                     }
-                    else if (e.MsgID == 0x22) // Client only KillTile
-                    {
-                        e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
-                    }
                 }
+            }
+            else if (e.MsgID == 0x22) // Client only KillTile
+            {
+                e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
             }
         }
 
@@ -797,6 +834,7 @@ namespace TShockAPI
 
         public static void Ban(int plr, string reason = "")
         {
+            Tools.Kick(plr, reason);
             Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
         }
 

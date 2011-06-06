@@ -200,7 +200,18 @@ namespace TShockAPI
 
         public static void Ban(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 4).Trim().TrimEnd('"').TrimStart('"');
+            string plStr = args.Message.Remove(0, 4).Trim().TrimEnd('"').TrimStart('"').Split(' ')[0];
+            string[] reason = plStr.Split(' ');
+            string banReason = "";
+            for (int i = 0; i < reason.Length; i++)
+            {
+                if (reason[i].Contains("\""))
+                    reason[i] = "";
+            }
+            for (int i = 0; i < reason.Length; i++)
+            {
+                banReason += reason[i];
+            }
             int adminplr = args.PlayerID;
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
