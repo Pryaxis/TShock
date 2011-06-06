@@ -106,6 +106,7 @@ namespace TShockAPI
             commands.Add(new Command("playing", "", Playing));
             commands.Add(new Command("auth", "", AuthToken));
             commands.Add(new Command("me", "", ThirdPerson));
+            commands.Add(new Command("p", "", PartyChat));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
@@ -116,6 +117,26 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void PartyChat(CommandArgs args)
+        {
+            int playerTeam = Main.player[args.PlayerID].team;
+            if (playerTeam != 0)
+            {
+                string msg = "<" + Main.player[args.PlayerID].name + "> " + args.Message.Remove(0, 3);
+                for (int i = 0; i < Main.player.Length; i++)
+                {
+                    if (Main.player[i].team == Main.player[args.PlayerID].team)
+                    {
+                        Tools.SendMessage(i, msg, new float[] { (float)Main.teamColor[playerTeam].R, (float)Main.teamColor[playerTeam].G, (float)Main.teamColor[playerTeam].B });
+                    }
+                }
+            }
+            else
+            {
+                Tools.SendMessage(args.PlayerID, "You are not in a party!", new float[]{ 255f, 240f, 20f});
+            }
+        }
 
         public static void ThirdPerson(CommandArgs args)
         {
@@ -574,8 +595,6 @@ namespace TShockAPI
         {
             int ply = args.PlayerID;
             Tools.SendMessage(ply, "TShock Commands:");
-            int h = 1;
-            int i = 0;
             string tempstring = "";
             int page = 1;
             if (args.Message.Split(' ').Length == 2)
@@ -588,36 +607,27 @@ namespace TShockAPI
                     cmdlist.Add(commands[j]);
                 }
             }
-            if (cmdlist.Count > (15*(page - 1)))
+            if (cmdlist.Count > (15 * (page - 1)))
             {
-                for (int j = (15*(page - 1)); j < cmdlist.Count; j++)
+                for (int j = (15 * (page - 1)); j < (15 * page); j++)
                 {
-                    if (i == 3) break;
+                    tempstring += "/" + cmdlist[j].Name() + ", ";
                     if (j == cmdlist.Count - 1)
                     {
-                        tempstring += "/" + cmdlist[j].Name() + ", ";
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] {' ', ','}), new[] {255f, 255f, 0f});
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), new[] { 255f, 255f, 0f });
+                        break;
                     }
-                    if ((h - 1)%5 == 0 && (h - 1) != 0)
+                    if ((j + 1) % 5 == 0)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] {' ', ','}), new[] {255f, 255f, 0f});
-                        tempstring = "/" + cmdlist[j].Name() + ", ";
-                        i++;
-                        h++;
-                    }
-                    else
-                    {
-                        tempstring += "/" + cmdlist[j].Name() + ", ";
-                        h++;
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), new[] { 255f, 255f, 0f });
+                        tempstring = "";
                     }
                 }
             }
-            if (cmdlist.Count > (15*page))
+            if (cmdlist.Count > (15 * page))
             {
-                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", new[] {255f, 0f, 255f});
+                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", new[] { 255f, 0f, 255f });
             }
-            Tools.SendMessage(ply, "Terraria commands:");
-            Tools.SendMessage(ply, "/playing, /p, /me", new[] {255f, 255f, 0f});
         }
 
         public static void Time(CommandArgs args)
