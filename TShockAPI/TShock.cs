@@ -284,17 +284,18 @@ namespace TShockAPI
                     {
                         if (players[ply].syncHP)
                         {
-                            if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                                if (ConfigurationManager.banCheater)
+                            if (!players[ply].group.HasPermission("ignorecheatdetection"))
+                            {
+                                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
                                 {
-                                    Ban(ply, "Abnormal life increase");
-                                    Tools.Broadcast(Tools.FindPlayer(ply) +
-                                                    " was banned because they gained an abnormal amount of health.");
-                                }
-                                else if (ConfigurationManager.kickCheater)
+                                    string playerName = Tools.FindPlayer(ply);
+                                    if (ConfigurationManager.banCheater)
+                                        Ban(ply, "Abnormal life increase");
                                     Tools.Kick(ply, "Abnormal life increase");
-                            Tools.Broadcast(Tools.FindPlayer(ply) +
-                                            " was kicked because they gained an abnormal amount of health.");
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + 
+                                                    " because they gained an abnormal amount of health.");
+                                }
+                            }
                         }
                         else
                         {
@@ -315,16 +316,18 @@ namespace TShockAPI
                     {
                         if (players[ply].syncMP)
                         {
-                            if (ConfigurationManager.banCheater)
+                            if (!players[ply].group.HasPermission("ignorecheatdetection"))
                             {
-                                Ban(ply, "Abnormal mana increase");
-                                Tools.Broadcast(Tools.FindPlayer(ply) +
-                                                " was banned because they gained an abnormal amount of mana.");
+                                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
+                                {
+                                    string playerName = Tools.FindPlayer(ply);
+                                    if (ConfigurationManager.banCheater)
+                                        Ban(ply, "Abnormal mana increase");
+                                    Tools.Kick(ply, "Abnormal mana increase");
+                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + 
+                                                    " because they gained an abnormal amount of mana.");
+                                }
                             }
-                            else if (ConfigurationManager.kickCheater)
-                                Tools.Kick(ply, "Abnormal mana increase");
-                            Log.Info(Tools.FindPlayer(ply) +
-                                     " had increased max mana by more than 20 or increased mana more than max");
                         }
                         else
                         {
@@ -447,15 +450,16 @@ namespace TShockAPI
             }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
-            if (HackedHealth(who) && ConfigurationManager.kickCheater && ConfigurationManager.banCheater)
+            if (!players[who].group.HasPermission("ignorecheatdetection") && HackedHealth(who))
             {
-                Ban(who, "Hacked health.");
-                Tools.Broadcast(Tools.FindPlayer(who) + " was banned for hacked health.");
-            }
-            else if (HackedHealth(who) && ConfigurationManager.kickCheater && (!ConfigurationManager.banCheater))
-            {
-                Tools.Kick(who, "Hacked health.");
-                Tools.Broadcast(Tools.FindPlayer(who) + " was kicked for hacked health.");
+                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
+                {
+                    string playerName = Tools.FindPlayer(who);
+                    if (ConfigurationManager.banCheater)
+                        Ban(who, "Hacked health.");
+                    Tools.Kick(who, "Hacked health.");
+                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.kickCheater ? "banned" : "kicked") + " for hacked health.");
+                }
             }
             if (ConfigurationManager.permaPvp)
             {
