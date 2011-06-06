@@ -117,16 +117,16 @@ namespace TShockAPI
                               Version.Revision + " (" + VersionCodename + ") now running.");
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
-            GameHooks.OnPreInitialize += OnPreInit;
-            GameHooks.OnPostInitialize += OnPostInit;
-            GameHooks.OnUpdate += OnUpdate;
-            GameHooks.OnLoadContent += OnLoadContent;
-            ServerHooks.OnChat += OnChat;
-            ServerHooks.OnJoin += OnJoin;
-            NetHooks.OnPreGetData += GetData;
-            NetHooks.OnGreetPlayer += OnGreetPlayer;
-            NpcHooks.OnStrikeNpc += NpcHooks_OnStrikeNpc;
-            ServerHooks.OnCommand += ServerHooks_OnCommand;
+            GameHooks.Initialize += OnPreInit;
+            GameHooks.PostInitialize += OnPostInit;
+            GameHooks.Update += OnUpdate;
+            GameHooks.LoadContent += OnLoadContent;
+            ServerHooks.Chat += OnChat;
+            ServerHooks.Join += OnJoin;
+            NetHooks.GetData += GetData;
+            NetHooks.GreetPlayer += OnGreetPlayer;
+            NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+            ServerHooks.Command += ServerHooks_OnCommand;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -169,16 +169,16 @@ namespace TShockAPI
         {
             Bans.SaveBans();
 
-            GameHooks.OnPreInitialize -= OnPreInit;
-            GameHooks.OnPostInitialize -= OnPostInit;
-            GameHooks.OnUpdate -= OnUpdate;
-            GameHooks.OnLoadContent -= OnLoadContent;
-            ServerHooks.OnChat -= OnChat;
-            ServerHooks.OnJoin -= OnJoin;
-            ServerHooks.OnCommand -= ServerHooks_OnCommand;
-            NetHooks.OnPreGetData -= GetData;
-            NetHooks.OnGreetPlayer -= OnGreetPlayer;
-            NpcHooks.OnStrikeNpc -= NpcHooks_OnStrikeNpc;
+            GameHooks.Initialize -= OnPreInit;
+            GameHooks.PostInitialize -= OnPostInit;
+            GameHooks.Update -= OnUpdate;
+            GameHooks.LoadContent -= OnLoadContent;
+            ServerHooks.Chat -= OnChat;
+            ServerHooks.Join -= OnJoin;
+            ServerHooks.Command -= ServerHooks_OnCommand;
+            NetHooks.GetData -= GetData;
+            NetHooks.GreetPlayer -= OnGreetPlayer;
+            NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
         }
 
         /*
@@ -338,20 +338,6 @@ namespace TShockAPI
                     }
                 }
             }
-            else if (e.MsgID == 0x19) // Chat Text
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte ply = br.ReadByte();
-
-                    if (e.Msg.whoAmI != ply)
-                    {
-                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
-                        Ban(ply, "Faking Chat");
-                        e.Handled = true;
-                    }
-                }
-            }
             else if (e.MsgID == 0x1B) // New Projectile
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
@@ -478,22 +464,28 @@ namespace TShockAPI
             e.Handled = true;
         }
 
-        private void OnChat(int ply, string msg, HandledEventArgs handler)
+        private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
             if (Main.netMode != 2)
-            {
                 return;
+
+            if (msg.whoAmI != ply)
+            {
+                Log.Info(Tools.FindPlayer(msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
+                Ban(ply, "Faking Chat");
+                e.Handled = true;
             }
+
             int x = (int)Main.player[ply].position.X;
             int y = (int)Main.player[ply].position.Y;
 
-            if (msg.StartsWith("/"))
+            if (text.StartsWith("/"))
             {
                 //Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
                 Commands.Command cmd = null;
                 for (int i = 0; i < Commands.commands.Count; i++)
                 {
-                    if (Commands.commands[i].Name().Equals(msg.Split(' ')[0].TrimStart('/')))
+                    if (Commands.commands[i].Name().Equals(text.Split(' ')[0].TrimStart('/')))
                     {
                         cmd = Commands.commands[i];
                     }
@@ -505,18 +497,18 @@ namespace TShockAPI
                 }
                 else
                 {
-                    if (!cmd.Run(msg, players[ply]))
+                    if (!cmd.Run(text, players[ply]))
                     {
                         Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() +
                                  " that s/he did not have access to!");
                         Tools.SendMessage(ply, "You do not have access to that command.", new float[] { 255, 0, 0 });
                     }
                 }
-                handler.Handled = true;
+                e.Handled = true;
             }
         }
 
-        private void OnJoin(int ply, AllowEventArgs handler)
+        private void OnJoin(int ply, HandledEventArgs handler)
         {
             if (Main.netMode != 2)
             {
