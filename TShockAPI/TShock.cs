@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 9, 0, 0);
+        public static Version VersionNum = new Version(1, 8, 0, 1);
 
         public static string VersionCodename = "Squashing Bugs";
 
@@ -204,7 +204,7 @@ namespace TShockAPI
                                 var flag = CheckSpawn(x, y);
                                 if (flag)
                                 {
-                                    Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                    Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", new float[] { 255f, 0f, 0f });
                                     e.Handled = true;
                                 }
                             }

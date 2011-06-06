@@ -102,10 +102,7 @@ namespace TShockAPI
             commands.Add(new Command("debug-config", "cfg", new CommandDelegate(DebugConfiguration)));
             commands.Add(new Command("playing", "", new CommandDelegate(Playing)));
             commands.Add(new Command("auth", "", new CommandDelegate(AuthToken)));
-            //TShock.admincommandList.Add("debug-config", new CommandDelegate(DebugConfiguration));
-            //TShock.admincommandList.Add("playing", new CommandDelegate(Playing));
-            //TShock.commandList.Add("help", new CommandDelegate(Help));
-            //TShock.commandList.Add("playing", new CommandDelegate(Playing)););
+            commands.Add(new Command("me", "", new CommandDelegate(ThirdPerson)));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
@@ -116,6 +113,12 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void ThirdPerson(CommandArgs args)
+        {
+            string msg = args.Message.Remove(0, 3);
+            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] {205, 133, 63 });
+        }
 
         public static void Playing(CommandArgs args)
         {

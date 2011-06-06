@@ -85,6 +85,16 @@ namespace TShockAPI
             Log.Info("Broadcast: " + msg);
         }
 
+
+        public static void Broadcast(string msg, float[] color)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                SendMessage(i, msg, color);
+            }
+            Log.Info("Broadcast: " + msg);
+        }
+
         /// <summary>
         /// Sends a message out to a single player
         /// </summary>
@@ -94,7 +104,6 @@ namespace TShockAPI
         public static void SendMessage(int ply, string msg, float[] color)
         {
             NetMessage.SendData(0x19, ply, -1, msg, 255, color[0], color[1], color[2]);
-            Log.Info("Said: " + msg + " - To: " + Tools.FindPlayer(ply));
         }
 
         /// <summary>
@@ -105,7 +114,6 @@ namespace TShockAPI
         public static void SendMessage(int ply, string message)
         {
             NetMessage.SendData(0x19, ply, -1, message, 255, 0f, 255f, 0f);
-            Log.Info("Said: " + message + " - To: " + Tools.FindPlayer(ply));
         }
 
         /// <summary>
@@ -377,5 +385,6 @@ namespace TShockAPI
         }
 
         public Tools() { }
+
     }
 }
