@@ -398,7 +398,7 @@ namespace TShockAPI
                     }
                 }
             }
-            else if (e.MsgID == 0x1b) //PlayerDamage
+            else if (e.MsgID == 0x1a) //PlayerDamage
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
