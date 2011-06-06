@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
@@ -19,9 +19,9 @@ namespace TShockAPI
 
         public static string VersionCodename = "SPACEEE";
 
-        public static bool shownVersion = false;
+        public static bool shownVersion;
 
-        static bool[] BlacklistTiles;
+        private static bool[] BlacklistTiles;
 
         public static BanManager Bans = new BanManager(Path.Combine(saveDir, "bans.txt"));
 
@@ -113,7 +113,8 @@ namespace TShockAPI
             {
                 Console.WriteLine(ex.ToString());
             }
-            Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." + Version.Revision + " (" + VersionCodename + ") now running.");
+            Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." +
+                              Version.Revision + " (" + VersionCodename + ") now running.");
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
             GameHooks.OnPreInitialize += OnPreInit;
@@ -135,12 +136,13 @@ namespace TShockAPI
             Commands.InitCommands();
             Log.Info("Commands initialized");
         }
+
         /// <summary>
         /// Handles exceptions that we didn't catch or that Red fucked up
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.IsTerminating)
             {
@@ -153,12 +155,13 @@ namespace TShockAPI
             }
             Log.Error(e.ExceptionObject.ToString());
         }
+
         /// <summary>
         /// When a server command is run.
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="e"></param>
-        void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
+        private void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
         {
         }
 
@@ -182,7 +185,7 @@ namespace TShockAPI
          * Hooks:
          * */
 
-        void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
+        private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {
             if (ConfigurationManager.infiniteInvasion)
             {
@@ -194,9 +197,12 @@ namespace TShockAPI
             }
         }
 
-        void GetData(GetDataEventArgs e)
+        private void GetData(GetDataEventArgs e)
         {
-            if (Main.netMode != 2) { return; }
+            if (Main.netMode != 2)
+            {
+                return;
+            }
             if (e.MsgID == 17)
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
@@ -212,7 +218,8 @@ namespace TShockAPI
                                 var flag = CheckSpawn(x, y);
                                 if (flag)
                                 {
-                                    Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", new float[] { 255f, 0f, 0f });
+                                    Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
+                                                      new[] {255f, 0f, 0f});
                                     e.Handled = true;
                                 }
                             }
@@ -220,7 +227,7 @@ namespace TShockAPI
                     if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                     {
                         players[e.Msg.whoAmI].tileThreshold++;
-                        players[e.Msg.whoAmI].tilesDestroyed.Add(new Position((float)x, (float)y), Main.tile[x, y]);
+                        players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
                     }
                     return;
                 }
@@ -244,13 +251,15 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x0A) //SendSection
             {
-                Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name,
+                                              e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
                 e.Handled = true;
             }
             else if (e.MsgID == 0x17) //Npc Data
             {
-                Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name, e.Msg.whoAmI));
+                Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name,
+                                              e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
                 e.Handled = true;
             }
@@ -270,7 +279,7 @@ namespace TShockAPI
                     byte ply = br.ReadByte();
                     short life = br.ReadInt16();
                     short maxLife = br.ReadInt16();
-                    
+
                     if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                     {
                         if (players[ply].syncHP)
@@ -278,12 +287,14 @@ namespace TShockAPI
                             if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
                                 if (ConfigurationManager.banCheater)
                                 {
-                                    TShock.Ban(ply, "Abnormal life increase");
-                                    Tools.Broadcast(Tools.FindPlayer(ply) + " was banned because they gained an abnormal amount of health.");
+                                    Ban(ply, "Abnormal life increase");
+                                    Tools.Broadcast(Tools.FindPlayer(ply) +
+                                                    " was banned because they gained an abnormal amount of health.");
                                 }
                                 else if (ConfigurationManager.kickCheater)
                                     Tools.Kick(ply, "Abnormal life increase");
-                            Tools.Broadcast(Tools.FindPlayer(ply) + " was kicked because they gained an abnormal amount of health.");
+                            Tools.Broadcast(Tools.FindPlayer(ply) +
+                                            " was kicked because they gained an abnormal amount of health.");
                         }
                         else
                         {
@@ -306,8 +317,9 @@ namespace TShockAPI
                         {
                             if (ConfigurationManager.banCheater)
                             {
-                                TShock.Ban(ply, "Abnormal mana increase");
-                                Tools.Broadcast(Tools.FindPlayer(ply) + " was banned because they gained an abnormal amount of mana.");
+                                Ban(ply, "Abnormal mana increase");
+                                Tools.Broadcast(Tools.FindPlayer(ply) +
+                                                " was banned because they gained an abnormal amount of mana.");
                             }
                             else if (ConfigurationManager.kickCheater)
                                 Tools.Kick(ply, "Abnormal mana increase");
@@ -329,9 +341,8 @@ namespace TShockAPI
 
                     if (e.Msg.whoAmI != ply)
                     {
-                        //fuck you faggot
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
-                        TShock.Ban(ply, "Faking Chat");
+                        Ban(ply, "Faking Chat");
                     }
                 }
             }
@@ -357,8 +368,8 @@ namespace TShockAPI
                             {
                                 int i = e.Msg.whoAmI;
                                 if (ConfigurationManager.banBoom)
-                                    TShock.Ban(i, "Explosives");
-                                Tools.Kick((int)i, "Explosives were thrown.");
+                                    Ban(i, "Explosives");
+                                Tools.Kick(i, "Explosives were thrown.");
                                 Tools.Broadcast(Main.player[i].name + " was " +
                                                 (ConfigurationManager.banBoom ? "banned" : "kicked") +
                                                 " for throwing an explosive device.");
@@ -379,7 +390,7 @@ namespace TShockAPI
 
                     if (id != e.Msg.whoAmI)
                     {
-                        TShock.Ban(e.Msg.whoAmI, "Griefer");
+                        Ban(e.Msg.whoAmI, "Griefer");
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) +
                                  " was kicked for trying to execute KillMe on someone else.");
                         e.Handled = true;
@@ -402,7 +413,7 @@ namespace TShockAPI
                             var flag = CheckSpawn(x, y);
                             if (flag)
                             {
-                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new float[] { 255f, 0f, 0f });
+                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] {255f, 0f, 0f});
                                 e.Handled = true;
                             }
                         }
@@ -415,16 +426,20 @@ namespace TShockAPI
             }
         }
 
-        void OnGreetPlayer(int who, HandledEventArgs e)
+        private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2) { return; }
+            if (Main.netMode != 2)
+            {
+                return;
+            }
             int plr = who; //legacy support
             Tools.ShowMOTD(who);
             if (HackedHealth(who) && ConfigurationManager.kickCheater && ConfigurationManager.banCheater)
             {
-                TShock.Ban(who, "Hacked health.");
+                Ban(who, "Hacked health.");
                 Tools.Broadcast(Tools.FindPlayer(who) + " was banned for hacked health.");
-            } else if (HackedHealth(who) && ConfigurationManager.kickCheater && (!ConfigurationManager.banCheater))
+            }
+            else if (HackedHealth(who) && ConfigurationManager.kickCheater && (!ConfigurationManager.banCheater))
             {
                 Tools.Kick(who, "Hacked health.");
                 Tools.Broadcast(Tools.FindPlayer(who) + " was kicked for hacked health.");
@@ -434,7 +449,8 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (TShock.players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion && !ConfigurationManager.startedInvasion)
+            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion &&
+                !ConfigurationManager.startedInvasion)
             {
                 StartInvasion();
             }
@@ -442,11 +458,14 @@ namespace TShockAPI
             e.Handled = true;
         }
 
-        void OnChat(int ply, string msg, HandledEventArgs handler)
+        private void OnChat(int ply, string msg, HandledEventArgs handler)
         {
-            if (Main.netMode != 2) { return; }
-            int x = (int)Main.player[ply].position.X;
-            int y = (int)Main.player[ply].position.Y;
+            if (Main.netMode != 2)
+            {
+                return;
+            }
+            int x = (int) Main.player[ply].position.X;
+            int y = (int) Main.player[ply].position.Y;
 
             if (msg.StartsWith("/"))
             {
@@ -462,29 +481,35 @@ namespace TShockAPI
 
                 if (cmd == null)
                 {
-                    Tools.SendMessage(ply, "That command does not exist, try /help", new float[] { 255, 0, 0 });
+                    Tools.SendMessage(ply, "That command does not exist, try /help", new float[] {255, 0, 0});
                 }
                 else
                 {
                     if (!cmd.Run(msg, players[ply]))
                     {
-                        Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() + " that s/he did not have access to!");
-                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] { 255, 0, 0 });
+                        Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() +
+                                 " that s/he did not have access to!");
+                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] {255, 0, 0});
                     }
                 }
                 handler.Handled = true;
             }
         }
 
-        void OnJoin(int ply, AllowEventArgs handler)
+        private void OnJoin(int ply, AllowEventArgs handler)
         {
-            if (Main.netMode != 2) { return; }
+            if (Main.netMode != 2)
+            {
+                return;
+            }
 
-            string ip = Tools.GetPlayerIP(ply); ;
+            string ip = Tools.GetPlayerIP(ply);
+            ;
             players[ply] = new TSPlayer(ply);
             players[ply].group = Tools.GetGroupForIP(ip);
 
-            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots && !players[ply].group.HasPermission("reservedslot"))
+            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots &&
+                !players[ply].group.HasPermission("reservedslot"))
             {
                 Tools.Kick(ply, "Server is full");
                 return;
@@ -508,32 +533,39 @@ namespace TShockAPI
             players[ply].group = Tools.GetGroupForIP(ip);
         }
 
-        void OnLoadContent(Microsoft.Xna.Framework.Content.ContentManager obj)
+        private void OnLoadContent(ContentManager obj)
         {
         }
 
-        void OnPreInit()
+        private void OnPreInit()
         {
         }
 
-        void OnPostInit()
+        private void OnPostInit()
         {
-            if (!System.IO.File.Exists(FileTools.SaveDir + "auth.lck"))
+            if (!File.Exists(FileTools.SaveDir + "auth.lck"))
             {
-                Random r = new Random((int)System.DateTime.Now.ToBinary());
+                Random r = new Random((int) DateTime.Now.ToBinary());
                 ConfigurationManager.authToken = r.Next(100000, 10000000);
-                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + ConfigurationManager.authToken);
+                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
+                                  ConfigurationManager.authToken);
                 Console.WriteLine("This token will only display ONCE.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
         }
 
-        void OnUpdate(GameTime time)
+        private void OnUpdate(GameTime time)
         {
-            if (Main.netMode != 2) { return; }
+            if (Main.netMode != 2)
+            {
+                return;
+            }
             for (uint i = 0; i < Main.maxPlayers; i++)
             {
-                if (Main.player[i].active == false) { continue; }
+                if (Main.player[i].active == false)
+                {
+                    continue;
+                }
                 if (players[i].tileThreshold >= 20)
                 {
                     if (Main.player[i] != null)
@@ -541,10 +573,12 @@ namespace TShockAPI
                         if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
                         {
                             if (ConfigurationManager.banTnt)
-                                TShock.Ban((int)i, "Explosives");
-                            Tools.Kick((int)i, "Kill tile abuse detected.");
-                            Tools.Broadcast(Main.player[i].name + " was " + (ConfigurationManager.banTnt ? "banned" : "kicked") + " for kill tile abuse.");
-                            RevertKillTile((int)i);
+                                Ban((int) i, "Explosives");
+                            Tools.Kick((int) i, "Kill tile abuse detected.");
+                            Tools.Broadcast(Main.player[i].name + " was " +
+                                            (ConfigurationManager.banTnt ? "banned" : "kicked") +
+                                            " for kill tile abuse.");
+                            RevertKillTile((int) i);
                         }
                         else if (players[i].tileThreshold > 0)
                         {
@@ -568,16 +602,18 @@ namespace TShockAPI
         {
             if (!shownVersion)
             {
-                if (TShock.players[ply].group.HasPermission("maintenance"))
+                if (players[ply].group.HasPermission("maintenance"))
                 {
                     WebClient client = new WebClient();
-                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+                    client.Headers.Add("user-agent",
+                                       "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
                     try
                     {
                         string updateString = client.DownloadString("http://shankshock.com/tshock-update.txt");
                         string[] changes = updateString.Split(',');
-                        Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]), Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
-                        float[] color = { 255, 255, 000 };
+                        Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
+                                                            Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
+                        float[] color = {255, 255, 000};
                         if (VersionNum.CompareTo(updateVersion) < 0)
                         {
                             Tools.SendMessage(ply, "This server is out of date.");
@@ -598,8 +634,8 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
-            Main.player[ply].position.X = (float)x;
-            Main.player[ply].position.Y = (float)y;
+            Main.player[ply].position.X = x;
+            Main.player[ply].position.Y = y;
             NetMessage.SendData(0x0d, -1, ply, "", ply);
             NetMessage.SendData(0x0d, -1, -1, "", ply);
             NetMessage.syncPlayers();
@@ -623,7 +659,7 @@ namespace TShockAPI
             }
             else
             {
-                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier * Tools.activePlayers());
+                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier*Tools.activePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -642,7 +678,7 @@ namespace TShockAPI
             ConfigurationManager.killCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (ConfigurationManager.killCount % 100 == 0)
+            if (ConfigurationManager.killCount%100 == 0)
             {
                 switch (random)
                 {
@@ -656,7 +692,8 @@ namespace TShockAPI
                         Tools.Broadcast("Number of 'noobs' killed to date: " + ConfigurationManager.killCount);
                         break;
                     case 3:
-                        Tools.Broadcast("Duke Nukem would be proud. " + ConfigurationManager.killCount + " goblins killed.");
+                        Tools.Broadcast("Duke Nukem would be proud. " + ConfigurationManager.killCount +
+                                        " goblins killed.");
                         break;
                     case 4:
                         Tools.Broadcast("You call that a lot? " + ConfigurationManager.killCount + " goblins killed!");
@@ -675,7 +712,7 @@ namespace TShockAPI
                 for (int j = 0; j < 44; j++)
                 {
                     for (int h = 0; h < Main.player.Length; h++)
-                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, (float)j, 0f, 0f);
+                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, j, 0f, 0f);
                 }
             }
         }
@@ -692,7 +729,7 @@ namespace TShockAPI
         public static void KillMe(int plr)
         {
             for (int i = 0; i < Main.player.Length; i++)
-                NetMessage.SendData(44, i, -1, "", plr, (float)1, (float)9999999, (float)0);
+                NetMessage.SendData(44, i, -1, "", plr, 1, 9999999, (float) 0);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
@@ -735,10 +772,10 @@ namespace TShockAPI
 
         public static bool CheckSpawn(int x, int y)
         {
-            Vector2 tile = new Vector2((float)x, (float)y);
-            Vector2 spawn = new Vector2((float)Main.spawnTileX, (float)Main.spawnTileY);
+            Vector2 tile = new Vector2(x, y);
+            Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
             var distance = Vector2.Distance(spawn, tile);
-            if (distance > (float)ConfigurationManager.spawnProtectRadius)
+            if (distance > ConfigurationManager.spawnProtectRadius)
                 return false;
             else
                 return true;
@@ -754,7 +791,11 @@ namespace TShockAPI
             public float X;
             public float Y;
 
-            public Position(float x, float y) { X = x; Y = y; }
+            public Position(float x, float y)
+            {
+                X = x;
+                Y = y;
+            }
         }
 
         public static void RevertKillTile(int ply)
@@ -765,8 +806,8 @@ namespace TShockAPI
             players[ply].tilesDestroyed.Keys.CopyTo(positions, 0);
             for (int i = (players[ply].tilesDestroyed.Count - 1); i >= 0; i--)
             {
-                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
-                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
+                Main.tile[(int) positions[i].X, (int) positions[i].Y] = tiles[i];
+                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float) 0);
             }
         }
 
