@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI
@@ -11,6 +10,7 @@ namespace TShockAPI
     public class Commands
     {
         public delegate void CommandDelegate(CommandArgs args);
+
         public static List<Command> commands = new List<Command>();
 
         public struct CommandArgs
@@ -22,7 +22,10 @@ namespace TShockAPI
 
             public CommandArgs(string message, int x, int y, int id)
             {
-                Message = message; PlayerX = x; PlayerY = y; PlayerID = id;
+                Message = message;
+                PlayerX = x;
+                PlayerY = y;
+                PlayerID = id;
             }
         }
 
@@ -30,7 +33,7 @@ namespace TShockAPI
         {
             private string name;
             private string permission;
-            CommandDelegate command;
+            private CommandDelegate command;
 
             public Command(string cmdName, string permissionNeeded, CommandDelegate cmd)
             {
@@ -48,8 +51,8 @@ namespace TShockAPI
 
                 CommandArgs args = new CommandArgs();
                 args.Message = msg;
-                args.PlayerX = (int)ply.GetPlayer().position.X;
-                args.PlayerY = (int)ply.GetPlayer().position.Y;
+                args.PlayerX = (int) ply.GetPlayer().position.X;
+                args.PlayerY = (int) ply.GetPlayer().position.Y;
                 args.PlayerID = ply.GetPlayerID();
 
                 command(args);
@@ -73,42 +76,42 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
-            commands.Add(new Command("kick", "kick", new CommandDelegate(Kick)));
-            commands.Add(new Command("ban", "ban", new CommandDelegate(Ban)));
-            commands.Add(new Command("off", "maintenance", new CommandDelegate(Off)));
-            commands.Add(new Command("reload", "cfg", new CommandDelegate(Reload)));
-            commands.Add(new Command("dropmetor", "causeevents", new CommandDelegate(DropMeteor)));
-            commands.Add(new Command("star", "causeevents", new CommandDelegate(Star)));
-            commands.Add(new Command("bloodmoon", "causeevents", new CommandDelegate(Bloodmoon)));
-            commands.Add(new Command("eater", "spawnboss", new CommandDelegate(Eater)));
-            commands.Add(new Command("eye", "spawnboss", new CommandDelegate(Eye)));
-            commands.Add(new Command("skeletron", "spawnboss", new CommandDelegate(Skeletron)));
-            commands.Add(new Command("hardcore", "cfg", new CommandDelegate(Hardcore)));
-            commands.Add(new Command("invade", "causeevents", new CommandDelegate(Invade)));
-            commands.Add(new Command("password", "cfg", new CommandDelegate(Password)));
-            commands.Add(new Command("save", "cfg", new CommandDelegate(Save)));
-            commands.Add(new Command("spawn", "tp", new CommandDelegate(Spawn)));
-            commands.Add(new Command("tp", "tp", new CommandDelegate(TP)));
-            commands.Add(new Command("tphere", "tp", new CommandDelegate(TPHere)));
-            commands.Add(new Command("spawnmob", "spawnmob", new CommandDelegate(SpawnMob)));
-            commands.Add(new Command("butcher", "cheat", new CommandDelegate(Butcher)));
-            commands.Add(new Command("maxspawns", "cfg", new CommandDelegate(MaxSpawns)));
-            commands.Add(new Command("spawnrate", "cfg", new CommandDelegate(SpawnRate)));
-            commands.Add(new Command("time", "cfg", new CommandDelegate(Time)));
-            commands.Add(new Command("help", "", new CommandDelegate(Help)));
-            commands.Add(new Command("slap", "pvpfun", new CommandDelegate(Slap)));
-            commands.Add(new Command("off-nosave", "maintenance", new CommandDelegate(OffNoSave)));
-            commands.Add(new Command("protectspawn", "editspawn", new CommandDelegate(ProtectSpawn)));
-            commands.Add(new Command("debug-config", "cfg", new CommandDelegate(DebugConfiguration)));
-            commands.Add(new Command("playing", "", new CommandDelegate(Playing)));
-            commands.Add(new Command("auth", "", new CommandDelegate(AuthToken)));
-            commands.Add(new Command("me", "", new CommandDelegate(ThirdPerson)));
+            commands.Add(new Command("kick", "kick", Kick));
+            commands.Add(new Command("ban", "ban", Ban));
+            commands.Add(new Command("off", "maintenance", Off));
+            commands.Add(new Command("reload", "cfg", Reload));
+            commands.Add(new Command("dropmetor", "causeevents", DropMeteor));
+            commands.Add(new Command("star", "causeevents", Star));
+            commands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
+            commands.Add(new Command("eater", "spawnboss", Eater));
+            commands.Add(new Command("eye", "spawnboss", Eye));
+            commands.Add(new Command("skeletron", "spawnboss", Skeletron));
+            commands.Add(new Command("hardcore", "cfg", Hardcore));
+            commands.Add(new Command("invade", "causeevents", Invade));
+            commands.Add(new Command("password", "cfg", Password));
+            commands.Add(new Command("save", "cfg", Save));
+            commands.Add(new Command("spawn", "tp", Spawn));
+            commands.Add(new Command("tp", "tp", TP));
+            commands.Add(new Command("tphere", "tp", TPHere));
+            commands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
+            commands.Add(new Command("butcher", "cheat", Butcher));
+            commands.Add(new Command("maxspawns", "cfg", MaxSpawns));
+            commands.Add(new Command("spawnrate", "cfg", SpawnRate));
+            commands.Add(new Command("time", "cfg", Time));
+            commands.Add(new Command("help", "", Help));
+            commands.Add(new Command("slap", "pvpfun", Slap));
+            commands.Add(new Command("off-nosave", "maintenance", OffNoSave));
+            commands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
+            commands.Add(new Command("debug-config", "cfg", DebugConfiguration));
+            commands.Add(new Command("playing", "", Playing));
+            commands.Add(new Command("auth", "", AuthToken));
+            commands.Add(new Command("me", "", ThirdPerson));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
-                commands.Add(new Command("kill", "kill", new CommandDelegate(Kill)));
-                commands.Add(new Command("item", "cheat", new CommandDelegate(Item)));
-                commands.Add(new Command("give", "cheat", new CommandDelegate(Give)));
-                commands.Add(new Command("heal", "cheat", new CommandDelegate(Heal)));
+                commands.Add(new Command("kill", "kill", Kill));
+                commands.Add(new Command("item", "cheat", Item));
+                commands.Add(new Command("give", "cheat", Give));
+                commands.Add(new Command("heal", "cheat", Heal));
             }
         }
 
@@ -117,7 +120,7 @@ namespace TShockAPI
         public static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] {205, 133, 63 });
+            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] {205, 133, 63});
         }
 
         public static void Playing(CommandArgs args)
@@ -134,20 +137,20 @@ namespace TShockAPI
             lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
             lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
             lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
-            Tools.SendMessage(ply, lineOne, new float[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineOne, new[] {255f, 255f, 0f});
             string lineTwo = "";
             lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
             lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
             lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
             lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
-            Tools.SendMessage(ply, lineTwo, new float[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineTwo, new[] {255f, 255f, 0f});
             string lineThree = "";
             lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
             lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
             lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
             lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
             lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate + ", ";
-            Tools.SendMessage(ply, lineThree, new float[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineThree, new[] {255f, 255f, 0f});
         }
 
         public static void Kick(CommandArgs args)
@@ -163,12 +166,12 @@ namespace TShockAPI
                     Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
-                    Tools.SendMessage(ply, "You can't kick another admin!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(ply, "You can't kick another admin!", new[] {255f, 0f, 0f});
             }
             else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(ply, "More than one player matched!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(ply, "More than one player matched!", new[] {255f, 0f, 0f});
             else
-                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
         }
 
         public static void Ban(CommandArgs args)
@@ -185,12 +188,12 @@ namespace TShockAPI
                     Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + "!");
                 }
                 else
-                    Tools.SendMessage(adminplr, "You can't ban another admin!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(adminplr, "You can't ban another admin!", new[] {255f, 0f, 0f});
             }
             else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(adminplr, "More than one player matched!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(adminplr, "More than one player matched!", new[] {255f, 0f, 0f});
             else
-                Tools.SendMessage(adminplr, "Invalid player!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(adminplr, "Invalid player!", new[] {255f, 0f, 0f});
         }
 
         public static void Off(CommandArgs args)
@@ -228,12 +231,12 @@ namespace TShockAPI
             int penis56 = 12;
             int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
             penis57 *= 0x10;
-            int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-            Microsoft.Xna.Framework.Vector2 vector = new Microsoft.Xna.Framework.Vector2((float)penis57, (float)penis58);
+            int penis58 = Main.rand.Next((int) (Main.maxTilesY*0.05))*0x10;
+            Vector2 vector = new Vector2(penis57, penis58);
             float speedX = Main.rand.Next(-100, 0x65);
             float speedY = Main.rand.Next(200) + 100;
-            float penis61 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-            penis61 = ((float)penis56) / penis61;
+            float penis61 = (float) Math.Sqrt(((speedX*speedX) + (speedY*speedY)));
+            penis61 = (penis56)/penis61;
             speedX *= penis61;
             speedY *= penis61;
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
@@ -255,7 +258,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
+            Tools.NewNPC((int) ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eater of worlds!");
         }
 
@@ -264,7 +267,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
+            Tools.NewNPC((int) ConfigurationManager.NPCList.EYE, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eye!");
         }
 
@@ -273,7 +276,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
+            Tools.NewNPC((int) ConfigurationManager.NPCList.SKELETRON, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned skeletron!");
         }
 
@@ -322,7 +325,8 @@ namespace TShockAPI
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2, Main.spawnTileY * 16 - Main.player[ply].height);
+            TShock.Teleport(ply, Main.spawnTileX*16 + 8 - Main.player[ply].width/2,
+                            Main.spawnTileY*16 - Main.player[ply].height);
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
         }
 
@@ -334,7 +338,10 @@ namespace TShockAPI
             if (givenCode == ConfigurationManager.authToken)
             {
                 TextWriter tw = new StreamWriter(FileTools.SaveDir + "users.txt", true);
-                tw.Write("\n" + Tools.GetRealIP(Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) + " superadmin");
+                tw.Write("\n" +
+                         Tools.GetRealIP(
+                             Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) +
+                         " superadmin");
                 Tools.SendMessage(args.PlayerID, "SuperAdmin authenticated. Please re-connect using the same IP.");
                 ConfigurationManager.authToken = 0;
                 tw.Close();
@@ -347,11 +354,12 @@ namespace TShockAPI
             string player = args.Message.Remove(0, 3).Trim();
             if (Tools.FindPlayer(player) != -1 && Tools.FindPlayer(player) != -2 && player != "")
             {
-                TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X, Main.player[Tools.FindPlayer(player)].position.Y);
+                TShock.Teleport(ply, Main.player[Tools.FindPlayer(player)].position.X,
+                                Main.player[Tools.FindPlayer(player)].position.Y);
                 Tools.SendMessage(ply, "Teleported to " + player);
             }
             else
-                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
         }
 
         public static void TPHere(CommandArgs args)
@@ -365,7 +373,7 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "You brought " + player + " here.");
             }
             else
-                Tools.SendMessage(ply, "Invalid player!", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
         }
 
         public static void SpawnMob(CommandArgs args)
@@ -391,16 +399,19 @@ namespace TShockAPI
                 {
                     for (int i = 0; i < amount; i++)
                         npcid = NPC.NewNPC(x, y, type, 0);
-                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount)); ;
+                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
+                    ;
                 }
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]",
+                                  new[] {255f, 0f, 0f});
         }
 
         public static void Item(CommandArgs args)
         {
-            var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
+            var msgargs =
+                Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
             int ply = args.PlayerID;
             bool flag = false;
             if (msgargs.Length >= 2)
@@ -418,8 +429,8 @@ namespace TShockAPI
                             //Main.player[ply].inventory[i].SetDefaults(type);
                             //Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
                             int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
-                            Main.item[id].position.X = (float)args.PlayerX;
-                            Main.item[id].position.Y = (float)args.PlayerY;
+                            Main.item[id].position.X = args.PlayerX;
+                            Main.item[id].position.Y = args.PlayerY;
                             Main.item[id].stack = Main.item[id].maxStack;
                             //TShock.SendDataAll(21, -1, "", id);
                             NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
@@ -430,13 +441,14 @@ namespace TShockAPI
                         }
                     }
                     if (!flag)
-                        Tools.SendMessage(args.PlayerID, "You don't have free slots!", new float[] { 255f, 0f, 0f });
+                        Tools.SendMessage(args.PlayerID, "You don't have free slots!", new[] {255f, 0f, 0f});
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] {255f, 0f, 0f});
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /item <item name/id>", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /item <item name/id>",
+                                  new[] {255f, 0f, 0f});
         }
 
         public static void Give(CommandArgs args)
@@ -469,24 +481,28 @@ namespace TShockAPI
                                 Main.item[id].stack = Main.item[id].maxStack;
                                 //TShock.SendDataAll(21, -1, "", id);
                                 NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                                Tools.SendMessage(ply, string.Format("Gave {0} some {1}.", msgargs[2], Main.item[id].name));
-                                Tools.SendMessage(player, string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply), Main.item[id].name));
+                                Tools.SendMessage(ply,
+                                                  string.Format("Gave {0} some {1}.", msgargs[2], Main.item[id].name));
+                                Tools.SendMessage(player,
+                                                  string.Format("{0} gave you some {1}.", Tools.FindPlayer(ply),
+                                                                Main.item[id].name));
                                 //TShock.UpdateInventories();
                                 flag = true;
                                 break;
                             }
                         }
                         if (!flag)
-                            Tools.SendMessage(args.PlayerID, "Player does not have free slots!", new float[] { 255f, 0f, 0f });
+                            Tools.SendMessage(args.PlayerID, "Player does not have free slots!", new[] {255f, 0f, 0f});
                     }
                     else
-                        Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
+                        Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] {255f, 0f, 0f});
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /give <item type/id> <player>", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /give <item type/id> <player>",
+                                  new[] {255f, 0f, 0f});
         }
 
         public static void Heal(CommandArgs args)
@@ -502,16 +518,16 @@ namespace TShockAPI
             {
                 Tools.SendMessage(ply, string.Format("You just healed {0}", (msgargs[1].TrimEnd('"')).TrimStart('"')));
                 Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
-                x = (int)Main.player[player].position.X;
-                y = (int)Main.player[player].position.Y;
+                x = (int) Main.player[player].position.X;
+                y = (int) Main.player[player].position.Y;
             }
             else
                 Tools.SendMessage(ply, "You just got healed!");
             for (int i = 0; i < 20; i++)
             {
                 int itemid = Terraria.Item.NewItem(1, 1, 1, 1, 58);
-                Main.item[itemid].position.X = (float)x;
-                Main.item[itemid].position.Y = (float)y;
+                Main.item[itemid].position.X = x;
+                Main.item[itemid].position.Y = y;
                 NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
             }
         }
@@ -526,11 +542,11 @@ namespace TShockAPI
                 else
                 {
                     Main.npc[i].StrikeNPC(99999, 90f, 1);
-                    NetMessage.SendData(28, -1, -1, "", i, (float)99999, 90f, 1);
+                    NetMessage.SendData(28, -1, -1, "", i, 99999, 90f, 1);
                     killcount++;
                 }
             }
-            Tools.Broadcast("Killed " + killcount.ToString() + " NPCs.");
+            Tools.Broadcast("Killed " + killcount + " NPCs.");
         }
 
         public static void MaxSpawns(CommandArgs args)
@@ -569,19 +585,19 @@ namespace TShockAPI
                     cmdlist.Add(commands[j]);
                 }
             }
-            if (cmdlist.Count > (15 * (page - 1)))
+            if (cmdlist.Count > (15*(page - 1)))
             {
-                for (int j = (15 * (page - 1)); j < cmdlist.Count; j++)
+                for (int j = (15*(page - 1)); j < cmdlist.Count; j++)
                 {
                     if (i == 3) break;
                     if (j == cmdlist.Count - 1)
                     {
                         tempstring += "/" + cmdlist[j].Name() + ", ";
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] {' ', ','}), new[] {255f, 255f, 0f});
                     }
-                    if ((h - 1) % 5 == 0 && (h - 1) != 0)
+                    if ((h - 1)%5 == 0 && (h - 1) != 0)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new char[] { ' ', ',' }), new float[] { 255f, 255f, 0f });
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] {' ', ','}), new[] {255f, 255f, 0f});
                         tempstring = "/" + cmdlist[j].Name() + ", ";
                         i++;
                         h++;
@@ -593,10 +609,12 @@ namespace TShockAPI
                     }
                 }
             }
-            if (cmdlist.Count > (15 * page))
-            { Tools.SendMessage(ply, "Type /help " + (page + 1).ToString() + " for more commands.", new float[] { 255f, 0f, 255f }); }
+            if (cmdlist.Count > (15*page))
+            {
+                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", new[] {255f, 0f, 255f});
+            }
             Tools.SendMessage(ply, "Terraria commands:");
-            Tools.SendMessage(ply, "/playing, /p, /me", new float[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, "/playing, /p, /me", new[] {255f, 255f, 0f});
         }
 
         public static void Time(CommandArgs args)
@@ -621,10 +639,12 @@ namespace TShockAPI
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                                      new[] {255f, 0f, 0f});
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                                  new[] {255f, 0f, 0f});
         }
 
         public static void Kill(CommandArgs args)
@@ -646,16 +666,18 @@ namespace TShockAPI
             for (int i = 0; i < msgargs.Length; i++)
                 msgargs[i] = (msgargs[i].TrimStart('"')).TrimEnd('"');
             if (msgargs.Length == 1)
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]",
+                                  new[] {255f, 0f, 0f});
             else if (msgargs.Length == 2)
             {
                 int player = Tools.FindPlayer(msgargs[1]);
                 if (player == -1)
-                    Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
                 else
                 {
-                    NetMessage.SendData(26, -1, -1, "", player, (float)((new Random()).Next(1, 20)), (float)5, (float)0);
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for 5 damage.");
+                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(1, 20)), 5, (float) 0);
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) +
+                                    " for 5 damage.");
                 }
             }
             else if (msgargs.Length == 3)
@@ -664,21 +686,24 @@ namespace TShockAPI
                 int damage = 5;
                 int.TryParse(msgargs[2], out damage);
                 if (player == -1)
-                    Tools.SendMessage(args.PlayerID, "Invalid player!", new float[] { 255f, 0f, 0f });
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
                 else
                 {
-                    NetMessage.SendData(26, -1, -1, "", player, (float)((new Random()).Next(-1, 1)), (float)damage, (float)0);
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " + damage.ToString() + " damage.");
+                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float) 0);
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " +
+                                    damage + " damage.");
                 }
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]", new float[] { 255f, 0f, 0f });
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]",
+                                  new[] {255f, 0f, 0f});
         }
 
         public static void ProtectSpawn(CommandArgs args)
         {
             ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
-            Tools.SendMessage(args.PlayerID, "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
+            Tools.SendMessage(args.PlayerID,
+                              "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
         }
 
         #endregion Command Methods

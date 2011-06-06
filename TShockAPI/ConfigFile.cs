@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace TShockAPI
+﻿namespace TShockAPI
 {
-    class ConfigFile
+    internal class ConfigFile
     {
-        public ConfigFile() { }
-
         public int InvasionMultiplier = 1;
         public int DefaultMaximumSpawns = 4;
         public int DefaultSpawnRate = 700;
         public int ServerPort = 7777;
-        public bool EnableWhitelist = false;
-        public bool InfiniteInvasion = false;
-        public bool AlwaysPvP = false;
+        public bool EnableWhitelist;
+        public bool InfiniteInvasion;
+        public bool AlwaysPvP;
         public bool KickCheaters = true;
         public bool BanCheaters = true;
         public bool KickGriefers = true;
         public bool BanGriefers = true;
-        public bool BanKillTileAbusers = false;
-        public bool KickKillTileAbusers = false;
+        public bool BanKillTileAbusers;
+        public bool KickKillTileAbusers;
         public bool BanExplosives = true;
         public bool KickExplosives = true;
         public bool SpawnProtection = true;

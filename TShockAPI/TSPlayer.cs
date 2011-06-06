@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Terraria;
 
 namespace TShockAPI
 {
     public class TSPlayer
     {
         public uint tileThreshold;
-        public Dictionary<TShock.Position, Terraria.Tile> tilesDestroyed = new Dictionary<TShock.Position, Terraria.Tile>();
-        public bool syncHP = false;
-        public bool syncMP = false;
+        public Dictionary<TShock.Position, Tile> tilesDestroyed = new Dictionary<TShock.Position, Tile>();
+        public bool syncHP;
+        public bool syncMP;
         public Group group;
 
         private int player;
@@ -20,9 +18,9 @@ namespace TShockAPI
             player = ply;
         }
 
-        public Terraria.Player GetPlayer()
+        public Player GetPlayer()
         {
-            return Terraria.Main.player[player];
+            return Main.player[player];
         }
 
         public int GetPlayerID()

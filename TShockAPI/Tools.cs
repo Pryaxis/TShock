@@ -5,7 +5,7 @@ using Terraria;
 
 namespace TShockAPI
 {
-    class Tools
+    internal class Tools
     {
         private static List<Group> groups = new List<Group>();
 
@@ -62,7 +62,7 @@ namespace TShockAPI
         /// <param name="min">Minimum bounds of the clamp</param>
         /// <returns></returns>
         public static T Clamp<T>(T value, T max, T min)
-    where T : System.IComparable<T>
+            where T : IComparable<T>
         {
             T result = value;
             if (value.CompareTo(max) > 0)
@@ -216,7 +216,7 @@ namespace TShockAPI
         public static void Kick(int ply, string reason)
         {
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-            Log.Info("Kicked " + Tools.FindPlayer(ply) + " for : " + reason);
+            Log.Info("Kicked " + FindPlayer(ply) + " for : " + reason);
         }
 
         /// <summary>
@@ -230,22 +230,22 @@ namespace TShockAPI
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);
-                foo = foo.Replace("%players%", Tools.GetPlayers());
+                foo = foo.Replace("%players%", GetPlayers());
                 if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
                 {
                     string possibleColor = foo.Substring(0, 13);
                     foo = foo.Remove(0, 13);
-                    float[] pC = { 0, 0, 0 };
+                    float[] pC = {0, 0, 0};
                     possibleColor = possibleColor.Replace("%", "");
                     string[] pCc = possibleColor.Split(',');
                     if (pCc.Length == 3)
                     {
                         try
                         {
-                            pC[0] = Tools.Clamp(Convert.ToInt32(pCc[0]), 255, 0);
-                            pC[1] = Tools.Clamp(Convert.ToInt32(pCc[1]), 255, 0);
-                            pC[2] = Tools.Clamp(Convert.ToInt32(pCc[2]), 255, 0);
-                            Tools.SendMessage(ply, foo, pC);
+                            pC[0] = Clamp(Convert.ToInt32(pCc[0]), 255, 0);
+                            pC[1] = Clamp(Convert.ToInt32(pCc[1]), 255, 0);
+                            pC[2] = Clamp(Convert.ToInt32(pCc[2]), 255, 0);
+                            SendMessage(ply, foo, pC);
                             continue;
                         }
                         catch (Exception e)
@@ -254,7 +254,7 @@ namespace TShockAPI
                         }
                     }
                 }
-                Tools.SendMessage(ply, foo);
+                SendMessage(ply, foo);
             }
             tr.Close();
         }
@@ -300,7 +300,7 @@ namespace TShockAPI
                 }
                 if (group == null)
                 {
-                    throw new System.Exception("Something in the groups.txt is fucked up");
+                    throw new Exception("Something in the groups.txt is fucked up");
                 }
                 else
                 {
@@ -383,8 +383,5 @@ namespace TShockAPI
             sr.Close();
             return GetGroup("default");
         }
-
-        public Tools() { }
-
     }
 }

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace TShockAPI
 {
     public class BanManager
     {
-        DateTime LastLoad;
-        string Path;
+        private DateTime LastLoad;
+        private string Path;
+
         /// <summary>
         /// IP - Name - Reason
         /// </summary>
-        List<Ban> Bans = new List<Ban>();
+        private List<Ban> Bans = new List<Ban>();
 
         public BanManager(string path)
         {
@@ -36,7 +36,10 @@ namespace TShockAPI
             EnsureChanges();
             foreach (var ban in Bans)
             {
-                if (ban.Name.Equals(name, casesensitive ? StringComparison.Ordinal : StringComparison.InvariantCultureIgnoreCase))
+                if (ban.Name.Equals(name,
+                                    casesensitive
+                                        ? StringComparison.Ordinal
+                                        : StringComparison.InvariantCultureIgnoreCase))
                     return ban;
             }
             return null;

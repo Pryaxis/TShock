@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading;
 
 namespace TShockAPI
 {
@@ -82,7 +78,8 @@ namespace TShockAPI
                 _logWriter = new StreamWriter(_filename + "." + Process.GetCurrentProcess().Id.ToString(), true);
             }*/
 
-            String text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) + " - " + caller + message;
+            String text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) + " - " + caller +
+                          message;
 
             Console.WriteLine(text);
 

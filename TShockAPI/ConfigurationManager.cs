@@ -1,41 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using Newtonsoft.Json;
+using Terraria;
 
 namespace TShockAPI
 {
     /// <summary>
     /// Provides all the stupid little variables a home away from home.
     /// </summary>
-    class ConfigurationManager
+    internal class ConfigurationManager
     {
         public static int invasionMultiplier = 1;
         public static int defaultMaxSpawns = 4;
         public static int defaultSpawnRate = 700;
         public static int serverPort = 7777;
-        public static bool enableWhitelist = false;
-        public static bool infiniteInvasion = false;
-        public static bool permaPvp = false;
-        public static int killCount = 0;
-        public static bool startedInvasion = false;
+        public static bool enableWhitelist;
+        public static bool infiniteInvasion;
+        public static bool permaPvp;
+        public static int killCount;
+        public static bool startedInvasion;
         public static bool kickCheater = true;
         public static bool banCheater = true;
         public static bool kickGriefer = true;
         public static bool banGriefer = true;
-        public static bool banTnt = false;
-        public static bool kickTnt = false;
+        public static bool banTnt;
+        public static bool kickTnt;
         public static bool banBoom = true;
         public static bool kickBoom = true;
         public static bool spawnProtect = true;
         public static int spawnProtectRadius = 5;
         public static string distributationAgent = "facepunch";
-        public static int authToken = 0;
+        public static int authToken;
         public static int maxSlots = 8;
 
-        public enum NPCList : int
+        public enum NPCList
         {
             WORLD_EATER = 0,
             EYE = 1,
@@ -67,17 +64,17 @@ namespace TShockAPI
             spawnProtectRadius = cfg.SpawnProtectionRadius;
             distributationAgent = cfg.DistributationAgent;
             maxSlots = cfg.MaxSlots;
-            Terraria.NPC.maxSpawns = defaultMaxSpawns;
-            Terraria.NPC.defaultSpawnRate = defaultSpawnRate;
+            NPC.maxSpawns = defaultMaxSpawns;
+            NPC.defaultSpawnRate = defaultSpawnRate;
         }
 
         public static void WriteJsonConfiguration()
         {
-            if (!System.IO.Directory.Exists(FileTools.SaveDir))
+            if (!Directory.Exists(FileTools.SaveDir))
             {
-                System.IO.Directory.CreateDirectory(FileTools.SaveDir);
+                Directory.CreateDirectory(FileTools.SaveDir);
             }
-            if (System.IO.File.Exists(FileTools.SaveDir + "config.json"))
+            if (File.Exists(FileTools.SaveDir + "config.json"))
             {
                 return;
             }

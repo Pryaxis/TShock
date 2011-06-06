@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace TShockAPI
 {
     public class Group
     {
         private string name;
-        private Group parent = null;
+        private Group parent;
         private List<string> permissions = new List<string>();
         private List<string> negatedPermissions = new List<string>();
 
@@ -20,7 +18,7 @@ namespace TShockAPI
 
         public Group()
         {
-            throw new System.Exception("Called Group constructor with no parameters");
+            throw new Exception("Called Group constructor with no parameters");
         }
 
         public string GetName()
@@ -72,7 +70,7 @@ namespace TShockAPI
         {
         }
 
-        public SuperAdminGroup() : base()
+        public SuperAdminGroup()
         {
         }
 
