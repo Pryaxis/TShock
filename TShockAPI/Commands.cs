@@ -184,13 +184,10 @@ namespace TShockAPI
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetokick"))
+                if (!Tools.Kick(player, "Misbehaviour."))
                 {
-                    Tools.Kick(player, "You were kicked.");
-                    Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
-                }
-                else
                     Tools.SendMessage(ply, "You can't kick another admin!", new[] {255f, 0f, 0f});
+                }
             }
             else if (Tools.FindPlayer(plStr) == -2)
                 Tools.SendMessage(ply, "More than one player matched!", new[] {255f, 0f, 0f});
@@ -216,14 +213,10 @@ namespace TShockAPI
             int player = Tools.FindPlayer(plStr);
             if (!(player == -1 || player == -2 || plStr == ""))
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetoban"))
+                if (!Tools.Ban(player, banReason.Equals("") ? "Misbehaviour." : banReason, Tools.FindPlayer(adminplr)))
                 {
-                    TShock.Bans.AddBan(Tools.GetPlayerIP(player), Main.player[player].name);
-                    Tools.Kick(player, "You were banned.");
-                    Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + "!");
-                }
-                else
                     Tools.SendMessage(adminplr, "You can't ban another admin!", new[] {255f, 0f, 0f});
+                }
             }
             else if (Tools.FindPlayer(plStr) == -2)
                 Tools.SendMessage(adminplr, "More than one player matched!", new[] {255f, 0f, 0f});
@@ -237,7 +230,7 @@ namespace TShockAPI
             {
                 if (Main.player[player].active)
                 {
-                    Tools.Kick(player, "Server shutting down!");
+                    Tools.ForceKick(player, "Server shutting down!");
                 }
             }
             WorldGen.saveWorld();
