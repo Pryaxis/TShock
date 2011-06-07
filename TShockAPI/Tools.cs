@@ -226,7 +226,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static bool Kick(int ply, string reason, string adminUserName = "")
         {
-            if (!Main.player[ply].active)
+            if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
                 return true;
             if (!TShock.players[ply].group.HasPermission("immunetokick"))
             {
@@ -254,7 +254,7 @@ namespace TShockAPI
                 string ip = GetPlayerIP(plr);
                 string playerName = Main.player[plr].name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                if (!Main.player[plr].active)
+                if (!Main.player[plr].active || Netplay.serverSock[ply].kill)
                     NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
                 Log.Info("Banned " + playerName + " for : " + reason);
                 if (adminUserName.Length == 0)

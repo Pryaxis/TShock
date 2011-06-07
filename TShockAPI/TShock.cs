@@ -549,7 +549,6 @@ namespace TShockAPI
             }
 
             string ip = Tools.GetPlayerIP(ply);
-            
             players[ply] = new TSPlayer(ply);
             players[ply].group = Tools.GetGroupForIP(ip);
 
@@ -604,7 +603,7 @@ namespace TShockAPI
             {
                 return;
             }
-            for (uint i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false)
                 {
@@ -614,9 +613,9 @@ namespace TShockAPI
                 {
                     if (Main.player[i] != null)
                     {
-                        if (Tools.HandleTntUser((int)i, "Kill tile abuse detected."))
+                        if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
                         {
-                            RevertKillTile((int)i);
+                            RevertKillTile(i);
                             players[i].tileThreshold = 0;
                             players[i].tilesDestroyed.Clear();
                         }
