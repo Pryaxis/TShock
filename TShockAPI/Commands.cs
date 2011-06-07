@@ -368,7 +368,9 @@ namespace TShockAPI
         public static void AuthToken(CommandArgs args)
         {
             if (ConfigurationManager.authToken == 0)
+            {
                 return;
+            }
             int givenCode = Convert.ToInt32(args.Message.Remove(0, 5));
             if (givenCode == ConfigurationManager.authToken)
             {
