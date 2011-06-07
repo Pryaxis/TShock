@@ -201,6 +201,15 @@ namespace TShockAPI
         {
             if (e.MsgID == 4)
             {
+                var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
+                if (ban != null)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                }
+                if (Main.player[e.Msg.whoAmI].name.Length > 32)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                }
                 if (players[e.Msg.whoAmI] == null)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Player doesn't exist");
@@ -611,11 +620,6 @@ namespace TShockAPI
             if (ban != null)
             {
                 Tools.Kick(ply, "You are banned: " + ban.Reason);
-            }
-            else if (Tools.FindPlayer(ply).Length > 32)
-            {
-                Tools.Kick(ply, "Your name was too long.");
-                Tools.Broadcast(ip + " was kicked because their name exceeded 32 characters.");
             }
             if (!FileTools.OnWhitelist(ip))
             {
