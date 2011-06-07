@@ -10,6 +10,7 @@ namespace TShockAPI
         public bool syncHP;
         public bool syncMP;
         public Group group;
+        public bool receivedInfo;
         private int player;
 
         public TSPlayer(int ply)

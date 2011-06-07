@@ -199,7 +199,42 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            if (e.MsgID == 17)
+            if (e.MsgID == 4)
+            {
+                if (players[e.Msg.whoAmI] == null)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "Player doesn't exist");
+                    e.Handled = true;
+                }
+                else if (players[e.Msg.whoAmI].receivedInfo)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "Sent client info more than once");
+                    e.Handled = true;
+                }
+                else
+                {
+                    players[e.Msg.whoAmI].receivedInfo = true;
+                }
+            }
+            else if (e.MsgID == 0x14)
+            {
+                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
+                {
+                    short size = br.ReadInt16();
+                    int x = br.ReadInt32();
+                    int y = br.ReadInt32();
+                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
+                    int tileX = Math.Abs(x);
+                    int tileY = Math.Abs(y);
+                    if (size > 5 || Math.Abs(plyX - tileX) > 10 || Math.Abs(plyY - tileY) > 10)
+                    {
+                        Ban(e.Msg.whoAmI, "Send Tile Square Abuse");
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if (e.MsgID == 17)
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
@@ -586,8 +621,6 @@ namespace TShockAPI
             {
                 Tools.Kick(ply, "Not on whitelist.");
             }
-            players[ply] = new TSPlayer(ply);
-            players[ply].group = Tools.GetGroupForIP(ip);
         }
 
         private void OnLoadContent(ContentManager obj)
