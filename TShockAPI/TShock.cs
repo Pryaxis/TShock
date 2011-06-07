@@ -209,15 +209,18 @@ namespace TShockAPI
                     byte typetile = br.ReadByte();
                     if (type == 1 || type == 3)
                     {
-                        int plyX = Math.Abs((int) Main.player[e.Msg.whoAmI].position.X/16);
-                        int plyY = Math.Abs((int) Main.player[e.Msg.whoAmI].position.Y/16);
-                        int tileX = Math.Abs(x/16);
-                        int tileY = Math.Abs(y/16);
+                        int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+                        int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
+                        int tileX = Math.Abs(x);
+                        int tileY = Math.Abs(y);
 
-                        if ((plyX - tileX > 6) || (plyY - tileY > 6))
+                        if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
+                        {
                             TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
-                            Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place blocks.");
+                            Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
+                                            " was banned for placing impossible to place blocks.");
                             e.Handled = true;
+                        }
                     }
                     if (type == 0 || type == 1)
 
@@ -420,33 +423,39 @@ namespace TShockAPI
                     byte liquid = br.ReadByte();
                     bool lava = br.ReadBoolean();
 
-                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X/16);
-                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y/16);
+                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
                     int tileX = Math.Abs(x);
                     int tileY = Math.Abs(y);
+
+                    int lavacount = 0;
+                    int watercount = 0;
 
                     for (int i = 0; i < 44; i++)
                     {
                         if (Main.player[e.Msg.whoAmI].inventory[i].name == "Lava Bucket")
-                            TShock.players[e.Msg.whoAmI].lavaCount++;
+                            lavacount++;
                         else if (Main.player[e.Msg.whoAmI].inventory[i].name == "Water Bucket")
-                            TShock.players[e.Msg.whoAmI].waterCount++;
+                            watercount++;
                     }
 
-                    if (lava && TShock.players[e.Msg.whoAmI].lavaCount <= 0)
+                    if (lava && lavacount <= 0)
                     {
                         TShock.Ban(e.Msg.whoAmI, "Placing lava they didn't have.");
                         e.Handled = true;
                     }
-                    else if (!lava && TShock.players[e.Msg.whoAmI].waterCount <= 0)
+                    else if (!lava && watercount <= 0)
                     {
                         TShock.Ban(e.Msg.whoAmI, "Placing water they didn't have.");
                         e.Handled = true;
                     }
-                    if ((plyX - tileX > 6) || (plyY - tileY > 6))
+                    if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
+                    {
                         TShock.Ban(e.Msg.whoAmI, "Placing impossible to place liquid.");
-                        Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place liquid.");
+                        Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
+                                        " was banned for placing impossible to place liquid.");
                         e.Handled = true;
+                    }
 
                     if (ConfigurationManager.spawnProtect)
                     {
@@ -492,8 +501,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion &&
-                !ConfigurationManager.startedInvasion)
+            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
             {
                 StartInvasion();
             }
@@ -834,8 +842,11 @@ namespace TShockAPI
 
         public static void Ban(int plr, string reason = "")
         {
-            Tools.Kick(plr, reason);
-            Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
+            if (!players[plr].group.HasPermission("immunetoban"))
+            {
+                Tools.Kick(plr, "Banned: " + reason);
+                Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
+            }
         }
 
         public class Position
