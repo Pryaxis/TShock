@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Terraria;
@@ -206,7 +207,8 @@ namespace TShockAPI
                 {
                     Tools.Kick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
                 }
-                if (Main.player[e.Msg.whoAmI].name.Length > 32)
+                string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
+                if (name.Length > 32)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Name exceeded 32 characters.");
                 }
@@ -466,6 +468,10 @@ namespace TShockAPI
                     int y = br.ReadInt32();
                     byte liquid = br.ReadByte();
                     bool lava = br.ReadBoolean();
+
+                    //The liquid was picked up.
+                    if (liquid == 0)
+                        return;
 
                     int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
                     int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);

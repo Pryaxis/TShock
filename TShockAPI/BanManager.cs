@@ -47,8 +47,15 @@ namespace TShockAPI
 
         public void AddBan(string ip, string name = "", string reason = "")
         {
+            if (GetBanByIp(ip) != null)
+                return;
             Bans.Add(new Ban(ip, name, reason));
             SaveBans();
+        }
+
+        public void RemoveBan(Ban ban)
+        {
+            Bans.Remove(ban);
         }
 
         /// <summary>
