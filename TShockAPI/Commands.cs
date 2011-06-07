@@ -51,8 +51,8 @@ namespace TShockAPI
 
                 CommandArgs args = new CommandArgs();
                 args.Message = msg;
-                args.PlayerX = (int) ply.GetPlayer().position.X;
-                args.PlayerY = (int) ply.GetPlayer().position.Y;
+                args.PlayerX = (int)ply.GetPlayer().position.X;
+                args.PlayerY = (int)ply.GetPlayer().position.Y;
                 args.PlayerID = ply.GetPlayerID();
 
                 command(args);
@@ -79,6 +79,8 @@ namespace TShockAPI
             commands.Add(new Command("kick", "kick", Kick));
             commands.Add(new Command("ban", "ban", Ban));
             commands.Add(new Command("banip", "ban", BanIP));
+            commands.Add(new Command("unban", "unban", UnBan));
+            commands.Add(new Command("unbanip", "unbanip", UnBanIP));
             commands.Add(new Command("off", "maintenance", Off));
             commands.Add(new Command("reload", "cfg", Reload));
             commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
@@ -136,14 +138,14 @@ namespace TShockAPI
             }
             else
             {
-                Tools.SendMessage(args.PlayerID, "You are not in a party!", new float[]{ 255f, 240f, 20f});
+                Tools.SendMessage(args.PlayerID, "You are not in a party!", new float[] { 255f, 240f, 20f });
             }
         }
 
         public static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] {205, 133, 63});
+            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] { 205, 133, 63 });
         }
 
         public static void Playing(CommandArgs args)
@@ -160,7 +162,7 @@ namespace TShockAPI
             lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
             lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
             lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
-            Tools.SendMessage(ply, lineOne, new[] {255f, 255f, 0f});
+            Tools.SendMessage(ply, lineOne, new[] { 255f, 255f, 0f });
             string lineTwo = "";
             lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
             lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
@@ -192,12 +194,12 @@ namespace TShockAPI
                     Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
                 }
                 else
-                    Tools.SendMessage(ply, "You can't kick another admin!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(ply, "You can't kick another admin!", new[] { 255f, 0f, 0f });
             }
             else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(ply, "More than one player matched!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(ply, "More than one player matched!", new[] { 255f, 0f, 0f });
             else
-                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
         }
 
         public static void BanIP(CommandArgs args)
@@ -247,12 +249,44 @@ namespace TShockAPI
                     Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + " with reason " + reason + "!");
                 }
                 else
-                    Tools.SendMessage(adminplr, "You can't ban another admin!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(adminplr, "You can't ban another admin!", new[] { 255f, 0f, 0f });
             }
             else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(adminplr, "More than one player matched!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(adminplr, "More than one player matched!", new[] { 255f, 0f, 0f });
             else
-                Tools.SendMessage(adminplr, "Invalid player!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(adminplr, "Invalid player!", new[] { 255f, 0f, 0f });
+        }
+
+        public static void UnBan(CommandArgs args)
+        {
+            string plStr = args.Message.Remove(0, 6);
+            int adminplr = args.PlayerID;
+            var ban = TShock.Bans.GetBanByName(plStr);
+            if (ban != null)
+            {
+                TShock.Bans.RemoveBan(ban);
+                Tools.SendMessage(adminplr, string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), new[] { 255f, 0f, 0f });
+            }
+            else
+            {
+                Tools.SendMessage(adminplr, "Invalid player!", new[] { 255f, 0f, 0f });
+            }
+        }
+
+        public static void UnBanIP(CommandArgs args)
+        {
+            string plStr = args.Message.Remove(0, 8);
+            int adminplr = args.PlayerID;
+            var ban = TShock.Bans.GetBanByIp(plStr);
+            if (ban != null)
+            {
+                TShock.Bans.RemoveBan(ban);
+                Tools.SendMessage(adminplr, string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), new[] { 255f, 0f, 0f });
+            }
+            else
+            {
+                Tools.SendMessage(adminplr, "Invalid player!", new[] { 255f, 0f, 0f });
+            }
         }
 
         public static void Off(CommandArgs args)
@@ -290,12 +324,12 @@ namespace TShockAPI
             int penis56 = 12;
             int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
             penis57 *= 0x10;
-            int penis58 = Main.rand.Next((int) (Main.maxTilesY*0.05))*0x10;
+            int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
             Vector2 vector = new Vector2(penis57, penis58);
             float speedX = Main.rand.Next(-100, 0x65);
             float speedY = Main.rand.Next(200) + 100;
-            float penis61 = (float) Math.Sqrt(((speedX*speedX) + (speedY*speedY)));
-            penis61 = (penis56)/penis61;
+            float penis61 = (float)Math.Sqrt(((speedX * speedX) + (speedY * speedY)));
+            penis61 = (penis56) / penis61;
             speedX *= penis61;
             speedY *= penis61;
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
@@ -317,7 +351,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int) ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eater of worlds!");
         }
 
@@ -326,7 +360,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int) ConfigurationManager.NPCList.EYE, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eye!");
         }
 
@@ -335,7 +369,7 @@ namespace TShockAPI
             int x = args.PlayerX;
             int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int) ConfigurationManager.NPCList.SKELETRON, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
             Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned skeletron!");
         }
 
@@ -389,12 +423,11 @@ namespace TShockAPI
             Tools.SendMessage(ply, "Teleported to your spawnpoint.");
         }
 
-
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.spawnTileX*16 + 8 - Main.player[ply].width/2,
-                            Main.spawnTileY*16 - Main.player[ply].height);
+            TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2,
+                            Main.spawnTileY * 16 - Main.player[ply].height);
             Tools.SendMessage(ply, "Teleported to the map's spawnpoint.");
         }
 
@@ -429,7 +462,7 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "Teleported to " + player);
             }
             else
-                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
         }
 
         public static void TPHere(CommandArgs args)
@@ -443,7 +476,7 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "You brought " + player + " here.");
             }
             else
-                Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
+                Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
         }
 
         public static void SpawnMob(CommandArgs args)
@@ -475,7 +508,7 @@ namespace TShockAPI
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void Item(CommandArgs args)
@@ -511,14 +544,14 @@ namespace TShockAPI
                         }
                     }
                     if (!flag)
-                        Tools.SendMessage(args.PlayerID, "You don't have free slots!", new[] {255f, 0f, 0f});
+                        Tools.SendMessage(args.PlayerID, "You don't have free slots!", new[] { 255f, 0f, 0f });
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] { 255f, 0f, 0f });
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /item <item name/id>",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void Give(CommandArgs args)
@@ -562,17 +595,17 @@ namespace TShockAPI
                             }
                         }
                         if (!flag)
-                            Tools.SendMessage(args.PlayerID, "Player does not have free slots!", new[] {255f, 0f, 0f});
+                            Tools.SendMessage(args.PlayerID, "Player does not have free slots!", new[] { 255f, 0f, 0f });
                     }
                     else
-                        Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
+                        Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(args.PlayerID, "Invalid item type!", new[] { 255f, 0f, 0f });
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /give <item type/id> <player>",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void Heal(CommandArgs args)
@@ -588,8 +621,8 @@ namespace TShockAPI
             {
                 Tools.SendMessage(ply, string.Format("You just healed {0}", (msgargs[1].TrimEnd('"')).TrimStart('"')));
                 Tools.SendMessage(player, string.Format("{0} just healed you!", Tools.FindPlayer(ply)));
-                x = (int) Main.player[player].position.X;
-                y = (int) Main.player[player].position.Y;
+                x = (int)Main.player[player].position.X;
+                y = (int)Main.player[player].position.Y;
             }
             else
                 Tools.SendMessage(ply, "You just got healed!");
@@ -696,21 +729,24 @@ namespace TShockAPI
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
-                } else if (arg[1] == "dusk")
+                }
+                else if (arg[1] == "dusk")
                 {
                     Main.dayTime = false;
                     Main.time = 0.0;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to dusk.");
-                } else if (arg[1] == "noon")
+                }
+                else if (arg[1] == "noon")
                 {
                     Main.dayTime = true;
                     Main.time = 27000.0;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to noon.");
-                } else if (arg[1] == "midnight")
+                }
+                else if (arg[1] == "midnight")
                 {
                     Main.dayTime = false;
                     Main.time = 16200.0;
@@ -720,11 +756,11 @@ namespace TShockAPI
                 }
                 else
                     Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
-                                      new[] {255f, 0f, 0f});
+                                      new[] { 255f, 0f, 0f });
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void Kill(CommandArgs args)
@@ -747,15 +783,15 @@ namespace TShockAPI
                 msgargs[i] = (msgargs[i].TrimStart('"')).TrimEnd('"');
             if (msgargs.Length == 1)
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
             else if (msgargs.Length == 2)
             {
                 int player = Tools.FindPlayer(msgargs[1]);
                 if (player == -1)
-                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
                 else
                 {
-                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(1, 20)), 5, (float) 0);
+                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(1, 20)), 5, (float)0);
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) +
                                     " for 5 damage.");
                 }
@@ -766,17 +802,17 @@ namespace TShockAPI
                 int damage = 5;
                 int.TryParse(msgargs[2], out damage);
                 if (player == -1)
-                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] {255f, 0f, 0f});
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
                 else
                 {
-                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float) 0);
+                    NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float)0);
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " slapped " + Tools.FindPlayer(player) + " for " +
                                     damage + " damage.");
                 }
             }
             else
                 Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /slap <player> [dmg]",
-                                  new[] {255f, 0f, 0f});
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void ProtectSpawn(CommandArgs args)

@@ -17,5 +17,5 @@
 default null
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban causeevents spawnboss spawnmob tp immunetokick kill
+admin newadmin ban unban unbanip causeevents spawnboss spawnmob tp immunetokick kill
 trustedadmin admin maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection
