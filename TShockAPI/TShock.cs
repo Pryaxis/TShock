@@ -213,24 +213,23 @@ namespace TShockAPI
                 var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
                 if (ban != null)
                 {
-                    Tools.Kick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                    Tools.ForceKick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
                     return true;
                 }
                 string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
                 if (name.Length > 32)
                 {
-                    Tools.Kick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                    Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
                     return true;
                 }
                 if (players[e.Msg.whoAmI] == null)
                 {
-                    Tools.Kick(e.Msg.whoAmI, "Player doesn't exist");
+                    Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
                     return true;
                 }
                 else if (players[e.Msg.whoAmI].receivedInfo)
                 {
-                    Tools.Kick(e.Msg.whoAmI, "Sent client info more than once");
-                    return true;
+                    return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
                 }
                 else
                 {
@@ -250,8 +249,7 @@ namespace TShockAPI
                     int tileY = Math.Abs(y);
                     if (size > 5 || Math.Abs(plyX - tileX) > 10 || Math.Abs(plyY - tileY) > 10)
                     {
-                        Ban(e.Msg.whoAmI, "Send Tile Square Abuse");
-                        return true;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
                     }
                 }
             }
@@ -272,10 +270,7 @@ namespace TShockAPI
 
                         if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                         {
-                            TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
-                            Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
-                                            " was banned for placing impossible to place blocks.");
-                            return true;
+                            return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                         }
                     }
                     if (type == 0 || type == 1)
@@ -320,25 +315,18 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x0A) //SendSection
             {
-                Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name,
-                                              e.Msg.whoAmI));
-                Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
-                return true;
+                return Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
             }
             else if (e.MsgID == 0x17) //Npc Data
             {
-                Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name,
-                                              e.Msg.whoAmI));
-                Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
-                return true;
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
             }
             else if (e.MsgID == 0x0D) //Update Player
             {
                 byte plr = e.Msg.readBuffer[e.Index];
                 if (plr != e.Msg.whoAmI)
                 {
-                    Tools.Kick(e.Msg.whoAmI, "Update Player abuse");
-                    return true;
+                    return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
                 }
             }
             else if (e.MsgID == 0x10)
@@ -353,19 +341,7 @@ namespace TShockAPI
                     {
                         if (players[ply].syncHP)
                         {
-                            if (!players[ply].group.HasPermission("ignorecheatdetection"))
-                            {
-                                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
-                                {
-                                    string playerName = Tools.FindPlayer(ply);
-                                    if (ConfigurationManager.banCheater)
-                                        Ban(ply, "Abnormal life increase");
-                                    Tools.Kick(ply, "Abnormal life increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
-                                                    " because they gained an abnormal amount of health.");
-                                    return true;
-                                }
-                            }
+                            return Tools.HandleCheater(ply, "Abnormal life increase");
                         }
                         else
                         {
@@ -386,19 +362,7 @@ namespace TShockAPI
                     {
                         if (players[ply].syncMP)
                         {
-                            if (!players[ply].group.HasPermission("ignorecheatdetection"))
-                            {
-                                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
-                                {
-                                    string playerName = Tools.FindPlayer(ply);
-                                    if (ConfigurationManager.banCheater)
-                                        Ban(ply, "Abnormal mana increase");
-                                    Tools.Kick(ply, "Abnormal mana increase");
-                                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
-                                                    " because they gained an abnormal amount of mana.");
-                                    return true;
-                                }
-                            }
+                            return Tools.HandleCheater(ply, "Abnormal mana increase");
                         }
                         else
                         {
@@ -423,20 +387,7 @@ namespace TShockAPI
 
                     if (type == 29 || type == 28 || type == 30)
                     {
-                        if (!players[e.Msg.whoAmI].group.HasPermission("ignoregriefdetection"))
-                        {
-                            if (ConfigurationManager.kickBoom || ConfigurationManager.banBoom)
-                            {
-                                int i = e.Msg.whoAmI;
-                                if (ConfigurationManager.banBoom)
-                                    Ban(i, "Explosives");
-                                Tools.Kick(i, "Explosives were thrown.");
-                                Tools.Broadcast(Main.player[i].name + " was " +
-                                                (ConfigurationManager.banBoom ? "banned" : "kicked") +
-                                                " for throwing an explosive device.");
-                                return true;
-                            }
-                        }
+                        return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
                     }
                 }
             }
@@ -451,10 +402,7 @@ namespace TShockAPI
 
                     if (id != e.Msg.whoAmI)
                     {
-                        Ban(e.Msg.whoAmI, "Griefer");
-                        Log.Info(Tools.FindPlayer(e.Msg.whoAmI) +
-                                 " was kicked for trying to execute KillMe on someone else.");
-                        return true;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
                     }
                 }
             }
@@ -502,20 +450,15 @@ namespace TShockAPI
 
                     if (lava && lavacount <= 0)
                     {
-                        TShock.Ban(e.Msg.whoAmI, "Placing lava they didn't have.");
-                        return true;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
                     }
                     else if (!lava && watercount <= 0)
                     {
-                        TShock.Ban(e.Msg.whoAmI, "Placing water they didn't have.");
-                        return true;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
                     }
                     if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                     {
-                        TShock.Ban(e.Msg.whoAmI, "Placing impossible to place liquid.");
-                        Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
-                                        " was banned for placing impossible to place liquid.");
-                        return true;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
                     }
 
                     if (ConfigurationManager.spawnProtect)
@@ -547,17 +490,11 @@ namespace TShockAPI
                 return;
             }
             int plr = who; //legacy support
+            Log.Info(Tools.FindPlayer(who) + " (" + Tools.GetPlayerIP(who) + ") from '" + players[who].group.GetName() + "' group joined.");
             Tools.ShowMOTD(who);
-            if (!players[who].group.HasPermission("ignorecheatdetection") && HackedHealth(who))
+            if (HackedHealth(who))
             {
-                if (ConfigurationManager.banCheater || ConfigurationManager.kickCheater)
-                {
-                    string playerName = Tools.FindPlayer(who);
-                    if (ConfigurationManager.banCheater)
-                        Ban(who, "Hacked health.");
-                    Tools.Kick(who, "Hacked health.");
-                    Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") + " for hacked health.");
-                }
+                Tools.HandleCheater(who, "Hacked health.");
             }
             if (ConfigurationManager.permaPvp)
             {
@@ -579,9 +516,7 @@ namespace TShockAPI
 
             if (msg.whoAmI != ply)
             {
-                Log.Info(Tools.FindPlayer(msg.whoAmI) + " was kicked for trying to fake chat as someone else.");
-                Ban(ply, "Faking Chat");
-                e.Handled = true;
+                e.Handled = Tools.HandleGriefer(ply, "Faking Chat"); ;
             }
 
             int x = (int)Main.player[ply].position.X;
@@ -630,23 +565,22 @@ namespace TShockAPI
             if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots &&
                 !players[ply].group.HasPermission("reservedslot"))
             {
-                Tools.Kick(ply, "Server is full");
+                Tools.ForceKick(ply, "Server is full");
                 handler.Handled = true;
-                return;
             }
-
-            var ban = Bans.GetBanByIp(ip);
-            if (ban != null)
+            else
             {
-                Tools.Kick(ply, "You are banned: " + ban.Reason);
-                handler.Handled = true;
-                return;
-            }
-            if (!FileTools.OnWhitelist(ip))
-            {
-                Tools.Kick(ply, "Not on whitelist.");
-                handler.Handled = true;
-                return;
+                var ban = Bans.GetBanByIp(ip);
+                if (ban != null)
+                {
+                    Tools.ForceKick(ply, "You are banned: " + ban.Reason);
+                    handler.Handled = true;
+                }
+                else if (!FileTools.OnWhitelist(ip))
+                {
+                    Tools.ForceKick(ply, "Not on whitelist.");
+                    handler.Handled = true;
+                }
             }
         }
 
@@ -670,7 +604,7 @@ namespace TShockAPI
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
 
-            ConfigurationManager.maxSlots = Main.maxPlayers - 1;
+            //ConfigurationManager.maxSlots = Main.maxPlayers - 1;
         }
 
         private void OnUpdate(GameTime time)
@@ -689,15 +623,8 @@ namespace TShockAPI
                 {
                     if (Main.player[i] != null)
                     {
-                        if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
+                        if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
                         {
-                            if (ConfigurationManager.banTnt)
-                                Ban(i, "Kill Tile Abuse");
-                            else
-                                Tools.Kick(i, "Kill tile abuse detected.");
-                            Tools.Broadcast(Main.player[i].name + " was " +
-                                            (ConfigurationManager.banTnt ? "banned" : "kicked") +
-                                            " for kill tile abuse.");
                             RevertKillTile(i);
                             players[i].tileThreshold = 0;
                             players[i].tilesDestroyed.Clear();
@@ -901,15 +828,6 @@ namespace TShockAPI
                 return false;
             else
                 return true;
-        }
-
-        public static void Ban(int plr, string reason = "")
-        {
-            if (!players[plr].group.HasPermission("immunetoban"))
-            {
-                Tools.Kick(plr, "Banned: " + reason);
-                Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
-            }
         }
 
         public class Position

@@ -183,23 +183,38 @@ namespace TShockAPI
 
         public static void Kick(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 5).Trim().TrimEnd('"').TrimStart('"');
-            int ply = args.PlayerID;
-            int player = Tools.FindPlayer(plStr);
-            if (!(player == -1 || player == -2 || plStr == ""))
+            string input = args.Message.Remove(0, 5).Trim();
+            string plStr = "";
+            string reason = "";
+            int splitIndex = input.StartsWith("\"") ? splitIndex = input.IndexOf('"', 1) : splitIndex = input.IndexOf(' ', 0);
+            if (splitIndex == -1)
             {
-                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetokick"))
-                {
-                    Tools.Kick(player, "You were kicked.");
-                    Tools.Broadcast(Tools.FindPlayer(player) + " was kicked by " + Tools.FindPlayer(ply));
-                }
-                else
-                    Tools.SendMessage(ply, "You can't kick another admin!", new[] { 255f, 0f, 0f });
+                plStr = input;
             }
-            else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(ply, "More than one player matched!", new[] { 255f, 0f, 0f });
             else
-                Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
+            {
+                plStr = input.Substring(0, splitIndex).Trim().TrimEnd('"').TrimStart('"');
+                reason = input.Substring(splitIndex + 1).Trim().TrimEnd('"').TrimStart('"');
+            }
+            int ply = args.PlayerID;
+            if (plStr.Length != 0)
+            {
+                int player = Tools.FindPlayer(plStr);
+                if (player == -1)
+                    Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
+                else if (player == -2)
+                    Tools.SendMessage(ply, "More than one player matched!", new[] { 255f, 0f, 0f });
+                else
+                {
+                    if (!Tools.Kick(player, reason.Length != 0 ? reason : "Misbehaviour."))
+                    {
+                        Tools.SendMessage(ply, "You can't kick another admin!", new[] { 255f, 0f, 0f });
+                    }
+                }
+            }
+            else
+                Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /kick <player> [reason]",
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void BanIP(CommandArgs args)
@@ -226,35 +241,38 @@ namespace TShockAPI
 
         public static void Ban(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 4).Trim().TrimEnd('"').TrimStart('"').Split(' ')[0];
-            string[] reason = plStr.Split(' ');
-            string banReason = "";
-            for (int i = 0; i < reason.Length; i++)
+            string input = args.Message.Remove(0, 4).Trim();
+            string plStr = "";
+            string reason = "";
+            int splitIndex = input.StartsWith("\"") ? splitIndex = input.IndexOf('"', 1) : splitIndex = input.IndexOf(' ', 0);
+            if (splitIndex == -1)
             {
-                if (reason[i].Contains("\""))
-                    reason[i] = "";
+                plStr = input;
             }
-            for (int i = 0; i < reason.Length; i++)
-            {
-                banReason += reason[i];
-            }
-            int adminplr = args.PlayerID;
-            int player = Tools.FindPlayer(plStr);
-            if (!(player == -1 || player == -2 || plStr == ""))
-            {
-                if (!TShock.players[Tools.FindPlayer(plStr)].group.HasPermission("immunetoban"))
-                {
-                    TShock.Bans.AddBan(Tools.GetPlayerIP(player), Main.player[player].name);
-                    Tools.Kick(player, "You were banned.");
-                    Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + " with reason " + reason + "!");
-                }
-                else
-                    Tools.SendMessage(adminplr, "You can't ban another admin!", new[] { 255f, 0f, 0f });
-            }
-            else if (Tools.FindPlayer(plStr) == -2)
-                Tools.SendMessage(adminplr, "More than one player matched!", new[] { 255f, 0f, 0f });
             else
-                Tools.SendMessage(adminplr, "Invalid player!", new[] { 255f, 0f, 0f });
+            {
+                plStr = input.Substring(0, splitIndex).Trim().TrimEnd('"').TrimStart('"');
+                reason = input.Substring(splitIndex + 1).Trim().TrimEnd('"').TrimStart('"');
+            }
+            int ply = args.PlayerID;
+            if (plStr.Length != 0)
+            {
+                int player = Tools.FindPlayer(plStr);
+                if (player == -1)
+                    Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
+                else if (player == -2)
+                    Tools.SendMessage(ply, "More than one player matched!", new[] { 255f, 0f, 0f });
+                else
+                {
+                    if (!Tools.Ban(player, reason.Length != 0 ? reason : "Misbehaviour."))
+                    {
+                        Tools.SendMessage(ply, "You can't ban another admin!", new[] { 255f, 0f, 0f });
+                    }
+                }
+            }
+            else
+                Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /ban <player> [reason]",
+                                  new[] { 255f, 0f, 0f });
         }
 
         public static void UnBan(CommandArgs args)
@@ -295,7 +313,7 @@ namespace TShockAPI
             {
                 if (Main.player[player].active)
                 {
-                    Tools.Kick(player, "Server shutting down!");
+                    Tools.ForceKick(player, "Server shutting down!");
                 }
             }
             WorldGen.saveWorld();
