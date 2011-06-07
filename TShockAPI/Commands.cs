@@ -90,6 +90,7 @@ namespace TShockAPI
             commands.Add(new Command("invade", "causeevents", Invade));
             commands.Add(new Command("password", "cfg", Password));
             commands.Add(new Command("save", "cfg", Save));
+            commands.Add(new Command("home", "tp", Home));
             commands.Add(new Command("spawn", "tp", Spawn));
             commands.Add(new Command("tp", "tp", TP));
             commands.Add(new Command("tphere", "tp", TPHere));
@@ -357,12 +358,21 @@ namespace TShockAPI
             Tools.SendMessage(ply, "World saved.");
         }
 
+        public static void Home(CommandArgs args)
+        {
+            int ply = args.PlayerID;
+            TShock.Teleport(ply, Main.player[args.PlayerID].SpawnX * 16 + 8 - Main.player[ply].width / 2,
+                            Main.player[args.PlayerID].SpawnY * 16 - Main.player[ply].height);
+            Tools.SendMessage(ply, "Teleported to your spawnpoint.");
+        }
+
+
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.spawnTileX*16 + 8 - Main.player[ply].width/2,
                             Main.spawnTileY*16 - Main.player[ply].height);
-            Tools.SendMessage(ply, "Teleported to your spawnpoint.");
+            Tools.SendMessage(ply, "Teleported to the map's spawnpoint.");
         }
 
         public static void AuthToken(CommandArgs args)
