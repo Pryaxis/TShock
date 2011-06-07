@@ -85,7 +85,6 @@ namespace TShockAPI
             Log.Info("Broadcast: " + msg);
         }
 
-
         public static void Broadcast(string msg, float[] color)
         {
             for (int i = 0; i < Main.player.Length; i++)
@@ -215,6 +214,8 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void Kick(int ply, string reason)
         {
+            if (!Main.player[ply].active)
+                return;
             if (!TShock.players[ply].group.HasPermission("immunetokick") || reason.Contains("Banned: "))
             {
                 string displayName = FindPlayer(ply).Equals("") ? GetPlayerIP(ply) : FindPlayer(ply);
@@ -239,7 +240,7 @@ namespace TShockAPI
                 {
                     string possibleColor = foo.Substring(0, 13);
                     foo = foo.Remove(0, 13);
-                    float[] pC = {0, 0, 0};
+                    float[] pC = { 0, 0, 0 };
                     possibleColor = possibleColor.Replace("%", "");
                     string[] pCc = possibleColor.Split(',');
                     if (pCc.Length == 3)
