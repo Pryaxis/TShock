@@ -681,6 +681,8 @@ namespace TShockAPI
                                             (ConfigurationManager.banTnt ? "banned" : "kicked") +
                                             " for kill tile abuse.");
                             RevertKillTile((int)i);
+                            players[i].tileThreshold = 0;
+                            players[i].tilesDestroyed.Clear();
                         }
                         else if (players[i].tileThreshold > 0)
                         {
