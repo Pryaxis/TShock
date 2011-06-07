@@ -200,27 +200,37 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
+            e.Handled = HandleGetData(e);
+        }
+
+        private bool HandleGetData(GetDataEventArgs e)
+        {
+            if (!Netplay.serverSock[e.Msg.whoAmI].active || Netplay.serverSock[e.Msg.whoAmI].kill)
+                return true;
+
             if (e.MsgID == 4)
             {
                 var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
                 if (ban != null)
                 {
                     Tools.Kick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                    return true;
                 }
                 string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
                 if (name.Length > 32)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                    return true;
                 }
                 if (players[e.Msg.whoAmI] == null)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Player doesn't exist");
-                    e.Handled = true;
+                    return true;
                 }
                 else if (players[e.Msg.whoAmI].receivedInfo)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Sent client info more than once");
-                    e.Handled = true;
+                    return true;
                 }
                 else
                 {
@@ -241,7 +251,7 @@ namespace TShockAPI
                     if (size > 5 || Math.Abs(plyX - tileX) > 10 || Math.Abs(plyY - tileY) > 10)
                     {
                         Ban(e.Msg.whoAmI, "Send Tile Square Abuse");
-                        e.Handled = true;
+                        return true;
                     }
                 }
             }
@@ -265,12 +275,13 @@ namespace TShockAPI
                             TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
                             Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
                                             " was banned for placing impossible to place blocks.");
-                            e.Handled = true;
+                            return true;
                         }
                     }
                     if (type == 0 || type == 1)
-
+                    {
                         if (ConfigurationManager.spawnProtect)
+                        {
                             if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                             {
                                 var flag = CheckSpawn(x, y);
@@ -278,16 +289,17 @@ namespace TShockAPI
                                 {
                                     Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
                                                       new[] { 255f, 0f, 0f });
-                                    e.Handled = true;
+                                    return true;
                                 }
                             }
+                        }
+                    }
 
                     if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                     {
                         players[e.Msg.whoAmI].tileThreshold++;
                         players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
                     }
-                    return;
                 }
             }
             else if (e.MsgID == 0x1e)
@@ -303,8 +315,7 @@ namespace TShockAPI
                     if (ConfigurationManager.permaPvp)
                         Main.player[e.Msg.whoAmI].hostile = true;
                     NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
-                    e.Handled = true;
-                    return;
+                    return true;
                 }
             }
             else if (e.MsgID == 0x0A) //SendSection
@@ -312,14 +323,14 @@ namespace TShockAPI
                 Tools.Broadcast(string.Format("{0}({1}) attempted sending a section", Main.player[e.Msg.whoAmI].name,
                                               e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "SendSection abuse.");
-                e.Handled = true;
+                return true;
             }
             else if (e.MsgID == 0x17) //Npc Data
             {
                 Tools.Broadcast(string.Format("{0}({1}) attempted spawning an NPC", Main.player[e.Msg.whoAmI].name,
                                               e.Msg.whoAmI));
                 Tools.Kick(e.Msg.whoAmI, "Spawn NPC abuse");
-                e.Handled = true;
+                return true;
             }
             else if (e.MsgID == 0x0D) //Update Player
             {
@@ -327,7 +338,7 @@ namespace TShockAPI
                 if (plr != e.Msg.whoAmI)
                 {
                     Tools.Kick(e.Msg.whoAmI, "Update Player abuse");
-                    e.Handled = true;
+                    return true;
                 }
             }
             else if (e.MsgID == 0x10)
@@ -352,7 +363,7 @@ namespace TShockAPI
                                     Tools.Kick(ply, "Abnormal life increase");
                                     Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of health.");
-                                    e.Handled = true;
+                                    return true;
                                 }
                             }
                         }
@@ -385,7 +396,7 @@ namespace TShockAPI
                                     Tools.Kick(ply, "Abnormal mana increase");
                                     Tools.Broadcast(playerName + " was " + (ConfigurationManager.banCheater ? "banned" : "kicked") +
                                                     " because they gained an abnormal amount of mana.");
-                                    e.Handled = true;
+                                    return true;
                                 }
                             }
                         }
@@ -423,7 +434,7 @@ namespace TShockAPI
                                 Tools.Broadcast(Main.player[i].name + " was " +
                                                 (ConfigurationManager.banBoom ? "banned" : "kicked") +
                                                 " for throwing an explosive device.");
-                                e.Handled = true;
+                                return true;
                             }
                         }
                     }
@@ -443,7 +454,7 @@ namespace TShockAPI
                         Ban(e.Msg.whoAmI, "Griefer");
                         Log.Info(Tools.FindPlayer(e.Msg.whoAmI) +
                                  " was kicked for trying to execute KillMe on someone else.");
-                        e.Handled = true;
+                        return true;
                     }
                 }
             }
@@ -457,7 +468,7 @@ namespace TShockAPI
                     byte pvp = br.ReadByte();
 
                     if (!Main.player[playerid].hostile)
-                        e.Handled = true;
+                        return true;
                 }
             }
             else if (e.MsgID == 0x30)
@@ -471,7 +482,7 @@ namespace TShockAPI
 
                     //The liquid was picked up.
                     if (liquid == 0)
-                        return;
+                        return false;
 
                     int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
                     int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
@@ -492,19 +503,19 @@ namespace TShockAPI
                     if (lava && lavacount <= 0)
                     {
                         TShock.Ban(e.Msg.whoAmI, "Placing lava they didn't have.");
-                        e.Handled = true;
+                        return true;
                     }
                     else if (!lava && watercount <= 0)
                     {
                         TShock.Ban(e.Msg.whoAmI, "Placing water they didn't have.");
-                        e.Handled = true;
+                        return true;
                     }
                     if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                     {
                         TShock.Ban(e.Msg.whoAmI, "Placing impossible to place liquid.");
                         Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
                                         " was banned for placing impossible to place liquid.");
-                        e.Handled = true;
+                        return true;
                     }
 
                     if (ConfigurationManager.spawnProtect)
@@ -515,7 +526,7 @@ namespace TShockAPI
                             if (flag)
                             {
                                 Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
-                                e.Handled = true;
+                                return true;
                             }
                         }
                     }
@@ -523,8 +534,10 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x22) // Client only KillTile
             {
-                e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
+                return true;  // Client only uses it for chests, but sends regular 17 as well.
             }
+
+            return false;
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
