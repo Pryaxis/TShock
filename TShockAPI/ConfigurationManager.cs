@@ -77,8 +77,7 @@ namespace TShockAPI
             {
                 return;
             }
-            else
-                FileTools.CreateFile(FileTools.SaveDir + "config.json");
+            FileTools.CreateFile(FileTools.SaveDir + "config.json");
             ConfigFile cfg = new ConfigFile();
             cfg.InvasionMultiplier = 50;
             cfg.DefaultMaximumSpawns = 4;
