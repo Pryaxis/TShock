@@ -215,9 +215,12 @@ namespace TShockAPI
                         int tileY = Math.Abs(y / 16);
 
                         if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
+                        {
                             TShock.Ban(e.Msg.whoAmI, "Placing impossible to place blocks.");
-                        Tools.Broadcast(Main.player[e.Msg.whoAmI].name + " was banned for placing impossible to place blocks.");
-                        e.Handled = true;
+                            Tools.Broadcast(Main.player[e.Msg.whoAmI].name +
+                                            " was banned for placing impossible to place blocks.");
+                            e.Handled = true;
+                        }
                     }
                     if (type == 0 || type == 1)
 
