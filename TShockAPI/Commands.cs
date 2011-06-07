@@ -220,7 +220,7 @@ namespace TShockAPI
                 {
                     TShock.Bans.AddBan(Tools.GetPlayerIP(player), Main.player[player].name);
                     Tools.Kick(player, "You were banned.");
-                    Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + "!");
+                    Tools.Broadcast(Tools.FindPlayer(adminplr) + " banned " + Tools.FindPlayer(player) + " with reason " + reason + "!");
                 }
                 else
                     Tools.SendMessage(adminplr, "You can't ban another admin!", new[] {255f, 0f, 0f});
