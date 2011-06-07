@@ -208,20 +208,98 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Kicks a player from the server without checking for immunetokick permission.
+        /// </summary>
+        /// <param name="ply">int player</param>
+        /// <param name="reason">string reason</param>
+        public static void ForceKick(int ply, string reason)
+        {
+            string ip = GetPlayerIP(ply);
+            NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
+            Log.Info(ip + " was force kicked for : " + reason);
+        }
+
+        /// <summary>
         /// Kicks a player from the server.
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static void Kick(int ply, string reason)
+        public static bool Kick(int ply, string reason, string adminUserName = "")
         {
             if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
-                return;
-            if (!TShock.players[ply].group.HasPermission("immunetokick") || reason.Contains("Banned: "))
+                return true;
+            if (!TShock.players[ply].group.HasPermission("immunetokick"))
             {
-                string displayName = FindPlayer(ply).Equals("") ? GetPlayerIP(ply) : FindPlayer(ply);
-                NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-                Log.Info("Kicked " + displayName + " for : " + reason);
+                string playerName = Main.player[ply].name;
+                NetMessage.SendData(0x2, ply, -1, "Kicked: " + reason, 0x0, 0f, 0f, 0f);
+                Log.Info("Kicked " + playerName + " for : " + reason);
+                if (adminUserName.Length == 0)
+                    Broadcast(playerName + " was kicked for " + reason.ToLower());
+                else
+                    Tools.Broadcast(adminUserName + " kicked " + playerName + " for " + reason.ToLower());
+                return true;
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Bans and kicks a player from the server.
+        /// </summary>
+        /// <param name="ply">int player</param>
+        /// <param name="reason">string reason</param>
+        public static bool Ban(int plr, string reason, string adminUserName = "")
+        {
+            if (!TShock.players[plr].group.HasPermission("immunetoban"))
+            {
+                string ip = GetPlayerIP(plr);
+                string playerName = Main.player[plr].name;
+                TShock.Bans.AddBan(ip, playerName, reason);
+                if (!Main.player[plr].active || Netplay.serverSock[plr].kill)
+                    NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
+                Log.Info("Banned " + playerName + " for : " + reason);
+                if (adminUserName.Length == 0)
+                    Broadcast(playerName + " was banned for " + reason.ToLower());
+                else
+                    Tools.Broadcast(adminUserName + " banned " + playerName + " for " + reason.ToLower());
+                return true;
+            }
+            return false;
+        }
+
+        public static bool HandleCheater(int ply, string reason)
+        {
+            return HandleBadPlayer(ply, "ignorecheatdetection", ConfigurationManager.banCheater, ConfigurationManager.kickCheater, reason);
+        }
+
+        public static bool HandleGriefer(int ply, string reason)
+        {
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banGriefer, ConfigurationManager.kickGriefer, reason);
+        }
+
+        public static bool HandleTntUser(int ply, string reason)
+        {
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banTnt, ConfigurationManager.kickTnt, reason);
+        }
+
+        public static bool HandleExplosivesUser(int ply, string reason)
+        {
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banBoom, ConfigurationManager.kickBoom, reason);
+        }
+
+        private static bool HandleBadPlayer(int ply, string overridePermission, bool ban, bool kick, string reason)
+        {
+            if (!TShock.players[ply].group.HasPermission(overridePermission))
+            {
+                if (ban)
+                {
+                    return Ban(ply, reason);
+                }
+                else if (kick)
+                {
+                    return Kick(ply, reason);
+                }
+            }
+            return false;
         }
 
         /// <summary>
