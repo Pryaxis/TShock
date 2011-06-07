@@ -17,7 +17,6 @@ namespace TShockAPI
         public static bool infiniteInvasion;
         public static bool permaPvp;
         public static int killCount;
-        public static bool startedInvasion;
         public static bool kickCheater = true;
         public static bool banCheater = true;
         public static bool kickGriefer = true;

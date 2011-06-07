@@ -840,8 +840,11 @@ namespace TShockAPI
 
         public static void Ban(int plr, string reason = "")
         {
-            Tools.Kick(plr, reason);
-            Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
+            if (!players[plr].group.HasPermission("immunetoban"))
+            {
+                Tools.Kick(plr,"Banned: " + reason);
+                Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
+            }
         }
 
         public class Position
