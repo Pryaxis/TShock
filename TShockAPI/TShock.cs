@@ -200,29 +200,36 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
+            e.Handled = HandleGetData(e);
+        }
+
+        private bool HandleGetData(GetDataEventArgs e)
+        {
+            if (!Netplay.serverSock[e.Msg.whoAmI].active || Netplay.serverSock[e.Msg.whoAmI].kill)
+                return true;
+
             if (e.MsgID == 4)
             {
                 var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
                 if (ban != null)
                 {
                     Tools.ForceKick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
-                    e.Handled = true;
-                    return;
+                    return true;
                 }
                 string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
                 if (name.Length > 32)
                 {
                     Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
-                    e.Handled = true;
+                    return true;
                 }
-                else if (players[e.Msg.whoAmI] == null)
+                if (players[e.Msg.whoAmI] == null)
                 {
                     Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
-                    e.Handled = true;
+                    return true;
                 }
                 else if (players[e.Msg.whoAmI].receivedInfo)
                 {
-                    e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
+                    return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
                 }
                 else
                 {
@@ -242,7 +249,7 @@ namespace TShockAPI
                     int tileY = Math.Abs(y);
                     if (size > 5 || Math.Abs(plyX - tileX) > 10 || Math.Abs(plyY - tileY) > 10)
                     {
-                        e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
                     }
                 }
             }
@@ -263,12 +270,13 @@ namespace TShockAPI
 
                         if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                         {
-                            e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
+                            return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                         }
                     }
                     if (type == 0 || type == 1)
-
+                    {
                         if (ConfigurationManager.spawnProtect)
+                        {
                             if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                             {
                                 var flag = CheckSpawn(x, y);
@@ -276,16 +284,17 @@ namespace TShockAPI
                                 {
                                     Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
                                                       new[] { 255f, 0f, 0f });
-                                    e.Handled = true;
+                                    return true;
                                 }
                             }
+                        }
+                    }
 
                     if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
                     {
                         players[e.Msg.whoAmI].tileThreshold++;
                         players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
                     }
-                    return;
                 }
             }
             else if (e.MsgID == 0x1e)
@@ -301,24 +310,23 @@ namespace TShockAPI
                     if (ConfigurationManager.permaPvp)
                         Main.player[e.Msg.whoAmI].hostile = true;
                     NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
-                    e.Handled = true;
-                    return;
+                    return true;
                 }
             }
             else if (e.MsgID == 0x0A) //SendSection
             {
-                e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
+                return Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
             }
             else if (e.MsgID == 0x17) //Npc Data
             {
-                e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
             }
             else if (e.MsgID == 0x0D) //Update Player
             {
                 byte plr = e.Msg.readBuffer[e.Index];
                 if (plr != e.Msg.whoAmI)
                 {
-                    e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
+                    return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
                 }
             }
             else if (e.MsgID == 0x10)
@@ -333,7 +341,7 @@ namespace TShockAPI
                     {
                         if (players[ply].syncHP)
                         {
-                            e.Handled = Tools.HandleCheater(ply, "Abnormal life increase");
+                            return Tools.HandleCheater(ply, "Abnormal life increase");
                         }
                         else
                         {
@@ -354,7 +362,7 @@ namespace TShockAPI
                     {
                         if (players[ply].syncMP)
                         {
-                            e.Handled = Tools.HandleCheater(ply, "Abnormal mana increase");
+                            return Tools.HandleCheater(ply, "Abnormal mana increase");
                         }
                         else
                         {
@@ -379,7 +387,7 @@ namespace TShockAPI
 
                     if (type == 29 || type == 28 || type == 30)
                     {
-                        e.Handled = Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
+                        return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
                     }
                 }
             }
@@ -394,7 +402,7 @@ namespace TShockAPI
 
                     if (id != e.Msg.whoAmI)
                     {
-                        e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
                     }
                 }
             }
@@ -408,7 +416,7 @@ namespace TShockAPI
                     byte pvp = br.ReadByte();
 
                     if (!Main.player[playerid].hostile)
-                        e.Handled = true;
+                        return true;
                 }
             }
             else if (e.MsgID == 0x30)
@@ -422,7 +430,7 @@ namespace TShockAPI
 
                     //The liquid was picked up.
                     if (liquid == 0)
-                        return;
+                        return false;
 
                     int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
                     int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
@@ -442,15 +450,15 @@ namespace TShockAPI
 
                     if (lava && lavacount <= 0)
                     {
-                        e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
                     }
                     else if (!lava && watercount <= 0)
                     {
-                        e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
                     }
                     if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                     {
-                        e.Handled = Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
+                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
                     }
 
                     if (ConfigurationManager.spawnProtect)
@@ -461,7 +469,7 @@ namespace TShockAPI
                             if (flag)
                             {
                                 Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
-                                e.Handled = true;
+                                return true;
                             }
                         }
                     }
@@ -469,8 +477,10 @@ namespace TShockAPI
             }
             else if (e.MsgID == 0x22) // Client only KillTile
             {
-                e.Handled = true; // Client only uses it for chests, but sends regular 17 as well.
+                return true;  // Client only uses it for chests, but sends regular 17 as well.
             }
+
+            return false;
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)

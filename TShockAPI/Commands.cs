@@ -78,6 +78,7 @@ namespace TShockAPI
         {
             commands.Add(new Command("kick", "kick", Kick));
             commands.Add(new Command("ban", "ban", Ban));
+            commands.Add(new Command("banip", "ban", BanIP));
             commands.Add(new Command("unban", "unban", UnBan));
             commands.Add(new Command("unbanip", "unbanip", UnBanIP));
             commands.Add(new Command("off", "maintenance", Off));
@@ -216,6 +217,28 @@ namespace TShockAPI
                                   new[] { 255f, 0f, 0f });
         }
 
+        public static void BanIP(CommandArgs args)
+        {
+            if (args.Message.Split(' ').Length == 2)
+            {
+                string ip = args.Message.Split(' ')[1];
+                TShock.Bans.AddBan(ip, "", "Manually added IP address ban.");
+            } else if (args.Message.Split(' ').Length > 2)
+            {
+                string reason = "";
+                for (int i = 2; i > args.Message.Split(' ').Length;i++)
+                {
+                    reason += args.Message.Split(' ')[i];
+                }
+                string ip = args.Message.Split(' ')[1];
+                TShock.Bans.AddBan(ip, "", reason);
+            }
+            else
+            {
+                Tools.SendMessage(args.PlayerID, "Syntax: /banip <ip> <reason>");
+            }
+        }
+
         public static void Ban(CommandArgs args)
         {
             string input = args.Message.Remove(0, 4).Trim();
@@ -254,7 +277,7 @@ namespace TShockAPI
 
         public static void UnBan(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 4);
+            string plStr = args.Message.Remove(0, 6);
             int adminplr = args.PlayerID;
             var ban = TShock.Bans.GetBanByName(plStr);
             if (ban != null)
@@ -270,7 +293,7 @@ namespace TShockAPI
 
         public static void UnBanIP(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 4);
+            string plStr = args.Message.Remove(0, 8);
             int adminplr = args.PlayerID;
             var ban = TShock.Bans.GetBanByIp(plStr);
             if (ban != null)
