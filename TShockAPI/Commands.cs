@@ -786,11 +786,17 @@ namespace TShockAPI
             var msgargs = Regex.Split(args.Message, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             if (msgargs.Length == 2)
             {
-                int player = -1;
-                player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
-                Tools.SendMessage(args.PlayerID, "You just killed " + Tools.FindPlayer(player) + "!");
-                Tools.SendMessage(player, Tools.FindPlayer(args.PlayerID) + " just killed you!");
-                TShock.KillMe(player);
+                int player = Tools.FindPlayer((msgargs[1].TrimEnd('"')).TrimStart('"'));
+                if (player == -1)
+                    Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
+                else if (player == -2)
+                    Tools.SendMessage(args.PlayerID, "More than one player matched!", new[] { 255f, 0f, 0f });
+                else
+                {
+                    Tools.SendMessage(args.PlayerID, "You just killed " + Tools.FindPlayer(player) + "!");
+                    Tools.SendMessage(player, Tools.FindPlayer(args.PlayerID) + " just killed you!");
+                    TShock.KillMe(player);
+                }
             }
         }
 
@@ -807,6 +813,8 @@ namespace TShockAPI
                 int player = Tools.FindPlayer(msgargs[1]);
                 if (player == -1)
                     Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
+                else if (player == -2)
+                    Tools.SendMessage(args.PlayerID, "More than one player matched!", new[] { 255f, 0f, 0f });
                 else
                 {
                     NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(1, 20)), 5, (float)0);
@@ -821,6 +829,8 @@ namespace TShockAPI
                 int.TryParse(msgargs[2], out damage);
                 if (player == -1)
                     Tools.SendMessage(args.PlayerID, "Invalid player!", new[] { 255f, 0f, 0f });
+                else if (player == -2)
+                    Tools.SendMessage(args.PlayerID, "More than one player matched!", new[] { 255f, 0f, 0f });
                 else
                 {
                     NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float)0);
