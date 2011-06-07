@@ -78,6 +78,7 @@ namespace TShockAPI
         {
             commands.Add(new Command("kick", "kick", Kick));
             commands.Add(new Command("ban", "ban", Ban));
+            commands.Add(new Command("banip", "ban", BanIP));
             commands.Add(new Command("off", "maintenance", Off));
             commands.Add(new Command("reload", "cfg", Reload));
             commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
@@ -197,6 +198,28 @@ namespace TShockAPI
                 Tools.SendMessage(ply, "More than one player matched!", new[] {255f, 0f, 0f});
             else
                 Tools.SendMessage(ply, "Invalid player!", new[] {255f, 0f, 0f});
+        }
+
+        public static void BanIP(CommandArgs args)
+        {
+            if (args.Message.Split(' ').Length == 2)
+            {
+                string ip = args.Message.Split(' ')[1];
+                TShock.Bans.AddBan(ip, "", "Manually added IP address ban.");
+            } else if (args.Message.Split(' ').Length > 2)
+            {
+                string reason = "";
+                for (int i = 2; i > args.Message.Split(' ').Length;i++)
+                {
+                    reason += args.Message.Split(' ')[i];
+                }
+                string ip = args.Message.Split(' ')[1];
+                TShock.Bans.AddBan(ip, "", reason);
+            }
+            else
+            {
+                Tools.SendMessage(args.PlayerID, "Syntax: /banip <ip> <reason>");
+            }
         }
 
         public static void Ban(CommandArgs args)
