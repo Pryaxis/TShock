@@ -611,7 +611,6 @@ namespace TShockAPI
             }
 
             string ip = Tools.GetPlayerIP(ply);
-            ;
             players[ply] = new TSPlayer(ply);
             players[ply].group = Tools.GetGroupForIP(ip);
 
@@ -619,6 +618,7 @@ namespace TShockAPI
                 !players[ply].group.HasPermission("reservedslot"))
             {
                 Tools.Kick(ply, "Server is full");
+                handler.Handled = true;
                 return;
             }
 
@@ -626,10 +626,14 @@ namespace TShockAPI
             if (ban != null)
             {
                 Tools.Kick(ply, "You are banned: " + ban.Reason);
+                handler.Handled = true;
+                return;
             }
             if (!FileTools.OnWhitelist(ip))
             {
                 Tools.Kick(ply, "Not on whitelist.");
+                handler.Handled = true;
+                return;
             }
         }
 
@@ -662,7 +666,7 @@ namespace TShockAPI
             {
                 return;
             }
-            for (uint i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false)
                 {
@@ -675,12 +679,13 @@ namespace TShockAPI
                         if (ConfigurationManager.kickTnt || ConfigurationManager.banTnt)
                         {
                             if (ConfigurationManager.banTnt)
-                                Ban((int)i, "Explosives");
-                            Tools.Kick((int)i, "Kill tile abuse detected.");
+                                Ban(i, "Kill Tile Abuse");
+                            else
+                                Tools.Kick(i, "Kill tile abuse detected.");
                             Tools.Broadcast(Main.player[i].name + " was " +
                                             (ConfigurationManager.banTnt ? "banned" : "kicked") +
                                             " for kill tile abuse.");
-                            RevertKillTile((int)i);
+                            RevertKillTile(i);
                             players[i].tileThreshold = 0;
                             players[i].tilesDestroyed.Clear();
                         }

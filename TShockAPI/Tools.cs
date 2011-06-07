@@ -214,7 +214,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void Kick(int ply, string reason)
         {
-            if (!Main.player[ply].active)
+            if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
                 return;
             if (!TShock.players[ply].group.HasPermission("immunetokick") || reason.Contains("Banned: "))
             {
