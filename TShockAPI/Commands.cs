@@ -246,8 +246,6 @@ namespace TShockAPI
                         Tools.SendMessage(ply, "You can't ban another admin!", new[] { 255f, 0f, 0f });
                     }
                 }
-                else
-                    Tools.SendMessage(adminplr, "You can't ban another admin!", new[] { 255f, 0f, 0f });
             }
             else
                 Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /ban <player> [reason]",

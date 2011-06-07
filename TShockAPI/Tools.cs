@@ -227,7 +227,7 @@ namespace TShockAPI
         public static bool Kick(int ply, string reason, string adminUserName = "")
         {
             if (!Main.player[ply].active)
-                return;
+                return false;
             if (!TShock.players[ply].group.HasPermission("immunetokick"))
             {
                 string playerName = Main.player[ply].name;
