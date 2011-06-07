@@ -663,13 +663,34 @@ namespace TShockAPI
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
+                } else if (arg[1] == "dusk")
+                {
+                    Main.dayTime = false;
+                    Main.time = 0.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to dusk.");
+                } else if (arg[1] == "noon")
+                {
+                    Main.dayTime = true;
+                    Main.time = 27000.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to noon.");
+                } else if (arg[1] == "midnight")
+                {
+                    Main.dayTime = false;
+                    Main.time = 16200.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to midnight.");
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
                                       new[] {255f, 0f, 0f});
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
                                   new[] {255f, 0f, 0f});
         }
 
