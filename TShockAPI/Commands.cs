@@ -193,7 +193,6 @@ namespace TShockAPI
                 plStr = input.Substring(0, splitIndex).Trim().TrimEnd('"').TrimStart('"');
                 reason = input.Substring(splitIndex + 1).Trim().TrimEnd('"').TrimStart('"');
             }
-            Log.Debug("plStr : '" + plStr + "', reason : '" + reason + "'");
             int ply = args.PlayerID;
             if (plStr.Length != 0)
             {
@@ -230,7 +229,6 @@ namespace TShockAPI
                 plStr = input.Substring(0, splitIndex).Trim().TrimEnd('"').TrimStart('"');
                 reason = input.Substring(splitIndex + 1).Trim().TrimEnd('"').TrimStart('"');
             }
-            Log.Debug("plStr : '" + plStr + "', reason : '" + reason + "'");
             int ply = args.PlayerID;
             if (plStr.Length != 0)
             {
