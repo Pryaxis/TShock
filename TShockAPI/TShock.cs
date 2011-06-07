@@ -501,8 +501,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion &&
-                !ConfigurationManager.startedInvasion)
+            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
             {
                 StartInvasion();
             }
@@ -845,7 +844,7 @@ namespace TShockAPI
         {
             if (!players[plr].group.HasPermission("immunetoban"))
             {
-                Tools.Kick(plr,"Banned: " + reason);
+                Tools.Kick(plr, "Banned: " + reason);
                 Bans.AddBan(Tools.GetPlayerIP(plr), Main.player[plr].name, reason);
             }
         }
