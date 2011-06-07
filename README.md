@@ -1,6 +1,8 @@
 TShock is a server modification based upon High6's mod API that allows for basic server administration commands.
 
-_Constant builds_: http://ci.shankshock.com/
+__Constant builds__: http://ci.shankshock.com/
+
+----
 
 ### Helping out
 
@@ -10,6 +12,6 @@ If you'd like to help out, the best thing you can do is to fork this repository,
 
 We communicate on the ShankShock Temspeak server whilst programming.
 
-_IP_: ts3.shankshock.com
+__IP__: ts3.shankshock.com
 
-_Port_: 9987
+__Port__: 9987
