@@ -80,7 +80,7 @@ namespace TShockAPI
             commands.Add(new Command("ban", "ban", Ban));
             commands.Add(new Command("off", "maintenance", Off));
             commands.Add(new Command("reload", "cfg", Reload));
-            commands.Add(new Command("dropmetor", "causeevents", DropMeteor));
+            commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
             commands.Add(new Command("star", "causeevents", Star));
             commands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
             commands.Add(new Command("eater", "spawnboss", Eater));
