@@ -15,7 +15,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 9, 0, 0);
+        public static Version VersionNum = new Version(1, 9, 0, 1);
 
         public static string VersionCodename = "SPACEEE";
 
@@ -201,6 +201,15 @@ namespace TShockAPI
         {
             if (e.MsgID == 4)
             {
+                var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
+                if (ban != null)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                }
+                if (Main.player[e.Msg.whoAmI].name.Length > 32)
+                {
+                    Tools.Kick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                }
                 if (players[e.Msg.whoAmI] == null)
                 {
                     Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
@@ -547,11 +556,6 @@ namespace TShockAPI
                 if (ban != null)
                 {
                     Tools.ForceKick(ply, "You are banned: " + ban.Reason);
-                    handler.Handled = true;
-                }
-                else if (Tools.FindPlayer(ply).Length > 32)
-                {
-                    Tools.ForceKick(ply, "Your name was too long.");
                     handler.Handled = true;
                 }
                 else if (!FileTools.OnWhitelist(ip))

@@ -80,7 +80,7 @@ namespace TShockAPI
             commands.Add(new Command("ban", "ban", Ban));
             commands.Add(new Command("off", "maintenance", Off));
             commands.Add(new Command("reload", "cfg", Reload));
-            commands.Add(new Command("dropmetor", "causeevents", DropMeteor));
+            commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
             commands.Add(new Command("star", "causeevents", Star));
             commands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
             commands.Add(new Command("eater", "spawnboss", Eater));
@@ -90,6 +90,7 @@ namespace TShockAPI
             commands.Add(new Command("invade", "causeevents", Invade));
             commands.Add(new Command("password", "cfg", Password));
             commands.Add(new Command("save", "cfg", Save));
+            commands.Add(new Command("home", "tp", Home));
             commands.Add(new Command("spawn", "tp", Spawn));
             commands.Add(new Command("tp", "tp", TP));
             commands.Add(new Command("tphere", "tp", TPHere));
@@ -377,12 +378,21 @@ namespace TShockAPI
             Tools.SendMessage(ply, "World saved.");
         }
 
+        public static void Home(CommandArgs args)
+        {
+            int ply = args.PlayerID;
+            TShock.Teleport(ply, Main.player[args.PlayerID].SpawnX * 16 + 8 - Main.player[ply].width / 2,
+                            Main.player[args.PlayerID].SpawnY * 16 - Main.player[ply].height);
+            Tools.SendMessage(ply, "Teleported to your spawnpoint.");
+        }
+
+
         public static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.spawnTileX*16 + 8 - Main.player[ply].width/2,
                             Main.spawnTileY*16 - Main.player[ply].height);
-            Tools.SendMessage(ply, "Teleported to your spawnpoint.");
+            Tools.SendMessage(ply, "Teleported to the map's spawnpoint.");
         }
 
         public static void AuthToken(CommandArgs args)
@@ -683,13 +693,34 @@ namespace TShockAPI
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
                     Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
+                } else if (arg[1] == "dusk")
+                {
+                    Main.dayTime = false;
+                    Main.time = 0.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to dusk.");
+                } else if (arg[1] == "noon")
+                {
+                    Main.dayTime = true;
+                    Main.time = 27000.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to noon.");
+                } else if (arg[1] == "midnight")
+                {
+                    Main.dayTime = false;
+                    Main.time = 16200.0;
+                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+                    NetMessage.syncPlayers();
+                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to midnight.");
                 }
                 else
-                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                    Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
                                       new[] {255f, 0f, 0f});
             }
             else
-                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night>",
+                Tools.SendMessage(args.PlayerID, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>",
                                   new[] {255f, 0f, 0f});
         }
 
