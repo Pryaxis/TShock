@@ -232,7 +232,7 @@ namespace TShockAPI
                 string playerName = Main.player[ply].name;
                 NetMessage.SendData(0x2, ply, -1, "Kicked: " + reason, 0x0, 0f, 0f, 0f);
                 Log.Info("Kicked " + playerName + " for : " + reason);
-                if (adminUserName.Equals(""))
+                if (adminUserName.Length == 0)
                     Broadcast(playerName + " was kicked for " + reason.ToLower());
                 else
                     Tools.Broadcast(adminUserName + " kicked " + playerName + " for " + reason.ToLower());
@@ -255,7 +255,7 @@ namespace TShockAPI
                 TShock.Bans.AddBan(ip, playerName, reason);
                 NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
                 Log.Info("Banned " + playerName + " for : " + reason);
-                if (adminUserName.Equals(""))
+                if (adminUserName.Length == 0)
                     Broadcast(playerName + " was banned for " + reason.ToLower());
                 else
                     Tools.Broadcast(adminUserName + " banned " + playerName + " for " + reason.ToLower());
