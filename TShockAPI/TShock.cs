@@ -211,8 +211,8 @@ namespace TShockAPI
                     {
                         int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
                         int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
-                        int tileX = Math.Abs(x / 16);
-                        int tileY = Math.Abs(y / 16);
+                        int tileX = Math.Abs(x);
+                        int tileY = Math.Abs(y);
 
                         if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
                         {
