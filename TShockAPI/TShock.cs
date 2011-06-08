@@ -136,7 +136,7 @@ namespace TShockAPI
             }
             Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." +
                               Version.Revision + " (" + VersionCodename + ") now running.");
-            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
+            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, false);
             Log.Info("Starting...");
 
             GameHooks.Initialize += OnPreInit;
