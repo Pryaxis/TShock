@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -209,6 +211,9 @@ namespace TShockAPI
         {
             if (!Netplay.serverSock[e.Msg.whoAmI].active || Netplay.serverSock[e.Msg.whoAmI].kill)
                 return true;
+
+            if (Main.verboseNetplay)
+                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", e.Msg.whoAmI, e.MsgID, Main.player[e.Msg.whoAmI].dead ? "dead " : "alive", MsgNames[e.MsgID]);
 
             if (e.MsgID == 4)
             {
@@ -871,15 +876,64 @@ namespace TShockAPI
 
         public static bool HackedHealth(int ply)
         {
-            if (Main.player[ply].statManaMax > 200)
-                return true;
-            if (Main.player[ply].statMana > 200)
-                return true;
-            if (Main.player[ply].statLifeMax > 400)
-                return true;
-            if (Main.player[ply].statLife > 400)
-                return true;
-            return false;
+            return (Main.player[ply].statManaMax > 200) ||
+                    (Main.player[ply].statMana > 200) ||
+                    (Main.player[ply].statLifeMax > 400) ||
+                    (Main.player[ply].statLife > 400);
         }
+
+
+        static readonly Dictionary<byte, string> MsgNames = new Dictionary<byte, string>()
+        {
+            {1, "Connect Request"},
+            {2, "Disconnect"},
+            {3, "Continue Connecting"},
+            {4, "Player Info"},
+            {5, "Player Slot"},
+            {6, "Continue Connecting (2)"},
+            {7, "World Info"},
+            {8, "Tile Get Section"},
+            {9, "Status"},
+            {10, "Tile Send Section"},
+            {11, "Tile Frame Section"},
+            {12, "Player Spawn"},
+            {13, "Player Update"},
+            {14, "Player Active"},
+            {15, "Sync Players"},
+            {16, "Player HP"},
+            {17, "Tile"},
+            {18, "Time Set"},
+            {19, "Door Use"},
+            {20, "Tile Send Square"},
+            {21, "Item Drop"},
+            {22, "Item Owner"},
+            {23, "Npc Update"},
+            {24, "Npc Item Strike"},
+            {25, "Chat Text"},
+            {26, "Player Damage"},
+            {27, "Projectile New"},
+            {28, "Npc Strike"},
+            {29, "Projectile Destroy"},
+            {30, "Toggle PVP"},
+            {31, "Chest Get Contents"},
+            {32, "Chest Item"},
+            {33, "Chest Open"},
+            {34, "Tile Kill"},
+            {35, "Effect Heal"},
+            {36, "Zones"},
+            {37, "Password Requied"},
+            {38, "Password Send"},
+            {39, "Item Unown"},
+            {40, "Npc Talk"},
+            {41, "Player Animation"},
+            {42, "Player Mana"},
+            {43, "Effect Mana"},
+            {44, "Player Kill Me"},
+            {45, "Player Team"},
+            {46, "Sign Read"},
+            {47, "Sign New"},
+            {48, "Liquid Set"},
+            {49, "Player Spawn Self"},
+        };
     }
 }
