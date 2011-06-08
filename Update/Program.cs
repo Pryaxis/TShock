@@ -55,7 +55,19 @@ namespace Update
 
             try
             {
-                File.Delete("serverplugins/TShockAPI.dll");
+                DirectoryInfo di = new DirectoryInfo("serverplugins");
+                FileInfo[] fi = di.GetFiles();
+                for (int i = 0; i < fi.Length; i ++ )
+                {
+                    if (fi[i].Name.ToLowerInvariant().Contains("tshockapi"))
+                    {
+                        fi[i].Delete();
+                    }
+                }
+                if (System.IO.File.Exists("serverplugins/TShockAPI.dll"))
+                {
+                    System.IO.File.Delete("serverplugins/TShockAPI.dll");
+                }
             }
             catch (FileNotFoundException)
             {
