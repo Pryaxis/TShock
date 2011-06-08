@@ -249,7 +249,7 @@ namespace TShockAPI
                     int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
                     int tileX = Math.Abs(x);
                     int tileY = Math.Abs(y);
-                    if (size > 5 || Math.Abs(plyX - tileX) > 10 || Math.Abs(plyY - tileY) > 10)
+                    if (size > 5 || Math.Abs(plyX - tileX) > 12 || Math.Abs(plyY - tileY) > 12)
                     {
                         return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
                     }
@@ -270,7 +270,7 @@ namespace TShockAPI
                         int tileX = Math.Abs(x);
                         int tileY = Math.Abs(y);
 
-                        if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
+                        if ((Math.Abs(plyX - tileX) > 8) || (Math.Abs(plyY - tileY) > 8))
                         {
                             return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                         }
@@ -433,6 +433,12 @@ namespace TShockAPI
                     //The liquid was picked up.
                     if (liquid == 0)
                         return false;
+
+                    if (Main.player[e.Msg.whoAmI].selectedItem == 0x72) //Dirt Rod
+                    {
+                        Tools.ForceKick(e.Msg.whoAmI, "Using dirt rod");
+                        return true;
+                    }
 
                     int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
                     int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
