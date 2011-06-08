@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using StreamBinary;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
@@ -29,6 +30,9 @@ namespace TShockAPI
         public static bool updateCmd;
 
         public static BanManager Bans = new BanManager(Path.Combine(saveDir, "bans.txt"));
+
+        delegate bool HandleGetDataD(MemoryStream data, GetDataEventArgs e);
+        Dictionary<byte, HandleGetDataD> GetDataFuncs;
 
         public override Version Version
         {
@@ -106,6 +110,22 @@ namespace TShockAPI
         public TShock(Main game)
             : base(game)
         {
+
+            GetDataFuncs = new Dictionary<byte, HandleGetDataD>
+            {
+                {0x4, HandlePlayerInfo},
+                {0xA, HandleSendSection},
+                {0xD, HandlePlayerUpdate},
+                {0x11, HandleTile},
+                {0x14, HandleSendTileSquare},
+                {0x17, HandleNpcUpdate},
+                {0x1A, HandlePlayerDamage},
+                {0x1B, HandleProjectileNew},
+                {0x1E, HandleTogglePvp},
+                {0x22, HandleTileKill},
+                {0x2C, HandlePlayerKillMe},
+                {0x30, HandleLiquidSet},
+            };
         }
 
         public override void Initialize()
@@ -122,6 +142,7 @@ namespace TShockAPI
                               Version.Revision + " (" + VersionCodename + ") now running.");
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, true);
             Log.Info("Starting...");
+
             GameHooks.Initialize += OnPreInit;
             GameHooks.PostInitialize += OnPostInit;
             GameHooks.Update += OnUpdate;
@@ -204,253 +225,252 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            e.Handled = e.Handled || HandleGetData(e);
-        }
-
-        private bool HandleGetData(GetDataEventArgs e)
-        {
             if (!Netplay.serverSock[e.Msg.whoAmI].active || Netplay.serverSock[e.Msg.whoAmI].kill)
-                return true;
+                return;
 
             if (Main.verboseNetplay)
                 Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", e.Msg.whoAmI, e.MsgID, Main.player[e.Msg.whoAmI].dead ? "dead " : "alive", MsgNames[e.MsgID]);
 
-            if (e.MsgID == 4)
+            HandleGetDataD func;
+            if (GetDataFuncs.TryGetValue(e.MsgID, out func))
             {
-                var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
-                if (ban != null)
+                using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
                 {
-                    Tools.ForceKick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
-                    return true;
-                }
-                string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
-                if (name.Length > 32)
-                {
-                    Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
-                    return true;
-                }
-                if (players[e.Msg.whoAmI] == null)
-                {
-                    Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
-                    return true;
-                }
-                else if (players[e.Msg.whoAmI].receivedInfo)
-                {
-                    return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
-                }
-                else
-                {
-                    players[e.Msg.whoAmI].receivedInfo = true;
+                    e.Handled = func(data, e);
                 }
             }
-            else if (e.MsgID == 0x14)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    short size = br.ReadInt16();
-                    int x = br.ReadInt32();
-                    int y = br.ReadInt32();
-                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
-                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
-                    int tileX = Math.Abs(x);
-                    int tileY = Math.Abs(y);
-                    if (size > 5 || Math.Abs(plyX - tileX) > 12 || Math.Abs(plyY - tileY) > 12)
-                    {
-                        return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
-                    }
-                }
-            }
-            else if (e.MsgID == 17)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte type = br.ReadByte();
-                    int x = br.ReadInt32();
-                    int y = br.ReadInt32();
-                    byte typetile = br.ReadByte();
-                    if (type == 1 || type == 3)
-                    {
-                        int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
-                        int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
-                        int tileX = Math.Abs(x);
-                        int tileY = Math.Abs(y);
+        }
 
-                        if ((Math.Abs(plyX - tileX) > 8) || (Math.Abs(plyY - tileY) > 8))
+
+
+
+        bool HandlePlayerInfo(MemoryStream data, GetDataEventArgs e)
+        {
+            var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
+            if (ban != null)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                return true;
+            }
+            string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
+            if (name.Length > 32)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                return true;
+            }
+            if (players[e.Msg.whoAmI] == null)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
+                return true;
+            }
+            if (players[e.Msg.whoAmI].receivedInfo)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
+            }
+
+            players[e.Msg.whoAmI].receivedInfo = true;
+            return false;
+        }
+
+        bool HandleSendTileSquare(MemoryStream data, GetDataEventArgs e)
+        {
+            short size = data.ReadInt16();
+            int x = data.ReadInt32();
+            int y = data.ReadInt32();
+            int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+            int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
+            int tileX = Math.Abs(x);
+            int tileY = Math.Abs(y);
+            if (size > 5 || Math.Abs(plyX - tileX) > 12 || Math.Abs(plyY - tileY) > 12)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
+            }
+            return false;
+        }
+        bool HandleTile(MemoryStream data, GetDataEventArgs e)
+        {
+            byte type = data.ReadInt8();
+            int x = data.ReadInt32();
+            int y = data.ReadInt32();
+            byte typetile = data.ReadInt8();
+            if (type == 1 || type == 3)
+            {
+                int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+                int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
+                int tileX = Math.Abs(x);
+                int tileY = Math.Abs(y);
+
+                if (Main.player[e.Msg.whoAmI].selectedItem == 0x72) //Dirt Rod
+                {
+                    return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
+                }
+
+                if ((Math.Abs(plyX - tileX) > 8) || (Math.Abs(plyY - tileY) > 8))
+                {
+                    return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
+                }
+            }
+            if (type == 0 || type == 1)
+            {
+                if (ConfigurationManager.spawnProtect)
+                {
+                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    {
+                        var flag = CheckSpawn(x, y);
+                        if (flag)
                         {
-                            return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
-                        }
-                    }
-                    if (type == 0 || type == 1)
-                    {
-                        if (ConfigurationManager.spawnProtect)
-                        {
-                            if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
-                            {
-                                var flag = CheckSpawn(x, y);
-                                if (flag)
-                                {
-                                    Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
-                                                      new[] { 255f, 0f, 0f });
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
-                    {
-                        players[e.Msg.whoAmI].tileThreshold++;
-                        players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
-                    }
-                }
-            }
-            else if (e.MsgID == 0x1e)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    int id = br.ReadByte();
-                    bool pvp = br.ReadBoolean();
-
-                    Main.player[e.Msg.whoAmI].hostile = pvp;
-                    if (id != e.Msg.whoAmI)
-                        Main.player[e.Msg.whoAmI].hostile = true;
-                    if (ConfigurationManager.permaPvp)
-                        Main.player[e.Msg.whoAmI].hostile = true;
-                    NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
-                    return true;
-                }
-            }
-            else if (e.MsgID == 0x0A) //SendSection
-            {
-                return Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
-            }
-            else if (e.MsgID == 0x17) //Npc Data
-            {
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
-            }
-            else if (e.MsgID == 0x0D) //Update Player
-            {
-                byte plr = e.Msg.readBuffer[e.Index];
-                if (plr != e.Msg.whoAmI)
-                {
-                    return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
-                }
-            }
-            else if (e.MsgID == 0x1B) // New Projectile
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    short ident = br.ReadInt16();
-                    float posx = br.ReadSingle();
-                    float posy = br.ReadSingle();
-                    float velx = br.ReadSingle();
-                    float vely = br.ReadSingle();
-                    float knockback = br.ReadSingle();
-                    short dmg = br.ReadInt16();
-                    byte owner = br.ReadByte();
-                    byte type = br.ReadByte();
-
-                    if (type == 29 || type == 28 || type == 37)
-                    {
-                        return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
-                    }
-                }
-            }
-            else if (e.MsgID == 0x2C) // KillMe
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte id = br.ReadByte();
-                    byte hitdirection = br.ReadByte();
-                    short dmg = br.ReadInt16();
-                    bool pvp = br.ReadBoolean();
-
-                    if (id != e.Msg.whoAmI)
-                    {
-                        return Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
-                    }
-                }
-            }
-            else if (e.MsgID == 0x1a) //PlayerDamage
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte playerid = br.ReadByte();
-                    byte direction = br.ReadByte();
-                    Int16 damage = br.ReadInt16();
-                    byte pvp = br.ReadByte();
-
-                    if (!Main.player[playerid].hostile)
-                        return true;
-                }
-            }
-            else if (e.MsgID == 0x30)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    int x = br.ReadInt32();
-                    int y = br.ReadInt32();
-                    byte liquid = br.ReadByte();
-                    bool lava = br.ReadBoolean();
-
-                    //The liquid was picked up.
-                    if (liquid == 0)
-                        return false;
-
-                    if (Main.player[e.Msg.whoAmI].selectedItem == 0x72) //Dirt Rod
-                    {
-                        return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
-                    }
-
-                    int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
-                    int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
-                    int tileX = Math.Abs(x);
-                    int tileY = Math.Abs(y);
-
-                    int lavacount = 0;
-                    int watercount = 0;
-
-                    for (int i = 0; i < 44; i++)
-                    {
-                        if (Main.player[e.Msg.whoAmI].inventory[i].name == "Lava Bucket")
-                            lavacount++;
-                        else if (Main.player[e.Msg.whoAmI].inventory[i].name == "Water Bucket")
-                            watercount++;
-                    }
-
-                    if (lava && lavacount <= 0)
-                    {
-                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
-                    }
-                    else if (!lava && watercount <= 0)
-                    {
-                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
-                    }
-                    if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
-                    {
-                        return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
-                    }
-
-                    if (ConfigurationManager.spawnProtect)
-                    {
-                        if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
-                        {
-                            var flag = CheckSpawn(x, y);
-                            if (flag)
-                            {
-                                Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
-                                return true;
-                            }
+                            Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
+                                              new[] { 255f, 0f, 0f });
+                            return true;
                         }
                     }
                 }
             }
-            else if (e.MsgID == 0x22) // Client only KillTile
+
+            if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
             {
-                return true;  // Client only uses it for chests, but sends regular 17 as well.
+                players[e.Msg.whoAmI].tileThreshold++;
+                players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
             }
 
             return false;
+        }
+
+        bool HandleTogglePvp(MemoryStream data, GetDataEventArgs e)
+        {
+            int id = data.ReadByte();
+            bool pvp = data.ReadBoolean();
+
+            Main.player[e.Msg.whoAmI].hostile = pvp;
+            if (id != e.Msg.whoAmI)
+                Main.player[e.Msg.whoAmI].hostile = true;
+            if (ConfigurationManager.permaPvp)
+                Main.player[e.Msg.whoAmI].hostile = true;
+            NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
+            return true;
+        }
+
+        bool HandleSendSection(MemoryStream data, GetDataEventArgs e)
+        {
+            return Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
+        }
+
+        bool HandleNpcUpdate(MemoryStream data, GetDataEventArgs e)
+        {
+            return Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
+        }
+
+        bool HandlePlayerUpdate(MemoryStream data, GetDataEventArgs e)
+        {
+            byte plr = e.Msg.readBuffer[e.Index];
+            if (plr != e.Msg.whoAmI)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
+            }
+            return false;
+        }
+
+        bool HandleProjectileNew(MemoryStream data, GetDataEventArgs e)
+        {
+            short ident = data.ReadInt16();
+            float posx = data.ReadSingle();
+            float posy = data.ReadSingle();
+            float velx = data.ReadSingle();
+            float vely = data.ReadSingle();
+            float knockback = data.ReadSingle();
+            short dmg = data.ReadInt16();
+            byte owner = data.ReadInt8();
+            byte type = data.ReadInt8();
+
+            if (type == 29 || type == 28 || type == 37)
+            {
+                return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
+            }
+            return false;
+        }
+
+        bool HandlePlayerKillMe(MemoryStream data, GetDataEventArgs e)
+        {
+            byte id = data.ReadInt8();
+            byte hitdirection = data.ReadInt8();
+            short dmg = data.ReadInt16();
+            bool pvp = data.ReadBoolean();
+
+            if (id != e.Msg.whoAmI)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
+            }
+            return false;
+        }
+        
+        bool HandlePlayerDamage(MemoryStream data, GetDataEventArgs e)
+        {
+            byte playerid = data.ReadInt8();
+            byte direction = data.ReadInt8();
+            Int16 damage = data.ReadInt16();
+            byte pvp = data.ReadInt8();
+
+            return !Main.player[playerid].hostile;
+        }
+        
+        bool HandleLiquidSet(MemoryStream data, GetDataEventArgs e)
+        {
+            int x = data.ReadInt32();
+            int y = data.ReadInt32();
+            byte liquid = data.ReadInt8();
+            bool lava = data.ReadBoolean();
+
+            //The liquid was picked up.
+            if (liquid == 0)
+                return false;
+
+            int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
+            int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
+            int tileX = Math.Abs(x);
+            int tileY = Math.Abs(y);
+
+            int lavacount = 0;
+            int watercount = 0;
+
+            for (int i = 0; i < 44; i++)
+            {
+                if (Main.player[e.Msg.whoAmI].inventory[i].name == "Lava Bucket")
+                    lavacount++;
+                else if (Main.player[e.Msg.whoAmI].inventory[i].name == "Water Bucket")
+                    watercount++;
+            }
+
+            if (lava && lavacount <= 0)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
+            }
+            else if (!lava && watercount <= 0)
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
+            }
+            if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
+            {
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
+            }
+
+            if (ConfigurationManager.spawnProtect)
+            {
+                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                {
+                    var flag = CheckSpawn(x, y);
+                    if (flag)
+                    {
+                        Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        bool HandleTileKill(MemoryStream data, GetDataEventArgs e)
+        {
+            return true;
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
