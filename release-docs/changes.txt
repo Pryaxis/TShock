@@ -1,5 +1,9 @@
 For the full list of changes, please take a look at GitHub:
 https://github.com/TShock/TShock/commits/master
+From now on, all release notes aren't put here. It's too much to track, but new features will be tossed here.
+
+Changes in API release 2.0.0.0:
+ - Added update checker.
 
 Changes in API release 1.8.0.0:
  - Added permissions system for managing different levels of admins
