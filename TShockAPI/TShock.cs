@@ -19,7 +19,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 4);
+        public static Version VersionNum = new Version(2, 0, 0, 5);
 
         public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
@@ -294,6 +294,12 @@ namespace TShockAPI
         }
         bool HandleTile(MemoryStream data, GetDataEventArgs e)
         {
+            if (Main.player[e.Msg.whoAmI].dead)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Manipulating tiles when dead");
+                return true;
+            }
+
             byte type = data.ReadInt8();
             int x = data.ReadInt32();
             int y = data.ReadInt32();
@@ -442,6 +448,12 @@ namespace TShockAPI
 
         bool HandleLiquidSet(MemoryStream data, GetDataEventArgs e)
         {
+            if (Main.player[e.Msg.whoAmI].dead)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Manipulating liquids when dead");
+                return true;
+            }
+
             int x = data.ReadInt32();
             int y = data.ReadInt32();
             byte liquid = data.ReadInt8();
@@ -575,11 +587,19 @@ namespace TShockAPI
 
             if (text.StartsWith("/"))
             {
-                //Commands.CommandArgs args = new Commands.CommandArgs(msg, x, y, ply);
+                text = text.Remove(0, 1);
+
+                var args = Commands.ParseParameters(text);
+                if (args.Count < 1)
+                    return;
+
+                string scmd = args[0];
+                args.RemoveAt(0);
+
                 Commands.Command cmd = null;
                 for (int i = 0; i < Commands.commands.Count; i++)
                 {
-                    if (Commands.commands[i].Name().Equals(text.Split(' ')[0].TrimStart('/')))
+                    if (Commands.commands[i].Name().Equals(scmd))
                     {
                         cmd = Commands.commands[i];
                     }
@@ -591,7 +611,7 @@ namespace TShockAPI
                 }
                 else
                 {
-                    if (!cmd.Run(text, players[ply]))
+                    if (!cmd.Run(text, players[ply], args))
                     {
                         Tools.SendLogs(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name(), Color.Red);
                         Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
