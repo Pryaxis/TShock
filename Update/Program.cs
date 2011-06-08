@@ -19,7 +19,6 @@ namespace Update
                 StreamReader sr = new StreamReader("pn");
                 procname = sr.ReadToEnd();
                 sr.Close();
-
                 string[] datat = procname.Split(' ');
                 procname = datat[0];
                 procargs = "";

@@ -16,7 +16,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 9, 0, 1);
+        public static Version VersionNum = new Version(2, 0, 0, 0);
 
         public static string VersionCodename = "SPACEEE";
 
@@ -335,7 +335,7 @@ namespace TShockAPI
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    byte ply = br.ReadByte();
+                    int ply = e.Msg.whoAmI;
                     short life = br.ReadInt16();
                     short maxLife = br.ReadInt16();
 
@@ -356,7 +356,7 @@ namespace TShockAPI
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
                 {
-                    byte ply = br.ReadByte();
+                    int ply = e.Msg.whoAmI;
                     short mana = br.ReadInt16();
                     short maxmana = br.ReadInt16();
 
