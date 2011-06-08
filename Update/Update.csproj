@@ -59,7 +59,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\TShockAPI.dll" />
   </ItemGroup>
