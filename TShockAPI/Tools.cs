@@ -249,13 +249,14 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static bool Ban(int plr, string reason, string adminUserName = "")
         {
+            if (!Netplay.serverSock[plr].active || Netplay.serverSock[plr].kill)
+                return true;
             if (!TShock.players[plr].group.HasPermission("immunetoban"))
             {
                 string ip = GetPlayerIP(plr);
                 string playerName = Main.player[plr].name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                if (Main.player[plr].active || !Netplay.serverSock[plr].kill)
-                    NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
+                NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
                 Log.Info("Banned " + playerName + " for : " + reason);
                 if (adminUserName.Length == 0)
                     Broadcast(playerName + " was banned for " + reason.ToLower());

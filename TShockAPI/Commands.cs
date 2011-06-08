@@ -279,7 +279,7 @@ namespace TShockAPI
 
         public static void UnBan(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 6);
+            string plStr = args.Message.Remove(0, 7);
             int adminplr = args.PlayerID;
             var ban = TShock.Bans.GetBanByName(plStr);
             if (ban != null)
@@ -295,7 +295,7 @@ namespace TShockAPI
 
         public static void UnBanIP(CommandArgs args)
         {
-            string plStr = args.Message.Remove(0, 8);
+            string plStr = args.Message.Remove(0, 9);
             int adminplr = args.PlayerID;
             var ban = TShock.Bans.GetBanByIp(plStr);
             if (ban != null)
