@@ -466,7 +466,17 @@ namespace TShockAPI
 
         bool HandleTileKill(MemoryStream data, GetDataEventArgs e)
         {
-            return true;
+            int tilex = data.ReadInt32();
+            int tiley = data.ReadInt32();
+            if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
+                return false;
+
+            if (Main.tile[tilex, tiley].type != 0x15) //Chest
+            {
+                Tools.Kick(e.Msg.whoAmI, "Tile Kill abuse (" + Main.tile[tilex, tiley].type + ")");
+                return true;
+            }
+            return false;
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
