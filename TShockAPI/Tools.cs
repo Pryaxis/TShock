@@ -139,20 +139,14 @@ namespace TShockAPI
         /// <returns>int player</returns>
         public static int FindPlayer(string ply)
         {
-            /*int pl = -1;
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                if ((ply.ToLower()) == Main.player[i].name.ToLower())
-                {
-                    pl = i;
-                    break;
-                }
-            }
-            return pl;*/
             List<int> found = new List<int>();
             for (int i = 0; i < Main.player.Length; i++)
+            {
+                if (Main.player[i].name.ToLower().Equals(ply.ToLower()))
+                    return i;
                 if (Main.player[i].name.ToLower().Contains(ply.ToLower()))
                     found.Add(i);
+            }
             if (found.Count == 1)
                 return found[0];
             else if (found.Count > 1)

@@ -19,7 +19,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 1);
+        public static Version VersionNum = new Version(2, 0, 0, 2);
 
         public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
