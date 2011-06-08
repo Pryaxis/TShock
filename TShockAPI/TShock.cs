@@ -237,9 +237,6 @@ namespace TShockAPI
             }
         }
 
-
-
-
         bool HandlePlayerInfo(MemoryStream data, GetDataEventArgs e)
         {
             var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
@@ -252,6 +249,11 @@ namespace TShockAPI
             if (name.Length > 32)
             {
                 Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                return true;
+            }
+            if (name.Trim().Length == 0)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Empty Name.");
                 return true;
             }
             if (players[e.Msg.whoAmI] == null)
@@ -279,6 +281,12 @@ namespace TShockAPI
             int tileY = Math.Abs(y);
             if (size > 5 || Math.Abs(plyX - tileX) > 12 || Math.Abs(plyY - tileY) > 12)
             {
+                Log.Debug(string.Format("SendTileSquare(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Size:{6})",
+                        plyX, plyY,
+                        tileX, tileY,
+                        Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
+                        size
+                    ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
             }
             return false;
@@ -288,7 +296,7 @@ namespace TShockAPI
             byte type = data.ReadInt8();
             int x = data.ReadInt32();
             int y = data.ReadInt32();
-            byte typetile = data.ReadInt8();
+            byte tiletype = data.ReadInt8();
             if (type == 1 || type == 3)
             {
                 int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
@@ -303,6 +311,12 @@ namespace TShockAPI
 
                 if ((Math.Abs(plyX - tileX) > 8) || (Math.Abs(plyY - tileY) > 8))
                 {
+                    Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
+                        plyX, plyY,
+                        tileX, tileY,
+                        Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
+                        tiletype
+                    ));
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                 }
             }
@@ -380,6 +394,12 @@ namespace TShockAPI
 
             if (type == 29 || type == 28 || type == 37)
             {
+                var plr = Main.player[e.Msg.whoAmI];
+                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, Type:{2})",
+                        (int)(plr.position.X / 16),
+                        (int)(plr.position.Y / 16),
+                        type
+                    ));
                 return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
             }
             return false;
@@ -398,7 +418,7 @@ namespace TShockAPI
             }
             return false;
         }
-        
+
         bool HandlePlayerDamage(MemoryStream data, GetDataEventArgs e)
         {
             byte playerid = data.ReadInt8();
@@ -408,7 +428,7 @@ namespace TShockAPI
 
             return !Main.player[playerid].hostile;
         }
-        
+
         bool HandleLiquidSet(MemoryStream data, GetDataEventArgs e)
         {
             int x = data.ReadInt32();
@@ -438,14 +458,29 @@ namespace TShockAPI
 
             if (lava && lavacount <= 0)
             {
+                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
+                        plyX, plyY,
+                        tileX, tileY,
+                        Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
+                    ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
             }
-            else if (!lava && watercount <= 0)
+            if (!lava && watercount <= 0)
             {
+                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
+                           plyX, plyY,
+                           tileX, tileY,
+                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
+                       ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
             }
             if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
             {
+                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
+                           plyX, plyY,
+                           tileX, tileY,
+                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
+                       ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
             }
 
@@ -473,6 +508,10 @@ namespace TShockAPI
 
             if (Main.tile[tilex, tiley].type != 0x15) //Chest
             {
+                Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
+                        tilex, tiley,
+                        Main.tile[tilex, tiley].type
+                    ));
                 Tools.Kick(e.Msg.whoAmI, "Tile Kill abuse (" + Main.tile[tilex, tiley].type + ")");
                 return true;
             }
@@ -609,25 +648,21 @@ namespace TShockAPI
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active == false)
-                {
                     continue;
-                }
                 if (players[i].tileThreshold >= 20)
                 {
-                    if (Main.player[i] != null)
+                    if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
                     {
-                        if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
-                        {
-                            RevertKillTile(i);
-                            players[i].tileThreshold = 0;
-                            players[i].tilesDestroyed.Clear();
-                        }
-                        else if (players[i].tileThreshold > 0)
-                        {
-                            players[i].tileThreshold = 0;
-                            players[i].tilesDestroyed.Clear();
-                        }
+                        RevertKillTile(i);
+                        players[i].tileThreshold = 0;
+                        players[i].tilesDestroyed.Clear();
                     }
+                    else if (players[i].tileThreshold > 0)
+                    {
+                        players[i].tileThreshold = 0;
+                        players[i].tilesDestroyed.Clear();
+                    }
+
                 }
                 else if (players[i].tileThreshold > 0)
                 {
