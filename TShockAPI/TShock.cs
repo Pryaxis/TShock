@@ -202,7 +202,7 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            e.Handled = HandleGetData(e);
+            e.Handled = e.Handled || HandleGetData(e);
         }
 
         private bool HandleGetData(GetDataEventArgs e)
@@ -518,7 +518,8 @@ namespace TShockAPI
 
             if (msg.whoAmI != ply)
             {
-                e.Handled = Tools.HandleGriefer(ply, "Faking Chat"); ;
+                e.Handled = Tools.HandleGriefer(ply, "Faking Chat");
+                return;
             }
 
             int x = (int)Main.player[ply].position.X;
