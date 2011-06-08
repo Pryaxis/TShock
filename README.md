@@ -15,3 +15,11 @@ We communicate on the ShankShock Temspeak server whilst programming.
 __IP__: ts3.shankshock.com
 
 __Port__: 9987
+
+### IRC
+
+We love IRC.
+
+__IP__: irc.shankshock.com
+
+__Channel__: #terraria
