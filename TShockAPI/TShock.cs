@@ -16,9 +16,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 0);
+        public static Version VersionNum = new Version(2, 0, 0, 1);
 
-        public static string VersionCodename = "SPACEEE";
+        public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
         public static bool shownVersion;
 
@@ -329,48 +329,6 @@ namespace TShockAPI
                 if (plr != e.Msg.whoAmI)
                 {
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
-                }
-            }
-            else if (e.MsgID == 0x10)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    int ply = e.Msg.whoAmI;
-                    short life = br.ReadInt16();
-                    short maxLife = br.ReadInt16();
-
-                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                    {
-                        if (players[ply].syncHP)
-                        {
-                            return Tools.HandleCheater(ply, "Abnormal life increase");
-                        }
-                        else
-                        {
-                            players[ply].syncHP = true;
-                        }
-                    }
-                }
-            }
-            else if (e.MsgID == 0x2a)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    int ply = e.Msg.whoAmI;
-                    short mana = br.ReadInt16();
-                    short maxmana = br.ReadInt16();
-
-                    if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                    {
-                        if (players[ply].syncMP)
-                        {
-                            return Tools.HandleCheater(ply, "Abnormal mana increase");
-                        }
-                        else
-                        {
-                            players[ply].syncMP = true;
-                        }
-                    }
                 }
             }
             else if (e.MsgID == 0x1B) // New Projectile
