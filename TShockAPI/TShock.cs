@@ -21,7 +21,7 @@ namespace TShockAPI
 
         public static Version VersionNum = new Version(2, 0, 0, 6);
 
-        public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
+        public static string VersionCodename = "RSaC (Red Sucks at Coding)";
 
         private static bool[] BlacklistTiles;
 
