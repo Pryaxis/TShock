@@ -56,13 +56,13 @@ namespace Update
 
             try
             {
-                File.Delete("TShockAPI.dll");
+                File.Delete("serverplugins/TShockAPI.dll");
             }
             catch (FileNotFoundException)
             {
             }
 
-            BinaryWriter bw = new BinaryWriter(new FileStream("TShockAPI.dll", FileMode.Create));
+            BinaryWriter bw = new BinaryWriter(new FileStream("serverplugins/TShockAPI.dll", FileMode.Create));
             bw.Write(Resources.TShockAPI);
             bw.Close();
 

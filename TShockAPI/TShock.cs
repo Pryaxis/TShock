@@ -670,7 +670,7 @@ namespace TShockAPI
                             Tools.SendMessage(ply, "This server is out of date, to update now type /updatenow");
                             if (!updateCmd)
                             {
-                                Commands.commands.Add(new Commands.Command("/updatenow", "maintenance", Commands.UpdateNow));
+                                Commands.commands.Add(new Commands.Command("updatenow", "maintenance", Commands.UpdateNow));
                                 updateCmd = true;
                             }
                             for (int i = 4; i <= changes.Length; i++)
