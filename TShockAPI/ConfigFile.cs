@@ -21,5 +21,6 @@
         public int SpawnProtectionRadius = 5;
         public string DistributationAgent = "facepunch";
         public int MaxSlots = 8;
+        public bool RangeChecks = true;
     }
 }

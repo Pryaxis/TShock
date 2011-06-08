@@ -26,6 +26,7 @@ namespace TShockAPI
         public static bool banBoom = true;
         public static bool kickBoom = true;
         public static bool spawnProtect = true;
+        public static bool rangeChecks = true;
         public static int spawnProtectRadius = 5;
         public static string distributationAgent = "facepunch";
         public static int authToken;
@@ -63,6 +64,7 @@ namespace TShockAPI
             spawnProtectRadius = cfg.SpawnProtectionRadius;
             distributationAgent = cfg.DistributationAgent;
             maxSlots = cfg.MaxSlots;
+            rangeChecks = cfg.RangeChecks;
             NPC.maxSpawns = defaultMaxSpawns;
             NPC.defaultSpawnRate = defaultSpawnRate;
         }
@@ -97,6 +99,7 @@ namespace TShockAPI
             cfg.SpawnProtection = true;
             cfg.SpawnProtectionRadius = 5;
             cfg.MaxSlots = maxSlots;
+            cfg.RangeChecks = rangeChecks;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");

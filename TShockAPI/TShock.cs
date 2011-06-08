@@ -19,7 +19,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 5);
+        public static Version VersionNum = new Version(2, 0, 0, 6);
 
         public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
@@ -280,7 +280,7 @@ namespace TShockAPI
             int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
             int tileX = Math.Abs(x);
             int tileY = Math.Abs(y);
-            if (size > 5 || Math.Abs(plyX - tileX) > 32 || Math.Abs(plyY - tileY) > 32)
+            if (size > 5 || (ConfigurationManager.rangeChecks && (Math.Abs(plyX - tileX) > 32 || Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("SendTileSquare(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Size:{6})",
                         plyX, plyY,
@@ -316,7 +316,7 @@ namespace TShockAPI
                     return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
                 }
 
-                if ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32))
+                if (ConfigurationManager.rangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
                     Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
                         plyX, plyY,
@@ -503,7 +503,7 @@ namespace TShockAPI
                     ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Manipulating liquid without bucket."); ;
             }
-            if ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32))
+            if (ConfigurationManager.rangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
                            plyX, plyY,
