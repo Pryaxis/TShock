@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Terraria;
 
 namespace TShockAPI
 {
@@ -10,8 +13,12 @@ namespace TShockAPI
     {
         static string updateUrl = "http://shankshock.com/tshock-update.txt";
         public static bool updateCmd;
-        public static long updateEpoch = 0;
+        public static DateTime lastcheck = DateTime.MinValue;
         public static string[] globalChanges = {};
+        /// <summary>
+        /// Check once every X minutes.
+        /// </summary>
+        static readonly int CheckXMinutes = 30;
         /// <summary>
         /// Checks to see if the server is out of date.
         /// </summary>
@@ -48,16 +55,16 @@ namespace TShockAPI
         
         public static void NotifyAdministrators(string[] changes)
         {
-            for (int i = 0; i < ConfigurationManager.maxSlots; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if (Terraria.Main.player[i].active)
+                if (Main.player[i].active)
                 {
                     if (!TShock.players[i].group.HasPermission("maintenance"))
                         return;
                     Tools.SendMessage(i, "The server is out of date. To update, type /updatenow.");
-                    for (int j = 4; j <= changes.Length; j++)
+                    for (int j = 4; j < changes.Length; j++)
                     {
-                        Tools.SendMessage(i, changes[i], new float[] { 255, 0, 0 });
+                        Tools.SendMessage(i, changes[j], new float[] { 255, 0, 0 });
                     }
                 }
             }
@@ -65,14 +72,14 @@ namespace TShockAPI
 
         public static void UpdateProcedureCheck()
         {
-            long currentEpoch = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (currentEpoch > UpdateManager.updateEpoch)
+            if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
             {
-                CheckUpdate();
+                ThreadPool.QueueUserWorkItem(CheckUpdate);
+                lastcheck = DateTime.Now;
             }
         }
 
-        public static void CheckUpdate()
+        public static void CheckUpdate(object o)
         {
             if (ServerIsOutOfDate())
             {

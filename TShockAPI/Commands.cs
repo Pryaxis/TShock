@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Net;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
 
@@ -127,7 +128,7 @@ namespace TShockAPI
 
         public static void CheckUpdates(CommandArgs args)
         {
-            UpdateManager.CheckUpdate();
+            ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
         }
 
         public static void PartyChat(CommandArgs args)
@@ -231,10 +232,11 @@ namespace TShockAPI
             {
                 string ip = args.Message.Split(' ')[1];
                 TShock.Bans.AddBan(ip, "", "Manually added IP address ban.");
-            } else if (args.Message.Split(' ').Length > 2)
+            }
+            else if (args.Message.Split(' ').Length > 2)
             {
                 string reason = "";
-                for (int i = 2; i > args.Message.Split(' ').Length;i++)
+                for (int i = 2; i > args.Message.Split(' ').Length; i++)
                 {
                     reason += args.Message.Split(' ')[i];
                 }
