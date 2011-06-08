@@ -24,6 +24,8 @@ namespace TShockAPI
 
         private static bool[] BlacklistTiles;
 
+        public static bool updateCmd;
+
         public static BanManager Bans = new BanManager(Path.Combine(saveDir, "bans.txt"));
 
         public override Version Version
@@ -665,7 +667,12 @@ namespace TShockAPI
                         float[] color = { 255, 255, 000 };
                         if (VersionNum.CompareTo(updateVersion) < 0)
                         {
-                            Tools.SendMessage(ply, "This server is out of date.");
+                            Tools.SendMessage(ply, "This server is out of date, to update now type /updatenow");
+                            if (!updateCmd)
+                            {
+                                Commands.commands.Add(new Commands.Command("/updatenow", "maintenance", Commands.UpdateNow));
+                                updateCmd = true;
+                            }
                             for (int i = 4; i <= changes.Length; i++)
                             {
                                 Tools.SendMessage(ply, changes[i], color);

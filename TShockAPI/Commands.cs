@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
 
@@ -848,6 +850,39 @@ namespace TShockAPI
             ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
             Tools.SendMessage(args.PlayerID,
                               "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
+        }
+
+        public static void UpdateNow(CommandArgs args)
+        {
+            Process TServer = Process.GetCurrentProcess();
+
+            StreamWriter sw = new StreamWriter("pid");
+            sw.Write(TServer.Id);
+            sw.Close();
+
+            sw = new StreamWriter("pn");
+            sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
+            sw.Close();
+
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "TShock");
+            byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
+
+            BinaryWriter bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create));
+            bw.Write(updatefile);
+            bw.Close();
+
+            Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
+
+            for (int player = 0; player < Main.maxPlayers; player++)
+            {
+                if (Main.player[player].active)
+                {
+                    Tools.ForceKick(player, "Server shutting down for update!");
+                }
+            }
+            WorldGen.saveWorld();
+            Netplay.disconnect = true;
         }
 
         #endregion Command Methods
