@@ -141,20 +141,20 @@ namespace TShockAPI
                 {
                     if (Main.player[i].team == Main.player[args.PlayerID].team)
                     {
-                        Tools.SendMessage(i, msg, new float[] { (float)Main.teamColor[playerTeam].R, (float)Main.teamColor[playerTeam].G, (float)Main.teamColor[playerTeam].B });
+                        Tools.SendMessage(i, msg, Main.teamColor[playerTeam].R, Main.teamColor[playerTeam].G, Main.teamColor[playerTeam].B);
                     }
                 }
             }
             else
             {
-                Tools.SendMessage(args.PlayerID, "You are not in a party!", new float[] { 255f, 240f, 20f });
+                Tools.SendMessage(args.PlayerID, "You are not in a party!", 255f, 240f, 20f);
             }
         }
 
         public static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, new float[] { 205, 133, 63 });
+            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, 205, 133, 63);
         }
 
         public static void Playing(CommandArgs args)
@@ -171,23 +171,23 @@ namespace TShockAPI
             lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
             lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
             lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
-            Tools.SendMessage(ply, lineOne, new[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineOne, 255f, 255f, 0f);
             string lineTwo = "";
             lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
             lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
             lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
             lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
-            Tools.SendMessage(ply, lineTwo, new[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineTwo, 255f, 255f, 0f);
             string lineThree = "";
             lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
             lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
             lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
             lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
             lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate;
-            Tools.SendMessage(ply, lineThree, new[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineThree, 255f, 255f, 0f);
             string lineFour = "";
             lineFour += "MaxSlots : " + ConfigurationManager.maxSlots + ", ";
-            Tools.SendMessage(ply, lineFour, new[] { 255f, 255f, 0f });
+            Tools.SendMessage(ply, lineFour, 255f, 255f, 0f);
         }
 
         public static void Kick(CommandArgs args)
@@ -210,20 +210,20 @@ namespace TShockAPI
             {
                 int player = Tools.FindPlayer(plStr);
                 if (player == -1)
-                    Tools.SendMessage(ply, "Invalid player!", new[] { 255f, 0f, 0f });
+                    Tools.SendMessage(ply, "Invalid player!", 255f, 0f, 0f);
                 else if (player == -2)
-                    Tools.SendMessage(ply, "More than one player matched!", new[] { 255f, 0f, 0f });
+                    Tools.SendMessage(ply, "More than one player matched!",  255f, 0f, 0f );
                 else
                 {
                     if (!Tools.Kick(player, reason.Length != 0 ? reason : "Misbehaviour."))
                     {
-                        Tools.SendMessage(ply, "You can't kick another admin!", new[] { 255f, 0f, 0f });
+                        Tools.SendMessage(ply, "You can't kick another admin!",  255f, 0f, 0f );
                     }
                 }
             }
             else
                 Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /kick <player> [reason]",
-                                  new[] { 255f, 0f, 0f });
+                                   255f, 0f, 0f );
         }
 
         public static void BanIP(CommandArgs args)

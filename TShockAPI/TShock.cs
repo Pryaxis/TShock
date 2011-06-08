@@ -19,7 +19,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 2);
+        public static Version VersionNum = new Version(2, 0, 0, 4);
 
         public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
@@ -134,9 +134,10 @@ namespace TShockAPI
             {
                 Console.WriteLine(ex.ToString());
             }
-            Console.WriteLine("TShock Version " + Version.Major + "." + Version.Minor + "." + Version.Build + "." +
-                              Version.Revision + " (" + VersionCodename + ") now running.");
+            string version = "TShock Version " + Version + " (" + VersionCodename + ") now running.";
+            Console.WriteLine(version);
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, false);
+            Log.Info(version);
             Log.Info("Starting...");
 
             GameHooks.Initialize += OnPreInit;
@@ -445,41 +446,48 @@ namespace TShockAPI
             int tileX = Math.Abs(x);
             int tileY = Math.Abs(y);
 
-            int lavacount = 0;
-            int watercount = 0;
-
+            bool bucket = false;
             for (int i = 0; i < 44; i++)
             {
-                if (Main.player[e.Msg.whoAmI].inventory[i].name == "Lava Bucket")
-                    lavacount++;
-                else if (Main.player[e.Msg.whoAmI].inventory[i].name == "Water Bucket")
-                    watercount++;
+                if (Main.player[e.Msg.whoAmI].inventory[i].type >= 205 && Main.player[e.Msg.whoAmI].inventory[i].type <= 207)
+                {
+                    bucket = true;
+                    break;
+                }
             }
 
-            if (lava && lavacount <= 0)
+            if (lava && !players[e.Msg.whoAmI].group.HasPermission("canlava"))
             {
-                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
+                Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use lava", Color.Red);
+                Tools.SendLogs(Main.player[e.Msg.whoAmI].name + " tried using lava", Color.Red);
+                
+                return true;
+            }
+            if (!lava && !players[e.Msg.whoAmI].group.HasPermission("canwater"))
+            {
+                Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use water", Color.Red);
+                Tools.SendLogs(Main.player[e.Msg.whoAmI].name + " tried using water", Color.Red);
+                return true;
+            }
+
+            if (!bucket)
+            {
+                Log.Debug(string.Format("{0}(PlyXY:{1}_{2}, TileXY:{3}_{4}, Result:{5}_{6}, Amount:{7})",
+                    lava ? "Lava" : "Water",
                         plyX, plyY,
                         tileX, tileY,
-                        Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
+                        Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
+                           liquid
                     ));
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing lava they didn't have."); ;
-            }
-            if (!lava && watercount <= 0)
-            {
-                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
-                           plyX, plyY,
-                           tileX, tileY,
-                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
-                       ));
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing water they didn't have.");
+                return Tools.HandleGriefer(e.Msg.whoAmI, "Manipulating liquid without bucket."); ;
             }
             if ((Math.Abs(plyX - tileX) > 6) || (Math.Abs(plyY - tileY) > 6))
             {
-                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5})",
+                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
                            plyX, plyY,
                            tileX, tileY,
-                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY)
+                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
+                           liquid
                        ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
             }
@@ -521,10 +529,8 @@ namespace TShockAPI
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
             if (Main.netMode != 2)
-            {
                 return;
-            }
-            int plr = who; //legacy support
+
             Log.Info(Tools.FindPlayer(who) + " (" + Tools.GetPlayerIP(who) + ") from '" + players[who].group.GetName() + "' group joined.");
             Tools.ShowMOTD(who);
             if (HackedHealth(who))
@@ -571,15 +577,14 @@ namespace TShockAPI
 
                 if (cmd == null)
                 {
-                    Tools.SendMessage(ply, "That command does not exist, try /help", new float[] { 255, 0, 0 });
+                    Tools.SendMessage(ply, "That command does not exist, try /help", Color.Red);
                 }
                 else
                 {
                     if (!cmd.Run(text, players[ply]))
                     {
-                        Log.Info(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name() +
-                                 " that s/he did not have access to!");
-                        Tools.SendMessage(ply, "You do not have access to that command.", new float[] { 255, 0, 0 });
+                        Tools.SendLogs(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name(), Color.Red);
+                        Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
                     }
                 }
                 e.Handled = true;

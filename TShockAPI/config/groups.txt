@@ -14,8 +14,8 @@
 #immunetoban immunetokick editspawn
 #ignoregriefdetection reservedslot
 
-default null
+default null canwater canlava
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban unban unbanip causeevents spawnboss spawnmob tp immunetokick kill
+admin newadmin ban unban unbanip causeevents spawnboss spawnmob tp immunetokick kill logs
 trustedadmin admin maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection

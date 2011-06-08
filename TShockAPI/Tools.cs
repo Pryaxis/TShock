@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI
@@ -85,13 +86,30 @@ namespace TShockAPI
             Log.Info("Broadcast: " + msg);
         }
 
-        public static void Broadcast(string msg, float[] color)
+        public static void Broadcast(string msg, float red, float green, float blue)
         {
             for (int i = 0; i < Main.player.Length; i++)
             {
-                SendMessage(i, msg, color);
+                SendMessage(i, msg, red, green, blue);
             }
             Log.Info("Broadcast: " + msg);
+        }
+
+        [Obsolete("STOP USING THIS")]
+        public static void SendMessage(int ply, string msg, float[] colors)
+        {
+            SendMessage(ply, msg, colors[0],colors[1],colors[2]);
+        }
+
+        /// <summary>
+        /// Sends a message out to a single player
+        /// </summary>
+        /// <param name="ply">int socket thingy for the player from the server socket</param>
+        /// <param name="msg">String message</param>
+      
+        public static void SendMessage(int ply, string msg, float red, float green, float blue)
+        {
+            NetMessage.SendData(0x19, ply, -1, msg, 255, red, green, blue);
         }
 
         /// <summary>
@@ -100,9 +118,28 @@ namespace TShockAPI
         /// <param name="ply">int socket thingy for the player from the server socket</param>
         /// <param name="msg">String message</param>
         /// <param name="color">Float containing red, blue, and green color values</param>
-        public static void SendMessage(int ply, string msg, float[] color)
+        public static void SendMessage(int ply, string msg, Color color)
         {
-            NetMessage.SendData(0x19, ply, -1, msg, 255, color[0], color[1], color[2]);
+            NetMessage.SendData(0x19, ply, -1, msg, 255, color.R, color.G, color.B);
+        }
+
+        /// <summary>
+        /// Sends message to all users with 'logs' permission.
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="color"></param>
+        public static void SendLogs(string log, Color color)
+        {
+            Log.Info(log);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (TShock.players[i] == null)
+                    continue;
+                if (!TShock.players[i].group.HasPermission("logs"))
+                    continue;
+
+                SendMessage(i, log, color);
+            }
         }
 
         /// <summary>
