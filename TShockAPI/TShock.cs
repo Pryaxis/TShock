@@ -18,9 +18,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(1, 9, 0, 1);
+        public static Version VersionNum = new Version(2, 0, 0, 1);
 
-        public static string VersionCodename = "SPACEEE";
+        public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
         public static bool shownVersion;
 
@@ -336,48 +336,6 @@ namespace TShockAPI
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
                 }
             }
-            else if (e.MsgID == 0x10)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte ply = br.ReadByte();
-                    short life = br.ReadInt16();
-                    short maxLife = br.ReadInt16();
-
-                    if (maxLife > Main.player[ply].statLifeMax + 20 || life > maxLife)
-                    {
-                        if (players[ply].syncHP)
-                        {
-                            return Tools.HandleCheater(ply, "Abnormal life increase");
-                        }
-                        else
-                        {
-                            players[ply].syncHP = true;
-                        }
-                    }
-                }
-            }
-            else if (e.MsgID == 0x2a)
-            {
-                using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
-                {
-                    byte ply = br.ReadByte();
-                    short mana = br.ReadInt16();
-                    short maxmana = br.ReadInt16();
-
-                    if (maxmana > Main.player[ply].statManaMax + 20 || mana > maxmana)
-                    {
-                        if (players[ply].syncMP)
-                        {
-                            return Tools.HandleCheater(ply, "Abnormal mana increase");
-                        }
-                        else
-                        {
-                            players[ply].syncMP = true;
-                        }
-                    }
-                }
-            }
             else if (e.MsgID == 0x1B) // New Projectile
             {
                 using (var br = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length)))
@@ -392,7 +350,7 @@ namespace TShockAPI
                     byte owner = br.ReadByte();
                     byte type = br.ReadByte();
 
-                    if (type == 29 || type == 28 || type == 30)
+                    if (type == 29 || type == 28 || type == 37)
                     {
                         return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
                     }
@@ -441,8 +399,7 @@ namespace TShockAPI
 
                     if (Main.player[e.Msg.whoAmI].selectedItem == 0x72) //Dirt Rod
                     {
-                        Tools.ForceKick(e.Msg.whoAmI, "Using dirt rod");
-                        return true;
+                        return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
                     }
 
                     int plyX = Math.Abs((int)Main.player[e.Msg.whoAmI].position.X / 16);
