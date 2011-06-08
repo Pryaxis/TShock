@@ -113,6 +113,7 @@ namespace TShockAPI
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
             commands.Add(new Command("butcher", "cheat", Butcher));
+            commands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
@@ -123,6 +124,11 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void CheckUpdates(CommandArgs args)
+        {
+            UpdateManager.CheckUpdate();
+        }
 
         public static void PartyChat(CommandArgs args)
         {

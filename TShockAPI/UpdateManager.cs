@@ -68,13 +68,17 @@ namespace TShockAPI
             long currentEpoch = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
             if (currentEpoch > UpdateManager.updateEpoch)
             {
-                if (ServerIsOutOfDate())
-                {
-                    EnableUpdateCommand();
-                    NotifyAdministrators(globalChanges);
-                }
+                CheckUpdate();
             }
         }
 
+        public static void CheckUpdate()
+        {
+            if (ServerIsOutOfDate())
+            {
+                EnableUpdateCommand();
+                NotifyAdministrators(globalChanges);
+            }
+        }
     }
 }
