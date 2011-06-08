@@ -14,13 +14,17 @@ namespace TShockAPI
     {
         public static TSPlayer[] players = new TSPlayer[Main.maxPlayers];
 
+        public static long updateEpoch = 0;
+
+        public static bool serverOutOfDate = false;
+
         public static string saveDir = "./tshock/";
 
         public static Version VersionNum = new Version(2, 0, 0, 1);
 
         public static string VersionCodename = "UnrealIRCd ftw (irc.shankshock.com #terraria)";
 
-        public static bool shownVersion;
+        public static bool notifiedAdminOfVersionCheck;
 
         private static bool[] BlacklistTiles;
 
@@ -575,9 +579,10 @@ namespace TShockAPI
 
         private void OnUpdate(GameTime time)
         {
-            if (Main.netMode != 2)
+            long currentEpoch = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000)/10000000;
+            if (currentEpoch > updateEpoch)
             {
-                return;
+                CheckForUpdates();
             }
             for (int i = 0; i < Main.maxPlayers; i++)
             {
@@ -613,12 +618,40 @@ namespace TShockAPI
          * Useful stuff:
          * */
 
+        public static void CheckForUpdates()
+        {
+            if (serverOutOfDate)
+                return;
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent",
+                               "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+            try
+            {
+                string updateString = client.DownloadString("http://shankshock.com/tshock-update.txt");
+                string[] changes = updateString.Split(',');
+                Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
+                                                    Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
+                if (VersionNum.CompareTo(updateVersion) < 0)
+                {
+                    notifiedAdminOfVersionCheck = false;
+                    Tools.Broadcast("A TShock update has been released. Tell an admin to join to see the full changelog.");
+                    serverOutOfDate = true;
+                }
+            }
+            catch (Exception e)
+            {
+                FileTools.WriteError(e.Message);
+            }
+            notifiedAdminOfVersionCheck = true;
+        }
+
         public static void ShowUpdateReminder(int ply)
         {
-            if (!shownVersion)
+            if (!notifiedAdminOfVersionCheck || serverOutOfDate)
             {
                 if (players[ply].group.HasPermission("maintenance"))
                 {
+                    updateEpoch = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000)/10000000 + 600;
                     WebClient client = new WebClient();
                     client.Headers.Add("user-agent",
                                        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
@@ -636,6 +669,7 @@ namespace TShockAPI
                             {
                                 Commands.commands.Add(new Commands.Command("updatenow", "maintenance", Commands.UpdateNow));
                                 updateCmd = true;
+                                serverOutOfDate = true;
                             }
                             for (int i = 4; i <= changes.Length; i++)
                             {
@@ -647,7 +681,7 @@ namespace TShockAPI
                     {
                         FileTools.WriteError(e.Message);
                     }
-                    shownVersion = true;
+                    notifiedAdminOfVersionCheck = true;
                 }
             }
         }
