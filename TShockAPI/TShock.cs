@@ -336,8 +336,7 @@ namespace TShockAPI
                         var flag = CheckSpawn(x, y);
                         if (flag)
                         {
-                            Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.",
-                                              new[] { 255f, 0f, 0f });
+                            Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
                             return true;
                         }
                     }
@@ -521,7 +520,7 @@ namespace TShockAPI
                     var flag = CheckSpawn(x, y);
                     if (flag)
                     {
-                        Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", new[] { 255f, 0f, 0f });
+                        Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", Color.Red);
                         return true;
                     }
                 }
@@ -673,8 +672,6 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
-
-            //ConfigurationManager.maxSlots = Main.maxPlayers - 1;
         }
 
         private void OnUpdate(GameTime time)

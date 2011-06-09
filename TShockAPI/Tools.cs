@@ -95,12 +95,6 @@ namespace TShockAPI
             Log.Info("Broadcast: " + msg);
         }
 
-        [Obsolete("STOP USING THIS")]
-        public static void SendMessage(int ply, string msg, float[] colors)
-        {
-            SendMessage(ply, msg, colors[0],colors[1],colors[2]);
-        }
-
         /// <summary>
         /// Sends a message out to a single player
         /// </summary>
@@ -357,10 +351,7 @@ namespace TShockAPI
                     {
                         try
                         {
-                            pC[0] = Clamp(Convert.ToInt32(pCc[0]), 255, 0);
-                            pC[1] = Clamp(Convert.ToInt32(pCc[1]), 255, 0);
-                            pC[2] = Clamp(Convert.ToInt32(pCc[2]), 255, 0);
-                            SendMessage(ply, foo, pC);
+                            SendMessage(ply, foo, Clamp(Convert.ToInt32(pCc[0]), 255, 0), Clamp(Convert.ToInt32(pCc[1]), 255, 0), Clamp(Convert.ToInt32(pCc[2]), 255, 0));
                             continue;
                         }
                         catch (Exception e)

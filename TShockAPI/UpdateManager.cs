@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI
@@ -64,7 +65,7 @@ namespace TShockAPI
                     Tools.SendMessage(i, "The server is out of date. To update, type /updatenow.");
                     for (int j = 4; j < changes.Length; j++)
                     {
-                        Tools.SendMessage(i, changes[j],  255, 0, 0);
+                        Tools.SendMessage(i, changes[j], Color.Red);
                     }
                 }
             }

@@ -261,24 +261,24 @@ namespace TShockAPI
             lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
             lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
             lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
-            Tools.SendMessage(ply, lineOne, 255f, 255f, 0f);
+            Tools.SendMessage(ply, lineOne, Color.Yellow);
             string lineTwo = "";
             lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
             lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
             lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
             lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
-            Tools.SendMessage(ply, lineTwo, 255f, 255f, 0f);
+            Tools.SendMessage(ply, lineTwo, Color.Yellow);
             string lineThree = "";
             lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
             lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
             lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
             lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
             lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate;
-            Tools.SendMessage(ply, lineThree, 255f, 255f, 0f);
+            Tools.SendMessage(ply, lineThree, Color.Yellow);
             string lineFour = "";
             lineFour += "MaxSlots : " + ConfigurationManager.maxSlots + ", ";
             lineFour += "RangeChecks : " + ConfigurationManager.rangeChecks + ", ";
-            Tools.SendMessage(ply, lineFour, 255f, 255f, 0f);
+            Tools.SendMessage(ply, lineFour, Color.Yellow);
         }
 
         public static void Kick(CommandArgs args)
@@ -823,19 +823,19 @@ namespace TShockAPI
                     tempstring += "/" + cmdlist[j].Name() + ", ";
                     if (j == cmdlist.Count - 1)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), new[] { 255f, 255f, 0f });
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), Color.Yellow);
                         break;
                     }
                     if ((j + 1) % 5 == 0)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), new[] { 255f, 255f, 0f });
+                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), Color.Yellow);
                         tempstring = "";
                     }
                 }
             }
             if (cmdlist.Count > (15 * page))
             {
-                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", new[] { 255f, 0f, 255f });
+                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", Color.Yellow);
             }
         }
 
