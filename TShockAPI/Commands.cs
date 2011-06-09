@@ -176,6 +176,7 @@ namespace TShockAPI
             commands.Add(new Command("unbanip", "unbanip", UnBanIP));
             commands.Add(new Command("off", "maintenance", Off));
             commands.Add(new Command("off-nosave", "maintenance", OffNoSave));
+            commands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
             commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
             commands.Add(new Command("star", "causeevents", Star));
             commands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
@@ -204,7 +205,6 @@ namespace TShockAPI
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
             commands.Add(new Command("butcher", "cheat", Butcher));
-            commands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
@@ -277,104 +277,108 @@ namespace TShockAPI
             Tools.SendMessage(ply, lineThree, 255f, 255f, 0f);
             string lineFour = "";
             lineFour += "MaxSlots : " + ConfigurationManager.maxSlots + ", ";
+            lineFour += "RangeChecks : " + ConfigurationManager.rangeChecks + ", ";
             Tools.SendMessage(ply, lineFour, 255f, 255f, 0f);
         }
 
         public static void Kick(CommandArgs args)
         {
-            string input = args.Message.Remove(0, 5).Trim();
-            string plStr = "";
-            string reason = "";
-            int splitIndex = input.StartsWith("\"") ? splitIndex = input.IndexOf('"', 1) : splitIndex = input.IndexOf(' ', 0);
-            if (splitIndex == -1)
-            {
-                plStr = input;
-            }
-            else
-            {
-                plStr = input.Substring(0, splitIndex).Trim().TrimEnd('"').TrimStart('"');
-                reason = input.Substring(splitIndex + 1).Trim().TrimEnd('"').TrimStart('"');
-            }
-            int ply = args.PlayerID;
-            if (plStr.Length != 0)
-            {
-                int player = Tools.FindPlayer(plStr);
-                if (player == -1)
-                    Tools.SendMessage(ply, "Invalid player!", Color.Red);
-                else if (player == -2)
-                    Tools.SendMessage(ply, "More than one player matched!", Color.Red);
-                else
-                {
-                    if (!Tools.Kick(player, reason.Length != 0 ? reason : "Misbehaviour."))
-                    {
-                        Tools.SendMessage(ply, "You can't kick another admin!", Color.Red);
-                    }
-                }
-            }
-            else
-                Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /kick <player> [reason]", Color.Red);
-        }
-
-        public static void BanIP(CommandArgs args)
-        {
-            int ply = args.PlayerID;
-
-            if (args.Parameters.Count < 1)
-            {
-                Tools.SendMessage(ply, "Syntax: /banip <ip> [reason]", Color.Red);
-                return;
-            }
-
-            string ip = args.Parameters[0];
-            string reason = args.Parameters.Count > 1 ? args.Parameters[1] : "Manually added IP address ban.";
-
-            TShock.Bans.AddBan(ip, "", reason);
-        }
-
-        public static void Ban(CommandArgs args)
-        {
-            int ply = args.PlayerID;
-
-            if (args.Parameters.Count < 1)
-            {
-                Tools.SendMessage(ply, "Missing player name", Color.Red);
-                return;
-            }
-
-            string plStr = args.Parameters[0];
-            string reason = args.Parameters.Count > 1 ? args.Parameters[1] : "Misbehaviour";
-
-
-            if (plStr.Length != 0)
-            {
-                int player = Tools.FindPlayer(plStr);
-                if (player == -1)
-                    Tools.SendMessage(ply, "Invalid player!", Color.Red);
-                else if (player == -2)
-                    Tools.SendMessage(ply, "More than one player matched!", Color.Red);
-                else
-                {
-                    if (!Tools.Ban(player, reason))
-                    {
-                        Tools.SendMessage(ply, "You can't ban another admin!", Color.Red);
-                    }
-                }
-            }
-            else
-                Tools.SendMessage(ply, "Invalid syntax! Proper syntax: /ban <player> [reason]", Color.Red);
-        }
-
-        public static void UnBan(CommandArgs args)
-        {
             int adminplr = args.PlayerID;
+
             if (args.Parameters.Count < 1)
+            {
+                Tools.SendMessage(adminplr, "Invalid syntax! Proper syntax: /kick <player> [reason]", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
             {
                 Tools.SendMessage(adminplr, "Missing player name", Color.Red);
                 return;
             }
 
             string plStr = args.Parameters[0];
+            int player = Tools.FindPlayer(plStr);
+            if (player == -1)
+                Tools.SendMessage(adminplr, "Invalid player!", Color.Red);
+            else if (player == -2)
+                Tools.SendMessage(adminplr, "More than one player matched!", Color.Red);
+            else
+            {
+                string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
+                if (!Tools.Kick(player, reason))
+                {
+                    Tools.SendMessage(adminplr, "You can't kick another admin!", Color.Red);
+                }
+            }
+        }
 
+        public static void Ban(CommandArgs args)
+        {
+            int adminplr = args.PlayerID;
+
+            if (args.Parameters.Count < 1)
+            {
+                Tools.SendMessage(adminplr, "Invalid syntax! Proper syntax: /ban <player> [reason]", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
+            {
+                Tools.SendMessage(adminplr, "Missing player name", Color.Red);
+                return;
+            }
+
+            string plStr = args.Parameters[0];
+            int player = Tools.FindPlayer(plStr);
+            if (player == -1)
+                Tools.SendMessage(adminplr, "Invalid player!", Color.Red);
+            else if (player == -2)
+                Tools.SendMessage(adminplr, "More than one player matched!", Color.Red);
+            else
+            {
+                string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
+                if (!Tools.Ban(player, reason))
+                {
+                    Tools.SendMessage(adminplr, "You can't ban another admin!", Color.Red);
+                }
+            }
+        }
+
+        public static void BanIP(CommandArgs args)
+        {
+            int adminplr = args.PlayerID;
+
+            if (args.Parameters.Count < 1)
+            {
+                Tools.SendMessage(adminplr, "Syntax: /banip <ip> [reason]", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
+            {
+                Tools.SendMessage(adminplr, "Missing IP address", Color.Red);
+                return;
+            }
+
+            string ip = args.Parameters[0];
+            string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Manually added IP address ban.";
+            TShock.Bans.AddBan(ip, "", reason);
+        }
+
+        public static void UnBan(CommandArgs args)
+        {
+            int adminplr = args.PlayerID;
+
+            if (args.Parameters.Count < 1)
+            {
+                Tools.SendMessage(adminplr, "Invalid syntax! Proper syntax: /unban <player>", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
+            {
+                Tools.SendMessage(adminplr, "Missing player name", Color.Red);
+                return;
+            }
+
+            string plStr = args.Parameters[0];
             var ban = TShock.Bans.GetBanByName(plStr);
             if (ban != null)
             {
@@ -390,14 +394,19 @@ namespace TShockAPI
         public static void UnBanIP(CommandArgs args)
         {
             int adminplr = args.PlayerID;
+
             if (args.Parameters.Count < 1)
+            {
+                Tools.SendMessage(adminplr, "Invalid syntax! Proper syntax: /unbanip <ip>", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
             {
                 Tools.SendMessage(adminplr, "Missing ip", Color.Red);
                 return;
             }
 
             string plStr = args.Parameters[0];
-
             var ban = TShock.Bans.GetBanByIp(plStr);
             if (ban != null)
             {
