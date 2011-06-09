@@ -411,7 +411,7 @@ namespace TShockAPI
             if (type == 29 || type == 28 || type == 37)
             {
                 var plr = Main.player[e.Msg.whoAmI];
-                Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, Type:{2})",
+                Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})",
                         (int)(plr.position.X / 16),
                         (int)(plr.position.Y / 16),
                         type
@@ -541,7 +541,7 @@ namespace TShockAPI
                         tilex, tiley,
                         Main.tile[tilex, tiley].type
                     ));
-                Tools.Kick(e.Msg.whoAmI, "Tile Kill abuse (" + Main.tile[tilex, tiley].type + ")");
+                Tools.ForceKick(e.Msg.whoAmI, "Tile Kill abuse (" + Main.tile[tilex, tiley].type + ")");
                 return true;
             }
             return false;
@@ -610,10 +610,15 @@ namespace TShockAPI
                 }
                 else
                 {
-                    if (!cmd.Run(text, players[ply], args))
+                    if (!cmd.CanRun(players[ply]))
                     {
                         Tools.SendLogs(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name(), Color.Red);
                         Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
+                    }
+                    else
+                    {
+                        Tools.SendLogs(Tools.FindPlayer(ply) + " executed: /" + text, Color.Red);
+                        cmd.Run(text, players[ply], args);
                     }
                 }
                 e.Handled = true;
