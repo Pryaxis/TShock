@@ -19,7 +19,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 7);
+        public static Version VersionNum = new Version(2, 0, 0, 8);
 
         public static string VersionCodename = "RSaC (Red Sucks at Coding)";
 
