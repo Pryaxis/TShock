@@ -140,10 +140,8 @@ namespace TShockAPI
             Log.Info(version);
             Log.Info("Starting...");
 
-            GameHooks.Initialize += OnPreInit;
             GameHooks.PostInitialize += OnPostInit;
             GameHooks.Update += OnUpdate;
-            GameHooks.LoadContent += OnLoadContent;
             ServerHooks.Chat += OnChat;
             ServerHooks.Join += OnJoin;
             NetHooks.GetData += GetData;
@@ -192,10 +190,8 @@ namespace TShockAPI
         {
             Bans.SaveBans();
 
-            GameHooks.Initialize -= OnPreInit;
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
-            GameHooks.LoadContent -= OnLoadContent;
             ServerHooks.Chat -= OnChat;
             ServerHooks.Join -= OnJoin;
             ServerHooks.Command -= ServerHooks_OnCommand;
@@ -657,14 +653,8 @@ namespace TShockAPI
                     handler.Handled = true;
                 }
             }
-        }
 
-        private void OnLoadContent(ContentManager obj)
-        {
-        }
-
-        private void OnPreInit()
-        {
+            Netplay.serverSock[ply].spamCheck = ConfigurationManager.spamChecks;
         }
 
         private void OnPostInit()

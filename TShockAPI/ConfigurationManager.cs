@@ -31,6 +31,7 @@ namespace TShockAPI
         public static string distributationAgent = "facepunch";
         public static int authToken;
         public static int maxSlots = 8;
+        public static bool spamChecks = false;
 
         public enum NPCList
         {
@@ -65,6 +66,7 @@ namespace TShockAPI
             distributationAgent = cfg.DistributationAgent;
             maxSlots = cfg.MaxSlots;
             rangeChecks = cfg.RangeChecks;
+            spamChecks = cfg.SpamChecks;
             NPC.maxSpawns = defaultMaxSpawns;
             NPC.defaultSpawnRate = defaultSpawnRate;
         }
@@ -100,7 +102,7 @@ namespace TShockAPI
             cfg.SpawnProtectionRadius = 5;
             cfg.MaxSlots = maxSlots;
             cfg.RangeChecks = rangeChecks;
-
+            cfg.SpamChecks = spamChecks;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");
             tr.Write(json);
