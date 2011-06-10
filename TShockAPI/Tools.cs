@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Terraria;
 
@@ -36,22 +37,19 @@ namespace TShockAPI
         /// <returns>String of players seperated by commas.</returns>
         public static string GetPlayers()
         {
-            string str = "";
+            var sb = new StringBuilder();
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active)
                 {
-                    if (str == "")
+                    if (sb.Length != 0)
                     {
-                        str = str + Main.player[i].name;
+                        sb.Append(", ");
                     }
-                    else
-                    {
-                        str = str + ", " + Main.player[i].name;
-                    }
+                    sb.Append(Main.player[i].name);
                 }
             }
-            return str;
+            return sb.ToString();
         }
 
         /// <summary>
@@ -83,7 +81,7 @@ namespace TShockAPI
             {
                 SendMessage(i, msg);
             }
-            Log.Info("Broadcast: " + msg);
+            Log.Info(string.Format("Broadcast: {0}", msg));
         }
 
         public static void Broadcast(string msg, float red, float green, float blue)
@@ -92,7 +90,7 @@ namespace TShockAPI
             {
                 SendMessage(i, msg, red, green, blue);
             }
-            Log.Info("Broadcast: " + msg);
+            Log.Info(string.Format("Broadcast: {0}", msg));
         }
 
         /// <summary>
@@ -241,7 +239,7 @@ namespace TShockAPI
         {
             string ip = GetPlayerIP(ply);
             NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-            Log.Info(ip + " was force kicked for : " + reason);
+            Log.Info(string.Format("{0} was force kicked for : {1}", ip, reason));
         }
 
         /// <summary>
@@ -256,12 +254,12 @@ namespace TShockAPI
             if (!TShock.players[ply].group.HasPermission("immunetokick"))
             {
                 string playerName = Main.player[ply].name;
-                NetMessage.SendData(0x2, ply, -1, "Kicked: " + reason, 0x0, 0f, 0f, 0f);
-                Log.Info("Kicked " + playerName + " for : " + reason);
+                NetMessage.SendData(0x2, ply, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
+                Log.Info(string.Format("Kicked {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
-                    Broadcast(playerName + " was kicked for " + reason.ToLower());
+                    Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(adminUserName + " kicked " + playerName + " for " + reason.ToLower());
+                    Tools.Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;
@@ -281,12 +279,12 @@ namespace TShockAPI
                 string ip = GetPlayerIP(plr);
                 string playerName = Main.player[plr].name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                NetMessage.SendData(0x2, plr, -1, "Banned: " + reason, 0x0, 0f, 0f, 0f);
-                Log.Info("Banned " + playerName + " for : " + reason);
+                NetMessage.SendData(0x2, plr, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);
+                Log.Info(string.Format("Banned {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
-                    Broadcast(playerName + " was banned for " + reason.ToLower());
+                    Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(adminUserName + " banned " + playerName + " for " + reason.ToLower());
+                    Tools.Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;

@@ -134,7 +134,7 @@ namespace TShockAPI
             {
                 Console.WriteLine(ex.ToString());
             }
-            string version = "TShock Version " + Version + " (" + VersionCodename + ") now running.";
+            string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
             Console.WriteLine(version);
             Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, false);
             Log.Info(version);
@@ -243,7 +243,7 @@ namespace TShockAPI
             var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
             if (ban != null)
             {
-                Tools.ForceKick(e.Msg.whoAmI, "You are banned: " + ban.Reason);
+                Tools.ForceKick(e.Msg.whoAmI, string.Format("You are banned: {0}", ban.Reason));
                 return true;
             }
             string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
@@ -480,14 +480,14 @@ namespace TShockAPI
             if (lava && !players[e.Msg.whoAmI].group.HasPermission("canlava"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use lava", Color.Red);
-                Tools.SendLogs(Main.player[e.Msg.whoAmI].name + " tried using lava", Color.Red);
+                Tools.SendLogs(string.Format("{0} tried using lava", Main.player[e.Msg.whoAmI].name), Color.Red);
 
                 return true;
             }
             if (!lava && !players[e.Msg.whoAmI].group.HasPermission("canwater"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use water", Color.Red);
-                Tools.SendLogs(Main.player[e.Msg.whoAmI].name + " tried using water", Color.Red);
+                Tools.SendLogs(string.Format("{0} tried using water", Main.player[e.Msg.whoAmI].name), Color.Red);
                 return true;
             }
 
@@ -541,7 +541,7 @@ namespace TShockAPI
                         tilex, tiley,
                         Main.tile[tilex, tiley].type
                     ));
-                Tools.ForceKick(e.Msg.whoAmI, "Tile Kill abuse (" + Main.tile[tilex, tiley].type + ")");
+                Tools.ForceKick(e.Msg.whoAmI, string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
                 return true;
             }
             return false;
@@ -552,7 +552,8 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(Tools.FindPlayer(who) + " (" + Tools.GetPlayerIP(who) + ") from '" + players[who].group.GetName() + "' group joined.");
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].group.GetName()));
+
             Tools.ShowMOTD(who);
             if (HackedHealth(who))
             {
@@ -612,12 +613,12 @@ namespace TShockAPI
                 {
                     if (!cmd.CanRun(players[ply]))
                     {
-                        Tools.SendLogs(Tools.FindPlayer(ply) + " tried to execute " + cmd.Name(), Color.Red);
+                        Tools.SendLogs(string.Format("{0} tried to execute {1}", Tools.FindPlayer(ply), cmd.Name()), Color.Red);
                         Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
                     }
                     else
                     {
-                        Tools.SendLogs(Tools.FindPlayer(ply) + " executed: /" + text, Color.Red);
+                        Tools.SendLogs(string.Format("{0} executed: /{1}", Tools.FindPlayer(ply), text), Color.Red);
                         cmd.Run(text, players[ply], args);
                     }
                 }
@@ -647,7 +648,7 @@ namespace TShockAPI
                 var ban = Bans.GetBanByIp(ip);
                 if (ban != null)
                 {
-                    Tools.ForceKick(ply, "You are banned: " + ban.Reason);
+                    Tools.ForceKick(ply, string.Format("You are banned: {0}", ban.Reason));
                     handler.Handled = true;
                 }
                 else if (!FileTools.OnWhitelist(ip))
@@ -763,23 +764,22 @@ namespace TShockAPI
                 switch (random)
                 {
                     case 0:
-                        Tools.Broadcast("You call that a lot? " + ConfigurationManager.killCount + " goblins killed!");
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.killCount));
                         break;
                     case 1:
-                        Tools.Broadcast("Fatality! " + ConfigurationManager.killCount + " goblins killed!");
+                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", ConfigurationManager.killCount));
                         break;
                     case 2:
-                        Tools.Broadcast("Number of 'noobs' killed to date: " + ConfigurationManager.killCount);
+                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", ConfigurationManager.killCount));
                         break;
                     case 3:
-                        Tools.Broadcast("Duke Nukem would be proud. " + ConfigurationManager.killCount +
-                                        " goblins killed.");
+                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", ConfigurationManager.killCount));
                         break;
                     case 4:
-                        Tools.Broadcast("You call that a lot? " + ConfigurationManager.killCount + " goblins killed!");
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.killCount));
                         break;
                     case 5:
-                        Tools.Broadcast(ConfigurationManager.killCount + " copies of Call of Duty smashed.");
+                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", ConfigurationManager.killCount));
                         break;
                 }
             }

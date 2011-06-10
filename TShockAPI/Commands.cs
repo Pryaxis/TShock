@@ -226,7 +226,7 @@ namespace TShockAPI
             int playerTeam = Main.player[args.PlayerID].team;
             if (playerTeam != 0)
             {
-                string msg = "<" + Main.player[args.PlayerID].name + "> " + args.Message.Remove(0, 2);
+                string msg = string.Format("<{0}> {1}", Main.player[args.PlayerID].name, args.Message.Remove(0, 2));
                 for (int i = 0; i < Main.player.Length; i++)
                 {
                     if (Main.player[i].team == Main.player[args.PlayerID].team)
@@ -244,40 +244,33 @@ namespace TShockAPI
         public static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast("*" + Tools.FindPlayer(args.PlayerID) + " " + msg, 205, 133, 63);
+            Tools.Broadcast(string.Format("*{0} {1}", Tools.FindPlayer(args.PlayerID), msg, 205, 133, 63));
         }
 
         public static void Playing(CommandArgs args)
         {
-            Tools.SendMessage(args.PlayerID, "Current players: " + Tools.GetPlayers(), 255f, 240f, 20f);
+            Tools.SendMessage(args.PlayerID, string.Format("Current players: {0}.", Tools.GetPlayers()), 255f, 240f, 20f);
         }
 
         public static void DebugConfiguration(CommandArgs args)
         {
             int ply = args.PlayerID;
             Tools.SendMessage(ply, "TShock Config:");
-            string lineOne = "";
-            lineOne += "KickCheater : " + ConfigurationManager.kickCheater + ", ";
-            lineOne += "BanCheater : " + ConfigurationManager.banCheater + ", ";
-            lineOne += "KickGriefer : " + ConfigurationManager.kickGriefer + ", ";
-            lineOne += "BanGriefer : " + ConfigurationManager.banGriefer;
+            string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
+                              ConfigurationManager.banCheater, ConfigurationManager.kickCheater,
+                              ConfigurationManager.banGriefer, ConfigurationManager.kickGriefer);
             Tools.SendMessage(ply, lineOne, Color.Yellow);
-            string lineTwo = "";
-            lineTwo += "BanTnt : " + ConfigurationManager.banTnt + ", ";
-            lineTwo += "KickTnt : " + ConfigurationManager.kickTnt + ", ";
-            lineTwo += "BanBoom : " + ConfigurationManager.banBoom + ", ";
-            lineTwo += "KickBoom : " + ConfigurationManager.kickBoom;
+            string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
+                                           ConfigurationManager.banTnt, ConfigurationManager.kickTnt,
+                                           ConfigurationManager.banBoom, ConfigurationManager.kickBoom);
             Tools.SendMessage(ply, lineTwo, Color.Yellow);
-            string lineThree = "";
-            lineThree += "InvMultiplier : " + ConfigurationManager.invasionMultiplier + ", ";
-            lineThree += "ProtectS : " + ConfigurationManager.spawnProtect + ", ";
-            lineThree += "ProtectR : " + ConfigurationManager.spawnProtectRadius + ", ";
-            lineThree += "DMS : " + ConfigurationManager.defaultMaxSpawns + ", ";
-            lineThree += "SpawnRate: " + ConfigurationManager.defaultSpawnRate;
+            string lineThree = string.Format("InvMultiplier : {0}, ProtectS : {1}, ProtectR : {2}, DMS : {3}, SpawnRate {4}",
+                                             ConfigurationManager.invasionMultiplier, ConfigurationManager.spawnProtect,
+                                             ConfigurationManager.spawnProtectRadius, ConfigurationManager.defaultMaxSpawns,
+                                             ConfigurationManager.defaultSpawnRate);
             Tools.SendMessage(ply, lineThree, Color.Yellow);
-            string lineFour = "";
-            lineFour += "MaxSlots : " + ConfigurationManager.maxSlots + ", ";
-            lineFour += "RangeChecks : " + ConfigurationManager.rangeChecks + ", ";
+            string lineFour = string.Format("MaxSlots : {0}, RangeChecks : {1}",
+                                           ConfigurationManager.maxSlots, ConfigurationManager.rangeChecks);
             Tools.SendMessage(ply, lineFour, Color.Yellow);
         }
 
@@ -468,7 +461,7 @@ namespace TShockAPI
         public static void Bloodmoon(CommandArgs args)
         {
             int ply = args.PlayerID;
-            Tools.Broadcast(Tools.FindPlayer(ply) + " turned on blood moon.");
+            Tools.Broadcast(string.Format("{0} turned on blood moon.", Tools.FindPlayer(ply)));
             Main.bloodMoon = true;
             Main.time = 0;
             Main.dayTime = false;
@@ -482,7 +475,7 @@ namespace TShockAPI
             int y = args.PlayerY;
             int ply = args.PlayerID;
             Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
-            Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eater of worlds!");
+            Tools.Broadcast(string.Format("{0} has spawned an eater of worlds!", Tools.FindPlayer(ply)));
         }
 
         public static void Eye(CommandArgs args)
@@ -491,7 +484,7 @@ namespace TShockAPI
             int y = args.PlayerY;
             int ply = args.PlayerID;
             Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
-            Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned an eye!");
+            Tools.Broadcast(string.Format("{0} has spawned an eye!", Tools.FindPlayer(ply)));
         }
 
         public static void Skeletron(CommandArgs args)
@@ -500,7 +493,7 @@ namespace TShockAPI
             int y = args.PlayerY;
             int ply = args.PlayerID;
             Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
-            Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned skeletron!");
+            Tools.Broadcast(string.Format("{0} has spawned skeletron!", Tools.FindPlayer(ply)));
         }
 
         public static void Hardcore(CommandArgs args)
@@ -512,7 +505,7 @@ namespace TShockAPI
             {
                 Tools.NewNPC(i, x, y, ply);
             }
-            Tools.Broadcast(Tools.FindPlayer(ply) + " has spawned all 3 bosses!");
+            Tools.Broadcast(string.Format("{0} has spawned all 3 bosses!", Tools.FindPlayer(ply)));
         }
 
         public static void Invade(CommandArgs args)
@@ -520,12 +513,12 @@ namespace TShockAPI
             int ply = args.PlayerID;
             if (Main.invasionSize <= 0)
             {
-                Tools.Broadcast(Main.player[ply].name + " has started an invasion.");
+                Tools.Broadcast(string.Format("{0} has started an invasion.", Tools.FindPlayer(ply)));
                 TShock.StartInvasion();
             }
             else
             {
-                Tools.Broadcast(Main.player[ply].name + " has ended an invasion.");
+                Tools.Broadcast(string.Format("{0} has ended an invasion.", Tools.FindPlayer(ply)));
                 Main.invasionSize = 0;
             }
         }
@@ -535,7 +528,7 @@ namespace TShockAPI
             int ply = args.PlayerID;
             string passwd = args.Message.Remove(0, 9).Trim();
             Netplay.password = passwd;
-            Tools.SendMessage(ply, "Server password changed to: " + passwd);
+            Tools.SendMessage(ply, string.Format("Server password changed to: {0}", passwd));
         }
 
         public static void Save(CommandArgs args)
@@ -600,7 +593,7 @@ namespace TShockAPI
             else
             {
                 TShock.Teleport(adminplr, Main.player[player].position.X, Main.player[player].position.Y);
-                Tools.SendMessage(adminplr, "Teleported to " + Tools.FindPlayer(player));
+                Tools.SendMessage(adminplr, string.Format("Teleported to {0}", Tools.FindPlayer(player)));
             }
         }
 
@@ -623,8 +616,8 @@ namespace TShockAPI
             else
             {
                 TShock.Teleport(player, Main.player[adminplr].position.X, Main.player[adminplr].position.Y);
-                Tools.SendMessage(player, "You were teleported to " + Tools.FindPlayer(adminplr) + ".");
-                Tools.SendMessage(adminplr, "You brought " + Tools.FindPlayer(player) + " here.");
+                Tools.SendMessage(player, string.Format("You were teleported to {0}.", Tools.FindPlayer(adminplr)));
+                Tools.SendMessage(adminplr, string.Format("You brought {0} here.", Tools.FindPlayer(player)));
             }
         }
 
@@ -705,7 +698,7 @@ namespace TShockAPI
                     Main.item[id].stack = Main.item[id].maxStack;
                     //TShock.SendDataAll(21, -1, "", id);
                     NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                    Tools.SendMessage(adminplr, "Got some " + Main.item[id].name + ".");
+                    Tools.SendMessage(adminplr, string.Format("Got some {0}.", Main.item[id].name));
                     //TShock.UpdateInventories();
                     flag = true;
                     break;
@@ -832,7 +825,7 @@ namespace TShockAPI
                     killcount++;
                 }
             }
-            Tools.Broadcast("Killed " + killcount + " NPCs.");
+            Tools.Broadcast(string.Format("Killed {0} NPCs.", killcount));
         }
 
         public static void MaxSpawns(CommandArgs args)
@@ -849,7 +842,7 @@ namespace TShockAPI
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultMaxSpawns = amount;
             ConfigurationManager.defaultMaxSpawns = amount;
-            Tools.Broadcast(Tools.FindPlayer(adminplr) + " changed the maximum spawns to: " + amount);
+            Tools.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", Tools.FindPlayer(adminplr), amount));
         }
 
         public static void SpawnRate(CommandArgs args)
@@ -866,14 +859,13 @@ namespace TShockAPI
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultSpawnRate = amount;
             ConfigurationManager.defaultSpawnRate = amount;
-            Tools.Broadcast(Tools.FindPlayer(adminplr) + " changed the spawn rate to: " + amount);
+            Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", Tools.FindPlayer(adminplr), amount));
         }
 
         public static void Help(CommandArgs args)
         {
             int ply = args.PlayerID;
             Tools.SendMessage(ply, "TShock Commands:");
-            string tempstring = "";
             int page = 1;
             if (args.Parameters.Count > 0)
                 int.TryParse(args.Parameters[0], out page);
@@ -885,26 +877,29 @@ namespace TShockAPI
                     cmdlist.Add(commands[j]);
                 }
             }
+            var sb = new StringBuilder();
             if (cmdlist.Count > (15 * (page - 1)))
             {
                 for (int j = (15 * (page - 1)); j < (15 * page); j++)
                 {
-                    tempstring += "/" + cmdlist[j].Name() + ", ";
+                    if (sb.Length != 0)
+                        sb.Append(", ");
+                    sb.Append("/").Append(cmdlist[j].Name());
                     if (j == cmdlist.Count - 1)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), Color.Yellow);
+                        Tools.SendMessage(ply, sb.ToString(), Color.Yellow);
                         break;
                     }
                     if ((j + 1) % 5 == 0)
                     {
-                        Tools.SendMessage(ply, tempstring.TrimEnd(new[] { ' ', ',' }), Color.Yellow);
-                        tempstring = "";
+                        Tools.SendMessage(ply, sb.ToString(), Color.Yellow);
+                        sb.Clear();
                     }
                 }
             }
             if (cmdlist.Count > (15 * page))
             {
-                Tools.SendMessage(ply, "Type /help " + (page + 1) + " for more commands.", Color.Yellow);
+                Tools.SendMessage(ply, string.Format("Type /help {0} for more commands.", (page + 1)), Color.Yellow);
             }
         }
 
@@ -925,35 +920,35 @@ namespace TShockAPI
                     Main.dayTime = true;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to day.");
+                    Tools.Broadcast(string.Format("{0} set time to day.", Tools.FindPlayer(args.PlayerID)));
                     break;
                 case "night":
                     Main.time = 0;
                     Main.dayTime = false;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to night.");
+                    Tools.Broadcast(string.Format("{0} set time to night.", Tools.FindPlayer(args.PlayerID)));
                     break;
                 case "dusk":
                     Main.dayTime = false;
                     Main.time = 0.0;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to dusk.");
+                    Tools.Broadcast(string.Format("{0} set time to dusk.", Tools.FindPlayer(args.PlayerID)));
                     break;
                 case "noon":
                     Main.dayTime = true;
                     Main.time = 27000.0;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to noon.");
+                    Tools.Broadcast(string.Format("{0} set time to noon.", Tools.FindPlayer(args.PlayerID)));
                     break;
                 case "midnight":
                     Main.dayTime = false;
                     Main.time = 16200.0;
                     NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
                     NetMessage.syncPlayers();
-                    Tools.Broadcast(Tools.FindPlayer(args.PlayerID) + " set time to midnight.");
+                    Tools.Broadcast(string.Format("{0} set time to midnight.", Tools.FindPlayer(args.PlayerID)));
                     break;
                 default:
                     Tools.SendMessage(adminplr, "Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>", Color.Red);
@@ -979,8 +974,8 @@ namespace TShockAPI
                 Tools.SendMessage(adminplr, "More than one player matched!", Color.Red);
             else
             {
-                Tools.SendMessage(adminplr, "You just killed " + Tools.FindPlayer(player) + "!");
-                Tools.SendMessage(player, Tools.FindPlayer(adminplr) + " just killed you!");
+                Tools.SendMessage(adminplr, string.Format("You just killed {0}!", Tools.FindPlayer(player)));
+                Tools.SendMessage(player, string.Format("{0} just killed you!", Tools.FindPlayer(adminplr)));
                 TShock.KillMe(player);
             }
         }
@@ -1014,8 +1009,8 @@ namespace TShockAPI
                     int.TryParse(args.Parameters[1], out damage);
                 }
                 NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float)0);
-                Tools.Broadcast(Tools.FindPlayer(adminplr) + " slapped " + Tools.FindPlayer(player) + " for " +
-                                damage + " damage.");
+                Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.", 
+                                Tools.FindPlayer(adminplr), Tools.FindPlayer(player), damage));
             }
         }
 
@@ -1023,7 +1018,7 @@ namespace TShockAPI
         {
             ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
             Tools.SendMessage(args.PlayerID,
-                              "Spawn is now " + (ConfigurationManager.spawnProtect ? "protected" : "open") + ".");
+                              string.Format("Spawn is now {0}.", (ConfigurationManager.spawnProtect ? "protected" : "open")));
         }
 
         public static void UpdateNow(CommandArgs args)
