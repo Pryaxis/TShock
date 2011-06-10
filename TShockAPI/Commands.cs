@@ -226,7 +226,7 @@ namespace TShockAPI
             int playerTeam = Main.player[args.PlayerID].team;
             if (playerTeam != 0)
             {
-                string msg = "<" + Main.player[args.PlayerID].name + "> " + args.Message.Remove(0, 3);
+                string msg = "<" + Main.player[args.PlayerID].name + "> " + args.Message.Remove(0, 2);
                 for (int i = 0; i < Main.player.Length; i++)
                 {
                     if (Main.player[i].team == Main.player[args.PlayerID].team)
