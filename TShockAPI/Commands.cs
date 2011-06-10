@@ -249,7 +249,7 @@ namespace TShockAPI
 
         public static void Playing(CommandArgs args)
         {
-            Tools.SendMessage(args.PlayerID, Tools.GetPlayers());
+            Tools.SendMessage(args.PlayerID, "Current players: " + Tools.GetPlayers(), 255f, 240f, 20f);
         }
 
         public static void DebugConfiguration(CommandArgs args)
