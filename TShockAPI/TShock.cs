@@ -806,7 +806,7 @@ namespace TShockAPI
         public static int GetNPCID(string name, bool exact = false)
         {
             NPC npc = new NPC();
-            for (int i = 1; i <= 45; i++)
+            for (int i = 1; i < Main.maxNPCTypes; i++)
             {
                 if (exact)
                 {
@@ -831,7 +831,7 @@ namespace TShockAPI
         {
             Item item = new Item();
             name = name.ToLower();
-            for (int i = 1; i <= 238; i++)
+            for (int i = 1; i < Main.maxItemTypes; i++)
             {
                 item.SetDefaults(i);
                 if (item.name.ToLower().StartsWith(name))

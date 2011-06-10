@@ -649,7 +649,7 @@ namespace TShockAPI
                 return;
             }
 
-            if (type >= 1 && type <= 45)
+            if (type >= 1 && type < Main.maxNPCTypes)
             {
                 int npcid = -1;
                 for (int i = 0; i < amount; i++)
@@ -679,7 +679,7 @@ namespace TShockAPI
             if (!int.TryParse(args.Parameters[0], out type))
                 type = TShock.GetItemID(String.Join(" ", args.Parameters));
 
-            if (type < 1 || type > 238)
+            if (type < 1 || type >= Main.maxItemTypes)
             {
                 Tools.SendMessage(adminplr, "Invalid item type!", Color.Red);
                 return;
@@ -732,7 +732,7 @@ namespace TShockAPI
             if (!int.TryParse(args.Parameters[0], out type))
                 type = TShock.GetItemID(args.Parameters[0]);
 
-            if (type < 1 || type > 238)
+            if (type < 1 || type >= Main.maxItemTypes)
             {
                 Tools.SendMessage(args.PlayerID, "Invalid item type!", Color.Red);
                 return;
