@@ -785,7 +785,7 @@ namespace TShockAPI
         {
             int adminplr = args.PlayerID;
 
-            if (args.Parameters.Count > 1)
+            if (args.Parameters.Count > 0)
             {
                 string plStr = String.Join(" ", args.Parameters);
                 int player = Tools.FindPlayer(plStr);
