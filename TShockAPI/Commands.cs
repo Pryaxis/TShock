@@ -201,16 +201,16 @@ namespace TShockAPI
             commands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
             commands.Add(new Command("help", "", Help));
             commands.Add(new Command("playing", "", Playing));
+            commands.Add(new Command("online", "", Playing));
+            commands.Add(new Command("who", "", Playing));
             commands.Add(new Command("auth", "", AuthToken));
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
-            commands.Add(new Command("butcher", "cheat", Butcher));
-            commands.Add(new Command("i", "cheat", Item));
-            commands.Add(new Command("online", "", Playing));
-            commands.Add(new Command("who", "", Playing));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
+                commands.Add(new Command("butcher", "cheat", Butcher));
+                commands.Add(new Command("i", "cheat", Item));
                 commands.Add(new Command("item", "cheat", Item));
                 commands.Add(new Command("give", "cheat", Give));
                 commands.Add(new Command("heal", "cheat", Heal));
@@ -272,8 +272,9 @@ namespace TShockAPI
                                              ConfigurationManager.spawnProtectRadius, ConfigurationManager.defaultMaxSpawns,
                                              ConfigurationManager.defaultSpawnRate);
             Tools.SendMessage(ply, lineThree, Color.Yellow);
-            string lineFour = string.Format("MaxSlots : {0}, RangeChecks : {1}",
-                                           ConfigurationManager.maxSlots, ConfigurationManager.rangeChecks);
+            string lineFour = string.Format("MaxSlots : {0}, RangeChecks : {1}, SpamChecks : {2}",
+                                           ConfigurationManager.maxSlots, ConfigurationManager.rangeChecks,
+                                           ConfigurationManager.spamChecks);
             Tools.SendMessage(ply, lineFour, Color.Yellow);
         }
 
@@ -975,6 +976,8 @@ namespace TShockAPI
                 Tools.SendMessage(adminplr, "Invalid player!", Color.Red);
             else if (player == -2)
                 Tools.SendMessage(adminplr, "More than one player matched!", Color.Red);
+            else if (player == adminplr)
+                Tools.SendMessage(adminplr, "Can't kill yourself!", Color.Red);
             else
             {
                 Tools.SendMessage(adminplr, string.Format("You just killed {0}!", Tools.FindPlayer(player)));
