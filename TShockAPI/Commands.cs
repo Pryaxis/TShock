@@ -205,6 +205,9 @@ namespace TShockAPI
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
             commands.Add(new Command("butcher", "cheat", Butcher));
+            commands.Add(new Command("i", "cheat", Item));
+            commands.Add(new Command("online", "", Playing));
+            commands.Add(new Command("who", "", Playing));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
