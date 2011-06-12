@@ -70,8 +70,10 @@ namespace TShockAPI {
         ///#Do not name a group SuperAdmin, that is hard-coded into the code, it grants total permissions
         ///#ALWAYS DECLARE A GROUP&apos;S PARENT BEFORE YOU DECLARE THE GROUP
         ///
-        ///#currently avaliable permissions: kick ban ignorecheatdetection power cfg causeevents spawnboss tp spawnmob cheat kill pvpfun
-        /// [rest of string was truncated]&quot;;.
+        ///#currently avaliable permissions: 
+        ///#kick ban ignorecheatdetection 
+        ///#maintenance cfg causeevents spawnboss tp 
+        ///#spawnmob che [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string groups {
             get {
@@ -83,7 +85,7 @@ namespace TShockAPI {
         ///   Looks up a localized string similar to #format
         ///#ip group
         ///#see groups.txt for a list of groups
-        ///127.0.0.1 superadmin.
+        ///#127.0.0.1 superadmin.
         /// </summary>
         internal static string users {
             get {

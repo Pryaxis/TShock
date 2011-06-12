@@ -1,4 +1,5 @@
-﻿<!-- 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
 TShock, a server mod for Terraria
 Copyright (C) <year>  <name of author>
 
@@ -15,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
