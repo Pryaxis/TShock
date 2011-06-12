@@ -63,11 +63,6 @@
     <Compile Include="FileTools.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="StreamExt.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="TShock.cs" />
@@ -84,7 +79,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
