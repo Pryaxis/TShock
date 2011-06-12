@@ -26,6 +26,8 @@ namespace TShockAPI
     /// </summary>
     internal class ConfigurationManager
     {
+        //Add default values here and in ConfigFile.cs
+        //Values written here will automatically be pulled into a config file on save.
         public static int invasionMultiplier = 1;
         public static int defaultMaxSpawns = 4;
         public static int defaultSpawnRate = 700;
