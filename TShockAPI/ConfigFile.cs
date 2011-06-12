@@ -40,5 +40,6 @@ namespace TShockAPI
         public int MaxSlots = 8;
         public bool RangeChecks = true;
         public bool SpamChecks = false;
+        public bool DisableBuild = false;
     }
 }

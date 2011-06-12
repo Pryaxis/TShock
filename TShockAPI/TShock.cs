@@ -336,6 +336,13 @@ namespace TShockAPI
             }
             if (type == 0 || type == 1)
             {
+                if (ConfigurationManager.disableBuild)
+                {
+                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    {
+                        return true;
+                    }
+                }
                 if (ConfigurationManager.spawnProtect)
                 {
                     if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
