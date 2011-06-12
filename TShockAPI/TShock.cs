@@ -19,9 +19,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 0, 0, 8);
+        public static Version VersionNum = new Version(2, 1, 0, 0);
 
-        public static string VersionCodename = "RSaC (Red Sucks at Coding)";
+        public static string VersionCodename = "Versioning fails";
 
         private static bool[] BlacklistTiles;
 
@@ -290,12 +290,6 @@ namespace TShockAPI
         }
         bool HandleTile(MemoryStream data, GetDataEventArgs e)
         {
-            if (Main.player[e.Msg.whoAmI].dead)
-            {
-                Tools.ForceKick(e.Msg.whoAmI, "Manipulating tiles when dead");
-                return true;
-            }
-
             byte type = data.ReadInt8();
             int x = data.ReadInt32();
             int y = data.ReadInt32();
@@ -443,12 +437,6 @@ namespace TShockAPI
 
         bool HandleLiquidSet(MemoryStream data, GetDataEventArgs e)
         {
-            if (Main.player[e.Msg.whoAmI].dead)
-            {
-                Tools.ForceKick(e.Msg.whoAmI, "Manipulating liquids when dead");
-                return true;
-            }
-
             int x = data.ReadInt32();
             int y = data.ReadInt32();
             byte liquid = data.ReadInt8();
