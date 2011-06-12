@@ -223,6 +223,7 @@ namespace TShockAPI
             commands.Add(new Command("auth", "", AuthToken));
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
+            commands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
@@ -235,6 +236,18 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void ToggleAntiBuild(CommandArgs args)
+        {
+            Tools.SendMessage(args.PlayerID, "Toggled world anti-build.");
+            if (ConfigurationManager.disableBuild)
+            {
+                ConfigurationManager.disableBuild = false;
+            } else
+            {
+                ConfigurationManager.disableBuild = true;
+            }
+        }
 
         public static void CheckUpdates(CommandArgs args)
         {
