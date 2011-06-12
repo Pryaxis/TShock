@@ -92,8 +92,15 @@ namespace TShockAPI
                 sw.Write(Resources.users);
                 sw.Close();
             }
-            ConfigurationManager.WriteJsonConfiguration();
-            ConfigurationManager.ReadJsonConfiguration();
+            if (File.Exists(FileTools.SaveDir + "config.json"))
+            {
+                ConfigurationManager.ReadJsonConfiguration();
+            } else
+            {
+                ConfigurationManager.WriteJsonConfiguration();
+                ConfigurationManager.ReadJsonConfiguration();
+            }
+
             Netplay.serverPort = ConfigurationManager.serverPort;
         }
 

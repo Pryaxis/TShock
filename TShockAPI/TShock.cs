@@ -206,7 +206,7 @@ namespace TShockAPI
         public override void DeInitialize()
         {
             Bans.SaveBans();
-
+            ConfigurationManager.WriteJsonConfiguration();
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
             ServerHooks.Chat -= OnChat;

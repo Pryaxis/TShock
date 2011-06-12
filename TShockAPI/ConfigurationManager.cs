@@ -30,16 +30,16 @@ namespace TShockAPI
         public static int defaultMaxSpawns = 4;
         public static int defaultSpawnRate = 700;
         public static int serverPort = 7777;
-        public static bool enableWhitelist;
-        public static bool infiniteInvasion;
-        public static bool permaPvp;
+        public static bool enableWhitelist = false;
+        public static bool infiniteInvasion = false;
+        public static bool permaPvp = false;
         public static int killCount;
         public static bool kickCheater = true;
         public static bool banCheater = true;
         public static bool kickGriefer = true;
         public static bool banGriefer = true;
-        public static bool banTnt;
-        public static bool kickTnt;
+        public static bool banTnt = true;
+        public static bool kickTnt = true;
         public static bool banBoom = true;
         public static bool kickBoom = true;
         public static bool spawnProtect = true;
@@ -92,33 +92,29 @@ namespace TShockAPI
 
         public static void WriteJsonConfiguration()
         {
-            if (!Directory.Exists(FileTools.SaveDir))
+            if (System.IO.File.Exists(FileTools.SaveDir + "config.json"))
             {
-                Directory.CreateDirectory(FileTools.SaveDir);
-            }
-            if (File.Exists(FileTools.SaveDir + "config.json"))
-            {
-                return;
+                System.IO.File.Delete(FileTools.SaveDir + "config.json");
             }
             FileTools.CreateFile(FileTools.SaveDir + "config.json");
             ConfigFile cfg = new ConfigFile();
-            cfg.InvasionMultiplier = 50;
-            cfg.DefaultMaximumSpawns = 4;
-            cfg.DefaultSpawnRate = 700;
-            cfg.ServerPort = 7777;
-            cfg.EnableWhitelist = false;
-            cfg.InfiniteInvasion = false;
-            cfg.AlwaysPvP = false;
+            cfg.InvasionMultiplier = invasionMultiplier;
+            cfg.DefaultMaximumSpawns = defaultMaxSpawns;
+            cfg.DefaultSpawnRate = defaultSpawnRate;
+            cfg.ServerPort = serverPort;
+            cfg.EnableWhitelist = enableWhitelist;
+            cfg.InfiniteInvasion = infiniteInvasion;
+            cfg.AlwaysPvP = permaPvp;
             cfg.KickCheaters = kickCheater;
             cfg.BanCheaters = banCheater;
             cfg.KickGriefers = kickGriefer;
             cfg.BanGriefers = banGriefer;
-            cfg.BanKillTileAbusers = true;
-            cfg.KickKillTileAbusers = true;
-            cfg.BanExplosives = true;
-            cfg.KickExplosives = true;
-            cfg.SpawnProtection = true;
-            cfg.SpawnProtectionRadius = 5;
+            cfg.BanKillTileAbusers = banGriefer;
+            cfg.KickKillTileAbusers = kickGriefer;
+            cfg.BanExplosives = banBoom;
+            cfg.KickExplosives = kickBoom;
+            cfg.SpawnProtection = spawnProtect;
+            cfg.SpawnProtectionRadius = spawnProtectRadius;
             cfg.MaxSlots = maxSlots;
             cfg.RangeChecks = rangeChecks;
             cfg.SpamChecks = spamChecks;
