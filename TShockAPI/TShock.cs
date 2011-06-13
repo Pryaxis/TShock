@@ -261,6 +261,13 @@ namespace TShockAPI
                 Tools.ForceKick(e.Msg.whoAmI, string.Format("You are banned: {0}", ban.Reason));
                 return true;
             }
+            byte hair = e.Msg.readBuffer[e.Index + 1];
+            if (hair > 0x10)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Hair crash exploit.");
+                return true;
+            }
+
             string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
             if (name.Length > 32)
             {
