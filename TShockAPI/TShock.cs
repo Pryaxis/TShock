@@ -680,6 +680,27 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
+            HandleCommandLine(Environment.GetCommandLineArgs());
+        }
+
+        void HandleCommandLine(string[] parms)
+        {
+            for (int i = 0; i < parms.Length; i++)
+            {
+                if (parms[i].ToLower() == "-ip")
+                {
+                    IPAddress ip;
+                    if (IPAddress.TryParse(parms[++i], out ip))
+                    {
+                        Netplay.serverListenIP = ip;
+                        Console.Write("Using IP: {0}", ip);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bad IP: {0}", parms[i]);
+                    }
+                }
+            }
         }
 
         private void OnUpdate(GameTime time)
