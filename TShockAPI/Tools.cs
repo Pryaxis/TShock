@@ -496,9 +496,47 @@ namespace TShockAPI
                 {
                     continue;
                 }
+                if (lines[i].StartsWith("!"))
+                {
+                    continue;
+                }                
                 if (args[0].Equals(ip))
                 {
                     return GetGroup(args[1]);
+                }
+            }
+            sr.Close();
+            return GetGroup("default");
+        }
+
+        /// <summary>
+        /// Returns a Group for a name from users.txt
+        /// </summary>
+        /// <param name="who">int who</param>
+        public static Group GetGroupbyName(int who)
+        {
+            StreamReader sr = new StreamReader(FileTools.SaveDir + "users.txt");
+            string data = sr.ReadToEnd();
+            data = data.Replace("\r", "");
+            string[] lines = data.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] args = lines[i].Split(' ');
+                if (args.Length < 2)
+                {
+                    continue;
+                }
+                if (lines[i].StartsWith("#"))
+                {
+                    continue;
+                }
+                if (lines[i].StartsWith("!"))
+                {
+                    if (args[1].Equals(FindPlayer(who)))
+                    {
+                        return GetGroup(args[2]);
+                    }
                 }
             }
             sr.Close();
