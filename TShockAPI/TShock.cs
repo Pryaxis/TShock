@@ -36,7 +36,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 1, 0, 1);
+        public static Version VersionNum = new Version(2, 1, 0, 2);
 
         public static string VersionCodename = "Forgot to close the issue.";
 
@@ -173,6 +173,8 @@ namespace TShockAPI
             Log.Info("Hooks initialized");
             Commands.InitCommands();
             Log.Info("Commands initialized");
+
+            HandleCommandLine(Environment.GetCommandLineArgs());
         }
 
         /// <summary>
@@ -680,7 +682,6 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
             }
-            HandleCommandLine(Environment.GetCommandLineArgs());
         }
 
         void HandleCommandLine(string[] parms)
