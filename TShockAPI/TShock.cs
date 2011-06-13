@@ -36,7 +36,7 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 1, 0, 1);
+        public static Version VersionNum = new Version(2, 1, 0, 2);
 
         public static string VersionCodename = "Forgot to close the issue.";
 
@@ -173,6 +173,8 @@ namespace TShockAPI
             Log.Info("Hooks initialized");
             Commands.InitCommands();
             Log.Info("Commands initialized");
+
+            HandleCommandLine(Environment.GetCommandLineArgs());
         }
 
         /// <summary>
@@ -259,6 +261,13 @@ namespace TShockAPI
                 Tools.ForceKick(e.Msg.whoAmI, string.Format("You are banned: {0}", ban.Reason));
                 return true;
             }
+            byte hair = e.Msg.readBuffer[e.Index + 1];
+            if (hair > 0x10)
+            {
+                Tools.ForceKick(e.Msg.whoAmI, "Hair crash exploit.");
+                return true;
+            }
+
             string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
             if (name.Length > 32)
             {
@@ -679,6 +688,26 @@ namespace TShockAPI
                                   ConfigurationManager.authToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
+            }
+        }
+
+        void HandleCommandLine(string[] parms)
+        {
+            for (int i = 0; i < parms.Length; i++)
+            {
+                if (parms[i].ToLower() == "-ip")
+                {
+                    IPAddress ip;
+                    if (IPAddress.TryParse(parms[++i], out ip))
+                    {
+                        Netplay.serverListenIP = ip;
+                        Console.Write("Using IP: {0}", ip);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bad IP: {0}", parms[i]);
+                    }
+                }
             }
         }
 
