@@ -568,7 +568,7 @@ namespace TShockAPI
         {
             if (Main.netMode != 2)
                 return;
-
+            players[who].group = Tools.GetGroupbyName(who);
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].group.GetName()));
 
             Tools.ShowMOTD(who);
