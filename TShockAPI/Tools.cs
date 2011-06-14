@@ -105,7 +105,16 @@ namespace TShockAPI
         {
             for (int i = 0; i < Main.player.Length; i++)
             {
-                SendMessage(i, msg, red, green, blue);
+                SendMessage(i, msg, Tools.Clamp(red, 255, 0), Tools.Clamp(green, 255, 0), Tools.Clamp(blue, 255, 0));
+            }
+            Log.Info(string.Format("Broadcast: {0}", msg));
+        }
+
+        public static void Broadcast(string msg, float[] colors)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                SendMessage(i, msg, Tools.Clamp(colors[0], 255, 0), Tools.Clamp(colors[1], 255, 0), Tools.Clamp(colors[2], 255, 0));
             }
             Log.Info(string.Format("Broadcast: {0}", msg));
         }
@@ -342,15 +351,20 @@ namespace TShockAPI
             }
             return false;
         }
-
-        /// <summary>
-        /// Shows a MOTD to the player
-        /// </summary>
-        /// <param name="ply">int player</param>
+        [Obsolete("Use ShowFileToUser(int ply, string file) instead.")]
         public static void ShowMOTD(int ply)
         {
+            ShowFileToUser(ply, "motd.txt");
+        }
+        /// <summary>
+        /// Shows a file to the user.
+        /// </summary>
+        /// <param name="ply">int player</param>
+        /// <param name="file">string filename reletave to savedir</param>
+        public static void ShowFileToUser(int ply, string file)
+        {
             string foo = "";
-            TextReader tr = new StreamReader(FileTools.SaveDir + "motd.txt");
+            TextReader tr = new StreamReader(FileTools.SaveDir + file);
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);

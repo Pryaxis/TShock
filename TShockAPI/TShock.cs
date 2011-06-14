@@ -338,26 +338,26 @@ namespace TShockAPI
                     ));
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                 }
-            }
-            if (type == 0 || type == 1)
+            } 
+            if (ConfigurationManager.disableBuild)
             {
-                if (ConfigurationManager.disableBuild)
+                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                 {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
-                    {
-                        return true;
-                    }
+                    Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
+                    RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
+                    return true;
                 }
-                if (ConfigurationManager.spawnProtect)
+            }
+            if (ConfigurationManager.spawnProtect)
+            {
+                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                 {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    var flag = CheckSpawn(x, y);
+                    if (flag)
                     {
-                        var flag = CheckSpawn(x, y);
-                        if (flag)
-                        {
-                            Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
-                            return true;
-                        }
+                        Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
+                        RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
+                        return true;
                     }
                 }
             }
@@ -369,6 +369,11 @@ namespace TShockAPI
             }
 
             return false;
+        }
+
+        private static void RevertPlayerChanges(int player, byte action, int x, int y)
+        {
+            NetMessage.SendData(20, player, -1, "", 10, (float)(x - 5), (float)(y - 5), 0f);
         }
 
         bool HandleTogglePvp(MemoryStream data, GetDataEventArgs e)
@@ -592,6 +597,13 @@ namespace TShockAPI
             if (msg.whoAmI != ply)
             {
                 e.Handled = Tools.HandleGriefer(ply, "Faking Chat");
+                return;
+            }
+
+            if (players[ply].group.HasPermission("adminchat") && !text.StartsWith("/"))
+            {
+                Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, ConfigurationManager.adminChatRGB);
+                e.Handled = true;
                 return;
             }
 
@@ -833,10 +845,9 @@ namespace TShockAPI
             }
         }
 
-        public static void KillMe(int plr)
+        public static void PlayerDamage(int plr, int damage)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-                NetMessage.SendData(44, i, -1, "", plr, 1, 9999999, (float)0);
+            NetMessage.SendData(26, -1, -1, "", plr, ((new Random()).Next(-1, 1)), damage, (float)0);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)

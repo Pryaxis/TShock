@@ -52,6 +52,8 @@ namespace TShockAPI
         public static int maxSlots = 8;
         public static bool spamChecks = false;
         public static bool disableBuild = false;
+        public static float[] adminChatRGB = {255, 0, 0};
+        public static string adminChatPrefix = "(Admin) ";
 
         public enum NPCList
         {
@@ -90,6 +92,8 @@ namespace TShockAPI
             disableBuild = cfg.DisableBuild;
             NPC.maxSpawns = defaultMaxSpawns;
             NPC.defaultSpawnRate = defaultSpawnRate;
+            adminChatRGB = cfg.AdminChatRGB;
+            adminChatPrefix = cfg.AdminChatPrefix;
         }
 
         public static void WriteJsonConfiguration()
@@ -121,6 +125,8 @@ namespace TShockAPI
             cfg.RangeChecks = rangeChecks;
             cfg.SpamChecks = spamChecks;
             cfg.DisableBuild = disableBuild;
+            cfg.AdminChatRGB = adminChatRGB;
+            cfg.AdminChatPrefix = adminChatPrefix;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");
             tr.Write(json);

@@ -61,6 +61,14 @@ namespace TShockAPI
             {
                 Directory.CreateDirectory(SaveDir);
             }
+            if (!File.Exists(SaveDir + "rules.txt"))
+            {
+                CreateFile(SaveDir + "rules.txt");
+                TextWriter tw = new StreamWriter(SaveDir + "rules.txt");
+                tw.WriteLine("Respect the admins!");
+                tw.WriteLine("Don't use TNT!");
+                tw.Close();
+            }
             if (!File.Exists(SaveDir + "motd.txt"))
             {
                 CreateFile(SaveDir + "motd.txt");
