@@ -365,7 +365,7 @@ namespace TShockAPI
             if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
             {
                 Players[e.Msg.whoAmI].TileThreshold++;
-                Players[e.Msg.whoAmI].TilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
+                Players[e.Msg.whoAmI].TilesDestroyed.Add(new Vector2(x, y), Main.tile[x, y]);
             }
 
             return false;
@@ -899,23 +899,11 @@ namespace TShockAPI
                 return true;
         }
 
-        public class Position
-        {
-            public float X;
-            public float Y;
-
-            public Position(float x, float y)
-            {
-                X = x;
-                Y = y;
-            }
-        }
-
         public static void RevertKillTile(int ply)
         {
             Tile[] tiles = new Tile[Players[ply].TilesDestroyed.Count];
             Players[ply].TilesDestroyed.Values.CopyTo(tiles, 0);
-            Position[] positions = new Position[Players[ply].TilesDestroyed.Count];
+            Vector2[] positions = new Vector2[Players[ply].TilesDestroyed.Count];
             Players[ply].TilesDestroyed.Keys.CopyTo(positions, 0);
             for (int i = (Players[ply].TilesDestroyed.Count - 1); i >= 0; i--)
             {

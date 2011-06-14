@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI
@@ -26,7 +27,7 @@ namespace TShockAPI
 
 
         public uint TileThreshold { get; set; }
-        public Dictionary<TShock.Position, Tile> TilesDestroyed { get; set; }
+        public Dictionary<Vector2, Tile> TilesDestroyed { get; set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -54,16 +55,16 @@ namespace TShockAPI
         }
         public int TileX
         {
-            get { return (int)(TPlayer.position.X / 16); }
+            get { return (int)(X / 16); }
         }
         public int TileY
         {
-            get { return (int)(TPlayer.position.Y / 16); }
+            get { return (int)(X / 16); }
         }
 
         public TSPlayer(Player ply)
         {
-            TilesDestroyed = new Dictionary<TShock.Position, Tile>();
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
             TPlayer = ply;
         }
     }
