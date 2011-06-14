@@ -223,6 +223,7 @@ namespace TShockAPI
             commands.Add(new Command("auth", "", AuthToken));
             commands.Add(new Command("me", "", ThirdPerson));
             commands.Add(new Command("p", "", PartyChat));
+            commands.Add(new Command("rules", "", Rules));
             commands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             if (ConfigurationManager.distributationAgent != "terraria-online")
             {
@@ -236,6 +237,19 @@ namespace TShockAPI
         }
 
         #region Command Methods
+
+        public static void Rules(CommandArgs args)
+        {
+            TextReader sr = new StreamReader(FileTools.SaveDir + "rules.txt");
+            string unsplit = sr.ReadToEnd();
+            sr.Close();
+
+            string[] split = unsplit.Split(Convert.ToChar("\n"));
+            for (int i = 0; i < split.Length; i++)
+            {
+                Tools.SendMessage(args.PlayerID, split[i]);
+            }
+        }
 
         public static void ToggleAntiBuild(CommandArgs args)
         {
