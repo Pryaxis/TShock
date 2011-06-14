@@ -837,10 +837,9 @@ namespace TShockAPI
             }
         }
 
-        public static void KillMe(int plr)
+        public static void PlayerDamage(int plr, int damage)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-                NetMessage.SendData(44, i, -1, "", plr, 1, 9999999, (float)0);
+            NetMessage.SendData(26, -1, -1, "", plr, ((new Random()).Next(-1, 1)), damage, (float)0);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)

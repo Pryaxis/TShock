@@ -297,14 +297,14 @@ namespace TShockAPI
                                            ConfigurationManager.banTnt, ConfigurationManager.kickTnt,
                                            ConfigurationManager.banBoom, ConfigurationManager.kickBoom);
             Tools.SendMessage(ply, lineTwo, Color.Yellow);
-            string lineThree = string.Format("InvMultiplier : {0}, ProtectS : {1}, ProtectR : {2}, DMS : {3}, SpawnRate {4}",
-                                             ConfigurationManager.invasionMultiplier, ConfigurationManager.spawnProtect,
-                                             ConfigurationManager.spawnProtectRadius, ConfigurationManager.defaultMaxSpawns,
-                                             ConfigurationManager.defaultSpawnRate);
+            string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
+                                             ConfigurationManager.rangeChecks, ConfigurationManager.disableBuild, 
+                                             ConfigurationManager.spawnProtect, ConfigurationManager.spawnProtectRadius);
             Tools.SendMessage(ply, lineThree, Color.Yellow);
-            string lineFour = string.Format("MaxSlots : {0}, RangeChecks : {1}, SpamChecks : {2}",
-                                           ConfigurationManager.maxSlots, ConfigurationManager.rangeChecks,
-                                           ConfigurationManager.spamChecks);
+            string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
+                                           ConfigurationManager.maxSlots, ConfigurationManager.spamChecks,
+                                           ConfigurationManager.invasionMultiplier, ConfigurationManager.defaultMaxSpawns,
+                                           ConfigurationManager.defaultSpawnRate);
             Tools.SendMessage(ply, lineFour, Color.Yellow);
         }
 
@@ -1006,13 +1006,11 @@ namespace TShockAPI
                 Tools.SendMessage(adminplr, "Invalid player!", Color.Red);
             else if (player == -2)
                 Tools.SendMessage(adminplr, "More than one player matched!", Color.Red);
-            else if (player == adminplr)
-                Tools.SendMessage(adminplr, "Can't kill yourself!", Color.Red);
             else
             {
                 Tools.SendMessage(adminplr, string.Format("You just killed {0}!", Tools.FindPlayer(player)));
                 Tools.SendMessage(player, string.Format("{0} just killed you!", Tools.FindPlayer(adminplr)));
-                TShock.KillMe(player);
+                TShock.PlayerDamage(player, 999999);
             }
         }
 
@@ -1044,7 +1042,7 @@ namespace TShockAPI
                 {
                     int.TryParse(args.Parameters[1], out damage);
                 }
-                NetMessage.SendData(26, -1, -1, "", player, ((new Random()).Next(-1, 1)), damage, (float)0);
+                TShock.PlayerDamage(player, damage);
                 Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.", 
                                 Tools.FindPlayer(adminplr), Tools.FindPlayer(player), damage));
             }
