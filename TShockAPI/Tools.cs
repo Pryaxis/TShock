@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -499,9 +498,7 @@ namespace TShockAPI
                 }
                 if (args[0].Equals(ip))
                 {
-                    IPHostEntry host = Dns.GetHostEntry(args[1]);
-                    IPAddress[] ipaddr = host.AddressList;
-                    return GetGroup(ipaddr.GetValue(0).ToString());
+                    return GetGroup(args[1]);
                 }
             }
             sr.Close();
