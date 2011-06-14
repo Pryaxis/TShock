@@ -77,7 +77,7 @@ namespace TShockAPI
             {
                 if (Main.player[i].active)
                 {
-                    if (!TShock.players[i].group.HasPermission("maintenance"))
+                    if (!TShock.players[i].Group.HasPermission("maintenance"))
                         return;
                     Tools.SendMessage(i, "The server is out of date. To update, type /updatenow.");
                     for (int j = 4; j < changes.Length; j++)

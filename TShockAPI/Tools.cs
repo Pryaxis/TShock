@@ -141,7 +141,7 @@ namespace TShockAPI
             {
                 if (TShock.players[i] == null)
                     continue;
-                if (!TShock.players[i].group.HasPermission("logs"))
+                if (!TShock.players[i].Group.HasPermission("logs"))
                     continue;
 
                 SendMessage(i, log, color);
@@ -162,7 +162,7 @@ namespace TShockAPI
         /// The number of active players on the server.
         /// </summary>
         /// <returns>int playerCount</returns>
-        public static int activePlayers()
+        public static int ActivePlayers()
         {
             int num = 0;
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -265,7 +265,7 @@ namespace TShockAPI
         {
             if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
                 return true;
-            if (!TShock.players[ply].group.HasPermission("immunetokick"))
+            if (!TShock.players[ply].Group.HasPermission("immunetokick"))
             {
                 string playerName = Main.player[ply].name;
                 NetMessage.SendData(0x2, ply, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
@@ -288,7 +288,7 @@ namespace TShockAPI
         {
             if (!Netplay.serverSock[plr].active || Netplay.serverSock[plr].kill)
                 return true;
-            if (!TShock.players[plr].group.HasPermission("immunetoban"))
+            if (!TShock.players[plr].Group.HasPermission("immunetoban"))
             {
                 string ip = GetPlayerIP(plr);
                 string playerName = Main.player[plr].name;
@@ -326,7 +326,7 @@ namespace TShockAPI
 
         private static bool HandleBadPlayer(int ply, string overridePermission, bool ban, bool kick, string reason)
         {
-            if (!TShock.players[ply].group.HasPermission(overridePermission))
+            if (!TShock.players[ply].Group.HasPermission(overridePermission))
             {
                 if (ban)
                 {

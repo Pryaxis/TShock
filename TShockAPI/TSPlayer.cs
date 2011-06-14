@@ -22,27 +22,22 @@ namespace TShockAPI
 {
     public class TSPlayer
     {
-        public uint tileThreshold;
-        public Dictionary<TShock.Position, Tile> tilesDestroyed = new Dictionary<TShock.Position, Tile>();
-        public bool syncHP;
-        public bool syncMP;
-        public Group group;
-        public bool receivedInfo;
-        private int player;
+        public uint TileThreshold { get; set; }
+        public Dictionary<TShock.Position, Tile> TilesDestroyed { get; set; }
+        public bool SyncHP { get; set; }
+        public bool SyncMP { get; set; }
+        public Group Group { get; set; }
+        public bool ReceivedInfo { get; set; }
+
+        public int Index {get;private set;}
+        public Player Player
+        {
+            get { return Main.player[Index]; }
+        }
 
         public TSPlayer(int ply)
         {
-            player = ply;
-        }
-
-        public Player GetPlayer()
-        {
-            return Main.player[player];
-        }
-
-        public int GetPlayerID()
-        {
-            return player;
+            TilesDestroyed = new Dictionary<TShock.Position, Tile>();
         }
     }
 }

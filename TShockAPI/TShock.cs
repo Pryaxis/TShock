@@ -280,12 +280,12 @@ namespace TShockAPI
                 Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
                 return true;
             }
-            if (players[e.Msg.whoAmI].receivedInfo)
+            if (players[e.Msg.whoAmI].ReceivedInfo)
             {
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
             }
 
-            players[e.Msg.whoAmI].receivedInfo = true;
+            players[e.Msg.whoAmI].ReceivedInfo = true;
             return false;
         }
 
@@ -341,7 +341,7 @@ namespace TShockAPI
             }
             if (ConfigurationManager.disableBuild)
             {
-                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
                     RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
@@ -350,7 +350,7 @@ namespace TShockAPI
             }
             if (ConfigurationManager.spawnProtect)
             {
-                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     var flag = CheckSpawn(x, y);
                     if (flag)
@@ -364,8 +364,8 @@ namespace TShockAPI
 
             if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
             {
-                players[e.Msg.whoAmI].tileThreshold++;
-                players[e.Msg.whoAmI].tilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
+                players[e.Msg.whoAmI].TileThreshold++;
+                players[e.Msg.whoAmI].TilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
             }
 
             return false;
@@ -495,14 +495,14 @@ namespace TShockAPI
                 }
             }
 
-            if (lava && !players[e.Msg.whoAmI].group.HasPermission("canlava"))
+            if (lava && !players[e.Msg.whoAmI].Group.HasPermission("canlava"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use lava", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using lava", Main.player[e.Msg.whoAmI].name), Color.Red);
 
                 return true;
             }
-            if (!lava && !players[e.Msg.whoAmI].group.HasPermission("canwater"))
+            if (!lava && !players[e.Msg.whoAmI].Group.HasPermission("canwater"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use water", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using water", Main.player[e.Msg.whoAmI].name), Color.Red);
@@ -533,7 +533,7 @@ namespace TShockAPI
 
             if (ConfigurationManager.spawnProtect)
             {
-                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     var flag = CheckSpawn(x, y);
                     if (flag)
@@ -570,7 +570,7 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].group.GetName()));
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].Group.GetName()));
 
             Tools.ShowMOTD(who);
             if (HackedHealth(who))
@@ -582,7 +582,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (players[who].group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
+            if (players[who].Group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
             {
                 StartInvasion();
             }
@@ -600,7 +600,7 @@ namespace TShockAPI
                 return;
             }
 
-            if (players[ply].group.HasPermission("adminchat") && !text.StartsWith("/"))
+            if (players[ply].Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
                 Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.adminChatRGB[0], (byte)ConfigurationManager.adminChatRGB[1], (byte)ConfigurationManager.adminChatRGB[2]);
                 e.Handled = true;
@@ -660,10 +660,10 @@ namespace TShockAPI
 
             string ip = Tools.GetPlayerIP(ply);
             players[ply] = new TSPlayer(ply);
-            players[ply].group = Tools.GetGroupForIP(ip);
+            players[ply].Group = Tools.GetGroupForIP(ip);
 
-            if (Tools.activePlayers() + 1 > ConfigurationManager.maxSlots &&
-                !players[ply].group.HasPermission("reservedslot"))
+            if (Tools.ActivePlayers() + 1 > ConfigurationManager.maxSlots &&
+                !players[ply].Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(ply, "Server is full");
                 handler.Handled = true;
@@ -726,24 +726,24 @@ namespace TShockAPI
             {
                 if (Main.player[i].active == false)
                     continue;
-                if (players[i].tileThreshold >= 20)
+                if (players[i].TileThreshold >= 20)
                 {
                     if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
                     {
                         RevertKillTile(i);
-                        players[i].tileThreshold = 0;
-                        players[i].tilesDestroyed.Clear();
+                        players[i].TileThreshold = 0;
+                        players[i].TilesDestroyed.Clear();
                     }
-                    else if (players[i].tileThreshold > 0)
+                    else if (players[i].TileThreshold > 0)
                     {
-                        players[i].tileThreshold = 0;
-                        players[i].tilesDestroyed.Clear();
+                        players[i].TileThreshold = 0;
+                        players[i].TilesDestroyed.Clear();
                     }
 
                 }
-                else if (players[i].tileThreshold > 0)
+                else if (players[i].TileThreshold > 0)
                 {
-                    players[i].tileThreshold = 0;
+                    players[i].TileThreshold = 0;
                 }
             }
         }
@@ -779,7 +779,7 @@ namespace TShockAPI
             }
             else
             {
-                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier * Tools.activePlayers());
+                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier * Tools.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -913,11 +913,11 @@ namespace TShockAPI
 
         public static void RevertKillTile(int ply)
         {
-            Tile[] tiles = new Tile[players[ply].tilesDestroyed.Count];
-            players[ply].tilesDestroyed.Values.CopyTo(tiles, 0);
-            Position[] positions = new Position[players[ply].tilesDestroyed.Count];
-            players[ply].tilesDestroyed.Keys.CopyTo(positions, 0);
-            for (int i = (players[ply].tilesDestroyed.Count - 1); i >= 0; i--)
+            Tile[] tiles = new Tile[players[ply].TilesDestroyed.Count];
+            players[ply].TilesDestroyed.Values.CopyTo(tiles, 0);
+            Position[] positions = new Position[players[ply].TilesDestroyed.Count];
+            players[ply].TilesDestroyed.Keys.CopyTo(positions, 0);
+            for (int i = (players[ply].TilesDestroyed.Count - 1); i >= 0; i--)
             {
                 Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
                 NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);

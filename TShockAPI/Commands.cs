@@ -71,16 +71,16 @@ namespace TShockAPI
 
             public bool Run(string msg, TSPlayer ply, List<string> parms)
             {
-                if (!ply.group.HasPermission(permission))
+                if (!ply.Group.HasPermission(permission))
                 {
                     return false;
                 }
 
                 CommandArgs args = new CommandArgs();
                 args.Message = msg;
-                args.PlayerX = (int)ply.GetPlayer().position.X;
-                args.PlayerY = (int)ply.GetPlayer().position.Y;
-                args.PlayerID = ply.GetPlayerID();
+                args.PlayerX = (int)ply.Player.position.X;
+                args.PlayerY = (int)ply.Player.position.Y;
+                args.PlayerID = ply.Index;
                 args.Parameters = parms;
 
                 command(args);
@@ -94,7 +94,7 @@ namespace TShockAPI
 
             public bool CanRun(TSPlayer ply)
             {
-                if (!ply.group.HasPermission(permission))
+                if (!ply.Group.HasPermission(permission))
                 {
                     return false;
                 }
