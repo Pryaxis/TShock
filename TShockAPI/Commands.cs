@@ -240,15 +240,7 @@ namespace TShockAPI
 
         public static void Rules(CommandArgs args)
         {
-            TextReader sr = new StreamReader(FileTools.SaveDir + "rules.txt");
-            string unsplit = sr.ReadToEnd();
-            sr.Close();
-
-            string[] split = unsplit.Split(Convert.ToChar("\n"));
-            for (int i = 0; i < split.Length; i++)
-            {
-                Tools.SendMessage(args.PlayerID, split[i]);
-            }
+            Tools.ShowFileToUser(args.PlayerID, "rules.txt");
         }
 
         public static void ToggleAntiBuild(CommandArgs args)

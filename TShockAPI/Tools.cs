@@ -342,15 +342,20 @@ namespace TShockAPI
             }
             return false;
         }
-
-        /// <summary>
-        /// Shows a MOTD to the player
-        /// </summary>
-        /// <param name="ply">int player</param>
+        [Obsolete("Use ShowFileToUser(int ply, string file) instead.")]
         public static void ShowMOTD(int ply)
         {
+            ShowFileToUser(ply, "motd.txt");
+        }
+        /// <summary>
+        /// Shows a file to the user.
+        /// </summary>
+        /// <param name="ply">int player</param>
+        /// <param name="file">string filename reletave to savedir</param>
+        public static void ShowFileToUser(int ply, string file)
+        {
             string foo = "";
-            TextReader tr = new StreamReader(FileTools.SaveDir + "motd.txt");
+            TextReader tr = new StreamReader(FileTools.SaveDir + file);
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);
