@@ -81,7 +81,7 @@ namespace TShockAPI
                 ConfigurationManager.ReadJsonConfiguration();
             }
 
-            Netplay.serverPort = ConfigurationManager.serverPort;
+            Netplay.serverPort = ConfigurationManager.ServerPort;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace TShockAPI
         /// <returns>true/false</returns>
         public static bool OnWhitelist(string ip)
         {
-            if (!ConfigurationManager.enableWhitelist)
+            if (!ConfigurationManager.EnableWhitelist)
             {
                 return true;
             }

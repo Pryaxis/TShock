@@ -221,7 +221,7 @@ namespace TShockAPI
 
         private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {
-            if (ConfigurationManager.infiniteInvasion)
+            if (ConfigurationManager.InfiniteInvasion)
             {
                 IncrementKills();
                 if (Main.invasionSize < 10)
@@ -298,7 +298,7 @@ namespace TShockAPI
             int plyY = Math.Abs((int)Main.player[e.Msg.whoAmI].position.Y / 16);
             int tileX = Math.Abs(x);
             int tileY = Math.Abs(y);
-            if (size > 5 || (ConfigurationManager.rangeChecks && (Math.Abs(plyX - tileX) > 32 || Math.Abs(plyY - tileY) > 32)))
+            if (size > 5 || (ConfigurationManager.RangeChecks && (Math.Abs(plyX - tileX) > 32 || Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("SendTileSquare(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Size:{6})",
                         plyX, plyY,
@@ -328,7 +328,7 @@ namespace TShockAPI
                     return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
                 }
 
-                if (ConfigurationManager.rangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
+                if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
                     Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
                         plyX, plyY,
@@ -339,7 +339,7 @@ namespace TShockAPI
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                 }
             }
-            if (ConfigurationManager.disableBuild)
+            if (ConfigurationManager.DisableBuild)
             {
                 if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
@@ -348,7 +348,7 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (ConfigurationManager.spawnProtect)
+            if (ConfigurationManager.SpawnProtect)
             {
                 if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
@@ -384,7 +384,7 @@ namespace TShockAPI
             Main.player[e.Msg.whoAmI].hostile = pvp;
             if (id != e.Msg.whoAmI)
                 Main.player[e.Msg.whoAmI].hostile = true;
-            if (ConfigurationManager.permaPvp)
+            if (ConfigurationManager.PermaPvp)
                 Main.player[e.Msg.whoAmI].hostile = true;
             NetMessage.SendData(30, -1, -1, "", e.Msg.whoAmI);
             return true;
@@ -520,7 +520,7 @@ namespace TShockAPI
                     ));
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Manipulating liquid without bucket."); ;
             }
-            if (ConfigurationManager.rangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
+            if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
                            plyX, plyY,
@@ -531,7 +531,7 @@ namespace TShockAPI
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
             }
 
-            if (ConfigurationManager.spawnProtect)
+            if (ConfigurationManager.SpawnProtect)
             {
                 if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
@@ -577,12 +577,12 @@ namespace TShockAPI
             {
                 Tools.HandleCheater(who, "Hacked health.");
             }
-            if (ConfigurationManager.permaPvp)
+            if (ConfigurationManager.PermaPvp)
             {
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
+            if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
                 StartInvasion();
             }
@@ -602,7 +602,7 @@ namespace TShockAPI
 
             if (Players[ply].Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
-                Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.adminChatRGB[0], (byte)ConfigurationManager.adminChatRGB[1], (byte)ConfigurationManager.adminChatRGB[2]);
+                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
                 e.Handled = true;
                 return;
             }
@@ -662,7 +662,7 @@ namespace TShockAPI
             Players[ply] = new TSPlayer(ply);
             Players[ply].Group = Tools.GetGroupForIP(ip);
 
-            if (Tools.ActivePlayers() + 1 > ConfigurationManager.maxSlots &&
+            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots &&
                 !Players[ply].Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(ply, "Server is full");
@@ -683,7 +683,7 @@ namespace TShockAPI
                 }
             }
 
-            Netplay.serverSock[ply].spamCheck = ConfigurationManager.spamChecks;
+            Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
         }
 
         private void OnPostInit()
@@ -691,9 +691,9 @@ namespace TShockAPI
             if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
             {
                 var r = new Random((int)DateTime.Now.ToBinary());
-                ConfigurationManager.authToken = r.Next(100000, 10000000);
+                ConfigurationManager.AuthToken = r.Next(100000, 10000000);
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
-                                  ConfigurationManager.authToken);
+                                  ConfigurationManager.AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
@@ -773,13 +773,13 @@ namespace TShockAPI
         public static void StartInvasion()
         {
             Main.invasionType = 1;
-            if (ConfigurationManager.infiniteInvasion)
+            if (ConfigurationManager.InfiniteInvasion)
             {
                 Main.invasionSize = 20000000;
             }
             else
             {
-                Main.invasionSize = 100 + (ConfigurationManager.invasionMultiplier * Tools.ActivePlayers());
+                Main.invasionSize = 100 + (ConfigurationManager.InvasionMultiplier * Tools.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -795,30 +795,30 @@ namespace TShockAPI
 
         public static void IncrementKills()
         {
-            ConfigurationManager.killCount++;
+            ConfigurationManager.KillCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (ConfigurationManager.killCount % 100 == 0)
+            if (ConfigurationManager.KillCount % 100 == 0)
             {
                 switch (random)
                 {
                     case 0:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.KillCount));
                         break;
                     case 1:
-                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", ConfigurationManager.KillCount));
                         break;
                     case 2:
-                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", ConfigurationManager.KillCount));
                         break;
                     case 3:
-                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", ConfigurationManager.KillCount));
                         break;
                     case 4:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.KillCount));
                         break;
                     case 5:
-                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", ConfigurationManager.killCount));
+                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", ConfigurationManager.KillCount));
                         break;
                 }
             }
@@ -893,7 +893,7 @@ namespace TShockAPI
             Vector2 tile = new Vector2(x, y);
             Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
             var distance = Vector2.Distance(spawn, tile);
-            if (distance > ConfigurationManager.spawnProtectRadius)
+            if (distance > ConfigurationManager.SpawnProtectRadius)
                 return false;
             else
                 return true;

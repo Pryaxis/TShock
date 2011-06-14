@@ -306,22 +306,22 @@ namespace TShockAPI
 
         public static bool HandleCheater(int ply, string reason)
         {
-            return HandleBadPlayer(ply, "ignorecheatdetection", ConfigurationManager.banCheater, ConfigurationManager.kickCheater, reason);
+            return HandleBadPlayer(ply, "ignorecheatdetection", ConfigurationManager.BanCheater, ConfigurationManager.KickCheater, reason);
         }
 
         public static bool HandleGriefer(int ply, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banGriefer, ConfigurationManager.kickGriefer, reason);
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer, reason);
         }
 
         public static bool HandleTntUser(int ply, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banTnt, ConfigurationManager.kickTnt, reason);
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanTnt, ConfigurationManager.KickTnt, reason);
         }
 
         public static bool HandleExplosivesUser(int ply, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.banBoom, ConfigurationManager.kickBoom, reason);
+            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanBoom, ConfigurationManager.KickBoom, reason);
         }
 
         private static bool HandleBadPlayer(int ply, string overridePermission, bool ban, bool kick, string reason)

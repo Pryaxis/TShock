@@ -225,7 +225,7 @@ namespace TShockAPI
             commands.Add(new Command("p", "", PartyChat));
             commands.Add(new Command("rules", "", Rules));
             commands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
-            if (ConfigurationManager.distributationAgent != "terraria-online")
+            if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 commands.Add(new Command("kill", "kill", Kill));
                 commands.Add(new Command("butcher", "cheat", Butcher));
@@ -246,12 +246,12 @@ namespace TShockAPI
         public static void ToggleAntiBuild(CommandArgs args)
         {
             Tools.SendMessage(args.PlayerID, "Toggled world anti-build.");
-            if (ConfigurationManager.disableBuild)
+            if (ConfigurationManager.DisableBuild)
             {
-                ConfigurationManager.disableBuild = false;
+                ConfigurationManager.DisableBuild = false;
             } else
             {
-                ConfigurationManager.disableBuild = true;
+                ConfigurationManager.DisableBuild = true;
             }
         }
 
@@ -296,21 +296,21 @@ namespace TShockAPI
             int ply = args.PlayerID;
             Tools.SendMessage(ply, "TShock Config:");
             string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
-                              ConfigurationManager.banCheater, ConfigurationManager.kickCheater,
-                              ConfigurationManager.banGriefer, ConfigurationManager.kickGriefer);
+                              ConfigurationManager.BanCheater, ConfigurationManager.KickCheater,
+                              ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer);
             Tools.SendMessage(ply, lineOne, Color.Yellow);
             string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
-                                           ConfigurationManager.banTnt, ConfigurationManager.kickTnt,
-                                           ConfigurationManager.banBoom, ConfigurationManager.kickBoom);
+                                           ConfigurationManager.BanTnt, ConfigurationManager.KickTnt,
+                                           ConfigurationManager.BanBoom, ConfigurationManager.KickBoom);
             Tools.SendMessage(ply, lineTwo, Color.Yellow);
             string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
-                                             ConfigurationManager.rangeChecks, ConfigurationManager.disableBuild, 
-                                             ConfigurationManager.spawnProtect, ConfigurationManager.spawnProtectRadius);
+                                             ConfigurationManager.RangeChecks, ConfigurationManager.DisableBuild, 
+                                             ConfigurationManager.SpawnProtect, ConfigurationManager.SpawnProtectRadius);
             Tools.SendMessage(ply, lineThree, Color.Yellow);
             string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
-                                           ConfigurationManager.maxSlots, ConfigurationManager.spamChecks,
-                                           ConfigurationManager.invasionMultiplier, ConfigurationManager.defaultMaxSpawns,
-                                           ConfigurationManager.defaultSpawnRate);
+                                           ConfigurationManager.MaxSlots, ConfigurationManager.SpamChecks,
+                                           ConfigurationManager.InvasionMultiplier, ConfigurationManager.DefaultMaxSpawns,
+                                           ConfigurationManager.DefaultSpawnRate);
             Tools.SendMessage(ply, lineFour, Color.Yellow);
         }
 
@@ -596,12 +596,12 @@ namespace TShockAPI
 
         public static void AuthToken(CommandArgs args)
         {
-            if (ConfigurationManager.authToken == 0)
+            if (ConfigurationManager.AuthToken == 0)
             {
                 return;
             }
             int givenCode = Convert.ToInt32(args.Parameters[0]);
-            if (givenCode == ConfigurationManager.authToken)
+            if (givenCode == ConfigurationManager.AuthToken)
             {
                 TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
                 tw.Write("\n" +
@@ -609,7 +609,7 @@ namespace TShockAPI
                              Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) +
                          " superadmin");
                 Tools.SendMessage(args.PlayerID, "SuperAdmin authenticated. Please re-connect using the same IP.");
-                ConfigurationManager.authToken = 0;
+                ConfigurationManager.AuthToken = 0;
                 tw.Close();
             }
         }
@@ -881,7 +881,7 @@ namespace TShockAPI
             int amount = Convert.ToInt32(args.Parameters[0]);
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultMaxSpawns = amount;
-            ConfigurationManager.defaultMaxSpawns = amount;
+            ConfigurationManager.DefaultMaxSpawns = amount;
             Tools.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", Tools.FindPlayer(adminplr), amount));
         }
 
@@ -898,7 +898,7 @@ namespace TShockAPI
             int amount = Convert.ToInt32(args.Parameters[0]);
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultSpawnRate = amount;
-            ConfigurationManager.defaultSpawnRate = amount;
+            ConfigurationManager.DefaultSpawnRate = amount;
             Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", Tools.FindPlayer(adminplr), amount));
         }
 
@@ -1056,9 +1056,9 @@ namespace TShockAPI
 
         public static void ProtectSpawn(CommandArgs args)
         {
-            ConfigurationManager.spawnProtect = (ConfigurationManager.spawnProtect == false);
+            ConfigurationManager.SpawnProtect = (ConfigurationManager.SpawnProtect == false);
             Tools.SendMessage(args.PlayerID,
-                              string.Format("Spawn is now {0}.", (ConfigurationManager.spawnProtect ? "protected" : "open")));
+                              string.Format("Spawn is now {0}.", (ConfigurationManager.SpawnProtect ? "protected" : "open")));
         }
 
         public static void UpdateNow(CommandArgs args)
