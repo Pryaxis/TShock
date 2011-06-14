@@ -22,30 +22,16 @@ namespace TShockAPI
 {
     public class Group
     {
-        private string name;
-        private Group parent;
-        private List<string> permissions = new List<string>();
-        private List<string> negatedPermissions = new List<string>();
+        private readonly List<string> permissions = new List<string>();
+        private readonly List<string> negatedpermissions = new List<string>();
 
-        public Group(string groupName, Group parentGroup = null)
-        {
-            name = groupName;
-            parent = parentGroup;
-        }
+        public string Name { get; protected set; }
+        public Group Parent { get; protected set; }
 
-        public Group()
+        public Group(string groupname, Group parentgroup = null)
         {
-            throw new Exception("Called Group constructor with no parameters");
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-
-        public Group GetParent()
-        {
-            return parent;
+            Name = groupname;
+            Parent = parentgroup;
         }
 
         public virtual bool HasPermission(string permission)
@@ -54,25 +40,25 @@ namespace TShockAPI
             {
                 return true;
             }
-            if (negatedPermissions.Contains(permission))
+            if (negatedpermissions.Contains(permission))
             {
                 return false;
             }
-            else if (permissions.Contains(permission))
+            if (permissions.Contains(permission))
             {
                 return true;
             }
-            else if (parent != null)
+            if (Parent != null)
             {
                 //inception
-                return parent.HasPermission(permission);
+                return Parent.HasPermission(permission);
             }
             return false;
         }
 
         public void NegatePermission(string permission)
         {
-            negatedPermissions.Add(permission);
+            negatedpermissions.Add(permission);
         }
 
         public void AddPermission(string permission)
@@ -83,11 +69,8 @@ namespace TShockAPI
 
     public class SuperAdminGroup : Group
     {
-        public SuperAdminGroup(string groupName, Group parentGroup = null) : base(groupName, parentGroup)
-        {
-        }
-
-        public SuperAdminGroup()
+        public SuperAdminGroup(string groupName, Group parentGroup = null)
+            : base(groupName, parentGroup)
         {
         }
 

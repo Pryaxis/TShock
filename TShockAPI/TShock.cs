@@ -570,7 +570,7 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].Group.GetName()));
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].Group.Name));
 
             Tools.ShowMOTD(who);
             if (HackedHealth(who))

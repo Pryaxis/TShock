@@ -415,7 +415,7 @@ namespace TShockAPI
                 {
                     for (int j = 0; j < groups.Count; j++)
                     {
-                        if (groups[j].GetName().Equals(parent))
+                        if (groups[j].Name.Equals(parent))
                         {
                             group = new Group(name, groups[j]);
                             break;
@@ -455,7 +455,7 @@ namespace TShockAPI
             //first attempt on cached groups
             for (int i = 0; i < groups.Count; i++)
             {
-                if (groups[i].GetName().Equals(groupName))
+                if (groups[i].Name.Equals(groupName))
                 {
                     return groups[i];
                 }
@@ -465,7 +465,7 @@ namespace TShockAPI
 
             for (int i = 0; i < groups.Count; i++)
             {
-                if (groups[i].GetName().Equals(groupName))
+                if (groups[i].Name.Equals(groupName))
                 {
                     return groups[i];
                 }
