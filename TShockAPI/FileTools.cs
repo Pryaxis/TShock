@@ -22,12 +22,24 @@ namespace TShockAPI
 {
     internal class FileTools
     {
-        public static string SaveDir = "./tshock/";
+        public static readonly string ErrorsPath = Path.Combine(TShock.SavePath, "errors.txt");
+        public static readonly string RulesPath = Path.Combine(TShock.SavePath, "rules.txt");
+        public static readonly string MotdPath = Path.Combine(TShock.SavePath, "motd.txt");
+        public static readonly string BansPath = Path.Combine(TShock.SavePath, "bans.txt");
+        public static readonly string WhitelistPath = Path.Combine(TShock.SavePath, "whitelist.txt");
+        public static readonly string GroupsPath = Path.Combine(TShock.SavePath, "groups.txt");
+        public static readonly string UsersPath = Path.Combine(TShock.SavePath, "users.txt");
+        public static readonly string ConfigPath = Path.Combine(TShock.SavePath, "config.json");
 
         public static void CreateFile(string file)
         {
-            using (FileStream fs = File.Create(file))
+            File.Create(file).Close();
+        }
+        public static void CreateIfNot(string file, string data = "")
+        {
+            if (!File.Exists(file))
             {
+                File.WriteAllText(file, data);
             }
         }
 
@@ -37,19 +49,9 @@ namespace TShockAPI
         /// <param name="err">string message</param>
         public static void WriteError(string err)
         {
-            if (File.Exists(SaveDir + "errors.txt"))
-            {
-                TextWriter tw = new StreamWriter(SaveDir + "errors.txt", true);
-                tw.WriteLine(err);
-                tw.Close();
-            }
-            else
-            {
-                CreateFile(SaveDir + "errors.txt");
-                TextWriter tw = new StreamWriter(SaveDir + "errors.txt", true);
-                tw.WriteLine(err);
-                tw.Close();
-            }
+            TextWriter tw = new StreamWriter(ErrorsPath, true);
+            tw.WriteLine(err);
+            tw.Close();
         }
 
         /// <summary>
@@ -57,53 +59,23 @@ namespace TShockAPI
         /// </summary>
         public static void SetupConfig()
         {
-            if (!Directory.Exists(SaveDir))
+            if (!Directory.Exists(TShock.SavePath))
             {
-                Directory.CreateDirectory(SaveDir);
+                Directory.CreateDirectory(TShock.SavePath);
             }
-            if (!File.Exists(SaveDir + "rules.txt"))
-            {
-                CreateFile(SaveDir + "rules.txt");
-                TextWriter tw = new StreamWriter(SaveDir + "rules.txt");
-                tw.WriteLine("Respect the admins!");
-                tw.WriteLine("Don't use TNT!");
-                tw.Close();
-            }
-            if (!File.Exists(SaveDir + "motd.txt"))
-            {
-                CreateFile(SaveDir + "motd.txt");
-                TextWriter tw = new StreamWriter(SaveDir + "motd.txt");
-                tw.WriteLine("This server is running TShock. Type /help for a list of commands.");
-                tw.WriteLine("%255,000,000%Current map: %map%");
-                tw.WriteLine("Current players: %players%");
-                tw.Close();
-            }
-            if (!File.Exists(SaveDir + "bans.txt"))
-            {
-                CreateFile(SaveDir + "bans.txt");
-            }
-            if (!File.Exists(SaveDir + "whitelist.txt"))
-            {
-                CreateFile(SaveDir + "whitelist.txt");
-            }
-            if (!File.Exists(SaveDir + "groups.txt"))
-            {
-                CreateFile(SaveDir + "groups.txt");
-                StreamWriter sw = new StreamWriter(SaveDir + "groups.txt");
-                sw.Write(Resources.groups);
-                sw.Close();
-            }
-            if (!File.Exists(SaveDir + "users.txt"))
-            {
-                CreateFile(SaveDir + "users.txt");
-                StreamWriter sw = new StreamWriter(SaveDir + "users.txt");
-                sw.Write(Resources.users);
-                sw.Close();
-            }
-            if (File.Exists(FileTools.SaveDir + "config.json"))
+
+            CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
+            CreateIfNot(MotdPath, "This server is running TShock. Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
+            CreateIfNot(BansPath);
+            CreateIfNot(WhitelistPath);
+            CreateIfNot(GroupsPath, Resources.groups);
+            CreateIfNot(UsersPath, Resources.users);
+
+            if (File.Exists(ConfigPath))
             {
                 ConfigurationManager.ReadJsonConfiguration();
-            } else
+            }
+            else
             {
                 ConfigurationManager.WriteJsonConfiguration();
                 ConfigurationManager.ReadJsonConfiguration();
@@ -123,14 +95,8 @@ namespace TShockAPI
             {
                 return true;
             }
-            if (!File.Exists(SaveDir + "whitelist.txt"))
-            {
-                CreateFile(SaveDir + "whitelist.txt");
-                TextWriter tw = new StreamWriter(SaveDir + "whitelist.txt");
-                tw.WriteLine("127.0.0.1");
-                tw.Close();
-            }
-            TextReader tr = new StreamReader(SaveDir + "whitelist.txt");
+            CreateIfNot(WhitelistPath, "127.0.0.1");
+            TextReader tr = new StreamReader(WhitelistPath);
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
             return whitelist.Contains(ip);

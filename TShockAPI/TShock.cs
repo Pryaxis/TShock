@@ -33,17 +33,17 @@ namespace TShockAPI
     [APIVersion(1, 3)]
     public class TShock : TerrariaPlugin
     {
-        public static TSPlayer[] players = new TSPlayer[Main.maxPlayers];
+        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 
-        public static string saveDir = "./tshock/";
+        public static readonly string SavePath = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 1, 0, 3);
+        public static readonly Version VersionNum = new Version(2, 1, 0, 3);
 
-        public static string VersionCodename = "Forgot to increase the version.";
+        public static readonly string VersionCodename = "Forgot to increase the version.";
 
         private static bool[] BlacklistTiles;
 
-        public static BanManager Bans = new BanManager(Path.Combine(saveDir, "bans.txt"));
+        public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
 
         delegate bool HandleGetDataD(MemoryStream data, GetDataEventArgs e);
         Dictionary<byte, HandleGetDataD> GetDataFuncs;
@@ -122,18 +122,18 @@ namespace TShockAPI
 
             GetDataFuncs = new Dictionary<byte, HandleGetDataD>
             {
-                {0x4, HandlePlayerInfo},
-                {0xA, HandleSendSection},
-                {0xD, HandlePlayerUpdate},
-                {0x11, HandleTile},
-                {0x14, HandleSendTileSquare},
-                {0x17, HandleNpcUpdate},
-                {0x1A, HandlePlayerDamage},
-                {0x1B, HandleProjectileNew},
-                {0x1E, HandleTogglePvp},
-                {0x22, HandleTileKill},
-                {0x2C, HandlePlayerKillMe},
-                {0x30, HandleLiquidSet},
+                {(byte)PacketTypes.PlayerInfo, HandlePlayerInfo},
+                {(byte)PacketTypes.TileSendSection, HandleSendSection},
+                {(byte)PacketTypes.PlayerUpdate, HandlePlayerUpdate},
+                {(byte)PacketTypes.Tile, HandleTile},
+                {(byte)PacketTypes.TileSendSquare, HandleSendTileSquare},
+                {(byte)PacketTypes.NPCUpdate, HandleNpcUpdate},
+                {(byte)PacketTypes.PlayerDamage, HandlePlayerDamage},
+                {(byte)PacketTypes.ProjectileNew, HandleProjectileNew},
+                {(byte)PacketTypes.TogglePVP, HandleTogglePvp},
+                {(byte)PacketTypes.TileKill, HandleTileKill},
+                {(byte)PacketTypes.PlayerKillMe, HandlePlayerKillMe},
+                {(byte)PacketTypes.LiquidSet, HandleLiquidSet},
             };
         }
 
@@ -149,7 +149,7 @@ namespace TShockAPI
             }
             string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
             Console.WriteLine(version);
-            Log.Initialize(FileTools.SaveDir + "log.txt", LogLevel.All, false);
+            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
             Log.Info(version);
             Log.Info("Starting...");
 
@@ -275,17 +275,17 @@ namespace TShockAPI
                 Tools.ForceKick(e.Msg.whoAmI, "Empty Name.");
                 return true;
             }
-            if (players[e.Msg.whoAmI] == null)
+            if (Players[e.Msg.whoAmI] == null)
             {
                 Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
                 return true;
             }
-            if (players[e.Msg.whoAmI].ReceivedInfo)
+            if (Players[e.Msg.whoAmI].ReceivedInfo)
             {
                 return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
             }
 
-            players[e.Msg.whoAmI].ReceivedInfo = true;
+            Players[e.Msg.whoAmI].ReceivedInfo = true;
             return false;
         }
 
@@ -341,7 +341,7 @@ namespace TShockAPI
             }
             if (ConfigurationManager.disableBuild)
             {
-                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
+                if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
                     RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
@@ -350,7 +350,7 @@ namespace TShockAPI
             }
             if (ConfigurationManager.spawnProtect)
             {
-                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
+                if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     var flag = CheckSpawn(x, y);
                     if (flag)
@@ -364,8 +364,8 @@ namespace TShockAPI
 
             if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
             {
-                players[e.Msg.whoAmI].TileThreshold++;
-                players[e.Msg.whoAmI].TilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
+                Players[e.Msg.whoAmI].TileThreshold++;
+                Players[e.Msg.whoAmI].TilesDestroyed.Add(new Position(x, y), Main.tile[x, y]);
             }
 
             return false;
@@ -495,14 +495,14 @@ namespace TShockAPI
                 }
             }
 
-            if (lava && !players[e.Msg.whoAmI].Group.HasPermission("canlava"))
+            if (lava && !Players[e.Msg.whoAmI].Group.HasPermission("canlava"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use lava", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using lava", Main.player[e.Msg.whoAmI].name), Color.Red);
 
                 return true;
             }
-            if (!lava && !players[e.Msg.whoAmI].Group.HasPermission("canwater"))
+            if (!lava && !Players[e.Msg.whoAmI].Group.HasPermission("canwater"))
             {
                 Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use water", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using water", Main.player[e.Msg.whoAmI].name), Color.Red);
@@ -533,7 +533,7 @@ namespace TShockAPI
 
             if (ConfigurationManager.spawnProtect)
             {
-                if (!players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
+                if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
                     var flag = CheckSpawn(x, y);
                     if (flag)
@@ -570,7 +570,7 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), players[who].Group.Name));
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), Players[who].Group.Name));
 
             Tools.ShowMOTD(who);
             if (HackedHealth(who))
@@ -582,7 +582,7 @@ namespace TShockAPI
                 Main.player[who].hostile = true;
                 NetMessage.SendData(30, -1, -1, "", who);
             }
-            if (players[who].Group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
+            if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.infiniteInvasion)
             {
                 StartInvasion();
             }
@@ -600,7 +600,7 @@ namespace TShockAPI
                 return;
             }
 
-            if (players[ply].Group.HasPermission("adminchat") && !text.StartsWith("/"))
+            if (Players[ply].Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
                 Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.adminChatRGB[0], (byte)ConfigurationManager.adminChatRGB[1], (byte)ConfigurationManager.adminChatRGB[2]);
                 e.Handled = true;
@@ -636,7 +636,7 @@ namespace TShockAPI
                 }
                 else
                 {
-                    if (!cmd.CanRun(players[ply]))
+                    if (!cmd.CanRun(Players[ply]))
                     {
                         Tools.SendLogs(string.Format("{0} tried to execute {1}", Tools.FindPlayer(ply), cmd.Name()), Color.Red);
                         Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
@@ -644,7 +644,7 @@ namespace TShockAPI
                     else
                     {
                         Tools.SendLogs(string.Format("{0} executed: /{1}", Tools.FindPlayer(ply), text), Color.Red);
-                        cmd.Run(text, players[ply], args);
+                        cmd.Run(text, Players[ply], args);
                     }
                 }
                 e.Handled = true;
@@ -659,11 +659,11 @@ namespace TShockAPI
             }
 
             string ip = Tools.GetPlayerIP(ply);
-            players[ply] = new TSPlayer(ply);
-            players[ply].Group = Tools.GetGroupForIP(ip);
+            Players[ply] = new TSPlayer(ply);
+            Players[ply].Group = Tools.GetGroupForIP(ip);
 
             if (Tools.ActivePlayers() + 1 > ConfigurationManager.maxSlots &&
-                !players[ply].Group.HasPermission("reservedslot"))
+                !Players[ply].Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(ply, "Server is full");
                 handler.Handled = true;
@@ -688,14 +688,14 @@ namespace TShockAPI
 
         private void OnPostInit()
         {
-            if (!File.Exists(FileTools.SaveDir + "auth.lck"))
+            if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
             {
-                Random r = new Random((int)DateTime.Now.ToBinary());
+                var r = new Random((int)DateTime.Now.ToBinary());
                 ConfigurationManager.authToken = r.Next(100000, 10000000);
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
                                   ConfigurationManager.authToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
-                FileTools.CreateFile(FileTools.SaveDir + "auth.lck");
+                FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
         }
 
@@ -726,24 +726,24 @@ namespace TShockAPI
             {
                 if (Main.player[i].active == false)
                     continue;
-                if (players[i].TileThreshold >= 20)
+                if (Players[i].TileThreshold >= 20)
                 {
                     if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
                     {
                         RevertKillTile(i);
-                        players[i].TileThreshold = 0;
-                        players[i].TilesDestroyed.Clear();
+                        Players[i].TileThreshold = 0;
+                        Players[i].TilesDestroyed.Clear();
                     }
-                    else if (players[i].TileThreshold > 0)
+                    else if (Players[i].TileThreshold > 0)
                     {
-                        players[i].TileThreshold = 0;
-                        players[i].TilesDestroyed.Clear();
+                        Players[i].TileThreshold = 0;
+                        Players[i].TilesDestroyed.Clear();
                     }
 
                 }
-                else if (players[i].TileThreshold > 0)
+                else if (Players[i].TileThreshold > 0)
                 {
-                    players[i].TileThreshold = 0;
+                    Players[i].TileThreshold = 0;
                 }
             }
         }
@@ -913,11 +913,11 @@ namespace TShockAPI
 
         public static void RevertKillTile(int ply)
         {
-            Tile[] tiles = new Tile[players[ply].TilesDestroyed.Count];
-            players[ply].TilesDestroyed.Values.CopyTo(tiles, 0);
-            Position[] positions = new Position[players[ply].TilesDestroyed.Count];
-            players[ply].TilesDestroyed.Keys.CopyTo(positions, 0);
-            for (int i = (players[ply].TilesDestroyed.Count - 1); i >= 0; i--)
+            Tile[] tiles = new Tile[Players[ply].TilesDestroyed.Count];
+            Players[ply].TilesDestroyed.Values.CopyTo(tiles, 0);
+            Position[] positions = new Position[Players[ply].TilesDestroyed.Count];
+            Players[ply].TilesDestroyed.Keys.CopyTo(positions, 0);
+            for (int i = (Players[ply].TilesDestroyed.Count - 1); i >= 0; i--)
             {
                 Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
                 NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);

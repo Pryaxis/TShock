@@ -139,9 +139,9 @@ namespace TShockAPI
             Log.Info(log);
             for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if (TShock.players[i] == null)
+                if (TShock.Players[i] == null)
                     continue;
-                if (!TShock.players[i].Group.HasPermission("logs"))
+                if (!TShock.Players[i].Group.HasPermission("logs"))
                     continue;
 
                 SendMessage(i, log, color);
@@ -265,7 +265,7 @@ namespace TShockAPI
         {
             if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
                 return true;
-            if (!TShock.players[ply].Group.HasPermission("immunetokick"))
+            if (!TShock.Players[ply].Group.HasPermission("immunetokick"))
             {
                 string playerName = Main.player[ply].name;
                 NetMessage.SendData(0x2, ply, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
@@ -288,7 +288,7 @@ namespace TShockAPI
         {
             if (!Netplay.serverSock[plr].active || Netplay.serverSock[plr].kill)
                 return true;
-            if (!TShock.players[plr].Group.HasPermission("immunetoban"))
+            if (!TShock.Players[plr].Group.HasPermission("immunetoban"))
             {
                 string ip = GetPlayerIP(plr);
                 string playerName = Main.player[plr].name;
@@ -326,7 +326,7 @@ namespace TShockAPI
 
         private static bool HandleBadPlayer(int ply, string overridePermission, bool ban, bool kick, string reason)
         {
-            if (!TShock.players[ply].Group.HasPermission(overridePermission))
+            if (!TShock.Players[ply].Group.HasPermission(overridePermission))
             {
                 if (ban)
                 {
@@ -353,7 +353,7 @@ namespace TShockAPI
         public static void ShowFileToUser(int ply, string file)
         {
             string foo = "";
-            TextReader tr = new StreamReader(FileTools.SaveDir + file);
+            TextReader tr = new StreamReader(Path.Combine(TShock.SavePath + file));
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);
@@ -388,7 +388,7 @@ namespace TShockAPI
             groups = new List<Group>();
             groups.Add(new SuperAdminGroup("superadmin"));
 
-            StreamReader sr = new StreamReader(FileTools.SaveDir + "groups.txt");
+            StreamReader sr = new StreamReader(FileTools.GroupsPath);
             string data = sr.ReadToEnd();
             data = data.Replace("\r", "");
             string[] lines = data.Split('\n');
@@ -483,7 +483,7 @@ namespace TShockAPI
         {
             ip = GetRealIP(ip);
 
-            StreamReader sr = new StreamReader(FileTools.SaveDir + "users.txt");
+            StreamReader sr = new StreamReader(FileTools.UsersPath);
             string data = sr.ReadToEnd();
             data = data.Replace("\r", "");
             string[] lines = data.Split('\n');

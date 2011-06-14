@@ -603,7 +603,7 @@ namespace TShockAPI
             int givenCode = Convert.ToInt32(args.Parameters[0]);
             if (givenCode == ConfigurationManager.authToken)
             {
-                TextWriter tw = new StreamWriter(FileTools.SaveDir + "users.txt", true);
+                TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
                 tw.Write("\n" +
                          Tools.GetRealIP(
                              Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) +
@@ -912,7 +912,7 @@ namespace TShockAPI
             List<Command> cmdlist = new List<Command>();
             for (int j = 0; j < commands.Count; j++)
             {
-                if (commands[j].CanRun(TShock.players[ply]))
+                if (commands[j].CanRun(TShock.Players[ply]))
                 {
                     cmdlist.Add(commands[j]);
                 }

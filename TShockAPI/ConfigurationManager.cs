@@ -64,7 +64,7 @@ namespace TShockAPI
 
         public static void ReadJsonConfiguration()
         {
-            TextReader tr = new StreamReader(FileTools.SaveDir + "config.json");
+            TextReader tr = new StreamReader(FileTools.ConfigPath);
             ConfigFile cfg = JsonConvert.DeserializeObject<ConfigFile>(tr.ReadToEnd());
             tr.Close();
 
@@ -98,11 +98,6 @@ namespace TShockAPI
 
         public static void WriteJsonConfiguration()
         {
-            if (System.IO.File.Exists(FileTools.SaveDir + "config.json"))
-            {
-                System.IO.File.Delete(FileTools.SaveDir + "config.json");
-            }
-            FileTools.CreateFile(FileTools.SaveDir + "config.json");
             ConfigFile cfg = new ConfigFile();
             cfg.InvasionMultiplier = invasionMultiplier;
             cfg.DefaultMaximumSpawns = defaultMaxSpawns;
@@ -128,7 +123,7 @@ namespace TShockAPI
             cfg.AdminChatRGB = adminChatRGB;
             cfg.AdminChatPrefix = adminChatPrefix;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
-            TextWriter tr = new StreamWriter(FileTools.SaveDir + "config.json");
+            TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);
             tr.Close();
         }
