@@ -215,14 +215,14 @@ namespace TShockAPI
         /// <param name="x">X coord of the desired npc</param>
         /// <param name="y">Y coord of the desired npc</param>
         /// <param name="target">int player that the npc targets</param>
-        public static void NewNPC(int type, int x, int y, int target)
+        public static void NewNPC(int type, float x, float y, int target)
         {
             switch (type)
             {
                 case 0: //World Eater
                     WorldGen.shadowOrbSmashed = true;
                     WorldGen.shadowOrbCount = 3;
-                    int w = NPC.NewNPC(x, y, 13, 1);
+                    int w = NPC.NewNPC((int)x, (int)y, 13, 1);
                     Main.npc[w].target = target;
                     break;
                 case 1: //Eye
@@ -231,7 +231,7 @@ namespace TShockAPI
                     WorldGen.spawnEye = true;
                     break;
                 case 2: //Skeletron
-                    int enpeecee = NPC.NewNPC(x, y, 0x23, 0);
+                    int enpeecee = NPC.NewNPC((int)x, (int)y, 0x23, 0);
                     Main.npc[enpeecee].netUpdate = true;
                     break;
             }

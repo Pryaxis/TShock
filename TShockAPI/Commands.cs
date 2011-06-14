@@ -28,79 +28,63 @@ using Terraria;
 
 namespace TShockAPI
 {
-    public class Commands
+    public delegate void CommandDelegate(CommandArgs args);
+    public class CommandArgs : EventArgs
     {
-        public delegate void CommandDelegate(CommandArgs args);
+        public string Message { get; private set; }
+        public TSPlayer Player { get; private set; }
+        /// <summary>
+        /// Parameters passed to the arguement. Does not include the command name. 
+        /// IE '/kick "jerk face"' will only have 1 argument
+        /// </summary>
+        public List<string> Parameters { get; private set; }
 
-        public static List<Command> commands = new List<Command>();
-
-        public struct CommandArgs
+        public int PlayerID
         {
-            public string Message;
-            public int PlayerX;
-            public int PlayerY;
-            public int PlayerID;
-            /// <summary>
-            /// Parameters passed to the arguement. Does not include the command name. 
-            /// IE '/kick "jerk face"' will only have 1 argument
-            /// </summary>
-            public List<string> Parameters;
-
-            public CommandArgs(string message, int x, int y, int id, List<string> args)
-            {
-                Message = message;
-                PlayerX = x;
-                PlayerY = y;
-                PlayerID = id;
-                Parameters = args;
-            }
+            get { return Player.Index; }
         }
 
-        public class Command
+        public CommandArgs(string message, TSPlayer ply, List<string> args)
         {
-            private string name;
-            private string permission;
-            private CommandDelegate command;
-
-            public Command(string cmdName, string permissionNeeded, CommandDelegate cmd)
-            {
-                name = cmdName;
-                permission = permissionNeeded;
-                command = cmd;
-            }
-
-            public bool Run(string msg, TSPlayer ply, List<string> parms)
-            {
-                if (!ply.Group.HasPermission(permission))
-                {
-                    return false;
-                }
-
-                CommandArgs args = new CommandArgs();
-                args.Message = msg;
-                args.PlayerX = (int)ply.Player.position.X;
-                args.PlayerY = (int)ply.Player.position.Y;
-                args.PlayerID = ply.Index;
-                args.Parameters = parms;
-
-                command(args);
-                return true;
-            }
-
-            public string Name()
-            {
-                return name;
-            }
-
-            public bool CanRun(TSPlayer ply)
-            {
-                if (!ply.Group.HasPermission(permission))
-                {
-                    return false;
-                }
-                return true;
-            }
+            Message = message;
+            Player = ply;
+            Parameters = args;
         }
+    }
+    public class Command
+    {
+        public string Name { get; protected set; }
+        private string permission;
+        private CommandDelegate command;
+
+        public Command(string cmdname, string permissionneeded, CommandDelegate cmd)
+        {
+            Name = cmdname;
+            permission = permissionneeded;
+            command = cmd;
+        }
+
+        public bool Run(string msg, TSPlayer ply, List<string> parms)
+        {
+            if (!ply.Group.HasPermission(permission))
+                return false;
+
+            command(new CommandArgs(msg, ply, parms));
+            return true;
+        }
+
+        public bool CanRun(TSPlayer ply)
+        {
+            if (!ply.Group.HasPermission(permission))
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+    public static class Commands
+    {
+        public static List<Command> ChatCommands = new List<Command>();
 
         /// <summary>
         /// Parses a string of parameters into a list. Handles quotes.
@@ -186,53 +170,53 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
-            commands.Add(new Command("kick", "kick", Kick));
-            commands.Add(new Command("ban", "ban", Ban));
-            commands.Add(new Command("banip", "ban", BanIP));
-            commands.Add(new Command("unban", "unban", UnBan));
-            commands.Add(new Command("unbanip", "unbanip", UnBanIP));
-            commands.Add(new Command("off", "maintenance", Off));
-            commands.Add(new Command("off-nosave", "maintenance", OffNoSave));
-            commands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
-            commands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
-            commands.Add(new Command("star", "causeevents", Star));
-            commands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
-            commands.Add(new Command("invade", "causeevents", Invade));
-            commands.Add(new Command("eater", "spawnboss", Eater));
-            commands.Add(new Command("eye", "spawnboss", Eye));
-            commands.Add(new Command("skeletron", "spawnboss", Skeletron));
-            commands.Add(new Command("hardcore", "spawnboss", Hardcore));
-            commands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
-            commands.Add(new Command("home", "tp", Home));
-            commands.Add(new Command("spawn", "tp", Spawn));
-            commands.Add(new Command("tp", "tp", TP));
-            commands.Add(new Command("tphere", "tp", TPHere));
-            commands.Add(new Command("reload", "cfg", Reload));
-            commands.Add(new Command("debug-config", "cfg", DebugConfiguration));
-            commands.Add(new Command("password", "cfg", Password));
-            commands.Add(new Command("save", "cfg", Save));
-            commands.Add(new Command("maxspawns", "cfg", MaxSpawns));
-            commands.Add(new Command("spawnrate", "cfg", SpawnRate));
-            commands.Add(new Command("time", "cfg", Time));
-            commands.Add(new Command("slap", "pvpfun", Slap));
-            commands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
-            commands.Add(new Command("help", "", Help));
-            commands.Add(new Command("playing", "", Playing));
-            commands.Add(new Command("online", "", Playing));
-            commands.Add(new Command("who", "", Playing));
-            commands.Add(new Command("auth", "", AuthToken));
-            commands.Add(new Command("me", "", ThirdPerson));
-            commands.Add(new Command("p", "", PartyChat));
-            commands.Add(new Command("rules", "", Rules));
-            commands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
+            ChatCommands.Add(new Command("kick", "kick", Kick));
+            ChatCommands.Add(new Command("ban", "ban", Ban));
+            ChatCommands.Add(new Command("banip", "ban", BanIP));
+            ChatCommands.Add(new Command("unban", "unban", UnBan));
+            ChatCommands.Add(new Command("unbanip", "unbanip", UnBanIP));
+            ChatCommands.Add(new Command("off", "maintenance", Off));
+            ChatCommands.Add(new Command("off-nosave", "maintenance", OffNoSave));
+            ChatCommands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
+            ChatCommands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
+            ChatCommands.Add(new Command("star", "causeevents", Star));
+            ChatCommands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
+            ChatCommands.Add(new Command("invade", "causeevents", Invade));
+            ChatCommands.Add(new Command("eater", "spawnboss", Eater));
+            ChatCommands.Add(new Command("eye", "spawnboss", Eye));
+            ChatCommands.Add(new Command("skeletron", "spawnboss", Skeletron));
+            ChatCommands.Add(new Command("hardcore", "spawnboss", Hardcore));
+            ChatCommands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
+            ChatCommands.Add(new Command("home", "tp", Home));
+            ChatCommands.Add(new Command("spawn", "tp", Spawn));
+            ChatCommands.Add(new Command("tp", "tp", TP));
+            ChatCommands.Add(new Command("tphere", "tp", TPHere));
+            ChatCommands.Add(new Command("reload", "cfg", Reload));
+            ChatCommands.Add(new Command("debug-config", "cfg", DebugConfiguration));
+            ChatCommands.Add(new Command("password", "cfg", Password));
+            ChatCommands.Add(new Command("save", "cfg", Save));
+            ChatCommands.Add(new Command("maxspawns", "cfg", MaxSpawns));
+            ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
+            ChatCommands.Add(new Command("time", "cfg", Time));
+            ChatCommands.Add(new Command("slap", "pvpfun", Slap));
+            ChatCommands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
+            ChatCommands.Add(new Command("help", "", Help));
+            ChatCommands.Add(new Command("playing", "", Playing));
+            ChatCommands.Add(new Command("online", "", Playing));
+            ChatCommands.Add(new Command("who", "", Playing));
+            ChatCommands.Add(new Command("auth", "", AuthToken));
+            ChatCommands.Add(new Command("me", "", ThirdPerson));
+            ChatCommands.Add(new Command("p", "", PartyChat));
+            ChatCommands.Add(new Command("rules", "", Rules));
+            ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
-                commands.Add(new Command("kill", "kill", Kill));
-                commands.Add(new Command("butcher", "cheat", Butcher));
-                commands.Add(new Command("i", "cheat", Item));
-                commands.Add(new Command("item", "cheat", Item));
-                commands.Add(new Command("give", "cheat", Give));
-                commands.Add(new Command("heal", "cheat", Heal));
+                ChatCommands.Add(new Command("kill", "kill", Kill));
+                ChatCommands.Add(new Command("butcher", "cheat", Butcher));
+                ChatCommands.Add(new Command("i", "cheat", Item));
+                ChatCommands.Add(new Command("item", "cheat", Item));
+                ChatCommands.Add(new Command("give", "cheat", Give));
+                ChatCommands.Add(new Command("heal", "cheat", Heal));
             }
         }
 
@@ -520,39 +504,31 @@ namespace TShockAPI
 
         public static void Eater(CommandArgs args)
         {
-            int x = args.PlayerX;
-            int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, args.Player.X, args.Player.Y, ply);
             Tools.Broadcast(string.Format("{0} has spawned an eater of worlds!", Tools.FindPlayer(ply)));
         }
 
         public static void Eye(CommandArgs args)
         {
-            int x = args.PlayerX;
-            int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, args.Player.X, args.Player.Y, ply);
             Tools.Broadcast(string.Format("{0} has spawned an eye!", Tools.FindPlayer(ply)));
         }
 
         public static void Skeletron(CommandArgs args)
         {
-            int x = args.PlayerX;
-            int y = args.PlayerY;
             int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, x, y, ply);
+            Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, args.Player.X, args.Player.Y, ply);
             Tools.Broadcast(string.Format("{0} has spawned skeletron!", Tools.FindPlayer(ply)));
         }
 
         public static void Hardcore(CommandArgs args)
         {
-            int x = args.PlayerX;
-            int y = args.PlayerY;
             int ply = args.PlayerID;
             for (int i = 0; i <= 2; i++)
             {
-                Tools.NewNPC(i, x, y, ply);
+                Tools.NewNPC(i, args.Player.X, args.Player.Y, ply);
             }
             Tools.Broadcast(string.Format("{0} has spawned all 3 bosses!", Tools.FindPlayer(ply)));
         }
@@ -689,8 +665,6 @@ namespace TShockAPI
                 return;
             }
 
-            int x = args.PlayerX;
-            int y = args.PlayerY;
             int type = -1;
             int amount = 1;
 
@@ -706,7 +680,7 @@ namespace TShockAPI
             {
                 int npcid = -1;
                 for (int i = 0; i < amount; i++)
-                    npcid = NPC.NewNPC(x, y, type, 0);
+                    npcid = NPC.NewNPC((int)args.Player.X, (int)args.Player.Y, type, 0);
                 Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
             }
             else
@@ -746,8 +720,8 @@ namespace TShockAPI
                     //Main.player[ply].inventory[i].SetDefaults(type);
                     //Main.player[ply].inventory[i].stack = Main.player[ply].inventory[i].maxStack;
                     int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
-                    Main.item[id].position.X = args.PlayerX;
-                    Main.item[id].position.Y = args.PlayerY;
+                    Main.item[id].position.X =  args.Player.X;
+                    Main.item[id].position.Y = args.Player.Y;
                     Main.item[id].stack = Main.item[id].maxStack;
                     //TShock.SendDataAll(21, -1, "", id);
                     NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
@@ -858,12 +832,12 @@ namespace TShockAPI
             }
             else
             {
-                DropHearts(args.PlayerX, args.PlayerY, 20);
+                DropHearts(args.Player.X, args.Player.Y, 20);
                 Tools.SendMessage(adminplr, "You just got healed!");
             }
         }
 
-        private static void DropHearts(int x, int y, int count)
+        private static void DropHearts(float x, float y, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -933,11 +907,11 @@ namespace TShockAPI
             if (args.Parameters.Count > 0)
                 int.TryParse(args.Parameters[0], out page);
             List<Command> cmdlist = new List<Command>();
-            for (int j = 0; j < commands.Count; j++)
+            for (int j = 0; j < ChatCommands.Count; j++)
             {
-                if (commands[j].CanRun(TShock.Players[ply]))
+                if (ChatCommands[j].CanRun(TShock.Players[ply]))
                 {
-                    cmdlist.Add(commands[j]);
+                    cmdlist.Add(ChatCommands[j]);
                 }
             }
             var sb = new StringBuilder();
@@ -947,7 +921,7 @@ namespace TShockAPI
                 {
                     if (sb.Length != 0)
                         sb.Append(", ");
-                    sb.Append("/").Append(cmdlist[j].Name());
+                    sb.Append("/").Append(cmdlist[j].Name);
                     if (j == cmdlist.Count - 1)
                     {
                         Tools.SendMessage(ply, sb.ToString(), Color.Yellow);

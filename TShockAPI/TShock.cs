@@ -621,12 +621,12 @@ namespace TShockAPI
                 string scmd = args[0];
                 args.RemoveAt(0);
 
-                Commands.Command cmd = null;
-                for (int i = 0; i < Commands.commands.Count; i++)
+                Command cmd = null;
+                for (int i = 0; i < Commands.ChatCommands.Count; i++)
                 {
-                    if (Commands.commands[i].Name().Equals(scmd))
+                    if (Commands.ChatCommands[i].Name.Equals(scmd))
                     {
-                        cmd = Commands.commands[i];
+                        cmd = Commands.ChatCommands[i];
                     }
                 }
 
@@ -638,7 +638,7 @@ namespace TShockAPI
                 {
                     if (!cmd.CanRun(Players[ply]))
                     {
-                        Tools.SendLogs(string.Format("{0} tried to execute {1}", Tools.FindPlayer(ply), cmd.Name()), Color.Red);
+                        Tools.SendLogs(string.Format("{0} tried to execute {1}", Tools.FindPlayer(ply), cmd.Name), Color.Red);
                         Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
                     }
                     else

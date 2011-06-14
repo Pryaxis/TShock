@@ -67,7 +67,7 @@ namespace TShockAPI
 
         public static void EnableUpdateCommand()
         {
-            Commands.commands.Add(new Commands.Command("updatenow", "maintenance", Commands.UpdateNow));
+            Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
             updateCmd = true;
         }
         

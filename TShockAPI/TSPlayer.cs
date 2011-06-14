@@ -29,10 +29,31 @@ namespace TShockAPI
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
 
-        public int Index {get;private set;}
-        public Player Player
+        public int Index { get; private set; }
+
+        /// <summary>
+        /// Terraria Player
+        /// </summary>
+        public Player TPlayer
         {
             get { return Main.player[Index]; }
+        }
+
+        public float X
+        {
+            get { return TPlayer.position.X; }
+        }
+        public float Y
+        {
+            get { return TPlayer.position.Y; }
+        }
+        public int TileX
+        {
+            get { return (int)(TPlayer.position.X / 16); }
+        }
+        public int TileY
+        {
+            get { return (int)(TPlayer.position.Y / 16); }
         }
 
         public TSPlayer(int ply)
