@@ -30,15 +30,16 @@ using TerrariaAPI.Hooks;
 
 namespace TShockAPI
 {
+    [APIVersion(1, 3)]
     public class TShock : TerrariaPlugin
     {
         public static TSPlayer[] players = new TSPlayer[Main.maxPlayers];
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 1, 0, 2);
+        public static Version VersionNum = new Version(2, 1, 0, 3);
 
-        public static string VersionCodename = "Forgot to close the issue.";
+        public static string VersionCodename = "Forgot to increase the version.";
 
         private static bool[] BlacklistTiles;
 
@@ -50,11 +51,6 @@ namespace TShockAPI
         public override Version Version
         {
             get { return VersionNum; }
-        }
-
-        public override Version APIVersion
-        {
-            get { return new Version(1, 2); }
         }
 
         public override string Name
