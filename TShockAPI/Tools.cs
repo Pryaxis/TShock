@@ -176,26 +176,26 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Finds the name of the player of the int given
+        /// 
         /// </summary>
-        /// <param name="ply">string player name</param>
-        /// <returns>int player</returns>
-        public static int FindPlayer(string ply)
+        /// <param name="ply"></param>
+        /// <returns></returns>
+        public static List<int> FindPlayer(string ply)
         {
-            List<int> found = new List<int>();
+            var found = new List<int>();
+            ply = ply.ToLower();
             for (int i = 0; i < Main.player.Length; i++)
             {
-                if (Main.player[i].name.ToLower().Equals(ply.ToLower()))
-                    return i;
-                if (Main.player[i].name.ToLower().Contains(ply.ToLower()))
+                if (Main.player[i] == null)
+                    continue;
+
+                string name = Main.player[i].name.ToLower();
+                if (name.Equals(ply))
+                    return new List<int> { i };
+                if (name.Contains(ply))
                     found.Add(i);
             }
-            if (found.Count == 1)
-                return found[0];
-            else if (found.Count > 1)
-                return -2;
-            else
-                return -1;
+            return found;
         }
 
         /// <summary>
@@ -205,14 +205,7 @@ namespace TShockAPI
         /// <returns>string name</returns>
         public static string FindPlayer(int ply)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                if (i == ply)
-                {
-                    return Main.player[i].name;
-                }
-            }
-            return "null";
+            return Main.player[ply] != null ? Main.player[ply].name : null;
         }
 
         /// <summary>
