@@ -17,5 +17,5 @@
 default null canwater canlava
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban unban unbanip causeevents spawnboss spawnmob tp immunetokick kill logs
+admin newadmin ban unban causeevents spawnboss spawnmob tp immunetokick kill logs
 trustedadmin admin maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection

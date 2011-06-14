@@ -174,7 +174,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("ban", "ban", Ban));
             ChatCommands.Add(new Command("banip", "ban", BanIP));
             ChatCommands.Add(new Command("unban", "unban", UnBan));
-            ChatCommands.Add(new Command("unbanip", "unbanip", UnBanIP));
+            ChatCommands.Add(new Command("unbanip", "unban", UnBanIP));
             ChatCommands.Add(new Command("off", "maintenance", Off));
             ChatCommands.Add(new Command("off-nosave", "maintenance", OffNoSave));
             ChatCommands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
@@ -218,6 +218,10 @@ namespace TShockAPI
                 ChatCommands.Add(new Command("give", "cheat", Give));
                 ChatCommands.Add(new Command("heal", "cheat", Heal));
             }
+
+
+
+
         }
 
         #region Command Methods

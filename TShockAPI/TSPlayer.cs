@@ -22,6 +22,9 @@ namespace TShockAPI
 {
     public class TSPlayer
     {
+        public static readonly TSPlayer Server = new TSPlayer(new Player { name = "Server" });
+
+
         public uint TileThreshold { get; set; }
         public Dictionary<TShock.Position, Tile> TilesDestroyed { get; set; }
         public bool SyncHP { get; set; }
@@ -29,14 +32,16 @@ namespace TShockAPI
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
 
-        public int Index { get; private set; }
+        public int Index { get { return TPlayer.whoAmi; } }
 
         /// <summary>
         /// Terraria Player
         /// </summary>
-        public Player TPlayer
+        public Player TPlayer { get; protected set; }
+
+        public string Name
         {
-            get { return Main.player[Index]; }
+            get { return TPlayer.name; }
         }
 
         public float X
@@ -56,9 +61,10 @@ namespace TShockAPI
             get { return (int)(TPlayer.position.Y / 16); }
         }
 
-        public TSPlayer(int ply)
+        public TSPlayer(Player ply)
         {
             TilesDestroyed = new Dictionary<TShock.Position, Tile>();
+            TPlayer = ply;
         }
     }
 }

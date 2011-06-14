@@ -659,7 +659,7 @@ namespace TShockAPI
             }
 
             string ip = Tools.GetPlayerIP(ply);
-            Players[ply] = new TSPlayer(ply);
+            Players[ply] = new TSPlayer(Main.player[ply]);
             Players[ply].Group = Tools.GetGroupForIP(ip);
 
             if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots &&
