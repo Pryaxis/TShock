@@ -105,7 +105,16 @@ namespace TShockAPI
         {
             for (int i = 0; i < Main.player.Length; i++)
             {
-                SendMessage(i, msg, red, green, blue);
+                SendMessage(i, msg, Tools.Clamp(red, 255, 0), Tools.Clamp(green, 255, 0), Tools.Clamp(blue, 255, 0));
+            }
+            Log.Info(string.Format("Broadcast: {0}", msg));
+        }
+
+        public static void Broadcast(string msg, float[] colors)
+        {
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                SendMessage(i, msg, Tools.Clamp(colors[0], 255, 0), Tools.Clamp(colors[1], 255, 0), Tools.Clamp(colors[2], 255, 0));
             }
             Log.Info(string.Format("Broadcast: {0}", msg));
         }

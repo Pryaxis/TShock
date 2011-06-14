@@ -600,6 +600,13 @@ namespace TShockAPI
                 return;
             }
 
+            if (players[ply].group.HasPermission("adminchat") && !text.StartsWith("/"))
+            {
+                Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, ConfigurationManager.adminChatRGB);
+                e.Handled = true;
+                return;
+            }
+
             int x = (int)Main.player[ply].position.X;
             int y = (int)Main.player[ply].position.Y;
 
