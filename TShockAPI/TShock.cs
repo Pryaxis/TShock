@@ -342,29 +342,26 @@ namespace TShockAPI
                     ));
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                 }
-            }
-            if (type == 0 || type == 1 || type == 2 || type == 3)
+            } 
+            if (ConfigurationManager.disableBuild)
             {
-                if (ConfigurationManager.disableBuild)
+                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                 {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                    Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
+                    RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
+                    return true;
+                }
+            }
+            if (ConfigurationManager.spawnProtect)
+            {
+                if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
+                {
+                    var flag = CheckSpawn(x, y);
+                    if (flag)
                     {
-                        Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
+                        Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
                         RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
                         return true;
-                    }
-                }
-                if (ConfigurationManager.spawnProtect)
-                {
-                    if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
-                    {
-                        var flag = CheckSpawn(x, y);
-                        if (flag)
-                        {
-                            Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
-                            RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
-                            return true;
-                        }
                     }
                 }
             }
@@ -380,30 +377,7 @@ namespace TShockAPI
 
         private static void RevertPlayerChanges(int player, byte action, int x, int y)
         {
-            int revertAction = 0;
-            float revertType = 0f;
-            switch (action)
-            {
-                case 0:
-                    revertAction = 1;
-                    revertType = Main.tile[x, y].type;
-                    break;
-                case 1:
-                    revertAction = 0;
-                    revertType = 0f;
-                    break;
-                case 2:
-                    revertAction = 3;
-                    revertType = Main.tile[x, y].wall;
-                    break;
-                case 3:
-                    revertAction = 2;
-                    revertType = 0f;
-                    break;
-            }
-            NetMessage.SendData(17, player, -1, "", revertAction, x, y, revertType);
-            for (int j = y - 2; j <= (y + 2); j++)
-                NetMessage.SendData(10, player, -1, "", 5, (float)(x - 2), (float)j, 0f);
+            NetMessage.SendData(20, player, -1, "", 10, (float)(x - 5), (float)(y - 5), 0f);
         }
 
         bool HandleTogglePvp(MemoryStream data, GetDataEventArgs e)
