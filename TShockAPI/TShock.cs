@@ -349,6 +349,7 @@ namespace TShockAPI
                 {
                     if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
                     {
+                        Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
                         return true;
                     }
                 }
