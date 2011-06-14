@@ -353,7 +353,7 @@ namespace TShockAPI
         public static void ShowFileToUser(int ply, string file)
         {
             string foo = "";
-            TextReader tr = new StreamReader(Path.Combine(TShock.SavePath + file));
+            TextReader tr = new StreamReader(Path.Combine(TShock.SavePath, file));
             while ((foo = tr.ReadLine()) != null)
             {
                 foo = foo.Replace("%map%", Main.worldName);
