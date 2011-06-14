@@ -36,9 +36,9 @@ namespace TShockAPI
 
         public static string saveDir = "./tshock/";
 
-        public static Version VersionNum = new Version(2, 1, 0, 2);
+        public static Version VersionNum = new Version(2, 1, 0, 3);
 
-        public static string VersionCodename = "Forgot to close the issue.";
+        public static string VersionCodename = "Revert!";
 
         private static bool[] BlacklistTiles;
 
