@@ -94,28 +94,16 @@ namespace TShockAPI
         /// <param name="msg">string message</param>
         public static void Broadcast(string msg)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                SendMessage(i, msg);
-            }
-            Log.Info(string.Format("Broadcast: {0}", msg));
+            Broadcast(msg, 0, 255, 0);
         }
 
-        public static void Broadcast(string msg, float red, float green, float blue)
+        public static void Broadcast(string msg, byte red, byte green, byte blue)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                SendMessage(i, msg, Tools.Clamp(red, 255, 0), Tools.Clamp(green, 255, 0), Tools.Clamp(blue, 255, 0));
-            }
-            Log.Info(string.Format("Broadcast: {0}", msg));
+            Broadcast(msg, new Color(red, green, blue));
         }
-
-        public static void Broadcast(string msg, float[] colors)
+        public static void Broadcast(string msg, Color color)
         {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                SendMessage(i, msg, Tools.Clamp(colors[0], 255, 0), Tools.Clamp(colors[1], 255, 0), Tools.Clamp(colors[2], 255, 0));
-            }
+            SendMessage(-1, msg, color);
             Log.Info(string.Format("Broadcast: {0}", msg));
         }
 
@@ -124,10 +112,10 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int socket thingy for the player from the server socket</param>
         /// <param name="msg">String message</param>
-      
-        public static void SendMessage(int ply, string msg, float red, float green, float blue)
+
+        public static void SendMessage(int ply, string msg, byte red, byte green, byte blue)
         {
-            NetMessage.SendData(0x19, ply, -1, msg, 255, red, green, blue);
+            SendMessage(ply, msg, new Color(red, green, blue));
         }
 
         /// <summary>
@@ -167,7 +155,7 @@ namespace TShockAPI
         /// <param name="message">string message</param>
         public static void SendMessage(int ply, string message)
         {
-            NetMessage.SendData(0x19, ply, -1, message, 255, 0f, 255f, 0f);
+            SendMessage(ply, message, 0, 255, 0);
         }
 
         /// <summary>
@@ -361,6 +349,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="file">string filename reletave to savedir</param>
+        //Todo: Fix this
         public static void ShowFileToUser(int ply, string file)
         {
             string foo = "";
@@ -380,7 +369,7 @@ namespace TShockAPI
                     {
                         try
                         {
-                            SendMessage(ply, foo, Clamp(Convert.ToInt32(pCc[0]), 255, 0), Clamp(Convert.ToInt32(pCc[1]), 255, 0), Clamp(Convert.ToInt32(pCc[2]), 255, 0));
+                            SendMessage(ply, foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
                             continue;
                         }
                         catch (Exception e)

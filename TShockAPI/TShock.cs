@@ -338,7 +338,7 @@ namespace TShockAPI
                     ));
                     return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
                 }
-            } 
+            }
             if (ConfigurationManager.disableBuild)
             {
                 if (!players[e.Msg.whoAmI].group.HasPermission("editspawn"))
@@ -602,7 +602,7 @@ namespace TShockAPI
 
             if (players[ply].group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
-                Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, ConfigurationManager.adminChatRGB);
+                Tools.Broadcast(ConfigurationManager.adminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.adminChatRGB[0], (byte)ConfigurationManager.adminChatRGB[1], (byte)ConfigurationManager.adminChatRGB[2]);
                 e.Handled = true;
                 return;
             }

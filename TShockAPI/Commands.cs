@@ -276,19 +276,19 @@ namespace TShockAPI
             }
             else
             {
-                Tools.SendMessage(args.PlayerID, "You are not in a party!", 255f, 240f, 20f);
+                Tools.SendMessage(args.PlayerID, "You are not in a party!", 255, 240, 20);
             }
         }
 
         public static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast(string.Format("*{0} {1}", Tools.FindPlayer(args.PlayerID), msg, 205, 133, 63));
+            Tools.Broadcast(string.Format("*{0} {1}", Tools.FindPlayer(args.PlayerID), msg), 205, 133, 63);
         }
 
         public static void Playing(CommandArgs args)
         {
-            Tools.SendMessage(args.PlayerID, string.Format("Current players: {0}.", Tools.GetPlayers()), 255f, 240f, 20f);
+            Tools.SendMessage(args.PlayerID, string.Format("Current players: {0}.", Tools.GetPlayers()), 255, 240, 20);
         }
 
         public static void DebugConfiguration(CommandArgs args)
