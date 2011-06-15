@@ -238,14 +238,13 @@ namespace TShockAPI
             }
             if (text.StartsWith("playing"))
             {
-               int count = 0;
-               for (int i = 0; i < Main.maxPlayers; i++)
-               {
-                    if (Main.player[i].active)
+                int count = 0;
+                foreach (TSPlayer player in Players)
+                {
+                    if (player != null && player.Active)
                     {
                         count++;
-                        Console.WriteLine(string.Format("{0} ({1}) [{2}]", Main.player[i].name, 
-                                          Netplay.serverSock[i].tcpClient.Client.RemoteEndPoint, Players[i].Group.Name));
+                        Console.WriteLine(string.Format("{0} ({1}) [{2}]", player.Name, player.IP, player.Group.Name));
                     }
                 }
                 Console.WriteLine(string.Format("{0} players connected.", count));

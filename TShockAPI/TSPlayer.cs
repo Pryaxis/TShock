@@ -48,6 +48,10 @@ namespace TShockAPI
         {
             get { return TPlayer.active; }
         }
+        public string IP
+        {
+            get { return Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()); }
+        }
         public int Team
         {
             get { return TPlayer.team; }
