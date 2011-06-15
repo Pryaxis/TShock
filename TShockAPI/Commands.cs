@@ -443,13 +443,7 @@ namespace TShockAPI
 
         public static void Off(CommandArgs args)
         {
-            for (int player = 0; player < Main.maxPlayers; player++)
-            {
-                if (Main.player[player].active)
-                {
-                    Tools.ForceKick(player, "Server shutting down!");
-                }
-            }
+            Tools.ForceKickAll("Server shutting down!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }
@@ -1066,13 +1060,7 @@ namespace TShockAPI
 
             Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
 
-            for (int player = 0; player < Main.maxPlayers; player++)
-            {
-                if (Main.player[player].active)
-                {
-                    Tools.ForceKick(player, "Server shutting down for update!");
-                }
-            }
+            Tools.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }

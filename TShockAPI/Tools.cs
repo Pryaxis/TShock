@@ -197,6 +197,22 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Kicks all player from the server without checking for immunetokick permission.
+        /// </summary>
+        /// <param name="ply">int player</param>
+        /// <param name="reason">string reason</param>
+        public static void ForceKickAll(string reason)
+        {
+            for (int player = 0; player < Main.maxPlayers; player++)
+            {
+                if (Main.player[player].active)
+                {
+                    Tools.ForceKick(player, reason);
+                }
+            }
+        }
+
+        /// <summary>
         /// Kicks a player from the server without checking for immunetokick permission.
         /// </summary>
         /// <param name="ply">int player</param>

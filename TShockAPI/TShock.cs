@@ -231,13 +231,7 @@ namespace TShockAPI
             }
             if (text.StartsWith("exit"))
             {
-                for (int player = 0; player < Main.maxPlayers; player++)
-                {
-                    if (Main.player[player].active)
-                    {
-                        Tools.ForceKick(player, "Server shutting down!");
-                    }
-                }
+                Tools.ForceKickAll("Server shutting down!");
             }
             if (text.StartsWith("playing"))
             {
