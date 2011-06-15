@@ -25,15 +25,14 @@ namespace TShockAPI
     public class TSPlayer
     {
         public static readonly TSPlayer Server = new ServerPlayer();
-        public static readonly TSPlayer All = new TSPlayer(new Player { name = "All", whoAmi = -1 });
+        public static readonly TSPlayer All = new TSPlayer("All");
         public uint TileThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
-
-        public int Index { get { return TPlayer.whoAmi; } }
+        public int Index { get; protected set; }
 
         /// <summary>
         /// Terraria Player
@@ -44,13 +43,13 @@ namespace TShockAPI
         {
             get { return TPlayer.name; }
         }
+        public string IP 
+        {
+            get { return Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()); }
+        }
         public bool Active
         {
             get { return TPlayer.active; }
-        }
-        public string IP
-        {
-            get { return Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()); }
         }
         public int Team
         {
@@ -74,10 +73,19 @@ namespace TShockAPI
             get { return (int)(X / 16); }
         }
 
-        public TSPlayer(Player ply)
+        public TSPlayer(int index)
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
-            TPlayer = ply;
+            Index = index;
+            TPlayer = Main.player[index];
+            Group = new Group("null");
+        }
+
+        protected TSPlayer(String playerName)
+        {
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
+            Index = -1;
+            TPlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
         }
 
@@ -101,8 +109,7 @@ namespace TShockAPI
 
     public class ServerPlayer : TSPlayer
     {
-        public ServerPlayer()
-            : base(new Player { name = "Server" })
+        public ServerPlayer() : base("Server")
         {
             Group = new SuperAdminGroup();
         }

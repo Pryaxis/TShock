@@ -46,16 +46,6 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Gets the IP from a player index
-        /// </summary>
-        /// <param name="plr">Player Index</param>
-        /// <returns>IP</returns>
-        public static string GetPlayerIP(int plr)
-        {
-            return GetRealIP(Netplay.serverSock[plr].tcpClient.Client.RemoteEndPoint.ToString());
-        }
-
-        /// <summary>
         /// Used for some places where a list of players might be used.
         /// </summary>
         /// <returns>String of players seperated by commas.</returns>
@@ -206,9 +196,9 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void ForceKickAll(string reason)
         {
-            for (int player = 0; player < Main.maxPlayers; player++)
+            foreach(TSPlayer player in TShock.Players)
             {
-                if (Main.player[player].active)
+                if (player != null && player.TPlayer.active)
                 {
                     Tools.ForceKick(player, reason);
                 }
@@ -220,11 +210,13 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static void ForceKick(int ply, string reason)
+        public static void ForceKick(TSPlayer player, string reason)
         {
-            string ip = GetPlayerIP(ply);
-            NetMessage.SendData(0x2, ply, -1, reason, 0x0, 0f, 0f, 0f);
-            Log.Info(string.Format("{0} was force kicked for : {1}", ip, reason));
+            Log.Info("ForceKick Pre : " + player.Index + " status " + Main.player[player.Index].active + " " + player.TPlayer.active + " " + Main.player[player.Index].name + " " + player.TPlayer.name);
+            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
+                return;
+            NetMessage.SendData(0x2, player.Index, -1, reason, 0x0, 0f, 0f, 0f);
+            Log.Info(string.Format("{0} was force kicked for : {1}", player.IP, reason));
         }
 
         /// <summary>
@@ -261,7 +253,7 @@ namespace TShockAPI
                 return true;
             if (!player.Group.HasPermission("immunetoban"))
             {
-                string ip = GetPlayerIP(player.Index);
+                string ip = player.IP;
                 string playerName = player.Name;
                 TShock.Bans.AddBan(ip, playerName, reason);
                 NetMessage.SendData(0x2, player.Index, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);

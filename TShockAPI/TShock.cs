@@ -313,41 +313,42 @@ namespace TShockAPI
 
         bool HandlePlayerInfo(MemoryStream data, GetDataEventArgs e)
         {
-            var ban = Bans.GetBanByName(Main.player[e.Msg.whoAmI].name);
+            var player = Players[e.Msg.whoAmI];
+            if (player == null)
+            {
+                Tools.ForceKick(new TSPlayer(e.Msg.whoAmI), "Player doesn't exist");
+                return true;
+            }
+            var ban = Bans.GetBanByName(player.Name);
             if (ban != null)
             {
-                Tools.ForceKick(e.Msg.whoAmI, string.Format("You are banned: {0}", ban.Reason));
+                Tools.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
                 return true;
             }
             byte hair = e.Msg.readBuffer[e.Index + 1];
             if (hair > 0x10)
             {
-                Tools.ForceKick(e.Msg.whoAmI, "Hair crash exploit.");
+                Tools.ForceKick(player, "Hair crash exploit.");
                 return true;
             }
 
             string name = Encoding.ASCII.GetString(e.Msg.readBuffer, e.Index + 23, (e.Length - (e.Index + 23)) + e.Index - 1);
             if (name.Length > 32)
             {
-                Tools.ForceKick(e.Msg.whoAmI, "Name exceeded 32 characters.");
+                Tools.ForceKick(player, "Name exceeded 32 characters.");
                 return true;
             }
             if (name.Trim().Length == 0)
             {
-                Tools.ForceKick(e.Msg.whoAmI, "Empty Name.");
+                Tools.ForceKick(player, "Empty Name.");
                 return true;
             }
-            if (Players[e.Msg.whoAmI] == null)
-            {
-                Tools.ForceKick(e.Msg.whoAmI, "Player doesn't exist");
-                return true;
-            }
-            if (Players[e.Msg.whoAmI].ReceivedInfo)
+            if (player.ReceivedInfo)
             {
                 return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Sent client info more than once");
             }
 
-            Players[e.Msg.whoAmI].ReceivedInfo = true;
+            player.ReceivedInfo = true;
             return false;
         }
 
@@ -624,7 +625,7 @@ namespace TShockAPI
                         tilex, tiley,
                         Main.tile[tilex, tiley].type
                     ));
-                Tools.ForceKick(e.Msg.whoAmI, string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
+                Tools.ForceKick(Players[e.Msg.whoAmI], string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
                 return true;
             }
             return false;
@@ -636,7 +637,7 @@ namespace TShockAPI
                 return;
 
             TSPlayer player = Players[who];
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, Tools.GetPlayerIP(who), player.Group.Name));
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
             Tools.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(who))
@@ -728,31 +729,31 @@ namespace TShockAPI
                 return;
             }
 
-            string ip = Tools.GetPlayerIP(ply);
-            Players[ply] = new TSPlayer(Main.player[ply]);
-            Players[ply].Group = Tools.GetGroupForIP(ip);
+            var player = new TSPlayer(ply);
+            player.Group = Tools.GetGroupForIP(player.IP);
 
             if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots &&
-                !Players[ply].Group.HasPermission("reservedslot"))
+                !player.Group.HasPermission("reservedslot"))
             {
-                Tools.ForceKick(ply, "Server is full");
+                Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
             }
             else
             {
-                var ban = Bans.GetBanByIp(ip);
+                var ban = Bans.GetBanByIp(player.IP);
                 if (ban != null)
                 {
-                    Tools.ForceKick(ply, string.Format("You are banned: {0}", ban.Reason));
+                    Tools.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
                     handler.Handled = true;
                 }
-                else if (!FileTools.OnWhitelist(ip))
+                else if (!FileTools.OnWhitelist(player.IP))
                 {
-                    Tools.ForceKick(ply, "Not on whitelist.");
+                    Tools.ForceKick(player, "Not on whitelist.");
                     handler.Handled = true;
                 }
             }
 
+            Players[ply] = player;
             Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
         }
 
@@ -764,6 +765,8 @@ namespace TShockAPI
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
+
+            Players[ply] = null;
         }
 
         private void OnPostInit()
