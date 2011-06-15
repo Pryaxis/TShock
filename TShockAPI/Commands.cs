@@ -204,6 +204,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
             ChatCommands.Add(new Command("time", "cfg", Time));
             ChatCommands.Add(new Command("slap", "pvpfun", Slap));
+            ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             ChatCommands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
             ChatCommands.Add(new Command("help", "", Help));
             ChatCommands.Add(new Command("playing", "", Playing));
@@ -213,7 +214,6 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
-            ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));

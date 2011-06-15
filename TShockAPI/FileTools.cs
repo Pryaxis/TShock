@@ -35,6 +35,7 @@ namespace TShockAPI
         {
             File.Create(file).Close();
         }
+
         public static void CreateIfNot(string file, string data = "")
         {
             if (!File.Exists(file))

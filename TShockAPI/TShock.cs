@@ -228,6 +228,31 @@ namespace TShockAPI
                 }
                 e.Handled = true;
             }
+            if (text.StartsWith("exit"))
+            {
+                for (int player = 0; player < Main.maxPlayers; player++)
+                {
+                    if (Main.player[player].active)
+                    {
+                        Tools.ForceKick(player, "Server shutting down!");
+                    }
+                }
+            }
+            if (text.StartsWith("playing"))
+            {
+               int count = 0;
+               for (int i = 0; i < Main.maxPlayers; i++)
+               {
+                    if (Main.player[i].active)
+                    {
+                        count++;
+                        Console.WriteLine(string.Format("{0} ({1}) [{2}]", Main.player[i].name, 
+                                          Netplay.serverSock[i].tcpClient.Client.RemoteEndPoint, Players[i].Group.Name));
+                    }
+                }
+                Console.WriteLine(string.Format("{0} players connected.", count));
+                e.Handled = true;
+            }
         }
 
         public override void DeInitialize()
@@ -640,7 +665,7 @@ namespace TShockAPI
 
             if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
-                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
+                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + tsplr.Name + "> " + text, (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
                 e.Handled = true;
                 return;
             }
