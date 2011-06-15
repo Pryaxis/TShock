@@ -62,15 +62,15 @@ namespace TShockAPI
         public static string GetPlayers()
         {
             var sb = new StringBuilder();
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (Main.player[i].active)
+                if (player != null && player.Active)
                 {
                     if (sb.Length != 0)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(Main.player[i].name);
+                    sb.Append(player.Name);
                 }
             }
             return sb.ToString();
@@ -125,14 +125,10 @@ namespace TShockAPI
         {
             Log.Info(log);
             TSPlayer.Server.SendMessage(log, color);
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (TShock.Players[i] == null)
-                    continue;
-                if (!TShock.Players[i].Group.HasPermission("logs"))
-                    continue;
-
-                TShock.Players[i].SendMessage(log, color);
+                if (player != null && player.Group.HasPermission("logs"))
+                    player.SendMessage(log, color);
             }
         }
 
@@ -143,9 +139,9 @@ namespace TShockAPI
         public static int ActivePlayers()
         {
             int num = 0;
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (Main.player[i].active)
+                if (player != null && player.Active)
                 {
                     num++;
                 }

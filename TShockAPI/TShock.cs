@@ -669,7 +669,8 @@ namespace TShockAPI
 
             if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
-                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + tsplr.Name + "> " + text, (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
+                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + tsplr.Name + "> " + text, 
+                                (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
                 e.Handled = true;
                 return;
             }
@@ -800,29 +801,29 @@ namespace TShockAPI
         private void OnUpdate(GameTime time)
         {
             UpdateManager.UpdateProcedureCheck();
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (Main.player[i].active == false)
-                    continue;
-                TSPlayer player = Players[i];
-                if (player.TileThreshold >= 20)
+                if (player != null && player.Active)
                 {
-                    if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                    if (player.TileThreshold >= 20)
                     {
-                        RevertKillTile(player);
-                        player.TileThreshold = 0;
-                        player.TilesDestroyed.Clear();
+                        if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                        {
+                            RevertKillTile(player);
+                            player.TileThreshold = 0;
+                            player.TilesDestroyed.Clear();
+                        }
+                        else if (player.TileThreshold > 0)
+                        {
+                            player.TileThreshold = 0;
+                            player.TilesDestroyed.Clear();
+                        }
+
                     }
                     else if (player.TileThreshold > 0)
                     {
                         player.TileThreshold = 0;
-                        player.TilesDestroyed.Clear();
                     }
-
-                }
-                else if (player.TileThreshold > 0)
-                {
-                    player.TileThreshold = 0;
                 }
             }
         }

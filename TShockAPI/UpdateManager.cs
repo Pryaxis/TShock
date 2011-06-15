@@ -73,16 +73,14 @@ namespace TShockAPI
         
         public static void NotifyAdministrators(string[] changes)
         {
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (Main.player[i].active)
+                if (player != null && player.Active && player.Group.HasPermission("maintenance"))
                 {
-                    if (!TShock.Players[i].Group.HasPermission("maintenance"))
-                        return;
-                    TShock.Players[i].SendMessage("The server is out of date. To update, type /updatenow.");
+                    player.SendMessage("The server is out of date. To update, type /updatenow.");
                     for (int j = 4; j < changes.Length; j++)
                     {
-                        TShock.Players[i].SendMessage(changes[j], Color.Red);
+                        player.SendMessage(changes[j], Color.Red);
                     }
                 }
             }
