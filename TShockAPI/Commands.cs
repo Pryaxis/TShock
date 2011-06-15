@@ -450,6 +450,7 @@ namespace TShockAPI
 
         public static void OffNoSave(CommandArgs args)
         {
+            Tools.ForceKickAll("Server shutting down!");
             Netplay.disconnect = true;
         }
 
