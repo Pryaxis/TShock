@@ -204,8 +204,8 @@ namespace TShockAPI
         {
             if (text.StartsWith("/"))
             {
-                text = text.Remove(0, 1);
-                var args = Commands.ParseParameters(text);
+                string cmdStr = text.Remove(0, 1);
+                var args = Commands.ParseParameters(cmdStr);
                 if (args.Count < 1)
                     return;
 
@@ -227,16 +227,16 @@ namespace TShockAPI
                 }
                 else
                 {
-                    Tools.SendLogs(string.Format("{0} executed: /{1}", TSPlayer.Server.Name, text), Color.Red);
-                    cmd.Run(text, TSPlayer.Server, args);
+                    Tools.SendLogs(string.Format("{0} executed: /{1}", TSPlayer.Server.Name, cmdStr), Color.Red);
+                    cmd.Run(cmdStr, TSPlayer.Server, args);
                 }
                 e.Handled = true;
             }
-            if (text.StartsWith("exit"))
+            else if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
             }
-            if (text.StartsWith("playing"))
+            else if (text.StartsWith("playing"))
             {
                 int count = 0;
                 foreach (TSPlayer player in Players)
@@ -250,7 +250,7 @@ namespace TShockAPI
                 Console.WriteLine(string.Format("{0} players connected.", count));
                 e.Handled = true;
             }
-            if (text.StartsWith("say "))
+            else if (text.StartsWith("say "))
                 Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
         }
 
