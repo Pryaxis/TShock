@@ -284,7 +284,7 @@ namespace TShockAPI
                 {
                     return Ban(ply, reason);
                 }
-                else if (kick)
+                if (kick)
                 {
                     return Kick(ply, reason);
                 }

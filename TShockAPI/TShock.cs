@@ -37,7 +37,7 @@ namespace TShockAPI
 
         public static readonly string SavePath = "tshock";
 
-        public static readonly Version VersionNum = new Version(2, 1, 0, 4);
+        public static readonly Version VersionNum = new Version(2, 1, 0, 6);
 
         public static readonly string VersionCodename = "Forgot to increase the version.";
 
@@ -401,7 +401,9 @@ namespace TShockAPI
             if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && Main.player[e.Msg.whoAmI].active)
             {
                 Players[e.Msg.whoAmI].TileThreshold++;
-                Players[e.Msg.whoAmI].TilesDestroyed.Add(new Vector2(x, y), Main.tile[x, y]);
+                var coords = new Vector2(x, y);
+                if (!Players[e.Msg.whoAmI].TilesDestroyed.ContainsKey(coords))
+                    Players[e.Msg.whoAmI].TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
 
             return false;
