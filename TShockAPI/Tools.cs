@@ -212,7 +212,6 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void ForceKick(TSPlayer player, string reason)
         {
-            Log.Info("ForceKick Pre : " + player.Index + " status " + Main.player[player.Index].active + " " + player.TPlayer.active + " " + Main.player[player.Index].name + " " + player.TPlayer.name);
             if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
                 return;
             NetMessage.SendData(0x2, player.Index, -1, reason, 0x0, 0f, 0f, 0f);
