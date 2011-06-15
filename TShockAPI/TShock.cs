@@ -761,7 +761,7 @@ namespace TShockAPI
                 return;
 
             var tsplr = Players[ply];
-            if (tsplr != null)
+            if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
         }
 
