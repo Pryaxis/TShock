@@ -149,6 +149,7 @@ namespace TShockAPI
             }
             string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
             Console.WriteLine(version);
+
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
             Log.Info(version);
             Log.Info("Starting...");
@@ -157,16 +158,18 @@ namespace TShockAPI
             GameHooks.Update += OnUpdate;
             ServerHooks.Chat += OnChat;
             ServerHooks.Join += OnJoin;
+            ServerHooks.Leave += OnLeave;
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
             ServerHooks.Command += ServerHooks_OnCommand;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Log.Info("Hooks initialized");
 
             Bans.LoadBans();
+            Log.Info("Bans initialized");
 
-            Log.Info("Hooks initialized");
             Commands.InitCommands();
             Log.Info("Commands initialized");
 
@@ -248,6 +251,8 @@ namespace TShockAPI
                 Console.WriteLine(string.Format("{0} players connected.", count));
                 e.Handled = true;
             }
+            if (text.StartsWith("say "))
+                Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
         }
 
         public override void DeInitialize()
@@ -258,6 +263,7 @@ namespace TShockAPI
             GameHooks.Update -= OnUpdate;
             ServerHooks.Chat -= OnChat;
             ServerHooks.Join -= OnJoin;
+            ServerHooks.Leave -= OnLeave;
             ServerHooks.Command -= ServerHooks_OnCommand;
             NetHooks.GetData -= GetData;
             NetHooks.GreetPlayer -= OnGreetPlayer;
@@ -708,6 +714,10 @@ namespace TShockAPI
                 }
                 e.Handled = true;
             }
+            else
+            {
+                Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
+            }
         }
 
         private void OnJoin(int ply, HandledEventArgs handler)
@@ -743,6 +753,16 @@ namespace TShockAPI
             }
 
             Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
+        }
+
+        private void OnLeave(int ply)
+        {
+            if (Main.netMode != 2)
+                return;
+
+            var tsplr = Players[ply];
+            if (tsplr != null)
+                Log.Info(string.Format("{0} left.", tsplr.Name));
         }
 
         private void OnPostInit()

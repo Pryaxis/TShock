@@ -58,54 +58,16 @@ namespace TShockAPI
         /// </summary>
         private static void Write(String message, LogLevel level)
         {
-            StackTrace trace = new StackTrace();
-            StackFrame frame = null;
-
-            frame = trace.GetFrame(2);
-
-            string caller = "TShock: ";
-
-            /*if (frame != null && frame.GetMethod().DeclaringType != null)
-            {
-                caller = frame.GetMethod().DeclaringType.Name + ": ";
-            }*/
-
-            switch (level)
-            {
-                case LogLevel.Debug:
-                    message = "DEBUG: " + message;
-                    break;
-                case LogLevel.Info:
-                    message = "INFO: " + message;
-                    break;
-                case LogLevel.Warning:
-                    message = "WARNING: " + message;
-                    break;
-                case LogLevel.Error:
-                    message = "ERROR: " + message;
-                    break;
-            }
-
-            /*try
-            {
-                _logWriter = new StreamWriter(_filename, true);
-            }
-            catch (IOException)
-            {
-                _logWriter = new StreamWriter(_filename + "." + Process.GetCurrentProcess().Id.ToString(), true);
-            }*/
-
-            String text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) + " - " + caller +
-                          message;
-
-            Console.WriteLine(text);
-
             if (!MayWriteType(level))
             {
                 return;
             }
 
-            _logWriter.WriteLine(text);
+            string caller = "TShock";
+
+            _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}", 
+                                 DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), 
+                                 caller, level.ToString().ToUpper(), message));
             _logWriter.Flush();
         }
 
@@ -160,11 +122,6 @@ namespace TShockAPI
         /// <param name="message">The message to be written.</param>
         public static void Debug(String message)
         {
-            if (!MayWriteType(LogLevel.Debug))
-            {
-                return;
-            }
-
             Write(message, LogLevel.Debug);
         }
     }

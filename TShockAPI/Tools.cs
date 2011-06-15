@@ -107,6 +107,7 @@ namespace TShockAPI
         public static void Broadcast(string msg, byte red, byte green, byte blue)
         {
             TSPlayer.All.SendMessage(msg, red, green, blue);
+            TSPlayer.Server.SendMessage(msg, red, green, blue);
             Log.Info(string.Format("Broadcast: {0}", msg));
 
         }
@@ -123,6 +124,7 @@ namespace TShockAPI
         public static void SendLogs(string log, Color color)
         {
             Log.Info(log);
+            TSPlayer.Server.SendMessage(log, color);
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (TShock.Players[i] == null)
