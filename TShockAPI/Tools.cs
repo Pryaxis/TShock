@@ -158,16 +158,16 @@ namespace TShockAPI
         {
             var found = new List<TSPlayer>();
             ply = ply.ToLower();
-            for (int i = 0; i < TShock.Players.Length; i++)
+            foreach (TSPlayer player in TShock.Players)
             {
-                if (TShock.Players[i] == null)
+                if (player == null)
                     continue;
 
-                string name = TShock.Players[i].Name.ToLower();
+                string name = player.Name.ToLower();
                 if (name.Equals(ply))
-                    return new List<TSPlayer> { TShock.Players[i] };
+                    return new List<TSPlayer> { player };
                 if (name.Contains(ply))
-                    found.Add(TShock.Players[i]);
+                    found.Add(player);
             }
             return found;
         }

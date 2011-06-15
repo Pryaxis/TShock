@@ -251,12 +251,10 @@ namespace TShockAPI
             if (playerTeam != 0)
             {
                 string msg = string.Format("<{0}> {1}", args.Player.Name, args.Message.Remove(0, 2));
-                for (int i = 0; i < TShock.Players.Length; i++)
+                foreach (TSPlayer player in TShock.Players)
                 {
-                    if (TShock.Players[i] != null && TShock.Players[i].Active && TShock.Players[i].Team == playerTeam)
-                    {
-                       TShock.Players[i].SendMessage(msg, Main.teamColor[playerTeam].R, Main.teamColor[playerTeam].G, Main.teamColor[playerTeam].B);
-                    }
+                    if (player != null && player.Active && player.Team == playerTeam)
+                        player.SendMessage(msg, Main.teamColor[playerTeam].R, Main.teamColor[playerTeam].G, Main.teamColor[playerTeam].B);
                 }
             }
             else
