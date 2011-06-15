@@ -229,7 +229,7 @@ namespace TShockAPI
 
         public static void Rules(CommandArgs args)
         {
-            Tools.ShowFileToUser(args.PlayerID, "rules.txt");
+            Tools.ShowFileToUser(args.Player, "rules.txt");
         }
 
         public static void ToggleAntiBuild(CommandArgs args)

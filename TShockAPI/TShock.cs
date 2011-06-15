@@ -631,9 +631,10 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Players[who].Name, Tools.GetPlayerIP(who), Players[who].Group.Name));
+            TSPlayer player = Players[who];
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, Tools.GetPlayerIP(who), player.Group.Name));
 
-            Tools.ShowMOTD(who);
+            Tools.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(who))
             {
                 Tools.HandleCheater(who, "Hacked health.");
