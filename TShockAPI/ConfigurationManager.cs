@@ -55,13 +55,6 @@ namespace TShockAPI
         public static float[] AdminChatRGB = {255, 0, 0};
         public static string AdminChatPrefix = "(Admin) ";
 
-        public enum NPCList
-        {
-            WORLD_EATER = 0,
-            EYE = 1,
-            SKELETRON = 2
-        }
-
         public static void ReadJsonConfiguration()
         {
             TextReader tr = new StreamReader(FileTools.ConfigPath);

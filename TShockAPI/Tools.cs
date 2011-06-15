@@ -24,6 +24,13 @@ using Terraria;
 
 namespace TShockAPI
 {
+    internal enum NPCList
+    {
+        WORLD_EATER = 0,
+        EYE = 1,
+        SKELETRON = 2
+    }
+
     internal class Tools
     {
         private static List<Group> groups = new List<Group>();
@@ -171,26 +178,24 @@ namespace TShockAPI
         /// Creates an NPC
         /// </summary>
         /// <param name="type">Type is defined in the enum NPC list</param>
-        /// <param name="x">X coord of the desired npc</param>
-        /// <param name="y">Y coord of the desired npc</param>
-        /// <param name="target">int player that the npc targets</param>
-        public static void NewNPC(int type, float x, float y, int target)
+        /// <param name="player">int player that the npc targets</param>
+        public static void NewNPC(NPCList type, TSPlayer player)
         {
             switch (type)
             {
-                case 0: //World Eater
+                case NPCList.WORLD_EATER:
                     WorldGen.shadowOrbSmashed = true;
                     WorldGen.shadowOrbCount = 3;
-                    int w = NPC.NewNPC((int)x, (int)y, 13, 1);
-                    Main.npc[w].target = target;
+                    int w = NPC.NewNPC((int)player.X, (int)player.Y, 13, 1);
+                    Main.npc[w].target = player.Index;
                     break;
-                case 1: //Eye
+                case NPCList.EYE:
                     Main.time = 4861;
                     Main.dayTime = false;
                     WorldGen.spawnEye = true;
                     break;
-                case 2: //Skeletron
-                    int enpeecee = NPC.NewNPC((int)x, (int)y, 0x23, 0);
+                case NPCList.SKELETRON:
+                    int enpeecee = NPC.NewNPC((int)player.X, (int)player.Y, 0x23, 0);
                     Main.npc[enpeecee].netUpdate = true;
                     break;
             }

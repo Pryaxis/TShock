@@ -48,6 +48,10 @@ namespace TShockAPI
         {
             get { return TPlayer.active; }
         }
+        public int Team
+        {
+            get { return TPlayer.team; }
+        }
 
         public float X
         {

@@ -232,19 +232,6 @@ namespace TShockAPI
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
 
-        public static void ToggleAntiBuild(CommandArgs args)
-        {
-            args.Player.SendMessage("Toggled world anti-build.");
-            if (ConfigurationManager.DisableBuild)
-            {
-                ConfigurationManager.DisableBuild = false;
-            }
-            else
-            {
-                ConfigurationManager.DisableBuild = true;
-            }
-        }
-
         public static void CheckUpdates(CommandArgs args)
         {
             ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
@@ -252,13 +239,13 @@ namespace TShockAPI
 
         public static void PartyChat(CommandArgs args)
         {
-            int playerTeam = Main.player[args.PlayerID].team;
+            int playerTeam = args.Player.Team;
             if (playerTeam != 0)
             {
-                string msg = string.Format("<{0}> {1}", Main.player[args.PlayerID].name, args.Message.Remove(0, 2));
-                for (int i = 0; i < Main.player.Length; i++)
+                string msg = string.Format("<{0}> {1}", args.Player.Name, args.Message.Remove(0, 2));
+                for (int i = 0; i < TShock.Players.Length; i++)
                 {
-                    if (Main.player[i].team == Main.player[args.PlayerID].team)
+                    if (TShock.Players[i] != null && TShock.Players[i].Active && TShock.Players[i].Team == playerTeam)
                     {
                        TShock.Players[i].SendMessage(msg, Main.teamColor[playerTeam].R, Main.teamColor[playerTeam].G, Main.teamColor[playerTeam].B);
                     }
@@ -279,28 +266,6 @@ namespace TShockAPI
         public static void Playing(CommandArgs args)
         {
             args.Player.SendMessage(string.Format("Current players: {0}.", Tools.GetPlayers()), 255, 240, 20);
-        }
-
-        public static void DebugConfiguration(CommandArgs args)
-        {
-            args.Player.SendMessage("TShock Config:");
-            string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
-                              ConfigurationManager.BanCheater, ConfigurationManager.KickCheater,
-                              ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer);
-            args.Player.SendMessage(lineOne, Color.Yellow);
-            string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
-                                           ConfigurationManager.BanTnt, ConfigurationManager.KickTnt,
-                                           ConfigurationManager.BanBoom, ConfigurationManager.KickBoom);
-            args.Player.SendMessage(lineTwo, Color.Yellow);
-            string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
-                                             ConfigurationManager.RangeChecks, ConfigurationManager.DisableBuild,
-                                             ConfigurationManager.SpawnProtect, ConfigurationManager.SpawnProtectRadius);
-            args.Player.SendMessage(lineThree, Color.Yellow);
-            string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
-                                           ConfigurationManager.MaxSlots, ConfigurationManager.SpamChecks,
-                                           ConfigurationManager.InvasionMultiplier, ConfigurationManager.DefaultMaxSpawns,
-                                           ConfigurationManager.DefaultSpawnRate);
-            args.Player.SendMessage(lineFour, Color.Yellow);
         }
 
         public static void Kick(CommandArgs args)
@@ -454,6 +419,28 @@ namespace TShockAPI
             Netplay.disconnect = true;
         }
 
+        public static void DebugConfiguration(CommandArgs args)
+        {
+            args.Player.SendMessage("TShock Config:");
+            string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
+                              ConfigurationManager.BanCheater, ConfigurationManager.KickCheater,
+                              ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer);
+            args.Player.SendMessage(lineOne, Color.Yellow);
+            string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
+                                           ConfigurationManager.BanTnt, ConfigurationManager.KickTnt,
+                                           ConfigurationManager.BanBoom, ConfigurationManager.KickBoom);
+            args.Player.SendMessage(lineTwo, Color.Yellow);
+            string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
+                                             ConfigurationManager.RangeChecks, ConfigurationManager.DisableBuild,
+                                             ConfigurationManager.SpawnProtect, ConfigurationManager.SpawnProtectRadius);
+            args.Player.SendMessage(lineThree, Color.Yellow);
+            string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
+                                           ConfigurationManager.MaxSlots, ConfigurationManager.SpamChecks,
+                                           ConfigurationManager.InvasionMultiplier, ConfigurationManager.DefaultMaxSpawns,
+                                           ConfigurationManager.DefaultSpawnRate);
+            args.Player.SendMessage(lineFour, Color.Yellow);
+        }
+
         public static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
@@ -484,7 +471,6 @@ namespace TShockAPI
 
         public static void Bloodmoon(CommandArgs args)
         {
-            int ply = args.PlayerID;
             Tools.Broadcast(string.Format("{0} turned on blood moon.", args.Player.Name));
             Main.bloodMoon = true;
             Main.time = 0;
@@ -495,38 +481,33 @@ namespace TShockAPI
 
         public static void Eater(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.WORLD_EATER, args.Player.X, args.Player.Y, ply);
+            Tools.NewNPC(NPCList.WORLD_EATER, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned an eater of worlds!", args.Player.Name));
         }
 
         public static void Eye(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.EYE, args.Player.X, args.Player.Y, ply);
+            Tools.NewNPC(NPCList.EYE, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned an eye!", args.Player.Name));
         }
 
         public static void Skeletron(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            Tools.NewNPC((int)ConfigurationManager.NPCList.SKELETRON, args.Player.X, args.Player.Y, ply);
+            Tools.NewNPC(NPCList.SKELETRON, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned skeletron!", args.Player.Name));
         }
 
         public static void Hardcore(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            for (int i = 0; i <= 2; i++)
+            foreach (NPCList type in Enum.GetValues(typeof(NPCList)))
             {
-                Tools.NewNPC(i, args.Player.X, args.Player.Y, ply);
+                Tools.NewNPC(type, args.Player);
             }
-            Tools.Broadcast(string.Format("{0} has spawned all 3 bosses!", args.Player.Name));
+            Tools.Broadcast(string.Format("{0} has spawned all bosses!", args.Player.Name));
         }
 
         public static void Invade(CommandArgs args)
         {
-            int ply = args.PlayerID;
             if (Main.invasionSize <= 0)
             {
                 Tools.Broadcast(string.Format("{0} has started an invasion.", args.Player.Name));
@@ -1032,11 +1013,16 @@ namespace TShockAPI
             }
         }
 
+        public static void ToggleAntiBuild(CommandArgs args)
+        {
+            ConfigurationManager.DisableBuild = (ConfigurationManager.DisableBuild == false);
+            Tools.Broadcast(string.Format("Anti-build is now {0}.", (ConfigurationManager.DisableBuild ? "on" : "off")));
+        }
+
         public static void ProtectSpawn(CommandArgs args)
         {
             ConfigurationManager.SpawnProtect = (ConfigurationManager.SpawnProtect == false);
-            args.Player.SendMessage(
-                              string.Format("Spawn is now {0}.", (ConfigurationManager.SpawnProtect ? "protected" : "open")));
+            Tools.Broadcast(string.Format("Spawn is now {0}.", (ConfigurationManager.SpawnProtect ? "protected" : "open")));
         }
 
         public static void UpdateNow(CommandArgs args)
