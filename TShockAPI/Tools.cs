@@ -291,18 +291,14 @@ namespace TShockAPI
             }
             return false;
         }
-        [Obsolete("Use ShowFileToUser(int ply, string file) instead.")]
-        public static void ShowMOTD(int ply)
-        {
-            ShowFileToUser(ply, "motd.txt");
-        }
+
         /// <summary>
         /// Shows a file to the user.
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="file">string filename reletave to savedir</param>
         //Todo: Fix this
-        public static void ShowFileToUser(int ply, string file)
+        public static void ShowFileToUser(TSPlayer player, string file)
         {
             string foo = "";
             TextReader tr = new StreamReader(Path.Combine(TShock.SavePath, file));
@@ -321,7 +317,7 @@ namespace TShockAPI
                     {
                         try
                         {
-                            TShock.Players[ply].SendMessage(foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
+                            player.SendMessage(foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
                             continue;
                         }
                         catch (Exception e)
@@ -330,7 +326,7 @@ namespace TShockAPI
                         }
                     }
                 }
-                TShock.Players[ply].SendMessage(foo);
+                player.SendMessage(foo);
             }
             tr.Close();
         }
