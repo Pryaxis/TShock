@@ -94,39 +94,18 @@ namespace TShockAPI
         /// <param name="msg">string message</param>
         public static void Broadcast(string msg)
         {
-            Broadcast(msg, 0, 255, 0);
+            Broadcast(msg, Color.Green);
         }
 
         public static void Broadcast(string msg, byte red, byte green, byte blue)
         {
-            Broadcast(msg, new Color(red, green, blue));
+            TSPlayer.All.SendMessage(msg, red, green, blue);
+            Log.Info(string.Format("Broadcast: {0}", msg));
+
         }
         public static void Broadcast(string msg, Color color)
         {
-            SendMessage(-1, msg, color);
-            Log.Info(string.Format("Broadcast: {0}", msg));
-        }
-
-        /// <summary>
-        /// Sends a message out to a single player
-        /// </summary>
-        /// <param name="ply">int socket thingy for the player from the server socket</param>
-        /// <param name="msg">String message</param>
-
-        public static void SendMessage(int ply, string msg, byte red, byte green, byte blue)
-        {
-            SendMessage(ply, msg, new Color(red, green, blue));
-        }
-
-        /// <summary>
-        /// Sends a message out to a single player
-        /// </summary>
-        /// <param name="ply">int socket thingy for the player from the server socket</param>
-        /// <param name="msg">String message</param>
-        /// <param name="color">Float containing red, blue, and green color values</param>
-        public static void SendMessage(int ply, string msg, Color color)
-        {
-            NetMessage.SendData(0x19, ply, -1, msg, 255, color.R, color.G, color.B);
+            Broadcast(msg, color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -144,18 +123,8 @@ namespace TShockAPI
                 if (!TShock.Players[i].Group.HasPermission("logs"))
                     continue;
 
-                SendMessage(i, log, color);
+                TShock.Players[i].SendMessage(log, color);
             }
-        }
-
-        /// <summary>
-        /// Sends a green message to a player
-        /// </summary>
-        /// <param name="ply">int socket thingy for the player from the server socket</param>
-        /// <param name="message">string message</param>
-        public static void SendMessage(int ply, string message)
-        {
-            SendMessage(ply, message, 0, 255, 0);
         }
 
         /// <summary>
@@ -180,32 +149,22 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply"></param>
         /// <returns></returns>
-        public static List<int> FindPlayer(string ply)
+        public static List<TSPlayer> FindPlayer(string ply)
         {
-            var found = new List<int>();
+            var found = new List<TSPlayer>();
             ply = ply.ToLower();
-            for (int i = 0; i < Main.player.Length; i++)
+            for (int i = 0; i < TShock.Players.Length; i++)
             {
-                if (Main.player[i] == null)
+                if (TShock.Players[i] == null)
                     continue;
 
-                string name = Main.player[i].name.ToLower();
+                string name = TShock.Players[i].Name.ToLower();
                 if (name.Equals(ply))
-                    return new List<int> { i };
+                    return new List<TSPlayer> { TShock.Players[i] };
                 if (name.Contains(ply))
-                    found.Add(i);
+                    found.Add(TShock.Players[i]);
             }
             return found;
-        }
-
-        /// <summary>
-        /// Gets the given player's name
-        /// </summary>
-        /// <param name="ply">int player</param>
-        /// <returns>string name</returns>
-        public static string FindPlayer(int ply)
-        {
-            return Main.player[ply] != null ? Main.player[ply].name : null;
         }
 
         /// <summary>
@@ -362,7 +321,7 @@ namespace TShockAPI
                     {
                         try
                         {
-                            SendMessage(ply, foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
+                            TShock.Players[ply].SendMessage(foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
                             continue;
                         }
                         catch (Exception e)
@@ -371,7 +330,7 @@ namespace TShockAPI
                         }
                     }
                 }
-                SendMessage(ply, foo);
+                TShock.Players[ply].SendMessage(foo);
             }
             tr.Close();
         }

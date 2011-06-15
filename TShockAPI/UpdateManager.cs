@@ -79,10 +79,10 @@ namespace TShockAPI
                 {
                     if (!TShock.Players[i].Group.HasPermission("maintenance"))
                         return;
-                    Tools.SendMessage(i, "The server is out of date. To update, type /updatenow.");
+                    TShock.Players[i].SendMessage("The server is out of date. To update, type /updatenow.");
                     for (int j = 4; j < changes.Length; j++)
                     {
-                        Tools.SendMessage(i, changes[j], Color.Red);
+                        TShock.Players[i].SendMessage(changes[j], Color.Red);
                     }
                 }
             }

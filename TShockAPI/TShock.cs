@@ -244,7 +244,14 @@ namespace TShockAPI
             {
                 using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
                 {
-                    e.Handled = func(data, e);
+                    try
+                    {
+                        e.Handled = func(data, e);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                    }
                 }
             }
         }
@@ -343,8 +350,8 @@ namespace TShockAPI
             {
                 if (!Players[e.Msg.whoAmI].Group.HasPermission("editspawn"))
                 {
-                    Tools.SendMessage(e.Msg.whoAmI, "World protected from changes.", Color.Red);
-                    RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
+                    Players[e.Msg.whoAmI].SendMessage("World protected from changes.", Color.Red);
+                    RevertPlayerChanges(e.Msg.whoAmI, x, y);
                     return true;
                 }
             }
@@ -355,8 +362,8 @@ namespace TShockAPI
                     var flag = CheckSpawn(x, y);
                     if (flag)
                     {
-                        Tools.SendMessage(e.Msg.whoAmI, "Spawn protected from changes.", Color.Red);
-                        RevertPlayerChanges(e.Msg.whoAmI, type, x, y);
+                        Players[e.Msg.whoAmI].SendMessage("Spawn protected from changes.", Color.Red);
+                        RevertPlayerChanges(e.Msg.whoAmI, x, y);
                         return true;
                     }
                 }
@@ -371,7 +378,7 @@ namespace TShockAPI
             return false;
         }
 
-        private static void RevertPlayerChanges(int player, byte action, int x, int y)
+        private static void RevertPlayerChanges(int player, int x, int y)
         {
             NetMessage.SendData(20, player, -1, "", 10, (float)(x - 5), (float)(y - 5), 0f);
         }
@@ -497,14 +504,14 @@ namespace TShockAPI
 
             if (lava && !Players[e.Msg.whoAmI].Group.HasPermission("canlava"))
             {
-                Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use lava", Color.Red);
+                Players[e.Msg.whoAmI].SendMessage("You do not have permission to use lava", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using lava", Main.player[e.Msg.whoAmI].name), Color.Red);
 
                 return true;
             }
             if (!lava && !Players[e.Msg.whoAmI].Group.HasPermission("canwater"))
             {
-                Tools.SendMessage(e.Msg.whoAmI, "You do not have permission to use water", Color.Red);
+                Players[e.Msg.whoAmI].SendMessage("You do not have permission to use water", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using water", Main.player[e.Msg.whoAmI].name), Color.Red);
                 return true;
             }
@@ -538,7 +545,7 @@ namespace TShockAPI
                     var flag = CheckSpawn(x, y);
                     if (flag)
                     {
-                        Tools.SendMessage(e.Msg.whoAmI, "The spawn is protected!", Color.Red);
+                        Players[e.Msg.whoAmI].SendMessage("The spawn is protected!", Color.Red);
                         return true;
                     }
                 }
@@ -570,7 +577,7 @@ namespace TShockAPI
             if (Main.netMode != 2)
                 return;
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Tools.FindPlayer(who), Tools.GetPlayerIP(who), Players[who].Group.Name));
+            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", Players[who].Name, Tools.GetPlayerIP(who), Players[who].Group.Name));
 
             Tools.ShowMOTD(who);
             if (HackedHealth(who))
@@ -600,7 +607,9 @@ namespace TShockAPI
                 return;
             }
 
-            if (Players[ply].Group.HasPermission("adminchat") && !text.StartsWith("/"))
+            var tsplr = Players[msg.whoAmI];
+
+            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
                 Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + Main.player[ply].name + "> " + text, (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
                 e.Handled = true;
@@ -632,19 +641,19 @@ namespace TShockAPI
 
                 if (cmd == null)
                 {
-                    Tools.SendMessage(ply, "That command does not exist, try /help", Color.Red);
+                    tsplr.SendMessage("That command does not exist, try /help", Color.Red);
                 }
                 else
                 {
-                    if (!cmd.CanRun(Players[ply]))
+                    if (!cmd.CanRun(tsplr))
                     {
-                        Tools.SendLogs(string.Format("{0} tried to execute {1}", Tools.FindPlayer(ply), cmd.Name), Color.Red);
-                        Tools.SendMessage(ply, "You do not have access to that command.", Color.Red);
+                        Tools.SendLogs(string.Format("{0} tried to execute {1}", tsplr.Name, cmd.Name), Color.Red);
+                        tsplr.SendMessage("You do not have access to that command.", Color.Red);
                     }
                     else
                     {
-                        Tools.SendLogs(string.Format("{0} executed: /{1}", Tools.FindPlayer(ply), text), Color.Red);
-                        cmd.Run(text, Players[ply], args);
+                        Tools.SendLogs(string.Format("{0} executed: /{1}", tsplr.Name, text), Color.Red);
+                        cmd.Run(text, tsplr, args);
                     }
                 }
                 e.Handled = true;

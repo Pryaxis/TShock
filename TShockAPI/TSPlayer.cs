@@ -24,6 +24,7 @@ namespace TShockAPI
     public class TSPlayer
     {
         public static readonly TSPlayer Server = new TSPlayer(new Player { name = "Server" });
+        public static readonly TSPlayer All = new TSPlayer(new Player { name = "All", whoAmi = -1 });
 
 
         public uint TileThreshold { get; set; }
@@ -43,6 +44,10 @@ namespace TShockAPI
         public string Name
         {
             get { return TPlayer.name; }
+        }
+        public bool Active
+        {
+            get { return TPlayer.active; }
         }
 
         public float X
@@ -67,5 +72,21 @@ namespace TShockAPI
             TilesDestroyed = new Dictionary<Vector2, Tile>();
             TPlayer = ply;
         }
+
+        public virtual void SendMessage(string msg)
+        {
+            SendMessage(msg, 0, 255, 0);
+        }
+
+        public virtual void SendMessage(string msg, Color color)
+        {
+            SendMessage(msg, color.R, color.G, color.B);
+        }
+
+        public virtual void SendMessage(string msg, byte red, byte green, byte blue)
+        {
+            NetMessage.SendData(0x19, Index, -1, msg, 255, red, green, blue);
+        }
+
     }
 }
