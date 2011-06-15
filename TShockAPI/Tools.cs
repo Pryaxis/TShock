@@ -338,7 +338,7 @@ namespace TShockAPI
         public static void LoadGroups()
         {
             groups = new List<Group>();
-            groups.Add(new SuperAdminGroup("superadmin"));
+            groups.Add(new SuperAdminGroup());
 
             StreamReader sr = new StreamReader(FileTools.GroupsPath);
             string data = sr.ReadToEnd();

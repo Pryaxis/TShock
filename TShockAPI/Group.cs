@@ -69,8 +69,8 @@ namespace TShockAPI
 
     public class SuperAdminGroup : Group
     {
-        public SuperAdminGroup(string groupName, Group parentGroup = null)
-            : base(groupName, parentGroup)
+        public SuperAdminGroup()
+            : base("superadmin")
         {
         }
 

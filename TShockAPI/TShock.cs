@@ -35,9 +35,9 @@ namespace TShockAPI
     {
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 
-        public static readonly string SavePath = "./tshock/";
+        public static readonly string SavePath = "tshock";
 
-        public static readonly Version VersionNum = new Version(2, 1, 0, 3);
+        public static readonly Version VersionNum = new Version(2, 1, 0, 4);
 
         public static readonly string VersionCodename = "Forgot to increase the version.";
 
@@ -197,8 +197,37 @@ namespace TShockAPI
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="e"></param>
-        private void ServerHooks_OnCommand(string cmd, HandledEventArgs e)
+        private void ServerHooks_OnCommand(string text, HandledEventArgs e)
         {
+            if (text.StartsWith("/"))
+            {
+                text = text.Remove(0, 1);
+                var args = Commands.ParseParameters(text);
+                if (args.Count < 1)
+                    return;
+
+                string scmd = args[0];
+                args.RemoveAt(0);
+
+                Command cmd = null;
+                for (int i = 0; i < Commands.ChatCommands.Count; i++)
+                {
+                    if (Commands.ChatCommands[i].Name.Equals(scmd))
+                    {
+                        cmd = Commands.ChatCommands[i];
+                    }
+                }
+
+                if (cmd == null)
+                {
+                    TSPlayer.Server.SendMessage("That command does not exist, try /help", Color.Red);
+                }
+                else
+                {
+                    cmd.Run(text, TSPlayer.Server, args);
+                }
+                e.Handled = true;
+            }
         }
 
         public override void DeInitialize()
@@ -615,9 +644,6 @@ namespace TShockAPI
                 e.Handled = true;
                 return;
             }
-
-            int x = (int)Main.player[ply].position.X;
-            int y = (int)Main.player[ply].position.Y;
 
             if (text.StartsWith("/"))
             {

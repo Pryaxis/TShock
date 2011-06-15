@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -23,7 +24,7 @@ namespace TShockAPI
 {
     public class TSPlayer
     {
-        public static readonly TSPlayer Server = new TSPlayer(new Player { name = "Server" });
+        public static readonly TSPlayer Server = new ServerPlayer();
         public static readonly TSPlayer All = new TSPlayer(new Player { name = "All", whoAmi = -1 });
 
 
@@ -71,6 +72,7 @@ namespace TShockAPI
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
             TPlayer = ply;
+            Group = new Group("null");
         }
 
         public virtual void SendMessage(string msg)
@@ -88,5 +90,28 @@ namespace TShockAPI
             NetMessage.SendData(0x19, Index, -1, msg, 255, red, green, blue);
         }
 
+    }
+
+
+    public class ServerPlayer : TSPlayer
+    {
+        public ServerPlayer()
+            : base(new Player { name = "Server" })
+        {
+            Group = new SuperAdminGroup();
+        }
+
+        public override void SendMessage(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+        public override void SendMessage(string msg, byte red, byte green, byte blue)
+        {
+            SendMessage(msg);
+        }
+        public override void SendMessage(string msg, Color color)
+        {
+            SendMessage(msg);
+        }
     }
 }
