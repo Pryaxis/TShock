@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System;
 using System.IO;
 using Terraria;
 
@@ -60,14 +61,23 @@ namespace TShockAPI
             CreateIfNot(GroupsPath, Resources.groups);
             CreateIfNot(UsersPath, Resources.users);
 
-            if (File.Exists(ConfigPath))
+            try
             {
-                ConfigurationManager.ReadJsonConfiguration();
+                if (File.Exists(ConfigPath))
+                {
+                    ConfigurationManager.ReadJsonConfiguration();
+                }
+                else
+                {
+                    ConfigurationManager.WriteJsonConfiguration();
+                    ConfigurationManager.ReadJsonConfiguration();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ConfigurationManager.WriteJsonConfiguration();
-                ConfigurationManager.ReadJsonConfiguration();
+                Console.WriteLine("Error in config file");
+                Log.Error("Config Exception");
+                Log.Error(ex.ToString());
             }
 
             Netplay.serverPort = ConfigurationManager.ServerPort;
