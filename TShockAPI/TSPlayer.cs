@@ -26,8 +26,6 @@ namespace TShockAPI
     {
         public static readonly TSPlayer Server = new ServerPlayer();
         public static readonly TSPlayer All = new TSPlayer(new Player { name = "All", whoAmi = -1 });
-
-
         public uint TileThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; set; }
         public bool SyncHP { get; set; }

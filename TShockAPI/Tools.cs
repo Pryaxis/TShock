@@ -213,14 +213,14 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static bool Kick(int ply, string reason, string adminUserName = "")
+        public static bool Kick(TSPlayer player, string reason, string adminUserName = "")
         {
-            if (!Netplay.serverSock[ply].active || Netplay.serverSock[ply].kill)
+            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
                 return true;
-            if (!TShock.Players[ply].Group.HasPermission("immunetokick"))
+            if (!player.Group.HasPermission("immunetokick"))
             {
-                string playerName = Main.player[ply].name;
-                NetMessage.SendData(0x2, ply, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
+                string playerName = player.Name;
+                NetMessage.SendData(0x2, player.Index, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
                 Log.Info(string.Format("Kicked {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
@@ -236,16 +236,16 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static bool Ban(int plr, string reason, string adminUserName = "")
+        public static bool Ban(TSPlayer player, string reason, string adminUserName = "")
         {
-            if (!Netplay.serverSock[plr].active || Netplay.serverSock[plr].kill)
+            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
                 return true;
-            if (!TShock.Players[plr].Group.HasPermission("immunetoban"))
+            if (!player.Group.HasPermission("immunetoban"))
             {
-                string ip = GetPlayerIP(plr);
-                string playerName = Main.player[plr].name;
+                string ip = GetPlayerIP(player.Index);
+                string playerName = player.Name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                NetMessage.SendData(0x2, plr, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);
+                NetMessage.SendData(0x2, player.Index, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);
                 Log.Info(string.Format("Banned {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
@@ -256,37 +256,37 @@ namespace TShockAPI
             return false;
         }
 
-        public static bool HandleCheater(int ply, string reason)
+        public static bool HandleCheater(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(ply, "ignorecheatdetection", ConfigurationManager.BanCheater, ConfigurationManager.KickCheater, reason);
+            return HandleBadPlayer(player, "ignorecheatdetection", ConfigurationManager.BanCheater, ConfigurationManager.KickCheater, reason);
         }
 
-        public static bool HandleGriefer(int ply, string reason)
+        public static bool HandleGriefer(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer, reason);
         }
 
-        public static bool HandleTntUser(int ply, string reason)
+        public static bool HandleTntUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanTnt, ConfigurationManager.KickTnt, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanTnt, ConfigurationManager.KickTnt, reason);
         }
 
-        public static bool HandleExplosivesUser(int ply, string reason)
+        public static bool HandleExplosivesUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(ply, "ignoregriefdetection", ConfigurationManager.BanBoom, ConfigurationManager.KickBoom, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanBoom, ConfigurationManager.KickBoom, reason);
         }
 
-        private static bool HandleBadPlayer(int ply, string overridePermission, bool ban, bool kick, string reason)
+        private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)
         {
-            if (!TShock.Players[ply].Group.HasPermission(overridePermission))
+            if (!player.Group.HasPermission(overridePermission))
             {
                 if (ban)
                 {
-                    return Ban(ply, reason);
+                    return Ban(player, reason);
                 }
                 if (kick)
                 {
-                    return Kick(ply, reason);
+                    return Kick(player, reason);
                 }
             }
             return false;

@@ -224,6 +224,7 @@ namespace TShockAPI
                 }
                 else
                 {
+                    Tools.SendLogs(string.Format("{0} executed: /{1}", TSPlayer.Server.Name, text), Color.Red);
                     cmd.Run(text, TSPlayer.Server, args);
                 }
                 e.Handled = true;
@@ -343,7 +344,7 @@ namespace TShockAPI
             }
             if (Players[e.Msg.whoAmI].ReceivedInfo)
             {
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Sent client info more than once");
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Sent client info more than once");
             }
 
             Players[e.Msg.whoAmI].ReceivedInfo = true;
@@ -367,10 +368,11 @@ namespace TShockAPI
                         Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
                         size
                     ));
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Send Tile Square Abuse");
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Send Tile Square Abuse");
             }
             return false;
         }
+
         bool HandleTile(MemoryStream data, GetDataEventArgs e)
         {
             byte type = data.ReadInt8();
@@ -384,9 +386,9 @@ namespace TShockAPI
                 int tileX = Math.Abs(x);
                 int tileY = Math.Abs(y);
 
-                if (Main.player[e.Msg.whoAmI].selectedItem == 0x72) //Dirt Rod
+                if (Players[e.Msg.whoAmI].TPlayer.selectedItem == 0x72) //Dirt Rod
                 {
-                    return Tools.Kick(e.Msg.whoAmI, "Using dirt rod");
+                    return Tools.Kick(Players[e.Msg.whoAmI], "Using dirt rod");
                 }
 
                 if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
@@ -397,7 +399,7 @@ namespace TShockAPI
                         Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
                         tiletype
                     ));
-                    return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place blocks.");
+                    return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Placing impossible to place blocks.");
                 }
             }
             if (ConfigurationManager.DisableBuild)
@@ -455,12 +457,12 @@ namespace TShockAPI
 
         bool HandleSendSection(MemoryStream data, GetDataEventArgs e)
         {
-            return Tools.HandleGriefer(e.Msg.whoAmI, "SendSection abuse.");
+            return Tools.HandleGriefer(Players[e.Msg.whoAmI], "SendSection abuse.");
         }
 
         bool HandleNpcUpdate(MemoryStream data, GetDataEventArgs e)
         {
-            return Tools.HandleGriefer(e.Msg.whoAmI, "Spawn NPC abuse");
+            return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Spawn NPC abuse");
         }
 
         bool HandlePlayerUpdate(MemoryStream data, GetDataEventArgs e)
@@ -478,7 +480,7 @@ namespace TShockAPI
 
             if (plr != e.Msg.whoAmI)
             {
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Update Player abuse");
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Update Player abuse");
             }
             return false;
         }
@@ -503,7 +505,7 @@ namespace TShockAPI
                         (int)(plr.position.Y / 16),
                         type
                     ));
-                return Tools.HandleExplosivesUser(e.Msg.whoAmI, "Throwing an explosive device.");
+                return Tools.HandleExplosivesUser(Players[e.Msg.whoAmI], "Throwing an explosive device.");
             }
             return false;
         }
@@ -517,7 +519,7 @@ namespace TShockAPI
 
             if (id != e.Msg.whoAmI)
             {
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Trying to execute KillMe on someone else.");
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Trying to execute KillMe on someone else.");
             }
             return false;
         }
@@ -581,7 +583,7 @@ namespace TShockAPI
                         Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
                            liquid
                     ));
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Manipulating liquid without bucket."); ;
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Manipulating liquid without bucket."); ;
             }
             if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
             {
@@ -591,7 +593,7 @@ namespace TShockAPI
                            Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
                            liquid
                        ));
-                return Tools.HandleGriefer(e.Msg.whoAmI, "Placing impossible to place liquid."); ;
+                return Tools.HandleGriefer(Players[e.Msg.whoAmI], "Placing impossible to place liquid."); ;
             }
 
             if (ConfigurationManager.SpawnProtect)
@@ -639,7 +641,7 @@ namespace TShockAPI
             Tools.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(who))
             {
-                Tools.HandleCheater(who, "Hacked health.");
+                Tools.HandleCheater(player, "Hacked health.");
             }
             if (ConfigurationManager.PermaPvp)
             {
@@ -660,7 +662,7 @@ namespace TShockAPI
 
             if (msg.whoAmI != ply)
             {
-                e.Handled = Tools.HandleGriefer(ply, "Faking Chat");
+                e.Handled = Tools.HandleGriefer(Players[ply], "Faking Chat");
                 return;
             }
 
@@ -789,24 +791,25 @@ namespace TShockAPI
             {
                 if (Main.player[i].active == false)
                     continue;
-                if (Players[i].TileThreshold >= 20)
+                TSPlayer player = Players[i];
+                if (player.TileThreshold >= 20)
                 {
-                    if (Tools.HandleTntUser(i, "Kill tile abuse detected."))
+                    if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                     {
-                        RevertKillTile(i);
-                        Players[i].TileThreshold = 0;
-                        Players[i].TilesDestroyed.Clear();
+                        RevertKillTile(player);
+                        player.TileThreshold = 0;
+                        player.TilesDestroyed.Clear();
                     }
-                    else if (Players[i].TileThreshold > 0)
+                    else if (player.TileThreshold > 0)
                     {
-                        Players[i].TileThreshold = 0;
-                        Players[i].TilesDestroyed.Clear();
+                        player.TileThreshold = 0;
+                        player.TilesDestroyed.Clear();
                     }
 
                 }
-                else if (Players[i].TileThreshold > 0)
+                else if (player.TileThreshold > 0)
                 {
-                    Players[i].TileThreshold = 0;
+                    player.TileThreshold = 0;
                 }
             }
         }
@@ -962,13 +965,13 @@ namespace TShockAPI
                 return true;
         }
 
-        public static void RevertKillTile(int ply)
+        public static void RevertKillTile(TSPlayer player)
         {
-            Tile[] tiles = new Tile[Players[ply].TilesDestroyed.Count];
-            Players[ply].TilesDestroyed.Values.CopyTo(tiles, 0);
-            Vector2[] positions = new Vector2[Players[ply].TilesDestroyed.Count];
-            Players[ply].TilesDestroyed.Keys.CopyTo(positions, 0);
-            for (int i = (Players[ply].TilesDestroyed.Count - 1); i >= 0; i--)
+            Tile[] tiles = new Tile[player.TilesDestroyed.Count];
+            player.TilesDestroyed.Values.CopyTo(tiles, 0);
+            Vector2[] positions = new Vector2[player.TilesDestroyed.Count];
+            player.TilesDestroyed.Keys.CopyTo(positions, 0);
+            for (int i = (player.TilesDestroyed.Count - 1); i >= 0; i--)
             {
                 Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
                 NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);

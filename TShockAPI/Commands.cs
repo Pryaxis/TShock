@@ -329,7 +329,7 @@ namespace TShockAPI
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Kick(player[0].Index, reason))
+                if (!Tools.Kick(player[0], reason))
                 {
                     args.Player.SendMessage("You can't kick another admin!", Color.Red);
                 }
@@ -364,7 +364,7 @@ namespace TShockAPI
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Ban(player[0].Index, reason))
+                if (!Tools.Ban(player[0], reason))
                 {
                     args.Player.SendMessage("You can't ban another admin!", Color.Red);
                 }
@@ -794,8 +794,6 @@ namespace TShockAPI
 
         public static void Heal(CommandArgs args)
         {
-            int adminplr = args.PlayerID;
-
             if (args.Parameters.Count > 0)
             {
                 string plStr = String.Join(" ", args.Parameters);
