@@ -176,6 +176,21 @@ namespace TShockAPI
             HandleCommandLine(Environment.GetCommandLineArgs());
         }
 
+        public override void DeInitialize()
+        {
+            Bans.SaveBans();
+            ConfigurationManager.WriteJsonConfiguration();
+            GameHooks.PostInitialize -= OnPostInit;
+            GameHooks.Update -= OnUpdate;
+            ServerHooks.Chat -= OnChat;
+            ServerHooks.Join -= OnJoin;
+            ServerHooks.Leave -= OnLeave;
+            ServerHooks.Command -= ServerHooks_OnCommand;
+            NetHooks.GetData -= GetData;
+            NetHooks.GreetPlayer -= OnGreetPlayer;
+            NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+        }
+
         /// <summary>
         /// Handles exceptions that we didn't catch or that Red fucked up
         /// </summary>
@@ -194,6 +209,11 @@ namespace TShockAPI
             }
             Log.Error(e.ExceptionObject.ToString());
         }
+
+        /*
+         * Hooks:
+         * 
+         */
 
         /// <summary>
         /// When a server command is run.
@@ -253,25 +273,6 @@ namespace TShockAPI
             else if (text.StartsWith("say "))
                 Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
         }
-
-        public override void DeInitialize()
-        {
-            Bans.SaveBans();
-            ConfigurationManager.WriteJsonConfiguration();
-            GameHooks.PostInitialize -= OnPostInit;
-            GameHooks.Update -= OnUpdate;
-            ServerHooks.Chat -= OnChat;
-            ServerHooks.Join -= OnJoin;
-            ServerHooks.Leave -= OnLeave;
-            ServerHooks.Command -= ServerHooks_OnCommand;
-            NetHooks.GetData -= GetData;
-            NetHooks.GreetPlayer -= OnGreetPlayer;
-            NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-        }
-
-        /*
-         * Hooks:
-         * */
 
         private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {

@@ -22,7 +22,6 @@ namespace TShockAPI
 {
     internal class FileTools
     {
-        public static readonly string ErrorsPath = Path.Combine(TShock.SavePath, "errors.txt");
         public static readonly string RulesPath = Path.Combine(TShock.SavePath, "rules.txt");
         public static readonly string MotdPath = Path.Combine(TShock.SavePath, "motd.txt");
         public static readonly string BansPath = Path.Combine(TShock.SavePath, "bans.txt");
@@ -42,17 +41,6 @@ namespace TShockAPI
             {
                 File.WriteAllText(file, data);
             }
-        }
-
-        /// <summary>
-        /// Writes an error message to errors.txt
-        /// </summary>
-        /// <param name="err">string message</param>
-        public static void WriteError(string err)
-        {
-            TextWriter tw = new StreamWriter(ErrorsPath, true);
-            tw.WriteLine(err);
-            tw.Close();
         }
 
         /// <summary>

@@ -74,7 +74,15 @@ namespace TShockAPI
             if (!ply.Group.HasPermission(permission))
                 return false;
 
-            command(new CommandArgs(msg, ply, parms));
+            try
+            {
+                command(new CommandArgs(msg, ply, parms));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.ToString());
+            }
+
             return true;
         }
 

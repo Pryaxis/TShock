@@ -60,7 +60,7 @@ namespace TShockAPI
             }
             catch (Exception e)
             {
-                FileTools.WriteError(e.Message);
+                Log.Error(e.ToString());
             }
             return false;
         }
