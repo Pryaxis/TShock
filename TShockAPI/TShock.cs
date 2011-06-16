@@ -139,14 +139,8 @@ namespace TShockAPI
 
         public override void Initialize()
         {
-            try
-            {
-                FileTools.SetupConfig();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            FileTools.SetupConfig();
+
             string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
             Console.WriteLine(version);
 
@@ -179,7 +173,6 @@ namespace TShockAPI
         public override void DeInitialize()
         {
             Bans.SaveBans();
-            ConfigurationManager.WriteJsonConfiguration();
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
             ServerHooks.Chat -= OnChat;
