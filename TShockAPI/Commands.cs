@@ -44,11 +44,6 @@ namespace TShockAPI
             get { return Player.TPlayer; }
         }
 
-        public int PlayerID
-        {
-            get { return Player.Index; }
-        }
-
         public CommandArgs(string message, TSPlayer ply, List<string> args)
         {
             Message = message;
@@ -80,6 +75,7 @@ namespace TShockAPI
             }
             catch (Exception e)
             {
+                ply.SendMessage("Command failed, check logs for more details.");
                 Log.Error(e.ToString());
             }
 
@@ -544,17 +540,15 @@ namespace TShockAPI
 
         private static void Home(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.player[args.PlayerID].SpawnX * 16 + 8 - Main.player[ply].width / 2,
-                            Main.player[args.PlayerID].SpawnY * 16 - Main.player[ply].height);
+            TShock.Teleport(args.Player.Index, args.TPlayer.SpawnX * 16 + 8 - args.TPlayer.width / 2,
+                            args.TPlayer.SpawnY * 16 - args.TPlayer.height);
             args.Player.SendMessage("Teleported to your spawnpoint.");
         }
 
         private static void Spawn(CommandArgs args)
         {
-            int ply = args.PlayerID;
-            TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2,
-                            Main.spawnTileY * 16 - Main.player[ply].height);
+            TShock.Teleport(args.Player.Index, Main.spawnTileX * 16 + 8 - args.TPlayer.width / 2,
+                            Main.spawnTileY * 16 - args.TPlayer.height);
             args.Player.SendMessage("Teleported to the map's spawnpoint.");
         }
 
@@ -577,8 +571,6 @@ namespace TShockAPI
 
         private static void TP(CommandArgs args)
         {
-            int adminplr = args.PlayerID;
-
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /tp <player> ", Color.Red);
@@ -594,7 +586,7 @@ namespace TShockAPI
             else
             {
                 var plr = player[0];
-                TShock.Teleport(adminplr, plr.TPlayer.position.X, plr.TPlayer.position.Y);
+                TShock.Teleport(args.Player.Index, plr.X, plr.Y);
                 args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
             }
         }
@@ -620,7 +612,7 @@ namespace TShockAPI
             else
             {
                 var plr = player[0];
-                TShock.Teleport(plr.Index, args.TPlayer.position.X, args.TPlayer.position.Y);
+                TShock.Teleport(plr.Index, args.Player.X, args.Player.Y);
                 plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
                 args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
             }
@@ -749,20 +741,13 @@ namespace TShockAPI
                 {
                     if (!plr.TPlayer.inventory[i].active)
                     {
-                        //Main.player[player].inventory[i].SetDefaults(type);
-                        //Main.player[player].inventory[i].stack = Main.player[player].inventory[i].maxStack;
                         int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
-                        Main.item[id].position.X = plr.TPlayer.position.X;
-                        Main.item[id].position.Y = plr.TPlayer.position.Y;
+                        Main.item[id].position.X = plr.X;
+                        Main.item[id].position.Y = plr.Y;
                         Main.item[id].stack = Main.item[id].maxStack;
-                        //TShock.SendDataAll(21, -1, "", id);
                         NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                        args.Player.SendMessage(
-                                          string.Format("Gave {0} some {1}.", plr.Name, Main.item[id].name));
-                        plr.SendMessage(
-                                          string.Format("{0} gave you some {1}.", args.Player.Name,
-                                                        Main.item[id].name));
-                        //TShock.UpdateInventories();
+                        args.Player.SendMessage(string.Format("Gave {0} some {1}.", plr.Name, Main.item[id].name));
+                        plr.SendMessage(string.Format("{0} gave you some {1}.", args.Player.Name, Main.item[id].name));
                         flag = true;
                         break;
                     }
@@ -789,10 +774,21 @@ namespace TShockAPI
                 else
                 {
                     var plr = player[0];
-                    DropHearts(plr.TPlayer.position.X, plr.TPlayer.position.Y, 20);
-                    args.Player.SendMessage(string.Format("You just healed {0}", plr.Name));
-                    plr.SendMessage(string.Format("{0} just healed you!", plr.Name));
+                    DropHearts(plr.X, plr.Y, 20);
+                    if (plr == args.Player)
+                    {
+                        args.Player.SendMessage("You just got healed!");
+                    }
+                    else
+                    {
+                        args.Player.SendMessage(string.Format("You just healed {0}", plr.Name));
+                        plr.SendMessage(string.Format("{0} just healed you!", args.Player.Name));
+                    }
                 }
+            }
+            else if (args.Player.Index < 0)
+            {
+                args.Player.SendMessage("You cant heal yourself!");
             }
             else
             {

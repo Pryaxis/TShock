@@ -215,7 +215,35 @@ namespace TShockAPI
         /// <param name="e"></param>
         private void ServerHooks_OnCommand(string text, HandledEventArgs e)
         {
-            if (text.StartsWith("/"))
+            // Damn you ThreadStatic and Redigit
+            if (Main.rand == null)
+            {
+                Main.rand = new Random();
+            }
+
+            if (text.StartsWith("exit"))
+            {
+                Tools.ForceKickAll("Server shutting down!");
+            }
+            else if (text.StartsWith("playing") || text.StartsWith("/playing"))
+            {
+                int count = 0;
+                foreach (TSPlayer player in Players)
+                {
+                    if (player != null && player.Active)
+                    {
+                        count++;
+                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}]", player.Name, player.IP, player.Group.Name));
+                    }
+                }
+                TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
+                e.Handled = true;
+            }
+            else if (text.StartsWith("say "))
+            {
+                Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
+            }
+            else if (text.StartsWith("/"))
             {
                 string cmdStr = text.Remove(0, 1);
                 var args = Commands.ParseParameters(cmdStr);
@@ -236,7 +264,7 @@ namespace TShockAPI
 
                 if (cmd == null)
                 {
-                    TSPlayer.Server.SendMessage("That command does not exist, try /help", Color.Red);
+                    TSPlayer.Server.SendMessage("That command does not exist, try /help");
                 }
                 else
                 {
@@ -245,26 +273,7 @@ namespace TShockAPI
                 }
                 e.Handled = true;
             }
-            else if (text.StartsWith("exit"))
-            {
-                Tools.ForceKickAll("Server shutting down!");
-            }
-            else if (text.StartsWith("playing"))
-            {
-                int count = 0;
-                foreach (TSPlayer player in Players)
-                {
-                    if (player != null && player.Active)
-                    {
-                        count++;
-                        Console.WriteLine(string.Format("{0} ({1}) [{2}]", player.Name, player.IP, player.Group.Name));
-                    }
-                }
-                Console.WriteLine(string.Format("{0} players connected.", count));
-                e.Handled = true;
-            }
-            else if (text.StartsWith("say "))
-                Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
+            
         }
 
         private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)

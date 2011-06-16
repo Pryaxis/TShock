@@ -101,6 +101,7 @@ namespace TShockAPI
             Log.Info(string.Format("Broadcast: {0}", msg));
 
         }
+
         public static void Broadcast(string msg, Color color)
         {
             Broadcast(msg, color.R, color.G, color.B);
