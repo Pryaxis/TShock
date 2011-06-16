@@ -215,7 +215,7 @@ namespace TShockAPI
         {
             if (!player.ConnectionAlive)
                 return;
-            NetMessage.SendData(0x2, player.Index, -1, reason, 0x0, 0f, 0f, 0f);
+            player.Disconnect(reason);
             Log.Info(string.Format("{0} was force kicked for : {1}", player.IP, reason));
         }
 
@@ -231,7 +231,7 @@ namespace TShockAPI
             if (!player.Group.HasPermission("immunetokick"))
             {
                 string playerName = player.Name;
-                NetMessage.SendData(0x2, player.Index, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
+                player.Disconnect(string.Format("Kicked: {0}", reason));
                 Log.Info(string.Format("Kicked {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
@@ -256,7 +256,7 @@ namespace TShockAPI
                 string ip = player.IP;
                 string playerName = player.Name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                NetMessage.SendData(0x2, player.Index, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);
+                player.Disconnect(string.Format("Banned: {0}", reason));
                 Log.Info(string.Format("Banned {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));

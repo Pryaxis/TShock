@@ -19,12 +19,13 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
+using TerrariaAPI;
 
 namespace TShockAPI
 {
     public class TSPlayer
     {
-        public static readonly TSPlayer Server = new ServerPlayer();
+        public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public uint TileThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; set; }
@@ -104,6 +105,22 @@ namespace TShockAPI
             Group = new Group("null");
         }
 
+        public virtual void Disconnect(string reason)
+        {
+            if (Index == -1)
+                return;
+
+            NetMessage.SendData((int)PacketTypes.Disconnect, Index, -1, reason, 0x0, 0f, 0f, 0f);
+        }
+
+        public virtual void SendTileSquare(int x, int y, int size = 10)
+        {
+            if (Index == -1)
+                return;
+
+            NetMessage.SendData((int)PacketTypes.TileSendSquare, Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
+        }
+
         public virtual void SendMessage(string msg)
         {
             SendMessage(msg, 0, 255, 0);
@@ -116,30 +133,72 @@ namespace TShockAPI
 
         public virtual void SendMessage(string msg, byte red, byte green, byte blue)
         {
-            NetMessage.SendData(0x19, Index, -1, msg, 255, red, green, blue);
+            NetMessage.SendData((int)PacketTypes.ChatText, Index, -1, msg, 255, red, green, blue);
+        }
+
+        public virtual void DamagePlayer(int damage)
+        {
+            if (Index == -1)
+                return;
+
+            NetMessage.SendData((int)PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage, (float)0);
+        }
+
+        public virtual void SetPvP(bool pvp)
+        {
+            if (Index == -1)
+                return;
+
+            if (TPlayer.hostile != pvp)
+            {
+                TPlayer.hostile = pvp;
+                NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
+                All.SendMessage(string.Format("{0} has {1} PvP!", Name, pvp ? "enabled" : "disabled"), Main.teamColor[Team]);
+            }
         }
 
     }
 
-
-    public class ServerPlayer : TSPlayer
+    public class TSServerPlayer : TSPlayer
     {
-        public ServerPlayer() : base("Server")
+        public TSServerPlayer() : base("Server")
         {
             Group = new SuperAdminGroup();
         }
 
         public override void SendMessage(string msg)
         {
-            Console.WriteLine(msg);
+            SendMessage(msg, 0, 255, 0);
         }
-        public override void SendMessage(string msg, byte red, byte green, byte blue)
-        {
-            SendMessage(msg);
-        }
+
         public override void SendMessage(string msg, Color color)
         {
-            SendMessage(msg);
+            SendMessage(msg, color.R, color.G, color.B);
+        }
+
+        public override void SendMessage(string msg, byte red, byte green, byte blue)
+        {
+            Console.WriteLine(msg);
+        }
+
+        public void SetBloodMoon(bool bloodMoon)
+        {
+            Main.bloodMoon = bloodMoon;
+            SetTime(false, 0);
+        }
+
+        public void SetTime(bool dayTime, double time)
+        {
+            Main.dayTime = dayTime;
+            Main.time = time;
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+            NetMessage.syncPlayers();
+        }
+
+        public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
+        {
+            Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
+            NetMessage.SendData((int)PacketTypes.NPCStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
     }
 }

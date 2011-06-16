@@ -490,12 +490,8 @@ namespace TShockAPI
 
         private static void Bloodmoon(CommandArgs args)
         {
+            TSPlayer.Server.SetBloodMoon(true);
             Tools.Broadcast(string.Format("{0} turned on blood moon.", args.Player.Name));
-            Main.bloodMoon = true;
-            Main.time = 0;
-            Main.dayTime = false;
-            NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-            NetMessage.syncPlayers();
         }
 
         private static void Invade(CommandArgs args)
@@ -728,38 +724,23 @@ namespace TShockAPI
             switch (args.Parameters[0])
             {
                 case "day":
-                    Main.time = 0;
-                    Main.dayTime = true;
-                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                    NetMessage.syncPlayers();
+                    TSPlayer.Server.SetTime(true, 0.0);
                     Tools.Broadcast(string.Format("{0} set time to day.", args.Player.Name));
                     break;
                 case "night":
-                    Main.time = 0;
-                    Main.dayTime = false;
-                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                    NetMessage.syncPlayers();
+                    TSPlayer.Server.SetTime(false, 0.0);
                     Tools.Broadcast(string.Format("{0} set time to night.", args.Player.Name));
                     break;
                 case "dusk":
-                    Main.dayTime = false;
-                    Main.time = 0.0;
-                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                    NetMessage.syncPlayers();
+                    TSPlayer.Server.SetTime(false, 0.0);
                     Tools.Broadcast(string.Format("{0} set time to dusk.", args.Player.Name));
                     break;
                 case "noon":
-                    Main.dayTime = true;
-                    Main.time = 27000.0;
-                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                    NetMessage.syncPlayers();
+                    TSPlayer.Server.SetTime(true, 27000.0);
                     Tools.Broadcast(string.Format("{0} set time to noon.", args.Player.Name));
                     break;
                 case "midnight":
-                    Main.dayTime = false;
-                    Main.time = 16200.0;
-                    NetMessage.SendData(18, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-                    NetMessage.syncPlayers();
+                    TSPlayer.Server.SetTime(false, 16200.0);
                     Tools.Broadcast(string.Format("{0} set time to midnight.", args.Player.Name));
                     break;
                 default:
@@ -914,7 +895,7 @@ namespace TShockAPI
                 {
                     int.TryParse(args.Parameters[1], out damage);
                 }
-                TShock.PlayerDamage(plr, damage);
+                plr.DamagePlayer(damage);
                 Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
                                 args.Player.Name, plr.Name, damage));
             }
@@ -941,9 +922,9 @@ namespace TShockAPI
             else
             {
                 var plr = player[0];
+                plr.DamagePlayer(999999);
                 args.Player.SendMessage(string.Format("You just killed {0}!", plr.Name));
                 plr.SendMessage(string.Format("{0} just killed you!", args.Player.Name));
-                TShock.PlayerDamage(plr, 999999);
             }
         }
 
@@ -954,8 +935,7 @@ namespace TShockAPI
             {
                 if (!Main.npc[i].townNPC && Main.npc[i].active)
                 {
-                    Main.npc[i].StrikeNPC(99999, 90f, 1);
-                    NetMessage.SendData(28, -1, -1, "", i, 99999, 90f, 1);
+                    TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
                     killcount++;
                 }
             }

@@ -146,7 +146,6 @@ namespace TShockAPI
                 Tools.ForceKick(args.Player, "Hair crash exploit.");
                 return true;
             }
-
             if (name.Length > 32)
             {
                 Tools.ForceKick(args.Player, "Name exceeded 32 characters.");
@@ -215,7 +214,7 @@ namespace TShockAPI
                 if (!args.Player.Group.HasPermission("editspawn"))
                 {
                     args.Player.SendMessage("World protected from changes.", Color.Red);
-                    TShock.SendTileSquare(args.Player, x, y);
+                    args.Player.SendTileSquare(x, y);
                     return true;
                 }
             }
@@ -227,7 +226,7 @@ namespace TShockAPI
                     if (flag)
                     {
                         args.Player.SendMessage("Spawn protected from changes.", Color.Red);
-                        TShock.SendTileSquare(args.Player, x, y);
+                        args.Player.SendTileSquare(x, y);
                         return true;
                     }
                 }
@@ -248,12 +247,7 @@ namespace TShockAPI
             int id = args.Data.ReadByte();
             bool pvp = args.Data.ReadBoolean();
 
-            args.TPlayer.hostile = pvp;
-            if (id != args.Player.Index)
-                args.TPlayer.hostile = true;
-            if (ConfigurationManager.PermaPvp)
-                args.TPlayer.hostile = true;
-            NetMessage.SendData(30, -1, -1, "", args.Player.Index);
+            args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : pvp);
             return true;
         }
 
@@ -382,11 +376,7 @@ namespace TShockAPI
             if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
-                           plyX, plyY,
-                           tileX, tileY,
-                           Math.Abs(plyX - tileX), Math.Abs(plyY - tileY),
-                           liquid
-                       ));
+                                        plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), liquid));
                 return Tools.HandleGriefer(args.Player, "Placing impossible to place liquid."); ;
             }
 

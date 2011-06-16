@@ -367,8 +367,7 @@ namespace TShockAPI
             }
             if (ConfigurationManager.PermaPvp)
             {
-                Main.player[who].hostile = true;
-                NetMessage.SendData(30, -1, -1, "", who);
+                player.SetPvP(true);
             }
             if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
@@ -463,17 +462,6 @@ namespace TShockAPI
                         break;
                 }
             }
-        }
-
-
-        public static void PlayerDamage(TSPlayer player, int damage)
-        {
-            NetMessage.SendData(26, -1, -1, "", player.Index, ((new Random()).Next(-1, 1)), damage, (float)0);
-        }
-
-        public static void SendTileSquare(TSPlayer player, int x, int y, int size = 10)
-        {
-            NetMessage.SendData(20, player.Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
