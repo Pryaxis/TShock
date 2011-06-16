@@ -233,19 +233,24 @@ namespace TShockAPI
             }
         }
 
+        public static void AddUpdateCommand()
+        {
+            Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
+        }
+
         #region Command Methods
 
-        public static void Rules(CommandArgs args)
+        private static void Rules(CommandArgs args)
         {
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
 
-        public static void CheckUpdates(CommandArgs args)
+        private static void CheckUpdates(CommandArgs args)
         {
             ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
         }
 
-        public static void PartyChat(CommandArgs args)
+        private static void PartyChat(CommandArgs args)
         {
             int playerTeam = args.Player.Team;
             if (playerTeam != 0)
@@ -263,18 +268,18 @@ namespace TShockAPI
             }
         }
 
-        public static void ThirdPerson(CommandArgs args)
+        private static void ThirdPerson(CommandArgs args)
         {
             string msg = args.Message.Remove(0, 3);
             Tools.Broadcast(string.Format("*{0} {1}", args.Player.Name, msg), 205, 133, 63);
         }
 
-        public static void Playing(CommandArgs args)
+        private static void Playing(CommandArgs args)
         {
             args.Player.SendMessage(string.Format("Current players: {0}.", Tools.GetPlayers()), 255, 240, 20);
         }
 
-        public static void Kick(CommandArgs args)
+        private static void Kick(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
@@ -307,10 +312,8 @@ namespace TShockAPI
             }
         }
 
-        public static void Ban(CommandArgs args)
+        private static void Ban(CommandArgs args)
         {
-            int adminplr = args.PlayerID;
-
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /ban <player> [reason]", Color.Red);
@@ -342,7 +345,7 @@ namespace TShockAPI
             }
         }
 
-        public static void BanIP(CommandArgs args)
+        private static void BanIP(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
@@ -360,7 +363,7 @@ namespace TShockAPI
             TShock.Bans.AddBan(ip, "", reason);
         }
 
-        public static void UnBan(CommandArgs args)
+        private static void UnBan(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
@@ -386,7 +389,7 @@ namespace TShockAPI
             }
         }
 
-        public static void UnBanIP(CommandArgs args)
+        private static void UnBanIP(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
@@ -412,20 +415,20 @@ namespace TShockAPI
             }
         }
 
-        public static void Off(CommandArgs args)
+        private static void Off(CommandArgs args)
         {
             Tools.ForceKickAll("Server shutting down!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }
 
-        public static void OffNoSave(CommandArgs args)
+        private static void OffNoSave(CommandArgs args)
         {
             Tools.ForceKickAll("Server shutting down!");
             Netplay.disconnect = true;
         }
 
-        public static void DebugConfiguration(CommandArgs args)
+        private static void DebugConfiguration(CommandArgs args)
         {
             args.Player.SendMessage("TShock Config:");
             string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
@@ -447,19 +450,19 @@ namespace TShockAPI
             args.Player.SendMessage(lineFour, Color.Yellow);
         }
 
-        public static void Reload(CommandArgs args)
+        private static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
             args.Player.SendMessage("Configuration reload complete. Some changes may require server restart.");
         }
 
-        public static void DropMeteor(CommandArgs args)
+        private static void DropMeteor(CommandArgs args)
         {
             WorldGen.spawnMeteor = false;
             WorldGen.dropMeteor();
         }
 
-        public static void Star(CommandArgs args)
+        private static void Star(CommandArgs args)
         {
             int penis56 = 12;
             int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
@@ -475,7 +478,7 @@ namespace TShockAPI
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
         }
 
-        public static void Bloodmoon(CommandArgs args)
+        private static void Bloodmoon(CommandArgs args)
         {
             Tools.Broadcast(string.Format("{0} turned on blood moon.", args.Player.Name));
             Main.bloodMoon = true;
@@ -485,25 +488,25 @@ namespace TShockAPI
             NetMessage.syncPlayers();
         }
 
-        public static void Eater(CommandArgs args)
+        private static void Eater(CommandArgs args)
         {
             Tools.NewNPC(NPCList.WORLD_EATER, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned an eater of worlds!", args.Player.Name));
         }
 
-        public static void Eye(CommandArgs args)
+        private static void Eye(CommandArgs args)
         {
             Tools.NewNPC(NPCList.EYE, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned an eye!", args.Player.Name));
         }
 
-        public static void Skeletron(CommandArgs args)
+        private static void Skeletron(CommandArgs args)
         {
             Tools.NewNPC(NPCList.SKELETRON, args.Player);
             Tools.Broadcast(string.Format("{0} has spawned skeletron!", args.Player.Name));
         }
 
-        public static void Hardcore(CommandArgs args)
+        private static void Hardcore(CommandArgs args)
         {
             foreach (NPCList type in Enum.GetValues(typeof(NPCList)))
             {
@@ -512,7 +515,7 @@ namespace TShockAPI
             Tools.Broadcast(string.Format("{0} has spawned all bosses!", args.Player.Name));
         }
 
-        public static void Invade(CommandArgs args)
+        private static void Invade(CommandArgs args)
         {
             if (Main.invasionSize <= 0)
             {
@@ -526,20 +529,20 @@ namespace TShockAPI
             }
         }
 
-        public static void Password(CommandArgs args)
+        private static void Password(CommandArgs args)
         {
             string passwd = args.Message.Remove(0, 9).Trim();
             Netplay.password = passwd;
             args.Player.SendMessage(string.Format("Server password changed to: {0}", passwd));
         }
 
-        public static void Save(CommandArgs args)
+        private static void Save(CommandArgs args)
         {
             WorldGen.saveWorld();
             args.Player.SendMessage("World saved.");
         }
 
-        public static void Home(CommandArgs args)
+        private static void Home(CommandArgs args)
         {
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.player[args.PlayerID].SpawnX * 16 + 8 - Main.player[ply].width / 2,
@@ -547,7 +550,7 @@ namespace TShockAPI
             args.Player.SendMessage("Teleported to your spawnpoint.");
         }
 
-        public static void Spawn(CommandArgs args)
+        private static void Spawn(CommandArgs args)
         {
             int ply = args.PlayerID;
             TShock.Teleport(ply, Main.spawnTileX * 16 + 8 - Main.player[ply].width / 2,
@@ -555,7 +558,7 @@ namespace TShockAPI
             args.Player.SendMessage("Teleported to the map's spawnpoint.");
         }
 
-        public static void AuthToken(CommandArgs args)
+        private static void AuthToken(CommandArgs args)
         {
             if (ConfigurationManager.AuthToken == 0)
             {
@@ -565,17 +568,14 @@ namespace TShockAPI
             if (givenCode == ConfigurationManager.AuthToken)
             {
                 TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                tw.Write("\n" +
-                         Tools.GetRealIP(
-                             Convert.ToString(Netplay.serverSock[args.PlayerID].tcpClient.Client.RemoteEndPoint)) +
-                         " superadmin");
+                tw.Write("\n" + args.Player.IP + " superadmin");
                 args.Player.SendMessage("SuperAdmin authenticated. Please re-connect using the same IP.");
                 ConfigurationManager.AuthToken = 0;
                 tw.Close();
             }
         }
 
-        public static void TP(CommandArgs args)
+        private static void TP(CommandArgs args)
         {
             int adminplr = args.PlayerID;
 
@@ -599,7 +599,7 @@ namespace TShockAPI
             }
         }
 
-        public static void TPHere(CommandArgs args)
+        private static void TPHere(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
@@ -626,7 +626,7 @@ namespace TShockAPI
             }
         }
 
-        public static void SpawnMob(CommandArgs args)
+        private static void SpawnMob(CommandArgs args)
         {
             if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
@@ -661,10 +661,8 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid mob type!", Color.Red);
         }
 
-        public static void Item(CommandArgs args)
+        private static void Item(CommandArgs args)
         {
-            int adminplr = args.PlayerID;
-
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id>", Color.Red);
@@ -689,7 +687,7 @@ namespace TShockAPI
             bool flag = false;
             for (int i = 0; i < 40; i++)
             {
-                if (!Main.player[adminplr].inventory[i].active)
+                if (!args.TPlayer.inventory[i].active)
                 {
                     int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
                     Main.item[id].position.X =  args.Player.X;
@@ -705,7 +703,7 @@ namespace TShockAPI
                 args.Player.SendMessage("You don't have free slots!", Color.Red);
         }
 
-        public static void Give(CommandArgs args)
+        private static void Give(CommandArgs args)
         {
             if (args.Parameters.Count != 2)
             {
@@ -774,7 +772,7 @@ namespace TShockAPI
             }
         }
 
-        public static void Heal(CommandArgs args)
+        private static void Heal(CommandArgs args)
         {
             if (args.Parameters.Count > 0)
             {
@@ -814,7 +812,7 @@ namespace TShockAPI
             }
         }
 
-        public static void Butcher(CommandArgs args)
+        private static void Butcher(CommandArgs args)
         {
             int killcount = 0;
             for (int i = 0; i < Main.npc.Length; i++)
@@ -829,7 +827,7 @@ namespace TShockAPI
             Tools.Broadcast(string.Format("Killed {0} NPCs.", killcount));
         }
 
-        public static void MaxSpawns(CommandArgs args)
+        private static void MaxSpawns(CommandArgs args)
         {
 
             if (args.Parameters.Count != 1)
@@ -845,7 +843,7 @@ namespace TShockAPI
             Tools.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", args.Player.Name, amount));
         }
 
-        public static void SpawnRate(CommandArgs args)
+        private static void SpawnRate(CommandArgs args)
         {
             if (args.Parameters.Count != 1)
             {
@@ -860,7 +858,7 @@ namespace TShockAPI
             Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
         }
 
-        public static void Help(CommandArgs args)
+        private static void Help(CommandArgs args)
         {
             args.Player.SendMessage("TShock Commands:");
             int page = 1;
@@ -900,7 +898,7 @@ namespace TShockAPI
             }
         }
 
-        public static void Time(CommandArgs args)
+        private static void Time(CommandArgs args)
         {
             if (args.Parameters.Count != 1)
             {
@@ -951,10 +949,8 @@ namespace TShockAPI
             }
         }
 
-        public static void Kill(CommandArgs args)
+        private static void Kill(CommandArgs args)
         {
-            int adminplr = args.PlayerID;
-
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /kill <player>", Color.Red);
@@ -980,7 +976,7 @@ namespace TShockAPI
             }
         }
 
-        public static void Slap(CommandArgs args)
+        private static void Slap(CommandArgs args)
         {
             if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
@@ -1017,19 +1013,19 @@ namespace TShockAPI
             }
         }
 
-        public static void ToggleAntiBuild(CommandArgs args)
+        private static void ToggleAntiBuild(CommandArgs args)
         {
             ConfigurationManager.DisableBuild = (ConfigurationManager.DisableBuild == false);
             Tools.Broadcast(string.Format("Anti-build is now {0}.", (ConfigurationManager.DisableBuild ? "on" : "off")));
         }
 
-        public static void ProtectSpawn(CommandArgs args)
+        private static void ProtectSpawn(CommandArgs args)
         {
             ConfigurationManager.SpawnProtect = (ConfigurationManager.SpawnProtect == false);
             Tools.Broadcast(string.Format("Spawn is now {0}.", (ConfigurationManager.SpawnProtect ? "protected" : "open")));
         }
 
-        public static void UpdateNow(CommandArgs args)
+        private static void UpdateNow(CommandArgs args)
         {
             Process TServer = Process.GetCurrentProcess();
 
