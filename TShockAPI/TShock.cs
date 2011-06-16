@@ -361,7 +361,7 @@ namespace TShockAPI
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
             Tools.ShowFileToUser(player, "motd.txt");
-            if (HackedHealth(who))
+            if (HackedHealth(player))
             {
                 Tools.HandleCheater(player, "Hacked health.");
             }
@@ -538,12 +538,12 @@ namespace TShockAPI
             }
         }
 
-        public static bool HackedHealth(int ply)
+        public static bool HackedHealth(TSPlayer player)
         {
-            return (Main.player[ply].statManaMax > 200) ||
-                    (Main.player[ply].statMana > 200) ||
-                    (Main.player[ply].statLifeMax > 400) ||
-                    (Main.player[ply].statLife > 400);
+            return (player.TPlayer.statManaMax > 200) ||
+                    (player.TPlayer.statMana > 200) ||
+                    (player.TPlayer.statLifeMax > 400) ||
+                    (player.TPlayer.statLife > 400);
         }
 
 
