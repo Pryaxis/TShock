@@ -465,26 +465,6 @@ namespace TShockAPI
             }
         }
 
-        public static void UpdateInventories()
-        {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                for (int j = 0; j < 44; j++)
-                {
-                    for (int h = 0; h < Main.player.Length; h++)
-                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, j, 0f, 0f);
-                }
-            }
-        }
-
-        public static void UpdatePlayers()
-        {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                for (int h = 0; h < Main.player.Length; h++)
-                    NetMessage.SendData(0x0d, i, -1, "", h);
-            }
-        }
 
         public static void PlayerDamage(TSPlayer player, int damage)
         {
