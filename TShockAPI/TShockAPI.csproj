@@ -47,12 +47,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TerrariaServer">
-      <HintPath>.\TerrariaServer.exe</HintPath>
-      <Private>False</Private>
+      <HintPath>TerrariaServerBins\TerrariaServer.exe</HintPath>
     </Reference>
     <Reference Include="TerrariaServerAPI">
-      <HintPath>.\TerrariaServerAPI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
