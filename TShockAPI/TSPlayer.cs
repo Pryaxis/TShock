@@ -33,19 +33,28 @@ namespace TShockAPI
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
-
+        public bool RealPlayer
+        {
+            get { return Index >= 0 && Index < Main.maxNetPlayers; }
+        }
+        public bool ConnectionAlive
+        {
+            get { return RealPlayer ? Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
+        }
         /// <summary>
         /// Terraria Player
         /// </summary>
         public Player TPlayer { get; protected set; }
-
         public string Name
         {
             get { return TPlayer.name; }
         }
         public string IP 
         {
-            get { return Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()); }
+            get 
+            {
+                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : ""; 
+            }
         }
         public bool Active
         {
@@ -55,14 +64,20 @@ namespace TShockAPI
         {
             get { return TPlayer.team; }
         }
-
         public float X
         {
-            get { return TPlayer.position.X; }
+            get 
+            {
+
+                return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16; 
+            }
         }
         public float Y
         {
-            get { return TPlayer.position.Y; }
+            get 
+            {
+                return RealPlayer ?  TPlayer.position.Y : Main.spawnTileY * 16;
+            }
         }
         public int TileX
         {
@@ -70,7 +85,7 @@ namespace TShockAPI
         }
         public int TileY
         {
-            get { return (int)(X / 16); }
+            get { return (int)(Y / 16); }
         }
 
         public TSPlayer(int index)

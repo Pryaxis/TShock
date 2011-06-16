@@ -59,6 +59,7 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="FileTools.cs" />
+    <Compile Include="GetDataHandlers.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Resources.Designer.cs">

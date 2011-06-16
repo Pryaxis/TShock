@@ -37,11 +37,30 @@ namespace TShockAPI
         /// Check once every X minutes.
         /// </summary>
         static readonly int CheckXMinutes = 30;
+
+        public static void UpdateProcedureCheck()
+        {
+            if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
+            {
+                ThreadPool.QueueUserWorkItem(CheckUpdate);
+                lastcheck = DateTime.Now;
+            }
+        }
+
+        public static void CheckUpdate(object o)
+        {
+            if (ServerIsOutOfDate())
+            {
+                EnableUpdateCommand();
+                NotifyAdministrators(globalChanges);
+            }
+        }
+
         /// <summary>
         /// Checks to see if the server is out of date.
         /// </summary>
         /// <returns></returns>
-        public static bool ServerIsOutOfDate()
+        private static bool ServerIsOutOfDate()
         {
             WebClient client = new WebClient();
             client.Headers.Add("user-agent",
@@ -65,42 +84,33 @@ namespace TShockAPI
             return false;
         }
 
-        public static void EnableUpdateCommand()
+        private static void EnableUpdateCommand()
         {
-            Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
-            updateCmd = true;
+            if (!updateCmd)
+            {
+                Commands.AddUpdateCommand();
+                updateCmd = true;
+            }
         }
-        
-        public static void NotifyAdministrators(string[] changes)
+
+        private static void NotifyAdministrators(string[] changes)
         {
+            NotifyAdministrator(TSPlayer.Server, changes);
             foreach (TSPlayer player in TShock.Players)
             {
                 if (player != null && player.Active && player.Group.HasPermission("maintenance"))
                 {
-                    player.SendMessage("The server is out of date. To update, type /updatenow.");
-                    for (int j = 4; j < changes.Length; j++)
-                    {
-                        player.SendMessage(changes[j], Color.Red);
-                    }
+                    NotifyAdministrator(player, changes);
                 }
             }
         }
 
-        public static void UpdateProcedureCheck()
+        private static void NotifyAdministrator(TSPlayer player, string[] changes)
         {
-            if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
+            player.SendMessage("The server is out of date. To update, type /updatenow.");
+            for (int j = 4; j < changes.Length; j++)
             {
-                ThreadPool.QueueUserWorkItem(CheckUpdate);
-                lastcheck = DateTime.Now;
-            }
-        }
-
-        public static void CheckUpdate(object o)
-        {
-            if (ServerIsOutOfDate())
-            {
-                EnableUpdateCommand();
-                NotifyAdministrators(globalChanges);
+                player.SendMessage(changes[j], Color.Red);
             }
         }
     }

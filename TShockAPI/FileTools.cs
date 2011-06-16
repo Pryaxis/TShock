@@ -66,6 +66,8 @@ namespace TShockAPI
                 if (File.Exists(ConfigPath))
                 {
                     ConfigurationManager.ReadJsonConfiguration();
+                    // Add all the missing config properties in the json file
+                    ConfigurationManager.WriteJsonConfiguration();
                 }
                 else
                 {

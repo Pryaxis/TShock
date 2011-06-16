@@ -74,6 +74,7 @@ namespace TShockAPI
         public void RemoveBan(Ban ban)
         {
             Bans.Remove(ban);
+            SaveBans();
         }
 
         /// <summary>
