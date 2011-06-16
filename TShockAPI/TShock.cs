@@ -220,6 +220,10 @@ namespace TShockAPI
             {
                 Main.rand = new Random();
             }
+            if (WorldGen.genRand == null)
+            {
+                WorldGen.genRand = new Random();
+            }
 
             if (text.StartsWith("exit"))
             {
