@@ -294,7 +294,7 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            if (!Netplay.serverSock[e.Msg.whoAmI].active || Netplay.serverSock[e.Msg.whoAmI].kill)
+            if (!Players[e.Msg.whoAmI].ConnectionAlive)
                 return;
 
             if (Main.verboseNetplay)
@@ -935,9 +935,9 @@ namespace TShockAPI
             }
         }
 
-        public static void PlayerDamage(int plr, int damage)
+        public static void PlayerDamage(TSPlayer player, int damage)
         {
-            NetMessage.SendData(26, -1, -1, "", plr, ((new Random()).Next(-1, 1)), damage, (float)0);
+            NetMessage.SendData(26, -1, -1, "", player.Index, ((new Random()).Next(-1, 1)), damage, (float)0);
         }
 
         //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)

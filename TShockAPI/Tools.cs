@@ -213,7 +213,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void ForceKick(TSPlayer player, string reason)
         {
-            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
+            if (!player.ConnectionAlive)
                 return;
             NetMessage.SendData(0x2, player.Index, -1, reason, 0x0, 0f, 0f, 0f);
             Log.Info(string.Format("{0} was force kicked for : {1}", player.IP, reason));
@@ -226,7 +226,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static bool Kick(TSPlayer player, string reason, string adminUserName = "")
         {
-            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
+            if (!player.ConnectionAlive)
                 return true;
             if (!player.Group.HasPermission("immunetokick"))
             {
@@ -249,7 +249,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static bool Ban(TSPlayer player, string reason, string adminUserName = "")
         {
-            if (!Netplay.serverSock[player.Index].active || Netplay.serverSock[player.Index].kill)
+            if (!player.ConnectionAlive)
                 return true;
             if (!player.Group.HasPermission("immunetoban"))
             {
