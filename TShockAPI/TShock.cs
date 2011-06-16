@@ -249,33 +249,8 @@ namespace TShockAPI
             }
             else if (text.StartsWith("/"))
             {
-                string cmdStr = text.Remove(0, 1);
-                var args = Commands.ParseParameters(cmdStr);
-                if (args.Count < 1)
-                    return;
-
-                string scmd = args[0];
-                args.RemoveAt(0);
-
-                Command cmd = null;
-                for (int i = 0; i < Commands.ChatCommands.Count; i++)
-                {
-                    if (Commands.ChatCommands[i].Name.Equals(scmd))
-                    {
-                        cmd = Commands.ChatCommands[i];
-                    }
-                }
-
-                if (cmd == null)
-                {
-                    TSPlayer.Server.SendMessage("That command does not exist, try /help");
-                }
-                else
-                {
-                    Tools.SendLogs(string.Format("{0} executed: /{1}", TSPlayer.Server.Name, cmdStr), Color.Red);
-                    cmd.Run(cmdStr, TSPlayer.Server, args);
-                }
-                e.Handled = true;
+                if (Commands.HandleCommand(TSPlayer.Server, text))
+                    e.Handled = true;
             }
             
         }
@@ -685,42 +660,8 @@ namespace TShockAPI
 
             if (text.StartsWith("/"))
             {
-                text = text.Remove(0, 1);
-
-                var args = Commands.ParseParameters(text);
-                if (args.Count < 1)
-                    return;
-
-                string scmd = args[0];
-                args.RemoveAt(0);
-
-                Command cmd = null;
-                for (int i = 0; i < Commands.ChatCommands.Count; i++)
-                {
-                    if (Commands.ChatCommands[i].Name.Equals(scmd))
-                    {
-                        cmd = Commands.ChatCommands[i];
-                    }
-                }
-
-                if (cmd == null)
-                {
-                    tsplr.SendMessage("That command does not exist, try /help", Color.Red);
-                }
-                else
-                {
-                    if (!cmd.CanRun(tsplr))
-                    {
-                        Tools.SendLogs(string.Format("{0} tried to execute {1}", tsplr.Name, cmd.Name), Color.Red);
-                        tsplr.SendMessage("You do not have access to that command.", Color.Red);
-                    }
-                    else
-                    {
-                        Tools.SendLogs(string.Format("{0} executed: /{1}", tsplr.Name, text), Color.Red);
-                        cmd.Run(text, tsplr, args);
-                    }
-                }
-                e.Handled = true;
+                if (Commands.HandleCommand(tsplr, text))
+                    e.Handled = true;
             }
             else
             {

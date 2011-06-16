@@ -93,89 +93,7 @@ namespace TShockAPI
     }
     public static class Commands
     {
-        public static List<Command> ChatCommands = new List<Command>();
-
-        /// <summary>
-        /// Parses a string of parameters into a list. Handles quotes.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static List<String> ParseParameters(string str)
-        {
-            var ret = new List<string>();
-            var sb = new StringBuilder();
-            bool instr = false;
-            for (int i = 0; i < str.Length; i++)
-            {
-                char c = str[i];
-
-                if (instr)
-                {
-                    if (c == '\\')
-                    {
-                        if (i + 1 >= str.Length)
-                            break;
-                        c = GetEscape(str[++i]);
-                    }
-                    else if (c == '"')
-                    {
-                        ret.Add(sb.ToString());
-                        sb.Clear();
-                        instr = false;
-                        continue;
-                    }
-                    sb.Append(c);
-                }
-                else
-                {
-                    if (IsWhiteSpace(c))
-                    {
-                        if (sb.Length > 0)
-                        {
-                            ret.Add(sb.ToString());
-                            sb.Clear();
-                        }
-                    }
-                    else if (c == '"')
-                    {
-                        if (sb.Length > 0)
-                        {
-                            ret.Add(sb.ToString());
-                            sb.Clear();
-                        }
-                        instr = true;
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
-                }
-            }
-            if (sb.Length > 0)
-                ret.Add(sb.ToString());
-
-            return ret;
-        }
-
-        static char GetEscape(char c)
-        {
-            switch (c)
-            {
-                case '\\':
-                    return '\\';
-                case '"':
-                    return '"';
-                case 't':
-                    return '\t';
-                default:
-                    return c;
-            }
-        }
-
-        static bool IsWhiteSpace(char c)
-        {
-            return c == ' ' || c == '\t' || c == '\n';
-        }
+        private static List<Command> ChatCommands = new List<Command>();
 
         public static void InitCommands()
         {
@@ -233,6 +151,128 @@ namespace TShockAPI
         public static void AddUpdateCommand()
         {
             Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
+        }
+
+        public static bool HandleCommand(TSPlayer player, string text)
+        {
+            string cmdText = text.Remove(0, 1);
+
+            var args = Commands.ParseParameters(cmdText);
+            if (args.Count < 1)
+                return false;
+
+            string cmdName = args[0];
+            args.RemoveAt(0);
+
+            Command cmd = null;
+            foreach (Command command in Commands.ChatCommands)
+            {
+                if (command.Name.Equals(cmdName))
+                {
+                    cmd = command;
+                }
+            }
+
+            if (cmd == null)
+            {
+                player.SendMessage("That command does not exist, try /help", Color.Red);
+            }
+            else
+            {
+                if (!cmd.CanRun(player))
+                {
+                    Tools.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
+                    player.SendMessage("You do not have access to that command.", Color.Red);
+                }
+                else
+                {
+                    Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
+                    cmd.Run(cmdText, player, args);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Parses a string of parameters into a list. Handles quotes.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private static List<String> ParseParameters(string str)
+        {
+            var ret = new List<string>();
+            var sb = new StringBuilder();
+            bool instr = false;
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str[i];
+
+                if (instr)
+                {
+                    if (c == '\\')
+                    {
+                        if (i + 1 >= str.Length)
+                            break;
+                        c = GetEscape(str[++i]);
+                    }
+                    else if (c == '"')
+                    {
+                        ret.Add(sb.ToString());
+                        sb.Clear();
+                        instr = false;
+                        continue;
+                    }
+                    sb.Append(c);
+                }
+                else
+                {
+                    if (IsWhiteSpace(c))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            ret.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                    }
+                    else if (c == '"')
+                    {
+                        if (sb.Length > 0)
+                        {
+                            ret.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                        instr = true;
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+            }
+            if (sb.Length > 0)
+                ret.Add(sb.ToString());
+
+            return ret;
+        }
+
+        private static char GetEscape(char c)
+        {
+            switch (c)
+            {
+                case '\\':
+                    return '\\';
+                case '"':
+                    return '"';
+                case 't':
+                    return '\t';
+                default:
+                    return c;
+            }
+        }
+
+        private static bool IsWhiteSpace(char c)
+        {
+            return c == ' ' || c == '\t' || c == '\n';
         }
 
         #region Player Management Commands
