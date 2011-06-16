@@ -196,6 +196,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("skeletron", "spawnboss", Skeletron));
             ChatCommands.Add(new Command("hardcore", "spawnboss", Hardcore));
             ChatCommands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
+            ChatCommands.Add(new Command("sm", "spawnmob", SpawnMob));
             ChatCommands.Add(new Command("home", "tp", Home));
             ChatCommands.Add(new Command("spawn", "tp", Spawn));
             ChatCommands.Add(new Command("tp", "tp", TP));
