@@ -85,7 +85,7 @@ namespace TShockAPI
         }
         public int TileY
         {
-            get { return (int)(X / 16); }
+            get { return (int)(Y / 16); }
         }
 
         public TSPlayer(int index)
