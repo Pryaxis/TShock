@@ -696,7 +696,12 @@ namespace TShockAPI
 
         private static void Password(CommandArgs args)
         {
-            string passwd = args.Message.Remove(0, 9).Trim();
+            if (args.Parameters.Count != 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /password \"<new password>\"", Color.Red);
+                return;
+            }
+            string passwd = args.Parameters[0];
             Netplay.password = passwd;
             args.Player.SendMessage(string.Format("Server password changed to: {0}", passwd));
         }
@@ -858,16 +863,25 @@ namespace TShockAPI
 
         private static void ThirdPerson(CommandArgs args)
         {
-            string msg = args.Message.Remove(0, 3);
-            Tools.Broadcast(string.Format("*{0} {1}", args.Player.Name, msg), 205, 133, 63);
+            if (args.Parameters.Count == 0)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /me <text>", Color.Red);
+                return;
+            }
+            Tools.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
         }
 
         private static void PartyChat(CommandArgs args)
         {
+            if (args.Parameters.Count == 0)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /p <team chat text>", Color.Red);
+                return;
+            }
             int playerTeam = args.Player.Team;
             if (playerTeam != 0)
             {
-                string msg = string.Format("<{0}> {1}", args.Player.Name, args.Message.Remove(0, 2));
+                string msg = string.Format("<{0}> {1}", args.Player.Name, String.Join(" ", args.Parameters));
                 foreach (TSPlayer player in TShock.Players)
                 {
                     if (player != null && player.Active && player.Team == playerTeam)
