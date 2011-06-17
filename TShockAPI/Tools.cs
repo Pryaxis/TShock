@@ -33,6 +33,7 @@ namespace TShockAPI
 
     internal class Tools
     {
+        private static Random random = new Random();
         private static List<Group> groups = new List<Group>();
 
         /// <summary>
@@ -161,6 +162,35 @@ namespace TShockAPI
                     found.Add(player);
             }
             return found;
+        }
+
+        public static void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange, out int tileX, out int tileY)
+        {
+            int j = 0;
+            do
+            {
+                if (j == 100)
+                {
+                    tileX = startTileX;
+                    tileY = startTileY;
+                    break;
+                }
+
+                tileX = startTileX + random.Next(tileXRange * -1, tileXRange);
+                tileY = startTileY + random.Next(tileYRange * -1, tileYRange);
+                j++;
+            }
+            while (TileValid(tileX, tileY) && !Tools.TileClear(tileX, tileY));
+        }
+
+        private static bool TileValid(int tileX, int tileY)
+        {
+            return tileX >= 0 && tileX <= Main.maxTilesX && tileY >= 0 && tileY <= Main.maxTilesY;
+        }
+
+        private static bool TileClear(int tileX, int tileY)
+        {
+            return !Main.tile[tileX, tileY].active;
         }
 
         public static NPC GetNPCById(int id)

@@ -195,9 +195,9 @@ namespace TShockAPI
             NetMessage.syncPlayers();
         }
 
-        public int SpawnNPC(int type, string name, int x, int y)
+        public int SpawnNPC(int type, string name, int tileX, int tileY)
         {
-            int npcid = NPC.NewNPC(x, y, type, 0);
+            int npcid = NPC.NewNPC(tileX * 16, tileY * 16, type, 0);
             // This is for special slimes
             Main.npc[npcid].SetDefaults(name);
             return npcid;

@@ -570,7 +570,7 @@ namespace TShockAPI
                 }
                 else if (npcs.Count > 1)
                 {
-                    args.Player.SendMessage("More than one mob matched!", Color.Red);
+                    args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
                     return;
                 }
                 else
@@ -583,7 +583,12 @@ namespace TShockAPI
             if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
             {
                 for (int i = 0; i < amount; i++)
-                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, (int)args.Player.X, (int)args.Player.Y);
+                {
+                    int spawnTileX;
+                    int spawnTileY;
+                    Tools.GetRandomClearTileWithInRange((int)args.Player.TileX, (int)args.Player.TileY, 50, 20, out spawnTileX, out spawnTileY);
+                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, spawnTileX, spawnTileY);
+                }
                 Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
             }
             else
