@@ -208,6 +208,12 @@ namespace TShockAPI
                                             plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), tiletype));
                     return Tools.HandleGriefer(args.Player, "Placing impossible to place blocks.");
                 }
+                if (tiletype == 48 && !args.Player.Group.HasPermission("canspike"))
+                {
+                    args.Player.SendMessage("You do not have permission to place spikes.", Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             }
             if (ConfigurationManager.DisableBuild)
             {
