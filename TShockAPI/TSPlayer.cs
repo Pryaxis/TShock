@@ -195,12 +195,17 @@ namespace TShockAPI
             NetMessage.syncPlayers();
         }
 
-        public int SpawnNPC(int type, string name, int tileX, int tileY)
+        public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 50, int tileYRange = 20)
         {
-            int npcid = NPC.NewNPC(tileX * 16, tileY * 16, type, 0);
-            // This is for special slimes
-            Main.npc[npcid].SetDefaults(name);
-            return npcid;
+            for (int i = 0; i < amount; i++)
+            {
+                int spawnTileX;
+                int spawnTileY;
+                Tools.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
+                int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
+                // This is for special slimes
+                Main.npc[npcid].SetDefaults(name);
+            }
         }
 
         public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)

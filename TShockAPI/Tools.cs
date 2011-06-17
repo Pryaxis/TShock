@@ -24,13 +24,6 @@ using Terraria;
 
 namespace TShockAPI
 {
-    internal enum NPCList
-    {
-        WORLD_EATER = 0,
-        EYE = 1,
-        SKELETRON = 2
-    }
-
     internal class Tools
     {
         private static Random random = new Random();
@@ -220,33 +213,6 @@ namespace TShockAPI
                     found.Add(npc);
             }
             return found;
-        }
-
-        /// <summary>
-        /// Creates an NPC
-        /// </summary>
-        /// <param name="type">Type is defined in the enum NPC list</param>
-        /// <param name="player">int player that the npc targets</param>
-        public static void NewNPC(NPCList type, TSPlayer player)
-        {
-            switch (type)
-            {
-                case NPCList.WORLD_EATER:
-                    WorldGen.shadowOrbSmashed = true;
-                    WorldGen.shadowOrbCount = 3;
-                    int w = NPC.NewNPC((int)player.X, (int)player.Y, 13, 1);
-                    Main.npc[w].target = player.Index;
-                    break;
-                case NPCList.EYE:
-                    Main.time = 4861;
-                    Main.dayTime = false;
-                    WorldGen.spawnEye = true;
-                    break;
-                case NPCList.SKELETRON:
-                    int enpeecee = NPC.NewNPC((int)player.X, (int)player.Y, 0x23, 0);
-                    Main.npc[enpeecee].netUpdate = true;
-                    break;
-            }
         }
 
         /// <summary>

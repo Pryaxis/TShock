@@ -111,6 +111,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("invade", "causeevents", Invade));
             ChatCommands.Add(new Command("eater", "spawnboss", Eater));
             ChatCommands.Add(new Command("eye", "spawnboss", Eye));
+            ChatCommands.Add(new Command("king", "spawnboss", King));
             ChatCommands.Add(new Command("skeletron", "spawnboss", Skeletron));
             ChatCommands.Add(new Command("hardcore", "spawnboss", Hardcore));
             ChatCommands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
@@ -510,29 +511,101 @@ namespace TShockAPI
 
         private static void Eater(CommandArgs args)
         {
-            Tools.NewNPC(NPCList.WORLD_EATER, args.Player);
-            Tools.Broadcast(string.Format("{0} has spawned an eater of worlds!", args.Player.Name));
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /eater [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /eater [amount]", Color.Red);
+                return;
+            }
+            NPC eater = Tools.GetNPCById(13);
+            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            Tools.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
         }
 
         private static void Eye(CommandArgs args)
         {
-            Tools.NewNPC(NPCList.EYE, args.Player);
-            Tools.Broadcast(string.Format("{0} has spawned an eye!", args.Player.Name));
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /eye [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /eye [amount]", Color.Red);
+                return;
+            }
+            NPC eye = Tools.GetNPCById(4);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            Tools.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
+        }
+
+        private static void King(CommandArgs args)
+        {
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /king [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /king [amount]", Color.Red);
+                return;
+            }
+            NPC king = Tools.GetNPCById(50);
+            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            Tools.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
         }
 
         private static void Skeletron(CommandArgs args)
         {
-            Tools.NewNPC(NPCList.SKELETRON, args.Player);
-            Tools.Broadcast(string.Format("{0} has spawned skeletron!", args.Player.Name));
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /skeletron [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /skeletron [amount]", Color.Red);
+                return;
+            }
+            NPC skeletron = Tools.GetNPCById(35);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            Tools.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
         }
 
         private static void Hardcore(CommandArgs args)
         {
-            foreach (NPCList type in Enum.GetValues(typeof(NPCList)))
+            if (args.Parameters.Count > 1)
             {
-                Tools.NewNPC(type, args.Player);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /hardcore [amount]", Color.Red);
+                return;
             }
-            Tools.Broadcast(string.Format("{0} has spawned all bosses!", args.Player.Name));
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /hardcore [amount]", Color.Red);
+                return;
+            }
+            NPC eater = Tools.GetNPCById(13);
+            NPC eye = Tools.GetNPCById(4);
+            NPC king = Tools.GetNPCById(50);
+            NPC skeletron = Tools.GetNPCById(35);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            Tools.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
         }
 
         private static void SpawnMob(CommandArgs args)
@@ -582,13 +655,7 @@ namespace TShockAPI
 
             if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
             {
-                for (int i = 0; i < amount; i++)
-                {
-                    int spawnTileX;
-                    int spawnTileY;
-                    Tools.GetRandomClearTileWithInRange((int)args.Player.TileX, (int)args.Player.TileY, 50, 20, out spawnTileX, out spawnTileY);
-                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, spawnTileX, spawnTileY);
-                }
+                TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, (int)args.Player.TileX, (int)args.Player.TileY, 50, 20);
                 Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
             }
             else
@@ -969,6 +1036,12 @@ namespace TShockAPI
 
         private static void Butcher(CommandArgs args)
         {
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killFriendly(true/false)]", Color.Red);
+                return;
+            }
+
             bool killFriendly = true;
             if (args.Parameters.Count == 1)
                 bool.TryParse(args.Parameters[0], out killFriendly);
