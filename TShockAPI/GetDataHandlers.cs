@@ -211,6 +211,7 @@ namespace TShockAPI
                 if (tiletype == 48 && !args.Player.Group.HasPermission("canspike"))
                 {
                     args.Player.SendMessage("You do not have permission to place spikes.", Color.Red);
+                    Tools.SendLogs(string.Format("{0} tried to place spikes", args.Player.Name), Color.Red);
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
@@ -361,14 +362,14 @@ namespace TShockAPI
             {
                 args.Player.SendMessage("You do not have permission to use lava", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using lava", args.Player.Name), Color.Red);
-                // TODO need to revert player changes so they are insync with server
+                args.Player.SendTileSquare(x, y);
                 return true;
             }
             if (!lava && !args.Player.Group.HasPermission("canwater"))
             {
                 args.Player.SendMessage("You do not have permission to use water", Color.Red);
                 Tools.SendLogs(string.Format("{0} tried using water", args.Player.Name), Color.Red);
-                // TODO need to revert player changes so they are insync with server
+                args.Player.SendTileSquare(x, y);
                 return true;
             }
 
@@ -394,7 +395,7 @@ namespace TShockAPI
                     if (flag)
                     {
                         args.Player.SendMessage("The spawn is protected!", Color.Red);
-                        // TODO need to revert player changes so they are insync with server
+                        args.Player.SendTileSquare(x, y);
                         return true;
                     }
                 }
