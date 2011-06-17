@@ -186,6 +186,35 @@ namespace TShockAPI
             return !Main.tile[tileX, tileY].active;
         }
 
+        public static Item GetItemById(int id)
+        {
+            Item item = new Item();
+            item.SetDefaults(id);
+            return item;
+        }
+
+        public static List<Item> GetItemByName(string name)
+        {
+            //Method #1 - must be exact match, allows support for different pickaxes/hammers/swords etc
+            for (int i = 1; i < Main.maxItemTypes; i++)
+            {
+                Item item = new Item();
+                item.SetDefaults(name);
+                if (item.name == name)
+                    return new List<Item> { item };
+            }
+            //Method #2 - allows impartial matching
+            var found = new List<Item>();
+            for (int i = 1; i < Main.maxItemTypes; i++)
+            {
+                Item item = new Item();
+                item.SetDefaults(i);
+                if (item.name.ToLower().StartsWith(name.ToLower()))
+                    found.Add(item);
+            }
+            return found;
+        }
+
         public static NPC GetNPCById(int id)
         {
             NPC npc = new NPC();

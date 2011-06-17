@@ -121,6 +121,16 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TileSendSquare, Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
         }
 
+        public virtual void GiveItem(int type, string name, int width, int height, int stack)
+        {
+            int itemid = Terraria.Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
+            // This is for special pickaxe/hammers/swords etc
+            Main.item[itemid].SetDefaults(name);
+            Main.item[itemid].owner = Index;
+            NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
+            NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
+        }
+
         public virtual void SendMessage(string msg)
         {
             SendMessage(msg, 0, 255, 0);

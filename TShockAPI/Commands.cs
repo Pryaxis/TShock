@@ -1170,6 +1170,7 @@ namespace TShockAPI
 
         private static void Heal(CommandArgs args)
         {
+            TSPlayer playerToHeal;
             if (args.Parameters.Count > 0)
             {
                 string plStr = String.Join(" ", args.Parameters);
@@ -1177,45 +1178,42 @@ namespace TShockAPI
                 if (players.Count == 0)
                 {
                     args.Player.SendMessage("Invalid player!", Color.Red);
+                    return;
                 }
                 else if (players.Count > 1)
                 {
                     args.Player.SendMessage("More than one player matched!", Color.Red);
+                    return;
                 }
                 else
                 {
-                    var plr = players[0];
-                    DropHearts(plr.X, plr.Y, 20);
-                    if (plr == args.Player)
-                    {
-                        args.Player.SendMessage("You just got healed!");
-                    }
-                    else
-                    {
-                        args.Player.SendMessage(string.Format("You just healed {0}", plr.Name));
-                        plr.SendMessage(string.Format("{0} just healed you!", args.Player.Name));
-                    }
+                    playerToHeal = players[0];
                 }
             }
             else if (!args.Player.RealPlayer)
             {
                 args.Player.SendMessage("You cant heal yourself!");
+                return;
             }
             else
             {
-                DropHearts(args.Player.X, args.Player.Y, 20);
+                playerToHeal = args.Player;
+            }
+
+            Item heart = Tools.GetItemById(58);
+            Item star = Tools.GetItemById(184);
+            for (int i = 0; i < 20; i++)
+                playerToHeal.GiveItem(heart.type, heart.name, heart.width, heart.height, heart.maxStack);
+            for (int i = 0; i < 10; i++)
+                playerToHeal.GiveItem(star.type, star.name, star.width, star.height, star.maxStack);
+            if (playerToHeal == args.Player)
+            {
                 args.Player.SendMessage("You just got healed!");
             }
-        }
-
-        private static void DropHearts(float x, float y, int count)
-        {
-            for (int i = 0; i < count; i++)
+            else
             {
-                int itemid = Terraria.Item.NewItem(1, 1, 1, 1, 58);
-                Main.item[itemid].position.X = x;
-                Main.item[itemid].position.Y = y;
-                NetMessage.SendData(21, -1, -1, "", itemid, 0f, 0f, 0f);
+                args.Player.SendMessage(string.Format("You just healed {0}", playerToHeal.Name));
+                playerToHeal.SendMessage(string.Format("{0} just healed you!", args.Player.Name));
             }
         }
 
