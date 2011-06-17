@@ -969,10 +969,14 @@ namespace TShockAPI
 
         private static void Butcher(CommandArgs args)
         {
+            bool killFriendly = true;
+            if (args.Parameters.Count == 1)
+                bool.TryParse(args.Parameters[0], out killFriendly);
+
             int killcount = 0;
             for (int i = 0; i < Main.npc.Length; i++)
             {
-                if (!Main.npc[i].townNPC && Main.npc[i].active)
+                if ( Main.npc[i].active && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
                 {
                     TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
                     killcount++;
