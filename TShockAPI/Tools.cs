@@ -219,6 +219,8 @@ namespace TShockAPI
             {
                 Item item = new Item();
                 item.SetDefaults(i);
+                if (item.name.ToLower() == name.ToLower())
+                    return new List<Item> { item };
                 if (item.name.ToLower().StartsWith(name.ToLower()))
                     found.Add(item);
             }
@@ -258,6 +260,8 @@ namespace TShockAPI
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(i);
+                if (npc.name.ToLower() == name.ToLower())
+                    return new List<NPC> { npc };
                 if (npc.name.ToLower().StartsWith(name.ToLower()))
                     found.Add(npc);
             }
