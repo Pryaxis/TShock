@@ -163,6 +163,35 @@ namespace TShockAPI
             return found;
         }
 
+        public static NPC GetNPCById(int id)
+        {
+            NPC npc = new NPC();
+            npc.SetDefaults(id);
+            return npc;
+        }
+
+        public static List<NPC> GetNPCByName(string name)
+        {
+            //Method #1 - must be exact match, allows support for different coloured slimes
+            for (int i = 1; i < Main.maxNPCTypes; i++)
+            {
+                NPC npc = new NPC();
+                npc.SetDefaults(name);
+                if (npc.name == name)
+                    return new List<NPC> { npc };
+            }
+            //Method #2 - allows impartial matching
+            var found = new List<NPC>();
+            for (int i = 1; i < Main.maxNPCTypes; i++)
+            {
+                NPC npc = new NPC();
+                npc.SetDefaults(i);
+                if (npc.name.ToLower().StartsWith(name.ToLower()))
+                    found.Add(npc);
+            }
+            return found;
+        }
+
         /// <summary>
         /// Creates an NPC
         /// </summary>

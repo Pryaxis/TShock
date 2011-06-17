@@ -291,19 +291,19 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Kick(player[0], reason))
+                if (!Tools.Kick(players[0], reason))
                 {
                     args.Player.SendMessage("You can't kick another admin!", Color.Red);
                 }
@@ -324,19 +324,19 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Ban(player[0], reason))
+                if (!Tools.Ban(players[0], reason))
                 {
                     args.Player.SendMessage("You can't ban another admin!", Color.Red);
                 }
@@ -547,24 +547,43 @@ namespace TShockAPI
                 args.Player.SendMessage("Missing mob name/id", Color.Red);
                 return;
             }
-
-            int type = -1;
             int amount = 1;
-
-            if (!int.TryParse(args.Parameters[0], out type))
-                type = TShock.GetNPCID(args.Parameters[0]);
             if (args.Parameters.Count == 2 && !int.TryParse(args.Parameters[1], out amount))
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
                 return;
             }
 
-            if (type >= 1 && type < Main.maxNPCTypes)
+            NPC npc;
+            int type = -1;
+            if (int.TryParse(args.Parameters[0], out type))
             {
-                int npcid = -1;
-                for (int i = 0; i < amount; i++)
-                    npcid = NPC.NewNPC((int)args.Player.X, (int)args.Player.Y, type, 0);
-                Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", Main.npc[npcid].name, amount));
+                npc = Tools.GetNPCById(type);
+            }
+            else
+            {
+                var npcs = Tools.GetNPCByName(args.Parameters[0]);
+                if (npcs.Count == 0)
+                {
+                    args.Player.SendMessage("Invalid mob type!", Color.Red);
+                    return;
+                }
+                else if (npcs.Count > 1)
+                {
+                    args.Player.SendMessage("More than one mob matched!", Color.Red);
+                    return;
+                }
+                else
+                {
+                    npc = npcs[0];
+                    type = npc.type;
+                }
+            }
+
+            if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
+            {
+                TSPlayer.Server.SpawnNPC(npc.type, npc.name, (int)args.Player.X, (int)args.Player.Y);
+                Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
             }
             else
                 args.Player.SendMessage("Invalid mob type!", Color.Red);
@@ -597,14 +616,14 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
                 args.Player.SendMessage("Invalid player!", Color.Red);
-            else if (player.Count > 1)
+            else if (players.Count > 1)
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             else
             {
-                var plr = player[0];
+                var plr = players[0];
                 TShock.Teleport(args.Player.Index, plr.X, plr.Y);
                 args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
             }
@@ -619,18 +638,18 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
-                var plr = player[0];
+                var plr = players[0];
                 TShock.Teleport(plr.Index, args.Player.X, args.Player.Y);
                 plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
                 args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
@@ -878,18 +897,18 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
-                var plr = player[0];
+                var plr = players[0];
                 int damage = 5;
                 if (args.Parameters.Count == 2)
                 {
@@ -910,18 +929,18 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
-                var plr = player[0];
+                var plr = players[0];
                 plr.DamagePlayer(999999);
                 args.Player.SendMessage(string.Format("You just killed {0}!", plr.Name));
                 plr.SendMessage(string.Format("{0} just killed you!", args.Player.Name));
@@ -1019,18 +1038,18 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[1];
-            var player = Tools.FindPlayer(plStr);
-            if (player.Count == 0)
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
             }
-            else if (player.Count > 1)
+            else if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else
             {
-                var plr = player[0];
+                var plr = players[0];
                 bool flag = false;
                 for (int i = 0; i < 40; i++)
                 {
@@ -1057,18 +1076,18 @@ namespace TShockAPI
             if (args.Parameters.Count > 0)
             {
                 string plStr = String.Join(" ", args.Parameters);
-                var player = Tools.FindPlayer(plStr);
-                if (player.Count == 0)
+                var players = Tools.FindPlayer(plStr);
+                if (players.Count == 0)
                 {
                     args.Player.SendMessage("Invalid player!", Color.Red);
                 }
-                else if (player.Count > 1)
+                else if (players.Count > 1)
                 {
                     args.Player.SendMessage("More than one player matched!", Color.Red);
                 }
                 else
                 {
-                    var plr = player[0];
+                    var plr = players[0];
                     DropHearts(plr.X, plr.Y, 20);
                     if (plr == args.Player)
                     {

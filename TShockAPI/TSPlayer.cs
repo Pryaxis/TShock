@@ -195,6 +195,14 @@ namespace TShockAPI
             NetMessage.syncPlayers();
         }
 
+        public int SpawnNPC(int type, string name, int x, int y)
+        {
+            int npcid = NPC.NewNPC(x, y, type, 0);
+            // This is for special slimes
+            Main.npc[npcid].SetDefaults(name);
+            return npcid;
+        }
+
         public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
         {
             Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);

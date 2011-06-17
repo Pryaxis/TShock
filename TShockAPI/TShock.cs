@@ -464,31 +464,6 @@ namespace TShockAPI
             }
         }
 
-        //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
-        public static int GetNPCID(string name, bool exact = false)
-        {
-            NPC npc = new NPC();
-            for (int i = 1; i < Main.maxNPCTypes; i++)
-            {
-                if (exact)
-                {
-                    //Method #1 - must be exact match, allows support for different coloured slimes
-                    npc.SetDefaults(name);
-                    if (npc.name == name)
-                        return i;
-                }
-                else
-                {
-                    //Method #2 - allows impartial matching
-                    name = name.ToLower();
-                    npc.SetDefaults(i);
-                    if (npc.name.ToLower().StartsWith(name))
-                        return i;
-                }
-            }
-            return -1;
-        }
-
         public static int GetItemID(string name)
         {
             Item item = new Item();
