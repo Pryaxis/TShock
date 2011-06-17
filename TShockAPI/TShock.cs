@@ -464,19 +464,6 @@ namespace TShockAPI
             }
         }
 
-        public static int GetItemID(string name)
-        {
-            Item item = new Item();
-            name = name.ToLower();
-            for (int i = 1; i < Main.maxItemTypes; i++)
-            {
-                item.SetDefaults(i);
-                if (item.name.ToLower().StartsWith(name))
-                    return i;
-            }
-            return -1;
-        }
-
         public static bool CheckSpawn(int x, int y)
         {
             Vector2 tile = new Vector2(x, y);
