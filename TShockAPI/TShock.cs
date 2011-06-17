@@ -28,7 +28,7 @@ using TerrariaAPI.Hooks;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 3)]
+    [APIVersion(1, 4)]
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = new Version(2, 1, 0, 6);
@@ -328,7 +328,7 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            PacketTypes type = (PacketTypes) e.MsgID;
+            PacketTypes type = e.MsgID;
             TSPlayer player = Players[e.Msg.whoAmI];
 
             if (!player.ConnectionAlive)
