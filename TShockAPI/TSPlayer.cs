@@ -224,7 +224,7 @@ namespace TShockAPI
             NetMessage.syncPlayers();
         }
 
-        public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 50, int tileYRange = 20)
+        public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100, int tileYRange = 50)
         {
             for (int i = 0; i < amount; i++)
             {
