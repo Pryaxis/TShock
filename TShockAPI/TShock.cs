@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Terraria;
@@ -31,7 +32,7 @@ namespace TShockAPI
     [APIVersion(1, 4)]
     public class TShock : TerrariaPlugin
     {
-        public static readonly Version VersionNum = new Version(2, 1, 0, 6);
+        public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version; 
         public static readonly string VersionCodename = "Forgot to increase the version.";
 
         public static readonly string SavePath = "tshock";
@@ -323,7 +324,7 @@ namespace TShockAPI
                 if (Commands.HandleCommand(TSPlayer.Server, text))
                     e.Handled = true;
             }
-            
+
         }
 
         private void GetData(GetDataEventArgs e)
