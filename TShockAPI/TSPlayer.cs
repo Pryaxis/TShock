@@ -27,8 +27,8 @@ namespace TShockAPI
     {
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
-        public uint TileThreshold { get; set; }
-        public Dictionary<Vector2, Tile> TilesDestroyed { get; set; }
+        public int TileThreshold { get; set; }
+        public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -42,6 +42,13 @@ namespace TShockAPI
         {
             get { return RealPlayer ? Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
         }
+        public string IP
+        {
+            get
+            {
+                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+            }
+        }
         /// <summary>
         /// Terraria Player
         /// </summary>
@@ -49,13 +56,6 @@ namespace TShockAPI
         public string Name
         {
             get { return TPlayer.name; }
-        }
-        public string IP 
-        {
-            get 
-            {
-                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : ""; 
-            }
         }
         public bool Active
         {
@@ -93,12 +93,15 @@ namespace TShockAPI
             get
             {
                 bool flag = false;
-                for (int i = 0; i < 40; i++)
+                if (RealPlayer)
                 {
-                    if (!TPlayer.inventory[i].active)
+                    for (int i = 0; i < 40; i++)
                     {
-                        flag = true;
-                        break;
+                        if (!TPlayer.inventory[i].active)
+                        {
+                            flag = true;
+                            break;
+                        }
                     }
                 }
                 return flag;
@@ -123,17 +126,11 @@ namespace TShockAPI
 
         public virtual void Disconnect(string reason)
         {
-            if (Index == -1)
-                return;
-
             NetMessage.SendData((int)PacketTypes.Disconnect, Index, -1, reason, 0x0, 0f, 0f, 0f);
         }
 
         public virtual void SendTileSquare(int x, int y, int size = 10)
         {
-            if (Index == -1)
-                return;
-
             NetMessage.SendData((int)PacketTypes.TileSendSquare, Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
         }
 
@@ -167,17 +164,11 @@ namespace TShockAPI
 
         public virtual void DamagePlayer(int damage)
         {
-            if (Index == -1)
-                return;
-
             NetMessage.SendData((int)PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage, (float)0);
         }
 
         public virtual void SetPvP(bool pvp)
         {
-            if (Index == -1)
-                return;
-
             if (TPlayer.hostile != pvp)
             {
                 TPlayer.hostile = pvp;
@@ -241,6 +232,22 @@ namespace TShockAPI
         {
             Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
             NetMessage.SendData((int)PacketTypes.NPCStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
+        }
+
+        public void RevertKillTile(Dictionary<Vector2, Tile> destroyedTiles)
+        {
+            // Update Main.Tile first so that when tile sqaure is sent it is correct
+            foreach (KeyValuePair<Vector2, Tile> entry in destroyedTiles)
+            {
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
+                Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})", 
+                                        entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
+            }
+            // Send all players updated tile sqaures
+            foreach (Vector2 coords in destroyedTiles.Keys)
+            {
+                TSPlayer.All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
+            }
         }
     }
 }

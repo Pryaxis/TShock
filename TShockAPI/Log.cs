@@ -54,24 +54,6 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Internal method which writes a message directly to the log file.
-        /// </summary>
-        private static void Write(String message, LogLevel level)
-        {
-            if (!MayWriteType(level))
-            {
-                return;
-            }
-
-            string caller = "TShock";
-
-            _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}", 
-                                 DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), 
-                                 caller, level.ToString().ToUpper(), message));
-            _logWriter.Flush();
-        }
-
-        /// <summary>
         /// Checks whether the log level contains the specified flag.
         /// </summary>
         /// <param name="type">The <see cref="LogLevel" /> value to check.</param>
@@ -123,6 +105,24 @@ namespace TShockAPI
         public static void Debug(String message)
         {
             Write(message, LogLevel.Debug);
+        }
+
+        /// <summary>
+        /// Internal method which writes a message directly to the log file.
+        /// </summary>
+        private static void Write(String message, LogLevel level)
+        {
+            if (!MayWriteType(level))
+            {
+                return;
+            }
+
+            string caller = "TShock";
+
+            _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}",
+                                 DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                                 caller, level.ToString().ToUpper(), message));
+            _logWriter.Flush();
         }
     }
 }

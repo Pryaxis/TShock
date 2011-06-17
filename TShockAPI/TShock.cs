@@ -31,14 +31,12 @@ namespace TShockAPI
     [APIVersion(1, 3)]
     public class TShock : TerrariaPlugin
     {
-        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
+        public static readonly Version VersionNum = new Version(2, 1, 0, 6);
+        public static readonly string VersionCodename = "Forgot to increase the version.";
 
         public static readonly string SavePath = "tshock";
 
-        public static readonly Version VersionNum = new Version(2, 1, 0, 6);
-
-        public static readonly string VersionCodename = "Forgot to increase the version.";
-
+        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
 
         public override Version Version
@@ -187,9 +185,7 @@ namespace TShockAPI
                     {
                         if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                         {
-                            RevertKillTile(player);
-                            player.TileThreshold = 0;
-                            player.TilesDestroyed.Clear();
+                            TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                         }
                         else if (player.TileThreshold > 0)
                         {
@@ -201,6 +197,7 @@ namespace TShockAPI
                     else if (player.TileThreshold > 0)
                     {
                         player.TileThreshold = 0;
+                        player.TilesDestroyed.Clear();
                     }
                 }
             }
@@ -214,8 +211,7 @@ namespace TShockAPI
             var player = new TSPlayer(ply);
             player.Group = Tools.GetGroupForIP(player.IP);
 
-            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots &&
-                !player.Group.HasPermission("reservedslot"))
+            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
@@ -336,21 +332,33 @@ namespace TShockAPI
             TSPlayer player = Players[e.Msg.whoAmI];
 
             if (!player.ConnectionAlive)
+            {
+                e.Handled = true;
                 return;
+            }
 
             if (Main.verboseNetplay)
-                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte) type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
+                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
-            using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+            // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
+            if (player.TileThreshold >= 20 && !player.Group.HasPermission("ignoregriefdetection"))
             {
-                try
+                Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
+                e.Handled = true;
+            }
+            else
+            {
+                using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
                 {
-                    if (GetDataHandlers.HandlerGetData(type, player, data))
-                        e.Handled = true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
+                    try
+                    {
+                        if (GetDataHandlers.HandlerGetData(type, player, data))
+                            e.Handled = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                    }
                 }
             }
         }
@@ -476,19 +484,6 @@ namespace TShockAPI
                 return false;
             else
                 return true;
-        }
-
-        public static void RevertKillTile(TSPlayer player)
-        {
-            Tile[] tiles = new Tile[player.TilesDestroyed.Count];
-            player.TilesDestroyed.Values.CopyTo(tiles, 0);
-            Vector2[] positions = new Vector2[player.TilesDestroyed.Count];
-            player.TilesDestroyed.Keys.CopyTo(positions, 0);
-            for (int i = (player.TilesDestroyed.Count - 1); i >= 0; i--)
-            {
-                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
-                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
-            }
         }
 
         public static bool HackedHealth(TSPlayer player)
