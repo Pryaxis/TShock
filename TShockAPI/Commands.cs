@@ -627,39 +627,26 @@ namespace TShockAPI
                 return;
             }
 
-            NPC npc;
-            int type = -1;
-            if (int.TryParse(args.Parameters[0], out type))
+            var npcs = Tools.GetNPCByIdOrName(args.Parameters[0]);
+            if (npcs.Count == 0)
             {
-                npc = Tools.GetNPCById(type);
+                args.Player.SendMessage("Invalid mob type!", Color.Red);
+            }
+            else if (npcs.Count > 1)
+            {
+                args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
             }
             else
             {
-                var npcs = Tools.GetNPCByName(args.Parameters[0]);
-                if (npcs.Count == 0)
+                var npc = npcs[0];
+                if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
                 {
-                    args.Player.SendMessage("Invalid mob type!", Color.Red);
-                    return;
-                }
-                else if (npcs.Count > 1)
-                {
-                    args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
-                    return;
+                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, (int)args.Player.TileX, (int)args.Player.TileY, 50, 20);
+                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
                 }
                 else
-                {
-                    npc = npcs[0];
-                    type = npc.type;
-                }
+                    args.Player.SendMessage("Invalid mob type!", Color.Red);
             }
-
-            if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
-            {
-                TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, (int)args.Player.TileX, (int)args.Player.TileY, 50, 20);
-                Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
-            }
-            else
-                args.Player.SendMessage("Invalid mob type!", Color.Red);
         }
 
         #endregion Cause Events and Spawn Monsters Commands
@@ -1071,39 +1058,35 @@ namespace TShockAPI
                 return;
             }
 
-            int type = -1;
-            if (!int.TryParse(args.Parameters[0], out type))
-                type = TShock.GetItemID(String.Join(" ", args.Parameters));
-
-            if (type < 1 || type >= Main.maxItemTypes)
+            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
-                return;
             }
-
-            if (!args.Player.RealPlayer)
+            else if (items.Count > 1)
             {
-                args.Player.SendMessage("You cant get items!");
-                return;
+                args.Player.SendMessage(string.Format("More than one ({0}) item matched!", items.Count), Color.Red);
             }
-
-            bool flag = false;
-            for (int i = 0; i < 40; i++)
+            else
             {
-                if (!args.TPlayer.inventory[i].active)
+                var item = items[0];
+                if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
-                    Main.item[id].position.X =  args.Player.X;
-                    Main.item[id].position.Y = args.Player.Y;
-                    Main.item[id].stack = Main.item[id].maxStack;
-                    NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                    args.Player.SendMessage(string.Format("Got some {0}.", Main.item[id].name));
-                    flag = true;
-                    break;
+                    if (args.Player.InventorySlotAvailable)
+                    {
+                        args.Player.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
+                        args.Player.SendMessage(string.Format("Got some {0}.", item.name));
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("You don't have free slots!", Color.Red);
+                    }
+                }
+                else
+                {
+                    args.Player.SendMessage("Invalid item type!", Color.Red);
                 }
             }
-            if (!flag)
-                args.Player.SendMessage("You don't have free slots!", Color.Red);
         }
 
         private static void Give(CommandArgs args)
@@ -1124,47 +1107,49 @@ namespace TShockAPI
                 return;
             }
 
-            int type = -1;
-            if (!int.TryParse(args.Parameters[0], out type))
-                type = TShock.GetItemID(args.Parameters[0]);
-
-            if (type < 1 || type >= Main.maxItemTypes)
+            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
-                return;
             }
-
-            string plStr = args.Parameters[1];
-            var players = Tools.FindPlayer(plStr);
-            if (players.Count == 0)
+            else if (items.Count > 1)
             {
-                args.Player.SendMessage("Invalid player!", Color.Red);
-            }
-            else if (players.Count > 1)
-            {
-                args.Player.SendMessage("More than one player matched!", Color.Red);
+                args.Player.SendMessage(string.Format("More than one ({0}) item matched!", items.Count), Color.Red);
             }
             else
             {
-                var plr = players[0];
-                bool flag = false;
-                for (int i = 0; i < 40; i++)
+                var item = items[0];
+                if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    if (!plr.TPlayer.inventory[i].active)
+                    string plStr = args.Parameters[1];
+                    var players = Tools.FindPlayer(plStr);
+                    if (players.Count == 0)
                     {
-                        int id = Terraria.Item.NewItem(0, 0, 0, 0, type, 1, true);
-                        Main.item[id].position.X = plr.X;
-                        Main.item[id].position.Y = plr.Y;
-                        Main.item[id].stack = Main.item[id].maxStack;
-                        NetMessage.SendData(21, -1, -1, "", id, 0f, 0f, 0f);
-                        args.Player.SendMessage(string.Format("Gave {0} some {1}.", plr.Name, Main.item[id].name));
-                        plr.SendMessage(string.Format("{0} gave you some {1}.", args.Player.Name, Main.item[id].name));
-                        flag = true;
-                        break;
+                        args.Player.SendMessage("Invalid player!", Color.Red);
+                    }
+                    else if (players.Count > 1)
+                    {
+                        args.Player.SendMessage("More than one player matched!", Color.Red);
+                    }
+                    else
+                    {
+                        var plr = players[0];
+                        if (plr.InventorySlotAvailable)
+                        {
+                            plr.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
+                            args.Player.SendMessage(string.Format("Gave {0} some {1}.", plr.Name, item.name));
+                            plr.SendMessage(string.Format("{0} gave you some {1}.", args.Player.Name, item.name));
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Player does not have free slots!", Color.Red);
+                        }
                     }
                 }
-                if (!flag)
-                    args.Player.SendMessage("Player does not have free slots!", Color.Red);
+                else
+                {
+                    args.Player.SendMessage("Invalid item type!", Color.Red);
+                }
             }
         }
 

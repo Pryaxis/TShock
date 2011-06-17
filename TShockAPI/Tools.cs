@@ -173,7 +173,7 @@ namespace TShockAPI
                 tileY = startTileY + random.Next(tileYRange * -1, tileYRange);
                 j++;
             }
-            while (TileValid(tileX, tileY) && !Tools.TileClear(tileX, tileY));
+            while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
         }
 
         private static bool TileValid(int tileX, int tileY)
@@ -184,6 +184,16 @@ namespace TShockAPI
         private static bool TileClear(int tileX, int tileY)
         {
             return !Main.tile[tileX, tileY].active;
+        }
+
+        public static List<Item> GetItemByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type))
+            {
+                return new List<Item> { GetItemById(type) };
+            }
+            return GetItemByName(idOrName);
         }
 
         public static Item GetItemById(int id)
@@ -213,6 +223,16 @@ namespace TShockAPI
                     found.Add(item);
             }
             return found;
+        }
+
+        public static List<NPC> GetNPCByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type))
+            {
+                return new List<NPC> { GetNPCById(type) };
+            }
+            return GetNPCByName(idOrName);
         }
 
         public static NPC GetNPCById(int id)
@@ -255,7 +275,7 @@ namespace TShockAPI
             {
                 if (player != null && player.Active)
                 {
-                    Tools.ForceKick(player, reason);
+                    ForceKick(player, reason);
                 }
             }
         }
@@ -290,7 +310,7 @@ namespace TShockAPI
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
+                    Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;
@@ -315,7 +335,7 @@ namespace TShockAPI
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
+                    Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;

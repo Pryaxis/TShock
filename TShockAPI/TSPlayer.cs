@@ -88,6 +88,22 @@ namespace TShockAPI
         {
             get { return (int)(Y / 16); }
         }
+        public bool InventorySlotAvailable
+        {
+            get
+            {
+                bool flag = false;
+                for (int i = 0; i < 40; i++)
+                {
+                    if (!TPlayer.inventory[i].active)
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+                return flag;
+            }
+        }
 
         public TSPlayer(int index)
         {
@@ -126,6 +142,9 @@ namespace TShockAPI
             int itemid = Terraria.Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
             // This is for special pickaxe/hammers/swords etc
             Main.item[itemid].SetDefaults(name);
+            // The set default overrides the wet and stack set by NewItem
+            Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width, Main.item[itemid].height);
+            Main.item[itemid].stack = stack;
             Main.item[itemid].owner = Index;
             NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
             NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
