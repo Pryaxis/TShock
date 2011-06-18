@@ -34,6 +34,7 @@ namespace TShockAPI
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
+        public DateTime LastPvpChange { get; protected set; }
         public bool RealPlayer
         {
             get { return Index >= 0 && Index < Main.maxNetPlayers; }
@@ -171,10 +172,12 @@ namespace TShockAPI
         {
             if (TPlayer.hostile != pvp)
             {
+                LastPvpChange = DateTime.UtcNow;
                 TPlayer.hostile = pvp;
-                NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
                 All.SendMessage(string.Format("{0} has {1} PvP!", Name, pvp ? "enabled" : "disabled"), Main.teamColor[Team]);
             }
+            //Broadcast anyways to keep players synced
+            NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
     }

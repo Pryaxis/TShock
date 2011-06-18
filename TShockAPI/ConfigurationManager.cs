@@ -55,6 +55,25 @@ namespace TShockAPI
         public static float[] AdminChatRGB = {255, 0, 0};
         public static string AdminChatPrefix = "(Admin) ";
 
+        /// <summary>
+        /// Don't allow pvp changing for x seconds.
+        /// </summary>
+        public static int PvpThrottle = 0;
+
+        /// <summary>
+        /// Backup every x minutes
+        /// </summary>
+        public static int BackupInterval = 0;
+        /// <summary>
+        /// Delete backups that are older than x mintues. 
+        /// </summary>
+        public static int BackupKeepFor = 60;
+
+        /// <summary>
+        /// Server will broadcast itself to the server list.
+        /// </summary>
+        public static bool ListServer = false;
+
         public static void ReadJsonConfiguration()
         {
             TextReader tr = new StreamReader(FileTools.ConfigPath);
@@ -87,6 +106,10 @@ namespace TShockAPI
             NPC.defaultSpawnRate = DefaultSpawnRate;
             AdminChatRGB = cfg.AdminChatRGB;
             AdminChatPrefix = cfg.AdminChatPrefix;
+            PvpThrottle = cfg.PvpThrottle;
+            BackupInterval = cfg.BackupInterval;
+            BackupKeepFor = cfg.BackupKeepFor;
+            ListServer = cfg.ListServer;
         }
 
         public static void WriteJsonConfiguration()
@@ -115,6 +138,10 @@ namespace TShockAPI
             cfg.DisableBuild = DisableBuild;
             cfg.AdminChatRGB = AdminChatRGB;
             cfg.AdminChatPrefix = AdminChatPrefix;
+            cfg.PvpThrottle = PvpThrottle;
+            cfg.BackupInterval = BackupInterval;
+            cfg.BackupKeepFor = BackupKeepFor;
+            cfg.ListServer = ListServer;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);

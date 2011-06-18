@@ -139,7 +139,7 @@ namespace TShockAPI
             Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
             Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
             Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+            string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
 
             if (hair >= Main.maxHair)
             {
@@ -254,7 +254,16 @@ namespace TShockAPI
             int id = args.Data.ReadByte();
             bool pvp = args.Data.ReadBoolean();
 
-            args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : pvp);
+            long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
+            if (ConfigurationManager.PvpThrottle > 0 && seconds < ConfigurationManager.PvpThrottle)
+            {
+                args.Player.SendMessage(string.Format("You cannot change pvp status for {0} seconds", ConfigurationManager.PvpThrottle - seconds), 255, 0, 0);
+                args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : args.TPlayer.hostile);
+            }
+            else
+            {
+                args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : pvp);
+            }
             return true;
         }
 

@@ -39,6 +39,7 @@ namespace TShockAPI
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
+        public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 
         public override Version Version
         {
@@ -100,6 +101,9 @@ namespace TShockAPI
 
             Commands.InitCommands();
             Log.Info("Commands initialized");
+
+            Backups.KeepFor = ConfigurationManager.BackupKeepFor;
+            Backups.Interval = ConfigurationManager.BackupInterval;
 
             HandleCommandLine(Environment.GetCommandLineArgs());
         }
@@ -178,6 +182,10 @@ namespace TShockAPI
         private void OnUpdate(GameTime time)
         {
             UpdateManager.UpdateProcedureCheck();
+
+            if (Backups.IsBackupTime)
+                Backups.Backup();
+
             foreach (TSPlayer player in TShock.Players)
             {
                 if (player != null && player.Active)

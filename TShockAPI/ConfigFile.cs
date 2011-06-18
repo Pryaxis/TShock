@@ -41,7 +41,15 @@ namespace TShockAPI
         public bool RangeChecks = true;
         public bool SpamChecks = false;
         public bool DisableBuild = false;
+
         public float[] AdminChatRGB = {255, 0, 0};
         public string AdminChatPrefix = "(Admin) ";
+
+        public int PvpThrottle = 0;
+
+        public int BackupInterval = 0;
+        public int BackupKeepFor = 60;
+
+        public bool ListServer = false;
     }
 }
