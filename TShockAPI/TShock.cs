@@ -72,11 +72,9 @@ namespace TShockAPI
 
             string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
             Console.WriteLine(version);
-#if DEBUG
+
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
-#else
-            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.Info, false);
-#endif
+
             Log.Info(version);
             Log.Info("Starting...");
 
