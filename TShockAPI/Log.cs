@@ -117,7 +117,17 @@ namespace TShockAPI
                 return;
             }
 
-            string caller = "TShock";
+            StackTrace trace = new StackTrace();
+            StackFrame frame = null;
+
+            frame = trace.GetFrame(2);
+
+            string caller = "TShock: ";
+
+            if (frame != null && frame.GetMethod().DeclaringType != null)
+            {
+                caller += frame.GetMethod().DeclaringType.Name + ": ";
+            }
 
             _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}",
                                  DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
