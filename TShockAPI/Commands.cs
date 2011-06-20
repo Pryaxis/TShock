@@ -1058,7 +1058,7 @@ namespace TShockAPI
                 return;
             }
 
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            var items = Tools.GetItemByIdOrName(String.Join(" ", args.Parameters));
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
