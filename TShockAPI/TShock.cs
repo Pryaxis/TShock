@@ -428,11 +428,7 @@ namespace TShockAPI
 
         public static void Teleport(int ply, float x, float y)
         {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y;
-            NetMessage.SendData(0x0d, -1, ply, "", ply);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            NetMessage.syncPlayers();
+            Teleport(ply, (int)x, (int)y);
         }
 
         public static void StartInvasion()
