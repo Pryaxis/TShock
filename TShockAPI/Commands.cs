@@ -176,7 +176,6 @@ namespace TShockAPI
 
             if (cmd == null)
             {
-                player.SendMessage("That command does not exist, try /help", Color.Red);
             }
             else
             {
