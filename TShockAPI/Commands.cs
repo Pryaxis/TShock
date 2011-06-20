@@ -852,6 +852,17 @@ namespace TShockAPI
 
         #region General Commands
 
+        public static void Whitelist(CommandArgs args)
+        {
+            if (args.Parameters.Count == 1)
+            {
+                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
+                tw.WriteLine(args.Parameters[0]);
+                tw.Close();
+                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
+            }
+        }
+
         private static void Help(CommandArgs args)
         {
             args.Player.SendMessage("TShock Commands:");
