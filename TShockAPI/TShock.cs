@@ -414,8 +414,8 @@ namespace TShockAPI
         {
             int oldSpawnX = Main.spawnTileX;
             int oldSpawnY = Main.spawnTileY;
-            Main.spawnTileX = x;
-            Main.spawnTileY = y;
+            Main.spawnTileX = x/16;
+            Main.spawnTileY = y/16;
             //Send only that player the new spawn point data
             NetMessage.SendData(7, ply, -1, "", 0, 0f, 0f, 0f);
             //Force them to respawn
