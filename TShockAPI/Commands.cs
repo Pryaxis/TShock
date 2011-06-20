@@ -138,6 +138,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
+            ChatCommands.Add(new Command("whitelist", "maintenance", Whitelist));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -176,7 +177,6 @@ namespace TShockAPI
 
             if (cmd == null)
             {
-                player.SendMessage("That command does not exist, try /help", Color.Red);
             }
             else
             {
@@ -852,6 +852,17 @@ namespace TShockAPI
         #endregion World Protection Commands
 
         #region General Commands
+
+        public static void Whitelist(CommandArgs args)
+        {
+            if (args.Parameters.Count == 1)
+            {
+                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
+                tw.WriteLine(args.Parameters[0]);
+                tw.Close();
+                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
+            }
+        }
 
         private static void Help(CommandArgs args)
         {

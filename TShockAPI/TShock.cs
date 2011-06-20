@@ -412,20 +412,23 @@ namespace TShockAPI
 
         public static void Teleport(int ply, int x, int y)
         {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y;
-            NetMessage.SendData(0x0d, -1, ply, "", ply);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            NetMessage.syncPlayers();
+            int oldSpawnX = Main.spawnTileX;
+            int oldSpawnY = Main.spawnTileY;
+            Main.spawnTileX = x;
+            Main.spawnTileY = y;
+            //Send only that player the new spawn point data
+            NetMessage.SendData(7, ply, -1, "", 0, 0f, 0f, 0f);
+            //Force them to respawn
+            NetMessage.SendData(12, ply, -1, "", ply, 0.0f, 0.0f, 0.0f);
+            //Reset to old spawnpoint and send spawn data back to player
+            Main.spawnTileX = (int)oldSpawnX;
+            Main.spawnTileY = (int)oldSpawnY;
+            NetMessage.SendData(7, ply, -1, "", 0, 0f, 0f, 0f);
         }
 
         public static void Teleport(int ply, float x, float y)
         {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y;
-            NetMessage.SendData(0x0d, -1, ply, "", ply);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            NetMessage.syncPlayers();
+            Teleport(ply, (int)x, (int)y);
         }
 
         public static void StartInvasion()
