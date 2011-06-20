@@ -21,9 +21,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
-using StreamBinary;
 using Terraria;
 using TerrariaAPI;
+using XNAHelpers;
 
 namespace TShockAPI
 {
