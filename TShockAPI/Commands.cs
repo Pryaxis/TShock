@@ -138,6 +138,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
+            ChatCommands.Add(new Command("whitelist", "maintenance", Whitelist));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
