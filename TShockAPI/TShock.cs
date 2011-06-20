@@ -30,7 +30,7 @@ using TerrariaAPI.Hooks;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 4)]
+    [APIVersion(1, 5)]
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version; 
