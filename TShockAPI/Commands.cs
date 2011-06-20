@@ -93,7 +93,7 @@ namespace TShockAPI
     }
     public static class Commands
     {
-        private static List<Command> ChatCommands = new List<Command>();
+        public static List<Command> ChatCommands = new List<Command>();
 
         public static void InitCommands()
         {
