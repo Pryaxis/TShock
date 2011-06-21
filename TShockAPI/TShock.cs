@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -29,7 +30,7 @@ using TerrariaAPI.Hooks;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 4)]
+    [APIVersion(1, 5)]
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version; 
@@ -256,7 +257,7 @@ namespace TShockAPI
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             if (msg.whoAmI != ply)
@@ -293,6 +294,9 @@ namespace TShockAPI
         /// <param name="e"></param>
         private void ServerHooks_OnCommand(string text, HandledEventArgs e)
         {
+            if (e.Handled)
+                return;
+
             // Damn you ThreadStatic and Redigit
             if (Main.rand == null)
             {
@@ -335,6 +339,9 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
+            if (Main.netMode != 2 || e.Handled)
+                return;
+
             PacketTypes type = e.MsgID;
             TSPlayer player = Players[e.Msg.whoAmI];
 
@@ -372,7 +379,7 @@ namespace TShockAPI
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             TSPlayer player = Players[who];
@@ -409,27 +416,6 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
-
-        public static void Teleport(int ply, int x, int y)
-        {
-            int oldSpawnX = Main.spawnTileX;
-            int oldSpawnY = Main.spawnTileY;
-            Main.spawnTileX = x;
-            Main.spawnTileY = y;
-            //Send only that player the new spawn point data
-            NetMessage.SendData(7, ply, -1, "", 0, 0f, 0f, 0f);
-            //Force them to respawn
-            NetMessage.SendData(12, ply, -1, "", ply, 0.0f, 0.0f, 0.0f);
-            //Reset to old spawnpoint and send spawn data back to player
-            Main.spawnTileX = (int)oldSpawnX;
-            Main.spawnTileY = (int)oldSpawnY;
-            NetMessage.SendData(7, ply, -1, "", 0, 0f, 0f, 0f);
-        }
-
-        public static void Teleport(int ply, float x, float y)
-        {
-            Teleport(ply, (int)x, (int)y);
-        }
 
         public static void StartInvasion()
         {

@@ -117,16 +117,14 @@ namespace TShockAPI
                 return;
             }
 
-            StackTrace trace = new StackTrace();
-            StackFrame frame = null;
+            string caller = "TShock";
 
-            frame = trace.GetFrame(2);
-
-            string caller = "TShock: ";
-
-            if (frame != null && frame.GetMethod().DeclaringType != null)
+            StackFrame frame = new StackTrace().GetFrame(2);
+            if (frame != null)
             {
-                caller += frame.GetMethod().DeclaringType.Name + ": ";
+                var meth = frame.GetMethod();
+                if (meth != null)
+                    caller = meth.DeclaringType.Name;
             }
 
             _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}",
