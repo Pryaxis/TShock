@@ -257,7 +257,7 @@ namespace TShockAPI
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             if (msg.whoAmI != ply)
@@ -294,6 +294,9 @@ namespace TShockAPI
         /// <param name="e"></param>
         private void ServerHooks_OnCommand(string text, HandledEventArgs e)
         {
+            if (e.Handled)
+                return;
+
             // Damn you ThreadStatic and Redigit
             if (Main.rand == null)
             {
@@ -336,6 +339,9 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
+            if (Main.netMode != 2 || e.Handled)
+                return;
+
             PacketTypes type = e.MsgID;
             TSPlayer player = Players[e.Msg.whoAmI];
 
@@ -373,7 +379,7 @@ namespace TShockAPI
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             TSPlayer player = Players[who];
