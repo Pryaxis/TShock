@@ -177,19 +177,18 @@ namespace TShockAPI
 
             if (cmd == null)
             {
+                return false;
+            }
+
+            if (!cmd.CanRun(player))
+            {
+                Tools.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
+                player.SendMessage("You do not have access to that command.", Color.Red);
             }
             else
             {
-                if (!cmd.CanRun(player))
-                {
-                    Tools.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
-                    player.SendMessage("You do not have access to that command.", Color.Red);
-                }
-                else
-                {
-                    Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
-                    cmd.Run(cmdText, player, args);
-                }
+                Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
+                cmd.Run(cmdText, player, args);
             }
             return true;
         }
