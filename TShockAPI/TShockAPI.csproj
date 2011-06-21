@@ -81,6 +81,7 @@
     <Compile Include="GetDataHandlers.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="RegionManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -91,6 +92,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TSPlayer.cs" />
     <Compile Include="UpdateManager.cs" />
+    <Compile Include="WarpsManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config\groups.txt" />
