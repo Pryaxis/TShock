@@ -15,7 +15,7 @@ namespace TShockAPI
         {
             foreach (Region nametest in Regions)
             {
-                if (name.ToLower() == nametest.Name.ToLower())
+                if (name.ToLower() == nametest.RegionName.ToLower())
                 {
                     return false;
                 }
@@ -28,7 +28,7 @@ namespace TShockAPI
         {
             foreach (Region nametest in Regions)
             {
-                if (name.ToLower() == nametest.Name.ToLower())
+                if (name.ToLower() == nametest.RegionName.ToLower())
                 {
                     Regions.Remove(nametest);
                     WriteSettings();
@@ -42,7 +42,7 @@ namespace TShockAPI
         {
             foreach (Region nametest in Regions)
             {
-                if (name.ToLower() == nametest.Name.ToLower())
+                if (name.ToLower() == nametest.RegionName.ToLower())
                 {
                     nametest.DisableBuild = state;
                     WriteSettings();
@@ -80,7 +80,7 @@ namespace TShockAPI
                     foreach (Region region in Regions)
                     {
                         settingsw.WriteStartElement("ProtectedRegion");
-                        settingsw.WriteElementString("RegionName", region.Name);
+                        settingsw.WriteElementString("RegionName", region.RegionName);
                         settingsw.WriteElementString("Point1X", region.RegionArea.X.ToString());
                         settingsw.WriteElementString("Point1Y", region.RegionArea.Y.ToString());
                         settingsw.WriteElementString("Point2X", region.RegionArea.Width.ToString());
@@ -194,20 +194,20 @@ namespace TShockAPI
     public class Region
     {
         public Rectangle RegionArea { get; set; }
-        public string Name { get; set; }
+        public string RegionName { get; set; }
         public bool DisableBuild { get; set; }
 
         public Region(Rectangle region, string name, bool disablebuild)
         {
             RegionArea = region;
-            Name = name;
+            RegionName = name;
             DisableBuild = disablebuild;
         }
 
         public Region()
         {
             RegionArea = Rectangle.Empty;
-            Name = string.Empty;
+            RegionName = string.Empty;
             DisableBuild = true;
         }
     }

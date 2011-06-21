@@ -140,6 +140,9 @@ namespace TShockAPI
             ChatCommands.Add(new Command("rules", "", Rules));
             ChatCommands.Add(new Command("whitelist", "maintenance", Whitelist));
             ChatCommands.Add(new Command("region", "editspawn", Region));
+            ChatCommands.Add(new Command("warp", "", UseWarp));
+            ChatCommands.Add(new Command("setwarp", "cfg", SetWarp));
+            ChatCommands.Add(new Command("delwarp", "cfg", DeleteWarp));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -747,6 +750,58 @@ namespace TShockAPI
             }
         }
 
+        private static void SetWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+                if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, args.Parameters[0]))
+                {
+                    args.Player.SendMessage("Set warp " + args.Parameters[0], Color.Yellow);
+                }
+                else
+                {
+                    args.Player.SendMessage("Warp " + args.Parameters[0] + " already exists", Color.Red);
+                }
+            else
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /setwarp [name]", Color.Red);
+        }
+
+        private static void DeleteWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                if (WarpsManager.DeleteWarp(args.Parameters[0]))
+                    args.Player.SendMessage("Deleted warp " + args.Parameters[0], Color.Yellow);
+                else
+                    args.Player.SendMessage("Could not find specified warp", Color.Red);
+            }
+        }
+
+        private static void UseWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                if (WarpsManager.FindWarp(args.Parameters[0]) != Vector2.Zero)
+                {
+                    args.Player.Teleport((int)WarpsManager.FindWarp(args.Parameters[0]).X, (int)WarpsManager.FindWarp(args.Parameters[0]).Y);
+                    args.Player.SendMessage("Warped to " + args.Parameters[0], Color.Yellow);
+                }
+                else
+                {
+                    args.Player.SendMessage("Specified warp not found", Color.Yellow);
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Current Warps:", Color.Green);
+
+                //Someone needs to make it list
+                for (int i = 0; i < (WarpsManager.Warps.Count); i++)
+                {
+                    args.Player.SendMessage(WarpsManager.Warps[i].WarpName, Color.Yellow);
+                }
+            }
+        }
+
         #endregion Teleport Commands
 
         #region Server Config Commands
@@ -980,6 +1035,8 @@ namespace TShockAPI
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
+                            else
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
                             break;
                         }
                     case "clear":
