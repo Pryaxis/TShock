@@ -103,6 +103,8 @@ namespace TShockAPI
 
             RegionManager.ReadAllSettings();
 
+            WarpsManager.ReadAllSettings();
+
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
 

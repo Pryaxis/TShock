@@ -756,6 +756,7 @@ namespace TShockAPI
                 if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, args.Parameters[0]))
                 {
                     args.Player.SendMessage("Set warp " + args.Parameters[0], Color.Yellow);
+                    WarpsManager.WriteSettings();
                 }
                 else
                 {
@@ -1001,7 +1002,7 @@ namespace TShockAPI
                                 args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
                             break;
                         }
-                    case "protected":
+                    case "protect":
                         {
                             if (args.Parameters.Count > 2)
                             {
@@ -1048,7 +1049,7 @@ namespace TShockAPI
                     case "help":
                         {
                             args.Player.SendMessage("Avialable region commands:", Color.Green);
-                            args.Player.SendMessage("/region set [1/2] /region define [name]", Color.Yellow);
+                            args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
                             args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
                             break;
                         }
