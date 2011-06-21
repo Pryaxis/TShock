@@ -35,6 +35,7 @@ namespace TShockAPI
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
+        public Rectangle TempArea = new Rectangle();
         public bool RealPlayer
         {
             get { return Index >= 0 && Index < Main.maxNetPlayers; }

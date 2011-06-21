@@ -101,6 +101,8 @@ namespace TShockAPI
             Commands.InitCommands();
             Log.Info("Commands initialized");
 
+            RegionManager.ReadAllSettings();
+
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
 
