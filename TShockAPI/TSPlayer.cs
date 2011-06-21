@@ -130,6 +130,31 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.Disconnect, Index, -1, reason, 0x0, 0f, 0f, 0f);
         }
 
+        public bool Teleport(int tileX, int tileY)
+        {
+            if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
+                return false;
+
+            int oldSpawnX = Main.spawnTileX;
+            int oldSpawnY = Main.spawnTileY;
+            Main.spawnTileX = tileX;
+            Main.spawnTileY = tileY;
+            //Send only that player the new spawn point data
+            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0f, 0f, 0f);
+            //Force them to respawn
+            Spawn();
+            //Reset to old spawnpoint and send spawn data back to player
+            Main.spawnTileX = (int)oldSpawnX;
+            Main.spawnTileY = (int)oldSpawnY;
+            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0f, 0f, 0f);
+            return true;
+        }
+
+        public void Spawn()
+        {
+            NetMessage.SendData((int)PacketTypes.PlayerSpawn, Index, -1, "", Index, 0.0f, 0.0f, 0.0f);
+        }
+
         public virtual void SendTileSquare(int x, int y, int size = 10)
         {
             NetMessage.SendData((int)PacketTypes.TileSendSquare, Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);

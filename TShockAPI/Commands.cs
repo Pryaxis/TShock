@@ -654,16 +654,16 @@ namespace TShockAPI
 
         private static void Home(CommandArgs args)
         {
-            TShock.Teleport(args.Player.Index, args.TPlayer.SpawnX * 16 + 8 - args.TPlayer.width / 2,
-                            args.TPlayer.SpawnY * 16 - args.TPlayer.height);
+            args.Player.Spawn();
             args.Player.SendMessage("Teleported to your spawnpoint.");
         }
 
         private static void Spawn(CommandArgs args)
         {
-            TShock.Teleport(args.Player.Index, Main.spawnTileX * 16 + 8 - args.TPlayer.width / 2,
-                            Main.spawnTileY * 16 - args.TPlayer.height);
-            args.Player.SendMessage("Teleported to the map's spawnpoint.");
+            if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
+                args.Player.SendMessage("Teleported to the map's spawnpoint.");
+            else
+                args.Player.SendMessage("Can't teleport because you have set custom spawnpoint.", Color.Red);
         }
 
         private static void TP(CommandArgs args)
@@ -683,8 +683,10 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                TShock.Teleport(args.Player.Index, plr.X, plr.Y);
-                args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
+                if (args.Player.Teleport(plr.TileX, plr.TileY))
+                    args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
+                else
+                    args.Player.SendMessage("Can't teleport because you have set custom spawnpoint.", Color.Red);
             }
         }
 
@@ -709,9 +711,14 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                TShock.Teleport(plr.Index, args.Player.X, args.Player.Y);
-                plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
-                args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
+                if (plr.Teleport(args.Player.TileX, args.Player.TileY))
+                {
+                    plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
+                    args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
+                }
+                else
+                    args.Player.SendMessage("Can't teleport because target player has set custom spawnpoint.", Color.Red);
+
             }
         }
 
