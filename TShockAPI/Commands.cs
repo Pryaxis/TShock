@@ -675,7 +675,7 @@ namespace TShockAPI
             if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
                 args.Player.SendMessage("Teleported to the map's spawnpoint.");
             else
-                args.Player.SendMessage("Can't teleport because you have set custom spawnpoint.", Color.Red);
+                args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset die after bed is destroyed).", Color.Red);
         }
 
         private static void TP(CommandArgs args)
@@ -704,7 +704,7 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY))
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
                 else
-                    args.Player.SendMessage("Can't teleport because you have set custom spawnpoint.", Color.Red);
+                    args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset die after bed is destroyed).", Color.Red);
             }
         }
 
@@ -741,7 +741,7 @@ namespace TShockAPI
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
                 }
                 else
-                    args.Player.SendMessage("Can't teleport because target player has set custom spawnpoint.", Color.Red);
+                    args.Player.SendMessage("Teleport unavailable target player has custom spawnpoint set.", Color.Red);
 
             }
         }
