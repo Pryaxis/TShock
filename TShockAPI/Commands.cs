@@ -654,12 +654,24 @@ namespace TShockAPI
 
         private static void Home(CommandArgs args)
         {
+            if (!args.Player.RealPlayer)
+            {
+                args.Player.SendMessage("You cant use teleport commands!");
+                return;
+            }
+
             args.Player.Spawn();
             args.Player.SendMessage("Teleported to your spawnpoint.");
         }
 
         private static void Spawn(CommandArgs args)
         {
+            if (!args.Player.RealPlayer)
+            {
+                args.Player.SendMessage("You cant use teleport commands!");
+                return;
+            }
+
             if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
                 args.Player.SendMessage("Teleported to the map's spawnpoint.");
             else
@@ -668,6 +680,12 @@ namespace TShockAPI
 
         private static void TP(CommandArgs args)
         {
+            if (!args.Player.RealPlayer)
+            {
+                args.Player.SendMessage("You cant use teleport commands!");
+                return;
+            }
+
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /tp <player> ", Color.Red);
@@ -692,6 +710,12 @@ namespace TShockAPI
 
         private static void TPHere(CommandArgs args)
         {
+            if (!args.Player.RealPlayer)
+            {
+                args.Player.SendMessage("You cant use teleport commands!");
+                return;
+            }
+
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /tphere <player> ", Color.Red);
