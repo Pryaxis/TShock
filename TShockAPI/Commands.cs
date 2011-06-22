@@ -798,7 +798,7 @@ namespace TShockAPI
 
         private static void UseWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 1)
+            if (args.Parameters.Count > 0)
             {
                 if (args.Parameters[0].Equals("list"))
                 {
