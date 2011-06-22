@@ -70,7 +70,7 @@ namespace TShockAPI
                 WorldGen.saveWorld();
 
                 Console.WriteLine("World backed up");
-                Log.Error(string.Format("World backed up ({0})", Main.worldPathName));
+                Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
 
                 Main.worldPathName = worldname;
             }
