@@ -105,6 +105,8 @@ namespace TShockAPI
 
             WarpsManager.ReadAllSettings();
 
+            ItemManager.LoadBans();
+
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
 
@@ -210,6 +212,18 @@ namespace TShockAPI
                     {
                         player.TileThreshold = 0;
                         player.TilesDestroyed.Clear();
+                    }
+
+                    if (!player.Group.HasPermission("usebanneditem"))
+                    {
+                        for (int i = 0; i < Main.player[player.Index].inventory.Length; i++)
+                        {
+                            if (ItemManager.ItemIsBanned(Main.player[player.Index].inventory[i].name))
+                            {
+                                player.Disconnect("Using banned item: " + Main.player[player.Index].inventory[i].name);
+                                break;
+                            }
+                        }
                     }
                 }
             }

@@ -1383,6 +1383,7 @@ namespace TShockAPI
             }
 
             var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);

@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="BanManager.cs" />
+    <Compile Include="ItemManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="ConfigurationManager.cs" />
@@ -129,6 +130,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="config\itembans.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -139,7 +143,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

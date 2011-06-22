@@ -34,9 +34,10 @@
 #immunetoban	- player can't be banned
 #ignorecheatdetection - allow player to cheat (health/mana cheats) 
 #ignoregriefdetection - allow player to grief (use explosives, water, lava even if they dont have premission to)
+#usebanneditem - allows player to use banned items
 
 default null canwater canlava warp
 vip default reservedslot
 newadmin default kick editspawn reservedslot
 admin newadmin ban unban whitelist causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick
-trustedadmin admin maintenance cfg butcher cheat immunetoban ignorecheatdetection ignoregriefdetection
+trustedadmin admin maintenance cfg butcher cheat immunetoban ignorecheatdetection ignoregriefdetection usebanneditem
