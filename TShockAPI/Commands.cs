@@ -1029,122 +1029,132 @@ namespace TShockAPI
 
         private static void Region(CommandArgs args)
         {
+            string cmd = "help";
             if (args.Parameters.Count > 0)
             {
-                switch (args.Parameters[0].ToLower())
-                {
-                    case "set":
+                cmd = args.Parameters[0].ToLower();
+            }
+            switch (cmd)
+            {
+                case "set":
+                    {
+                        if (args.Parameters.Count == 2)
                         {
-                            if (args.Parameters.Count > 1)
+                            if (args.Parameters[1] == "1")
                             {
-                                if (args.Parameters[1] == "1")
+                                args.Player.TempArea.X = args.Player.TileX;
+                                args.Player.TempArea.Y = args.Player.TileY;
+                                args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
+                            }
+                            else if (args.Parameters[1] == "2")
+                            {
+                                if (args.Player.TempArea.X != 0)
                                 {
-                                    args.Player.TempArea.X = args.Player.TileX;
-                                    args.Player.TempArea.Y = args.Player.TileY;
-                                    args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
-                                }
-                                else if (args.Parameters[1] == "2")
-                                {
-                                    if (args.Player.TempArea.X != 0)
+                                    if (args.Player.TileX > args.Player.TempArea.X && args.Player.TileY > args.Player.TempArea.Y)
                                     {
-                                        if (args.Player.TileX > args.Player.TempArea.X && args.Player.TileY > args.Player.TempArea.Y)
-                                        {
-                                            args.Player.TempArea.Width = args.Player.TileX - args.Player.TempArea.X;
-                                            args.Player.TempArea.Height = (args.Player.TileY + 3) - args.Player.TempArea.Y;
-                                            args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
-                                        }
-                                        else
-                                        {
-                                            args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
-                                            args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
-                                        }
+                                        args.Player.TempArea.Width = args.Player.TileX - args.Player.TempArea.X;
+                                        args.Player.TempArea.Height = (args.Player.TileY + 3) - args.Player.TempArea.Y;
+                                        args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
                                     }
                                     else
                                     {
-                                        args.Player.SendMessage("You have not set Point 1 yet", Color.Red);
+                                        args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
+                                        args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
                                     }
+                                }
+                                else
+                                {
+                                    args.Player.SendMessage("You have not set Point 1 yet", Color.Red);
                                 }
                             }
                             else
                                 args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
-                            break;
                         }
-                    case "define":
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
+                        break;
+                    }
+                case "define":
+                    {
+                        if (args.Parameters.Count > 1)
                         {
-                            if (args.Parameters.Count > 1)
+                            if (!args.Player.TempArea.IsEmpty)
                             {
-                                if (!args.Player.TempArea.IsEmpty)
+                                string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
+                                if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, 
+                                                            args.Player.TempArea.Width, args.Player.TempArea.Height, 
+                                                            regionName, Main.worldName))
                                 {
-                                    if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, args.Player.TempArea.Width, args.Player.TempArea.Height, args.Parameters[1], Main.worldName))
-                                    {
-                                        RegionManager.WriteSettings();
-                                        args.Player.TempArea = Rectangle.Empty;
-                                        args.Player.SendMessage("Set region " + args.Parameters[1], Color.Yellow);
-                                    }
-                                    else
-                                    {
-                                        args.Player.SendMessage("Region " + args.Parameters[1] + " already exists", Color.Red);
-                                    }
+                                    RegionManager.WriteSettings();
+                                    args.Player.TempArea = Rectangle.Empty;
+                                    args.Player.SendMessage("Set region " + regionName, Color.Yellow);
                                 }
                                 else
-                                    args.Player.SendMessage("Points not set up yet", Color.Red);
+                                {
+                                    args.Player.SendMessage("Region " + regionName + " already exists", Color.Red);
+                                }
                             }
                             else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
-                            break;
+                                args.Player.SendMessage("Points not set up yet", Color.Red);
                         }
-                    case "protect":
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
+                        break;
+                    }
+                case "protect":
+                    {
+                        if (args.Parameters.Count == 3)
                         {
-                            if (args.Parameters.Count > 2)
+                            string regionName = args.Parameters[1];
+                            if (args.Parameters[2].ToLower() == "true")
                             {
-                                if (args.Parameters[2].ToLower() == "true")
-                                {
-                                    if(RegionManager.SetRegionState(args.Parameters[1],true))
-                                        args.Player.SendMessage("Protected region " + args.Parameters[1], Color.Yellow);
-                                    else
-                                        args.Player.SendMessage("Could not find specified region", Color.Red);
-                                }
-                                else if (args.Parameters[2].ToLower() == "false")
-                                {
-                                    if (RegionManager.SetRegionState(args.Parameters[1], false))
-                                        args.Player.SendMessage("Unprotected region " + args.Parameters[1], Color.Yellow);
-                                    else
-                                        args.Player.SendMessage("Could not find specified region", Color.Red);
-                                }
+                                if (RegionManager.SetRegionState(regionName, true))
+                                    args.Player.SendMessage("Protected region " + regionName, Color.Yellow);
                                 else
-                                    args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
+                                    args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
-                            else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
-                            break;
-                        }
-                    case "delete":
-                        {
-                            if (args.Parameters.Count > 1)
+                            else if (args.Parameters[2].ToLower() == "false")
                             {
-                                if (RegionManager.DeleteRegion(args.Parameters[1]))
-                                    args.Player.SendMessage("Deleted region " + args.Parameters[1], Color.Yellow);
+                                if (RegionManager.SetRegionState(regionName, false))
+                                    args.Player.SendMessage("Unprotected region " + regionName, Color.Yellow);
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
-                            break;
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
                         }
-                    case "clear":
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
+                        break;
+                    }
+                case "delete":
+                    {
+                        if (args.Parameters.Count > 1)
                         {
-                            args.Player.TempArea = Rectangle.Empty;
-                            args.Player.SendMessage("Cleared temp area", Color.Yellow);
-                            break;
+                            string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
+                            if (RegionManager.DeleteRegion(regionName))
+                                args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
+                            else
+                                args.Player.SendMessage("Could not find specified region", Color.Red);
                         }
-                    case "help":
-                        {
-                            args.Player.SendMessage("Avialable region commands:", Color.Green);
-                            args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
-                            args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
-                            break;
-                        }
-                }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
+                        break;
+                    }
+                case "clear":
+                    {
+                        args.Player.TempArea = Rectangle.Empty;
+                        args.Player.SendMessage("Cleared temp area", Color.Yellow);
+                        break;
+                    }
+                case "help":
+                default:
+                    {
+                        args.Player.SendMessage("Avialable region commands:", Color.Green);
+                        args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
+                        args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
+                        break;
+                    }
             }
 
         }
