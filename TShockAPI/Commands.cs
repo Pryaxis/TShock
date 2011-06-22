@@ -671,7 +671,7 @@ namespace TShockAPI
         {
             if (!args.Player.RealPlayer)
             {
-                args.Player.SendMessage("You cant use teleport commands!");
+                args.Player.SendMessage("You cannot use teleport commands!");
                 return;
             }
 
@@ -683,21 +683,21 @@ namespace TShockAPI
         {
             if (!args.Player.RealPlayer)
             {
-                args.Player.SendMessage("You cant use teleport commands!");
+                args.Player.SendMessage("You cannot use teleport commands!");
                 return;
             }
 
             if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
                 args.Player.SendMessage("Teleported to the map's spawnpoint.");
             else
-                args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
+                args.Player.SendMessage("Teleport unavailable - Spawn point set to Bed. To unset, destroy Bed and suicide at least once.", Color.Red);
         }
 
         private static void TP(CommandArgs args)
         {
             if (!args.Player.RealPlayer)
             {
-                args.Player.SendMessage("You cant use teleport commands!");
+                args.Player.SendMessage("You cannot use teleport commands!");
                 return;
             }
 
@@ -719,7 +719,7 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY))
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
                 else
-                    args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
+                    args.Player.SendMessage("Teleport unavailable - Spawn point set to Bed. To unset, destroy Bed and suicide at least once.", Color.Red);
             }
         }
 
@@ -727,7 +727,7 @@ namespace TShockAPI
         {
             if (!args.Player.RealPlayer)
             {
-                args.Player.SendMessage("You cant use teleport commands!");
+                args.Player.SendMessage("You cannot use teleport commands!");
                 return;
             }
 
@@ -756,7 +756,7 @@ namespace TShockAPI
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
                 }
                 else
-                    args.Player.SendMessage("Teleport unavailable target player has custom spawnpoint set.", Color.Red);
+                    args.Player.SendMessage("Teleport unavailable - Target player has spawn point set to Bed.", Color.Red);
 
             }
         }
@@ -842,7 +842,7 @@ namespace TShockAPI
                         if (args.Player.Teleport((int)warp.X, (int)warp.Y))
                             args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
                         else
-                            args.Player.SendMessage("Warp unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
+                            args.Player.SendMessage("Warp unavailable - Spawn point set to Bed. To unset, destroy Bed and suicide at least once.", Color.Red);
 
                     }
                     else
