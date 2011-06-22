@@ -763,26 +763,34 @@ namespace TShockAPI
 
         private static void SetWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 0)
-                if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, args.Parameters[0], Main.worldName))
+            if (args.Parameters.Count > 1)
+            {
+                string warpName = String.Join(" ", args.Parameters);
+                if (warpName.Equals("list"))
                 {
-                    args.Player.SendMessage("Set warp " + args.Parameters[0], Color.Yellow);
+                    args.Player.SendMessage("Name reserved, use a different name", Color.Red);
+                }
+                else if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
+                {
+                    args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
                     WarpsManager.WriteSettings();
                 }
                 else
                 {
-                    args.Player.SendMessage("Warp " + args.Parameters[0] + " already exists", Color.Red);
+                    args.Player.SendMessage("Warp " + warpName + " already exists", Color.Red);
                 }
+            }
             else
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /setwarp [name]", Color.Red);
         }
 
         private static void DeleteWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 0)
+            if (args.Parameters.Count > 1)
             {
-                if (WarpsManager.DeleteWarp(args.Parameters[0]))
-                    args.Player.SendMessage("Deleted warp " + args.Parameters[0], Color.Yellow);
+                string warpName = String.Join(" ", args.Parameters);
+                if (WarpsManager.DeleteWarp(warpName))
+                    args.Player.SendMessage("Deleted warp " + warpName, Color.Yellow);
                 else
                     args.Player.SendMessage("Could not find specified warp", Color.Red);
             }
@@ -790,31 +798,59 @@ namespace TShockAPI
 
         private static void UseWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 0)
+            if (args.Parameters.Count > 1)
             {
-                if (WarpsManager.FindWarp(args.Parameters[0]) != Vector2.Zero)
+                if (args.Parameters[0].Equals("list"))
                 {
-                    if (args.Player.Teleport((int)WarpsManager.FindWarp(args.Parameters[0]).X, (int)WarpsManager.FindWarp(args.Parameters[0]).Y))
-                        args.Player.SendMessage("Warped to " + args.Parameters[0], Color.Yellow);
-                    else
-                        args.Player.SendMessage("Warp unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
-
+                    args.Player.SendMessage("Current Warps:", Color.Green); 
+                    int page = 1;
+                    if (args.Parameters.Count > 1)
+                        int.TryParse(args.Parameters[1], out page);
+                    var sb = new StringBuilder();
+                    if (WarpsManager.Warps.Count > (15 * (page - 1)))
+                    {
+                        for (int j = (15 * (page - 1)); j < (15 * page); j++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(", ");
+                            sb.Append("/").Append(WarpsManager.Warps[j].WarpName);
+                            if (j == WarpsManager.Warps.Count - 1)
+                            {
+                                args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                break;
+                            }
+                            if ((j + 1) % 5 == 0)
+                            {
+                                args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                sb.Clear();
+                            }
+                        }
+                    }
+                    if (WarpsManager.Warps.Count > (15 * page))
+                    {
+                        args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                    }
                 }
                 else
                 {
-                    args.Player.SendMessage("Specified warp not found", Color.Red);
+                    string warpName = String.Join(" ", args.Parameters);
+                    var warp = WarpsManager.FindWarp(warpName);
+                    if (warp != Vector2.Zero)
+                    {
+                        if (args.Player.Teleport((int)warp.X, (int)warp.Y))
+                            args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
+                        else
+                            args.Player.SendMessage("Warp unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
+
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Specified warp not found", Color.Red);
+                    }
                 }
             }
             else
-            {
-                args.Player.SendMessage("Current Warps:", Color.Green);
-
-                //Someone needs to make it list
-                for (int i = 0; i < (WarpsManager.Warps.Count); i++)
-                {
-                    args.Player.SendMessage(WarpsManager.Warps[i].WarpName, Color.Yellow);
-                }
-            }
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /warp [name] or warp list", Color.Red);
         }
 
         #endregion Teleport Commands
