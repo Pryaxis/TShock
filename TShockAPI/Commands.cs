@@ -134,7 +134,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("slap", "pvpfun", Slap));
             ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             ChatCommands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
-            ChatCommands.Add(new Command("region", "editspawn", Region));
+            ChatCommands.Add(new Command("region", "", Region));
             ChatCommands.Add(new Command("help", "", Help));
             ChatCommands.Add(new Command("playing", "", Playing));
             ChatCommands.Add(new Command("online", "", Playing));
@@ -1084,8 +1084,8 @@ namespace TShockAPI
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, 
-                                                            args.Player.TempArea.Width, args.Player.TempArea.Height, 
-                                                            regionName, Main.worldName))
+                                                            args.Player.TempArea.Width, args.Player.TempArea.Height,
+                                                            regionName, Main.worldName, args.Player.Name))
                                 {
                                     RegionManager.WriteSettings();
                                     args.Player.TempArea = Rectangle.Empty;

@@ -12,7 +12,7 @@ namespace TShockAPI
     {
         public static List<Region> Regions = new List<Region>();
 
-        public static bool AddRegion(int tx, int ty, int width, int height, string name, string worldname)
+        public static bool AddRegion(int tx, int ty, int width, int height, string name, string worldname, string player)
         {
             foreach (Region nametest in Regions)
             {
@@ -21,7 +21,7 @@ namespace TShockAPI
                     return false;
                 }
             }
-            Regions.Add(new Region(new Rectangle(tx, ty, width, height), name, true, worldname));
+            Regions.Add(new Region(new Rectangle(tx, ty, width, height), name, true, worldname, player));
             return true;
         }
 
@@ -65,6 +65,18 @@ namespace TShockAPI
             return false;
         }
 
+        public static bool Owner(string player)
+        {
+            foreach (Region region in Regions)
+            {
+                if (player == region.PlayerName)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static void WriteSettings()
         {
             try
@@ -88,6 +100,7 @@ namespace TShockAPI
                         settingsw.WriteElementString("Point2Y", region.RegionArea.Height.ToString());
                         settingsw.WriteElementString("Protected", region.DisableBuild.ToString());
                         settingsw.WriteElementString("WorldName", region.WorldRegionName);
+                        settingsw.WriteElementString("Player", region.PlayerName);
                         settingsw.WriteEndElement();
                     }
 
@@ -132,6 +145,7 @@ namespace TShockAPI
                                             int height = 0;
                                             bool state = true;
                                             string worldname = null;
+                                            string player = null;
 
                                             settingr.Read();
                                             if (settingr.Value != "" || settingr.Value != null)
@@ -188,7 +202,15 @@ namespace TShockAPI
                                             else
                                                 Log.Warn("Worldname for region " + name + " is empty");
 
-                                            AddRegion(x, y, width, height, name, worldname);
+                                            settingr.Read();
+                                            settingr.Read();
+                                            settingr.Read();
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                player = settingr.Value;
+                                            else
+                                                Log.Warn("Worldname for region " + name + " is empty");
+                                            
+                                            AddRegion(x, y, width, height, name, worldname, player);
                                         }
                                         break;
                                     }                                    
@@ -212,13 +234,15 @@ namespace TShockAPI
         public string RegionName { get; set; }
         public bool DisableBuild { get; set; }
         public string WorldRegionName { get; set; }
+        public string PlayerName { get; set; }
 
-        public Region(Rectangle region, string name, bool disablebuild, string worldname)
+        public Region(Rectangle region, string name, bool disablebuild, string worldname, string player)
         {
             RegionArea = region;
             RegionName = name;
             DisableBuild = disablebuild;
             WorldRegionName = worldname;
+            PlayerName = player;
         }
 
         public Region()
@@ -227,6 +251,7 @@ namespace TShockAPI
             RegionName = string.Empty;
             DisableBuild = true;
             WorldRegionName = string.Empty;
+            PlayerName = string.Empty;
         }
     }
 }

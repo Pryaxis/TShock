@@ -216,12 +216,12 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y))
+            if (!RegionManager.Owner(args.Player.Name) && !args.Player.Group.HasPermission("kick") && RegionManager.InProtectedArea(x, y))
             {
-                args.Player.SendMessage("Region protected from changes.", Color.Red);
-                args.Player.SendTileSquare(x, y);
-                return true;
-            }
+                    args.Player.SendMessage("Region protected from changes.", Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             if (ConfigurationManager.DisableBuild)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
