@@ -102,6 +102,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("banip", "ban", BanIP));
             ChatCommands.Add(new Command("unban", "unban", UnBan));
             ChatCommands.Add(new Command("unbanip", "unban", UnBanIP));
+            ChatCommands.Add(new Command("whitelist", "whitelist", Whitelist));
             ChatCommands.Add(new Command("off", "maintenance", Off));
             ChatCommands.Add(new Command("off-nosave", "maintenance", OffNoSave));
             ChatCommands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
@@ -129,7 +130,6 @@ namespace TShockAPI
             ChatCommands.Add(new Command("save", "cfg", Save));
             ChatCommands.Add(new Command("maxspawns", "cfg", MaxSpawns));
             ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
-            ChatCommands.Add(new Command("whitelist", "cfg", Whitelist));
             ChatCommands.Add(new Command("time", "time", Time));
             ChatCommands.Add(new Command("slap", "pvpfun", Slap));
             ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
@@ -414,6 +414,17 @@ namespace TShockAPI
             else
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+        }
+
+        public static void Whitelist(CommandArgs args)
+        {
+            if (args.Parameters.Count == 1)
+            {
+                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
+                tw.WriteLine(args.Parameters[0]);
+                tw.Close();
+                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
             }
         }
 
@@ -882,17 +893,6 @@ namespace TShockAPI
             NPC.defaultSpawnRate = amount;
             ConfigurationManager.DefaultSpawnRate = amount;
             Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
-        }
-
-        public static void Whitelist(CommandArgs args)
-        {
-            if (args.Parameters.Count == 1)
-            {
-                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
-                tw.WriteLine(args.Parameters[0]);
-                tw.Close();
-                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
-            }
         }
 
         #endregion Server Config Commands

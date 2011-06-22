@@ -15,6 +15,7 @@
 #kick			- kick users
 #ban			- ban players by name or ip
 #unban			- unban players by name or ip
+#whitelist		- add ip to whitelist
 #maintenance	- check for updates/turn off server
 #causeevents	- allow player to drop star/meteor and start invasion/bloodmoon
 #spawnboss		- allow player to spawn bosses
@@ -37,5 +38,5 @@
 default null canwater canlava warp
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban unban causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick
+admin newadmin ban unban whitelist causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick
 trustedadmin admin maintenance cfg butcher cheat immunetoban ignorecheatdetection ignoregriefdetection
