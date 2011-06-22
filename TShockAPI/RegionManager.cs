@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace TShockAPI
 {
@@ -11,7 +12,7 @@ namespace TShockAPI
     {
         public static List<Region> Regions = new List<Region>();
 
-        public static bool AddRegion(int tx, int ty, int width, int height, string name, bool state)
+        public static bool AddRegion(int tx, int ty, int width, int height, string name, string worldname)
         {
             foreach (Region nametest in Regions)
             {
@@ -20,7 +21,7 @@ namespace TShockAPI
                     return false;
                 }
             }
-            Regions.Add(new Region(new Rectangle(tx, ty, width, height), name, true));
+            Regions.Add(new Region(new Rectangle(tx, ty, width, height), name, true, worldname));
             return true;
         }
 
@@ -28,7 +29,7 @@ namespace TShockAPI
         {
             foreach (Region nametest in Regions)
             {
-                if (name.ToLower() == nametest.RegionName.ToLower())
+                if (name.ToLower() == nametest.RegionName.ToLower() && nametest.WorldRegionName == Main.worldName)
                 {
                     Regions.Remove(nametest);
                     WriteSettings();
@@ -56,7 +57,7 @@ namespace TShockAPI
         {
             foreach(Region region in Regions)
             {
-                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild)
+                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName)
                 {
                     return true;
                 }
@@ -86,6 +87,7 @@ namespace TShockAPI
                         settingsw.WriteElementString("Point2X", region.RegionArea.Width.ToString());
                         settingsw.WriteElementString("Point2Y", region.RegionArea.Height.ToString());
                         settingsw.WriteElementString("Protected", region.DisableBuild.ToString());
+                        settingsw.WriteElementString("WorldName", region.WorldRegionName);
                         settingsw.WriteEndElement();
                     }
 
@@ -96,7 +98,7 @@ namespace TShockAPI
             }
             catch
             {
-                Log.Info("Could not write Regions");
+                Log.Warn("Could not write Regions");
             }
         }
 
@@ -123,15 +125,20 @@ namespace TShockAPI
                                     {
                                         if (settingr.Read())
                                         {
-                                            string name;
+                                            string name = null;
                                             int x = 0;
                                             int y = 0;
                                             int width = 0;
                                             int height = 0;
                                             bool state = true;
+                                            string worldname = null;
 
                                             settingr.Read();
-                                            name = settingr.Value;
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                name = settingr.Value;
+                                            else
+                                                Log.Warn("Region name is empty");
+
 
                                             settingr.Read();
                                             settingr.Read();
@@ -139,7 +146,7 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out x);
                                             else
-                                                Console.WriteLine("Could not parse x");
+                                                Log.Warn("x for region " + name + " is empty");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -147,7 +154,7 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out y);
                                             else
-                                                Console.WriteLine("Could not parse y");
+                                                Log.Warn("y for region " + name + " is empty");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -155,7 +162,7 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out width);
                                             else
-                                                Console.WriteLine("Could not parse width");
+                                                Log.Warn("Width for region " + name + " is empty");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -163,7 +170,7 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out height);
                                             else
-                                                Console.WriteLine("Could not parse height");
+                                                Log.Warn("Height for region " + name + " is empty");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -171,9 +178,17 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 bool.TryParse(settingr.Value, out state);
                                             else
-                                                Console.WriteLine("Could not parse state");
+                                                Log.Warn("State for region " + name + " is empty");
 
-                                            AddRegion(x, y, width, height, name, state);
+                                            settingr.Read();
+                                            settingr.Read();
+                                            settingr.Read();
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                worldname = settingr.Value;
+                                            else
+                                                Log.Warn("Worldname for region " + name + " is empty");
+
+                                            AddRegion(x, y, width, height, name, worldname);
                                         }
                                         break;
                                     }                                    
@@ -185,7 +200,7 @@ namespace TShockAPI
             }
             catch
             {                
-                Log.Info("Could not read Regions");
+                Log.Warn("Could not read Regions");
                 WriteSettings();
             }
         }
@@ -196,12 +211,14 @@ namespace TShockAPI
         public Rectangle RegionArea { get; set; }
         public string RegionName { get; set; }
         public bool DisableBuild { get; set; }
+        public string WorldRegionName { get; set; }
 
-        public Region(Rectangle region, string name, bool disablebuild)
+        public Region(Rectangle region, string name, bool disablebuild, string worldname)
         {
             RegionArea = region;
             RegionName = name;
             DisableBuild = disablebuild;
+            WorldRegionName = worldname;
         }
 
         public Region()
@@ -209,6 +226,7 @@ namespace TShockAPI
             RegionArea = Rectangle.Empty;
             RegionName = string.Empty;
             DisableBuild = true;
+            WorldRegionName = string.Empty;
         }
     }
 }

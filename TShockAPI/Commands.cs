@@ -764,7 +764,7 @@ namespace TShockAPI
         private static void SetWarp(CommandArgs args)
         {
             if (args.Parameters.Count > 0)
-                if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, args.Parameters[0]))
+                if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, args.Parameters[0], Main.worldName))
                 {
                     args.Player.SendMessage("Set warp " + args.Parameters[0], Color.Yellow);
                     WarpsManager.WriteSettings();
@@ -1039,7 +1039,7 @@ namespace TShockAPI
                             {
                                 if (!args.Player.TempArea.IsEmpty)
                                 {
-                                    if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, args.Player.TempArea.Width, args.Player.TempArea.Height, args.Parameters[1], true))
+                                    if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, args.Player.TempArea.Width, args.Player.TempArea.Height, args.Parameters[1], Main.worldName))
                                     {
                                         RegionManager.WriteSettings();
                                         args.Player.TempArea = Rectangle.Empty;
