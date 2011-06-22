@@ -143,15 +143,12 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
-            if (ConfigurationManager.DistributationAgent != "terraria-online")
-            {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
                 ChatCommands.Add(new Command("butcher", "butcher", Butcher));
                 ChatCommands.Add(new Command("i", "cheat", Item));
                 ChatCommands.Add(new Command("item", "cheat", Item));
                 ChatCommands.Add(new Command("give", "cheat", Give));
                 ChatCommands.Add(new Command("heal", "cheat", Heal));
-            }
         }
 
         public static void AddUpdateCommand()
@@ -1131,30 +1128,44 @@ namespace TShockAPI
                     }
                 case "delete":
                     {
-                        if (args.Parameters.Count > 1)
+                        if (args.Player.Group.HasPermission("editspawn"))
                         {
-                            string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                            if (RegionManager.DeleteRegion(regionName))
-                                args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
+                            if (args.Parameters.Count > 1)
+                            {
+                                string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
+                                if (RegionManager.DeleteRegion(regionName))
+                                    args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
+                                else
+                                    args.Player.SendMessage("Could not find specified region", Color.Red);
+                            }
                             else
-                                args.Player.SendMessage("Could not find specified region", Color.Red);
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
                         }
-                        else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
-                        break;
+                        args.Player.SendMessage("You do not have permission", Color.Red);
+                            break;
                     }
                 case "clear":
                     {
-                        args.Player.TempArea = Rectangle.Empty;
+                       args.Player.TempArea = Rectangle.Empty;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
                         break;
                     }
+                case "reload":
+                    {
+                        if (args.Player.Group.HasPermission("editspawn"))
+                            {
+                                  RegionManager.ReadAllSettings();
+                                  args.Player.SendMessage("Regions readed", Color.Red);       
+                            }
+                        args.Player.SendMessage("You do not have permission", Color.Red); 
+                        break;
+                     }
                 case "help":
                 default:
                     {
                         args.Player.SendMessage("Avialable region commands:", Color.Green);
                         args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
-                        args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
+                        args.Player.SendMessage("/region delete [name] /region clear (temporary region) /region load", Color.Yellow);
                         break;
                     }
             }

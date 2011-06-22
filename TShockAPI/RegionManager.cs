@@ -59,19 +59,24 @@ namespace TShockAPI
             {
                 if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName)
                 {
-                    return true;
+                   
+                        return true;
+
                 }
             }
             return false;
         }
 
-        public static bool Owner(string player)
+        public static bool Owner(string player, int X, int Y)
         {
             foreach (Region region in Regions)
             {
-                if (player == region.PlayerName)
+                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName)
                 {
-                    return true;
+                    if (player == region.PlayerName)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
