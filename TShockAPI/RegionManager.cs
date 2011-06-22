@@ -25,6 +25,20 @@ namespace TShockAPI
             return true;
         }
 
+        public static bool AddNewUser(string regionName, string name)
+        {
+            foreach (Region nametest in Regions)
+            {
+                if (regionName.ToLower() == nametest.RegionName.ToLower())
+                {
+                    nametest.RegionAllowedUsers.Add(name.ToLower());
+                    Console.WriteLine(nametest.RegionName);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool DeleteRegion(string name)
         {
             foreach (Region nametest in Regions)
@@ -53,13 +67,40 @@ namespace TShockAPI
             return false;
         }
 
-        public static bool InProtectedArea(int X, int Y)
+        public static bool InProtectedArea(int X, int Y, string name)
         {
             foreach(Region region in Regions)
             {
-                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName)
+                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName && (!AllowedUser(region.RegionName, name.ToLower()) || region.RegionAllowedUsers.Count == 0))
                 {
+                    Console.WriteLine(region.RegionName);
                     return true;
+                }
+            }
+            return false;
+        }
+
+        public static int GetRegionIndex(string regionName)
+        {
+            for(int i = 0; i< Regions.Count;i++)
+            {
+                if(Regions[i].RegionName == regionName)
+                    return i;
+            }
+            return -1;
+        }
+
+        public static bool AllowedUser(string regionName, string playerName)
+        {
+            int ID = -1;
+            if ((ID = GetRegionIndex(regionName)) != -1)
+            {
+                for (int i = 0; i < Regions[ID].RegionAllowedUsers.Count; i++)
+                {
+                    if (Regions[ID].RegionAllowedUsers[i].ToLower() == playerName.ToLower())
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -88,6 +129,11 @@ namespace TShockAPI
                         settingsw.WriteElementString("Point2Y", region.RegionArea.Height.ToString());
                         settingsw.WriteElementString("Protected", region.DisableBuild.ToString());
                         settingsw.WriteElementString("WorldName", region.WorldRegionName);
+                        settingsw.WriteElementString("AllowedUserCount", region.RegionAllowedUsers.Count.ToString());
+                        for (int i = 0; i < region.RegionAllowedUsers.Count; i++)
+                        {
+                            settingsw.WriteElementString("User", region.RegionAllowedUsers[i]);
+                        }
                         settingsw.WriteEndElement();
                     }
 
@@ -132,6 +178,7 @@ namespace TShockAPI
                                             int height = 0;
                                             bool state = true;
                                             string worldname = null;
+                                            int playercount = 0;
 
                                             settingr.Read();
                                             if (settingr.Value != "" || settingr.Value != null)
@@ -188,7 +235,34 @@ namespace TShockAPI
                                             else
                                                 Log.Warn("Worldname for region " + name + " is empty");
 
+                                            Console.WriteLine(settingr.Value);
+
+                                            settingr.Read();
+                                            settingr.Read();
+                                            settingr.Read();
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                Int32.TryParse(settingr.Value, out playercount);
+                                            else
+                                                Log.Warn("Playercount for region " + name + " is empty");
+
                                             AddRegion(x, y, width, height, name, worldname);
+
+                                            if (playercount > 0)
+                                            {
+                                                for (int i = 0; i < playercount; i++)
+                                                {
+                                                    settingr.Read();
+                                                    settingr.Read();
+                                                    settingr.Read();
+                                                    if (settingr.Value != "" || settingr.Value != null)
+                                                    {
+                                                        int ID = RegionManager.GetRegionIndex(name);
+                                                        Regions[ID].RegionAllowedUsers.Add(settingr.Value);
+                                                    }
+                                                    else
+                                                        Log.Warn("Playername " + i + " for region " + name + " is empty");
+                                                }
+                                            }
                                         }
                                         break;
                                     }                                    
@@ -212,6 +286,7 @@ namespace TShockAPI
         public string RegionName { get; set; }
         public bool DisableBuild { get; set; }
         public string WorldRegionName { get; set; }
+        public List<string> RegionAllowedUsers = new List<string>();
 
         public Region(Rectangle region, string name, bool disablebuild, string worldname)
         {

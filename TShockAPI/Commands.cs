@@ -1149,12 +1149,44 @@ namespace TShockAPI
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
                         break;
                     }
+                case "allow":
+                    {
+                        if (args.Parameters.Count > 2)
+                        {
+                            string playerName = args.Parameters[1];
+                            string regionName = "";
+
+                            for (int i = 2; i < args.Parameters.Count; i++)
+                            {
+                                if (regionName == "")
+                                {
+                                    regionName = args.Parameters[2];
+                                }
+                                else
+                                {
+                                    regionName = regionName + " " + args.Parameters[i];
+                                }
+                            }
+
+                            if (RegionManager.AddNewUser(regionName, playerName))
+                            {
+                                args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
+                                RegionManager.WriteSettings();
+                            }
+                            else
+                                args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                        }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                        break;
+                    }
                 case "help":
                 default:
                     {
                         args.Player.SendMessage("Avialable region commands:", Color.Green);
                         args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
                         args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
+                        args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
                         break;
                     }
             }
