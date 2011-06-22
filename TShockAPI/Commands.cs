@@ -763,7 +763,7 @@ namespace TShockAPI
 
         private static void SetWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 1)
+            if (args.Parameters.Count > 0)
             {
                 string warpName = String.Join(" ", args.Parameters);
                 if (warpName.Equals("list"))
@@ -786,7 +786,7 @@ namespace TShockAPI
 
         private static void DeleteWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 1)
+            if (args.Parameters.Count > 0)
             {
                 string warpName = String.Join(" ", args.Parameters);
                 if (WarpsManager.DeleteWarp(warpName))
@@ -794,6 +794,8 @@ namespace TShockAPI
                 else
                     args.Player.SendMessage("Could not find specified warp", Color.Red);
             }
+            else
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /delwarp [name]", Color.Red);
         }
 
         private static void UseWarp(CommandArgs args)
