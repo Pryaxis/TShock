@@ -30,8 +30,8 @@ namespace TShockAPI
         public bool BanCheaters = true;
         public bool KickGriefers = true;
         public bool BanGriefers = true;
-        public bool BanKillTileAbusers;
-        public bool KickKillTileAbusers;
+        public bool BanKillTileAbusers = true;
+        public bool KickKillTileAbusers = true;
         public bool BanExplosives = true;
         public bool KickExplosives = true;
         public bool SpawnProtection = true;

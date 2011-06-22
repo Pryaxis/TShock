@@ -126,8 +126,8 @@ namespace TShockAPI
             cfg.BanCheaters = BanCheater;
             cfg.KickGriefers = KickGriefer;
             cfg.BanGriefers = BanGriefer;
-            cfg.BanKillTileAbusers = BanGriefer;
-            cfg.KickKillTileAbusers = KickGriefer;
+            cfg.BanKillTileAbusers = BanTnt;
+            cfg.KickKillTileAbusers = KickTnt;
             cfg.BanExplosives = BanBoom;
             cfg.KickExplosives = KickBoom;
             cfg.SpawnProtection = SpawnProtect;
