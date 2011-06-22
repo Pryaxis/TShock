@@ -8,14 +8,34 @@
 #ALWAYS DECLARE A GROUP'S PARENT BEFORE YOU DECLARE THE GROUP
 
 #currently avaliable permissions: 
-#kick ban ignorecheatdetection 
-#maintenance cfg causeevents spawnboss tp 
-#spawnmob cheat kill pvpfun 
-#immunetoban immunetokick editspawn
-#ignoregriefdetection reservedslot
+#reservedslot	- reserved slot for player
+#canwater		- allow players to use water
+#canlava		- allow playes to use lava
+#warp			- allow players to use warps
+#kick			- kick users
+#ban			- ban players by name or ip
+#unban			- unban players by name or ip
+#maintenance	- check for updates/turn off server
+#causeevents	- allow player to drop star/meteor and start invasion/bloodmoon
+#spawnboss		- allow player to spawn bosses
+#spawnmob		- allow player to spawn any npcs
+#tp				- allow player to teleport
+#managewarp		- allow player to add/delete warp locations
+#editspawn		- allow player to enable/disable build protection
+#cfg			- allow player to view/change tshock configuration
+#time			- allow player to change time
+#pvpfun			- enable pvpfun commands
+#logs			- notify player when any command is executed
+#kill			- allow player to kill others
+#butcher		- allow player to kill all alive monsters
+#cheat			- allow player to spawn items and heal self
+#immunetokick	- player can't be kick
+#immunetoban	- player can't be banned
+#ignorecheatdetection - allow player to cheat (health/mana cheats) 
+#ignoregriefdetection - allow player to grief (use explosives, water, lava even if they dont have premission to)
 
-default null canwater canlava
+default null canwater canlava warp
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban unban causeevents spawnboss spawnmob tp immunetokick kill logs
-trustedadmin admin maintenance cfg cheat pvpfun ignorecheatdetection immunetoban ignoregriefdetection
+admin newadmin ban unban causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick
+trustedadmin admin maintenance cfg butcher cheat immunetoban ignorecheatdetection ignoregriefdetection

@@ -120,16 +120,21 @@ namespace TShockAPI
             ChatCommands.Add(new Command("spawn", "tp", Spawn));
             ChatCommands.Add(new Command("tp", "tp", TP));
             ChatCommands.Add(new Command("tphere", "tp", TPHere));
+            ChatCommands.Add(new Command("warp", "warp", UseWarp));
+            ChatCommands.Add(new Command("setwarp", "managewarp", SetWarp));
+            ChatCommands.Add(new Command("delwarp", "managewarp", DeleteWarp));
             ChatCommands.Add(new Command("reload", "cfg", Reload));
             ChatCommands.Add(new Command("debug-config", "cfg", DebugConfiguration));
             ChatCommands.Add(new Command("password", "cfg", Password));
             ChatCommands.Add(new Command("save", "cfg", Save));
             ChatCommands.Add(new Command("maxspawns", "cfg", MaxSpawns));
             ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
-            ChatCommands.Add(new Command("time", "cfg", Time));
+            ChatCommands.Add(new Command("whitelist", "cfg", Whitelist));
+            ChatCommands.Add(new Command("time", "time", Time));
             ChatCommands.Add(new Command("slap", "pvpfun", Slap));
             ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
             ChatCommands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
+            ChatCommands.Add(new Command("region", "editspawn", Region));
             ChatCommands.Add(new Command("help", "", Help));
             ChatCommands.Add(new Command("playing", "", Playing));
             ChatCommands.Add(new Command("online", "", Playing));
@@ -138,15 +143,10 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
-            ChatCommands.Add(new Command("whitelist", "maintenance", Whitelist));
-            ChatCommands.Add(new Command("region", "editspawn", Region));
-            ChatCommands.Add(new Command("warp", "", UseWarp));
-            ChatCommands.Add(new Command("setwarp", "cfg", SetWarp));
-            ChatCommands.Add(new Command("delwarp", "cfg", DeleteWarp));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
-                ChatCommands.Add(new Command("butcher", "cheat", Butcher));
+                ChatCommands.Add(new Command("butcher", "butcher", Butcher));
                 ChatCommands.Add(new Command("i", "cheat", Item));
                 ChatCommands.Add(new Command("item", "cheat", Item));
                 ChatCommands.Add(new Command("give", "cheat", Give));
@@ -884,6 +884,21 @@ namespace TShockAPI
             Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
         }
 
+        public static void Whitelist(CommandArgs args)
+        {
+            if (args.Parameters.Count == 1)
+            {
+                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
+                tw.WriteLine(args.Parameters[0]);
+                tw.Close();
+                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
+            }
+        }
+
+        #endregion Server Config Commands
+
+        #region Time/PvpFun Commands
+
         private static void Time(CommandArgs args)
         {
             if (args.Parameters.Count != 1)
@@ -920,7 +935,44 @@ namespace TShockAPI
             }
         }
 
-        #endregion Server Config Commands
+        private static void Slap(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /slap <player> [dmg]", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
+            {
+                args.Player.SendMessage("Missing player name", Color.Red);
+                return;
+            }
+
+            string plStr = args.Parameters[0];
+            var players = Tools.FindPlayer(plStr);
+            if (players.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+            else if (players.Count > 1)
+            {
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            }
+            else
+            {
+                var plr = players[0];
+                int damage = 5;
+                if (args.Parameters.Count == 2)
+                {
+                    int.TryParse(args.Parameters[1], out damage);
+                }
+                plr.DamagePlayer(damage);
+                Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
+                                args.Player.Name, plr.Name, damage));
+            }
+        }
+
+        #endregion Time/PvpFun Commands
 
         #region World Protection Commands
 
@@ -1062,17 +1114,6 @@ namespace TShockAPI
 
         #region General Commands
 
-        public static void Whitelist(CommandArgs args)
-        {
-            if (args.Parameters.Count == 1)
-            {
-                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
-                tw.WriteLine(args.Parameters[0]);
-                tw.Close();
-                args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
-            }
-        }
-
         private static void Help(CommandArgs args)
         {
             args.Player.SendMessage("TShock Commands:");
@@ -1176,43 +1217,6 @@ namespace TShockAPI
         #endregion General Commands
 
         #region Cheat Commands
-
-        private static void Slap(CommandArgs args)
-        {
-            if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
-            {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /slap <player> [dmg]", Color.Red);
-                return;
-            }
-            if (args.Parameters[0].Length == 0)
-            {
-                args.Player.SendMessage("Missing player name", Color.Red);
-                return;
-            }
-
-            string plStr = args.Parameters[0];
-            var players = Tools.FindPlayer(plStr);
-            if (players.Count == 0)
-            {
-                args.Player.SendMessage("Invalid player!", Color.Red);
-            }
-            else if (players.Count > 1)
-            {
-                args.Player.SendMessage("More than one player matched!", Color.Red);
-            }
-            else
-            {
-                var plr = players[0];
-                int damage = 5;
-                if (args.Parameters.Count == 2)
-                {
-                    int.TryParse(args.Parameters[1], out damage);
-                }
-                plr.DamagePlayer(damage);
-                Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
-                                args.Player.Name, plr.Name, damage));
-            }
-        }
 
         private static void Kill(CommandArgs args)
         {
