@@ -690,7 +690,7 @@ namespace TShockAPI
             if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
                 args.Player.SendMessage("Teleported to the map's spawnpoint.");
             else
-                args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset die after bed is destroyed).", Color.Red);
+                args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
         }
 
         private static void TP(CommandArgs args)
@@ -719,7 +719,7 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY))
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
                 else
-                    args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset die after bed is destroyed).", Color.Red);
+                    args.Player.SendMessage("Teleport unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
             }
         }
 
@@ -794,12 +794,15 @@ namespace TShockAPI
             {
                 if (WarpsManager.FindWarp(args.Parameters[0]) != Vector2.Zero)
                 {
-                    args.Player.Teleport((int)WarpsManager.FindWarp(args.Parameters[0]).X, (int)WarpsManager.FindWarp(args.Parameters[0]).Y);
-                    args.Player.SendMessage("Warped to " + args.Parameters[0], Color.Yellow);
+                    if (args.Player.Teleport((int)WarpsManager.FindWarp(args.Parameters[0]).X, (int)WarpsManager.FindWarp(args.Parameters[0]).Y))
+                        args.Player.SendMessage("Warped to " + args.Parameters[0], Color.Yellow);
+                    else
+                        args.Player.SendMessage("Warp unavailable custom spawnpoint set (to unset sucide atleast once after bed is destroyed).", Color.Red);
+
                 }
                 else
                 {
-                    args.Player.SendMessage("Specified warp not found", Color.Yellow);
+                    args.Player.SendMessage("Specified warp not found", Color.Red);
                 }
             }
             else
