@@ -195,7 +195,7 @@ namespace TShockAPI
             {
                 if (player != null && player.Active)
                 {
-                    if (player.TileThreshold >= 20)
+                    if (player.TileThreshold >= ConfigurationManager.TileThreshold)
                     {
                         if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                         {
@@ -379,7 +379,7 @@ namespace TShockAPI
                 Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= 20 && !player.Group.HasPermission("ignoregriefdetection"))
+            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= ConfigurationManager.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
             {
                 Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
                 e.Handled = true;

@@ -55,6 +55,7 @@ namespace TShockAPI
         public static float[] AdminChatRGB = {255, 0, 0};
         public static string AdminChatPrefix = "(Admin) ";
         public static bool RememberLeavePos = false;
+        public static int TileThreshold = 20;
 
         /// <summary>
         /// Don't allow pvp changing for x seconds.
@@ -103,6 +104,7 @@ namespace TShockAPI
             RangeChecks = cfg.RangeChecks;
             SpamChecks = cfg.SpamChecks;
             DisableBuild = cfg.DisableBuild;
+            TileThreshold = cfg.TileThreshold;
             NPC.maxSpawns = DefaultMaxSpawns;
             NPC.defaultSpawnRate = DefaultSpawnRate;
             AdminChatRGB = cfg.AdminChatRGB;
@@ -140,6 +142,7 @@ namespace TShockAPI
             cfg.RangeChecks = RangeChecks;
             cfg.SpamChecks = SpamChecks;
             cfg.DisableBuild = DisableBuild;
+            cfg.TileThreshold = TileThreshold;
             cfg.AdminChatRGB = AdminChatRGB;
             cfg.AdminChatPrefix = AdminChatPrefix;
             cfg.PvpThrottle = PvpThrottle;
