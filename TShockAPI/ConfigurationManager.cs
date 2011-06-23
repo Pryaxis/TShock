@@ -110,6 +110,8 @@ namespace TShockAPI
             BackupInterval = cfg.BackupInterval;
             BackupKeepFor = cfg.BackupKeepFor;
             ListServer = cfg.ListServer;
+            Main.spawnTileX = cfg.spawnTileX;
+            Main.spawnTileY = cfg.spawnTileY;
         }
 
         public static void WriteJsonConfiguration()
@@ -142,6 +144,9 @@ namespace TShockAPI
             cfg.BackupInterval = BackupInterval;
             cfg.BackupKeepFor = BackupKeepFor;
             cfg.ListServer = ListServer;
+            cfg.spawnTileX = Main.spawnTileX;
+            cfg.spawnTileY = Main.spawnTileY;
+
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);

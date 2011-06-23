@@ -51,5 +51,8 @@ namespace TShockAPI
         public int BackupKeepFor = 60;
 
         public bool ListServer = false;
+
+        public int spawnTileX;
+        public int spawnTileY;
     }
 }
