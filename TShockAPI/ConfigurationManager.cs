@@ -44,6 +44,7 @@ namespace TShockAPI
         public static bool KickTnt = true;
         public static bool BanBoom = true;
         public static bool KickBoom = true;
+        public static bool DisableBoom = true;
         public static bool SpawnProtect = true;
         public static bool RangeChecks = true;
         public static int SpawnProtectRadius = 5;
@@ -97,6 +98,7 @@ namespace TShockAPI
             KickTnt = cfg.KickKillTileAbusers;
             BanBoom = cfg.BanExplosives;
             KickBoom = cfg.KickExplosives;
+            DisableBoom = cfg.DisableExplosives;
             SpawnProtect = cfg.SpawnProtection;
             SpawnProtectRadius = cfg.SpawnProtectionRadius;
             DistributationAgent = cfg.DistributationAgent;
@@ -136,6 +138,7 @@ namespace TShockAPI
             cfg.KickKillTileAbusers = KickTnt;
             cfg.BanExplosives = BanBoom;
             cfg.KickExplosives = KickBoom;
+            cfg.DisableExplosives = DisableBoom;
             cfg.SpawnProtection = SpawnProtect;
             cfg.SpawnProtectionRadius = SpawnProtectRadius;
             cfg.MaxSlots = MaxSlots;

@@ -34,6 +34,7 @@ namespace TShockAPI
         public bool KickKillTileAbusers = true;
         public bool BanExplosives = true;
         public bool KickExplosives = true;
+        public bool DisableExplosives = true;
         public bool SpawnProtection = true;
         public int SpawnProtectionRadius = 5;
         public string DistributationAgent = "facepunch";

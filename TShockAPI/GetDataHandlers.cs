@@ -318,7 +318,17 @@ namespace TShockAPI
             if (type == 29 || type == 28 || type == 37)
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                return Tools.HandleExplosivesUser(args.Player, "Throwing an explosive device.");
+                if (ConfigurationManager.DisableBoom && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
+                {
+                    //Lag will still allow the projectile to detonate.
+                    //TODO: Stop KillTile for x period of time after projectile packet is received.
+                    Main.projectile[ident].type = 0;
+                    NetMessage.SendData((int)PacketTypes.ProjectileNew, args.Player.Index, -1, "", ident);
+                    args.Player.SendMessage("Explosives are disabled!", Color.Red);
+                    //return true;
+                }
+                else
+                    return Tools.HandleExplosivesUser(args.Player, "Throwing an explosive device.");
             }
             return false;
         }
