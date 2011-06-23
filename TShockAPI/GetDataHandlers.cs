@@ -132,13 +132,6 @@ namespace TShockAPI
         {
             byte playerid = args.Data.ReadInt8();
             byte hair = args.Data.ReadInt8();
-            Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color skinColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color eyeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color shirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-            Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
             string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
 
             if (hair >= Main.maxHair)
@@ -342,10 +335,6 @@ namespace TShockAPI
         private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
         {
             byte id = args.Data.ReadInt8();
-            byte hitdirection = args.Data.ReadInt8();
-            short dmg = args.Data.ReadInt16();
-            bool pvp = args.Data.ReadBoolean();
-
             if (id != args.Player.Index)
             {
                 return Tools.HandleGriefer(args.Player, "Trying to execute KillMe on someone else.");
@@ -356,10 +345,6 @@ namespace TShockAPI
         private static bool HandlePlayerDamage(GetDataHandlerArgs args)
         {
             byte playerid = args.Data.ReadInt8();
-            byte direction = args.Data.ReadInt8();
-            Int16 damage = args.Data.ReadInt16();
-            byte pvp = args.Data.ReadInt8();
-
             return !TShock.Players[playerid].TPlayer.hostile;
         }
 
