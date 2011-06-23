@@ -29,6 +29,8 @@ namespace TShockAPI
         public static readonly string WhitelistPath = Path.Combine(TShock.SavePath, "whitelist.txt");
         public static readonly string GroupsPath = Path.Combine(TShock.SavePath, "groups.txt");
         public static readonly string UsersPath = Path.Combine(TShock.SavePath, "users.txt");
+        public static readonly string ItemBansPath = Path.Combine(TShock.SavePath, "itembans.txt");
+        public static readonly string RememberedPosPath = Path.Combine(TShock.SavePath, "oldpos.xml");
         public static readonly string ConfigPath = Path.Combine(TShock.SavePath, "config.json");
 
         public static void CreateFile(string file)
@@ -60,6 +62,7 @@ namespace TShockAPI
             CreateIfNot(WhitelistPath);
             CreateIfNot(GroupsPath, Resources.groups);
             CreateIfNot(UsersPath, Resources.users);
+            CreateIfNot(ItemBansPath, Resources.itembans);
 
             try
             {
@@ -100,7 +103,23 @@ namespace TShockAPI
             TextReader tr = new StreamReader(WhitelistPath);
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
-            return whitelist.Contains(ip);
+            bool contains = whitelist.Contains(ip);
+            if (!contains)
+            {
+                var char2 = Environment.NewLine.ToCharArray();
+                var array = whitelist.Split(Environment.NewLine.ToCharArray());
+                foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+                    contains = Tools.GetIPv4Address(line).Equals(ip);
+                    if (contains)
+                        return true;
+                }
+                return false;
+            }
+            else
+                return true;
         }
     }
 }

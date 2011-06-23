@@ -216,7 +216,7 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y))
+            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)))
             {
                 args.Player.SendMessage("Region protected from changes.", Color.Red);
                 args.Player.SendTileSquare(x, y);
@@ -251,6 +251,13 @@ namespace TShockAPI
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
+            if (args.Player.LastExplosive != null)
+                if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
+                {
+                    args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds).ToString() + " milliseconds before placing/destroying tiles", Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
 
             return false;
         }
@@ -318,7 +325,16 @@ namespace TShockAPI
             if (type == 29 || type == 28 || type == 37)
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                return Tools.HandleExplosivesUser(args.Player, "Throwing an explosive device.");
+                if (ConfigurationManager.DisableBoom && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
+                {
+                    Main.projectile[ident].type = 0;
+                    NetMessage.SendData((int)PacketTypes.ProjectileNew, args.Player.Index, -1, "", ident);
+                    args.Player.SendMessage("Explosives are disabled!", Color.Red);
+                    args.Player.LastExplosive = DateTime.UtcNow;
+                    //return true;
+                }
+                else
+                    return Tools.HandleExplosivesUser(args.Player, "Throwing an explosive device.");
             }
             return false;
         }

@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="BanManager.cs" />
+    <Compile Include="ItemManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="ConfigurationManager.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Group.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="RegionManager.cs" />
+    <Compile Include="RememberPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -129,13 +131,17 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="config\itembans.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)\myass.bat"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

@@ -36,6 +36,8 @@ namespace TShockAPI
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
         public Rectangle TempArea = new Rectangle();
+        public DateTime LastExplosive { get; set; }
+
         public bool RealPlayer
         {
             get { return Index >= 0 && Index < Main.maxNetPlayers; }
@@ -133,21 +135,27 @@ namespace TShockAPI
 
         public bool Teleport(int tileX, int tileY)
         {
-            if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
-                return false;
-
-            int oldSpawnX = Main.spawnTileX;
-            int oldSpawnY = Main.spawnTileY;
+            int spawnTileX = Main.spawnTileX;
+            int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
-            //Send only that player the new spawn point data
-            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0f, 0f, 0f);
-            //Force them to respawn
-            Spawn();
-            //Reset to old spawnpoint and send spawn data back to player
-            Main.spawnTileX = (int)oldSpawnX;
-            Main.spawnTileY = (int)oldSpawnY;
-            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0f, 0f, 0f);
+            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
+            if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
+            {
+                Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = false;
+                NetMessage.SendTileSquare(Index, TPlayer.SpawnX, TPlayer.SpawnY, 1);
+                Spawn();
+                Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = true;
+                NetMessage.SendTileSquare(Index, TPlayer.SpawnX, TPlayer.SpawnY, 1);
+                SendMessage("Warning! Your bed spawn point has been destroyed because of warp", Color.Red);
+            }
+            else
+            {
+                Spawn();
+            }
+            Main.spawnTileX = spawnTileX;
+            Main.spawnTileY = spawnTileY;
+            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
             return true;
         }
 

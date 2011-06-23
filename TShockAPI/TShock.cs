@@ -102,8 +102,10 @@ namespace TShockAPI
             Log.Info("Commands initialized");
 
             RegionManager.ReadAllSettings();
-
             WarpsManager.ReadAllSettings();
+            ItemManager.LoadBans();
+
+
 
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
@@ -193,7 +195,7 @@ namespace TShockAPI
             {
                 if (player != null && player.Active)
                 {
-                    if (player.TileThreshold >= 20)
+                    if (player.TileThreshold >= ConfigurationManager.TileThreshold)
                     {
                         if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                         {
@@ -210,6 +212,18 @@ namespace TShockAPI
                     {
                         player.TileThreshold = 0;
                         player.TilesDestroyed.Clear();
+                    }
+
+                    if (!player.Group.HasPermission("usebanneditem"))
+                    {
+                        for (int i = 0; i < Main.player[player.Index].inventory.Length; i++)
+                        {
+                            if (ItemManager.ItemIsBanned(Main.player[player.Index].inventory[i].name))
+                            {
+                                player.Disconnect("Using banned item: " + Main.player[player.Index].inventory[i].name + ", remove it and rejoin");
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -255,6 +269,12 @@ namespace TShockAPI
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
+
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
+                RemeberedPosManager.WriteSettings();
+            }
 
             Players[ply] = null;
         }
@@ -359,7 +379,7 @@ namespace TShockAPI
                 Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= 20 && !player.Group.HasPermission("ignoregriefdetection"))
+            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= ConfigurationManager.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
             {
                 Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
                 e.Handled = true;
@@ -401,6 +421,16 @@ namespace TShockAPI
             if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
                 StartInvasion();
+            }
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
+                {
+                    if (playerIP.IP == Players[who].IP)
+                    {
+                        Players[who].Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                    }
+                }
             }
             e.Handled = true;
         }

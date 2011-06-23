@@ -30,10 +30,11 @@ namespace TShockAPI
         public bool BanCheaters = true;
         public bool KickGriefers = true;
         public bool BanGriefers = true;
-        public bool BanKillTileAbusers;
-        public bool KickKillTileAbusers;
+        public bool BanKillTileAbusers = true;
+        public bool KickKillTileAbusers = true;
         public bool BanExplosives = true;
         public bool KickExplosives = true;
+        public bool DisableExplosives = true;
         public bool SpawnProtection = true;
         public int SpawnProtectionRadius = 5;
         public string DistributationAgent = "facepunch";
@@ -41,6 +42,7 @@ namespace TShockAPI
         public bool RangeChecks = true;
         public bool SpamChecks = false;
         public bool DisableBuild = false;
+        public int TileThreshold = 20;
 
         public float[] AdminChatRGB = {255, 0, 0};
         public string AdminChatPrefix = "(Admin) ";
@@ -51,5 +53,10 @@ namespace TShockAPI
         public int BackupKeepFor = 60;
 
         public bool ListServer = false;
+
+        public int spawnTileX;
+        public int spawnTileY;
+
+        public bool RememberLeavePos = false;
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using System.Xml;
+using Terraria;
 
 namespace TShockAPI
 {
@@ -11,7 +12,7 @@ namespace TShockAPI
     {
         public static List<Warp> Warps = new List<Warp>();
 
-        public static bool AddWarp(int x, int y, string name)
+        public static bool AddWarp(int x, int y, string name, string worldname)
         {
             foreach (Warp nametest in Warps)
             {
@@ -20,7 +21,7 @@ namespace TShockAPI
                     return false;
                 }
             }
-            Warps.Add(new Warp(new Vector2(x, y), name));
+            Warps.Add(new Warp(new Vector2(x, y), name, worldname));
             return true;
         }
 
@@ -28,7 +29,7 @@ namespace TShockAPI
         {
             foreach (Warp nametest in Warps)
             {
-                if (name.ToLower() == nametest.WarpName.ToLower())
+                if (name.ToLower() == nametest.WarpName.ToLower() && nametest.WorldWarpName == Main.worldName)
                 {
                     Warps.Remove(nametest);
                     WriteSettings();
@@ -42,7 +43,7 @@ namespace TShockAPI
         {
             foreach (Warp nametest in Warps)
             {
-                if (name.ToLower() == nametest.WarpName.ToLower())
+                if (name.ToLower() == nametest.WarpName.ToLower() && nametest.WorldWarpName == Main.worldName)
                 {
                     return nametest.WarpPos;
                 }
@@ -69,6 +70,7 @@ namespace TShockAPI
                         settingsw.WriteElementString("WarpName", warp.WarpName);
                         settingsw.WriteElementString("X", warp.WarpPos.X.ToString());
                         settingsw.WriteElementString("Y", warp.WarpPos.Y.ToString());
+                        settingsw.WriteElementString("WorldName", warp.WorldWarpName);
                         settingsw.WriteEndElement();
                     }
 
@@ -106,12 +108,16 @@ namespace TShockAPI
                                     {
                                         if (settingr.Read())
                                         {
-                                            string name;
+                                            string name = string.Empty;
                                             int x = 0;
                                             int y = 0;
+                                            string worldname = string.Empty;
 
                                             settingr.Read();
-                                            name = settingr.Value;
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                name = settingr.Value;
+                                            else
+                                                Log.Warn("Warp name is empty, This warp will not work");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -119,7 +125,7 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out x);
                                             else
-                                                Console.WriteLine("Could not parse x");
+                                                Log.Warn("x for warp " + name + " is empty");
 
                                             settingr.Read();
                                             settingr.Read();
@@ -127,9 +133,17 @@ namespace TShockAPI
                                             if (settingr.Value != "" || settingr.Value != null)
                                                 Int32.TryParse(settingr.Value, out y);
                                             else
-                                                Console.WriteLine("Could not parse y");
+                                                Log.Warn("y for warp " + name + " is empty");
 
-                                            AddWarp(x, y, name);
+                                            settingr.Read();
+                                            settingr.Read();
+                                            settingr.Read();
+                                            if (settingr.Value != "" || settingr.Value != null)
+                                                worldname = settingr.Value;
+                                            else
+                                                Log.Warn("Worldname for warp " + name + " is empty");
+
+                                            AddWarp(x, y, name, worldname);
                                         }
                                         break;
                                     }
@@ -151,17 +165,20 @@ namespace TShockAPI
     {
         public Vector2 WarpPos { get; set; }
         public string WarpName { get; set; }
+        public string WorldWarpName { get; set; }
 
-        public Warp(Vector2 warppos, string name)
+        public Warp(Vector2 warppos, string name, string worldname)
         {
             WarpPos = warppos;
             WarpName = name;
+            WorldWarpName = worldname;
         }
 
         public Warp()
         {
             WarpPos = Vector2.Zero;
             WarpName = null;
+            WorldWarpName = string.Empty;
         }
     }
 }

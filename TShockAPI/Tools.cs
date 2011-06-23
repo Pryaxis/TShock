@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
 
@@ -58,6 +59,25 @@ namespace TShockAPI
                 }
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Finds a player and gets IP as string
+        /// </summary>
+        /// <param name="msg">Player name</param>
+        public static string GetPlayerIP(string playername)
+        {
+            foreach (TSPlayer player in TShock.Players)
+            {
+                if (player != null && player.Active)
+                {
+                    if (playername.ToLower() == player.Name.ToLower())
+                    {
+                        return player.IP;
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -536,13 +556,35 @@ namespace TShockAPI
                 {
                     continue;
                 }
-                if (args[0].Equals(ip))
+                try
                 {
-                    return GetGroup(args[1]);
+                    var hi = GetIPv4Address(args[0]);
+                    if (GetIPv4Address(args[0]).Equals(ip))
+                        return GetGroup(args[1]);
                 }
+                catch (Exception ex)
+                { Log.Error(ex.ToString()); }
             }
             sr.Close();
             return GetGroup("default");
+        }
+
+        /// <summary>
+        /// Returns an IPv4 address from a DNS query
+        /// </summary>
+        /// <param name="hostname">string ip</param>
+        public static string GetIPv4Address(string hostname)
+        {
+            string IP4Address = String.Empty;
+            foreach (IPAddress IPA in Dns.GetHostAddresses(hostname))
+            {
+                if (IPA.AddressFamily.ToString() == "InterNetwork")
+                {
+                    IP4Address = IPA.ToString();
+                    break;
+                }
+            }
+            return IP4Address;
         }
     }
 }
