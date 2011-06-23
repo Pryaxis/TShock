@@ -106,8 +106,12 @@ namespace TShockAPI
             bool contains = whitelist.Contains(ip);
             if (!contains)
             {
+                var char2 = Environment.NewLine.ToCharArray();
+                var array = whitelist.Split(Environment.NewLine.ToCharArray());
                 foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
                 {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
                     contains = Tools.GetIPv4Address(line).Equals(ip);
                     if (contains)
                         return true;
