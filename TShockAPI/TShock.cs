@@ -220,7 +220,7 @@ namespace TShockAPI
                         {
                             if (ItemManager.ItemIsBanned(Main.player[player.Index].inventory[i].name))
                             {
-                                player.Disconnect("Using banned item: " + Main.player[player.Index].inventory[i].name);
+                                player.Disconnect("Using banned item: " + Main.player[player.Index].inventory[i].name + ", remove it and rejoin");
                                 break;
                             }
                         }
