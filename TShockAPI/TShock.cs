@@ -102,10 +102,10 @@ namespace TShockAPI
             Log.Info("Commands initialized");
 
             RegionManager.ReadAllSettings();
-
             WarpsManager.ReadAllSettings();
-
             ItemManager.LoadBans();
+
+
 
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
@@ -270,6 +270,12 @@ namespace TShockAPI
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
+                RemeberedPosManager.WriteSettings();
+            }
+
             Players[ply] = null;
         }
 
@@ -415,6 +421,16 @@ namespace TShockAPI
             if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
                 StartInvasion();
+            }
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
+                {
+                    if (playerIP.IP == Players[who].IP)
+                    {
+                        Players[who].Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                    }
+                }
             }
             e.Handled = true;
         }

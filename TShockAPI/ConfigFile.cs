@@ -54,5 +54,7 @@ namespace TShockAPI
 
         public int spawnTileX;
         public int spawnTileY;
+
+        public bool RememberLeavePos = false;
     }
 }

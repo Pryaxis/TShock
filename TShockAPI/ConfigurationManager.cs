@@ -54,6 +54,7 @@ namespace TShockAPI
         public static bool DisableBuild = false;
         public static float[] AdminChatRGB = {255, 0, 0};
         public static string AdminChatPrefix = "(Admin) ";
+        public static bool RememberLeavePos = false;
 
         /// <summary>
         /// Don't allow pvp changing for x seconds.
@@ -112,6 +113,7 @@ namespace TShockAPI
             ListServer = cfg.ListServer;
             Main.spawnTileX = cfg.spawnTileX;
             Main.spawnTileY = cfg.spawnTileY;
+            RememberLeavePos = cfg.RememberLeavePos;
         }
 
         public static void WriteJsonConfiguration()
@@ -146,6 +148,7 @@ namespace TShockAPI
             cfg.ListServer = ListServer;
             cfg.spawnTileX = Main.spawnTileX;
             cfg.spawnTileY = Main.spawnTileY;
+            cfg.RememberLeavePos = RememberLeavePos;
 
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
