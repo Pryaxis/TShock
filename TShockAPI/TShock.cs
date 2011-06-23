@@ -258,7 +258,7 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
-            Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
+            Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }
 
         private void OnLeave(int ply)
