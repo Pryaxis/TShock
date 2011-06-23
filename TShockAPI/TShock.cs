@@ -34,7 +34,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version; 
-        public static readonly string VersionCodename = "Forgot to increase the version.";
+        public static readonly string VersionCodename = "Lol, packet changes.";
 
         public static readonly string SavePath = "tshock";
 
@@ -258,7 +258,7 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
-            Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
+            Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }
 
         private void OnLeave(int ply)
