@@ -251,6 +251,13 @@ namespace TShockAPI
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
+            if (args.Player.LastExplosive != null)
+                if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
+                {
+                    args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds).ToString() + " milliseconds before placing/destroying tiles", Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
 
             return false;
         }
@@ -320,11 +327,10 @@ namespace TShockAPI
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
                 if (ConfigurationManager.DisableBoom && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
                 {
-                    //Lag will still allow the projectile to detonate.
-                    //TODO: Stop KillTile for x period of time after projectile packet is received.
                     Main.projectile[ident].type = 0;
                     NetMessage.SendData((int)PacketTypes.ProjectileNew, args.Player.Index, -1, "", ident);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
+                    args.Player.LastExplosive = DateTime.UtcNow;
                     //return true;
                 }
                 else

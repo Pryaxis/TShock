@@ -36,6 +36,7 @@ namespace TShockAPI
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
         public Rectangle TempArea = new Rectangle();
+        public DateTime LastExplosive { get; set; }
 
         public bool RealPlayer
         {
