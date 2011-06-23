@@ -1087,7 +1087,6 @@ namespace TShockAPI
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height, 
                                                             regionName, Main.worldName))
                                 {
-                                    RegionManager.WriteSettings();
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
                                 }
@@ -1155,6 +1154,7 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
+                            string playerIP = null;
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1167,14 +1167,20 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-
-                            if (RegionManager.AddNewUser(regionName, playerName))
+                            if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
                             {
-                                args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
-                                RegionManager.WriteSettings();
+                                if (RegionManager.AddNewUser(regionName, playerIP))
+                                {
+                                    args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
+                                    RegionManager.WriteSettings();
+                                }
+                                else
+                                    args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
                             }
                             else
-                                args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                            {
+                                args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+                            }
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);

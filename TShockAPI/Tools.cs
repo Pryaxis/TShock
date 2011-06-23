@@ -61,6 +61,25 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Finds a player and gets IP as string
+        /// </summary>
+        /// <param name="msg">Player name</param>
+        public static string GetPlayerIP(string playername)
+        {
+            foreach (TSPlayer player in TShock.Players)
+            {
+                if (player != null && player.Active)
+                {
+                    if (playername.ToLower() == player.Name.ToLower())
+                    {
+                        return player.IP;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// It's a clamp function
         /// </summary>
         /// <typeparam name="T"></typeparam>
