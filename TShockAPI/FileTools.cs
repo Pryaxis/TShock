@@ -103,7 +103,19 @@ namespace TShockAPI
             TextReader tr = new StreamReader(WhitelistPath);
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
-            return whitelist.Contains(ip);
+            bool contains = whitelist.Contains(ip);
+            if (!contains)
+            {
+                foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                {
+                    contains = Tools.GetIPv4Address(line).Equals(ip);
+                    if (contains)
+                        return true;
+                }
+                return false;
+            }
+            else
+                return true;
         }
     }
 }
