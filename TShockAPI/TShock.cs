@@ -43,6 +43,8 @@ namespace TShockAPI
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
         public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 
+        public static bool IsTP = false;
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -334,75 +336,81 @@ namespace TShockAPI
             int num3 = num2;
             if (e.MsgID == PacketTypes.WorldInfo)
             {
-                byte[] bytes18 = BitConverter.GetBytes((int)e.MsgID);
-                byte[] bytes19 = BitConverter.GetBytes((int)Main.time);
-                byte b6 = 0;
-                if (Main.dayTime)
+                if (!IsTP)
                 {
-                    b6 = 1;
+                    byte[] bytes18 = BitConverter.GetBytes((int)e.MsgID);
+                    byte[] bytes19 = BitConverter.GetBytes((int)Main.time);
+                    byte b6 = 0;
+                    if (Main.dayTime)
+                    {
+                        b6 = 1;
+                    }
+                    byte b7 = (byte)Main.moonPhase;
+                    byte b8 = 0;
+                    if (Main.bloodMoon)
+                    {
+                        b8 = 1;
+                    }
+                    byte[] bytes20 = BitConverter.GetBytes(Main.maxTilesX);
+                    byte[] bytes21 = BitConverter.GetBytes(Main.maxTilesY);
+
+
+                    byte[] bytes22 = BitConverter.GetBytes(ConfigurationManager.spawnTileX);
+                    byte[] bytes23 = BitConverter.GetBytes(ConfigurationManager.spawnTileY);
+
+                    byte[] bytes24 = BitConverter.GetBytes((int)Main.worldSurface);
+                    byte[] bytes25 = BitConverter.GetBytes((int)Main.rockLayer);
+                    byte[] bytes26 = BitConverter.GetBytes(Main.worldID);
+                    byte[] bytes27 = Encoding.ASCII.GetBytes(Main.worldName);
+                    byte b9 = 0;
+                    if (WorldGen.shadowOrbSmashed)
+                    {
+                        b9 += 1;
+                    }
+                    if (NPC.downedBoss1)
+                    {
+                        b9 += 2;
+                    }
+                    if (NPC.downedBoss2)
+                    {
+                        b9 += 4;
+                    }
+                    if (NPC.downedBoss3)
+                    {
+                        b9 += 8;
+                    }
+                    num2 += bytes19.Length + 1 + 1 + 1 + bytes20.Length + bytes21.Length + bytes22.Length + bytes23.Length + bytes24.Length + bytes25.Length + bytes26.Length + 1 + bytes27.Length;
+                    byte[] bytes28 = BitConverter.GetBytes(num2 - 4);
+                    Buffer.BlockCopy(bytes28, 0, NetMessage.buffer[remoteClient].writeBuffer, 0, 4);
+                    Buffer.BlockCopy(bytes18, 0, NetMessage.buffer[remoteClient].writeBuffer, 4, 1);
+                    Buffer.BlockCopy(bytes19, 0, NetMessage.buffer[remoteClient].writeBuffer, 5, bytes19.Length);
+                    num3 += bytes19.Length;
+                    NetMessage.buffer[remoteClient].writeBuffer[num3] = b6;
+                    num3++;
+                    NetMessage.buffer[remoteClient].writeBuffer[num3] = b7;
+                    num3++;
+                    NetMessage.buffer[remoteClient].writeBuffer[num3] = b8;
+                    num3++;
+                    Buffer.BlockCopy(bytes20, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes20.Length);
+                    num3 += bytes20.Length;
+                    Buffer.BlockCopy(bytes21, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes21.Length);
+                    num3 += bytes21.Length;
+                    Buffer.BlockCopy(bytes22, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes22.Length);
+                    num3 += bytes22.Length;
+                    Buffer.BlockCopy(bytes23, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes23.Length);
+                    num3 += bytes23.Length;
+                    Buffer.BlockCopy(bytes24, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes24.Length);
+                    num3 += bytes24.Length;
+                    Buffer.BlockCopy(bytes25, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes25.Length);
+                    num3 += bytes25.Length;
+                    Buffer.BlockCopy(bytes26, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes26.Length);
+                    num3 += bytes26.Length;
+                    NetMessage.buffer[remoteClient].writeBuffer[num3] = b9;
+                    num3++;
+                    Buffer.BlockCopy(bytes27, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes27.Length);
+                    num3 += bytes27.Length;
+                    e.Handled = true;
                 }
-                byte b7 = (byte)Main.moonPhase;
-                byte b8 = 0;
-                if (Main.bloodMoon)
-                {
-                    b8 = 1;
-                }
-                byte[] bytes20 = BitConverter.GetBytes(Main.maxTilesX);
-                byte[] bytes21 = BitConverter.GetBytes(Main.maxTilesY);
-                byte[] bytes22 = BitConverter.GetBytes(ConfigurationManager.spawnTileX);
-                byte[] bytes23 = BitConverter.GetBytes(ConfigurationManager.spawnTileY);
-                byte[] bytes24 = BitConverter.GetBytes((int)Main.worldSurface);
-                byte[] bytes25 = BitConverter.GetBytes((int)Main.rockLayer);
-                byte[] bytes26 = BitConverter.GetBytes(Main.worldID);
-                byte[] bytes27 = Encoding.ASCII.GetBytes(Main.worldName);
-                byte b9 = 0;
-                if (WorldGen.shadowOrbSmashed)
-                {
-                    b9 += 1;
-                }
-                if (NPC.downedBoss1)
-                {
-                    b9 += 2;
-                }
-                if (NPC.downedBoss2)
-                {
-                    b9 += 4;
-                }
-                if (NPC.downedBoss3)
-                {
-                    b9 += 8;
-                }
-                num2 += bytes19.Length + 1 + 1 + 1 + bytes20.Length + bytes21.Length + bytes22.Length + bytes23.Length + bytes24.Length + bytes25.Length + bytes26.Length + 1 + bytes27.Length;
-                byte[] bytes28 = BitConverter.GetBytes(num2 - 4);
-                Buffer.BlockCopy(bytes28, 0, NetMessage.buffer[remoteClient].writeBuffer, 0, 4);
-                Buffer.BlockCopy(bytes18, 0, NetMessage.buffer[remoteClient].writeBuffer, 4, 1);
-                Buffer.BlockCopy(bytes19, 0, NetMessage.buffer[remoteClient].writeBuffer, 5, bytes19.Length);
-                num3 += bytes19.Length;
-                NetMessage.buffer[remoteClient].writeBuffer[num3] = b6;
-                num3++;
-                NetMessage.buffer[remoteClient].writeBuffer[num3] = b7;
-                num3++;
-                NetMessage.buffer[remoteClient].writeBuffer[num3] = b8;
-                num3++;
-                Buffer.BlockCopy(bytes20, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes20.Length);
-                num3 += bytes20.Length;
-                Buffer.BlockCopy(bytes21, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes21.Length);
-                num3 += bytes21.Length;
-                Buffer.BlockCopy(bytes22, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes22.Length);
-                num3 += bytes22.Length;
-                Buffer.BlockCopy(bytes23, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes23.Length);
-                num3 += bytes23.Length;
-                Buffer.BlockCopy(bytes24, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes24.Length);
-                num3 += bytes24.Length;
-                Buffer.BlockCopy(bytes25, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes25.Length);
-                num3 += bytes25.Length;
-                Buffer.BlockCopy(bytes26, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes26.Length);
-                num3 += bytes26.Length;
-                NetMessage.buffer[remoteClient].writeBuffer[num3] = b9;
-                num3++;
-                Buffer.BlockCopy(bytes27, 0, NetMessage.buffer[remoteClient].writeBuffer, num3, bytes27.Length);
-                num3 += bytes27.Length;
-                e.Handled = true;
             }
             if (e.Handled)
             {
@@ -593,9 +601,9 @@ namespace TShockAPI
             {
                 foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
                 {
-                    if (playerIP.IP == Players[who].IP)
+                    if (playerIP.IP == player.IP)
                     {
-                        Players[who].Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                        player.Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
                         RemeberedPosManager.RemeberedPosistions.Remove(playerIP);
                         RemeberedPosManager.WriteSettings();
                         break;
