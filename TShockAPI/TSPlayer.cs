@@ -38,6 +38,7 @@ namespace TShockAPI
         public Rectangle TempArea = new Rectangle();
         public DateTime LastExplosive { get; set; }
         public bool InitSpawn = false;
+        public bool DisplayLogs = true;
 
         public bool RealPlayer
         {
