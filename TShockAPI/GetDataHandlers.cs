@@ -132,6 +132,7 @@ namespace TShockAPI
         {
             byte playerid = args.Data.ReadInt8();
             byte hair = args.Data.ReadInt8();
+            args.Data.Position += 22;
             string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
 
             if (hair >= Main.maxHair)
