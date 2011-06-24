@@ -77,6 +77,10 @@ namespace TShockAPI
         /// </summary>
         public static bool ListServer = false;
 
+        public static int Spawn_WorldID;
+        public static int originalSpawnX;
+        public static int originalSpawnY;
+
         public static void ReadJsonConfiguration()
         {
             TextReader tr = new StreamReader(FileTools.ConfigPath);
@@ -115,8 +119,11 @@ namespace TShockAPI
             BackupInterval = cfg.BackupInterval;
             BackupKeepFor = cfg.BackupKeepFor;
             ListServer = cfg.ListServer;
+            originalSpawnX = Main.spawnTileX;
+            originalSpawnY = Main.spawnTileY;
             Main.spawnTileX = cfg.spawnTileX;
             Main.spawnTileY = cfg.spawnTileY;
+            Spawn_WorldID = cfg.Spawn_WorldID;
             RememberLeavePos = cfg.RememberLeavePos;
         }
 
@@ -155,7 +162,7 @@ namespace TShockAPI
             cfg.spawnTileX = Main.spawnTileX;
             cfg.spawnTileY = Main.spawnTileY;
             cfg.RememberLeavePos = RememberLeavePos;
-
+            cfg.Spawn_WorldID = Spawn_WorldID;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);

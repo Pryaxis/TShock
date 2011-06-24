@@ -257,6 +257,13 @@ namespace TShockAPI
                 }
             }
 
+            if (ConfigurationManager.Spawn_WorldID != Main.worldID)
+            {
+                Main.spawnTileX = ConfigurationManager.originalSpawnX;
+                Main.spawnTileY = ConfigurationManager.originalSpawnY;
+                ConfigurationManager.Spawn_WorldID = Main.worldID;
+            }
+
             Players[ply] = player;
             Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }

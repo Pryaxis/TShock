@@ -56,6 +56,7 @@ namespace TShockAPI
 
         public int spawnTileX;
         public int spawnTileY;
+        public int Spawn_WorldID;
 
         public bool RememberLeavePos = false;
     }
