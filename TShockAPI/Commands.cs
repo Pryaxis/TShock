@@ -821,18 +821,21 @@ namespace TShockAPI
                     {
                         for (int j = (15 * (page - 1)); j < (15 * page); j++)
                         {
-                            if (sb.Length != 0)
-                                sb.Append(", ");
-                            sb.Append("/").Append(WarpsManager.Warps[j].WarpName);
-                            if (j == WarpsManager.Warps.Count - 1)
+                            if (WarpsManager.Warps[j].WorldWarpName == Main.worldName)
                             {
-                                args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                break;
-                            }
-                            if ((j + 1) % 5 == 0)
-                            {
-                                args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                sb.Clear();
+                                if (sb.Length != 0)
+                                    sb.Append(", ");
+                                sb.Append("/").Append(WarpsManager.Warps[j].WarpName);
+                                if (j == WarpsManager.Warps.Count - 1)
+                                {
+                                    args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                    break;
+                                }
+                                if ((j + 1) % 5 == 0)
+                                {
+                                    args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                    sb.Clear();
+                                }
                             }
                         }
                     }
