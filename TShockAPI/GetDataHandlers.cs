@@ -132,7 +132,10 @@ namespace TShockAPI
         {
             byte playerid = args.Data.ReadInt8();
             byte hair = args.Data.ReadInt8();
-            args.Data.Position += 22;
+            //Various colours here
+
+            args.Data.Position += 21;
+            bool hardcore = args.Data.ReadBoolean();
             string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
 
             if (hair >= Main.maxHair)
@@ -160,6 +163,12 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Sent client info more than once");
             }
+            if (ConfigurationManager.hardcoreOnly)
+                if (!hardcore)
+                {
+                    Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
+                    return true;
+                }
 
             args.Player.ReceivedInfo = true;
             return false;

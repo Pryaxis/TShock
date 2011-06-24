@@ -59,5 +59,7 @@ namespace TShockAPI
         public int Spawn_WorldID;
 
         public bool RememberLeavePos = false;
+
+        public bool HardcoreOnly = false;
     }
 }

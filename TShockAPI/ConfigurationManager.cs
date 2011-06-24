@@ -81,6 +81,8 @@ namespace TShockAPI
         public static int originalSpawnX;
         public static int originalSpawnY;
 
+        public static bool hardcoreOnly = false;
+
         public static void ReadJsonConfiguration()
         {
             TextReader tr = new StreamReader(FileTools.ConfigPath);
@@ -125,6 +127,7 @@ namespace TShockAPI
             Main.spawnTileY = cfg.spawnTileY;
             Spawn_WorldID = cfg.Spawn_WorldID;
             RememberLeavePos = cfg.RememberLeavePos;
+            hardcoreOnly = cfg.HardcoreOnly;
         }
 
         public static void WriteJsonConfiguration()
@@ -163,6 +166,7 @@ namespace TShockAPI
             cfg.spawnTileY = Main.spawnTileY;
             cfg.RememberLeavePos = RememberLeavePos;
             cfg.Spawn_WorldID = Spawn_WorldID;
+            cfg.HardcoreOnly = hardcoreOnly;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);
