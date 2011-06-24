@@ -142,7 +142,6 @@ namespace TShockAPI
             int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
-            TShock.IsTP = true;
             NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
             if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
             {
@@ -160,7 +159,6 @@ namespace TShockAPI
             Main.spawnTileX = spawnTileX;
             Main.spawnTileY = spawnTileY;
             NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
-            TShock.IsTP = false;
             return true;
         }
 
