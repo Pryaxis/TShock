@@ -336,7 +336,7 @@ namespace TShockAPI
                 if (ConfigurationManager.DisableBoom && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
                 {
                     Main.projectile[ident].type = 0;
-                    NetMessage.SendData((int)PacketTypes.ProjectileNew, args.Player.Index, -1, "", ident);
+                    args.Player.SendData(PacketTypes.ProjectileNew, "", ident);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
                     args.Player.LastExplosive = DateTime.UtcNow;
                     //return true;

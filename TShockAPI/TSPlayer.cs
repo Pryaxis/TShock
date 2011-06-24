@@ -132,7 +132,7 @@ namespace TShockAPI
 
         public virtual void Disconnect(string reason)
         {
-            NetMessage.SendData((int)PacketTypes.Disconnect, Index, -1, reason, 0x0, 0f, 0f, 0f);
+            SendData(PacketTypes.Disconnect, reason);
         }
 
         public bool Teleport(int tileX, int tileY)
@@ -142,7 +142,7 @@ namespace TShockAPI
             int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
-            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
+            SendData(PacketTypes.WorldInfo);
             if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
             {
                 Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = false;
@@ -158,18 +158,18 @@ namespace TShockAPI
             }
             Main.spawnTileX = spawnTileX;
             Main.spawnTileY = spawnTileY;
-            NetMessage.SendData((int)PacketTypes.WorldInfo, Index, -1, "", 0, 0.0f, 0.0f, 0.0f);
+            SendData(PacketTypes.WorldInfo);
             return true;
         }
 
         public void Spawn()
         {
-            NetMessage.SendData((int)PacketTypes.PlayerSpawn, Index, -1, "", Index, 0.0f, 0.0f, 0.0f);
+            SendData(PacketTypes.PlayerSpawn,  "", Index, 0.0f, 0.0f, 0.0f);
         }
 
         public virtual void SendTileSquare(int x, int y, int size = 10)
         {
-            NetMessage.SendData((int)PacketTypes.TileSendSquare, Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
+            SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
         }
 
         public virtual void GiveItem(int type, string name, int width, int height, int stack)
@@ -197,7 +197,7 @@ namespace TShockAPI
 
         public virtual void SendMessage(string msg, byte red, byte green, byte blue)
         {
-            NetMessage.SendData((int)PacketTypes.ChatText, Index, -1, msg, 255, red, green, blue);
+            SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
         }
 
         public virtual void DamagePlayer(int damage)
@@ -217,6 +217,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
+        public void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
+        {
+            if (!ConnectionAlive)
+                return;
+            NetMessage.SendData((int)msgType, Index, -1, text, number, number2, number3, number4, number5);
+        }
     }
 
     public class TSServerPlayer : TSPlayer
