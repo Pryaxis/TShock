@@ -864,6 +864,7 @@ namespace TShockAPI
         {
             Main.spawnTileX = args.Player.TileX;
             Main.spawnTileY = args.Player.TileY;
+            ConfigurationManager.Spawn_WorldID = Main.worldID;
             ConfigurationManager.WriteJsonConfiguration();
             args.Player.SendMessage("Set server spawn point to your position");
         }
