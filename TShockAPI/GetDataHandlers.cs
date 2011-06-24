@@ -207,9 +207,12 @@ namespace TShockAPI
 
                 if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
-                    Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
-                                            plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), tiletype));
-                    return Tools.HandleGriefer(args.Player, "Placing impossible to place blocks.");
+                    if (!(type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
+                    {
+                        Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
+                                                plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), tiletype));
+                        return Tools.HandleGriefer(args.Player, "Placing impossible to place blocks.");
+                    }
                 }
                 if (tiletype == 48 && !args.Player.Group.HasPermission("canspike"))
                 {
