@@ -61,5 +61,7 @@ namespace TShockAPI
         public bool RememberLeavePos = false;
 
         public bool HardcoreOnly = false;
+        public bool KickOnHardcoreOnlyDeath = false;
+        public bool BanOnHardcoreOnlyDeath = false;
     }
 }

@@ -265,6 +265,7 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
+            Players[ply].InitSpawn = false;
             Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }
 

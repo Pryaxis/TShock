@@ -108,6 +108,7 @@ namespace TShockAPI
                 {PacketTypes.TileKill, HandleTileKill},
                 {PacketTypes.PlayerKillMe, HandlePlayerKillMe},
                 {PacketTypes.LiquidSet, HandleLiquidSet},
+                {PacketTypes.PlayerSpawn, HandleSpawn},
             };
         }
 
@@ -446,6 +447,32 @@ namespace TShockAPI
                 Tools.ForceKick(args.Player, string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
                 return true;
             }
+            return false;
+        }
+
+        private static bool HandleSpawn(GetDataHandlerArgs args)
+        {
+            byte player = args.Data.ReadInt8();
+            int spawnx = args.Data.ReadInt32();
+            int spawny = args.Data.ReadInt32();
+
+            if (args.Player.InitSpawn)
+            {
+                if (ConfigurationManager.hardcoreOnly && (ConfigurationManager.KickOnHardcoreDeath || ConfigurationManager.BanOnHardcoreDeath))
+                    if (args.TPlayer.selectedItem != 50)
+                    {
+                        if (ConfigurationManager.BanOnHardcoreDeath)
+                        {
+                            if (!Tools.Ban(args.Player, "Death results in a ban"))
+                                Tools.ForceKick(args.Player, "Death results in a ban, but can't ban you");
+                        }
+                        else
+                            Tools.ForceKick(args.Player, "Death results in a kick");
+                        return true;
+                    }
+            }
+            else
+                args.Player.InitSpawn = true;
             return false;
         }
     }

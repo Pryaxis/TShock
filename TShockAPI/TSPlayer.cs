@@ -37,6 +37,7 @@ namespace TShockAPI
         public DateTime LastPvpChange { get; protected set; }
         public Rectangle TempArea = new Rectangle();
         public DateTime LastExplosive { get; set; }
+        public bool InitSpawn = false;
 
         public bool RealPlayer
         {
@@ -135,6 +136,7 @@ namespace TShockAPI
 
         public bool Teleport(int tileX, int tileY)
         {
+            this.InitSpawn = false;
             int spawnTileX = Main.spawnTileX;
             int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
