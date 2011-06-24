@@ -182,6 +182,7 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
+            ConfigurationManager.ReadJsonConfiguration();
         }
 
         private void OnUpdate(GameTime time)
@@ -227,6 +228,12 @@ namespace TShockAPI
                     }
                 }
             }
+            if (ConfigurationManager.Spawn_WorldID != Main.worldID)
+            {
+                Main.spawnTileX = ConfigurationManager.originalSpawnX;
+                Main.spawnTileY = ConfigurationManager.originalSpawnY;
+                ConfigurationManager.Spawn_WorldID = Main.worldID;
+            }
         }
 
         private void OnJoin(int ply, HandledEventArgs handler)
@@ -255,13 +262,6 @@ namespace TShockAPI
                     Tools.ForceKick(player, "Not on whitelist.");
                     handler.Handled = true;
                 }
-            }
-
-            if (ConfigurationManager.Spawn_WorldID != Main.worldID)
-            {
-                Main.spawnTileX = ConfigurationManager.originalSpawnX;
-                Main.spawnTileY = ConfigurationManager.originalSpawnY;
-                ConfigurationManager.Spawn_WorldID = Main.worldID;
             }
 
             Players[ply] = player;
