@@ -717,7 +717,7 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                if (args.Player.Teleport(plr.TileX, plr.TileY))
+                if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
                 else
                     args.Player.SendMessage("Teleport unavailable - Spawn point set to Bed. To unset, destroy Bed and suicide at least once.", Color.Red);
@@ -751,7 +751,7 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                if (plr.Teleport(args.Player.TileX, args.Player.TileY))
+                if (plr.Teleport(args.Player.TileX, args.Player.TileY + 3))
                 {
                     plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
@@ -840,7 +840,7 @@ namespace TShockAPI
                     var warp = WarpsManager.FindWarp(warpName);
                     if (warp != Vector2.Zero)
                     {
-                        if (args.Player.Teleport((int)warp.X, (int)warp.Y))
+                        if (args.Player.Teleport((int)warp.X, (int)warp.Y + 3))
                             args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
                         else
                             args.Player.SendMessage("Warp unavailable - Spawn point set to Bed. To unset, destroy Bed and suicide at least once.", Color.Red);
