@@ -144,6 +144,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("me", "", ThirdPerson));
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
+            ChatCommands.Add(new Command("displaylogs", "logs", Rules));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -427,6 +428,12 @@ namespace TShockAPI
                 tw.Close();
                 args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
             }
+        }
+
+        public static void DisplayLogs(CommandArgs args)
+        {
+            args.Player.DisplayLogs = (!args.Player.DisplayLogs);
+            args.Player.SendMessage("You now " + (args.Player.DisplayLogs ? "receive" : "stopped receiving") + " logs");
         }
 
         #endregion Player Management Commands

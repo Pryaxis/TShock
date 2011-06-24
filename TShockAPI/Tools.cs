@@ -132,7 +132,7 @@ namespace TShockAPI
             TSPlayer.Server.SendMessage(log, color);
             foreach (TSPlayer player in TShock.Players)
             {
-                if (player != null && player.Active && player.Group.HasPermission("logs"))
+                if (player != null && player.Active && player.Group.HasPermission("logs") && player.DisplayLogs)
                     player.SendMessage(log, color);
             }
         }
