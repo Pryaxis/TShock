@@ -217,9 +217,10 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
+        //Todo: Separate this into a few functions. SendTo, SendToAll, etc
         public void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {
-            if (Index != -1 && !ConnectionAlive)
+            if (RealPlayer && !ConnectionAlive)
                 return;
             NetMessage.SendData((int)msgType, Index, -1, text, number, number2, number3, number4, number5);
         }
