@@ -59,7 +59,7 @@ namespace TShockAPI
                 xmlWriterSettings.Indent = true;
                 xmlWriterSettings.NewLineChars = Environment.NewLine;
 
-                using (XmlWriter settingsw = XmlWriter.Create("warps.xml", xmlWriterSettings))
+                using (XmlWriter settingsw = XmlWriter.Create(FileTools.WarpsPath, xmlWriterSettings))
                 {
                     settingsw.WriteStartDocument();
                     settingsw.WriteStartElement("Warps");
@@ -92,7 +92,7 @@ namespace TShockAPI
                 XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
                 xmlReaderSettings.IgnoreWhitespace = true;
 
-                using (XmlReader settingr = XmlReader.Create("warps.xml", xmlReaderSettings))
+                using (XmlReader settingr = XmlReader.Create(FileTools.WarpsPath, xmlReaderSettings))
                 {
                     while (settingr.Read())
                     {

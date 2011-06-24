@@ -32,6 +32,8 @@ namespace TShockAPI
         public static readonly string ItemBansPath = Path.Combine(TShock.SavePath, "itembans.txt");
         public static readonly string RememberedPosPath = Path.Combine(TShock.SavePath, "oldpos.xml");
         public static readonly string ConfigPath = Path.Combine(TShock.SavePath, "config.json");
+        public static readonly string RegionsPath = Path.Combine(TShock.SavePath, "regions.xml");
+        public static readonly string WarpsPath = Path.Combine(TShock.SavePath, "warps.xml");
 
         public static void CreateFile(string file)
         {
@@ -63,6 +65,24 @@ namespace TShockAPI
             CreateIfNot(GroupsPath, Resources.groups);
             CreateIfNot(UsersPath, Resources.users);
             CreateIfNot(ItemBansPath, Resources.itembans);
+
+            //Copies if using old paths (Remove in future releases, after everyone is running this version +)
+            if (File.Exists("regions.xml") && !File.Exists(RegionsPath))
+            {
+                File.Move("regions.xml", RegionsPath);                
+            }
+            else
+            {
+                CreateIfNot(RegionsPath);
+            }
+            if (File.Exists("warps.xml") && !File.Exists(WarpsPath))
+            {
+                File.Move("warps.xml", WarpsPath);
+            }
+            else
+            {
+                CreateIfNot(WarpsPath);
+            }
 
             try
             {

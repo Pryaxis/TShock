@@ -114,7 +114,7 @@ namespace TShockAPI
                 xmlWriterSettings.Indent = true;
                 xmlWriterSettings.NewLineChars = Environment.NewLine;
 
-                using (XmlWriter settingsw = XmlWriter.Create("regions.xml", xmlWriterSettings))
+                using (XmlWriter settingsw = XmlWriter.Create(FileTools.RegionsPath, xmlWriterSettings))
                 {
                     settingsw.WriteStartDocument();
                     settingsw.WriteStartElement("Regions");
@@ -155,7 +155,7 @@ namespace TShockAPI
                 XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
                 xmlReaderSettings.IgnoreWhitespace = true;
 
-                using (XmlReader settingr = XmlReader.Create("regions.xml", xmlReaderSettings))
+                using (XmlReader settingr = XmlReader.Create(FileTools.RegionsPath, xmlReaderSettings))
                 {
                     while (settingr.Read())
                     {
