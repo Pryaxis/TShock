@@ -314,6 +314,7 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Update Player abuse");
             }
+
             return false;
         }
 
@@ -473,6 +474,7 @@ namespace TShockAPI
             }
             else
                 args.Player.InitSpawn = true;
+
             return false;
         }
     }

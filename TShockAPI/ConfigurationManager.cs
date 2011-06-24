@@ -80,6 +80,8 @@ namespace TShockAPI
         public static int Spawn_WorldID;
         public static int originalSpawnX;
         public static int originalSpawnY;
+        public static int spawnTileX;
+        public static int spawnTileY;
 
         public static bool hardcoreOnly = false;
         public static bool KickOnHardcoreDeath = false;
@@ -125,8 +127,8 @@ namespace TShockAPI
             ListServer = cfg.ListServer;
             originalSpawnX = Main.spawnTileX;
             originalSpawnY = Main.spawnTileY;
-            Main.spawnTileX = cfg.spawnTileX;
-            Main.spawnTileY = cfg.spawnTileY;
+            spawnTileX = cfg.spawnTileX;
+            spawnTileY = cfg.spawnTileY;
             Spawn_WorldID = cfg.Spawn_WorldID;
             RememberLeavePos = cfg.RememberLeavePos;
             hardcoreOnly = cfg.HardcoreOnly;
@@ -166,8 +168,8 @@ namespace TShockAPI
             cfg.BackupInterval = BackupInterval;
             cfg.BackupKeepFor = BackupKeepFor;
             cfg.ListServer = ListServer;
-            cfg.spawnTileX = Main.spawnTileX;
-            cfg.spawnTileY = Main.spawnTileY;
+            cfg.spawnTileX = spawnTileX;
+            cfg.spawnTileY = spawnTileY;
             cfg.RememberLeavePos = RememberLeavePos;
             cfg.Spawn_WorldID = Spawn_WorldID;
             cfg.HardcoreOnly = hardcoreOnly;
