@@ -437,6 +437,9 @@ namespace TShockAPI
                     if (playerIP.IP == Players[who].IP)
                     {
                         Players[who].Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                        RemeberedPosManager.RemeberedPosistions.Remove(playerIP);
+                        RemeberedPosManager.WriteSettings();
+                        break;
                     }
                 }
             }
