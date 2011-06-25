@@ -99,6 +99,16 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Writes an informative string to the log file. Also outputs to the console.
+        /// </summary>
+        /// <param name="message">The message to be written.</param>
+        public static void ConsoleInfo(String message)
+        {
+            Console.WriteLine(message);
+            Write(message, LogLevel.Info);
+        }
+
+        /// <summary>
         /// Writes a debug string to the log file.
         /// </summary>
         /// <param name="message">The message to be written.</param>

@@ -78,14 +78,16 @@ namespace TShockAPI
         public static bool ListServer = false;
 
         public static int Spawn_WorldID;
-        public static int originalSpawnX;
-        public static int originalSpawnY;
-        public static int spawnTileX;
-        public static int spawnTileY;
+        public static int OriginalSpawnX;
+        public static int OriginalSpawnY;
+        public static int SpawnTileX;
+        public static int SpawnTileY;
 
-        public static bool hardcoreOnly = false;
+        public static bool HardcoreOnly = false;
         public static bool KickOnHardcoreDeath = false;
         public static bool BanOnHardcoreDeath = false;
+
+        public static bool AutoSave = true;
 
         public static void ReadJsonConfiguration()
         {
@@ -125,15 +127,16 @@ namespace TShockAPI
             BackupInterval = cfg.BackupInterval;
             BackupKeepFor = cfg.BackupKeepFor;
             ListServer = cfg.ListServer;
-            originalSpawnX = Main.spawnTileX;
-            originalSpawnY = Main.spawnTileY;
-            spawnTileX = cfg.spawnTileX;
-            spawnTileY = cfg.spawnTileY;
+            OriginalSpawnX = Main.spawnTileX;
+            OriginalSpawnY = Main.spawnTileY;
+            SpawnTileX = cfg.SpawnTileX;
+            SpawnTileY = cfg.SpawnTileY;
             Spawn_WorldID = cfg.Spawn_WorldID;
             RememberLeavePos = cfg.RememberLeavePos;
-            hardcoreOnly = cfg.HardcoreOnly;
+            HardcoreOnly = cfg.HardcoreOnly;
             KickOnHardcoreDeath = cfg.KickOnHardcoreOnlyDeath;
             BanOnHardcoreDeath = cfg.BanOnHardcoreOnlyDeath;
+            AutoSave = cfg.AutoSave;
         }
 
         public static void WriteJsonConfiguration()
@@ -168,13 +171,14 @@ namespace TShockAPI
             cfg.BackupInterval = BackupInterval;
             cfg.BackupKeepFor = BackupKeepFor;
             cfg.ListServer = ListServer;
-            cfg.spawnTileX = spawnTileX;
-            cfg.spawnTileY = spawnTileY;
+            cfg.SpawnTileX = SpawnTileX;
+            cfg.SpawnTileY = SpawnTileY;
             cfg.RememberLeavePos = RememberLeavePos;
             cfg.Spawn_WorldID = Spawn_WorldID;
-            cfg.HardcoreOnly = hardcoreOnly;
+            cfg.HardcoreOnly = HardcoreOnly;
             cfg.BanOnHardcoreOnlyDeath = BanOnHardcoreDeath;
             cfg.KickOnHardcoreOnlyDeath = KickOnHardcoreDeath;
+            cfg.AutoSave = AutoSave;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);
