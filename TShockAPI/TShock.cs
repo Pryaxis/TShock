@@ -230,14 +230,14 @@ namespace TShockAPI
                         }
                     }
                 
-               // if (flag == 0)
-           // {
-               // do
-              //  {
-           //         player.Teleport(Main.spawnTileX, Main.spawnTileY);
-             //   }
-          //      while (flag != 1);
-          //  }
+                if (!Login.Contains(player.Name))
+            {
+                do
+                {
+                    player.Teleport(Main.spawnTileX, Main.spawnTileY);
+               }
+                while (Login.Contains(player.Name));
+           }
                 }
             }
             var id = Main.worldID;
