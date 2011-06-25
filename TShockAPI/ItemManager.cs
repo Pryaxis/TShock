@@ -25,7 +25,7 @@ namespace TShockAPI
                     int ID = -1;
                     if (Int32.TryParse(line, out ID))
                     {
-                        if (ID <= 326) //MUST CHANGE ON EACH UPDATE
+                        if (ID < Main.maxItemTypes && ID > 0)
                         {
                             var item = Tools.GetItemById(ID);
                             BannedItems.Add(new ItemBan(ID, item.name));
