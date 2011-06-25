@@ -1200,7 +1200,7 @@ namespace TShockAPI
                             }
                             if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
                             {
-                                if (RegionManager.AddNewUser(regionName, playerIP))
+                                if (RegionManager.AddNewUser(regionName, playerName))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
                                     RegionManager.WriteSettings();
@@ -1347,8 +1347,8 @@ namespace TShockAPI
                     args.Player.SendMessage("Now login with your password.");
                     tw.Close();
                 }
-                        if (TShock.flag == 0)
-                       {
+                       else
+                {
                     args.Player.SendMessage("This player is already registered.", Color.Red);
                     args.Player.SendMessage("Login or create new character with different name.", Color.Red);
                         }
@@ -1382,13 +1382,14 @@ namespace TShockAPI
                             {
                                 args.Player.SendMessage("Login successful");
                                 args.Player.Group = Tools.GetGroup(arg[2]);
-                                TShock.flag = 1;              
+                                TShock.Login.Add(args.Player.Name);      
                                 break;
                             }
                         }
-                        if (TShock.flag == 0)
+                        if (!Tools.Name(args.Player.Name))
                         {
-                            args.Player.SendMessage("Access denied", Color.Red);
+                            args.Player.SendMessage("Access denied!", Color.Red);
+                            args.Player.SendMessage("Player not found or incorrect password", Color.Red);
                         }
                              sr.Close();
                     }

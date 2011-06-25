@@ -42,7 +42,7 @@ namespace TShockAPI
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
         public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-        public static int flag = 0;
+        public static List<string> Login = new List<string>();
         public override Version Version
         {
             get { return VersionNum; }
@@ -230,14 +230,14 @@ namespace TShockAPI
                         }
                     }
                 
-                if (flag == 0)
-            {
-                do
-                {
-                    player.Teleport(Main.spawnTileX, Main.spawnTileY);
-                }
-                while (flag != 1);
-            }
+               // if (flag == 0)
+           // {
+               // do
+              //  {
+           //         player.Teleport(Main.spawnTileX, Main.spawnTileY);
+             //   }
+          //      while (flag != 1);
+          //  }
                 }
             }
             var id = Main.worldID;
@@ -294,6 +294,7 @@ namespace TShockAPI
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
+                Login.Remove(tsplr.Name);
 
             if (ConfigurationManager.RememberLeavePos)
             {
@@ -434,7 +435,6 @@ namespace TShockAPI
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            flag = 0;
             if (Main.netMode != 2 || e.Handled)
                 return;
 
