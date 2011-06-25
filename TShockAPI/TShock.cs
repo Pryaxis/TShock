@@ -186,6 +186,7 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
+            ConfigurationManager.ReadJsonConfiguration();
         }
 
         private void OnUpdate(GameTime time)
