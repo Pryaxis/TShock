@@ -143,6 +143,7 @@ namespace TShockAPI
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
             SendData(PacketTypes.WorldInfo);
+            SendTileSquare(tileX, tileY, 30);
             if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
             {
                 Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = false;
