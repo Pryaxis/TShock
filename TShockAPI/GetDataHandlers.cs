@@ -229,7 +229,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Login to change this region.", Color.Red);
                 args.Player.SendTileSquare(x, y);
                 return true;
-            }
+                }
             if (ConfigurationManager.DisableBuild)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))

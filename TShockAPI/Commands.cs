@@ -1185,7 +1185,6 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            string playerIP = null;
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1198,8 +1197,6 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
-                            {
                                 if (RegionManager.AddNewUser(regionName, playerName))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
@@ -1207,11 +1204,6 @@ namespace TShockAPI
                                 }
                                 else
                                     args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
-                            }
-                            else
-                            {
-                                args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
-                            }
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
@@ -1345,6 +1337,8 @@ namespace TShockAPI
                     tw.Write("\n" + args.Player.Name + ";" + password + ";default");
                     args.Player.SendMessage("Registration successful!");
                     args.Player.SendMessage("Now login with your password.");
+                    Console.WriteLine(string.Format("{0} Registration successful", args.Player.Name));
+                    Log.Info(string.Format("{0} Registration successful", args.Player.Name));
                     tw.Close();
                 }
                        else
@@ -1382,7 +1376,9 @@ namespace TShockAPI
                             {
                                 args.Player.SendMessage("Login successful");
                                 args.Player.Group = Tools.GetGroup(arg[2]);
-                                TShock.Login.Add(args.Player.Name);      
+                                TShock.Login.Add(args.Player.Name);
+                                Console.WriteLine(string.Format("{0} Login successful", args.Player.Name));
+                                Log.Info(string.Format("{0} Login successful", args.Player.Name));
                                 break;
                             }
                         }
@@ -1390,6 +1386,8 @@ namespace TShockAPI
                         {
                             args.Player.SendMessage("Access denied!", Color.Red);
                             args.Player.SendMessage("Player not found or incorrect password", Color.Red);
+                            Console.WriteLine(string.Format("{0} access denied", args.Player.Name));
+                            Log.Info(string.Format("{0} access denied", args.Player.Name));
                         }
                              sr.Close();
                     }

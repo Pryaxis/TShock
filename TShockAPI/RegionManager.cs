@@ -78,14 +78,6 @@ namespace TShockAPI
                         Console.WriteLine(name + " try to destroy " + region.RegionName);
                         return true;
                     }
-                    else
-                    {
-                        if (!TShock.Login.Contains(name))
-                        {
-                            Console.WriteLine(name + " try to destroy " + region.RegionName);
-                            return true;
-                        }
-                    }
                     }
             }
             return false;
@@ -110,7 +102,10 @@ namespace TShockAPI
                 {
                     if (Regions[ID].RegionAllowedNames[i].ToLower() == name)
                     {
-                        return true;
+                        if (TShock.Login.Contains(name))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -276,7 +271,7 @@ namespace TShockAPI
                                             }
                                         }
                                         break;
-                                    }                                    
+                                  }                                    
                             }
                         }
                     }

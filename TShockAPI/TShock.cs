@@ -234,6 +234,7 @@ namespace TShockAPI
             {
                 do
                 {
+                            System.Threading.Thread.Sleep(1000); 
                     player.Teleport(Main.spawnTileX, Main.spawnTileY);
                }
                 while (Login.Contains(player.Name));
@@ -295,7 +296,7 @@ namespace TShockAPI
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
                 Login.Remove(tsplr.Name);
-
+            
             if (ConfigurationManager.RememberLeavePos)
             {
                 RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
