@@ -34,7 +34,7 @@ namespace TShockAPI
     [APIVersion(1, 5)]
     public class TShock : TerrariaPlugin
     {
-        public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version; 
+        public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
         public static readonly string VersionCodename = "Lol, packet changes.";
 
         public static readonly string SavePath = "tshock";
@@ -107,9 +107,12 @@ namespace TShockAPI
             ItemManager.LoadBans();
 
 
-
+            Main.autoSave = ConfigurationManager.AutoSave;
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
             Backups.Interval = ConfigurationManager.BackupInterval;
+
+            Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+            Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
             HandleCommandLine(Environment.GetCommandLineArgs());
         }
@@ -183,7 +186,6 @@ namespace TShockAPI
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
-            ConfigurationManager.ReadJsonConfiguration();
         }
 
         private void OnUpdate(GameTime time)
@@ -241,10 +243,10 @@ namespace TShockAPI
             var id = Main.worldID;
             if (ConfigurationManager.Spawn_WorldID != Main.worldID)
             {
-                Main.spawnTileX = ConfigurationManager.originalSpawnX;
-                Main.spawnTileY = ConfigurationManager.originalSpawnY;
-                ConfigurationManager.spawnTileX = Main.spawnTileX;
-                ConfigurationManager.spawnTileY = Main.spawnTileY;
+                Main.spawnTileX = ConfigurationManager.OriginalSpawnX;
+                Main.spawnTileY = ConfigurationManager.OriginalSpawnY;
+                ConfigurationManager.SpawnTileX = Main.spawnTileX;
+                ConfigurationManager.SpawnTileY = Main.spawnTileY;
                 ConfigurationManager.Spawn_WorldID = Main.worldID;
             }
         }
@@ -375,6 +377,12 @@ namespace TShockAPI
             else if (text.StartsWith("say "))
             {
                 Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
+            }
+            else if (text == "autosave")
+            {
+                Main.autoSave = ConfigurationManager.AutoSave = !ConfigurationManager.AutoSave;
+                Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+                e.Handled = true;
             }
             else if (text.StartsWith("/"))
             {

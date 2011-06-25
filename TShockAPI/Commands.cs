@@ -875,8 +875,8 @@ namespace TShockAPI
 
         private static void SetSpawn(CommandArgs args)
         {
-            ConfigurationManager.spawnTileX = args.Player.TileX;
-            ConfigurationManager.spawnTileY = args.Player.TileY + 3;
+            ConfigurationManager.SpawnTileX = args.Player.TileX;
+            ConfigurationManager.SpawnTileY = args.Player.TileY + 3;
             ConfigurationManager.Spawn_WorldID = Main.worldID;
             ConfigurationManager.WriteJsonConfiguration();
             args.Player.SendMessage("Set server spawn point to your position");
@@ -884,8 +884,8 @@ namespace TShockAPI
 
         private static void SaveSpawn(CommandArgs args)
         {
-            Main.spawnTileX = ConfigurationManager.spawnTileX;
-            Main.spawnTileY = ConfigurationManager.spawnTileY;
+            Main.spawnTileX = ConfigurationManager.SpawnTileX;
+            Main.spawnTileY = ConfigurationManager.SpawnTileY;
             WorldGen.saveWorld();
             args.Player.SendMessage("Saved current spawn point to file.");
         }

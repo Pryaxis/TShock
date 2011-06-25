@@ -164,7 +164,7 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Sent client info more than once");
             }
-            if (ConfigurationManager.hardcoreOnly)
+            if (ConfigurationManager.HardcoreOnly)
                 if (!hardcore)
                 {
                     Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
@@ -459,7 +459,7 @@ namespace TShockAPI
 
             if (args.Player.InitSpawn)
             {
-                if (ConfigurationManager.hardcoreOnly && (ConfigurationManager.KickOnHardcoreDeath || ConfigurationManager.BanOnHardcoreDeath))
+                if (ConfigurationManager.HardcoreOnly && (ConfigurationManager.KickOnHardcoreDeath || ConfigurationManager.BanOnHardcoreDeath))
                     if (args.TPlayer.selectedItem != 50)
                     {
                         if (ConfigurationManager.BanOnHardcoreDeath)

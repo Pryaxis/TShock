@@ -54,8 +54,8 @@ namespace TShockAPI
 
         public bool ListServer = false;
 
-        public int spawnTileX;
-        public int spawnTileY;
+        public int SpawnTileX;
+        public int SpawnTileY;
         public int Spawn_WorldID;
 
         public bool RememberLeavePos = false;
@@ -63,5 +63,7 @@ namespace TShockAPI
         public bool HardcoreOnly = false;
         public bool KickOnHardcoreOnlyDeath = false;
         public bool BanOnHardcoreOnlyDeath = false;
+
+        public bool AutoSave = true;
     }
 }
