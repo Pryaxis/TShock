@@ -146,6 +146,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
             ChatCommands.Add(new Command("displaylogs", "logs", Rules));
+            ChatCommands.Add(new Command("reg", "", Registration));
+            ChatCommands.Add(new Command("login", "", Login));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -1331,6 +1333,68 @@ namespace TShockAPI
         {
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
+
+        private static void Registration(CommandArgs args)
+        {
+            string password = String.Join(" ", args.Parameters);
+            if (args.Parameters.Count == 1)
+            {
+                if (!Tools.Name(args.Player.Name))
+                {
+                    TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
+                    tw.Write("\n" + args.Player.Name + ";" + password + ";default");
+                    args.Player.SendMessage("Registration successful!");
+                    args.Player.SendMessage("Now login with your password.");
+                    tw.Close();
+                }
+                        if (TShock.flag == 0)
+                       {
+                    args.Player.SendMessage("This player is already registered.", Color.Red);
+                    args.Player.SendMessage("Login or create new character with different name.", Color.Red);
+                        }
+            }
+            else
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /reg Password", Color.Red);
+        }
+
+                private static void Login(CommandArgs args)
+                {
+                    string password = String.Join(" ", args.Parameters);
+                    if (args.Parameters.Count == 1)
+                    {
+                        StreamReader sr = new StreamReader(FileTools.UsersPath);
+                        string data = sr.ReadToEnd();
+                        data = data.Replace("\r", "");
+                        string[] lines = data.Split('\n');
+
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            string[] arg = lines[i].Split(';');
+                            if (arg.Length < 2)
+                            {
+                                continue;
+                            }
+                            if (lines[i].StartsWith("#"))
+                            {
+                                continue;
+                            }
+                            if (arg[0] == args.Player.Name && arg[1] == password)
+                            {
+                                args.Player.SendMessage("Login successful");
+                                args.Player.Group = Tools.GetGroup(arg[2]);
+                                TShock.flag = 1;              
+                                break;
+                            }
+                        }
+                        if (TShock.flag == 0)
+                        {
+                            args.Player.SendMessage("Access denied", Color.Red);
+                        }
+                             sr.Close();
+                    }
+                    else 
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /login Password", Color.Red);
+                }
 
         #endregion General Commands
 

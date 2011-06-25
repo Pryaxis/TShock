@@ -42,7 +42,7 @@ namespace TShockAPI
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
         public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-
+        public static int flag = 0;
         public override Version Version
         {
             get { return VersionNum; }
@@ -227,6 +227,15 @@ namespace TShockAPI
                             }
                         }
                     }
+                
+                if (flag == 0)
+            {
+                do
+                {
+                    player.Teleport(Main.spawnTileX, Main.spawnTileY);
+                }
+                while (flag != 1);
+            }
                 }
             }
             var id = Main.worldID;
@@ -246,7 +255,8 @@ namespace TShockAPI
                 return;
 
             var player = new TSPlayer(ply);
-            player.Group = Tools.GetGroupForIP(player.IP);
+
+            player.Group = Tools.GetGroup("default");
 
             if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
@@ -416,6 +426,7 @@ namespace TShockAPI
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
+            flag = 0;
             if (Main.netMode != 2 || e.Handled)
                 return;
 

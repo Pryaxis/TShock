@@ -533,12 +533,11 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Returns a Group for a ip from users.txt
+        /// Returns a Group for a name from users.txt
         /// </summary>
-        /// <param name="ply">string ip</param>
-        public static Group GetGroupForIP(string ip)
+        /// <param name="ply">string name</param>
+        public static Group GetGroupForIP(string name)
         {
-            ip = GetRealIP(ip);
 
             StreamReader sr = new StreamReader(FileTools.UsersPath);
             string data = sr.ReadToEnd();
@@ -547,7 +546,7 @@ namespace TShockAPI
 
             for (int i = 0; i < lines.Length; i++)
             {
-                string[] args = lines[i].Split(' ');
+                string[] args = lines[i].Split(';');
                 if (args.Length < 2)
                 {
                     continue;
@@ -558,9 +557,8 @@ namespace TShockAPI
                 }
                 try
                 {
-                    var hi = GetIPv4Address(args[0]);
-                    if (GetIPv4Address(args[0]).Equals(ip))
-                        return GetGroup(args[1]);
+                    if (args[0] == name)
+                        return GetGroup(args[2]);
                 }
                 catch (Exception ex)
                 { Log.Error(ex.ToString()); }
@@ -569,6 +567,36 @@ namespace TShockAPI
             return GetGroup("default");
         }
 
+        /// <summary>
+        /// Returns a true if name exist in users.txt
+        /// </summary>
+        /// <param name="ply">string name</param>
+        
+        public static bool Name(string name)
+        {
+            StreamReader sr = new StreamReader(FileTools.UsersPath);
+            string data = sr.ReadToEnd();
+            data = data.Replace("\r", "");
+            string[] lines = data.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] args = lines[i].Split(';');
+                if (args.Length < 2)
+                {
+                    continue;
+                }
+                if (lines[i].StartsWith("#"))
+                {
+                    continue;
+                }
+
+                    if (args[0] == name)
+                        return true;
+            }
+            sr.Close();
+            return false;
+        }
         /// <summary>
         /// Returns an IPv4 address from a DNS query
         /// </summary>
