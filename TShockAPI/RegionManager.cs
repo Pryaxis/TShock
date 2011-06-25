@@ -129,11 +129,13 @@ namespace TShockAPI
                         settingsw.WriteElementString("Point2Y", region.RegionArea.Height.ToString());
                         settingsw.WriteElementString("Protected", region.DisableBuild.ToString());
                         settingsw.WriteElementString("WorldName", region.WorldRegionName);
+
                         settingsw.WriteElementString("AllowedUserCount", region.RegionAllowedIPs.Count.ToString());
                         for (int i = 0; i < region.RegionAllowedIPs.Count; i++)
                         {
                             settingsw.WriteElementString("IP", region.RegionAllowedIPs[i]);
                         }
+
                         settingsw.WriteEndElement();
                     }
 
@@ -231,11 +233,9 @@ namespace TShockAPI
                                             settingr.Read();
                                             settingr.Read();
                                             if (settingr.Value != "" || settingr.Value != null)
-                                                worldname = settingr.Value;
+                                                worldname = settingr.Value;                                                
                                             else
                                                 Log.Warn("Worldname for region " + name + " is empty");
-
-                                            Console.WriteLine(settingr.Value);
 
                                             settingr.Read();
                                             settingr.Read();
