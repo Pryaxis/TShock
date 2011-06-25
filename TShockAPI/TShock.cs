@@ -368,6 +368,12 @@ namespace TShockAPI
             {
                 Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
             }
+            else if (text == "autosave")
+            {
+                Main.autoSave = ConfigurationManager.AutoSave = !ConfigurationManager.AutoSave;
+                Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+                e.Handled = true;
+            }
             else if (text.StartsWith("/"))
             {
                 if (Commands.HandleCommand(TSPlayer.Server, text))
