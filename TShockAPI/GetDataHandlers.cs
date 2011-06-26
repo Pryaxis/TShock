@@ -177,20 +177,7 @@ namespace TShockAPI
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
         {
-            short size = args.Data.ReadInt16();
-            int x = args.Data.ReadInt32();
-            int y = args.Data.ReadInt32();
-            int plyX = Math.Abs(args.Player.TileX);
-            int plyY = Math.Abs(args.Player.TileY);
-            int tileX = Math.Abs(x);
-            int tileY = Math.Abs(y);
-            if (size > 5 || (ConfigurationManager.RangeChecks && (Math.Abs(plyX - tileX) > 32 || Math.Abs(plyY - tileY) > 32)))
-            {
-                Log.Debug(string.Format("SendTileSquare(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Size:{6})",
-                                        plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), size));
-                return Tools.HandleGriefer(args.Player, "Send Tile Square Abuse");
-            }
-            return false;
+            return true;
         }
 
         private static bool HandleTile(GetDataHandlerArgs args)
