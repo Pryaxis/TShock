@@ -72,17 +72,6 @@ namespace TShockAPI
         /// </summary>
         public static int BackupKeepFor = 60;
 
-        /// <summary>
-        /// Server will broadcast itself to the server list.
-        /// </summary>
-        public static bool ListServer = false;
-
-        public static int Spawn_WorldID;
-        public static int OriginalSpawnX;
-        public static int OriginalSpawnY;
-        public static int SpawnTileX;
-        public static int SpawnTileY;
-
         public static bool HardcoreOnly = false;
         public static bool KickOnHardcoreDeath = false;
         public static bool BanOnHardcoreDeath = false;
@@ -126,12 +115,6 @@ namespace TShockAPI
             PvpThrottle = cfg.PvpThrottle;
             BackupInterval = cfg.BackupInterval;
             BackupKeepFor = cfg.BackupKeepFor;
-            ListServer = cfg.ListServer;
-            OriginalSpawnX = Main.spawnTileX;
-            OriginalSpawnY = Main.spawnTileY;
-            SpawnTileX = cfg.SpawnTileX;
-            SpawnTileY = cfg.SpawnTileY;
-            Spawn_WorldID = cfg.Spawn_WorldID;
             RememberLeavePos = cfg.RememberLeavePos;
             HardcoreOnly = cfg.HardcoreOnly;
             KickOnHardcoreDeath = cfg.KickOnHardcoreOnlyDeath;
@@ -170,11 +153,7 @@ namespace TShockAPI
             cfg.PvpThrottle = PvpThrottle;
             cfg.BackupInterval = BackupInterval;
             cfg.BackupKeepFor = BackupKeepFor;
-            cfg.ListServer = ListServer;
-            cfg.SpawnTileX = SpawnTileX;
-            cfg.SpawnTileY = SpawnTileY;
             cfg.RememberLeavePos = RememberLeavePos;
-            cfg.Spawn_WorldID = Spawn_WorldID;
             cfg.HardcoreOnly = HardcoreOnly;
             cfg.BanOnHardcoreOnlyDeath = BanOnHardcoreDeath;
             cfg.KickOnHardcoreOnlyDeath = KickOnHardcoreDeath;

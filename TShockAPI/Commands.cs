@@ -130,8 +130,6 @@ namespace TShockAPI
             ChatCommands.Add(new Command("save", "cfg", Save));
             ChatCommands.Add(new Command("maxspawns", "cfg", MaxSpawns));
             ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
-            ChatCommands.Add(new Command("setspawn", "cfg", SetSpawn));
-            ChatCommands.Add(new Command("savespawn", "cfg", SaveSpawn));
             ChatCommands.Add(new Command("time", "time", Time));
             ChatCommands.Add(new Command("slap", "pvpfun", Slap));
             ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
@@ -870,23 +868,6 @@ namespace TShockAPI
         #endregion Teleport Commands
 
         #region Server Config Commands
-
-        private static void SetSpawn(CommandArgs args)
-        {
-            ConfigurationManager.SpawnTileX = args.Player.TileX;
-            ConfigurationManager.SpawnTileY = args.Player.TileY + 3;
-            ConfigurationManager.Spawn_WorldID = Main.worldID;
-            ConfigurationManager.WriteJsonConfiguration();
-            args.Player.SendMessage("Set server spawn point to your position");
-        }
-
-        private static void SaveSpawn(CommandArgs args)
-        {
-            Main.spawnTileX = ConfigurationManager.SpawnTileX;
-            Main.spawnTileY = ConfigurationManager.SpawnTileY;
-            WorldGen.saveWorld();
-            args.Player.SendMessage("Saved current spawn point to file.");
-        }
 
         private static void DebugConfiguration(CommandArgs args)
         {

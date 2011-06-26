@@ -52,12 +52,6 @@ namespace TShockAPI
         public int BackupInterval = 0;
         public int BackupKeepFor = 60;
 
-        public bool ListServer = false;
-
-        public int SpawnTileX;
-        public int SpawnTileY;
-        public int Spawn_WorldID;
-
         public bool RememberLeavePos = false;
 
         public bool HardcoreOnly = false;

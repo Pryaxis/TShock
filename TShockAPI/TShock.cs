@@ -231,15 +231,6 @@ namespace TShockAPI
                     }
                 }
             }
-            var id = Main.worldID;
-            if (ConfigurationManager.Spawn_WorldID != Main.worldID)
-            {
-                Main.spawnTileX = ConfigurationManager.OriginalSpawnX;
-                Main.spawnTileY = ConfigurationManager.OriginalSpawnY;
-                ConfigurationManager.SpawnTileX = Main.spawnTileX;
-                ConfigurationManager.SpawnTileY = Main.spawnTileY;
-                ConfigurationManager.Spawn_WorldID = Main.worldID;
-            }
         }
 
         private void OnJoin(int ply, HandledEventArgs handler)
