@@ -144,6 +144,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
             ChatCommands.Add(new Command("displaylogs", "logs", Rules));
+            ChatCommands.Add(new Command("reg", "", Registration));
+            ChatCommands.Add(new Command("login", "", Login));
             ChatCommands.Add(new Command("w", "", Whisper));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
@@ -1165,7 +1167,6 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            string playerIP = null;
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1178,20 +1179,13 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
-                            {
-                                if (RegionManager.AddNewUser(regionName, playerIP))
+                                if (RegionManager.AddNewUser(regionName, playerName))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
                                     RegionManager.WriteSettings();
                                 }
                                 else
                                     args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
-                            }
-                            else
-                            {
-                                args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
-                            }
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
@@ -1313,6 +1307,74 @@ namespace TShockAPI
         {
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
+
+        private static void Registration(CommandArgs args)
+        {
+            string password = String.Join(" ", args.Parameters);
+            if (args.Parameters.Count == 1)
+            {
+                if (!Tools.Name(args.Player.Name))
+                {
+                    TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
+                    tw.Write("\n" + args.Player.Name + ";" + password + ";default");
+                    args.Player.SendMessage("Registration successful!");
+                    args.Player.SendMessage("Now login with your password.");
+                    Console.WriteLine(string.Format("{0} Registration successful", args.Player.Name));
+                    Log.Info(string.Format("{0} Registration successful", args.Player.Name));
+                    tw.Close();
+                }
+                       else
+                {
+                    args.Player.SendMessage("This player is already registered.", Color.Red);
+                    args.Player.SendMessage("Login or create new character with different name.", Color.Red);
+                        }
+            }
+            else
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /reg Password", Color.Red);
+        }
+
+                private static void Login(CommandArgs args)
+                {
+                    string password = String.Join(" ", args.Parameters);
+                    if (args.Parameters.Count == 1)
+                    {
+                        StreamReader sr = new StreamReader(FileTools.UsersPath);
+                        string data = sr.ReadToEnd();
+                        data = data.Replace("\r", "");
+                        string[] lines = data.Split('\n');
+
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            string[] arg = lines[i].Split(';');
+                            if (arg.Length < 2)
+                            {
+                                continue;
+                            }
+                            if (lines[i].StartsWith("#"))
+                            {
+                                continue;
+                            }
+                            if (arg[0].ToLower() == args.Player.Name.ToLower() && arg[1] == password)
+                            {
+                                args.Player.SendMessage("Login successful");
+                                args.Player.Group = Tools.GetGroup(arg[2]);
+                                TShock.Login.Add(args.Player.Name.ToLower());
+                                Console.WriteLine(string.Format("{0} Login successful", args.Player.Name));
+                                Log.Info(string.Format("{0} Login successful", args.Player.Name));
+                            }
+                        }
+                        if (!Tools.Name(args.Player.Name))
+                        {
+                            args.Player.SendMessage("Access denied!", Color.Red);
+                            args.Player.SendMessage("Player not found or incorrect password", Color.Red);
+                            Console.WriteLine(string.Format("{0} access denied", args.Player.Name));
+                            Log.Info(string.Format("{0} access denied", args.Player.Name));
+                        }
+                             sr.Close();
+                    }
+                    else 
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /login Password", Color.Red);
+                }
 
                 private static void Whisper(CommandArgs args)
                 {
