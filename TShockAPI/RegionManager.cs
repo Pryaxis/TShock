@@ -26,13 +26,13 @@ namespace TShockAPI
             return true;
         }
 
-        public static bool AddNewUser(string regionName, string IP)
+        public static bool AddNewUser(string regionName, string name)
         {
             foreach (Region nametest in Regions)
             {
                 if (regionName.ToLower() == nametest.RegionName.ToLower())
                 {
-                    nametest.RegionAllowedIPs.Add(IP.ToLower());
+                    nametest.RegionAllowedNames.Add(name.ToLower());
                     return true;
                 }
             }
@@ -67,16 +67,19 @@ namespace TShockAPI
             return false;
         }
 
-        public static bool InProtectedArea(int X, int Y, string IP)
+        public static bool InProtectedArea(int X, int Y, string name)
         {
             foreach(Region region in Regions)
             {
-                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName && (!AllowedUser(region.RegionName, IP.ToLower()) || region.RegionAllowedIPs.Count == 0))
+                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName)
                 {
-                    Console.WriteLine(region.RegionName);
+                    if (!AllowedUser(region.RegionName, name.ToLower()) || region.RegionAllowedNames.Count == 0)
+                    {
+                        Console.WriteLine(name + " try to destroy " + region.RegionName);
                     return true;
-                }
+                    }
             }
+         }
             return false;
         }
 
@@ -90,16 +93,19 @@ namespace TShockAPI
             return -1;
         }
 
-        public static bool AllowedUser(string regionName, string playerIP)
+        public static bool AllowedUser(string regionName, string name)
         {
             int ID = -1;
             if ((ID = GetRegionIndex(regionName)) != -1)
             {
-                for (int i = 0; i < Regions[ID].RegionAllowedIPs.Count; i++)
+                for (int i = 0; i < Regions[ID].RegionAllowedNames.Count; i++)
                 {
-                    if (Regions[ID].RegionAllowedIPs[i].ToLower() == playerIP.ToLower())
+                    if (Regions[ID].RegionAllowedNames[i].ToLower() == name)
                     {
-                        return true;
+                        if (TShock.Login.Contains(name))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -130,10 +136,10 @@ namespace TShockAPI
                         settingsw.WriteElementString("Protected", region.DisableBuild.ToString());
                         settingsw.WriteElementString("WorldName", region.WorldRegionName);
 
-                        settingsw.WriteElementString("AllowedUserCount", region.RegionAllowedIPs.Count.ToString());
-                        for (int i = 0; i < region.RegionAllowedIPs.Count; i++)
+                        settingsw.WriteElementString("AllowedUserCount", region.RegionAllowedNames.Count.ToString());
+                        for (int i = 0; i < region.RegionAllowedNames.Count; i++)
                         {
-                            settingsw.WriteElementString("IP", region.RegionAllowedIPs[i]);
+                            settingsw.WriteElementString("Player", region.RegionAllowedNames[i]);
                         }
 
                         settingsw.WriteEndElement();
@@ -257,10 +263,10 @@ namespace TShockAPI
                                                     if (settingr.Value != "" || settingr.Value != null)
                                                     {
                                                         int ID = RegionManager.GetRegionIndex(name);
-                                                        Regions[ID].RegionAllowedIPs.Add(settingr.Value);
+                                                        Regions[ID].RegionAllowedNames.Add(settingr.Value);
                                                     }
                                                     else
-                                                        Log.Warn("PlayerIP " + i + " for region " + name + " is empty");
+                                                        Log.Warn("PlayerName " + i + " for region " + name + " is empty");
                                                 }
                                             }
                                         }
@@ -286,7 +292,7 @@ namespace TShockAPI
         public string RegionName { get; set; }
         public bool DisableBuild { get; set; }
         public string WorldRegionName { get; set; }
-        public List<string> RegionAllowedIPs = new List<string>();
+        public List<string> RegionAllowedNames = new List<string>();
 
         public Region(Rectangle region, string name, bool disablebuild, string worldname)
         {

@@ -42,7 +42,7 @@ namespace TShockAPI
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
         public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-
+        public static List<string> Login = new List<string>();
         public override Version Version
         {
             get { return VersionNum; }
@@ -239,7 +239,8 @@ namespace TShockAPI
                 return;
 
             var player = new TSPlayer(ply);
-            player.Group = Tools.GetGroupForIP(player.IP);
+
+            player.Group = Tools.GetGroup("default");
 
             if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
@@ -274,8 +275,9 @@ namespace TShockAPI
 
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
-                Log.Info(string.Format("{0} left.", tsplr.Name));
-
+                Log.Info(string.Format("{0} left.", tsplr));
+                Login.Remove(tsplr.Name.ToLower());
+            
             if (ConfigurationManager.RememberLeavePos)
             {
                 RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
