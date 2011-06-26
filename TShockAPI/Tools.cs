@@ -557,7 +557,7 @@ namespace TShockAPI
                 }
                 try
                 {
-                    if (args[0] == name)
+                    if (args[0].ToLower() == name.ToLower())
                         return GetGroup(args[2]);
                 }
                 catch (Exception ex)
@@ -591,7 +591,7 @@ namespace TShockAPI
                     continue;
                 }
 
-                    if (args[0] == name)
+                    if (args[0].ToLower() == name.ToLower())
                         return true;
             }
             sr.Close();

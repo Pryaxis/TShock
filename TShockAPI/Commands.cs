@@ -1372,14 +1372,13 @@ namespace TShockAPI
                             {
                                 continue;
                             }
-                            if (arg[0] == args.Player.Name && arg[1] == password)
+                            if (arg[0].ToLower() == args.Player.Name.ToLower() && arg[1] == password)
                             {
                                 args.Player.SendMessage("Login successful");
                                 args.Player.Group = Tools.GetGroup(arg[2]);
-                                TShock.Login.Add(args.Player.Name);
+                                TShock.Login.Add(args.Player.Name.ToLower());
                                 Console.WriteLine(string.Format("{0} Login successful", args.Player.Name));
                                 Log.Info(string.Format("{0} Login successful", args.Player.Name));
-                                break;
                             }
                         }
                         if (!Tools.Name(args.Player.Name))

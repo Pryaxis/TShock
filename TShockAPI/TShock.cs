@@ -230,16 +230,24 @@ namespace TShockAPI
                             }
                         }
                     }
-                
-                if (!Login.Contains(player.Name))
-            {
-                do
-                {
-                            System.Threading.Thread.Sleep(1000); 
-                    player.Teleport(Main.spawnTileX, Main.spawnTileY);
-               }
-                while (Login.Contains(player.Name));
-           }
+
+                    #region freeze
+                /*
+                    if (!Login.Contains(player.Name.ToLower()))
+                    {
+                        int i = 0;
+                            do
+                         {
+                            System.Threading.Thread.Sleep(1000);
+                            i++;
+                            player.Teleport(Main.spawnTileX, Main.spawnTileY);
+                                if (i == 60)
+                                    player.Disconnect("Not logged in");
+                         }
+                            while (Login.Contains(player.Name.ToLower()));
+                    }
+               */
+                    #endregion
                 }
             }
             var id = Main.worldID;
@@ -295,8 +303,8 @@ namespace TShockAPI
 
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
-                Log.Info(string.Format("{0} left.", tsplr.Name));
-                Login.Remove(tsplr.Name);
+                Log.Info(string.Format("{0} left.", tsplr));
+                Login.Remove(tsplr.Name.ToLower());
             
             if (ConfigurationManager.RememberLeavePos)
             {
