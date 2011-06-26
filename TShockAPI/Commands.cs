@@ -1378,6 +1378,7 @@ namespace TShockAPI
 
                 private static void Whisper(CommandArgs args)
                 {
+                    int i = 0;
                      if (args.Parameters.Count <= 1)
                     {
                         args.Player.SendMessage("Invalid syntax! Proper syntax: /w <PlayerName> <Text>", Color.Red);
@@ -1393,8 +1394,13 @@ namespace TShockAPI
                      else
                      {
                          var plr = players[0];
-                         args.Player.SendMessage(string.Format("<{0}> {1}.", args.Player.Name, args.Parameters[1]));
-                         plr.SendMessage(string.Format("<{0}> {1}.", args.Player.Name, args.Parameters[1]));
+                         string msg = string.Empty;
+                         for (i = 2; i <= args.Parameters.Count; i++)
+                         {
+                             msg = string.Format("{0} {1}", msg, args.Parameters[i - 1]);
+                         }
+                         args.Player.SendMessage(string.Format("<{0}> {1}", args.Player.Name, msg));
+                         plr.SendMessage(string.Format("<{0}> {1}", args.Player.Name, msg));
                      }
                        }
         
