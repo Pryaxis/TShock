@@ -1399,8 +1399,8 @@ namespace TShockAPI
                          {
                              msg = string.Format("{0} {1}", msg, args.Parameters[i - 1]);
                          }
-                         args.Player.SendMessage(string.Format("<{0}> {1}", args.Player.Name, msg));
-                         plr.SendMessage(string.Format("<{0}> {1}", args.Player.Name, msg));
+                         args.Player.SendMessage(string.Format("<{0}>{1}", args.Player.Name, msg));
+                         plr.SendMessage(string.Format("<{0}>{1}", args.Player.Name, msg));
                      }
                        }
         
