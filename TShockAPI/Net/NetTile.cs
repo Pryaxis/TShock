@@ -52,7 +52,7 @@ namespace TShockAPI.Net
         }
 
         public NetTile(Stream stream)
-            : base()
+            : this()
         {
             Unpack(stream);
         }
