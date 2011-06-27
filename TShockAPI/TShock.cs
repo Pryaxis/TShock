@@ -184,7 +184,8 @@ namespace TShockAPI
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
                                   ConfigurationManager.AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
-                FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
+                //FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
+                File.WriteAllText(Path.Combine(SavePath, "auth.lck"), ConfigurationManager.AuthToken.ToString());
             }
         }
 
