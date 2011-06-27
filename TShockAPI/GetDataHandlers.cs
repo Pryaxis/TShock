@@ -23,6 +23,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
+using TShockAPI.Net;
 using XNAHelpers;
 
 namespace TShockAPI
@@ -177,6 +178,55 @@ namespace TShockAPI
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
         {
+            short size = args.Data.ReadInt16();
+            int tilex = args.Data.ReadInt32();
+            int tiley = args.Data.ReadInt32();
+
+            if (size != 3)
+                return true;
+
+            var tiles = new NetTile[size, size];
+
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    tiles[x, y] = new NetTile(args.Data);
+                }
+            }
+
+            bool changed = false;
+            for (int x = 0; x < size; x++)
+            {
+                int realx = tilex + x;
+                if (realx < 0 || realx >= Main.maxTilesX)
+                    continue;
+
+                for (int y = 0; y < size; y++)
+                {
+                    int realy = tiley + y;
+                    if (realy < 0 || realy >= Main.maxTilesY)
+                        continue;
+
+                    var tile = Main.tile[realx, realy];
+                    var newtile = tiles[x, y];
+
+                    if (tile.type == 0x17 && newtile.Type == 0x2)
+                    {
+                        tile.type = 0x2;
+                        changed = true;
+                    }
+                    else if (tile.type == 0x19 && newtile.Type == 0x1)
+                    {
+                        tile.type = 0x1;
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed)
+                TSPlayer.All.SendTileSquare(tilex, tiley, 3);
+
             return true;
         }
 
