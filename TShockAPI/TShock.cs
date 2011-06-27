@@ -17,29 +17,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
+using System.Text;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 3)]
+    [APIVersion(1, 5)]
     public class TShock : TerrariaPlugin
     {
-        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
+        public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
+        public static readonly string VersionCodename = "Lol, packet changes.";
 
         public static readonly string SavePath = "tshock";
 
-        public static readonly Version VersionNum = new Version(2, 1, 0, 6);
-
-        public static readonly string VersionCodename = "Forgot to increase the version.";
-
+        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
+        public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 
         public override Version Version
         {
@@ -74,6 +76,7 @@ namespace TShockAPI
             Console.WriteLine(version);
 
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+
             Log.Info(version);
             Log.Info("Starting...");
 
@@ -98,6 +101,18 @@ namespace TShockAPI
 
             Commands.InitCommands();
             Log.Info("Commands initialized");
+
+            RegionManager.ReadAllSettings();
+            WarpsManager.ReadAllSettings();
+            ItemManager.LoadBans();
+
+
+            Main.autoSave = ConfigurationManager.AutoSave;
+            Backups.KeepFor = ConfigurationManager.BackupKeepFor;
+            Backups.Interval = ConfigurationManager.BackupInterval;
+
+            Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+            Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
             HandleCommandLine(Environment.GetCommandLineArgs());
         }
@@ -176,17 +191,19 @@ namespace TShockAPI
         private void OnUpdate(GameTime time)
         {
             UpdateManager.UpdateProcedureCheck();
+
+            if (Backups.IsBackupTime)
+                Backups.Backup();
+
             foreach (TSPlayer player in TShock.Players)
             {
                 if (player != null && player.Active)
                 {
-                    if (player.TileThreshold >= 20)
+                    if (player.TileThreshold >= ConfigurationManager.TileThreshold)
                     {
                         if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                         {
-                            RevertKillTile(player);
-                            player.TileThreshold = 0;
-                            player.TilesDestroyed.Clear();
+                            TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                         }
                         else if (player.TileThreshold > 0)
                         {
@@ -198,6 +215,20 @@ namespace TShockAPI
                     else if (player.TileThreshold > 0)
                     {
                         player.TileThreshold = 0;
+                        player.TilesDestroyed.Clear();
+                    }
+
+                    if (!player.Group.HasPermission("usebanneditem"))
+                    {
+                        var inv = Main.player[player.Index].inventory;
+                        for (int i = 0; i < inv.Length; i++)
+                        {
+                            if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
+                            {
+                                player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -211,8 +242,7 @@ namespace TShockAPI
             var player = new TSPlayer(ply);
             player.Group = Tools.GetGroupForIP(player.IP);
 
-            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots &&
-                !player.Group.HasPermission("reservedslot"))
+            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
@@ -233,7 +263,9 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
-            Netplay.serverSock[ply].spamCheck = ConfigurationManager.SpamChecks;
+            Players[ply].InitSpawn = false;
+
+            Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }
 
         private void OnLeave(int ply)
@@ -245,12 +277,18 @@ namespace TShockAPI
             if (tsplr != null && tsplr.ReceivedInfo)
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
+                RemeberedPosManager.WriteSettings();
+            }
+
             Players[ply] = null;
         }
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             if (msg.whoAmI != ply)
@@ -287,6 +325,9 @@ namespace TShockAPI
         /// <param name="e"></param>
         private void ServerHooks_OnCommand(string text, HandledEventArgs e)
         {
+            if (e.Handled)
+                return;
+
             // Damn you ThreadStatic and Redigit
             if (Main.rand == null)
             {
@@ -319,60 +360,93 @@ namespace TShockAPI
             {
                 Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
             }
+            else if (text == "autosave")
+            {
+                Main.autoSave = ConfigurationManager.AutoSave = !ConfigurationManager.AutoSave;
+                Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+                e.Handled = true;
+            }
             else if (text.StartsWith("/"))
             {
                 if (Commands.HandleCommand(TSPlayer.Server, text))
                     e.Handled = true;
             }
-            
+
         }
 
         private void GetData(GetDataEventArgs e)
         {
-            PacketTypes type = (PacketTypes) e.MsgID;
+            if (Main.netMode != 2 || e.Handled)
+                return;
+
+            PacketTypes type = e.MsgID;
             TSPlayer player = Players[e.Msg.whoAmI];
 
             if (!player.ConnectionAlive)
+            {
+                e.Handled = true;
                 return;
+            }
 
             if (Main.verboseNetplay)
-                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte) type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
+                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
-            using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+            // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
+            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= ConfigurationManager.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
             {
-                try
+                Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
+                e.Handled = true;
+            }
+            else
+            {
+                using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
                 {
-                    if (GetDataHandlers.HandlerGetData(type, player, data))
-                        e.Handled = true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
+                    try
+                    {
+                        if (GetDataHandlers.HandlerGetData(type, player, data))
+                            e.Handled = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                    }
                 }
             }
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2)
+            if (Main.netMode != 2 || e.Handled)
                 return;
 
             TSPlayer player = Players[who];
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
             Tools.ShowFileToUser(player, "motd.txt");
-            if (HackedHealth(who))
+            if (HackedHealth(player))
             {
                 Tools.HandleCheater(player, "Hacked health.");
             }
             if (ConfigurationManager.PermaPvp)
             {
-                Main.player[who].hostile = true;
-                NetMessage.SendData(30, -1, -1, "", who);
+                player.SetPvP(true);
             }
             if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
                 StartInvasion();
+            }
+            if (ConfigurationManager.RememberLeavePos)
+            {
+                foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
+                {
+                    if (playerIP.IP == player.IP)
+                    {
+                        player.Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                        RemeberedPosManager.RemeberedPosistions.Remove(playerIP);
+                        RemeberedPosManager.WriteSettings();
+                        break;
+                    }
+                }
             }
             e.Handled = true;
         }
@@ -392,24 +466,6 @@ namespace TShockAPI
         /*
          * Useful stuff:
          * */
-
-        public static void Teleport(int ply, int x, int y)
-        {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y;
-            NetMessage.SendData(0x0d, -1, ply, "", ply);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            NetMessage.syncPlayers();
-        }
-
-        public static void Teleport(int ply, float x, float y)
-        {
-            Main.player[ply].position.X = x;
-            Main.player[ply].position.Y = y;
-            NetMessage.SendData(0x0d, -1, ply, "", ply);
-            NetMessage.SendData(0x0d, -1, -1, "", ply);
-            NetMessage.syncPlayers();
-        }
 
         public static void StartInvasion()
         {
@@ -465,75 +521,6 @@ namespace TShockAPI
             }
         }
 
-        public static void UpdateInventories()
-        {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                for (int j = 0; j < 44; j++)
-                {
-                    for (int h = 0; h < Main.player.Length; h++)
-                        NetMessage.SendData(5, h, i, Main.player[i].inventory[j].name, i, j, 0f, 0f);
-                }
-            }
-        }
-
-        public static void UpdatePlayers()
-        {
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                for (int h = 0; h < Main.player.Length; h++)
-                    NetMessage.SendData(0x0d, i, -1, "", h);
-            }
-        }
-
-        public static void PlayerDamage(TSPlayer player, int damage)
-        {
-            NetMessage.SendData(26, -1, -1, "", player.Index, ((new Random()).Next(-1, 1)), damage, (float)0);
-        }
-
-        public static void SendTileSquare(TSPlayer player, int x, int y, int size = 10)
-        {
-            NetMessage.SendData(20, player.Index, -1, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
-        }
-
-        //TODO : Notify the player if there is more than one match. (or do we want a First() kinda thing?)
-        public static int GetNPCID(string name, bool exact = false)
-        {
-            NPC npc = new NPC();
-            for (int i = 1; i < Main.maxNPCTypes; i++)
-            {
-                if (exact)
-                {
-                    //Method #1 - must be exact match, allows support for different coloured slimes
-                    npc.SetDefaults(name);
-                    if (npc.name == name)
-                        return i;
-                }
-                else
-                {
-                    //Method #2 - allows impartial matching
-                    name = name.ToLower();
-                    npc.SetDefaults(i);
-                    if (npc.name.ToLower().StartsWith(name))
-                        return i;
-                }
-            }
-            return -1;
-        }
-
-        public static int GetItemID(string name)
-        {
-            Item item = new Item();
-            name = name.ToLower();
-            for (int i = 1; i < Main.maxItemTypes; i++)
-            {
-                item.SetDefaults(i);
-                if (item.name.ToLower().StartsWith(name))
-                    return i;
-            }
-            return -1;
-        }
-
         public static bool CheckSpawn(int x, int y)
         {
             Vector2 tile = new Vector2(x, y);
@@ -545,25 +532,12 @@ namespace TShockAPI
                 return true;
         }
 
-        public static void RevertKillTile(TSPlayer player)
+        public static bool HackedHealth(TSPlayer player)
         {
-            Tile[] tiles = new Tile[player.TilesDestroyed.Count];
-            player.TilesDestroyed.Values.CopyTo(tiles, 0);
-            Vector2[] positions = new Vector2[player.TilesDestroyed.Count];
-            player.TilesDestroyed.Keys.CopyTo(positions, 0);
-            for (int i = (player.TilesDestroyed.Count - 1); i >= 0; i--)
-            {
-                Main.tile[(int)positions[i].X, (int)positions[i].Y] = tiles[i];
-                NetMessage.SendData(17, -1, -1, "", 1, positions[i].X, positions[i].Y, (float)0);
-            }
-        }
-
-        public static bool HackedHealth(int ply)
-        {
-            return (Main.player[ply].statManaMax > 200) ||
-                    (Main.player[ply].statMana > 200) ||
-                    (Main.player[ply].statLifeMax > 400) ||
-                    (Main.player[ply].statLife > 400);
+            return (player.TPlayer.statManaMax > 200) ||
+                    (player.TPlayer.statMana > 200) ||
+                    (player.TPlayer.statLifeMax > 400) ||
+                    (player.TPlayer.statLife > 400);
         }
 
 

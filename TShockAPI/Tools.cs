@@ -19,20 +19,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI
 {
-    internal enum NPCList
-    {
-        WORLD_EATER = 0,
-        EYE = 1,
-        SKELETRON = 2
-    }
-
     internal class Tools
     {
+        private static Random random = new Random();
         private static List<Group> groups = new List<Group>();
 
         /// <summary>
@@ -64,6 +59,25 @@ namespace TShockAPI
                 }
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Finds a player and gets IP as string
+        /// </summary>
+        /// <param name="msg">Player name</param>
+        public static string GetPlayerIP(string playername)
+        {
+            foreach (TSPlayer player in TShock.Players)
+            {
+                if (player != null && player.Active)
+                {
+                    if (playername.ToLower() == player.Name.ToLower())
+                    {
+                        return player.IP;
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -118,7 +132,7 @@ namespace TShockAPI
             TSPlayer.Server.SendMessage(log, color);
             foreach (TSPlayer player in TShock.Players)
             {
-                if (player != null && player.Active && player.Group.HasPermission("logs"))
+                if (player != null && player.Active && player.Group.HasPermission("logs") && player.DisplayLogs)
                     player.SendMessage(log, color);
             }
         }
@@ -163,31 +177,115 @@ namespace TShockAPI
             return found;
         }
 
-        /// <summary>
-        /// Creates an NPC
-        /// </summary>
-        /// <param name="type">Type is defined in the enum NPC list</param>
-        /// <param name="player">int player that the npc targets</param>
-        public static void NewNPC(NPCList type, TSPlayer player)
+        public static void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange, out int tileX, out int tileY)
         {
-            switch (type)
+            int j = 0;
+            do
             {
-                case NPCList.WORLD_EATER:
-                    WorldGen.shadowOrbSmashed = true;
-                    WorldGen.shadowOrbCount = 3;
-                    int w = NPC.NewNPC((int)player.X, (int)player.Y, 13, 1);
-                    Main.npc[w].target = player.Index;
+                if (j == 100)
+                {
+                    tileX = startTileX;
+                    tileY = startTileY;
                     break;
-                case NPCList.EYE:
-                    Main.time = 4861;
-                    Main.dayTime = false;
-                    WorldGen.spawnEye = true;
-                    break;
-                case NPCList.SKELETRON:
-                    int enpeecee = NPC.NewNPC((int)player.X, (int)player.Y, 0x23, 0);
-                    Main.npc[enpeecee].netUpdate = true;
-                    break;
+                }
+
+                tileX = startTileX + random.Next(tileXRange * -1, tileXRange);
+                tileY = startTileY + random.Next(tileYRange * -1, tileYRange);
+                j++;
             }
+            while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
+        }
+
+        private static bool TileValid(int tileX, int tileY)
+        {
+            return tileX >= 0 && tileX <= Main.maxTilesX && tileY >= 0 && tileY <= Main.maxTilesY;
+        }
+
+        private static bool TileClear(int tileX, int tileY)
+        {
+            return !Main.tile[tileX, tileY].active;
+        }
+
+        public static List<Item> GetItemByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type))
+            {
+                return new List<Item> { GetItemById(type) };
+            }
+            return GetItemByName(idOrName);
+        }
+
+        public static Item GetItemById(int id)
+        {
+            Item item = new Item();
+            item.SetDefaults(id);
+            return item;
+        }
+
+        public static List<Item> GetItemByName(string name)
+        {
+            //Method #1 - must be exact match, allows support for different pickaxes/hammers/swords etc
+            for (int i = 1; i < Main.maxItemTypes; i++)
+            {
+                Item item = new Item();
+                item.SetDefaults(name);
+                if (item.name == name)
+                    return new List<Item> { item };
+            }
+            //Method #2 - allows impartial matching
+            var found = new List<Item>();
+            for (int i = 1; i < Main.maxItemTypes; i++)
+            {
+                Item item = new Item();
+                item.SetDefaults(i);
+                if (item.name.ToLower() == name.ToLower())
+                    return new List<Item> { item };
+                if (item.name.ToLower().StartsWith(name.ToLower()))
+                    found.Add(item);
+            }
+            return found;
+        }
+
+        public static List<NPC> GetNPCByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type))
+            {
+                return new List<NPC> { GetNPCById(type) };
+            }
+            return GetNPCByName(idOrName);
+        }
+
+        public static NPC GetNPCById(int id)
+        {
+            NPC npc = new NPC();
+            npc.SetDefaults(id);
+            return npc;
+        }
+
+        public static List<NPC> GetNPCByName(string name)
+        {
+            //Method #1 - must be exact match, allows support for different coloured slimes
+            for (int i = 1; i < Main.maxNPCTypes; i++)
+            {
+                NPC npc = new NPC();
+                npc.SetDefaults(name);
+                if (npc.name == name)
+                    return new List<NPC> { npc };
+            }
+            //Method #2 - allows impartial matching
+            var found = new List<NPC>();
+            for (int i = 1; i < Main.maxNPCTypes; i++)
+            {
+                NPC npc = new NPC();
+                npc.SetDefaults(i);
+                if (npc.name.ToLower() == name.ToLower())
+                    return new List<NPC> { npc };
+                if (npc.name.ToLower().StartsWith(name.ToLower()))
+                    found.Add(npc);
+            }
+            return found;
         }
 
         /// <summary>
@@ -201,7 +299,7 @@ namespace TShockAPI
             {
                 if (player != null && player.Active)
                 {
-                    Tools.ForceKick(player, reason);
+                    ForceKick(player, reason);
                 }
             }
         }
@@ -215,7 +313,7 @@ namespace TShockAPI
         {
             if (!player.ConnectionAlive)
                 return;
-            NetMessage.SendData(0x2, player.Index, -1, reason, 0x0, 0f, 0f, 0f);
+            player.Disconnect(reason);
             Log.Info(string.Format("{0} was force kicked for : {1}", player.IP, reason));
         }
 
@@ -231,12 +329,12 @@ namespace TShockAPI
             if (!player.Group.HasPermission("immunetokick"))
             {
                 string playerName = player.Name;
-                NetMessage.SendData(0x2, player.Index, -1, string.Format("Kicked: {0}", reason), 0x0, 0f, 0f, 0f);
+                player.Disconnect(string.Format("Kicked: {0}", reason));
                 Log.Info(string.Format("Kicked {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
+                    Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;
@@ -256,12 +354,12 @@ namespace TShockAPI
                 string ip = player.IP;
                 string playerName = player.Name;
                 TShock.Bans.AddBan(ip, playerName, reason);
-                NetMessage.SendData(0x2, player.Index, -1, string.Format("Banned: {0}", reason), 0x0, 0f, 0f, 0f);
+                player.Disconnect(string.Format("Banned: {0}", reason));
                 Log.Info(string.Format("Banned {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
                 else
-                    Tools.Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
+                    Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
                 return true;
             }
             return false;
@@ -458,13 +556,35 @@ namespace TShockAPI
                 {
                     continue;
                 }
-                if (args[0].Equals(ip))
+                try
                 {
-                    return GetGroup(args[1]);
+                    var hi = GetIPv4Address(args[0]);
+                    if (GetIPv4Address(args[0]).Equals(ip))
+                        return GetGroup(args[1]);
                 }
+                catch (Exception ex)
+                { Log.Error(ex.ToString()); }
             }
             sr.Close();
             return GetGroup("default");
+        }
+
+        /// <summary>
+        /// Returns an IPv4 address from a DNS query
+        /// </summary>
+        /// <param name="hostname">string ip</param>
+        public static string GetIPv4Address(string hostname)
+        {
+            string IP4Address = String.Empty;
+            foreach (IPAddress IPA in Dns.GetHostAddresses(hostname))
+            {
+                if (IPA.AddressFamily.ToString() == "InterNetwork")
+                {
+                    IP4Address = IPA.ToString();
+                    break;
+                }
+            }
+            return IP4Address;
         }
     }
 }

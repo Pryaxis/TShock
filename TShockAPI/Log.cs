@@ -54,24 +54,6 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Internal method which writes a message directly to the log file.
-        /// </summary>
-        private static void Write(String message, LogLevel level)
-        {
-            if (!MayWriteType(level))
-            {
-                return;
-            }
-
-            string caller = "TShock";
-
-            _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}", 
-                                 DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), 
-                                 caller, level.ToString().ToUpper(), message));
-            _logWriter.Flush();
-        }
-
-        /// <summary>
         /// Checks whether the log level contains the specified flag.
         /// </summary>
         /// <param name="type">The <see cref="LogLevel" /> value to check.</param>
@@ -117,12 +99,48 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Writes an informative string to the log file. Also outputs to the console.
+        /// </summary>
+        /// <param name="message">The message to be written.</param>
+        public static void ConsoleInfo(String message)
+        {
+            Console.WriteLine(message);
+            Write(message, LogLevel.Info);
+        }
+
+        /// <summary>
         /// Writes a debug string to the log file.
         /// </summary>
         /// <param name="message">The message to be written.</param>
         public static void Debug(String message)
         {
             Write(message, LogLevel.Debug);
+        }
+
+        /// <summary>
+        /// Internal method which writes a message directly to the log file.
+        /// </summary>
+        private static void Write(String message, LogLevel level)
+        {
+            if (!MayWriteType(level))
+            {
+                return;
+            }
+
+            string caller = "TShock";
+
+            StackFrame frame = new StackTrace().GetFrame(2);
+            if (frame != null)
+            {
+                var meth = frame.GetMethod();
+                if (meth != null)
+                    caller = meth.DeclaringType.Name;
+            }
+
+            _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}",
+                                 DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                                 caller, level.ToString().ToUpper(), message));
+            _logWriter.Flush();
         }
     }
 }

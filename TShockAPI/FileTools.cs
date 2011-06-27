@@ -29,7 +29,11 @@ namespace TShockAPI
         public static readonly string WhitelistPath = Path.Combine(TShock.SavePath, "whitelist.txt");
         public static readonly string GroupsPath = Path.Combine(TShock.SavePath, "groups.txt");
         public static readonly string UsersPath = Path.Combine(TShock.SavePath, "users.txt");
+        public static readonly string ItemBansPath = Path.Combine(TShock.SavePath, "itembans.txt");
+        public static readonly string RememberedPosPath = Path.Combine(TShock.SavePath, "oldpos.xml");
         public static readonly string ConfigPath = Path.Combine(TShock.SavePath, "config.json");
+        public static readonly string RegionsPath = Path.Combine(TShock.SavePath, "regions.xml");
+        public static readonly string WarpsPath = Path.Combine(TShock.SavePath, "warps.xml");
 
         public static void CreateFile(string file)
         {
@@ -60,6 +64,25 @@ namespace TShockAPI
             CreateIfNot(WhitelistPath);
             CreateIfNot(GroupsPath, Resources.groups);
             CreateIfNot(UsersPath, Resources.users);
+            CreateIfNot(ItemBansPath, Resources.itembans);
+
+            //Copies if using old paths (Remove in future releases, after everyone is running this version +)
+            if (File.Exists("regions.xml") && !File.Exists(RegionsPath))
+            {
+                File.Move("regions.xml", RegionsPath);                
+            }
+            else
+            {
+                CreateIfNot(RegionsPath);
+            }
+            if (File.Exists("warps.xml") && !File.Exists(WarpsPath))
+            {
+                File.Move("warps.xml", WarpsPath);
+            }
+            else
+            {
+                CreateIfNot(WarpsPath);
+            }
 
             try
             {
@@ -100,7 +123,23 @@ namespace TShockAPI
             TextReader tr = new StreamReader(WhitelistPath);
             string whitelist = tr.ReadToEnd();
             ip = Tools.GetRealIP(ip);
-            return whitelist.Contains(ip);
+            bool contains = whitelist.Contains(ip);
+            if (!contains)
+            {
+                var char2 = Environment.NewLine.ToCharArray();
+                var array = whitelist.Split(Environment.NewLine.ToCharArray());
+                foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+                    contains = Tools.GetIPv4Address(line).Equals(ip);
+                    if (contains)
+                        return true;
+                }
+                return false;
+            }
+            else
+                return true;
         }
     }
 }

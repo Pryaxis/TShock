@@ -44,6 +44,7 @@ namespace TShockAPI
         public static bool KickTnt = true;
         public static bool BanBoom = true;
         public static bool KickBoom = true;
+        public static bool DisableBoom = true;
         public static bool SpawnProtect = true;
         public static bool RangeChecks = true;
         public static int SpawnProtectRadius = 5;
@@ -54,6 +55,28 @@ namespace TShockAPI
         public static bool DisableBuild = false;
         public static float[] AdminChatRGB = {255, 0, 0};
         public static string AdminChatPrefix = "(Admin) ";
+        public static bool RememberLeavePos = false;
+        public static int TileThreshold = 20;
+
+        /// <summary>
+        /// Don't allow pvp changing for x seconds.
+        /// </summary>
+        public static int PvpThrottle = 0;
+
+        /// <summary>
+        /// Backup every x minutes
+        /// </summary>
+        public static int BackupInterval = 0;
+        /// <summary>
+        /// Delete backups that are older than x mintues. 
+        /// </summary>
+        public static int BackupKeepFor = 60;
+
+        public static bool HardcoreOnly = false;
+        public static bool KickOnHardcoreDeath = false;
+        public static bool BanOnHardcoreDeath = false;
+
+        public static bool AutoSave = true;
 
         public static void ReadJsonConfiguration()
         {
@@ -76,6 +99,7 @@ namespace TShockAPI
             KickTnt = cfg.KickKillTileAbusers;
             BanBoom = cfg.BanExplosives;
             KickBoom = cfg.KickExplosives;
+            DisableBoom = cfg.DisableExplosives;
             SpawnProtect = cfg.SpawnProtection;
             SpawnProtectRadius = cfg.SpawnProtectionRadius;
             DistributationAgent = cfg.DistributationAgent;
@@ -83,10 +107,19 @@ namespace TShockAPI
             RangeChecks = cfg.RangeChecks;
             SpamChecks = cfg.SpamChecks;
             DisableBuild = cfg.DisableBuild;
+            TileThreshold = cfg.TileThreshold;
             NPC.maxSpawns = DefaultMaxSpawns;
             NPC.defaultSpawnRate = DefaultSpawnRate;
             AdminChatRGB = cfg.AdminChatRGB;
             AdminChatPrefix = cfg.AdminChatPrefix;
+            PvpThrottle = cfg.PvpThrottle;
+            BackupInterval = cfg.BackupInterval;
+            BackupKeepFor = cfg.BackupKeepFor;
+            RememberLeavePos = cfg.RememberLeavePos;
+            HardcoreOnly = cfg.HardcoreOnly;
+            KickOnHardcoreDeath = cfg.KickOnHardcoreOnlyDeath;
+            BanOnHardcoreDeath = cfg.BanOnHardcoreOnlyDeath;
+            AutoSave = cfg.AutoSave;
         }
 
         public static void WriteJsonConfiguration()
@@ -103,18 +136,28 @@ namespace TShockAPI
             cfg.BanCheaters = BanCheater;
             cfg.KickGriefers = KickGriefer;
             cfg.BanGriefers = BanGriefer;
-            cfg.BanKillTileAbusers = BanGriefer;
-            cfg.KickKillTileAbusers = KickGriefer;
+            cfg.BanKillTileAbusers = BanTnt;
+            cfg.KickKillTileAbusers = KickTnt;
             cfg.BanExplosives = BanBoom;
             cfg.KickExplosives = KickBoom;
+            cfg.DisableExplosives = DisableBoom;
             cfg.SpawnProtection = SpawnProtect;
             cfg.SpawnProtectionRadius = SpawnProtectRadius;
             cfg.MaxSlots = MaxSlots;
             cfg.RangeChecks = RangeChecks;
             cfg.SpamChecks = SpamChecks;
             cfg.DisableBuild = DisableBuild;
+            cfg.TileThreshold = TileThreshold;
             cfg.AdminChatRGB = AdminChatRGB;
             cfg.AdminChatPrefix = AdminChatPrefix;
+            cfg.PvpThrottle = PvpThrottle;
+            cfg.BackupInterval = BackupInterval;
+            cfg.BackupKeepFor = BackupKeepFor;
+            cfg.RememberLeavePos = RememberLeavePos;
+            cfg.HardcoreOnly = HardcoreOnly;
+            cfg.BanOnHardcoreOnlyDeath = BanOnHardcoreDeath;
+            cfg.KickOnHardcoreOnlyDeath = KickOnHardcoreDeath;
+            cfg.AutoSave = AutoSave;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);

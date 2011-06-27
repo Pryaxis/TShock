@@ -1,0 +1,11 @@
+These guidelines are for contributors. If you do not follow these guidelines your commits will be reverted.
+
+Required:
+-Follow the code style. We generally use microsofts except for m_ infront of private variables.
+-Do not push unfinished features to the master branch, instead create a remote branch and push to that.
+-Do not push untested code to the master branch, instead push to the test branch.
+-Document all compatibility issues in the COMPATIBILITY file. (IE file formats changing)
+-DO NOT MASS COMMIT. Commit changes as you go (without pushing). That way when you push we don't get a thousand changes with a 1-3 line commit message.
+
+Optional:
+-Build Version Increment (http://autobuildversion.codeplex.com/).

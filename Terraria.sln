@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Update", "Update\Update.csproj", "{AF322FAB-9A32-43AA-A01A-76B2A039F711}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,16 +23,6 @@ Global
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x86.ActiveCfg = Release|Any CPU
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Debug|x86.ActiveCfg = Debug|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Debug|x86.Build.0 = Debug|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Release|Any CPU.ActiveCfg = Release|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Release|Mixed Platforms.Build.0 = Release|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Release|x86.ActiveCfg = Release|x86
-		{AF322FAB-9A32-43AA-A01A-76B2A039F711}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
