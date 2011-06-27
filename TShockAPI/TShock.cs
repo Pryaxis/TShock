@@ -220,11 +220,12 @@ namespace TShockAPI
 
                     if (!player.Group.HasPermission("usebanneditem"))
                     {
-                        for (int i = 0; i < Main.player[player.Index].inventory.Length; i++)
+                        var inv = Main.player[player.Index].inventory;
+                        for (int i = 0; i < inv.Length; i++)
                         {
-                            if (ItemManager.ItemIsBanned(Main.player[player.Index].inventory[i].name))
+                            if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
                             {
-                                player.Disconnect("Using banned item: " + Main.player[player.Index].inventory[i].name + ", remove it and rejoin");
+                                player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
                                 break;
                             }
                         }
