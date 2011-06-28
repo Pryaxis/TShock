@@ -232,7 +232,7 @@ namespace TShockAPI
 
                     if (!player.Group.HasPermission("usebanneditem"))
                     {
-                        var inv = Main.player[player.Index].inventory;
+                        var inv = player.TPlayer.inventory;
                         for (int i = 0; i < inv.Length; i++)
                         {
                             if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
