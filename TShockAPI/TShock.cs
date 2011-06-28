@@ -200,23 +200,26 @@ namespace TShockAPI
             {
                 if (player != null && player.Active)
                 {
-                    if (player.TileThreshold >= ConfigurationManager.TileThreshold)
+                    if (player.TilesDestroyed != null)
                     {
-                        if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                        if (player.TileThreshold >= ConfigurationManager.TileThreshold)
                         {
-                            TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
+                            if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                            {
+                                TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
+                            }
+                            else if (player.TileThreshold > 0)
+                            {
+                                player.TileThreshold = 0;
+                                player.TilesDestroyed.Clear();
+                            }
+
                         }
                         else if (player.TileThreshold > 0)
                         {
                             player.TileThreshold = 0;
                             player.TilesDestroyed.Clear();
                         }
-
-                    }
-                    else if (player.TileThreshold > 0)
-                    {
-                        player.TileThreshold = 0;
-                        player.TilesDestroyed.Clear();
                     }
 
                     if (!player.Group.HasPermission("usebanneditem"))

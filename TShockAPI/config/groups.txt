@@ -21,6 +21,7 @@
 #spawnboss		- allow player to spawn bosses
 #spawnmob		- allow player to spawn any npcs
 #tp				- allow player to teleport
+#tphere			- allow a player to teleport players to their position
 #managewarp		- allow player to add/delete warp locations
 #editspawn		- allow player to enable/disable build protection
 #cfg			- allow player to view/change tshock configuration
@@ -39,5 +40,5 @@
 default null canwater canlava warp
 vip default reservedslot
 newadmin default kick editspawn reservedslot
-admin newadmin ban unban whitelist causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick
+admin newadmin ban unban whitelist causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick tphere
 trustedadmin admin maintenance cfg butcher cheat immunetoban ignorecheatdetection ignoregriefdetection usebanneditem

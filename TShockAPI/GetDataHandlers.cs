@@ -360,7 +360,10 @@ namespace TShockAPI
         private static bool HandlePlayerDamage(GetDataHandlerArgs args)
         {
             byte playerid = args.Data.ReadInt8();
-            return !TShock.Players[playerid].TPlayer.hostile;
+            if (playerid >= 0 && playerid <= Main.maxPlayers && TShock.Players[playerid] != null)
+                return !TShock.Players[playerid].TPlayer.hostile;
+
+            return ConfigurationManager.PermaPvp;
         }
 
         private static bool HandleLiquidSet(GetDataHandlerArgs args)
