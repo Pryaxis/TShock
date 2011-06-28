@@ -120,7 +120,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("home", "tp", Home));
             ChatCommands.Add(new Command("spawn", "tp", Spawn));
             ChatCommands.Add(new Command("tp", "tp", TP));
-            ChatCommands.Add(new Command("tphere", "tp", TPHere));
+            ChatCommands.Add(new Command("tphere", "tphere", TPHere));
             ChatCommands.Add(new Command("warp", "warp", UseWarp));
             ChatCommands.Add(new Command("setwarp", "managewarp", SetWarp));
             ChatCommands.Add(new Command("delwarp", "managewarp", DeleteWarp));
