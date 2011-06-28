@@ -165,12 +165,11 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Sent client info more than once");
             }
-            if (ConfigurationManager.HardcoreOnly)
-                if (!hardcore)
-                {
-                    Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
-                    return true;
-                }
+            if (ConfigurationManager.HardcoreOnly && !hardcore)
+            {
+                Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
+                return true;
+            }
 
             args.Player.ReceivedInfo = true;
             return false;
@@ -295,13 +294,13 @@ namespace TShockAPI
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
-            if (args.Player.LastExplosive != null)
-                if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
-                {
-                    args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds).ToString() + " milliseconds before placing/destroying tiles", Color.Red);
-                    args.Player.SendTileSquare(x, y);
-                    return true;
-                }
+
+            if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
+            {
+                args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds).ToString() + " milliseconds before placing/destroying tiles", Color.Red);
+                args.Player.SendTileSquare(x, y);
+                return true;
+            }
 
             return false;
         }

@@ -71,9 +71,11 @@ namespace TShockAPI
         {
             foreach(Region region in Regions)
             {
-                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right && Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom && region.DisableBuild && Main.worldName == region.WorldRegionName && (!AllowedUser(region.RegionName, IP.ToLower()) || region.RegionAllowedIPs.Count == 0))
+                if (X >= region.RegionArea.Left && X <= region.RegionArea.Right &&
+                    Y >= region.RegionArea.Top && Y <= region.RegionArea.Bottom &&
+                    region.DisableBuild && Main.worldName == region.WorldRegionName &&
+                    (!AllowedUser(region.RegionName, IP.ToLower()) || region.RegionAllowedIPs.Count == 0))
                 {
-                    Console.WriteLine(region.RegionName);
                     return true;
                 }
             }

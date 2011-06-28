@@ -138,6 +138,7 @@ namespace TShockAPI
         /// <param name="e"></param>
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Log.Error(e.ExceptionObject.ToString());
             if (e.IsTerminating)
             {
                 if (Main.worldPathName != null)
@@ -147,7 +148,6 @@ namespace TShockAPI
                 }
                 DeInitialize();
             }
-            Log.Error(e.ExceptionObject.ToString());
         }
 
         private void HandleCommandLine(string[] parms)
@@ -537,11 +537,7 @@ namespace TShockAPI
         {
             Vector2 tile = new Vector2(x, y);
             Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-            var distance = Vector2.Distance(spawn, tile);
-            if (distance > ConfigurationManager.SpawnProtectRadius)
-                return false;
-            else
-                return true;
+            return Vector2.Distance(spawn, tile) <= ConfigurationManager.SpawnProtectRadius;
         }
 
         public static bool HackedHealth(TSPlayer player)
