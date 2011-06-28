@@ -143,8 +143,9 @@ namespace TShockAPI
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
             SendData(PacketTypes.WorldInfo);
-            SendTileSquare(tileX, tileY, 30);
-            if (TPlayer.SpawnX >= 0 && TPlayer.SpawnY >= 0)
+            SendTileSquare(tileX, tileY, 50);
+
+            if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
             {
                 Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = false;
                 NetMessage.SendTileSquare(Index, TPlayer.SpawnX, TPlayer.SpawnY, 1);
@@ -157,6 +158,7 @@ namespace TShockAPI
             {
                 Spawn();
             }
+
             Main.spawnTileX = spawnTileX;
             Main.spawnTileY = spawnTileY;
             SendData(PacketTypes.WorldInfo);
