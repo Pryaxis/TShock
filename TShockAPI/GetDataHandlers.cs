@@ -397,10 +397,10 @@ namespace TShockAPI
         private static bool HandlePlayerDamage(GetDataHandlerArgs args)
         {
             byte playerid = args.Data.ReadInt8();
-            if (playerid >= 0 && playerid <= Main.maxPlayers)
-                return !TShock.Players[playerid].TPlayer.hostile;
-            else
+            if (TShock.Players[playerid] == null)
                 return true;
+
+            return !TShock.Players[playerid].TPlayer.hostile;
         }
 
         private static bool HandleLiquidSet(GetDataHandlerArgs args)
