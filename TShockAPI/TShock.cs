@@ -37,7 +37,7 @@ namespace TShockAPI
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
         public static readonly string VersionCodename = "Lol, packet changes.";
 
-        public static readonly string SavePath = "tshock";
+        public static string SavePath = "tshock";
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
@@ -167,6 +167,15 @@ namespace TShockAPI
                         Console.WriteLine("Bad IP: {0}", parms[i]);
                     }
                 }
+                if (parms[i].ToLower() == "-configpath")
+                {
+                    var path = parms[++i];
+                    if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                    {
+                        SavePath = path;
+                        Log.ConsoleInfo("Config path has been set to " + path);
+                    }
+                }
             }
         }
 
@@ -223,7 +232,7 @@ namespace TShockAPI
 
                     if (!player.Group.HasPermission("usebanneditem"))
                     {
-                        var inv = Main.player[player.Index].inventory;
+                        var inv = player.TPlayer.inventory;
                         for (int i = 0; i < inv.Length; i++)
                         {
                             if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
