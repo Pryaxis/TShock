@@ -37,7 +37,7 @@ namespace TShockAPI
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
         public static readonly string VersionCodename = "Lol, packet changes.";
 
-        public static readonly string SavePath = "tshock";
+        public static string SavePath = "tshock";
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
@@ -167,6 +167,15 @@ namespace TShockAPI
                         Console.WriteLine("Bad IP: {0}", parms[i]);
                     }
                 }
+                if (parms[i].ToLower() == "-configpath")
+                {
+                    var path = parms[++i];
+                    if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                    {
+                        SavePath = path;
+                        Log.ConsoleInfo("Config path has been set to " + path);
+                    }
+                }
             }
         }
 
@@ -184,8 +193,7 @@ namespace TShockAPI
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
                                   ConfigurationManager.AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
-                //FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
-                File.WriteAllText(Path.Combine(SavePath, "auth.lck"), ConfigurationManager.AuthToken.ToString());
+                FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
         }
 
