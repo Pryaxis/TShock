@@ -23,17 +23,17 @@ namespace TShockAPI
 {
     internal class FileTools
     {
-        public static readonly string RulesPath = Path.Combine(TShock.SavePath, "rules.txt");
-        public static readonly string MotdPath = Path.Combine(TShock.SavePath, "motd.txt");
-        public static readonly string BansPath = Path.Combine(TShock.SavePath, "bans.txt");
-        public static readonly string WhitelistPath = Path.Combine(TShock.SavePath, "whitelist.txt");
-        public static readonly string GroupsPath = Path.Combine(TShock.SavePath, "groups.txt");
-        public static readonly string UsersPath = Path.Combine(TShock.SavePath, "users.txt");
-        public static readonly string ItemBansPath = Path.Combine(TShock.SavePath, "itembans.txt");
-        public static readonly string RememberedPosPath = Path.Combine(TShock.SavePath, "oldpos.xml");
-        public static readonly string ConfigPath = Path.Combine(TShock.SavePath, "config.json");
-        public static readonly string RegionsPath = Path.Combine(TShock.SavePath, "regions.xml");
-        public static readonly string WarpsPath = Path.Combine(TShock.SavePath, "warps.xml");
+        public static string RulesPath { get { return Path.Combine(TShock.SavePath, "rules.txt"); } }
+        public static string MotdPath { get { return Path.Combine(TShock.SavePath, "motd.txt"); } }
+        public static string BansPath { get { return Path.Combine(TShock.SavePath, "bans.txt"); } }
+        public static string WhitelistPath { get { return Path.Combine(TShock.SavePath, "whitelist.txt"); } }
+        public static string GroupsPath { get { return Path.Combine(TShock.SavePath, "groups.txt"); } }
+        public static string UsersPath { get { return Path.Combine(TShock.SavePath, "users.txt"); } }
+        public static string ItemBansPath { get { return Path.Combine(TShock.SavePath, "itembans.txt"); } }
+        public static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
+        public static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
+        public static string RegionsPath { get { return Path.Combine(TShock.SavePath, "regions.xml"); } }
+        public static string WarpsPath { get { return Path.Combine(TShock.SavePath, "warps.xml"); } }
 
         public static void CreateFile(string file)
         {
@@ -69,7 +69,7 @@ namespace TShockAPI
             //Copies if using old paths (Remove in future releases, after everyone is running this version +)
             if (File.Exists("regions.xml") && !File.Exists(RegionsPath))
             {
-                File.Move("regions.xml", RegionsPath);                
+                File.Move("regions.xml", RegionsPath);
             }
             else
             {

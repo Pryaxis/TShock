@@ -40,8 +40,8 @@ namespace TShockAPI
         public static string SavePath = "tshock";
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
-        public static BanManager Bans = new BanManager(Path.Combine(SavePath, "bans.txt"));
-        public static BackupManager Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+        public static BanManager Bans;
+        public static BackupManager Backups;
 
         public override Version Version
         {
@@ -70,14 +70,15 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            HandleCommandLine(Environment.GetCommandLineArgs());
+
+            Bans = new BanManager(FileTools.BansPath);
+            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+
             FileTools.SetupConfig();
 
-            string version = string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename);
-            Console.WriteLine(version);
-
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
-
-            Log.Info(version);
+            Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
             Log.Info("Starting...");
 
             GameHooks.PostInitialize += OnPostInit;
@@ -113,8 +114,6 @@ namespace TShockAPI
 
             Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
-
-            HandleCommandLine(Environment.GetCommandLineArgs());
         }
 
         public override void DeInitialize()
