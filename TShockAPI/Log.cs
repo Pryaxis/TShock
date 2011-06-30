@@ -79,6 +79,16 @@ namespace TShockAPI
         {
             Write(message, LogLevel.Error);
         }
+        
+        /// <summary>
+        /// Writes an error to the log file.
+        /// </summary>
+        /// <param name="message">The message to be written.</param>
+        public static void ConsoleError(String message)
+        {
+            Console.WriteLine(message);
+            Write(message, LogLevel.Error);
+        }
 
         /// <summary>
         /// Writes a warning to the log file.

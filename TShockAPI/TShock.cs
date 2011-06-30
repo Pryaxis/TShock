@@ -307,13 +307,13 @@ namespace TShockAPI
             if (Main.netMode != 2 || e.Handled)
                 return;
 
-            if (msg.whoAmI != ply)
+            var tsplr = Players[msg.whoAmI];
+
+            if (msg.whoAmI != ply || tsplr == null)
             {
                 e.Handled = Tools.HandleGriefer(Players[ply], "Faking Chat");
                 return;
             }
-
-            var tsplr = Players[msg.whoAmI];
 
             if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/"))
             {
@@ -325,8 +325,15 @@ namespace TShockAPI
 
             if (text.StartsWith("/"))
             {
-                if (Commands.HandleCommand(tsplr, text))
-                    e.Handled = true;
+                try
+                {
+                    e.Handled = Commands.HandleCommand(tsplr, text);
+                }
+                catch (Exception ex)
+                {
+                    Log.ConsoleError("Command exception");
+                    Log.Error(ex.ToString());
+                }
             }
             else
             {
