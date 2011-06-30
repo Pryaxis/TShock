@@ -39,6 +39,7 @@ namespace TShockAPI
         public DateTime LastExplosive { get; set; }
         public bool InitSpawn = false;
         public bool DisplayLogs = true;
+        public Vector2 oldSpawn = Vector2.Zero;
 
         public bool RealPlayer
         {
@@ -142,26 +143,48 @@ namespace TShockAPI
             int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
             Main.spawnTileY = tileY;
-            SendData(PacketTypes.WorldInfo);
-            SendTileSquare(tileX, tileY, 50);
 
+            SendData(PacketTypes.WorldInfo);
+
+            //150 Should avoid all client crash errors
+            //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
+            //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
+            SendTileSquare(tileX, tileY, 150);
             if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
             {
-                Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = false;
-                NetMessage.SendTileSquare(Index, TPlayer.SpawnX, TPlayer.SpawnY, 1);
+                int spX = TPlayer.SpawnX;
+                int spY = TPlayer.SpawnY;
+                Main.tile[spX, spY].active = false;
+                SendTileSquare(spX, spY);
                 Spawn();
-                Main.tile[TPlayer.SpawnX, TPlayer.SpawnY].active = true;
-                NetMessage.SendTileSquare(Index, TPlayer.SpawnX, TPlayer.SpawnY, 1);
-                SendMessage("Warning! Your bed spawn point has been destroyed because of warp", Color.Red);
+                Main.tile[spX, spY].active = true;
+                SendTileSquare(spX, spY);
+                oldSpawn = new Vector2(spX, spY);
             }
             else
             {
-                Spawn();
+                //Checks if Player has spawn point set (Server may think player does not have spawn)
+                if (oldSpawn != Vector2.Zero)
+                {
+                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = false;
+                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
+                    Spawn();
+                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = true;
+                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
+                    NetMessage.syncPlayers();
+                }
+                //Player has no spawn point set
+                else
+                {
+                    Spawn();
+                }
             }
 
             Main.spawnTileX = spawnTileX;
             Main.spawnTileY = spawnTileY;
+
             SendData(PacketTypes.WorldInfo);
+
             return true;
         }
 
