@@ -165,7 +165,7 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Sent client info more than once");
             }
-            if (ConfigurationManager.HardcoreOnly && !hardcore)
+            if (TShock.Config.HardcoreOnly && !hardcore)
             {
                 Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
                 return true;
@@ -242,7 +242,7 @@ namespace TShockAPI
                 int tileX = Math.Abs(x);
                 int tileY = Math.Abs(y);
 
-                if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
+                if (TShock.Config.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
                     if (!(type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
                     {
@@ -265,7 +265,7 @@ namespace TShockAPI
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
-            if (ConfigurationManager.DisableBuild)
+            if (TShock.Config.DisableBuild)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
                 {
@@ -274,7 +274,7 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (ConfigurationManager.SpawnProtect)
+            if (TShock.Config.SpawnProtection)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
                 {
@@ -311,14 +311,14 @@ namespace TShockAPI
             bool pvp = args.Data.ReadBoolean();
 
             long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
-            if (ConfigurationManager.PvpThrottle > 0 && seconds < ConfigurationManager.PvpThrottle)
+            if (TShock.Config.PvpThrottle > 0 && seconds < TShock.Config.PvpThrottle)
             {
-                args.Player.SendMessage(string.Format("You cannot change pvp status for {0} seconds", ConfigurationManager.PvpThrottle - seconds), 255, 0, 0);
-                args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : args.TPlayer.hostile);
+                args.Player.SendMessage(string.Format("You cannot change pvp status for {0} seconds", TShock.Config.PvpThrottle - seconds), 255, 0, 0);
+                args.Player.SetPvP(id != args.Player.Index || TShock.Config.AlwaysPvP ? true : args.TPlayer.hostile);
             }
             else
             {
-                args.Player.SetPvP(id != args.Player.Index || ConfigurationManager.PermaPvp ? true : pvp);
+                args.Player.SetPvP(id != args.Player.Index || TShock.Config.AlwaysPvP ? true : pvp);
             }
             return true;
         }
@@ -369,7 +369,7 @@ namespace TShockAPI
             if (type == 29 || type == 28 || type == 37)
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                if (ConfigurationManager.DisableBoom && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
+                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission("useexplosives") || !args.Player.Group.HasPermission("ignoregriefdetection")))
                 {
                     Main.projectile[ident].type = 0;
                     args.Player.SendData(PacketTypes.ProjectileNew, "", ident);
@@ -450,14 +450,14 @@ namespace TShockAPI
                                         Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), liquid));
                 return Tools.HandleGriefer(args.Player, "Manipulating liquid without bucket."); ;
             }
-            if (ConfigurationManager.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
+            if (TShock.Config.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
             {
                 Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
                                         plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), liquid));
                 return Tools.HandleGriefer(args.Player, "Placing impossible to place liquid."); ;
             }
 
-            if (ConfigurationManager.SpawnProtect)
+            if (TShock.Config.SpawnProtection)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
                 {
@@ -498,16 +498,18 @@ namespace TShockAPI
 
             if (args.Player.InitSpawn)
             {
-                if (ConfigurationManager.HardcoreOnly && (ConfigurationManager.KickOnHardcoreDeath || ConfigurationManager.BanOnHardcoreDeath))
+                if (TShock.Config.HardcoreOnly && (TShock.Config.KickOnHardcoreOnlyDeath || TShock.Config.BanOnHardcoreOnlyDeath))
                     if (args.TPlayer.selectedItem != 50)
                     {
-                        if (ConfigurationManager.BanOnHardcoreDeath)
+                        if (TShock.Config.BanOnHardcoreOnlyDeath)
                         {
                             if (!Tools.Ban(args.Player, "Death results in a ban"))
                                 Tools.ForceKick(args.Player, "Death results in a ban, but can't ban you");
                         }
                         else
+                        {
                             Tools.ForceKick(args.Player, "Death results in a kick");
+                        }
                         return true;
                     }
             }

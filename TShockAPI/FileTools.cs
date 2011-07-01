@@ -88,15 +88,10 @@ namespace TShockAPI
             {
                 if (File.Exists(ConfigPath))
                 {
-                    ConfigurationManager.ReadJsonConfiguration();
+                    TShock.Config = ConfigFile.Read(ConfigPath);
                     // Add all the missing config properties in the json file
-                    ConfigurationManager.WriteJsonConfiguration();
                 }
-                else
-                {
-                    ConfigurationManager.WriteJsonConfiguration();
-                    ConfigurationManager.ReadJsonConfiguration();
-                }
+                TShock.Config.Write(ConfigPath);
             }
             catch (Exception ex)
             {
@@ -105,7 +100,7 @@ namespace TShockAPI
                 Log.Error(ex.ToString());
             }
 
-            Netplay.serverPort = ConfigurationManager.ServerPort;
+            
         }
 
         /// <summary>
@@ -115,7 +110,7 @@ namespace TShockAPI
         /// <returns>true/false</returns>
         public static bool OnWhitelist(string ip)
         {
-            if (!ConfigurationManager.EnableWhitelist)
+            if (!TShock.Config.EnableWhitelist)
             {
                 return true;
             }

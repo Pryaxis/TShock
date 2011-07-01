@@ -15,17 +15,21 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System;
+using System.IO;
+using Newtonsoft.Json;
+
 namespace TShockAPI
 {
-    internal class ConfigFile
+    public class ConfigFile
     {
         public int InvasionMultiplier = 1;
         public int DefaultMaximumSpawns = 4;
         public int DefaultSpawnRate = 700;
         public int ServerPort = 7777;
-        public bool EnableWhitelist;
-        public bool InfiniteInvasion;
-        public bool AlwaysPvP;
+        public bool EnableWhitelist = false;
+        public bool InfiniteInvasion = false;
+        public bool AlwaysPvP = false;
         public bool KickCheaters = true;
         public bool BanCheaters = true;
         public bool KickGriefers = true;
@@ -44,8 +48,9 @@ namespace TShockAPI
         public bool DisableBuild = false;
         public int TileThreshold = 20;
 
-        public float[] AdminChatRGB = {255, 0, 0};
+        public float[] AdminChatRGB = { 255, 0, 0 };
         public string AdminChatPrefix = "(Admin) ";
+        public bool AdminChatEnabled = true;
 
         public int PvpThrottle = 0;
 
@@ -62,6 +67,44 @@ namespace TShockAPI
 
         public int MaximumLoginAttempts = 3;
 
-        public bool EnableOptionalAlwaysOnAdminChatColor = true;
+        public static ConfigFile Read(string path)
+        {
+            if (!File.Exists(path))
+                return new ConfigFile();
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return Read(fs);
+            }
+        }
+
+        public static ConfigFile Read(Stream stream)
+        {
+            using(var sr = new StreamReader(stream))
+            {
+                var cf = JsonConvert.DeserializeObject<ConfigFile>(sr.ReadToEnd());
+                if (ConfigRead != null)
+                    ConfigRead(cf);
+                return cf;
+            }
+        }
+
+        public void Write(string path)
+        {
+            using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
+            {
+                Write(fs);
+            }
+        }
+
+        public void Write(Stream stream)
+        {
+            var str = JsonConvert.SerializeObject(this, Formatting.Indented);
+            using (var sw = new StreamWriter(stream))
+            {
+                sw.Write(str);
+            }
+        }
+
+        public static Action<ConfigFile> ConfigRead;
     }
 }

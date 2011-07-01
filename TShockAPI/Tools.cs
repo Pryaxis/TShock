@@ -369,22 +369,22 @@ namespace TShockAPI
 
         public static bool HandleCheater(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignorecheatdetection", ConfigurationManager.BanCheater, ConfigurationManager.KickCheater, reason);
+            return HandleBadPlayer(player, "ignorecheatdetection", TShock.Config.BanCheaters, TShock.Config.KickCheaters, reason);
         }
 
         public static bool HandleGriefer(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanGriefers, TShock.Config.KickGriefers, reason);
         }
 
         public static bool HandleTntUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanTnt, ConfigurationManager.KickTnt, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers, reason);
         }
 
         public static bool HandleExplosivesUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", ConfigurationManager.BanBoom, ConfigurationManager.KickBoom, reason);
+            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanExplosives, TShock.Config.KickExplosives, reason);
         }
 
         private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -43,6 +44,10 @@ namespace TShockAPI
         public static BanManager Bans;
         public static BackupManager Backups;
 
+        public static ConfigFile Config { get; set; }
+
+        public static IDbConnection Sql;
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -66,12 +71,15 @@ namespace TShockAPI
         public TShock(Main game)
             : base(game)
         {
+            Config = new ConfigFile();
             Order = 0;
         }
 
         public override void Initialize()
         {
             HandleCommandLine(Environment.GetCommandLineArgs());
+
+            ConfigFile.ConfigRead += OnConfigRead;
 
             Bans = new BanManager(FileTools.BansPath);
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
@@ -105,11 +113,7 @@ namespace TShockAPI
             WarpsManager.ReadAllSettings();
             ItemManager.LoadBans();
 
-            Main.autoSave = ConfigurationManager.AutoSave;
-            Backups.KeepFor = ConfigurationManager.BackupKeepFor;
-            Backups.Interval = ConfigurationManager.BackupInterval;
-
-            Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+            Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
         }
 
@@ -180,14 +184,14 @@ namespace TShockAPI
          * 
          */
 
+        public static int AuthToken = -1;
         private void OnPostInit()
         {
             if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
             {
                 var r = new Random((int)DateTime.Now.ToBinary());
-                ConfigurationManager.AuthToken = r.Next(100000, 10000000);
-                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " +
-                                  ConfigurationManager.AuthToken);
+                AuthToken = r.Next(100000, 10000000);
+                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
@@ -206,7 +210,7 @@ namespace TShockAPI
                 {
                     if (player.TilesDestroyed != null)
                     {
-                        if (player.TileThreshold >= ConfigurationManager.TileThreshold)
+                        if (player.TileThreshold >= TShock.Config.TileThreshold)
                         {
                             if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                             {
@@ -247,7 +251,7 @@ namespace TShockAPI
             var player = new TSPlayer(ply);
             player.Group = Tools.GetGroupForIP(player.IP);
 
-            if (Tools.ActivePlayers() + 1 > ConfigurationManager.MaxSlots && !player.Group.HasPermission("reservedslot"))
+            if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
@@ -270,7 +274,7 @@ namespace TShockAPI
 
             Players[ply] = player;
 
-            Netplay.spamCheck = ConfigurationManager.SpamChecks;
+            
         }
 
         private void OnLeave(int ply)
@@ -280,7 +284,7 @@ namespace TShockAPI
             {
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
-                if (ConfigurationManager.RememberLeavePos)
+                if (TShock.Config.RememberLeavePos)
                 {
                     RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(tsplr.IP,
                                                                                  new Vector2(tsplr.X / 16,
@@ -307,10 +311,10 @@ namespace TShockAPI
                 return;
             }
 
-            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && ConfigurationManager.AdminChatOptional)
+            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && Config.AdminChatEnabled)
             {
-                Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
-                                (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
+                Tools.Broadcast(TShock.Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
+                                (byte)TShock.Config.AdminChatRGB[0], (byte)TShock.Config.AdminChatRGB[1], (byte)TShock.Config.AdminChatRGB[2]);
                 e.Handled = true;
                 return;
             }
@@ -377,8 +381,8 @@ namespace TShockAPI
             }
             else if (text == "autosave")
             {
-                Main.autoSave = ConfigurationManager.AutoSave = !ConfigurationManager.AutoSave;
-                Log.ConsoleInfo("AutoSave " + (ConfigurationManager.AutoSave ? "Enabled" : "Disabled"));
+                Main.autoSave = TShock.Config.AutoSave = !TShock.Config.AutoSave;
+                Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
                 e.Handled = true;
             }
             else if (text.StartsWith("/"))
@@ -409,7 +413,7 @@ namespace TShockAPI
                 Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((ConfigurationManager.BanTnt || ConfigurationManager.KickTnt) && player.TileThreshold >= ConfigurationManager.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
+            if ((TShock.Config.BanKillTileAbusers || TShock.Config.KickKillTileAbusers) && player.TileThreshold >= TShock.Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
             {
                 Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
                 e.Handled = true;
@@ -447,15 +451,15 @@ namespace TShockAPI
             {
                 Tools.HandleCheater(player, "Hacked health.");
             }
-            if (ConfigurationManager.PermaPvp)
+            if (Config.AlwaysPvP)
             {
                 player.SetPvP(true);
             }
-            if (player.Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
+            if (player.Group.HasPermission("causeevents") && Config.InfiniteInvasion)
             {
                 StartInvasion();
             }
-            if (ConfigurationManager.RememberLeavePos)
+            if (Config.RememberLeavePos)
             {
                 foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
                 {
@@ -473,7 +477,7 @@ namespace TShockAPI
 
         private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
         {
-            if (ConfigurationManager.InfiniteInvasion)
+            if (Config.InfiniteInvasion)
             {
                 IncrementKills();
                 if (Main.invasionSize < 10)
@@ -490,13 +494,13 @@ namespace TShockAPI
         public static void StartInvasion()
         {
             Main.invasionType = 1;
-            if (ConfigurationManager.InfiniteInvasion)
+            if (TShock.Config.InfiniteInvasion)
             {
                 Main.invasionSize = 20000000;
             }
             else
             {
-                Main.invasionSize = 100 + (ConfigurationManager.InvasionMultiplier * Tools.ActivePlayers());
+                Main.invasionSize = 100 + (TShock.Config.InvasionMultiplier * Tools.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -510,32 +514,33 @@ namespace TShockAPI
             }
         }
 
+        static int KillCount = 0;
         public static void IncrementKills()
         {
-            ConfigurationManager.KillCount++;
+            KillCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (ConfigurationManager.KillCount % 100 == 0)
+            if (KillCount % 100 == 0)
             {
                 switch (random)
                 {
                     case 0:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
                         break;
                     case 1:
-                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
                         break;
                     case 2:
-                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
                         break;
                     case 3:
-                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
                         break;
                     case 4:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
                         break;
                     case 5:
-                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", ConfigurationManager.KillCount));
+                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
                         break;
                 }
             }
@@ -545,7 +550,7 @@ namespace TShockAPI
         {
             Vector2 tile = new Vector2(x, y);
             Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-            return Vector2.Distance(spawn, tile) <= ConfigurationManager.SpawnProtectRadius;
+            return Vector2.Distance(spawn, tile) <= TShock.Config.SpawnProtectionRadius;
         }
 
         public static bool HackedHealth(TSPlayer player)
@@ -554,6 +559,20 @@ namespace TShockAPI
                     (player.TPlayer.statMana > 200) ||
                     (player.TPlayer.statLifeMax > 400) ||
                     (player.TPlayer.statLife > 400);
+        }
+
+        public void OnConfigRead(ConfigFile file)
+        {
+            NPC.maxSpawns = file.DefaultMaximumSpawns;
+            NPC.defaultSpawnRate = file.DefaultSpawnRate;
+
+            Main.autoSave = file.AutoSave;
+            Backups.KeepFor = file.BackupKeepFor;
+            Backups.Interval = file.BackupInterval;
+
+            Netplay.serverPort = file.ServerPort;
+
+            Netplay.spamCheck = file.SpamChecks;
         }
 
 

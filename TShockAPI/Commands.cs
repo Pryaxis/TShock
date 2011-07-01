@@ -156,7 +156,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
-            if (ConfigurationManager.DistributationAgent != "terraria-online")
+            if (TShock.Config.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
                 ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
@@ -285,9 +285,9 @@ namespace TShockAPI
         public static void AttemptLogin(CommandArgs args)
         {
 
-            if (args.Player.LoginAttempts > ConfigurationManager.MaximumLoginAttempts && (ConfigurationManager.MaximumLoginAttempts != -1))
+            if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
             {
-                Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had " + ConfigurationManager.MaximumLoginAttempts + " or more invalid login attempts and was kicked automatically.");
+                Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had " + TShock.Config.MaximumLoginAttempts + " or more invalid login attempts and was kicked automatically.");
                 Tools.Kick(args.Player, "Too many invalid login attempts.");
             }
 
@@ -965,21 +965,21 @@ namespace TShockAPI
         {
             args.Player.SendMessage("TShock Config:");
             string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
-                              ConfigurationManager.BanCheater, ConfigurationManager.KickCheater,
-                              ConfigurationManager.BanGriefer, ConfigurationManager.KickGriefer);
+                              TShock.Config.BanCheaters, TShock.Config.KickCheaters,
+                              TShock.Config.BanGriefers, TShock.Config.KickGriefers);
             args.Player.SendMessage(lineOne, Color.Yellow);
             string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
-                                           ConfigurationManager.BanTnt, ConfigurationManager.KickTnt,
-                                           ConfigurationManager.BanBoom, ConfigurationManager.KickBoom);
+                                           TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers,
+                                           TShock.Config.BanExplosives, TShock.Config.KickExplosives);
             args.Player.SendMessage(lineTwo, Color.Yellow);
             string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
-                                             ConfigurationManager.RangeChecks, ConfigurationManager.DisableBuild,
-                                             ConfigurationManager.SpawnProtect, ConfigurationManager.SpawnProtectRadius);
+                                             TShock.Config.RangeChecks, TShock.Config.DisableBuild,
+                                             TShock.Config.SpawnProtection, TShock.Config.SpawnProtectionRadius);
             args.Player.SendMessage(lineThree, Color.Yellow);
             string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
-                                           ConfigurationManager.MaxSlots, ConfigurationManager.SpamChecks,
-                                           ConfigurationManager.InvasionMultiplier, ConfigurationManager.DefaultMaxSpawns,
-                                           ConfigurationManager.DefaultSpawnRate);
+                                           TShock.Config.MaxSlots, TShock.Config.SpamChecks,
+                                           TShock.Config.InvasionMultiplier, TShock.Config.DefaultMaximumSpawns,
+                                           TShock.Config.DefaultSpawnRate);
             args.Player.SendMessage(lineFour, Color.Yellow);
         }
 
@@ -1020,7 +1020,7 @@ namespace TShockAPI
             int amount = Convert.ToInt32(args.Parameters[0]);
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultMaxSpawns = amount;
-            ConfigurationManager.DefaultMaxSpawns = amount;
+            TShock.Config.DefaultMaximumSpawns = amount;
             Tools.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", args.Player.Name, amount));
         }
 
@@ -1035,7 +1035,7 @@ namespace TShockAPI
             int amount = Convert.ToInt32(args.Parameters[0]);
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultSpawnRate = amount;
-            ConfigurationManager.DefaultSpawnRate = amount;
+            TShock.Config.DefaultSpawnRate = amount;
             Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
         }
 
@@ -1127,14 +1127,14 @@ namespace TShockAPI
 
         private static void ToggleAntiBuild(CommandArgs args)
         {
-            ConfigurationManager.DisableBuild = (ConfigurationManager.DisableBuild == false);
-            Tools.Broadcast(string.Format("Anti-build is now {0}.", (ConfigurationManager.DisableBuild ? "on" : "off")));
+            TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
+            Tools.Broadcast(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
         }
 
         private static void ProtectSpawn(CommandArgs args)
         {
-            ConfigurationManager.SpawnProtect = (ConfigurationManager.SpawnProtect == false);
-            Tools.Broadcast(string.Format("Spawn is now {0}.", (ConfigurationManager.SpawnProtect ? "protected" : "open")));
+            TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
+            Tools.Broadcast(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
         }
 
         private static void Region(CommandArgs args)
@@ -1358,17 +1358,17 @@ namespace TShockAPI
 
         private static void AuthToken(CommandArgs args)
         {
-            if (ConfigurationManager.AuthToken == 0)
+            if (TShock.AuthToken == 0)
             {
                 return;
             }
             int givenCode = Convert.ToInt32(args.Parameters[0]);
-            if (givenCode == ConfigurationManager.AuthToken)
+            if (givenCode == TShock.AuthToken)
             {
                 TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
                 tw.Write("\n" + args.Player.IP + " superadmin");
                 args.Player.SendMessage("SuperAdmin authenticated. Please re-connect using the same IP.");
-                ConfigurationManager.AuthToken = 0;
+                TShock.AuthToken = 0;
                 tw.Close();
             }
         }
