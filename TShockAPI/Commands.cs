@@ -144,6 +144,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
             ChatCommands.Add(new Command("displaylogs", "logs", Rules));
+            ChatCommands.Add(new Command("whisper", "whisper", Whisper));
+            ChatCommands.Add(new Command("tell", "whisper", Whisper));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -1305,6 +1307,30 @@ namespace TShockAPI
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
 
+        private static void Whisper(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /whisper <player> <text>", Color.Red);
+                return;
+            }
+
+            var players = Tools.FindPlayer(args.Parameters[0]);
+            if (players.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+            else if (players.Count > 1)
+            {
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            }
+            else
+            {
+                var plr = players[0];
+                plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + args.Parameters[1], Color.MediumPurple);
+                args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + args.Parameters[1], Color.MediumPurple);
+            }
+        }
         #endregion General Commands
 
         #region Cheat Commands
