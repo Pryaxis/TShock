@@ -107,7 +107,7 @@ namespace TShockAPI
 
         private static void NotifyAdministrator(TSPlayer player, string[] changes)
         {
-            player.SendMessage("The server is out of date. To update, type /updatenow.");
+            player.SendMessage("The server is out of date.", Color.Red);
             for (int j = 4; j < changes.Length; j++)
             {
                 player.SendMessage(changes[j], Color.Red);

@@ -144,6 +144,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("p", "", PartyChat));
             ChatCommands.Add(new Command("rules", "", Rules));
             ChatCommands.Add(new Command("displaylogs", "logs", Rules));
+            ChatCommands.Add(new Command("user", "manageusers", ManageUsers));
+            ChatCommands.Add(new Command("login", "", AttemptLogin));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -157,7 +159,7 @@ namespace TShockAPI
 
         public static void AddUpdateCommand()
         {
-            Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
+            //Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -279,6 +281,72 @@ namespace TShockAPI
         {
             return c == ' ' || c == '\t' || c == '\n';
         }
+
+        #region Account commands
+
+        public static void AttemptLogin(CommandArgs args)
+        {
+            if (args.Parameters.Count != 2)
+            {
+                args.Player.SendMessage("Syntax: /login [username] [password]");
+                args.Player.SendMessage("If you forgot your password, there is no way to recover it.");
+                return;
+            }
+
+            string encrPass = Tools.HashPassword(args.Parameters[1]);
+            string[] exr = Tools.FetchHashedPasswordAndGroup(args.Parameters[0]);
+            if (exr[0] == Tools.HashPassword(args.Parameters[1]))
+            {
+                args.Player.Group = Tools.GetGroup(exr[1]);
+                args.Player.SendMessage("Authenticated as " + args.Parameters[0] + "successfully.", Color.LimeGreen);
+                return;
+            } else
+            {
+                args.Player.SendMessage("Invalid login attempt. This incident has been reported.", Color.Red);
+                Log.Warn(args.Player.IP + " failed to authenticate as " + args.Parameters[0]);
+                args.Player.LoginAttempts++;
+                return;
+            }
+        }
+
+        private static void ManageUsers(CommandArgs args)
+        {
+            if (args.Parameters.Count < 3)
+            {
+                args.Player.SendMessage("Syntax: /user add <ip/user:pass> [group]");
+                args.Player.SendMessage("Note: Passwords are stored with very basic Hashion. To reset a user's password, remove and re-add them.");
+                return;
+            }
+
+            if (args.Parameters.Count > 2)
+            {
+                if (args.Parameters[0] == "add")
+                {
+                    if (args.Parameters[1].Split(':').Length == 2)
+                    {
+                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
+                        tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[0]) + " " + args.Parameters[2]);
+                        tw.Close();
+                        //Notify the admin that they can now login
+                        return;
+                    }
+                    else if (args.Parameters[1].Split(':').Length == 1)
+                    {
+                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
+                        tw.WriteLine("\n" + args.Parameters[1] + " " + args.Parameters[2]);
+                        tw.Close();
+                        //Notify the admin that they can now login if they rejoin
+                        //Notify admin that this is fucking insecure
+                        return;
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
+                    }
+                }
+            }
+        }
+        #endregion
 
         #region Player Management Commands
 

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Net;
 using Microsoft.Xna.Framework;
@@ -552,6 +553,10 @@ namespace TShockAPI
                 {
                     continue;
                 }
+                if (args[0].Contains(":"))
+                {
+                    continue;
+                }
                 if (lines[i].StartsWith("#"))
                 {
                     continue;
@@ -567,6 +572,49 @@ namespace TShockAPI
             }
             sr.Close();
             return GetGroup("default");
+        }
+        /// <summary>
+        /// Fetches the hashed password and group for a given username
+        /// </summary>
+        /// <param name="username">string username</param>
+        /// <returns>string[] {password, group}</returns>
+        public static string[] FetchHashedPasswordAndGroup(string username)
+        {
+
+            StreamReader sr = new StreamReader(FileTools.UsersPath);
+            string data = sr.ReadToEnd();
+            data = data.Replace("\r", "");
+            string[] lines = data.Split('\n');
+            string[] result = {"null", "null"};
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] args = lines[i].Split(' ');
+                if (args.Length < 2)
+                {
+                    continue;
+                }
+                if (lines[i].StartsWith("#"))
+                {
+                    continue;
+                }
+                if (!lines[i].Contains(":"))
+                {
+                    continue;
+                }
+                try
+                {
+                    if (args[0].Split(':')[0].ToLower() == username.ToLower())
+                    {
+                        result = new string[] {args[0].Split(':')[1], args[1]};
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                { Log.Error(ex.ToString()); }
+            }
+            sr.Close();
+            return result;
         }
 
         /// <summary>
@@ -585,6 +633,33 @@ namespace TShockAPI
                 }
             }
             return IP4Address;
+        }
+        /// <summary>
+        /// Returns a byte array for a given string
+        /// </summary>
+        /// <param name="str">string str</param>
+        /// <returns>byte[] string</returns>
+        public static byte[] StrToByteArray(string str)
+        {
+            System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+            return encoding.GetBytes(str);
+        }
+        /// <summary>
+        /// Returns a Sha256 string for a given string
+        /// </summary>
+        /// <param name="password">string password</param>
+        /// <returns>string sha256</returns>
+        public static string HashPassword(string password)
+        {
+            byte[] data = StrToByteArray(password);
+            byte[] result;
+
+            using (SHA256 shaM = new SHA256Managed())
+            {
+                result = shaM.ComputeHash(data);
+            }
+            System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
+            return enc.GetString(result);
         }
     }
 }
