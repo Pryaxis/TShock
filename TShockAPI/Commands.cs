@@ -524,10 +524,10 @@ namespace TShockAPI
 
             for (int i = 0; i < args.Parameters.Count; i++)
             {
-                message += args.Parameters[i];
+                message += " " + args.Parameters[i];
             }
 
-            Tools.Broadcast("(Server Broadcast) " + message, Color.Red);
+            Tools.Broadcast("(Server Broadcast)" + message, Color.Red);
             return;
         }
 
