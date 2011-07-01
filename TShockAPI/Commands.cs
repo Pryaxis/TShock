@@ -303,6 +303,7 @@ namespace TShockAPI
             } else
             {
                 args.Player.SendMessage("Invalid login attempt. This incident has been reported.", Color.Red);
+                args.Player.SendMessage("User found: " + exr[0] + ", Password Encrypt Found: " + exr[1]);
                 Log.Warn(args.Player.IP + " failed to authenticate as " + args.Parameters[0]);
                 args.Player.LoginAttempts++;
                 return;
@@ -327,7 +328,7 @@ namespace TShockAPI
                         TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
                         tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[0]) + " " + args.Parameters[2]);
                         tw.Close();
-                        //Notify the admin that they can now login
+                        args.Player.SendMessage("This player can now login!", Color.Green);
                         return;
                     }
                     else if (args.Parameters[1].Split(':').Length == 1)
@@ -335,8 +336,8 @@ namespace TShockAPI
                         TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
                         tw.WriteLine("\n" + args.Parameters[1] + " " + args.Parameters[2]);
                         tw.Close();
-                        //Notify the admin that they can now login if they rejoin
-                        //Notify admin that this is fucking insecure
+                        args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
+                        args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
                         return;
                     }
                     else
