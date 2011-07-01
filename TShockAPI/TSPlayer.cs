@@ -43,13 +43,15 @@ namespace TShockAPI
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
 
+        Player FakePlayer = null;
+
         public bool RealPlayer
         {
-            get { return Index >= 0 && Index < Main.maxNetPlayers; }
+            get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
         }
         public bool ConnectionAlive
         {
-            get { return RealPlayer ? Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
+            get { return RealPlayer ? Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
         }
         public string IP
         {
@@ -61,14 +63,20 @@ namespace TShockAPI
         /// <summary>
         /// Terraria Player
         /// </summary>
-        public Player TPlayer { get; protected set; }
+        public Player TPlayer
+        {
+            get
+            {
+                return FakePlayer ?? Main.player[Index];
+            }
+        }
         public string Name
         {
             get { return TPlayer.name; }
         }
         public bool Active
         {
-            get { return TPlayer.active; }
+            get { return TPlayer != null && TPlayer.active; }
         }
         public int Team
         {
@@ -104,9 +112,9 @@ namespace TShockAPI
                 bool flag = false;
                 if (RealPlayer)
                 {
-                    for (int i = 0; i < 40; i++)
+                    for (int i = 0; i < TPlayer.inventory.Length; i++)
                     {
-                        if (!TPlayer.inventory[i].active)
+                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active)
                         {
                             flag = true;
                             break;
@@ -121,7 +129,6 @@ namespace TShockAPI
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = index;
-            TPlayer = Main.player[index];
             Group = new Group("null");
         }
 
@@ -129,7 +136,7 @@ namespace TShockAPI
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = -1;
-            TPlayer = new Player { name = playerName, whoAmi = -1 };
+            FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
         }
 
