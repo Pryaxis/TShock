@@ -29,7 +29,7 @@ namespace TShockAPI
 {
     internal class Tools
     {
-        private static Random random = new Random();
+        public static Random Random = new Random();
         private static List<Group> groups = new List<Group>();
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace TShockAPI
                     break;
                 }
 
-                tileX = startTileX + random.Next(tileXRange * -1, tileXRange);
-                tileY = startTileY + random.Next(tileYRange * -1, tileYRange);
+                tileX = startTileX + Random.Next(tileXRange * -1, tileXRange);
+                tileY = startTileY + Random.Next(tileYRange * -1, tileYRange);
                 j++;
             }
             while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));

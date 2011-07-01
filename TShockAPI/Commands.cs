@@ -112,6 +112,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("ban", BanIP, "banip"));
             ChatCommands.Add(new Command("unban", UnBan, "unban"));
             ChatCommands.Add(new Command("unban", UnBanIP, "unbanip"));
+            ChatCommands.Add(new Command("maintenance", ClearBans, "clearbans"));
             ChatCommands.Add(new Command("whitelist", Whitelist, "whitelist"));
             ChatCommands.Add(new Command("maintenance", Off, "off"));
             ChatCommands.Add(new Command("maintenance", OffNoSave, "off-nosave"));
@@ -464,6 +465,47 @@ namespace TShockAPI
             else
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+        }
+
+        static int ClearBansCode = -1;
+        private static void ClearBans(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1 && ClearBansCode == -1)
+            {
+                ClearBansCode = new Random().Next(0, short.MaxValue);
+                args.Player.SendMessage("ClearBans Code: " + ClearBansCode, Color.Red);
+                return;
+            }
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /clearbans <code>");
+                return;
+            }
+
+            int num;
+            if (!int.TryParse(args.Parameters[0], out num))
+            {
+                args.Player.SendMessage("Invalid syntax! Expecting number");
+                return;
+            }
+
+            if (num == ClearBansCode)
+            {
+                ClearBansCode = -1;
+                if (TShock.Bans.ClearBans())
+                {
+                    Log.ConsoleInfo("Bans cleared");
+                    args.Player.SendMessage("Bans cleared");
+                }
+                else
+                {
+                    args.Player.SendMessage("Failed to clear bans");
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Incorrect clear code");
             }
         }
 

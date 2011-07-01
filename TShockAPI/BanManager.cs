@@ -80,7 +80,7 @@ namespace TShockAPI
                     var namecol = casesensitive ? "Name" : "UPPER(Name)";
                     if (!casesensitive)
                         name = name.ToUpper();
-                    com.CommandText = "SELECT *, COUNT(*) FROM Bans WHERE " + namecol + "=@name LIMIT 5";
+                    com.CommandText = "SELECT * FROM Bans WHERE " + namecol + "=@name";
                     AddParameter(com, "@name", name);
                     using (var reader = com.ExecuteReader())
                     {
@@ -123,6 +123,22 @@ namespace TShockAPI
                 {
                     com.CommandText = "DELETE FROM Bans WHERE IP=@ip";
                     AddParameter(com, "@ip", ip);
+                    com.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return false;
+        }
+        public bool ClearBans()
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "DELETE FROM Bans";
                     com.ExecuteNonQuery();
                     return true;
                 }
