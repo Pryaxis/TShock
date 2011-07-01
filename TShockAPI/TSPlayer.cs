@@ -40,6 +40,7 @@ namespace TShockAPI
         public bool InitSpawn = false;
         public bool DisplayLogs = true;
         public Vector2 oldSpawn = Vector2.Zero;
+        public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
 
         public bool RealPlayer

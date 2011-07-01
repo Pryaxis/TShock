@@ -154,6 +154,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("manageusers", ManageUsers, "user"));
             ChatCommands.Add(new Command(AttemptLogin, "login"));
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
+            ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
+            ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
@@ -1409,6 +1411,44 @@ namespace TShockAPI
             Tools.ShowFileToUser(args.Player, "rules.txt");
         }
 
+        private static void Whisper(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /whisper <player> <text>", Color.Red);
+                return;
+            }
+
+            var players = Tools.FindPlayer(args.Parameters[0]);
+            if (players.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+            else if (players.Count > 1)
+            {
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            }
+            else
+            {
+                var plr = players[0];
+                var msg = string.Join(" ", args.Parameters, 1, args.Parameters.Count - 1);
+                plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
+                args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + msg, Color.MediumPurple);
+                plr.LastWhisper = args.Player;
+            }
+        }
+
+        private static void Reply(CommandArgs args)
+        {
+            if (args.Player.LastWhisper != null)
+            {
+                var msg = string.Join(" ", args.Parameters);
+                args.Player.LastWhisper.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
+                args.Player.SendMessage("(Whisper To)" + "<" + args.Player.LastWhisper.Name + ">" + msg, Color.MediumPurple);
+            }
+            else
+                args.Player.SendMessage("You haven't previously received any whispers. Please use /whisper to whisper to other people.", Color.Red);
+        }
         #endregion General Commands
 
         #region Cheat Commands
