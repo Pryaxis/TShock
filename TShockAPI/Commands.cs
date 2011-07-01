@@ -323,7 +323,7 @@ namespace TShockAPI
             if (args.Parameters.Count < 3)
             {
                 args.Player.SendMessage("Syntax: /user add <ip/user:pass> [group]");
-                args.Player.SendMessage("Note: Passwords are stored with very complicated SHA512 hashing. To reset a user's password, remove and re-add them.");
+                args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
                 return;
             }
 
