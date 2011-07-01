@@ -290,9 +290,9 @@ namespace TShockAPI
         public static void AttemptLogin(CommandArgs args)
         {
 
-            if (args.Player.LoginAttempts > 3)
+            if (args.Player.LoginAttempts > ConfigurationManager.MaximumLoginAttempts)
             {
-                Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had 3 or more invalid login attempts and was kicked automatically.");
+                Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had " + ConfigurationManager.MaximumLoginAttempts + " or more invalid login attempts and was kicked automatically.");
                 Tools.Kick(args.Player, "Too many invalid login attempts.");
             }
 

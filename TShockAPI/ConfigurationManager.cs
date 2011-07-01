@@ -57,6 +57,7 @@ namespace TShockAPI
         public static string AdminChatPrefix = "(Admin) ";
         public static bool RememberLeavePos = false;
         public static int TileThreshold = 20;
+        public static int MaximumLoginAttempts = 3;
 
         /// <summary>
         /// Don't allow pvp changing for x seconds.
@@ -120,6 +121,7 @@ namespace TShockAPI
             KickOnHardcoreDeath = cfg.KickOnHardcoreOnlyDeath;
             BanOnHardcoreDeath = cfg.BanOnHardcoreOnlyDeath;
             AutoSave = cfg.AutoSave;
+            MaximumLoginAttempts = cfg.MaximumLoginAttempts;
         }
 
         public static void WriteJsonConfiguration()
@@ -158,6 +160,7 @@ namespace TShockAPI
             cfg.BanOnHardcoreOnlyDeath = BanOnHardcoreDeath;
             cfg.KickOnHardcoreOnlyDeath = KickOnHardcoreDeath;
             cfg.AutoSave = AutoSave;
+            cfg.MaximumLoginAttempts = MaximumLoginAttempts;
             string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             TextWriter tr = new StreamWriter(FileTools.ConfigPath);
             tr.Write(json);
