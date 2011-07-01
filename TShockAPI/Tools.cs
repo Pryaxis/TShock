@@ -653,13 +653,14 @@ namespace TShockAPI
         {
             byte[] data = StrToByteArray(password);
             byte[] result;
-
+            byte[] final;
             using (SHA256 shaM = new SHA256Managed())
             {
                 result = shaM.ComputeHash(data);
             }
             System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
-            return enc.GetString(result);
+            final = Encoding.UTF8.GetBytes(enc.GetString(result));
+            return BitConverter.ToString(final);
         }
     }
 }
