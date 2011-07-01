@@ -651,16 +651,10 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
-            byte[] data = StrToByteArray(password);
-            byte[] result;
-            byte[] final;
-            using (SHA256 shaM = new SHA256Managed())
-            {
-                result = shaM.ComputeHash(data);
-            }
-            System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
-            final = Encoding.UTF8.GetBytes(enc.GetString(result));
-            return BitConverter.ToString(final);
+            Encoding enc = System.Text.Encoding.UTF8;
+            byte[] buffer = enc.GetBytes(password);
+            SHA1CryptoServiceProvider cryptoTransformSHA1 = new SHA1CryptoServiceProvider();
+            return BitConverter.ToString(cryptoTransformSHA1.ComputeHash(buffer)).Replace("-", "");
         }
     }
 }
