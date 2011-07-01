@@ -61,5 +61,7 @@ namespace TShockAPI
         public bool AutoSave = true;
 
         public int MaximumLoginAttempts = 3;
+
+        public bool EnableOptionalAlwaysOnAdminChatColor = true;
     }
 }

@@ -146,6 +146,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("displaylogs", "logs", Rules));
             ChatCommands.Add(new Command("user", "manageusers", ManageUsers));
             ChatCommands.Add(new Command("login", "", AttemptLogin));
+            ChatCommands.Add(new Command("broadcast", "cfg", Broadcast));
+            ChatCommands.Add(new Command("bc", "cfg", Broadcast));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -515,6 +517,19 @@ namespace TShockAPI
         #endregion Player Management Commands
 
         #region Server Maintenence Commands
+
+        private static void Broadcast(CommandArgs args)
+        {
+            string message = "";
+
+            for (int i = 0; i < args.Parameters.Count; i++)
+            {
+                message += args.Parameters[i];
+            }
+
+            Tools.Broadcast("(Server Broadcast) " + message, Color.Red);
+            return;
+        }
 
         private static void Off(CommandArgs args)
         {

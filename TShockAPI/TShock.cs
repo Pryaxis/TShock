@@ -315,7 +315,7 @@ namespace TShockAPI
                 return;
             }
 
-            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/"))
+            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && ConfigurationManager.AdminChatOptional)
             {
                 Tools.Broadcast(ConfigurationManager.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
                                 (byte)ConfigurationManager.AdminChatRGB[0], (byte)ConfigurationManager.AdminChatRGB[1], (byte)ConfigurationManager.AdminChatRGB[2]);
