@@ -811,6 +811,21 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
+
+            if (plStr == "all" || plStr == "*")
+            {
+                args.Player.SendMessage(string.Format("You brought all players here."));
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+                    {
+                        TShock.Players[i].Teleport(args.Player.TileX, args.Player.TileY + 3);
+                        TShock.Players[i].SendMessage(string.Format("You were teleported to {0}.", args.Player.Name));
+                    }
+                }
+                return;
+            }
+
             var players = Tools.FindPlayer(plStr);
             if (players.Count == 0)
             {
