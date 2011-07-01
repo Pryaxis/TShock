@@ -82,8 +82,15 @@ namespace TShockAPI
         /// </summary>
         public void EnsureChanges()
         {
-            if (new FileInfo(Path).LastWriteTime > LastLoad)
-                LoadBans();
+            if (File.Exists(Path))
+            {
+                if (new FileInfo(Path).LastWriteTime > LastLoad)
+                    LoadBans();
+            }
+            else
+            {
+                Bans.Clear();
+            }
         }
 
         /// <summary>
@@ -98,10 +105,11 @@ namespace TShockAPI
 
         public void LoadBans()
         {
+            Bans.Clear();
+
             if (!File.Exists(Path))
                 return;
 
-            Bans.Clear();
             LastLoad = new FileInfo(Path).LastWriteTime;
 
             foreach (var line in File.ReadAllLines(Path))
