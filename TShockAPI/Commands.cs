@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -53,14 +54,22 @@ namespace TShockAPI
     }
     public class Command
     {
-        public string Name { get; protected set; }
+        public string Name { get { return Names[0]; } }
+        public List<string> Names { get; protected set; }
         private string permission;
         private CommandDelegate command;
 
-        public Command(string cmdname, string permissionneeded, CommandDelegate cmd)
+        public Command(string permissionneeded, CommandDelegate cmd, params string[] names)
+            : this(cmd, names)
         {
-            Name = cmdname;
             permission = permissionneeded;
+        }
+        public Command(CommandDelegate cmd, params string[] names)
+        {
+            if (names == null || names.Length < 1)
+                throw new NotSupportedException();
+            permission = null;
+            Names = new List<string>(names);
             command = cmd;
         }
 
@@ -82,13 +91,14 @@ namespace TShockAPI
             return true;
         }
 
+        public bool HasAlias(string name)
+        {
+            return Names.Contains(name);
+        }
+
         public bool CanRun(TSPlayer ply)
         {
-            if (!ply.Group.HasPermission(permission))
-            {
-                return false;
-            }
-            return true;
+            return ply.Group.HasPermission(permission);
         }
     }
     public static class Commands
@@ -97,97 +107,78 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
-            ChatCommands.Add(new Command("kick", "kick", Kick));
-            ChatCommands.Add(new Command("ban", "ban", Ban));
-            ChatCommands.Add(new Command("banip", "ban", BanIP));
-            ChatCommands.Add(new Command("unban", "unban", UnBan));
-            ChatCommands.Add(new Command("unbanip", "unban", UnBanIP));
-            ChatCommands.Add(new Command("whitelist", "whitelist", Whitelist));
-            ChatCommands.Add(new Command("off", "maintenance", Off));
-            ChatCommands.Add(new Command("off-nosave", "maintenance", OffNoSave));
-            ChatCommands.Add(new Command("checkupdates", "maintenance", CheckUpdates));
-            ChatCommands.Add(new Command("dropmeteor", "causeevents", DropMeteor));
-            ChatCommands.Add(new Command("star", "causeevents", Star));
-            ChatCommands.Add(new Command("bloodmoon", "causeevents", Bloodmoon));
-            ChatCommands.Add(new Command("invade", "causeevents", Invade));
-            ChatCommands.Add(new Command("eater", "spawnboss", Eater));
-            ChatCommands.Add(new Command("eye", "spawnboss", Eye));
-            ChatCommands.Add(new Command("king", "spawnboss", King));
-            ChatCommands.Add(new Command("skeletron", "spawnboss", Skeletron));
-            ChatCommands.Add(new Command("hardcore", "spawnboss", Hardcore));
-            ChatCommands.Add(new Command("spawnmob", "spawnmob", SpawnMob));
-            ChatCommands.Add(new Command("sm", "spawnmob", SpawnMob));
-            ChatCommands.Add(new Command("home", "tp", Home));
-            ChatCommands.Add(new Command("spawn", "tp", Spawn));
-            ChatCommands.Add(new Command("tp", "tp", TP));
-            ChatCommands.Add(new Command("tphere", "tphere", TPHere));
-            ChatCommands.Add(new Command("warp", "warp", UseWarp));
-            ChatCommands.Add(new Command("setwarp", "managewarp", SetWarp));
-            ChatCommands.Add(new Command("delwarp", "managewarp", DeleteWarp));
-            ChatCommands.Add(new Command("reload", "cfg", Reload));
-            ChatCommands.Add(new Command("debug-config", "cfg", DebugConfiguration));
-            ChatCommands.Add(new Command("password", "cfg", Password));
-            ChatCommands.Add(new Command("save", "cfg", Save));
-            ChatCommands.Add(new Command("maxspawns", "cfg", MaxSpawns));
-            ChatCommands.Add(new Command("spawnrate", "cfg", SpawnRate));
-            ChatCommands.Add(new Command("time", "time", Time));
-            ChatCommands.Add(new Command("slap", "pvpfun", Slap));
-            ChatCommands.Add(new Command("antibuild", "editspawn", ToggleAntiBuild));
-            ChatCommands.Add(new Command("protectspawn", "editspawn", ProtectSpawn));
-            ChatCommands.Add(new Command("region", "editspawn", Region));
-            ChatCommands.Add(new Command("help", "", Help));
-            ChatCommands.Add(new Command("playing", "", Playing));
-            ChatCommands.Add(new Command("online", "", Playing));
-            ChatCommands.Add(new Command("who", "", Playing));
-            ChatCommands.Add(new Command("auth", "", AuthToken));
-            ChatCommands.Add(new Command("me", "", ThirdPerson));
-            ChatCommands.Add(new Command("p", "", PartyChat));
-            ChatCommands.Add(new Command("rules", "", Rules));
-            ChatCommands.Add(new Command("displaylogs", "logs", Rules));
-            ChatCommands.Add(new Command("user", "manageusers", ManageUsers));
-            ChatCommands.Add(new Command("login", "", AttemptLogin));
-            ChatCommands.Add(new Command("broadcast", "cfg", Broadcast));
-            ChatCommands.Add(new Command("bc", "cfg", Broadcast));
+            ChatCommands.Add(new Command("kick", Kick, "kick"));
+            ChatCommands.Add(new Command("ban", Ban, "ban"));
+            ChatCommands.Add(new Command("ban", BanIP, "banip"));
+            ChatCommands.Add(new Command("unban", UnBan, "unban"));
+            ChatCommands.Add(new Command("unban", UnBanIP, "unbanip"));
+            ChatCommands.Add(new Command("whitelist", Whitelist, "whitelist"));
+            ChatCommands.Add(new Command("maintenance", Off, "off"));
+            ChatCommands.Add(new Command("maintenance", OffNoSave, "off-nosave"));
+            ChatCommands.Add(new Command("maintenance", CheckUpdates, "checkupdates"));
+            ChatCommands.Add(new Command("causeevents", DropMeteor, "dropmeteor"));
+            ChatCommands.Add(new Command("causeevents", Star, "star"));
+            ChatCommands.Add(new Command("causeevents", Bloodmoon, "bloodmoon"));
+            ChatCommands.Add(new Command("causeevents", Invade, "invade"));
+            ChatCommands.Add(new Command("spawnboss", Eater, "eater"));
+            ChatCommands.Add(new Command("spawnboss", Eye, "eye"));
+            ChatCommands.Add(new Command("spawnboss", King, "king"));
+            ChatCommands.Add(new Command("spawnboss", Skeletron, "skeletron"));
+            ChatCommands.Add(new Command("spawnboss", Hardcore, "hardcore"));
+            ChatCommands.Add(new Command("spawnmob", SpawnMob, "spawnmob", "sm"));
+            ChatCommands.Add(new Command("tp", Home, "home"));
+            ChatCommands.Add(new Command("tp", Spawn, "spawn"));
+            ChatCommands.Add(new Command("tp", TP, "tp"));
+            ChatCommands.Add(new Command("tphere", TPHere, "tphere"));
+            ChatCommands.Add(new Command("warp", UseWarp, "warp"));
+            ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
+            ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
+            ChatCommands.Add(new Command("cfg", Reload, "reload"));
+            ChatCommands.Add(new Command("cfg", DebugConfiguration, "debug-config"));
+            ChatCommands.Add(new Command("cfg", Password, "password"));
+            ChatCommands.Add(new Command("cfg", Save, "save"));
+            ChatCommands.Add(new Command("cfg", MaxSpawns, "maxspawns"));
+            ChatCommands.Add(new Command("cfg", SpawnRate, "spawnrate"));
+            ChatCommands.Add(new Command("time", Time, "time"));
+            ChatCommands.Add(new Command("pvpfun", Slap, "slap"));
+            ChatCommands.Add(new Command("editspawn", ToggleAntiBuild, "antibuild"));
+            ChatCommands.Add(new Command("editspawn", ProtectSpawn, "protectspawn"));
+            ChatCommands.Add(new Command("editspawn", Region, "region"));
+            ChatCommands.Add(new Command(Help, "help"));
+            ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
+            ChatCommands.Add(new Command(AuthToken, "auth"));
+            ChatCommands.Add(new Command(ThirdPerson, "me"));
+            ChatCommands.Add(new Command(PartyChat, "p"));
+            ChatCommands.Add(new Command(Rules, "rules"));
+            ChatCommands.Add(new Command("logs", Rules, "displaylogs"));
+            ChatCommands.Add(new Command("manageusers", ManageUsers, "user"));
+            ChatCommands.Add(new Command(AttemptLogin, "login"));
+            ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
-                ChatCommands.Add(new Command("kill", "kill", Kill));
-                ChatCommands.Add(new Command("butcher", "butcher", Butcher));
-                ChatCommands.Add(new Command("i", "cheat", Item));
-                ChatCommands.Add(new Command("item", "cheat", Item));
-                ChatCommands.Add(new Command("give", "cheat", Give));
-                ChatCommands.Add(new Command("heal", "cheat", Heal));
+                ChatCommands.Add(new Command("kill", Kill, "kill"));
+                ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
+                ChatCommands.Add(new Command("cheat", Item, "item", "i"));
+                ChatCommands.Add(new Command("cheat", Give, "give"));
+                ChatCommands.Add(new Command("cheat", Heal, "heal"));
             }
-        }
-
-        public static void AddUpdateCommand()
-        {
-            //Commands.ChatCommands.Add(new Command("updatenow", "maintenance", Commands.UpdateNow));
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
         {
             string cmdText = text.Remove(0, 1);
 
-            var args = Commands.ParseParameters(cmdText);
+            var args = ParseParameters(cmdText);
             if (args.Count < 1)
                 return false;
 
             string cmdName = args[0];
             args.RemoveAt(0);
 
-            Command cmd = null;
-            foreach (Command command in Commands.ChatCommands)
-            {
-                if (command.Name.Equals(cmdName))
-                {
-                    cmd = command;
-                }
-            }
+            Command cmd = ChatCommands.FirstOrDefault(c => c.HasAlias(cmdName));
 
             if (cmd == null)
-            {
                 return false;
-            }
 
             if (!cmd.CanRun(player))
             {
@@ -312,7 +303,8 @@ namespace TShockAPI
                 args.Player.Group = Tools.GetGroup(exr[1]);
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                 return;
-            } else
+            }
+            else
             {
                 Log.Warn(args.Player.IP + " failed to authenticate as " + args.Parameters[0]);
                 args.Player.LoginAttempts++;
@@ -912,7 +904,7 @@ namespace TShockAPI
             {
                 if (args.Parameters[0].Equals("list"))
                 {
-                    args.Player.SendMessage("Current Warps:", Color.Green); 
+                    args.Player.SendMessage("Current Warps:", Color.Green);
                     int page = 1;
                     if (args.Parameters.Count > 1)
                         int.TryParse(args.Parameters[1], out page);
@@ -1197,8 +1189,8 @@ namespace TShockAPI
                             if (!args.Player.TempArea.IsEmpty)
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                                if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y, 
-                                                            args.Player.TempArea.Width, args.Player.TempArea.Height, 
+                                if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
+                                                            args.Player.TempArea.Width, args.Player.TempArea.Height,
                                                             regionName, Main.worldName))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
@@ -1463,7 +1455,7 @@ namespace TShockAPI
             int killcount = 0;
             for (int i = 0; i < Main.npc.Length; i++)
             {
-                if ( Main.npc[i].active && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
+                if (Main.npc[i].active && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
                 {
                     TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
                     killcount++;
