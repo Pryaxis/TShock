@@ -142,7 +142,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)postbuild.bat"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)postbuild.bat"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
