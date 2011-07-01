@@ -1123,7 +1123,7 @@ namespace TShockAPI
                 plr.DamagePlayer(damage);
                 Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
                                 args.Player.Name, plr.Name, damage));
-                Log.Info(args.Player.Name + " slapped {0} with {1} damage.", plr.Name, damage);
+                Log.Info(args.Player.Name + " slapped " + plr.Name + " with " + damage + " damage.");
             }
         }
 
