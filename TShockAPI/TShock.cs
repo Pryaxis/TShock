@@ -244,9 +244,6 @@ namespace TShockAPI
 
         private void OnJoin(int ply, HandledEventArgs handler)
         {
-            if (Main.netMode != 2 || handler.Handled)
-                return;
-
             var player = new TSPlayer(ply);
             player.Group = Tools.GetGroupForIP(player.IP);
 
@@ -254,41 +251,42 @@ namespace TShockAPI
             {
                 Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
+                return;
             }
-            else
+
+            var ban = Bans.GetBanByIp(player.IP);
+            if (ban != null)
             {
-                var ban = Bans.GetBanByIp(player.IP);
-                if (ban != null)
-                {
-                    Tools.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
-                    handler.Handled = true;
-                }
-                else if (!FileTools.OnWhitelist(player.IP))
-                {
-                    Tools.ForceKick(player, "Not on whitelist.");
-                    handler.Handled = true;
-                }
+                Tools.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+                handler.Handled = true;
+                return;
+            }
+            if (!FileTools.OnWhitelist(player.IP))
+            {
+                Tools.ForceKick(player, "Not on whitelist.");
+                handler.Handled = true;
+                return;
             }
 
             Players[ply] = player;
-            Players[ply].InitSpawn = false;
 
             Netplay.spamCheck = ConfigurationManager.SpamChecks;
         }
 
         private void OnLeave(int ply)
         {
-            if (Main.netMode != 2)
-                return;
-
             var tsplr = Players[ply];
             if (tsplr != null && tsplr.ReceivedInfo)
+            {
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
-            if (ConfigurationManager.RememberLeavePos)
-            {
-                RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(Players[ply].IP, new Vector2(Players[ply].X / 16, (Players[ply].Y / 16) + 3)));
-                RemeberedPosManager.WriteSettings();
+                if (ConfigurationManager.RememberLeavePos)
+                {
+                    RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(tsplr.IP,
+                                                                                 new Vector2(tsplr.X / 16,
+                                                                                             (tsplr.Y / 16) + 3)));
+                    RemeberedPosManager.WriteSettings();
+                }
             }
 
             Players[ply] = null;
@@ -296,14 +294,16 @@ namespace TShockAPI
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
-            if (Main.netMode != 2 || e.Handled)
-                return;
-
             var tsplr = Players[msg.whoAmI];
-
-            if (msg.whoAmI != ply || tsplr == null)
+            if (tsplr == null)
             {
-                e.Handled = Tools.HandleGriefer(Players[ply], "Faking Chat");
+                e.Handled = true;
+                return;
+            }
+
+            if (msg.whoAmI != ply)
+            {
+                e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
                 return;
             }
 
@@ -391,11 +391,13 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            if (Main.netMode != 2 || e.Handled)
-                return;
-
             PacketTypes type = e.MsgID;
-            TSPlayer player = Players[e.Msg.whoAmI];
+            var player = Players[e.Msg.whoAmI];
+            if (player == null)
+            {
+                e.Handled = true;
+                return;
+            }
 
             if (!player.ConnectionAlive)
             {
@@ -431,10 +433,13 @@ namespace TShockAPI
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
-            if (Main.netMode != 2 || e.Handled)
+            var player = Players[who];
+            if (player == null)
+            {
+                e.Handled = true;
                 return;
+            }
 
-            TSPlayer player = Players[who];
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
             Tools.ShowFileToUser(player, "motd.txt");
@@ -446,7 +451,7 @@ namespace TShockAPI
             {
                 player.SetPvP(true);
             }
-            if (Players[who].Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
+            if (player.Group.HasPermission("causeevents") && ConfigurationManager.InfiniteInvasion)
             {
                 StartInvasion();
             }

@@ -140,7 +140,7 @@ namespace TShockAPI
 
         public bool Teleport(int tileX, int tileY)
         {
-            this.InitSpawn = false;
+            InitSpawn = false;
             int spawnTileX = Main.spawnTileX;
             int spawnTileY = Main.spawnTileY;
             Main.spawnTileX = tileX;
