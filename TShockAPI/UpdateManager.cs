@@ -51,7 +51,6 @@ namespace TShockAPI
         {
             if (ServerIsOutOfDate())
             {
-                EnableUpdateCommand();
                 NotifyAdministrators(globalChanges);
             }
         }
@@ -82,15 +81,6 @@ namespace TShockAPI
                 Log.Error(e.ToString());
             }
             return false;
-        }
-
-        private static void EnableUpdateCommand()
-        {
-            if (!updateCmd)
-            {
-                Commands.AddUpdateCommand();
-                updateCmd = true;
-            }
         }
 
         private static void NotifyAdministrators(string[] changes)
