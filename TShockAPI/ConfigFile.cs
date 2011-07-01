@@ -67,6 +67,11 @@ namespace TShockAPI
 
         public int MaximumLoginAttempts = 3;
 
+        /// <summary>
+        /// Valid types are "sqlite" and "mysql"
+        /// </summary>
+        public string StorageType = "sqlite";
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

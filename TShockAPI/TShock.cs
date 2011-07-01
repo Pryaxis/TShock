@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Terraria;
@@ -46,7 +47,7 @@ namespace TShockAPI
 
         public static ConfigFile Config { get; set; }
 
-        public static IDbConnection Sql;
+        public static IDbConnection DB;
 
         public override Version Version
         {
@@ -77,20 +78,37 @@ namespace TShockAPI
 
         public override void Initialize()
         {
-            HandleCommandLine(Environment.GetCommandLineArgs());
-
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ConfigFile.ConfigRead += OnConfigRead;
-
-            Bans = new BanManager(FileTools.BansPath);
-            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-
-            FileTools.SetupConfig();
 
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
+
+            HandleCommandLine(Environment.GetCommandLineArgs());
+
+            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+
+            FileTools.SetupConfig();
+
+            if (Config.StorageType.ToLower() == "sqlite")
+            {
+                string sql = Path.Combine(SavePath, "tshock.sqlite");
+                DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+                DB.Open();
+            }
+            else if (Config.StorageType.ToLower() == "mysql")
+            {
+                throw new NotSupportedException("Mysql is not yet supported");
+            }
+            else
+            {
+                throw new Exception("Invalid storage type");
+            }
+
+            Bans = new BanManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -104,9 +122,7 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            Bans.LoadBans();
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
             RegionManager.ReadAllSettings();
@@ -119,7 +135,7 @@ namespace TShockAPI
 
         public override void DeInitialize()
         {
-            Bans.SaveBans();
+            DB.Close();
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
             ServerHooks.Join -= OnJoin;
@@ -274,7 +290,7 @@ namespace TShockAPI
 
             Players[ply] = player;
 
-            
+
         }
 
         private void OnLeave(int ply)
