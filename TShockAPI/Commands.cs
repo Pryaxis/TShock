@@ -1327,8 +1327,12 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + args.Parameters[1], Color.MediumPurple);
-                args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + args.Parameters[1], Color.MediumPurple);
+                var msg = "";
+                for (int i = 2; i < args.Parameters.Count; i++ )
+                    msg += args.Parameters[i] + " ";
+                msg = msg.TrimEnd(new char[] { ' ' });
+                plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
+                args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + msg, Color.MediumPurple);
             }
         }
         #endregion General Commands
