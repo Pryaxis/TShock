@@ -27,13 +27,7 @@ namespace TShockAPI
 {
     public class BanManager
     {
-        private DateTime LastLoad;
         private IDbConnection database;
-
-        /// <summary>
-        /// IP - Name - Reason
-        /// </summary>
-        private List<Ban> Bans = new List<Ban>();
 
         public BanManager(IDbConnection db)
         {
@@ -49,19 +43,25 @@ namespace TShockAPI
 
         public Ban GetBanByIp(string ip)
         {
-            using (var com = database.CreateCommand())
+            try
             {
-                com.CommandText = "SELECT * FROM Bans WHERE IP=@ip";
-                AddParameter(com, "@ip", ip);
-                using (var reader = com.ExecuteReader())
+                using (var com = database.CreateCommand())
                 {
-                    if (reader.Read())
-                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                    com.CommandText = "SELECT * FROM Bans WHERE IP=@ip";
+                    AddParameter(com, "@ip", ip);
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                            return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                    }
                 }
+            }
+            catch (SqliteExecutionException ex)
+            {
             }
             return null;
         }
-        IDbDataParameter AddParameter(IDbCommand command, string name, object data)
+        static IDbDataParameter AddParameter(IDbCommand command, string name, object data)
         {
             var parm = command.CreateParameter();
             parm.ParameterName = name;
@@ -73,37 +73,64 @@ namespace TShockAPI
 
         public Ban GetBanByName(string name, bool casesensitive = true)
         {
-            using (var com = database.CreateCommand())
+            try
             {
-                var namecol = casesensitive ? "Name" : "UPPER(Name)";
-                if (!casesensitive)
-                    name = name.ToUpper();
-                com.CommandText = "SELECT *, COUNT(*) FROM Bans WHERE " + namecol + "=@name LIMIT 5";
-                AddParameter(com, "@name", name);
-                using (var reader = com.ExecuteReader())
+                using (var com = database.CreateCommand())
                 {
-                    if (reader.Read())
-                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                    var namecol = casesensitive ? "Name" : "UPPER(Name)";
+                    if (!casesensitive)
+                        name = name.ToUpper();
+                    com.CommandText = "SELECT *, COUNT(*) FROM Bans WHERE " + namecol + "=@name LIMIT 5";
+                    AddParameter(com, "@name", name);
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                            return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                    }
                 }
+            }
+            catch (SqliteExecutionException ex)
+            {
             }
             return null;
         }
 
-        public void AddBan(string ip, string name = "", string reason = "")
+        public bool AddBan(string ip, string name = "", string reason = "")
         {
-            using (var com = database.CreateCommand())
+            try
             {
-                com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason)";
-                AddParameter(com, "@ip", ip);
-                AddParameter(com, "@name", name);
-                AddParameter(com, "@reason", reason);
-                com.ExecuteNonQuery();
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason)";
+                    AddParameter(com, "@ip", ip);
+                    AddParameter(com, "@name", name);
+                    AddParameter(com, "@reason", reason);
+                    com.ExecuteNonQuery();
+                }
+                return true;
             }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return false;
         }
 
-        public void RemoveBan(Ban ban)
+        public bool RemoveBan(string ip)
         {
-
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "DELETE FROM Bans WHERE IP=@ip";
+                    AddParameter(com, "@ip", ip);
+                    com.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return false;
         }
     }
 

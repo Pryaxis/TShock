@@ -456,8 +456,10 @@ namespace TShockAPI
             var ban = TShock.Bans.GetBanByName(plStr);
             if (ban != null)
             {
-                TShock.Bans.RemoveBan(ban);
-                args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                if (TShock.Bans.RemoveBan(ban.IP))
+                    args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                else
+                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
@@ -482,8 +484,10 @@ namespace TShockAPI
             var ban = TShock.Bans.GetBanByIp(plStr);
             if (ban != null)
             {
-                TShock.Bans.RemoveBan(ban);
-                args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                if (TShock.Bans.RemoveBan(ban.IP))
+                    args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                else
+                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
