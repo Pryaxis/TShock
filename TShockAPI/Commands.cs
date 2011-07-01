@@ -295,15 +295,16 @@ namespace TShockAPI
 
             string encrPass = Tools.HashPassword(args.Parameters[1]);
             string[] exr = Tools.FetchHashedPasswordAndGroup(args.Parameters[0]);
-            if (exr[0] == Tools.HashPassword(args.Parameters[1]))
+            if (exr[0] == encrPass)
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
-                args.Player.SendMessage("Authenticated as " + args.Parameters[0] + "successfully.", Color.LimeGreen);
+                args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                 return;
             } else
             {
                 args.Player.SendMessage("Invalid login attempt. This incident has been reported.", Color.Red);
-                args.Player.SendMessage("User found: " + exr[0] + ", Password Encrypt Found: " + exr[1]);
+                args.Player.SendMessage("Group Found: " + exr[1] + ", Password Encrypt Found: " + exr[0]);
+                args.Player.SendMessage("Entered hash: " + encrPass + ", " + args.Parameters[1]);
                 Log.Warn(args.Player.IP + " failed to authenticate as " + args.Parameters[0]);
                 args.Player.LoginAttempts++;
                 return;
@@ -315,7 +316,7 @@ namespace TShockAPI
             if (args.Parameters.Count < 3)
             {
                 args.Player.SendMessage("Syntax: /user add <ip/user:pass> [group]");
-                args.Player.SendMessage("Note: Passwords are stored with very basic Hashion. To reset a user's password, remove and re-add them.");
+                args.Player.SendMessage("Note: Passwords are stored with very basic SHA1 hashing. To reset a user's password, remove and re-add them.");
                 return;
             }
 
@@ -326,7 +327,7 @@ namespace TShockAPI
                     if (args.Parameters[1].Split(':').Length == 2)
                     {
                         TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                        tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[0]) + " " + args.Parameters[2]);
+                        tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[1]) + " " + args.Parameters[2]);
                         tw.Close();
                         args.Player.SendMessage("This player can now login!", Color.Green);
                         return;
