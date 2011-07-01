@@ -66,6 +66,7 @@ namespace TShockAPI
         public TShock(Main game)
             : base(game)
         {
+            Order = 0;
         }
 
         public override void Initialize()
@@ -84,7 +85,7 @@ namespace TShockAPI
 #endif
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
-            Log.Info("Starting...");
+
 
             GameHooks.PostInitialize += OnPostInit;
             GameHooks.Update += OnUpdate;
@@ -95,23 +96,14 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Log.Info("Hooks initialized");
 
             Bans.LoadBans();
-            Log.Info("Bans initialized");
-
             GetDataHandlers.InitGetDataHandler();
-            Log.Info("Get data handlers initialized");
-
             Commands.InitCommands();
-            Log.Info("Commands initialized");
-
             RegionManager.ReadAllSettings();
             WarpsManager.ReadAllSettings();
             ItemManager.LoadBans();
-
 
             Main.autoSave = ConfigurationManager.AutoSave;
             Backups.KeepFor = ConfigurationManager.BackupKeepFor;
