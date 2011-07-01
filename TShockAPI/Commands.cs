@@ -1116,6 +1116,10 @@ namespace TShockAPI
                 {
                     int.TryParse(args.Parameters[1], out damage);
                 }
+                if (!args.Player.Group.HasPermission("kill"))
+                {
+                    damage = Tools.Clamp(damage, 15, 0);
+                }
                 plr.DamagePlayer(damage);
                 Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
                                 args.Player.Name, plr.Name, damage));
