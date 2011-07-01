@@ -147,6 +147,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("whisper", "whisper", Whisper));
             ChatCommands.Add(new Command("w", "whisper", Whisper));
             ChatCommands.Add(new Command("tell", "whisper", Whisper));
+            ChatCommands.Add(new Command("r", "whisper", Reply));
+            ChatCommands.Add(new Command("reply", "whisper", Reply));
             if (ConfigurationManager.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", "kill", Kill));
@@ -1328,13 +1330,23 @@ namespace TShockAPI
             else
             {
                 var plr = players[0];
-                var msg = "";
-                for (int i = 2; i < args.Parameters.Count; i++ )
-                    msg += args.Parameters[i] + " ";
-                msg = msg.TrimEnd(new char[] { ' ' });
+                var msg = string.Join(" ", args.Parameters, 1, args.Parameters.Count - 1);
                 plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
                 args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + msg, Color.MediumPurple);
+                plr.LastWhisper = args.Player;
             }
+        }
+
+        private static void Reply(CommandArgs args)
+        {
+            if (args.Player.LastWhisper != null)
+            {
+                var msg = string.Join(" ", args.Parameters);
+                args.Player.LastWhisper.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
+                args.Player.SendMessage("(Whisper To)" + "<" + args.Player.LastWhisper.Name + ">" + msg, Color.MediumPurple);
+            }
+            else
+                args.Player.SendMessage("You haven't previously received any whispers. Please use /whisper to whisper to other people.", Color.Red);
         }
         #endregion General Commands
 
