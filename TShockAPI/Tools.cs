@@ -23,6 +23,7 @@ using System.Text;
 using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
+using System.Linq;
 
 namespace TShockAPI
 {
@@ -634,16 +635,7 @@ namespace TShockAPI
             }
             return IP4Address;
         }
-        /// <summary>
-        /// Returns a byte array for a given string
-        /// </summary>
-        /// <param name="str">string str</param>
-        /// <returns>byte[] string</returns>
-        public static byte[] StrToByteArray(string str)
-        {
-            System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-            return encoding.GetBytes(str);
-        }
+
         /// <summary>
         /// Returns a Sha256 string for a given string
         /// </summary>
@@ -651,10 +643,11 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
-            Encoding enc = System.Text.Encoding.UTF8;
-            byte[] buffer = enc.GetBytes(password);
-            SHA1CryptoServiceProvider cryptoTransformSHA1 = new SHA1CryptoServiceProvider();
-            return BitConverter.ToString(cryptoTransformSHA1.ComputeHash(buffer)).Replace("-", "");
+            using (var sha = new SHA512CryptoServiceProvider())
+            {
+                var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
+                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+            }
         }
     }
 }
