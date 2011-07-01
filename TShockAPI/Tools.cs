@@ -530,8 +530,7 @@ namespace TShockAPI
                 }
             }
 
-            //sigh :(, ok, you fucked up the config files, congrats.
-            return null;
+            return new Group("null");
         }
 
         /// <summary>
