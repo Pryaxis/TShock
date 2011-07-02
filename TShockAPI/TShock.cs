@@ -103,6 +103,7 @@ namespace TShockAPI
             ServerHooks.Command += ServerHooks_OnCommand;
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
+            NetHooks.SendData += OnSendData;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -128,6 +129,7 @@ namespace TShockAPI
             ServerHooks.Command -= ServerHooks_OnCommand;
             NetHooks.GetData -= GetData;
             NetHooks.GreetPlayer -= OnGreetPlayer;
+            NetHooks.SendData -= OnSendData;
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
         }
 
@@ -432,6 +434,48 @@ namespace TShockAPI
                         Log.Error(ex.ToString());
                     }
                 }
+            }
+        }
+
+        private void OnSendData(SendDataEventArgs e)
+        {
+            //TODO - Clean this code up
+            switch (e.MsgID)
+            {
+                case PacketTypes.WorldInfo:
+                    if (e.remoteClient >= 0 && Players[e.remoteClient] != null && Players[e.remoteClient].Teleporting)
+                    {
+                        var stream = new MemoryStream();
+                        var writer = new BinaryWriter(stream);
+                        stream.Position = 4;
+                        writer.Write(BitConverter.GetBytes(7), 0, 1);
+                        writer.Write(Main.dayTime);
+                        writer.Write((byte)Main.moonPhase);
+                        writer.Write(Main.bloodMoon);
+                        writer.Write((int)Main.time);
+                        writer.Write(Main.maxTilesX);
+                        writer.Write(Main.maxTilesY);
+                        writer.Write((int)Players[e.remoteClient].TeleportCoords.X);
+                        writer.Write((int)Players[e.remoteClient].TeleportCoords.Y);
+                        writer.Write((int)Main.worldSurface);
+                        writer.Write((int)Main.rockLayer);
+                        writer.Write(Main.worldID);
+                        writer.Write(0 + (WorldGen.shadowOrbSmashed ? 1 : 0) + (NPC.downedBoss1 ? 2 : 0) + (NPC.downedBoss2 ? 4 : 0) + (NPC.downedBoss3 ? 8 : 0));
+                        writer.Write(Main.worldName);
+                        var length = stream.Position - 5;
+                        stream.Position = 0;
+                        writer.Write(length);
+                        try
+                        {
+                            NetMessage.buffer[e.remoteClient].spamCount++;
+                            Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(stream.GetBuffer(), 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
+                        }
+                        catch { }
+                        e.Handled = true;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 

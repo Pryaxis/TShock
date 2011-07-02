@@ -42,6 +42,8 @@ namespace TShockAPI
         public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
+        public bool Teleporting = false;
+        public Vector2 TeleportCoords = new Vector2(-1, -1);
 
         Player FakePlayer = null;
 
@@ -148,10 +150,8 @@ namespace TShockAPI
         public bool Teleport(int tileX, int tileY)
         {
             InitSpawn = false;
-            int spawnTileX = Main.spawnTileX;
-            int spawnTileY = Main.spawnTileY;
-            Main.spawnTileX = tileX;
-            Main.spawnTileY = tileY;
+            Teleporting = true;
+            TeleportCoords = new Vector2(tileX, tileY);
 
             SendData(PacketTypes.WorldInfo);
 
@@ -189,9 +189,7 @@ namespace TShockAPI
                 }
             }
 
-            Main.spawnTileX = spawnTileX;
-            Main.spawnTileY = spawnTileY;
-
+            Teleporting = false;
             SendData(PacketTypes.WorldInfo);
 
             return true;
