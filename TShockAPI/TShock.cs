@@ -462,7 +462,7 @@ namespace TShockAPI
                         writer.Write(Main.worldID);
                         writer.Write(0 + (WorldGen.shadowOrbSmashed ? 1 : 0) + (NPC.downedBoss1 ? 2 : 0) + (NPC.downedBoss2 ? 4 : 0) + (NPC.downedBoss3 ? 8 : 0));
                         writer.Write(Main.worldName);
-                        var length = stream.Position - 5;
+                        var length = (int)(stream.Position - 5);
                         stream.Position = 0;
                         writer.Write(length);
                         try
