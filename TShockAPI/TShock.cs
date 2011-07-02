@@ -440,19 +440,19 @@ namespace TShockAPI
         private void OnSendData(SendDataEventArgs e)
         {
             //TODO - Clean this code up
-            switch (e.MsgID)
+            /*switch (e.MsgID)
             {
                 case PacketTypes.WorldInfo:
                     if (e.remoteClient >= 0 && Players[e.remoteClient] != null && Players[e.remoteClient].Teleporting)
                     {
-                        var stream = new MemoryStream();
+                        var stream = new MemoryStream(messageBuffer.writeBufferMax);
                         var writer = new BinaryWriter(stream);
                         stream.Position = 4;
                         writer.Write(BitConverter.GetBytes(7), 0, 1);
+                        writer.Write((int)Main.time);
                         writer.Write(Main.dayTime);
                         writer.Write((byte)Main.moonPhase);
                         writer.Write(Main.bloodMoon);
-                        writer.Write((int)Main.time);
                         writer.Write(Main.maxTilesX);
                         writer.Write(Main.maxTilesY);
                         writer.Write((int)Players[e.remoteClient].TeleportCoords.X);
@@ -460,23 +460,25 @@ namespace TShockAPI
                         writer.Write((int)Main.worldSurface);
                         writer.Write((int)Main.rockLayer);
                         writer.Write(Main.worldID);
-                        writer.Write(0 + (WorldGen.shadowOrbSmashed ? 1 : 0) + (NPC.downedBoss1 ? 2 : 0) + (NPC.downedBoss2 ? 4 : 0) + (NPC.downedBoss3 ? 8 : 0));
-                        writer.Write(Main.worldName);
-                        var length = (int)(stream.Position - 5);
+                        writer.Write((byte)(0 + (WorldGen.shadowOrbSmashed ? 1 : 0) + (NPC.downedBoss1 ? 2 : 0) + (NPC.downedBoss2 ? 4 : 0) + (NPC.downedBoss3 ? 8 : 0)));
+                        writer.Write(Encoding.ASCII.GetBytes(Main.worldName));
+                        var length = (int)(stream.Length - 5);
                         stream.Position = 0;
                         writer.Write(length);
+                        NetMessage.buffer[e.remoteClient].writeBuffer = stream.GetBuffer();
                         try
                         {
                             NetMessage.buffer[e.remoteClient].spamCount++;
-                            Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(stream.GetBuffer(), 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
+                            Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(NetMessage.buffer[e.remoteClient].writeBuffer, 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
                         }
                         catch { }
+                        NetMessage.buffer[e.remoteClient].writeLocked = false;
                         e.Handled = true;
                     }
                     break;
                 default:
                     break;
-            }
+            }*/
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
