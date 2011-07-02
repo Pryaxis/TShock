@@ -351,9 +351,10 @@ namespace TShockAPI
                 return Tools.HandleGriefer(args.Player, "Update Player abuse");
             }
 
-            if (item < 0 || item > args.TPlayer.inventory.Length)
+            if (item < 0 || item >= args.TPlayer.inventory.Length)
             {
-                return Tools.HandleGriefer(args.Player, "Update Player abuse");
+                Tools.HandleGriefer(args.Player, "Update Player abuse");
+                return true;
             }
 
             return false;
