@@ -505,6 +505,34 @@ namespace TShockAPI
                 Tools.ForceKick(args.Player, string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
                 return true;
             }
+            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            {
+                args.Player.SendMessage("Region protected from changes.", Color.Red);
+                args.Player.SendTileSquare(tilex, tiley);
+                return true;
+            }
+            if (TShock.Config.DisableBuild)
+            {
+                if (!args.Player.Group.HasPermission("editspawn"))
+                {
+                    args.Player.SendMessage("World protected from changes.", Color.Red);
+                    args.Player.SendTileSquare(tilex, tiley);
+                    return true;
+                }
+            }
+            if (TShock.Config.SpawnProtection)
+            {
+                if (!args.Player.Group.HasPermission("editspawn"))
+                {
+                    var flag = TShock.CheckSpawn(tilex, tiley);
+                    if (flag)
+                    {
+                        args.Player.SendMessage("Spawn protected from changes.", Color.Red);
+                        args.Player.SendTileSquare(tilex, tiley);
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
