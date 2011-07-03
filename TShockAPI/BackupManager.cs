@@ -67,7 +67,7 @@ namespace TShockAPI
                 if (worldpath != null && !Directory.Exists(worldpath))
                     Directory.CreateDirectory(worldpath);
 
-                Tools.Broadcast("Server map saving, potential lag spike");
+                //Tools.Broadcast("Server map saving, potential lag spike");
                 WorldGen.saveWorld();
 
                 Console.WriteLine("World backed up");

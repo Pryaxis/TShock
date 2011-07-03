@@ -48,6 +48,8 @@ namespace TShockAPI
 
         public static IDbConnection Sql;
 
+        public static bool WorldSaving = false;
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -105,6 +107,7 @@ namespace TShockAPI
             NetHooks.GreetPlayer += OnGreetPlayer;
             NetHooks.SendData += OnSendData;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+            WorldHooks.SaveWorld += OnSaveWorld;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Bans.LoadBans();
@@ -131,6 +134,7 @@ namespace TShockAPI
             NetHooks.GreetPlayer -= OnGreetPlayer;
             NetHooks.SendData -= OnSendData;
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+            WorldHooks.SaveWorld -= OnSaveWorld;
         }
 
         /// <summary>
@@ -530,6 +534,19 @@ namespace TShockAPI
                 {
                     Main.invasionSize = 20000000;
                 }
+            }
+        }
+
+        private void OnSaveWorld(bool resettime, HandledEventArgs e)
+        {
+            if (!WorldSaving)
+            {
+                WorldSaving = true;
+                Tools.Broadcast("Saving world, might lag.", Color.Red);
+                WorldGen.saveWorld(resettime);
+                Tools.Broadcast("World saved.", Color.LimeGreen);
+                WorldSaving = false;
+                e.Handled = true;
             }
         }
 

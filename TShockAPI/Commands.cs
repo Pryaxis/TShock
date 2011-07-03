@@ -1003,9 +1003,9 @@ namespace TShockAPI
 
         private static void Save(CommandArgs args)
         {
-            Tools.Broadcast("Server map saving, potential lag spike");
+            //Tools.Broadcast("Server map saving, potential lag spike");
             WorldGen.saveWorld();
-            args.Player.SendMessage("World saved.");
+            //args.Player.SendMessage("World saved.");
         }
 
         private static void MaxSpawns(CommandArgs args)
