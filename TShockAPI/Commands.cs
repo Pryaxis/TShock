@@ -189,7 +189,7 @@ namespace TShockAPI
             }
             else
             {
-                if (!cmdText.Contains("login") || !cmdText.Contains("user"))
+                if (!cmdText.Contains("login") && !cmdText.Contains("user"))
                 {
                     Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
                 }
