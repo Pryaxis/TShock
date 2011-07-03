@@ -133,6 +133,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("warp", UseWarp, "warp"));
             ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
             ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
+            ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
             ChatCommands.Add(new Command("cfg", Reload, "reload"));
             ChatCommands.Add(new Command("cfg", DebugConfiguration, "debug-config"));
             ChatCommands.Add(new Command("cfg", Password, "password"));
@@ -962,6 +963,16 @@ namespace TShockAPI
 
         #region Server Config Commands
 
+        private static void SetSpawn(CommandArgs args)
+        {
+            Main.spawnTileX = args.Player.TileX + 1;
+            Main.spawnTileY = args.Player.TileY + 3;
+
+            Tools.Broadcast("Server map saving, potential lag spike");
+            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            SaveWorld.Start();
+        }
+
         private static void DebugConfiguration(CommandArgs args)
         {
             args.Player.SendMessage("TShock Config:");
@@ -1004,9 +1015,9 @@ namespace TShockAPI
 
         private static void Save(CommandArgs args)
         {
-            //Tools.Broadcast("Server map saving, potential lag spike");
-            WorldGen.saveWorld();
-            //args.Player.SendMessage("World saved.");
+            Tools.Broadcast("Server map saving, potential lag spike");
+            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            SaveWorld.Start();
         }
 
         private static void MaxSpawns(CommandArgs args)
