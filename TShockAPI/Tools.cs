@@ -660,5 +660,37 @@ namespace TShockAPI
                 return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
         }
+
+        /// <summary>
+        /// Returns a true if text conatains begaars words
+        /// </summary>
+        /// <param name="hostname">string text</param>
+        public static bool BeggarsWords(string text)
+        {
+            StreamReader sr = new StreamReader(FileTools.DictionaryPath);
+            string data = sr.ReadToEnd();
+            data = data.Replace("\r", "");
+            string[] lines = data.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].ToLower().Contains(text.ToLower()))
+                    return true;
+            }
+            sr.Close();
+            return false;
+        }
+
+        /// <summary>
+        /// Save a beggar name in beggars.txt
+        /// </summary>
+        /// <param name="hostname">string name</param>
+        public static void Beggars(string name)
+        {
+            TextWriter tw = new StreamWriter(FileTools.BeggarsPath, true);
+            tw.Write("\n" + name);
+            tw.Close();
+        }
+        
     }
 }

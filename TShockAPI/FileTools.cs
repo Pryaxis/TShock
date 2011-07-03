@@ -34,6 +34,8 @@ namespace TShockAPI
         public static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
         public static string RegionsPath { get { return Path.Combine(TShock.SavePath, "regions.xml"); } }
         public static string WarpsPath { get { return Path.Combine(TShock.SavePath, "warps.xml"); } }
+        public static string BeggarsPath { get { return Path.Combine(TShock.SavePath, "beggars.txt"); } }
+        public static string DictionaryPath { get { return Path.Combine(TShock.SavePath, "dictionary.txt"); } }
 
         public static void CreateFile(string file)
         {
@@ -65,6 +67,8 @@ namespace TShockAPI
             CreateIfNot(GroupsPath, Resources.groups);
             CreateIfNot(UsersPath, Resources.users);
             CreateIfNot(ItemBansPath, Resources.itembans);
+            CreateIfNot(BeggarsPath);
+            CreateIfNot(DictionaryPath);
 
             //Copies if using old paths (Remove in future releases, after everyone is running this version +)
             if (File.Exists("regions.xml") && !File.Exists(RegionsPath))

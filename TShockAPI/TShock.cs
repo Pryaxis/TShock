@@ -326,6 +326,14 @@ namespace TShockAPI
                 return;
             }
 
+            if (!tsplr.Group.HasPermission("canbeggar") && Tools.BeggarsWords(text))
+            {
+                Tools.Broadcast(tsplr.Name + " is beggar.", (byte)TShock.Config.AdminChatRGB[0], (byte)TShock.Config.AdminChatRGB[1], (byte)TShock.Config.AdminChatRGB[2]);
+                Tools.Kick(tsplr, "Do not be a beggar.");
+                Tools.Beggars(tsplr.Name);
+                return;
+            }
+            
             if (text.StartsWith("/"))
             {
                 try
