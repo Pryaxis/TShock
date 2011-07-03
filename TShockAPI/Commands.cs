@@ -160,9 +160,9 @@ namespace TShockAPI
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
                 ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
-                ChatCommands.Add(new Command("cheat", Item, "item", "i"));
-                ChatCommands.Add(new Command("cheat", Give, "give"));
-                ChatCommands.Add(new Command("cheat", Heal, "heal"));
+                ChatCommands.Add(new Command("item", Item, "item", "i"));
+                ChatCommands.Add(new Command("item", Give, "give"));
+                ChatCommands.Add(new Command("heal", Heal, "heal"));
             }
         }
 
