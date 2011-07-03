@@ -152,10 +152,6 @@ namespace TShockAPI
             InitSpawn = false;
             Teleporting = true;
             TeleportCoords = new Vector2(tileX, tileY);
-            var spnx = Main.spawnTileX;
-            var spnY = Main.spawnTileY;
-            Main.spawnTileX = tileX;
-            Main.spawnTileY = tileY;
 
             SendData(PacketTypes.WorldInfo);
 
@@ -193,8 +189,6 @@ namespace TShockAPI
                 }
             }
 
-            Main.spawnTileX = spnx;
-            Main.spawnTileY = spnY;
             Teleporting = false;
             SendData(PacketTypes.WorldInfo);
 
