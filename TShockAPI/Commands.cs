@@ -160,9 +160,10 @@ namespace TShockAPI
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
                 ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
-                ChatCommands.Add(new Command("cheat", Item, "item", "i"));
-                ChatCommands.Add(new Command("cheat", Give, "give"));
-                ChatCommands.Add(new Command("cheat", Heal, "heal"));
+                ChatCommands.Add(new Command("item", Item, "item", "i"));
+                ChatCommands.Add(new Command("item", Give, "give"));
+                ChatCommands.Add(new Command("heal", Heal, "heal"));
+                //ChatCommands.Add(new Command("buff", Buff, "buff"));
             }
         }
 
@@ -1660,6 +1661,22 @@ namespace TShockAPI
                 args.Player.SendMessage(string.Format("You just healed {0}", playerToHeal.Name));
                 playerToHeal.SendMessage(string.Format("{0} just healed you!", args.Player.Name));
             }
+        }
+
+        private static void Buff(CommandArgs args)
+        {
+            if (!args.Player.RealPlayer)
+            {
+                args.Player.SendMessage("You cant buff yourself!");
+                return;
+            }
+            if (args.Parameters.Count > 0)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff", Color.Red);
+                return;
+            }
+            args.Player.Buff();
+            args.Player.SendMessage("You have been buffed.", Color.Lime);
         }
 
         #endregion Cheat Comamnds
