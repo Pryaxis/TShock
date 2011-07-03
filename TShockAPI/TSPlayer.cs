@@ -37,6 +37,7 @@ namespace TShockAPI
         public DateTime LastPvpChange { get; protected set; }
         public Rectangle TempArea = new Rectangle();
         public DateTime LastExplosive { get; set; }
+        public DateTime LastTileChangeNotify { get; set; }
         public bool InitSpawn = false;
         public bool DisplayLogs = true;
         public Vector2 oldSpawn = Vector2.Zero;
@@ -159,6 +160,7 @@ namespace TShockAPI
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
             SendTileSquare(tileX, tileY, 150);
+
             if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
             {
                 int spX = TPlayer.SpawnX;

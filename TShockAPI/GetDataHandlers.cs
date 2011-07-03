@@ -261,7 +261,11 @@ namespace TShockAPI
             }
             if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)))
             {
-                args.Player.SendMessage("Region protected from changes.", Color.Red);
+                if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                {
+                    args.Player.SendMessage("Region protected from changes.", Color.Red);
+                    args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                }
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
@@ -269,7 +273,11 @@ namespace TShockAPI
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
                 {
-                    args.Player.SendMessage("World protected from changes.", Color.Red);
+                    if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                    {
+                        args.Player.SendMessage("World protected from changes.", Color.Red);
+                        args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                    }
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
@@ -281,8 +289,12 @@ namespace TShockAPI
                     var flag = TShock.CheckSpawn(x, y);
                     if (flag)
                     {
-                        args.Player.SendMessage("Spawn protected from changes.", Color.Red);
-                        args.Player.SendTileSquare(x, y);
+                        if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                        {
+                            args.Player.SendMessage("Spawn protected from changes.", Color.Red);
+                            args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                        }
+                        args.Player.SendTileSquare(x, y);                        
                         return true;
                     }
                 }
