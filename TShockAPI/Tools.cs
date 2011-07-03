@@ -102,6 +102,18 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Saves the map data
+        /// </summary>
+        public static void SaveWorld()
+        {
+            WorldGen.saveWorld();
+
+            Broadcast("World Saved", Color.Yellow);
+            Console.WriteLine("World backed up");
+            Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
+        }
+
+        /// <summary>
         /// Broadcasts a message to all players
         /// </summary>
         /// <param name="msg">string message</param>
