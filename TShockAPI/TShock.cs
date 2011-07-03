@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Terraria;
@@ -543,8 +544,8 @@ namespace TShockAPI
             {
                 WorldSaving = true;
                 Tools.Broadcast("Saving world, might lag.", Color.Red);
-                WorldGen.saveWorld(resettime);
-                Tools.Broadcast("World saved.", Color.LimeGreen);
+                Thread SaveWorld = new Thread(Tools.SaveWorld);
+                SaveWorld.Start();
                 WorldSaving = false;
                 e.Handled = true;
             }
