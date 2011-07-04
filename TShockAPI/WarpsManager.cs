@@ -34,7 +34,7 @@ namespace TShockAPI
         {
             foreach (Warp nametest in Warps)
             {
-                if (name.ToLower() == nametest.WarpName.ToLower())
+                if (name.ToLower() == nametest.WarpName.ToLower() && worldname == nametest.WorldWarpName)
                 {
                     return false;
                 }
