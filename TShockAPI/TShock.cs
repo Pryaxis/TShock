@@ -563,7 +563,7 @@ namespace TShockAPI
 
         public void OnConfigRead(ConfigFile file)
         {
-            NPC.maxSpawns = file.DefaultMaximumSpawns;
+            NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
             NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
             Main.autoSave = file.AutoSave;
