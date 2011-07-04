@@ -181,6 +181,15 @@ namespace TShockAPI
                         Log.ConsoleInfo("Config path has been set to " + path);
                     }
                 }
+                if (parms[i].ToLower() == "-worldpath")
+                {
+                    var path = parms[++i];
+                    if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                    {
+                        Main.WorldPath = path;
+                        Log.ConsoleInfo("World path has been set to " + path);
+                    }
+                }
             }
         }
 
