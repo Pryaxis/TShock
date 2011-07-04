@@ -471,8 +471,11 @@ namespace TShockAPI
                         NetMessage.buffer[e.remoteClient].writeBuffer = stream.GetBuffer();
                         try
                         {
-                            NetMessage.buffer[e.remoteClient].spamCount++;
-                            Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(NetMessage.buffer[e.remoteClient].writeBuffer, 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
+                            if (Netplay.serverSock[e.remoteClient].tcpClient.Connected)
+                            {
+                                NetMessage.buffer[e.remoteClient].spamCount++;
+                                Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(NetMessage.buffer[e.remoteClient].writeBuffer, 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
+                            }
                         }
                         catch { }
                         NetMessage.buffer[e.remoteClient].writeLocked = false;
