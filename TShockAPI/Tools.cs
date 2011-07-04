@@ -109,7 +109,6 @@ namespace TShockAPI
             WorldGen.RealsaveWorld();
 
             Broadcast("World saved.", Color.Yellow);
-            Console.WriteLine("World saved.");
             Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
         }
 

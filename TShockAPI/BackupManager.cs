@@ -68,8 +68,12 @@ namespace TShockAPI
                     Directory.CreateDirectory(worldpath);
 
                 Tools.Broadcast("Server map saving, potential lag spike");
+                Console.WriteLine("Backing up world...");
                 Thread SaveWorld = new Thread(Tools.SaveWorld);
                 SaveWorld.Start();
+
+                while (SaveWorld.ThreadState == ThreadState.Running)
+                    Thread.Sleep(50);
 
                 Main.worldPathName = worldname;
             }
