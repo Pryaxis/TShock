@@ -49,8 +49,6 @@ namespace TShockAPI
 
         public static IDbConnection Sql;
 
-        public static bool WorldSaving = false;
-
         public override Version Version
         {
             get { return VersionNum; }
@@ -540,15 +538,10 @@ namespace TShockAPI
 
         private void OnSaveWorld(bool resettime, HandledEventArgs e)
         {
-            if (!WorldSaving)
-            {
-                WorldSaving = true;
-                Tools.Broadcast("Saving world, might lag.", Color.Red);
-                Thread SaveWorld = new Thread(Tools.SaveWorld);
-                SaveWorld.Start();
-                WorldSaving = false;
-                e.Handled = true;
-            }
+            Tools.Broadcast("Saving world, might lag.", Color.Red);
+            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            SaveWorld.Start();
+            e.Handled = true;
         }
 
         /*
@@ -627,7 +620,7 @@ namespace TShockAPI
 
         public void OnConfigRead(ConfigFile file)
         {
-            NPC.maxSpawns = file.DefaultMaximumSpawns;
+            NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
             NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
             Main.autoSave = file.AutoSave;

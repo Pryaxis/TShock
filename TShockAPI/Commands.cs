@@ -56,6 +56,7 @@ namespace TShockAPI
     {
         public string Name { get { return Names[0]; } }
         public List<string> Names { get; protected set; }
+        public bool DoLog { get; set; }
         private string permission;
         private CommandDelegate command;
 
@@ -71,6 +72,7 @@ namespace TShockAPI
             permission = null;
             Names = new List<string>(names);
             command = cmd;
+            DoLog = true;
         }
 
         public bool Run(string msg, TSPlayer ply, List<string> parms)
@@ -152,8 +154,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
             ChatCommands.Add(new Command("logs", Rules, "displaylogs"));
-            ChatCommands.Add(new Command("manageusers", ManageUsers, "user"));
-            ChatCommands.Add(new Command(AttemptLogin, "login"));
+            ChatCommands.Add(new Command("manageusers", ManageUsers, "user") { DoLog = false });
+            ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
@@ -191,10 +193,8 @@ namespace TShockAPI
             }
             else
             {
-                if (!cmdText.Contains("login") && !cmdText.Contains("user"))
-                {
+                if (cmd.DoLog)
                     Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
-                }
                 cmd.Run(cmdText, player, args);
             }
             return true;
