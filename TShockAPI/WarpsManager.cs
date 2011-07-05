@@ -25,6 +25,7 @@ using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -41,19 +42,12 @@ namespace TShockAPI
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS \"Warps\" (\"X\" VARCHAR(4) NOT NULL  UNIQUE, \"Y\" VARCHAR(4) NOT NULL  UNIQUE , \"WarpName\" VARCHAR(32) NOT NULL , \"WorldName\" VARCHAR(255) NOT NULL );";
+                    "CREATE TABLE IF NOT EXISTS \"Warps\" (\"X\" INTEGER(11) NOT NULL  UNIQUE, \"Y\" INTEGER(11) NOT NULL  UNIQUE , \"WarpName\" VARCHAR(32) NOT NULL UNIQUE , \"WorldName\" VARCHAR(255) NOT NULL );";
                 com.ExecuteNonQuery();
             }
         }
 
-        static IDbDataParameter AddParameter(IDbCommand command, string name, object data)
-        {
-            var parm = command.CreateParameter();
-            parm.ParameterName = name;
-            parm.Value = data;
-            command.Parameters.Add(parm);
-            return parm;
-        }
+
 
         public bool AddWarp(int x, int y, string name, string worldname)
         {
@@ -62,10 +56,10 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "INSERT INTO Warps (X, Y, WarpName, WorldName) VALUES (@x, @y, @name, @worldname)";
-                    AddParameter(com, "@x", x);
-                    AddParameter(com, "@y", y);
-                    AddParameter(com, "@name", name.ToLower());
-                    AddParameter(com, "@worldname", worldname);
+                    com.AddParameter("@x", x);
+                    com.AddParameter("@y", y);
+                    com.AddParameter("@name", name.ToLower());
+                    com.AddParameter("@worldname", worldname);
                     com.ExecuteNonQuery();
                 }
                 return true;
@@ -83,8 +77,8 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
-                    AddParameter(com, "@name", name.ToLower());
-                    AddParameter(com, "@worldname", Main.worldName);
+                    com.AddParameter("@name", name.ToLower());
+                    com.AddParameter("@worldname", Main.worldName);
                     com.ExecuteNonQuery();
                     return true;
                 }
@@ -102,12 +96,12 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
-                    AddParameter(com, "@name", name.ToLower());
-                    AddParameter(com, "@worldname", Main.worldName);
+                    com.AddParameter("@name", name.ToLower());
+                    com.AddParameter("@worldname", Main.worldName);
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
-                            return new Warp(new Vector2(Int32.Parse((string)reader["X"]),Int32.Parse((string)reader["Y"])), (string)reader["WarpName"], (string)reader["WorldName"]);
+                            return new Warp(new Vector2(reader.Get<int>("X"),reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldName"));
                     }
                 }
             }

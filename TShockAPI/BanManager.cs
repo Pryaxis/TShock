@@ -22,6 +22,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using Community.CsharpSqlite.SQLiteClient;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -48,7 +49,7 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "SELECT * FROM Bans WHERE IP=@ip";
-                    AddParameter(com, "@ip", ip);
+                    com.AddParameter("@ip", ip);
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
@@ -61,15 +62,6 @@ namespace TShockAPI
             }
             return null;
         }
-        static IDbDataParameter AddParameter(IDbCommand command, string name, object data)
-        {
-            var parm = command.CreateParameter();
-            parm.ParameterName = name;
-            parm.Value = data;
-            command.Parameters.Add(parm);
-            return parm;
-        }
-
 
         public Ban GetBanByName(string name, bool casesensitive = true)
         {
@@ -81,7 +73,7 @@ namespace TShockAPI
                     if (!casesensitive)
                         name = name.ToUpper();
                     com.CommandText = "SELECT * FROM Bans WHERE " + namecol + "=@name";
-                    AddParameter(com, "@name", name);
+                    com.AddParameter("@name", name);
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
@@ -102,9 +94,9 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason)";
-                    AddParameter(com, "@ip", ip);
-                    AddParameter(com, "@name", name);
-                    AddParameter(com, "@reason", reason);
+                    com.AddParameter("@ip", ip);
+                    com.AddParameter("@name", name);
+                    com.AddParameter("@reason", reason);
                     com.ExecuteNonQuery();
                 }
                 return true;
@@ -122,7 +114,7 @@ namespace TShockAPI
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "DELETE FROM Bans WHERE IP=@ip";
-                    AddParameter(com, "@ip", ip);
+                    com.AddParameter("@ip", ip);
                     com.ExecuteNonQuery();
                     return true;
                 }
