@@ -15,6 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/* TShock wouldn't be possible without:
+ * Github
+ * Dreamspark
+ * Microsoft Visual Studio 2010
+ * HostPenda
+ * And you, for your continued support and devotion to the evolution of TShock
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -302,7 +309,7 @@ namespace TShockAPI
 
             string encrPass = Tools.HashPassword(args.Parameters[1]);
             string[] exr = Tools.FetchHashedPasswordAndGroup(args.Parameters[0]);
-            if (exr[0] == encrPass)
+            if (exr[0].ToUpper() == encrPass.ToUpper())
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);

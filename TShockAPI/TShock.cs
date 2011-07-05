@@ -279,6 +279,9 @@ namespace TShockAPI
                 handler.Handled = true;
                 return;
             }
+
+            
+
             if (!FileTools.OnWhitelist(player.IP))
             {
                 Tools.ForceKick(player, "Not on whitelist.");
@@ -551,7 +554,7 @@ namespace TShockAPI
 
         private void OnSaveWorld(bool resettime, HandledEventArgs e)
         {
-            Tools.Broadcast("Saving world, might lag.", Color.Red);
+            Tools.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
             Thread SaveWorld = new Thread(Tools.SaveWorld);
             SaveWorld.Start();
             e.Handled = true;
