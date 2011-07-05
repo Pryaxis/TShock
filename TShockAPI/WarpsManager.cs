@@ -20,162 +20,101 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
+using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Terraria;
 
 namespace TShockAPI
 {
-    class WarpsManager
+    public class WarpManager
     {
+        private IDbConnection database;
+
         public static List<Warp> Warps = new List<Warp>();
 
-        public static bool AddWarp(int x, int y, string name, string worldname)
+        public WarpManager(IDbConnection db)
         {
-            foreach (Warp nametest in Warps)
+            database = db;
+
+            using (var com = database.CreateCommand())
             {
-                if (name.ToLower() == nametest.WarpName.ToLower())
-                {
-                    return false;
-                }
+                com.CommandText =
+                    "CREATE TABLE IF NOT EXISTS \"Warps\" (\"X\" VARCHAR(4) NOT NULL  UNIQUE, \"Y\" VARCHAR(4) NOT NULL  UNIQUE , \"WarpName\" VARCHAR(32) NOT NULL , \"WorldName\" VARCHAR(255) NOT NULL );";
+                com.ExecuteNonQuery();
             }
-            Warps.Add(new Warp(new Vector2(x, y), name, worldname));
-            return true;
         }
 
-        public static bool DeleteWarp(string name)
+        static IDbDataParameter AddParameter(IDbCommand command, string name, object data)
         {
-            foreach (Warp nametest in Warps)
+            var parm = command.CreateParameter();
+            parm.ParameterName = name;
+            parm.Value = data;
+            command.Parameters.Add(parm);
+            return parm;
+        }
+
+        public bool AddWarp(int x, int y, string name, string worldname)
+        {
+            try
             {
-                if (name.ToLower() == nametest.WarpName.ToLower() && nametest.WorldWarpName == Main.worldName)
+                using (var com = database.CreateCommand())
                 {
-                    Warps.Remove(nametest);
-                    WriteSettings();
-                    return true;
+                    com.CommandText = "INSERT INTO Warps (X, Y, WarpName, WorldName) VALUES (@x, @y, @name, @worldname)";
+                    AddParameter(com, "@x", x);
+                    AddParameter(com, "@y", y);
+                    AddParameter(com, "@name", name.ToLower());
+                    AddParameter(com, "@worldname", worldname);
+                    com.ExecuteNonQuery();
                 }
+                return true;
+            }
+            catch (SqliteExecutionException ex)
+            {
             }
             return false;
         }
 
-        public static Vector2 FindWarp(string name)
-        {
-            foreach (Warp nametest in Warps)
-            {
-                if (name.ToLower() == nametest.WarpName.ToLower() && nametest.WorldWarpName == Main.worldName)
-                {
-                    return nametest.WarpPos;
-                }
-            }
-            return Vector2.Zero;
-        }
-
-        public static void WriteSettings()
+        public bool RemoveWarp(string name)
         {
             try
             {
-                XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-                xmlWriterSettings.Indent = true;
-                xmlWriterSettings.NewLineChars = Environment.NewLine;
-
-                using (XmlWriter settingsw = XmlWriter.Create(FileTools.WarpsPath, xmlWriterSettings))
+                using (var com = database.CreateCommand())
                 {
-                    settingsw.WriteStartDocument();
-                    settingsw.WriteStartElement("Warps");
-
-                    foreach (Warp warp in Warps)
-                    {
-                        settingsw.WriteStartElement("Warp");
-                        settingsw.WriteElementString("WarpName", warp.WarpName);
-                        settingsw.WriteElementString("X", warp.WarpPos.X.ToString());
-                        settingsw.WriteElementString("Y", warp.WarpPos.Y.ToString());
-                        settingsw.WriteElementString("WorldName", warp.WorldWarpName);
-                        settingsw.WriteEndElement();
-                    }
-
-                    settingsw.WriteEndElement();
-                    settingsw.WriteEndDocument();
+                    com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
+                    AddParameter(com, "@name", name.ToLower());
+                    AddParameter(com, "@worldname", Main.worldName);
+                    com.ExecuteNonQuery();
+                    return true;
                 }
-                Log.Info("Wrote Warps");
             }
-            catch
+            catch (SqliteExecutionException ex)
             {
-                Log.Info("Could not write Warps");
             }
+            return false;
         }
 
-        public static void ReadAllSettings()
+        public Warp FindWarp(string name)
         {
             try
             {
-                XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
-                xmlReaderSettings.IgnoreWhitespace = true;
-
-                using (XmlReader settingr = XmlReader.Create(FileTools.WarpsPath, xmlReaderSettings))
+                using (var com = database.CreateCommand())
                 {
-                    while (settingr.Read())
+                    com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
+                    AddParameter(com, "@name", name.ToLower());
+                    AddParameter(com, "@worldname", Main.worldName);
+                    using (var reader = com.ExecuteReader())
                     {
-                        if (settingr.IsStartElement())
-                        {
-                            switch (settingr.Name)
-                            {
-                                case "Warps":
-                                    {
-                                        break;
-                                    }
-                                case "Warp":
-                                    {
-                                        if (settingr.Read())
-                                        {
-                                            string name = string.Empty;
-                                            int x = 0;
-                                            int y = 0;
-                                            string worldname = string.Empty;
-
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                name = settingr.Value;
-                                            else
-                                                Log.Warn("Warp name is empty, This warp will not work");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                Int32.TryParse(settingr.Value, out x);
-                                            else
-                                                Log.Warn("x for warp " + name + " is empty");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                Int32.TryParse(settingr.Value, out y);
-                                            else
-                                                Log.Warn("y for warp " + name + " is empty");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                worldname = settingr.Value;
-                                            else
-                                                Log.Warn("Worldname for warp " + name + " is empty");
-
-                                            AddWarp(x, y, name, worldname);
-                                        }
-                                        break;
-                                    }
-                            }
-                        }
+                        if (reader.Read())
+                            return new Warp(new Vector2(Int32.Parse((string)reader["X"]),Int32.Parse((string)reader["Y"])), (string)reader["WarpName"], (string)reader["WorldName"]);
                     }
                 }
-                Log.Info("Read Warps");
             }
-            catch
+            catch (SqliteExecutionException ex)
             {
-                Log.Info("Could not read Warps");
-                WriteSettings();
             }
+            return new Warp();
         }
     }
 

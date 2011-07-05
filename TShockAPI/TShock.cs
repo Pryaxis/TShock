@@ -43,6 +43,7 @@ namespace TShockAPI
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans;
+        public static WarpManager Warps;
         public static BackupManager Backups;
 
         public static ConfigFile Config { get; set; }
@@ -109,6 +110,7 @@ namespace TShockAPI
             }
 
             Bans = new BanManager(DB);
+            Warps = new WarpManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -126,7 +128,6 @@ namespace TShockAPI
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
             RegionManager.ReadAllSettings();
-            WarpsManager.ReadAllSettings();
             ItemManager.LoadBans();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
