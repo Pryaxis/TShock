@@ -204,6 +204,8 @@ namespace TShockAPI
 
         public virtual void SendTileSquare(int x, int y, int size = 10)
         {
+            if (x + size >= Main.maxTilesX || y + size >= Main.maxTilesX)
+                return;
             SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
         }
 
