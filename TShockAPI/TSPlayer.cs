@@ -259,13 +259,6 @@ namespace TShockAPI
                 return;
             NetMessage.SendData((int)msgType, Index, -1, text, number, number2, number3, number4, number5);
         }
-
-        public void Buff()
-        {
-            for (int i = 0; i < 10; i++)
-                TPlayer.buffType[i] = TShock.Config.Buffs[i];
-            NetMessage.SendData(50, -1, -1, "", Index);
-        }
     }
 
     public class TSServerPlayer : TSPlayer

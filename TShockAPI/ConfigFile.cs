@@ -67,8 +67,6 @@ namespace TShockAPI
 
         public int MaximumLoginAttempts = 3;
 
-        public int[] Buffs = { 1, 2, 3, 5, 6, 9, 12, 14, 17, 18 };
-
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
