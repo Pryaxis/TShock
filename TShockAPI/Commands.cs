@@ -843,8 +843,8 @@ namespace TShockAPI
                 {
                     if (Main.player[i].active && (Main.player[i] != args.TPlayer))
                     {
-                        TShock.Players[i].Teleport(args.Player.TileX, args.Player.TileY + 3);
-                        TShock.Players[i].SendMessage(string.Format("You were teleported to {0}.", args.Player.Name));
+                        if (TShock.Players[i].Teleport(args.Player.TileX, args.Player.TileY + 3))
+                            TShock.Players[i].SendMessage(string.Format("You were teleported to {0}.", args.Player.Name));
                     }
                 }
                 return;

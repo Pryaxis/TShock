@@ -159,7 +159,11 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            SendTileSquare(tileX, tileY, 150);
+            if (!SendTileSquare(tileX, tileY, 150))
+            {
+                SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
+                return false;
+            }
 
             if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
             {
@@ -202,11 +206,12 @@ namespace TShockAPI
             SendData(PacketTypes.PlayerSpawn,  "", Index, 0.0f, 0.0f, 0.0f);
         }
 
-        public virtual void SendTileSquare(int x, int y, int size = 10)
+        public virtual bool SendTileSquare(int x, int y, int size = 10)
         {
             if (x + size >= Main.maxTilesX || y + size >= Main.maxTilesX)
-                return;
+                return false;
             SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
+            return true;
         }
 
         public virtual void GiveItem(int type, string name, int width, int height, int stack)
