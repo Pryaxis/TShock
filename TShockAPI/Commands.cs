@@ -1472,6 +1472,7 @@ namespace TShockAPI
                 plr.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);
                 args.Player.SendMessage("(Whisper To)" + "<" + plr.Name + ">" + msg, Color.MediumPurple);
                 plr.LastWhisper = args.Player;
+                args.Player.LastWhisper = plr;
             }
         }
 
