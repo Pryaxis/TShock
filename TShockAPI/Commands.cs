@@ -162,6 +162,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(Rules, "rules"));
             ChatCommands.Add(new Command("logs", Rules, "displaylogs"));
             ChatCommands.Add(new Command("manageusers", ManageUsers, "user") { DoLog = false });
+            ChatCommands.Add(new Command("manageusers", GrabUserIP, "ip"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
@@ -362,6 +363,24 @@ namespace TShockAPI
         #endregion
 
         #region Player Management Commands
+
+        private static void GrabUserIP(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /ip <player>", Color.Red);
+                return;
+            }
+
+            var players = Tools.FindPlayer(args.Parameters[0]);
+            if (players.Count > 1)
+            {
+                args.Player.SendMessage("More than one player matched your query.", Color.Red);
+                return;
+            }
+
+            args.Player.SendMessage(players[0].IP, Color.Green);
+    }
 
         private static void Kick(CommandArgs args)
         {
