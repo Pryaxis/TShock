@@ -18,12 +18,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
 namespace TShockAPI.DB
 {
     public class UserManager
-    {
+    {        
+        private IDbConnection database;
+
+        public UserManager(IDbConnection db)
+        {
+            database = db;
+
+            using (var com = database.CreateCommand())
+            {
+                com.CommandText =
+                    "CREATE  TABLE  IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Username' VARCHAR(32) UNIQUE , 'Password' CHAR(32), 'Group' VARCHAR(50));";
+                com.ExecuteNonQuery();
+            }
+        }
     }
 }
