@@ -26,13 +26,13 @@ namespace TShockAPI.DB
             {typeof(Int64), (s, i) => s.GetInt64(i)},
             {typeof(string), (s, i) => s.GetString(i)},
             {typeof(decimal), (s, i) => s.GetDecimal(i)},
-            {typeof(decimal), (s, i) => s.GetFloat(i)},
+            {typeof(float), (s, i) => s.GetFloat(i)},
             {typeof(double), (s, i) => s.GetDouble(i)},
         };
 
         public static T Get<T>(this IDataReader reader, string column)
         {
-            return reader.Get<T>(column);
+            return reader.Get<T>(reader.GetOrdinal(column));
         }
         public static T Get<T>(this IDataReader reader, int column)
         {
