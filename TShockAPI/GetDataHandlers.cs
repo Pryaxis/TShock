@@ -181,7 +181,7 @@ namespace TShockAPI
             int tilex = args.Data.ReadInt32();
             int tiley = args.Data.ReadInt32();
 
-            if (size != 3)
+            if (size > 5)
                 return true;
 
             var tiles = new NetTile[size, size];
@@ -218,6 +218,13 @@ namespace TShockAPI
                     else if (tile.type == 0x19 && newtile.Type == 0x1)
                     {
                         tile.type = 0x1;
+                        changed = true;
+                    }
+                    else if ((tile.type == 0xF && newtile.Type == 0xF) ||
+                             (tile.type == 0x4F && newtile.Type == 0x4F))
+                    {
+                        tile.frameX = newtile.FrameX;
+                        tile.frameY = newtile.FrameY;
                         changed = true;
                     }
                 }
@@ -294,7 +301,7 @@ namespace TShockAPI
                             args.Player.SendMessage("Spawn protected from changes.", Color.Red);
                             args.Player.LastTileChangeNotify = DateTime.UtcNow;
                         }
-                        args.Player.SendTileSquare(x, y);                        
+                        args.Player.SendTileSquare(x, y);
                         return true;
                     }
                 }

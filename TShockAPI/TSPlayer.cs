@@ -17,9 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
+using TShockAPI.Net;
 
 namespace TShockAPI
 {
@@ -43,7 +45,6 @@ namespace TShockAPI
         public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
-        public bool Teleporting = false;
         public Vector2 TeleportCoords = new Vector2(-1, -1);
 
         Player FakePlayer = null;
@@ -87,17 +88,17 @@ namespace TShockAPI
         }
         public float X
         {
-            get 
+            get
             {
 
-                return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16; 
+                return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16;
             }
         }
         public float Y
         {
-            get 
+            get
             {
-                return RealPlayer ?  TPlayer.position.Y : Main.spawnTileY * 16;
+                return RealPlayer ? TPlayer.position.Y : Main.spawnTileY * 16;
             }
         }
         public int TileX
@@ -148,18 +149,44 @@ namespace TShockAPI
             SendData(PacketTypes.Disconnect, reason);
         }
 
-        public bool Teleport(int tileX, int tileY)
+        void SendTeleport(int tilex, int tiley)
+        {
+            var msg = new WorldInfoMsg
+            {
+                Time = (int)Main.time,
+                DayTime = Main.dayTime,
+                MoonPhase = (byte)Main.moonPhase,
+                BloodMoon = Main.bloodMoon,
+                MaxTilesX = Main.maxTilesX,
+                MaxTilesY = Main.maxTilesY,
+                SpawnX = tilex,
+                SpawnY = tiley,
+                WorldSurface = (int)Main.worldSurface,
+                RockLayer = (int)Main.rockLayer,
+                WorldID = Main.worldID,
+                WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
+                (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
+                (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
+                (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
+                WorldName = Main.worldName
+            };
+
+
+            var ms = new MemoryStream();
+            msg.PackFull(ms);
+            SendRawData(ms.ToArray());
+        }
+
+        public bool Teleport(int tilex, int tiley)
         {
             InitSpawn = false;
-            Teleporting = true;
-            TeleportCoords = new Vector2(tileX, tileY);
 
-            SendData(PacketTypes.WorldInfo);
+            SendTeleport(tilex, tiley);
 
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tileX, tileY, 150))
+            if (!SendTileSquare(tilex, tiley, 150))
             {
                 SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
                 return false;
@@ -195,23 +222,30 @@ namespace TShockAPI
                 }
             }
 
-            Teleporting = false;
-            SendData(PacketTypes.WorldInfo);
+            SendTeleport(Main.spawnTileX, Main.spawnTileY);
 
             return true;
         }
 
         public void Spawn()
         {
-            SendData(PacketTypes.PlayerSpawn,  "", Index, 0.0f, 0.0f, 0.0f);
+            SendData(PacketTypes.PlayerSpawn, "", Index, 0.0f, 0.0f, 0.0f);
         }
 
         public virtual bool SendTileSquare(int x, int y, int size = 10)
         {
             if (x + size >= Main.maxTilesX || y + size >= Main.maxTilesX)
                 return false;
-            SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)), 0f);
-            return true;
+            try
+            {
+                SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+            return false;
         }
 
         public virtual void GiveItem(int type, string name, int width, int height, int stack)
@@ -287,17 +321,39 @@ namespace TShockAPI
         }
 
         //Todo: Separate this into a few functions. SendTo, SendToAll, etc
-        public void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
+        public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {
             if (RealPlayer && !ConnectionAlive)
                 return;
             NetMessage.SendData((int)msgType, Index, -1, text, number, number2, number3, number4, number5);
         }
+
+        public virtual bool SendRawData(byte[] data)
+        {
+            if (!RealPlayer || !ConnectionAlive)
+                return false;
+
+            try
+            {
+                if (Netplay.serverSock[Index].tcpClient.Connected)
+                {
+                    Netplay.serverSock[Index].networkStream.Write(data, 0, data.Length);
+                    return true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+            return false;
+        }
     }
 
     public class TSServerPlayer : TSPlayer
     {
-        public TSServerPlayer() : base("Server")
+        public TSServerPlayer()
+            : base("Server")
         {
             Group = new SuperAdminGroup();
         }
@@ -356,7 +412,7 @@ namespace TShockAPI
             foreach (KeyValuePair<Vector2, Tile> entry in destroyedTiles)
             {
                 Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
-                Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})", 
+                Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }
             // Send all players updated tile sqaures
