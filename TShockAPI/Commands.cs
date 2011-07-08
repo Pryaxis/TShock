@@ -167,7 +167,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
-            //ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
+            ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
             if (TShock.Config.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));

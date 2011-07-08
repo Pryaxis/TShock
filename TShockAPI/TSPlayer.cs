@@ -234,8 +234,6 @@ namespace TShockAPI
 
         public virtual bool SendTileSquare(int x, int y, int size = 10)
         {
-            if (x + size >= Main.maxTilesX || y + size >= Main.maxTilesX)
-                return false;
             try
             {
                 SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)));
@@ -306,15 +304,16 @@ namespace TShockAPI
             while ((DateTime.UtcNow - launch).TotalSeconds < time2)
             {
                 Main.player[0].inventory[player].SetDefaults("Whoopie Cushion");
+                Main.player[0].inventory[player].stack = 1;
                 SendData(TerrariaAPI.PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
                 Main.player[player].position = TPlayer.position;
                 Main.player[player].selectedItem = 0;
                 Main.player[player].controlUseItem = true;
                 SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
-                Main.player[player].controlUseItem = false;
-                Main.player[player].controlJump = true;
-                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
                 System.Threading.Thread.Sleep(500);
+                Main.player[player].controlUseItem = false;
+                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
+                System.Threading.Thread.Sleep(50);
             }
             Main.player[0].inventory[0] = oriinv;
             SendData(TerrariaAPI.PacketTypes.PlayerSlot, oriinv.name, player, 0f);
