@@ -39,10 +39,11 @@
 #ignoregriefdetection - allow player to grief (use explosives, water, lava even if they dont have premission to)
 #usebanneditem - allows player to use banned items
 #manageusers	- Grab player info
-#whisper		- allow a player to whisper to other players
+#whisper		- allow player to whisper to other players
 #adminchat		- Colors and adds a prefix to the player's chats.
+#canbuild		- allow player to build (does not bypass other checks)
 
-default null canwater canlava warp
+default null canwater canlava warp canbuild
 vip default reservedslot
 newadmin default kick editspawn reservedslot
 admin newadmin ban unban whitelist causeevents spawnboss spawnmob managewarp time tp pvpfun kill logs immunetokick tphere

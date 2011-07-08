@@ -242,6 +242,11 @@ namespace TShockAPI
             int x = args.Data.ReadInt32();
             int y = args.Data.ReadInt32();
             byte tiletype = args.Data.ReadInt8();
+            if (!args.Player.Group.HasPermission("canbuild"))
+            {
+                args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                return true;
+            }
             if (type == 1 || type == 3)
             {
                 int plyX = Math.Abs(args.Player.TileX);
@@ -453,6 +458,12 @@ namespace TShockAPI
                 }
             }
 
+            if (!args.Player.Group.HasPermission("canbuild"))
+            {
+                args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                return true;
+            }
+
             if (lava && !args.Player.Group.HasPermission("canlava"))
             {
                 args.Player.SendMessage("You do not have permission to use lava", Color.Red);
@@ -510,6 +521,11 @@ namespace TShockAPI
                 Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
                                         tilex, tiley, Main.tile[tilex, tiley].type));
                 Tools.ForceKick(args.Player, string.Format("Tile Kill abuse ({0})", Main.tile[tilex, tiley].type));
+                return true;
+            }
+            if (!args.Player.Group.HasPermission("canbuild"))
+            {
+                args.Player.SendMessage("You do not have permission to build!", Color.Red);
                 return true;
             }
             if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
