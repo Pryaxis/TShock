@@ -84,6 +84,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Net\NetTile.cs" />
     <Compile Include="Net\WorldInfoMsg.cs" />
+    <Compile Include="RconHandler.cs" />
     <Compile Include="RegionManager.cs" />
     <Compile Include="RememberPosManager.cs" />
     <Compile Include="Resources.Designer.cs">

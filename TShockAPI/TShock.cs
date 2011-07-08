@@ -113,6 +113,7 @@ namespace TShockAPI
             RegionManager.ReadAllSettings();
             WarpsManager.ReadAllSettings();
             ItemManager.LoadBans();
+            RconHandler.StartThread();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -373,6 +374,8 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
+                WorldGen.saveWorld(false);
+                Netplay.disconnect = true;
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
@@ -595,6 +598,9 @@ namespace TShockAPI
             Netplay.serverPort = file.ServerPort;
 
             Netplay.spamCheck = file.SpamChecks;
+
+            RconHandler.Password = file.RconPassword;
+            RconHandler.ListenPort = file.RconPort;
         }
 
 
