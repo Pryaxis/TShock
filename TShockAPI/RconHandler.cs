@@ -80,7 +80,7 @@ namespace TShockAPI
                     lastRequest = DateTime.Now;
                     byte[] bytes = listener.Receive(ref listenEP);
                     Log.Info(string.Format("Recieved packet from {0}:{1}", listenEP.Address.ToString(), listenEP.Port.ToString()));
-                    var packet = parsePacket(bytes, listenEP);
+                    var packet = ParsePacket(bytes, listenEP);
                     listener.Send(packet, packet.Length, listenEP);
                     listener.Close();
                 }
@@ -92,7 +92,7 @@ namespace TShockAPI
             }
         }
 
-        private static string sendPacket(byte[] bytes, string hostname, int port)
+        private static string SendPacket(byte[] bytes, string hostname, int port)
         {
             var response = Encoding.UTF8.GetString(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }) + "disconnect";
             try
@@ -111,10 +111,10 @@ namespace TShockAPI
             return response;
         }
 
-        private static byte[] parsePacket(byte[] bytes, IPEndPoint EP)
+        private static byte[] ParsePacket(byte[] bytes, IPEndPoint EP)
         {
             string response = "";
-            var packetstring = Encoding.UTF8.GetString(padPacket(bytes));
+            var packetstring = Encoding.UTF8.GetString(PadPacket(bytes));
             var redirect = false;
             var print = true;
             if ((DateTime.Now - lastRequest).Milliseconds >= 100)
@@ -132,7 +132,7 @@ namespace TShockAPI
                                 for (int i = 2; i < args.Length; i++)
                                     command += args[i] + " ";
                                 command = command.TrimEnd(' ').TrimEnd('\0');
-                                response = executeCommand(command);
+                                response = ExecuteCommand(command);
                                 if (response == "" && Response != "")
                                 {
                                     response = Response;
@@ -158,12 +158,12 @@ namespace TShockAPI
                     redirect = true;
             }
             if (!redirect) 
-                return (constructPacket(response, print));
+                return (ConstructPacket(response, print));
             else
-                return (constructPacket("", false));
+                return (ConstructPacket("", false));
         }
 
-        private static string executeCommand(string text)
+        private static string ExecuteCommand(string text)
         {
             if (Main.rand == null)
                 Main.rand = new Random();
@@ -218,7 +218,7 @@ namespace TShockAPI
             return "";
         }
 
-        private static byte[] constructPacket(string response, bool print)
+        private static byte[] ConstructPacket(string response, bool print)
         {
             var oob = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
             MemoryStream stream = new MemoryStream();
@@ -234,7 +234,7 @@ namespace TShockAPI
             return packet;
         }
 
-        private static byte[] padPacket(byte[] packet)
+        private static byte[] PadPacket(byte[] packet)
         {
             var returnpacket = new byte[(4 + packet.Length)];
             int h = 0;
