@@ -76,8 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
-    <Compile Include="BanManager.cs" />
+    <Compile Include="DB\BanManager.cs" />
     <Compile Include="DB\DbExt.cs" />
+    <Compile Include="DB\UserManager.cs" />
     <Compile Include="IPackable.cs" />
     <Compile Include="ItemManager.cs" />
     <Compile Include="Commands.cs" />
@@ -99,7 +100,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TSPlayer.cs" />
     <Compile Include="UpdateManager.cs" />
-    <Compile Include="WarpsManager.cs" />
+    <Compile Include="DB\WarpsManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config\groups.txt" />
@@ -150,7 +151,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

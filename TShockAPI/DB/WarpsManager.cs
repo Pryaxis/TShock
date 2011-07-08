@@ -28,13 +28,13 @@ using System.Xml;
 using Terraria;
 using TShockAPI.DB;
 
-namespace TShockAPI
+namespace TShockAPI.DB
 {
     public class WarpManager
     {
         private IDbConnection database;
 
-        public static List<Warp> Warps = new List<Warp>();
+        public List<Warp> Warps = new List<Warp>();
 
         public WarpManager(IDbConnection db)
         {

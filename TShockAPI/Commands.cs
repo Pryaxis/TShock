@@ -26,6 +26,7 @@ using System.Net;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -956,16 +957,16 @@ namespace TShockAPI
                     if (args.Parameters.Count > 1)
                         int.TryParse(args.Parameters[1], out page);
                     var sb = new StringBuilder();
-                    if (WarpManager.Warps.Count > (15 * (page - 1)))
+                    if (TShock.Warps.Warps.Count > (15 * (page - 1)))
                     {
                         for (int j = (15 * (page - 1)); j < (15 * page); j++)
                         {
-                            if (WarpManager.Warps[j].WorldWarpName == Main.worldName)
+                            if (TShock.Warps.Warps[j].WorldWarpName == Main.worldName)
                             {
                                 if (sb.Length != 0)
                                     sb.Append(", ");
-                                sb.Append("/").Append(WarpManager.Warps[j].WarpName);
-                                if (j == WarpManager.Warps.Count - 1)
+                                sb.Append("/").Append(TShock.Warps.Warps[j].WarpName);
+                                if (j == TShock.Warps.Warps.Count - 1)
                                 {
                                     args.Player.SendMessage(sb.ToString(), Color.Yellow);
                                     break;
@@ -978,7 +979,7 @@ namespace TShockAPI
                             }
                         }
                     }
-                    if (WarpManager.Warps.Count > (15 * page))
+                    if (TShock.Warps.Warps.Count > (15 * page))
                     {
                         args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
                     }

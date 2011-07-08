@@ -30,6 +30,7 @@ using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
 using System.Text;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
