@@ -220,6 +220,13 @@ namespace TShockAPI
                         tile.type = 0x1;
                         changed = true;
                     }
+                    else if ((tile.type == 0xF && newtile.Type == 0xF) ||
+                             (tile.type == 0x4F && newtile.Type == 0x4F))
+                    {
+                        tile.frameX = newtile.FrameX;
+                        tile.frameY = newtile.FrameY;
+                        changed = true;
+                    }
                 }
             }
 
@@ -294,7 +301,7 @@ namespace TShockAPI
                             args.Player.SendMessage("Spawn protected from changes.", Color.Red);
                             args.Player.LastTileChangeNotify = DateTime.UtcNow;
                         }
-                        args.Player.SendTileSquare(x, y);                        
+                        args.Player.SendTileSquare(x, y);
                         return true;
                     }
                 }
