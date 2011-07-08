@@ -104,7 +104,6 @@ namespace TShockAPI
             ServerHooks.Command += ServerHooks_OnCommand;
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
-            NetHooks.SendData += OnSendData;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
             
 
@@ -130,7 +129,6 @@ namespace TShockAPI
             ServerHooks.Command -= ServerHooks_OnCommand;
             NetHooks.GetData -= GetData;
             NetHooks.GreetPlayer -= OnGreetPlayer;
-            NetHooks.SendData -= OnSendData;
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
         }
 
@@ -447,53 +445,6 @@ namespace TShockAPI
                         Log.Error(ex.ToString());
                     }
                 }
-            }
-        }
-
-        private void OnSendData(SendDataEventArgs e)
-        {
-            //TODO - Clean this code up
-            switch (e.MsgID)
-            {
-                case PacketTypes.WorldInfo:
-                    if (e.remoteClient >= 0 && Players[e.remoteClient] != null && Players[e.remoteClient].Teleporting)
-                    {
-                        var stream = new MemoryStream(messageBuffer.writeBufferMax);
-                        var writer = new BinaryWriter(stream);
-                        stream.Position = 4;
-                        writer.Write(BitConverter.GetBytes(7), 0, 1);
-                        writer.Write(BitConverter.GetBytes((int)Main.time));
-                        writer.Write(BitConverter.GetBytes(Main.dayTime));
-                        writer.Write((byte)Main.moonPhase);
-                        writer.Write(Main.bloodMoon);
-                        writer.Write(BitConverter.GetBytes(Main.maxTilesX));
-                        writer.Write(BitConverter.GetBytes(Main.maxTilesY));
-                        writer.Write(BitConverter.GetBytes((int)Players[e.remoteClient].TeleportCoords.X));
-                        writer.Write(BitConverter.GetBytes((int)Players[e.remoteClient].TeleportCoords.Y));
-                        writer.Write(BitConverter.GetBytes((int)Main.worldSurface));
-                        writer.Write(BitConverter.GetBytes((int)Main.rockLayer));
-                        writer.Write(BitConverter.GetBytes(Main.worldID));
-                        writer.Write((byte)(0 + (WorldGen.shadowOrbSmashed ? 1 : 0) + (NPC.downedBoss1 ? 2 : 0) + (NPC.downedBoss2 ? 4 : 0) + (NPC.downedBoss3 ? 8 : 0)));
-                        writer.Write(Encoding.ASCII.GetBytes(Main.worldName));
-                        var length = (int)(stream.Length - 4);
-                        stream.Position = 0;
-                        writer.Write(length);
-                        NetMessage.buffer[e.remoteClient].writeBuffer = stream.GetBuffer();
-                        try
-                        {
-                            if (Netplay.serverSock[e.remoteClient].tcpClient.Connected)
-                            {
-                                NetMessage.buffer[e.remoteClient].spamCount++;
-                                Netplay.serverSock[e.remoteClient].networkStream.BeginWrite(NetMessage.buffer[e.remoteClient].writeBuffer, 0, (int)stream.Length, new AsyncCallback(Netplay.serverSock[e.remoteClient].ServerWriteCallBack), Netplay.serverSock[e.remoteClient].networkStream);
-                            }
-                        }
-                        catch { }
-                        NetMessage.buffer[e.remoteClient].writeLocked = false;
-                        e.Handled = true;
-                    }
-                    break;
-                default:
-                    break;
             }
         }
 
