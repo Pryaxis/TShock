@@ -80,18 +80,18 @@ namespace TShockAPI
         {
             HandleCommandLine(Environment.GetCommandLineArgs());
 
-            ConfigFile.ConfigRead += OnConfigRead;
-
-            Bans = new BanManager(FileTools.BansPath);
-            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-
-            FileTools.SetupConfig();
-
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            Bans = new BanManager(FileTools.BansPath);
+            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+
+            ConfigFile.ConfigRead += OnConfigRead;
+            FileTools.SetupConfig();
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -106,8 +106,7 @@ namespace TShockAPI
             NetHooks.GreetPlayer += OnGreetPlayer;
             NetHooks.SendData += OnSendData;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-            WorldHooks.SaveWorld += OnSaveWorld;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            
 
             Bans.LoadBans();
             GetDataHandlers.InitGetDataHandler();
@@ -133,7 +132,6 @@ namespace TShockAPI
             NetHooks.GreetPlayer -= OnGreetPlayer;
             NetHooks.SendData -= OnSendData;
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-            WorldHooks.SaveWorld -= OnSaveWorld;
         }
 
         /// <summary>
@@ -297,6 +295,8 @@ namespace TShockAPI
         private void OnLeave(int ply)
         {
             var tsplr = Players[ply];
+            Players[ply] = null;
+
             if (tsplr != null && tsplr.ReceivedInfo)
             {
                 Log.Info(string.Format("{0} left.", tsplr.Name));
@@ -309,8 +309,6 @@ namespace TShockAPI
                     RemeberedPosManager.WriteSettings();
                 }
             }
-
-            Players[ply] = null;
         }
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)

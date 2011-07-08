@@ -181,7 +181,7 @@ namespace TShockAPI
             int tilex = args.Data.ReadInt32();
             int tiley = args.Data.ReadInt32();
 
-            if (size != 3)
+            if (size > 5)
                 return true;
 
             var tiles = new NetTile[size, size];
