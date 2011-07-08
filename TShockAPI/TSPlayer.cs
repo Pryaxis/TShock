@@ -280,7 +280,9 @@ namespace TShockAPI
 
         public override void SendMessage(string msg, byte red, byte green, byte blue)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
 
         public void SetBloodMoon(bool bloodMoon)

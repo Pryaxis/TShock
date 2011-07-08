@@ -45,6 +45,7 @@ namespace TShockAPI
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans;
         public static WarpManager Warps;
+        public static RegionManager Regions;
         public static BackupManager Backups;
 
         public static ConfigFile Config { get; set; }
@@ -112,6 +113,7 @@ namespace TShockAPI
 
             Bans = new BanManager(DB);
             Warps = new WarpManager(DB);
+            Regions = new RegionManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -128,7 +130,6 @@ namespace TShockAPI
 
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
-            RegionManager.ReadAllSettings();
             ItemManager.LoadBans();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
@@ -209,8 +210,10 @@ namespace TShockAPI
             {
                 var r = new Random((int)DateTime.Now.ToBinary());
                 AuthToken = r.Next(100000, 10000000);
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
         }
