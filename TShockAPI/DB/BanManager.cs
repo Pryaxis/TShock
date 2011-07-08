@@ -93,7 +93,7 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason)";
+                    com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason);";
                     com.AddParameter("@ip", ip);
                     com.AddParameter("@name", name);
                     com.AddParameter("@reason", reason);

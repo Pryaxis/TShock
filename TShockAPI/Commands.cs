@@ -919,7 +919,7 @@ namespace TShockAPI
                 {
                     args.Player.SendMessage("Name reserved, use a different name", Color.Red);
                 }
-                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
+                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
                 {
                     args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
                 }
@@ -1237,9 +1237,9 @@ namespace TShockAPI
                             if (!args.Player.TempArea.IsEmpty)
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                                if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
+                                if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldName))
+                                                            regionName, Main.worldID.ToString()))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
@@ -1263,14 +1263,14 @@ namespace TShockAPI
                             string regionName = args.Parameters[1];
                             if (args.Parameters[2].ToLower() == "true")
                             {
-                                if (RegionManager.SetRegionState(regionName, true))
+                                if (TShock.Regions.SetRegionState(regionName, true))
                                     args.Player.SendMessage("Protected region " + regionName, Color.Yellow);
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else if (args.Parameters[2].ToLower() == "false")
                             {
-                                if (RegionManager.SetRegionState(regionName, false))
+                                if (TShock.Regions.SetRegionState(regionName, false))
                                     args.Player.SendMessage("Unprotected region " + regionName, Color.Yellow);
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
@@ -1287,7 +1287,7 @@ namespace TShockAPI
                         if (args.Parameters.Count > 1)
                         {
                             string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                            if (RegionManager.DeleteRegion(regionName))
+                            if (TShock.Regions.DeleteRegion(regionName))
                                 args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
                             else
                                 args.Player.SendMessage("Could not find specified region", Color.Red);
@@ -1323,10 +1323,9 @@ namespace TShockAPI
                             }
                             if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
                             {
-                                if (RegionManager.AddNewUser(regionName, playerIP))
+                                if (TShock.Regions.AddNewUser(regionName, playerIP))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
-                                    RegionManager.WriteSettings();
                                 }
                                 else
                                     args.Player.SendMessage("Region " + regionName + " not found", Color.Red);

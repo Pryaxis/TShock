@@ -43,33 +43,25 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS \"Warps\" (\"X\" INTEGER(11) NOT NULL  UNIQUE, \"Y\" INTEGER(11) NOT NULL  UNIQUE , \"WarpName\" VARCHAR(32) NOT NULL UNIQUE , \"WorldName\" VARCHAR(255) NOT NULL );";
+                    "CREATE TABLE IF NOT EXISTS \"Warps\" (\"X\" INTEGER(11) NOT NULL, \"Y\" INTEGER(11) NOT NULL, \"WarpName\" VARCHAR(32) NOT NULL UNIQUE, \"WorldID\" VARCHAR(255) NOT NULL );";
                 com.ExecuteNonQuery();
-            }
-
-            if(!File.Exists(FileTools.WarpsPath))
-            {
-                ReadWarps();
-                File.Delete(FileTools.WarpsPath);
             }
         }
 
-
-
-        public bool AddWarp(int x, int y, string name, string worldname)
+        public bool AddWarp(int x, int y, string name, string worldid)
         {
             try
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "INSERT INTO Warps (X, Y, WarpName, WorldName) VALUES (@x, @y, @name, @worldname)";
+                    com.CommandText = "INSERT INTO Warps (X, Y, WarpName, WorldID) VALUES (@x, @y, @name, @worldid);";
                     com.AddParameter("@x", x);
                     com.AddParameter("@y", y);
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldname", worldname);
+                    com.AddParameter("@worldid", worldid);
                     com.ExecuteNonQuery();
+                    return true;
                 }
-                return true;
             }
             catch (SqliteExecutionException ex)
             {
@@ -83,9 +75,9 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
+                    com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldname", Main.worldName);
+                    com.AddParameter("@worldid", Main.worldID.ToString());
                     com.ExecuteNonQuery();
                     return true;
                 }
@@ -102,13 +94,13 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldName=@worldname";
+                    com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldname", Main.worldName);
+                    com.AddParameter("@worldid", Main.worldID.ToString());
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
-                            return new Warp(new Vector2(reader.Get<int>("X"),reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldName"));
+                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
                     }
                 }
             }
@@ -116,80 +108,6 @@ namespace TShockAPI.DB
             {
             }
             return new Warp();
-        }
-
-        public static void ReadWarps()
-        {
-            try
-            {
-                XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
-                xmlReaderSettings.IgnoreWhitespace = true;
-
-                using (XmlReader settingr = XmlReader.Create(FileTools.WarpsPath, xmlReaderSettings))
-                {
-                    while (settingr.Read())
-                    {
-                        if (settingr.IsStartElement())
-                        {
-                            switch (settingr.Name)
-                            {
-                                case "Warps":
-                                    {
-                                        break;
-                                    }
-                                case "Warp":
-                                    {
-                                        if (settingr.Read())
-                                        {
-                                            string name = string.Empty;
-                                            int x = 0;
-                                            int y = 0;
-                                            string worldname = string.Empty;
-
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                name = settingr.Value;
-                                            else
-                                                Log.Warn("Warp name is empty, This warp will not work");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                Int32.TryParse(settingr.Value, out x);
-                                            else
-                                                Log.Warn("x for warp " + name + " is empty");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                Int32.TryParse(settingr.Value, out y);
-                                            else
-                                                Log.Warn("y for warp " + name + " is empty");
-
-                                            settingr.Read();
-                                            settingr.Read();
-                                            settingr.Read();
-                                            if (settingr.Value != "" || settingr.Value != null)
-                                                worldname = settingr.Value;
-                                            else
-                                                Log.Warn("Worldname for warp " + name + " is empty");
-
-                                            TShock.Warps.AddWarp(x, y, name, worldname);
-                                        }
-                                        break;
-                                    }
-                            }
-                        }
-                    }
-                }
-                Log.Info("Read Warps");
-            }
-            catch
-            {
-                Log.Info("Could not read Warps");
-            }
         }
     }
 

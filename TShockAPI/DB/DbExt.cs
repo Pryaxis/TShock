@@ -34,6 +34,7 @@ namespace TShockAPI.DB
         {
             return reader.Get<T>(reader.GetOrdinal(column));
         }
+
         public static T Get<T>(this IDataReader reader, int column)
         {
             if (ReadFuncs.ContainsKey(typeof(T)))
