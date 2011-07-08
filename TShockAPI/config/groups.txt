@@ -10,7 +10,8 @@
 #currently avaliable permissions: 
 #reservedslot	- reserved slot for player
 #canwater		- allow players to use water
-#canlava		- allow playes to use lava
+#canlava		- allow players to use lava
+#canspike		- allow players to place spikes
 #warp			- allow players to use warps
 #kick			- kick users
 #ban			- ban players by name or ip
@@ -30,12 +31,16 @@
 #logs			- notify player when any command is executed
 #kill			- allow player to kill others
 #butcher		- allow player to kill all alive monsters
-#cheat			- allow player to spawn items and heal self
+#item			- allow player to spawn items
+#heal			- allow player to heal
 #immunetokick	- player can't be kick
 #immunetoban	- player can't be banned
 #ignorecheatdetection - allow player to cheat (health/mana cheats) 
 #ignoregriefdetection - allow player to grief (use explosives, water, lava even if they dont have premission to)
 #usebanneditem - allows player to use banned items
+#manageusers	- Grab player info
+#whisper		- allow a player to whisper to other players
+#adminchat		- Colors and adds a prefix to the player's chats.
 
 default null canwater canlava warp
 vip default reservedslot
