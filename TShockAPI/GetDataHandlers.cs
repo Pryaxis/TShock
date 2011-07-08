@@ -245,6 +245,7 @@ namespace TShockAPI
             if (!args.Player.Group.HasPermission("canbuild"))
             {
                 args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                args.Player.SendTileSquare(x, y);
                 return true;
             }
             if (type == 1 || type == 3)
@@ -461,6 +462,7 @@ namespace TShockAPI
             if (!args.Player.Group.HasPermission("canbuild"))
             {
                 args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                args.Player.SendTileSquare(x, y);
                 return true;
             }
 
@@ -526,6 +528,7 @@ namespace TShockAPI
             if (!args.Player.Group.HasPermission("canbuild"))
             {
                 args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                args.Player.SendTileSquare(x, y);
                 return true;
             }
             if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
