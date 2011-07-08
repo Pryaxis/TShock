@@ -167,6 +167,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
+            //ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
             if (TShock.Config.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
@@ -1486,6 +1487,29 @@ namespace TShockAPI
             }
             else
                 args.Player.SendMessage("You haven't previously received any whispers. Please use /whisper to whisper to other people.", Color.Red);
+        }
+
+        private static void Annoy(CommandArgs args)
+        {
+            if (args.Parameters.Count != 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /annoy <player> <seconds to annoy>", Color.Red);
+                return;
+            }
+            int annoy = 5;
+            int.TryParse(args.Parameters[1], out annoy);
+
+            var players = Tools.FindPlayer(args.Parameters[0]);
+            if (players.Count == 0)
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            else if (players.Count > 1)
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            else
+            {
+                var ply = players[0];
+                args.Player.SendMessage("Annoying " + ply.Name + " for " + annoy.ToString() + " seconds.");
+                (new Thread(new ParameterizedThreadStart(ply.Whoopie))).Start(annoy);
+            }
         }
         #endregion General Commands
 

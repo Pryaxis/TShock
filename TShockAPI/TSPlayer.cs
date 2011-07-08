@@ -259,6 +259,33 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
+        public virtual void Whoopie(object time)
+        {
+            var time2 = (int)time;
+            var launch = DateTime.UtcNow;
+            var player = 0;
+            for (int i = 0; i < Main.maxPlayers; i++)
+                if (Main.player[i] != null & Main.player[i].active && i != Index)
+                    player = i;
+                    
+            var oriinv = Main.player[0].inventory[player];
+            while ((DateTime.UtcNow - launch).TotalSeconds < time2)
+            {
+                Main.player[0].inventory[player].SetDefaults("Whoopie Cushion");
+                SendData(TerrariaAPI.PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
+                Main.player[player].position = TPlayer.position;
+                Main.player[player].selectedItem = 0;
+                Main.player[player].controlUseItem = true;
+                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
+                Main.player[player].controlUseItem = false;
+                Main.player[player].controlJump = true;
+                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
+                System.Threading.Thread.Sleep(500);
+            }
+            Main.player[0].inventory[0] = oriinv;
+            SendData(TerrariaAPI.PacketTypes.PlayerSlot, oriinv.name, player, 0f);
+        }
+
         //Todo: Separate this into a few functions. SendTo, SendToAll, etc
         public void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {
