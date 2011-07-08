@@ -549,12 +549,12 @@ namespace TShockAPI
             int spawnx = args.Data.ReadInt32();
             int spawny = args.Data.ReadInt32();
 
-            if (args.Player.InitSpawn)
+            if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
             {
-                if (TShock.Config.HardcoreOnly && (TShock.Config.KickOnHardcoreOnlyDeath || TShock.Config.BanOnHardcoreOnlyDeath))
+                if ((TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
                     if (args.TPlayer.selectedItem != 50)
                     {
-                        if (TShock.Config.BanOnHardcoreOnlyDeath)
+                        if (TShock.Config.BanOnHardcoreDeath)
                         {
                             if (!Tools.Ban(args.Player, "Death results in a ban"))
                                 Tools.ForceKick(args.Player, "Death results in a ban, but can't ban you");

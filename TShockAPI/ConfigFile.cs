@@ -60,8 +60,8 @@ namespace TShockAPI
         public bool RememberLeavePos = false;
 
         public bool HardcoreOnly = false;
-        public bool KickOnHardcoreOnlyDeath = false;
-        public bool BanOnHardcoreOnlyDeath = false;
+        public bool KickOnHardcoreDeath = false;
+        public bool BanOnHardcoreDeath = false;
 
         public bool AutoSave = true;
 
