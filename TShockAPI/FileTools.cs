@@ -32,8 +32,6 @@ namespace TShockAPI
         public static string ItemBansPath { get { return Path.Combine(TShock.SavePath, "itembans.txt"); } }
         public static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
         public static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
-        public static string RegionsPath { get { return Path.Combine(TShock.SavePath, "regions.xml"); } }
-        public static string WarpsPath { get { return Path.Combine(TShock.SavePath, "warps.xml"); } }
 
         public static void CreateFile(string file)
         {
@@ -66,24 +64,6 @@ namespace TShockAPI
             CreateIfNot(UsersPath, Resources.users);
             CreateIfNot(ItemBansPath, Resources.itembans);
 
-            //Copies if using old paths (Remove in future releases, after everyone is running this version +)
-            if (File.Exists("regions.xml") && !File.Exists(RegionsPath))
-            {
-                File.Move("regions.xml", RegionsPath);
-            }
-            else
-            {
-                CreateIfNot(RegionsPath);
-            }
-            if (File.Exists("warps.xml") && !File.Exists(WarpsPath))
-            {
-                File.Move("warps.xml", WarpsPath);
-            }
-            else
-            {
-                CreateIfNot(WarpsPath);
-            }
-
             try
             {
                 if (File.Exists(ConfigPath))
@@ -95,7 +75,9 @@ namespace TShockAPI
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error in config file");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Log.Error("Config Exception");
                 Log.Error(ex.ToString());
             }
