@@ -35,10 +35,13 @@ namespace TShockAPI
         public static int ListenPort;
         public static bool ContinueServer = true;
         public static string Response = "";
+        private static bool Started = false;
 
         public static void StartThread()
         {
-            (new Thread(Start)).Start();
+            if (!Started)
+                (new Thread(Start)).Start();
+            Started = true;
         }
 
         public static void Start()
@@ -71,23 +74,20 @@ namespace TShockAPI
 
         private static void Listener()
         {
+            UdpClient listener = new UdpClient(ListenPort);
             while (ContinueServer)
             {
-                UdpClient listener = new UdpClient(ListenPort);
                 try
                 {
                     var listenEP = new IPEndPoint(IPAddress.Any, ListenPort);
                     lastRequest = DateTime.Now;
                     byte[] bytes = listener.Receive(ref listenEP);
-                    //Log.Info(string.Format("Recieved packet from {0}:{1}", listenEP.Address.ToString(), listenEP.Port.ToString()));
                     var packet = ParsePacket(bytes, listenEP);
                     listener.Send(packet, packet.Length, listenEP);
-                    listener.Close();
                 }
                 catch (Exception e)
                 {
                     Log.Error(e.ToString());
-                    listener.Close();
                 }
             }
         }
@@ -136,6 +136,7 @@ namespace TShockAPI
                                 response = ExecuteCommand(command);
                                 response += "\n" + Response;
                                 Response = "";
+                                response = response.TrimStart('\n');
                             }
                             else
                             {
@@ -160,7 +161,7 @@ namespace TShockAPI
                     if (packetstring.Split(' ').Length == 2)
                         challenge = packetstring.Split(' ')[1];
                     response = "infoResponse\n";
-                    var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\hostname\{0}",
+                    var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
                         TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                         Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                         TShock.Config.HardcoreOnly ? 1 : 0);
@@ -177,7 +178,7 @@ namespace TShockAPI
                     if (packetstring.Split(' ').Length == 2)
                         challenge = packetstring.Split(' ')[1];
                     response = "statusResponse\n";
-                    var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\hostname\{0}",
+                    var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
                         TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                         Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                         TShock.Config.HardcoreOnly ? 1 : 0) + "\n";
