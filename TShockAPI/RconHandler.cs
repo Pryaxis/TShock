@@ -90,6 +90,7 @@ namespace TShockAPI
                     Log.Error(e.ToString());
                 }
             }
+
         }
 
         private static string SendPacket(byte[] bytes, string hostname, int port)
@@ -123,14 +124,13 @@ namespace TShockAPI
                 {
                     if (!string.IsNullOrEmpty(Password))
                     {
-                        var args = packetstring.Split(' ');
-                        if (args.Length >= 3)
+                        var args = ParseParameters(packetstring);
+                        if (args.Count >= 3)
                         {
                             if (args[1] == Password)
                             {
-                                string command = "";
-                                for (int i = 2; i < args.Length; i++)
-                                    command += args[i] + " ";
+                                args[1] = "";
+                                string command = string.Join(" ", args.ToArray());
                                 command = command.TrimEnd(' ').TrimEnd('\0');
                                 Response = "";
                                 response = ExecuteCommand(command);
@@ -187,9 +187,7 @@ namespace TShockAPI
                     foreach (TSPlayer player in TShock.Players)
                     {
                         if (player != null && player.Active)
-                        {
                             statusstring += (string.Format("0 0 {0}\n", player.Name));
-                        }
                     }
                     response += statusstring;
                     print = false;
@@ -275,10 +273,10 @@ namespace TShockAPI
                 writer.Write(Encoding.UTF8.GetBytes(string.Format("print\n{0}", response)));
             else
                 writer.Write(Encoding.UTF8.GetBytes(response));
-            var packet = Encoding.UTF8.GetBytes(
-                (Encoding.UTF8.GetString(stream.GetBuffer())
-                .Substring(0, (int)stream.Length)));
-            return packet;
+            var trimmedpacket = new byte[(int)stream.Length];
+            var packet = stream.GetBuffer();
+            Array.Copy(packet, trimmedpacket, (int)stream.Length);
+            return trimmedpacket;
         }
 
         private static byte[] PadPacket(byte[] packet)
@@ -296,5 +294,82 @@ namespace TShockAPI
                 returnpacket = packet;
             return returnpacket;
         }
+
+        #region ParseParams
+        private static List<String> ParseParameters(string str)
+        {
+            var ret = new List<string>();
+            var sb = new StringBuilder();
+            bool instr = false;
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str[i];
+
+                if (instr)
+                {
+                    if (c == '\\')
+                    {
+                        if (i + 1 >= str.Length)
+                            break;
+                        c = GetEscape(str[++i]);
+                    }
+                    else if (c == '"')
+                    {
+                        ret.Add(sb.ToString());
+                        sb.Clear();
+                        instr = false;
+                        continue;
+                    }
+                    sb.Append(c);
+                }
+                else
+                {
+                    if (IsWhiteSpace(c))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            ret.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                    }
+                    else if (c == '"')
+                    {
+                        if (sb.Length > 0)
+                        {
+                            ret.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                        instr = true;
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+            }
+            if (sb.Length > 0)
+                ret.Add(sb.ToString());
+
+            return ret;
+        }
+        private static char GetEscape(char c)
+        {
+            switch (c)
+            {
+                case '\\':
+                    return '\\';
+                case '"':
+                    return '"';
+                case 't':
+                    return '\t';
+                default:
+                    return c;
+            }
+        }
+        private static bool IsWhiteSpace(char c)
+        {
+            return c == ' ' || c == '\t' || c == '\n';
+        }
+        #endregion
     }
 }
