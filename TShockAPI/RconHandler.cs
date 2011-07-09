@@ -31,7 +31,7 @@ namespace TShockAPI
     class RconHandler
     {
         public static string Password = "";
-        private static DateTime lastRequest;
+        private static DateTime LastRequest;
         public static int ListenPort;
         public static bool ContinueServer = true;
         public static string Response = "";
@@ -80,7 +80,7 @@ namespace TShockAPI
                 try
                 {
                     var listenEP = new IPEndPoint(IPAddress.Any, ListenPort);
-                    lastRequest = DateTime.Now;
+                    LastRequest = DateTime.Now;
                     byte[] bytes = listener.Receive(ref listenEP);
                     var packet = ParsePacket(bytes, listenEP);
                     listener.Send(packet, packet.Length, listenEP);
@@ -118,7 +118,7 @@ namespace TShockAPI
             var packetstring = Encoding.UTF8.GetString(PadPacket(bytes));
             var redirect = false;
             var print = true;
-            if ((DateTime.Now - lastRequest).Milliseconds >= 100)
+            if ((DateTime.Now - LastRequest).Milliseconds >= 100)
             {
                 if (packetstring.StartsWith("rcon") || packetstring.Substring(4).StartsWith("rcon") || packetstring.Substring(5).StartsWith("rcon"))
                 {
@@ -149,53 +149,55 @@ namespace TShockAPI
                     }
                     else
                     {
-                        response = "The server must set a password for clients to use rcon."; 
+                        response = "The server must set a password for clients to use rcon.";
                         Log.Info("No password for rcon set");
                     }
-                }
-                else if (packetstring.StartsWith("getinfo")
-                    || packetstring.Substring(4).StartsWith("getinfo")
-                    || packetstring.Substring(5).StartsWith("getinfo"))
-                {
-                    var challenge = "";
-                    if (packetstring.Split(' ').Length == 2)
-                        challenge = packetstring.Split(' ')[1];
-                    response = "infoResponse\n";
-                    var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
-                        TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                        Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                        TShock.Config.HardcoreOnly ? 1 : 0);
-                    if (challenge != "")
-                        infostring += @"\challenge\" + challenge;
-                    response += infostring;
-                    print = false;
-                }
-                else if (packetstring.StartsWith("getstatus")
-                    || packetstring.Substring(4).StartsWith("getstatus")
-                    || packetstring.Substring(5).StartsWith("getstatus"))
-                {
-                    var challenge = "";
-                    if (packetstring.Split(' ').Length == 2)
-                        challenge = packetstring.Split(' ')[1];
-                    response = "statusResponse\n";
-                    var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
-                        TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                        Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                        TShock.Config.HardcoreOnly ? 1 : 0) + "\n";
-                    if (challenge != "")
-                        statusstring += @"\challenge\" + challenge;
-                    foreach (TSPlayer player in TShock.Players)
-                    {
-                        if (player != null && player.Active)
-                            statusstring += (string.Format("0 0 {0}\n", player.Name));
-                    }
-                    response += statusstring;
-                    print = false;
                 }
                 else
                     redirect = true;
             }
-            if (!redirect) 
+            if (packetstring.StartsWith("getinfo")
+                || packetstring.Substring(4).StartsWith("getinfo")
+                || packetstring.Substring(5).StartsWith("getinfo"))
+            {
+                var challenge = "";
+                if (packetstring.Split(' ').Length == 2)
+                    challenge = packetstring.Split(' ')[1];
+                response = "infoResponse\n";
+                var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
+                    TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
+                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Config.HardcoreOnly ? 1 : 0);
+                if (challenge != "")
+                    infostring += @"\challenge\" + challenge;
+                response += infostring;
+                print = false;
+                redirect = false;
+            }
+            else if (packetstring.StartsWith("getstatus")
+                || packetstring.Substring(4).StartsWith("getstatus")
+                || packetstring.Substring(5).StartsWith("getstatus"))
+            {
+                var challenge = "";
+                if (packetstring.Split(' ').Length == 2)
+                    challenge = packetstring.Split(' ')[1];
+                response = "statusResponse\n";
+                var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
+                    TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
+                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Config.HardcoreOnly ? 1 : 0) + "\n";
+                if (challenge != "")
+                    statusstring += @"\challenge\" + challenge;
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    if (player != null && player.Active)
+                        statusstring += (string.Format("0 0 {0}\n", player.Name));
+                }
+                response += statusstring;
+                print = false;
+                redirect = false;
+            }
+            if (!redirect)
                 return (ConstructPacket(response, print));
             else
                 return (ConstructPacket("disconnect", false));
