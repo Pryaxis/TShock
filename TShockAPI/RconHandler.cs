@@ -79,7 +79,8 @@ namespace TShockAPI
 
         private static void Listener()
         {
-            listener = new UdpClient(ListenPort);
+            if (listener == null)
+                listener = new UdpClient(ListenPort);
             while (ContinueServer)
             {
                 try
