@@ -68,7 +68,7 @@ namespace TShockAPI
         public int MaximumLoginAttempts = 3;
 
         public string RconPassword = "";
-        public int RconPort = 7778;
+        public int RconPort = 7777;
 
         public static ConfigFile Read(string path)
         {

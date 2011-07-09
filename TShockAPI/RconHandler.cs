@@ -190,14 +190,14 @@ namespace TShockAPI
             else if (text.StartsWith("status"))
             {
                 Response += "map: " + Main.worldName + "\n";
-                Response += "num score ping name\tlastmsg address\tqport rate\n";
+                Response += "num score ping name            lastmsg address            qport rate\n";
                 int count = 0;
                 foreach (TSPlayer player in TShock.Players)
                 {
                     if (player != null && player.Active)
                     {
                         count++;
-                        Response += (string.Format("{0} 0 0 {1}({2})\t{3} {4}\t0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint.ToString())) + "\n";
+                        Response += (string.Format("{0} 0 0 {1}({2})  {3} {4} 0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint.ToString())) + "\n";
                     }
                 }
             }
@@ -213,7 +213,7 @@ namespace TShockAPI
                 return "AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled");
             }
             else
-                if (!Commands.HandleCommand(TSPlayer.Server, text))
+                if (!Commands.HandleCommand(TSPlayer.Server, text + "/"))
                     return "Invalid command.";
             return "";
         }
