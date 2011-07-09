@@ -43,7 +43,7 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' INTEGER(11) NOT NULL, 'Y1' INTEGER(11) NOT NULL, 'X2' INTEGER(11) NOT NULL, 'Y2' INTEGER(11) NOT NULL, 'RegionName' VARCHAR(32) NOT NULL, 'WorldID' VARCHAR(255) NOT NULL, 'UserIds' VARCHAR(255) NOT NULL, 'Protected' INTEGER(1));";
+                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'X2' NUMERIC, 'Y2' NUMERIC, 'RegionName' TEXT, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);";
                 com.ExecuteNonQuery();
             }
         }
@@ -139,7 +139,9 @@ namespace TShockAPI.DB
                             int Y2 = reader.Get<int>("Y2");
                             int Protected = reader.Get<int>("Protected");
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
-                            List<string> SplitIDs = ListIDs(MergedIDs);
+
+                            string[] SplitIDs = MergedIDs.Split(',');
+
                             if (X >= X1 &&
                                 X <= X2 &&
                                 Y >= Y1 &&
@@ -190,7 +192,7 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "SELECT * FROM Regions WHERE RegionName=@name WorldID=@worldid";
+                    com.CommandText = "SELECT * FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", regionName);
                     com.AddParameter("@worldid", Main.worldID.ToString());
 
@@ -198,7 +200,7 @@ namespace TShockAPI.DB
                     {
                         if (reader.Read())
                         {
-                            MergedIDs = DbExt.Get<string>(reader, "UserIds");
+                            MergedIDs = reader.Get<string>("UserIds");
                         }
                     }
 
@@ -207,10 +209,8 @@ namespace TShockAPI.DB
                     else
                         MergedIDs = MergedIDs + "," + ID;
 
-                    com.CommandText = "UPDATE Regions SET UserIds='@ids' WHERE RegionName=@name WorldID=@worldid";
+                    com.CommandText = "UPDATE Regions SET UserIds=@ids";
                     com.AddParameter("@ids", MergedIDs);
-                    com.AddParameter("@name", regionName);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
                     if (com.ExecuteNonQuery() > 0)
                         return true;
                     else
@@ -223,30 +223,51 @@ namespace TShockAPI.DB
                 return false;
             }
         }
+
+        public List<Region> ListAllRegions()
+        {
+            List<Region> Regions = new List<Region>();
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Regions";
+                    using (var reader = com.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("X2"), reader.Get<int>("Y2")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return Regions;
+        }
     }
 
     public class Region
     {
         public Rectangle RegionArea { get; set; }
         public string RegionName { get; set; }
-        public bool DisableBuild { get; set; }
-        public string WorldRegionName { get; set; }
+        public int DisableBuild { get; set; }
+        public string RegionWorldID { get; set; }
         public string RegionAllowedIDs { get; set; }
 
-        public Region(Rectangle region, string name, bool disablebuild, string worldname)
+        public Region(Rectangle region, string name, int disablebuild, string worldname)
         {
             RegionArea = region;
             RegionName = name;
             DisableBuild = disablebuild;
-            WorldRegionName = worldname;
+            RegionWorldID = worldname;
         }
 
         public Region()
         {
             RegionArea = Rectangle.Empty;
             RegionName = string.Empty;
-            DisableBuild = true;
-            WorldRegionName = string.Empty;
+            DisableBuild = 1;
+            RegionWorldID = string.Empty;
         }
     }
 }

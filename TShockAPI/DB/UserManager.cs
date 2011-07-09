@@ -137,8 +137,45 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+
             }
             return Tools.GetGroup("default");
+        }
+
+        public string GetUserID(string username = "", string IP = "")
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    if (username != "" && username != null)
+                    {
+                        com.CommandText = "SELECT * FROM Users WHERE Username=@name";
+                        com.AddParameter("@name", username);
+                    }
+                    else if (IP != "" && IP != null)
+                    {
+                        com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
+                        com.AddParameter("@ip", IP);
+                    }
+                    else
+                        return "0";
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string ID = reader.Get<string>("ID");
+                            return ID;
+                        }
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+
+            }
+            return "0";
         }
     }
 }

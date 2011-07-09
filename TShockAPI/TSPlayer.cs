@@ -42,6 +42,7 @@ namespace TShockAPI
         public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
+        public string UserName { get; set; }
 
         Player FakePlayer = null;
 

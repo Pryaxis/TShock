@@ -305,6 +305,7 @@ namespace TShockAPI
             if (exr[0] == encrPass)
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
+                args.Player.UserName = args.Parameters[0];
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                 return;
             }
@@ -964,16 +965,18 @@ namespace TShockAPI
                     if (args.Parameters.Count > 1)
                         int.TryParse(args.Parameters[1], out page);
                     var sb = new StringBuilder();
-                    if (TShock.Warps.Warps.Count > (15 * (page - 1)))
+                    List<Warp> Warps = TShock.Warps.ListAllWarps();
+
+                    if (Warps.Count > (15 * (page - 1)))
                     {
                         for (int j = (15 * (page - 1)); j < (15 * page); j++)
                         {
-                            if (TShock.Warps.Warps[j].WorldWarpName == Main.worldName)
+                            if (Warps[j].WorldWarpID == Main.worldID.ToString())
                             {
                                 if (sb.Length != 0)
                                     sb.Append(", ");
-                                sb.Append("/").Append(TShock.Warps.Warps[j].WarpName);
-                                if (j == TShock.Warps.Warps.Count - 1)
+                                sb.Append("/").Append(Warps[j].WarpName);
+                                if (j == Warps.Count - 1)
                                 {
                                     args.Player.SendMessage(sb.ToString(), Color.Yellow);
                                     break;
@@ -986,7 +989,7 @@ namespace TShockAPI
                             }
                         }
                     }
-                    if (TShock.Warps.Warps.Count > (15 * page))
+                    if (Warps.Count > (15 * page))
                     {
                         args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
                     }
@@ -1315,7 +1318,7 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            string playerIP = null;
+                            string playerID = "0";
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1328,9 +1331,18 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
+                            if ((playerID = TShock.Users.GetUserID(Tools.FindPlayer(playerName)[0].UserName)) != "0")
                             {
-                                if (TShock.Regions.AddNewUser(regionName, playerIP))
+                                if (TShock.Regions.AddNewUser(regionName, playerID))
+                                {
+                                    args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
+                                }
+                                else
+                                    args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                            }
+                            else if ((playerID = TShock.Users.GetUserID("",Tools.FindPlayer(playerName)[0].IP)) != "0")
+                            {
+                                if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
                                 }
@@ -1344,6 +1356,44 @@ namespace TShockAPI
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                        break;
+                    }
+                case "list":
+                    {
+                        args.Player.SendMessage("Current Regions:", Color.Green);
+                        int page = 1;
+                        if (args.Parameters.Count > 1)
+                            int.TryParse(args.Parameters[1], out page);
+                        var sb = new StringBuilder();
+
+                        List<Region> Regions = TShock.Regions.ListAllRegions();
+
+                        if (Regions.Count > (15 * (page - 1)))
+                        {
+                            for (int j = (15 * (page - 1)); j < (15 * page); j++)
+                            {
+                                if (Regions[j].RegionWorldID == Main.worldID.ToString())
+                                {
+                                    if (sb.Length != 0)
+                                        sb.Append(", ");
+                                    sb.Append(Regions[j].RegionName);
+                                    if (j == Regions.Count - 1)
+                                    {
+                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                        break;
+                                    }
+                                    if ((j + 1) % 5 == 0)
+                                    {
+                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                        sb.Clear();
+                                    }
+                                }
+                            }
+                        }
+                        if (Regions.Count > (15 * page))
+                        {
+                            args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                        }
                         break;
                     }
                 case "help":

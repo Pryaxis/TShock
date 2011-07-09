@@ -34,8 +34,6 @@ namespace TShockAPI.DB
     {
         private IDbConnection database;
 
-        public List<Warp> Warps = new List<Warp>();
-
         public WarpManager(IDbConnection db)
         {
             database = db;
@@ -43,7 +41,7 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'Warps' ('X' INTEGER(11) NOT NULL, 'Y' INTEGER(11) NOT NULL, 'WarpName' TEXT UNIQUE, 'WorldID' TEXT);";
+                    "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT UNIQUE, 'WorldID' TEXT);";
                 com.ExecuteNonQuery();
             }
         }
@@ -109,26 +107,47 @@ namespace TShockAPI.DB
             }
             return new Warp();
         }
+
+        public List<Warp> ListAllWarps()
+        {
+            List<Warp> Warps = new List<Warp>();
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Warps";
+                    using (var reader = com.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            Warps.Add(new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID")));
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return Warps;
+        }
     }
 
     public class Warp
     {
         public Vector2 WarpPos { get; set; }
         public string WarpName { get; set; }
-        public string WorldWarpName { get; set; }
+        public string WorldWarpID { get; set; }
 
         public Warp(Vector2 warppos, string name, string worldname)
         {
             WarpPos = warppos;
             WarpName = name;
-            WorldWarpName = worldname;
+            WorldWarpID = worldname;
         }
 
         public Warp()
         {
             WarpPos = Vector2.Zero;
             WarpName = null;
-            WorldWarpName = string.Empty;
+            WorldWarpID = string.Empty;
         }
     }
 }
