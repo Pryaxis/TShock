@@ -213,7 +213,7 @@ namespace TShockAPI
                 return "AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled");
             }
             else
-                if (!Commands.HandleCommand(TSPlayer.Server, text + "/"))
+                if (!Commands.HandleCommand(TSPlayer.Server, "/" + text))
                     return "Invalid command.";
             return "";
         }
