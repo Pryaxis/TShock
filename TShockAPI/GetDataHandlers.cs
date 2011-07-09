@@ -134,8 +134,6 @@ namespace TShockAPI
         {
             byte playerid = args.Data.ReadInt8();
             byte hair = args.Data.ReadInt8();
-            //Various colours here
-
             args.Data.Position += 21;
             bool hardcore = args.Data.ReadBoolean();
             string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
@@ -143,6 +141,11 @@ namespace TShockAPI
             if (hair >= Main.maxHair)
             {
                 Tools.ForceKick(args.Player, "Hair crash exploit.");
+                return true;
+            }
+            if (!Tools.ValidString(name))
+            {
+                Tools.ForceKick(args.Player, "Unprintable character in name");
                 return true;
             }
             if (name.Length > 32)

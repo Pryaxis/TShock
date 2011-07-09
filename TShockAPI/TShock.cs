@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
@@ -105,7 +106,7 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-            
+
 
             Bans.LoadBans();
             GetDataHandlers.InitGetDataHandler();
@@ -113,7 +114,7 @@ namespace TShockAPI
             RegionManager.ReadAllSettings();
             WarpsManager.ReadAllSettings();
             ItemManager.LoadBans();
-            RconHandler.StartThread();
+            //RconHandler.StartThread();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -277,7 +278,7 @@ namespace TShockAPI
                 return;
             }
 
-            
+
 
             if (!FileTools.OnWhitelist(player.IP))
             {
@@ -288,7 +289,7 @@ namespace TShockAPI
 
             Players[ply] = player;
 
-            
+
         }
 
         private void OnLeave(int ply)
@@ -319,14 +320,11 @@ namespace TShockAPI
                 return;
             }
 
-            foreach (var character in text)
+            if (!Tools.ValidString(text))
             {
-                if (Resources.mousefontchars.IndexOf(character) == -1)
-                {
-                    Tools.HandleCheater(tsplr, "Attempted to crash clients");
-                    e.Handled = true;
-                    return;
-                }
+                Tools.Kick(tsplr, "Unprintable character in chat");
+                e.Handled = true;
+                return;
             }
 
             if (msg.whoAmI != ply)

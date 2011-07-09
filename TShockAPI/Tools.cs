@@ -659,5 +659,20 @@ namespace TShockAPI
                 return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
         }
+
+        /// <summary>
+        /// Checks if the string contains any unprintable characters
+        /// </summary>
+        /// <param name="str">String to check</param>
+        /// <returns>True if the string only contains printable characters</returns>
+        public static bool ValidString(string str)
+        {
+            foreach (var c in str)
+            {
+                if (c < 0x20 || c > 0xA9)
+                    return false;
+            }
+            return true;
+        }
     }
 }
