@@ -319,6 +319,16 @@ namespace TShockAPI
                 return;
             }
 
+            foreach (var character in text)
+            {
+                if (Resources.mousefontchars.IndexOf(character) == -1)
+                {
+                    Tools.HandleCheater(tsplr, "Attempted to crash clients");
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             if (msg.whoAmI != ply)
             {
                 e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
