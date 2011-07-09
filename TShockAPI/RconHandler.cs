@@ -79,7 +79,7 @@ namespace TShockAPI
                     var listenEP = new IPEndPoint(IPAddress.Any, ListenPort);
                     lastRequest = DateTime.Now;
                     byte[] bytes = listener.Receive(ref listenEP);
-                    Log.Info(string.Format("Recieved packet from {0}:{1}", listenEP.Address.ToString(), listenEP.Port.ToString()));
+                    //Log.Info(string.Format("Recieved packet from {0}:{1}", listenEP.Address.ToString(), listenEP.Port.ToString()));
                     var packet = ParsePacket(bytes, listenEP);
                     listener.Send(packet, packet.Length, listenEP);
                     listener.Close();
@@ -132,12 +132,10 @@ namespace TShockAPI
                                 for (int i = 2; i < args.Length; i++)
                                     command += args[i] + " ";
                                 command = command.TrimEnd(' ').TrimEnd('\0');
+                                Response = "";
                                 response = ExecuteCommand(command);
-                                if (response == "" && Response != "")
-                                {
-                                    response = Response;
-                                    Response = "";
-                                }
+                                response += "\n" + Response;
+                                Response = "";
                             }
                             else
                             {
@@ -154,23 +152,54 @@ namespace TShockAPI
                         Log.Info("No password for rcon set");
                     }
                 }
-                /*else if (packetstring.StartsWith("getinfo")
+                else if (packetstring.StartsWith("getinfo")
                     || packetstring.Substring(4).StartsWith("getinfo")
                     || packetstring.Substring(5).StartsWith("getinfo"))
                 {
+                    var challenge = "";
+                    if (packetstring.Split(' ').Length == 2)
+                        challenge = packetstring.Split(' ')[1];
+                    response = "infoResponse\n";
+                    var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\hostname\{0}",
+                        TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
+                        Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                        TShock.Config.HardcoreOnly ? 1 : 0);
+                    if (challenge != "")
+                        infostring += @"\challenge\" + challenge;
+                    response += infostring;
+                    print = false;
                 }
                 else if (packetstring.StartsWith("getstatus")
                     || packetstring.Substring(4).StartsWith("getstatus")
                     || packetstring.Substring(5).StartsWith("getstatus"))
                 {
-                }*/
+                    var challenge = "";
+                    if (packetstring.Split(' ').Length == 2)
+                        challenge = packetstring.Split(' ')[1];
+                    response = "statusResponse\n";
+                    var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\hostname\{0}",
+                        TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
+                        Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                        TShock.Config.HardcoreOnly ? 1 : 0) + "\n";
+                    if (challenge != "")
+                        statusstring += @"\challenge\" + challenge;
+                    foreach (TSPlayer player in TShock.Players)
+                    {
+                        if (player != null && player.Active)
+                        {
+                            statusstring += (string.Format("0 0 {0}\n", player.Name));
+                        }
+                    }
+                    response += statusstring;
+                    print = false;
+                }
                 else
                     redirect = true;
             }
             if (!redirect) 
                 return (ConstructPacket(response, print));
             else
-                return (ConstructPacket("", false));
+                return (ConstructPacket("disconnect", false));
         }
 
         private static string ExecuteCommand(string text)
@@ -182,6 +211,8 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
+                WorldGen.saveWorld(false);
+                Netplay.disconnect = true;
                 return "Server shutting down.";
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
@@ -223,8 +254,10 @@ namespace TShockAPI
                 return "AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled");
             }
             else if (text.StartsWith("/"))
+            {
                 if (!Commands.HandleCommand(TSPlayer.Server, text))
                     return "Invalid command.";
+            }
             else
                 if (!Commands.HandleCommand(TSPlayer.Server, "/" + text))
                     return "Invalid command.";
@@ -240,7 +273,7 @@ namespace TShockAPI
             if (print)
                 writer.Write(Encoding.UTF8.GetBytes(string.Format("print\n{0}", response)));
             else
-                writer.Write(Encoding.UTF8.GetBytes("disconnect\n"));
+                writer.Write(Encoding.UTF8.GetBytes(response));
             var packet = Encoding.UTF8.GetBytes(
                 (Encoding.UTF8.GetString(stream.GetBuffer())
                 .Substring(0, (int)stream.Length)));

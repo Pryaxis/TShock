@@ -374,8 +374,6 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
-                WorldGen.saveWorld(false);
-                Netplay.disconnect = true;
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {

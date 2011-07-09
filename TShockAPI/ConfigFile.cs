@@ -47,6 +47,7 @@ namespace TShockAPI
         public bool SpamChecks = false;
         public bool DisableBuild = false;
         public int TileThreshold = 20;
+        public string ServerName = "";
 
         public float[] AdminChatRGB = { 255, 0, 0 };
         public string AdminChatPrefix = "(Admin) ";
