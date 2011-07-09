@@ -1593,7 +1593,7 @@ namespace TShockAPI
                 var item = items[0];
                 if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    if (args.Player.InventorySlotAvailable)
+                    if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
                     {
                         args.Player.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
                         args.Player.SendMessage(string.Format("Got some {0}.", item.name));
@@ -1656,7 +1656,7 @@ namespace TShockAPI
                     else
                     {
                         var plr = players[0];
-                        if (plr.InventorySlotAvailable)
+                        if (plr.InventorySlotAvailable || item.name.Contains("Coin"))
                         {
                             plr.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
                             args.Player.SendMessage(string.Format("Gave {0} some {1}.", plr.Name, item.name));
