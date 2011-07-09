@@ -47,7 +47,6 @@ namespace TShockAPI
         public bool SpamChecks = false;
         public bool DisableBuild = false;
         public int TileThreshold = 20;
-        public string ServerName = "";
 
         public float[] AdminChatRGB = { 255, 0, 0 };
         public string AdminChatPrefix = "(Admin) ";
@@ -70,6 +69,8 @@ namespace TShockAPI
 
         public string RconPassword = "";
         public int RconPort = 7777;
+        public string ServerName = "";
+        public string MasterServer = "127.0.0.1";
 
         public static ConfigFile Read(string path)
         {
