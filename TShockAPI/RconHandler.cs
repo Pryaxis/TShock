@@ -154,6 +154,16 @@ namespace TShockAPI
                         Log.Info("No password for rcon set");
                     }
                 }
+                /*else if (packetstring.StartsWith("getinfo")
+                    || packetstring.Substring(4).StartsWith("getinfo")
+                    || packetstring.Substring(5).StartsWith("getinfo"))
+                {
+                }
+                else if (packetstring.StartsWith("getstatus")
+                    || packetstring.Substring(4).StartsWith("getstatus")
+                    || packetstring.Substring(5).StartsWith("getstatus"))
+                {
+                }*/
                 else
                     redirect = true;
             }
@@ -212,6 +222,9 @@ namespace TShockAPI
                 Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
                 return "AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled");
             }
+            else if (text.StartsWith("/"))
+                if (!Commands.HandleCommand(TSPlayer.Server, text))
+                    return "Invalid command.";
             else
                 if (!Commands.HandleCommand(TSPlayer.Server, "/" + text))
                     return "Invalid command.";
