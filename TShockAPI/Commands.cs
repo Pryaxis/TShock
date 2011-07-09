@@ -301,7 +301,7 @@ namespace TShockAPI
             }
 
             string encrPass = Tools.HashPassword(args.Parameters[1]);
-            string[] exr = Tools.FetchHashedPasswordAndGroup(args.Parameters[0]);
+            string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
             if (exr[0] == encrPass)
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
@@ -329,21 +329,28 @@ namespace TShockAPI
             {
                 if (args.Parameters[0] == "add")
                 {
+                    int returnval = 0;
                     if (args.Parameters[1].Split(':').Length == 2)
                     {
-                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                        tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[1]) + " " + args.Parameters[2]);
-                        tw.Close();
-                        args.Player.SendMessage("This player can now login!", Color.Green);
+                        if ((returnval = TShock.Users.AddUser("", args.Parameters[1].Split(':')[0], args.Parameters[1].Split(':')[1], args.Parameters[2])) == 1)
+                            args.Player.SendMessage("This player can now login!", Color.Green);
+                        else if(returnval == 2)
+                            args.Player.SendMessage("Invalid Group", Color.Green);
+                        else
+                            args.Player.SendMessage("Could not add user", Color.Green);
                         return;
                     }
                     else if (args.Parameters[1].Split(':').Length == 1)
                     {
-                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                        tw.WriteLine("\n" + args.Parameters[1] + " " + args.Parameters[2]);
-                        tw.Close();
-                        args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
-                        args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
+                        if ((returnval = TShock.Users.AddUser(args.Parameters[1], "", "", args.Parameters[2])) == 1)
+                        {
+                            args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
+                            args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
+                        }
+                        else if (returnval == 2)
+                            args.Player.SendMessage("Invalid Group", Color.Green);
+                        else
+                            args.Player.SendMessage("Could not add user", Color.Green);
                         return;
                     }
                     else

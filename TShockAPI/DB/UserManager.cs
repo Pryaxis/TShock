@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Community.CsharpSqlite.SQLiteClient;
 
 namespace TShockAPI.DB
 {
@@ -35,9 +36,109 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE  TABLE  IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Username' VARCHAR(32) UNIQUE , 'Password' CHAR(32), 'Group' VARCHAR(50));";
+                    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY, 'Username' TEXT UNIQUE, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
+                com.ExecuteNonQuery();
+
+                com.CommandText = "INSERT INTO Users (UserGroup, IP) VALUES (@group, @ip);";
+                com.AddParameter("@group", "superadmin");
+                com.AddParameter("@ip", "127.0.0.1");
                 com.ExecuteNonQuery();
             }
+        }
+
+        public int AddUser(string ip = "" , string name = "", string password = "", string group = "default")
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@name, @password, @group, @ip);";
+                    com.AddParameter("@name", name.ToLower());
+                    com.AddParameter("@password", Tools.HashPassword(password));
+
+                    if(TShock.Groups.GroupExists(group))
+                        com.AddParameter("@group", group);
+                    else
+                        //Return code 2 (Group not exist)
+                        return 2;
+
+                    com.AddParameter("@ip", ip);
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.RecordsAffected > 0)
+                            //Return code 1 (User added)
+                            return 1;
+                        else
+                            //Return code 0 (Add failed)
+                            return 0;
+                    }
+                }                
+            }
+            catch (SqliteExecutionException ex)
+            {
+                //Return code 0 (Add failed)
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Fetches the hashed password and group for a given username
+        /// </summary>
+        /// <param name="username">string username</param>
+        /// <returns>string[] {password, group}</returns>
+        public string[] FetchHashedPasswordAndGroup(string username)
+        {
+            string[] returndata = new string[2];
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Users WHERE Username=@name";
+                    com.AddParameter("@name", username.ToLower());
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            returndata[0] = reader.Get<string>("Password");
+                            returndata[1] = reader.Get<string>("UserGroup");
+                            return returndata;
+                        }
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {                
+            }
+            return returndata;
+        }
+
+        /// <summary>
+        /// Returns a Group for a ip from the database
+        /// </summary>
+        /// <param name="ply">string ip</param>
+        public Group GetGroupForIP(string ip)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
+                    com.AddParameter("@ip", ip);
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string group = reader.Get<string>("UserGroup");
+                            return Tools.GetGroup(group);
+                        }
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+            }
+            return Tools.GetGroup("default");
         }
     }
 }

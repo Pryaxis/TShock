@@ -47,6 +47,8 @@ namespace TShockAPI
         public static WarpManager Warps;
         public static RegionManager Regions;
         public static BackupManager Backups;
+        public static GroupManager Groups;
+        public static UserManager Users;
 
         public static ConfigFile Config { get; set; }
 
@@ -114,6 +116,8 @@ namespace TShockAPI
             Bans = new BanManager(DB);
             Warps = new WarpManager(DB);
             Regions = new RegionManager(DB);
+            Groups = new GroupManager(DB);
+            Users = new UserManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -270,7 +274,7 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
-            player.Group = Tools.GetGroupForIP(player.IP);
+            player.Group = TShock.Users.GetGroupForIP(player.IP);
 
             if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
@@ -294,8 +298,6 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
-
-
         }
 
         private void OnLeave(int ply)

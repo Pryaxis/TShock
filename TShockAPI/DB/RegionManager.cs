@@ -43,7 +43,7 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS \"Regions\" (\"X1\" INTEGER(11) NOT NULL, \"Y1\" INTEGER(11) NOT NULL, \"X2\" INTEGER(11) NOT NULL, \"Y2\" INTEGER(11) NOT NULL, \"RegionName\" VARCHAR(32) NOT NULL, \"WorldID\" VARCHAR(255) NOT NULL, \"UserIds\" VARCHAR(255) NOT NULL, \"Protected\" INTEGER(1));";
+                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' INTEGER(11) NOT NULL, 'Y1' INTEGER(11) NOT NULL, 'X2' INTEGER(11) NOT NULL, 'Y2' INTEGER(11) NOT NULL, 'RegionName' VARCHAR(32) NOT NULL, 'WorldID' VARCHAR(255) NOT NULL, 'UserIds' VARCHAR(255) NOT NULL, 'Protected' INTEGER(1));";
                 com.ExecuteNonQuery();
             }
         }
@@ -101,7 +101,7 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "UPDATE Regions SET Protected='@bool' WHERE RegionName=@name WorldID=@worldid";
+                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name WorldID=@worldid";
                     com.AddParameter("@name", name);
                     if (state)                    
                         com.AddParameter("@bool", 1);

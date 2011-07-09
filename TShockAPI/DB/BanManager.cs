@@ -37,7 +37,7 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS \"Bans\" (\"IP\" VARCHAR(15) NOT NULL  UNIQUE , \"Name\" VARCHAR(32) NOT NULL , \"Reason\" VARCHAR(255) NOT NULL );";
+                    "CREATE TABLE IF NOT EXISTS 'Bans' ('IP' TEXT UNIQUE , 'Name' TEXT, 'Reason' TEXT);";
                 com.ExecuteNonQuery();
             }
         }
