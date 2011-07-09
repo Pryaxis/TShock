@@ -299,7 +299,7 @@ namespace TShockAPI
             for (int i = 0; i < Main.maxPlayers; i++)
                 if (Main.player[i] != null & Main.player[i].active && i != Index)
                     player = i;
-                    
+            SendMessage("You are now being annoyed.", Color.Red);
             var oriinv = Main.player[0].inventory[player];
             while ((DateTime.UtcNow - launch).TotalSeconds < time2)
             {
