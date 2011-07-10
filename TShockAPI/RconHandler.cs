@@ -135,9 +135,9 @@ namespace TShockAPI
                         {
                             if (args[1] == Password)
                             {
-                                args[1] = "";
+                                args[1] = args[0] = "";
                                 string command = string.Join(" ", args.ToArray());
-                                command = command.TrimEnd(' ').TrimEnd('\0');
+                                command = command.TrimEnd(' ').TrimEnd('\0').TrimStart(' ');
                                 Log.ConsoleInfo("Rcon from " + EP.ToString() + ":" + command);
                                 Response = "";
                                 response = ExecuteCommand(command);
@@ -171,10 +171,10 @@ namespace TShockAPI
                 if (packetstring.Split(' ').Length == 2)
                     challenge = packetstring.Split(' ')[1];
                 response = "infoResponse\n";
-                var infostring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
+                var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0);
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString());
                 if (challenge != "")
                     infostring += @"\challenge\" + challenge;
                 response += infostring;
@@ -189,10 +189,10 @@ namespace TShockAPI
                 if (packetstring.Split(' ').Length == 2)
                     challenge = packetstring.Split(' ')[1];
                 response = "statusResponse\n";
-                var statusstring = string.Format(@"\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TER\protocol\100\sv_hostname\{0}",
+                var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0) + "\n";
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString()) + "\n";
                 if (challenge != "")
                     statusstring += @"\challenge\" + challenge;
                 foreach (TSPlayer player in TShock.Players)
