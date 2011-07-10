@@ -632,7 +632,7 @@ namespace TShockAPI
             int tiley = args.Data.ReadInt32();
             // ignoring text
 
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            if ((!args.Player.Group.HasPermission("editsigns") && !args.Player.Group.HasPermission("editspawn")) && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
                 args.Player.SendMessage("Sign protected from changes.", Color.Red);
                 return true;
