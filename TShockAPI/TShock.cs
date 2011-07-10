@@ -49,6 +49,7 @@ namespace TShockAPI
         public static BackupManager Backups;
         public static GroupManager Groups;
         public static UserManager Users;
+        public static ItemManager Itembans;
 
         public static ConfigFile Config { get; set; }
 
@@ -118,9 +119,9 @@ namespace TShockAPI
             Regions = new RegionManager(DB);
             Groups = new GroupManager(DB);
             Users = new UserManager(DB);
+            Itembans = new ItemManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
-
 
             GameHooks.PostInitialize += OnPostInit;
             GameHooks.Update += OnUpdate;
@@ -134,7 +135,6 @@ namespace TShockAPI
 
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
-            ItemManager.LoadBans();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -260,7 +260,7 @@ namespace TShockAPI
                         var inv = player.TPlayer.inventory;
                         for (int i = 0; i < inv.Length; i++)
                         {
-                            if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
+                            if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
                             {
                                 player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
                                 break;
@@ -383,6 +383,15 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
+                var sb = new StringBuilder();
+                for (int i = 0; i < Main.maxItemTypes; i++)
+                {
+                    string itemName = Main.itemName[i];
+                    string itemID = (i).ToString();
+                    sb.Append("ItemList.Add(\"" + itemName + "\");").AppendLine();
+                }
+
+                File.WriteAllText("item.txt", sb.ToString());
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
@@ -413,7 +422,6 @@ namespace TShockAPI
                 if (Commands.HandleCommand(TSPlayer.Server, text))
                     e.Handled = true;
             }
-
         }
 
         private void GetData(GetDataEventArgs e)

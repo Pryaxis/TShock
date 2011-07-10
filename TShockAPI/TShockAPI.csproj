@@ -77,11 +77,11 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\BanManager.cs" />
+    <Compile Include="DB\ItemManager.cs" />
     <Compile Include="DB\DbExt.cs" />
     <Compile Include="DB\GroupManager.cs" />
     <Compile Include="DB\UserManager.cs" />
     <Compile Include="IPackable.cs" />
-    <Compile Include="ItemManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="FileTools.cs" />

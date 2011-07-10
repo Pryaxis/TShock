@@ -239,12 +239,16 @@ namespace TShockAPI
             var found = new List<Item>();
             for (int i = 1; i < Main.maxItemTypes; i++)
             {
-                Item item = new Item();
-                item.SetDefaults(i);
-                if (item.name.ToLower() == name.ToLower())
-                    return new List<Item> { item };
-                if (item.name.ToLower().StartsWith(name.ToLower()))
-                    found.Add(item);
+                try
+                {
+                    Item item = new Item();
+                    item.SetDefaults(i);
+                    if (item.name.ToLower() == name.ToLower())
+                        return new List<Item> { item };
+                    if (item.name.ToLower().StartsWith(name.ToLower()))
+                        found.Add(item);
+                }
+                catch { }
             }
             return found;
         }
