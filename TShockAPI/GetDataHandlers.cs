@@ -286,7 +286,7 @@ namespace TShockAPI
             }
             if (type == 0)
             {
-                if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)) && Main.tile[x, y].type == 0x0A || Main.tile[x, y].type == 0x0B) //Door
+                if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)) && (Main.tile[x, y].type == 0x0A || Main.tile[x, y].type == 0x0B)) //Door
                 {
                     args.Player.SendTileSquare(x, y);
                     if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
