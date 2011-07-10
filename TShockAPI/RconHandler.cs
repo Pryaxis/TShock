@@ -80,7 +80,19 @@ namespace TShockAPI
         private static void Listener()
         {
             if (listener == null)
-                listener = new UdpClient(ListenPort);
+                try
+                {
+                    listener = new UdpClient(ListenPort);
+                }
+                catch (SocketException e)
+                {
+                    if (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
+                        Log.ConsoleError("Could not bind to " + ListenPort.ToString() + ". Are you sure you don't have another instance running?");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.ToString());
+                }
             while (ContinueServer)
             {
                 try
@@ -171,10 +183,11 @@ namespace TShockAPI
                 if (packetstring.Split(' ').Length == 2)
                     challenge = packetstring.Split(' ')[1];
                 response = "infoResponse\n";
-                var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}",
+                var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString());
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString(),
+                    Netplay.password != "" ? 1 : 0);
                 if (challenge != "")
                     infostring += @"\challenge\" + challenge;
                 response += infostring;
@@ -189,10 +202,11 @@ namespace TShockAPI
                 if (packetstring.Split(' ').Length == 2)
                     challenge = packetstring.Split(' ')[1];
                 response = "statusResponse\n";
-                var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}",
+                var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString()) + "\n";
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString(),
+                    Netplay.password != "" ? 1 : 0) + "\n";
                 if (challenge != "")
                     statusstring += @"\challenge\" + challenge;
                 foreach (TSPlayer player in TShock.Players)
@@ -313,7 +327,19 @@ namespace TShockAPI
                 {
                     var packet = ConstructPacket("heartbeat TERRARIA", false);
                     if (listener == null)
-                        listener = new UdpClient(ListenPort);
+                        try
+                        {
+                            listener = new UdpClient(ListenPort);
+                        }
+                        catch (SocketException e)
+                        {
+                            if (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
+                                Log.ConsoleError("Could not bind to " + ListenPort.ToString() + ". Are you sure you don't have another instance running?");
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e.ToString());
+                        }
                     listener.Send(packet, packet.Length, TShock.Config.MasterServer, 27950);
                     LastHeartbeat = DateTime.UtcNow;
                 }
