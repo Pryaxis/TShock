@@ -36,12 +36,13 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY, 'Username' TEXT UNIQUE, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
+                    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY UNIQUE, 'Username' TEXT UNIQUE, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
                 com.ExecuteNonQuery();
 
-                com.CommandText = "INSERT INTO Users (UserGroup, IP) VALUES (@group, @ip);";
-                com.AddParameter("@group", "superadmin");
+                com.CommandText = "INSERT OR IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+                com.AddParameter("@id", 1);
                 com.AddParameter("@ip", "127.0.0.1");
+                com.AddParameter("@group", "superadmin");
                 com.ExecuteNonQuery();
             }
         }
