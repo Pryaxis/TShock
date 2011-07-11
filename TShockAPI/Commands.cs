@@ -160,7 +160,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(ThirdPerson, "me"));
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
-            ChatCommands.Add(new Command("logs", Rules, "displaylogs"));
+            ChatCommands.Add(new Command("logs", DisplayLogs, "displaylogs"));
             ChatCommands.Add(new Command("manageusers", ManageUsers, "user") { DoLog = false });
             ChatCommands.Add(new Command("manageusers", GrabUserIP, "ip"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
@@ -379,8 +379,14 @@ namespace TShockAPI
                 args.Player.SendMessage("More than one player matched your query.", Color.Red);
                 return;
             }
-
-            args.Player.SendMessage(players[0].IP, Color.Green);
+            try
+            {
+                args.Player.SendMessage(players[0].IP, Color.Green);
+            }
+            catch (Exception)
+            {
+                args.Player.SendMessage("Invalid player.", Color.Red);
+            }
     }
 
         private static void Kick(CommandArgs args)
