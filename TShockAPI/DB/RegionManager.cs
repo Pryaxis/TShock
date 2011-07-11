@@ -241,6 +241,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return Regions;
         }

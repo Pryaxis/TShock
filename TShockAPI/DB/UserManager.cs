@@ -1,4 +1,5 @@
-﻿/*   
+﻿
+/*   
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -79,6 +80,7 @@ namespace TShockAPI.DB
             catch (SqliteExecutionException ex)
             {
                 //Return code 0 (Add failed)
+                Log.Error(ex.ToString());
                 return 0;
             }
         }
@@ -109,7 +111,8 @@ namespace TShockAPI.DB
                 }
             }
             catch (SqliteExecutionException ex)
-            {                
+            {
+                Log.Error(ex.ToString());
             }
             return returndata;
         }
@@ -138,7 +141,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
-
+                Log.Error(ex.ToString());
             }
             return Tools.GetGroup("default");
         }
@@ -174,7 +177,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
-
+                Log.Error(ex.ToString());
             }
             return "0";
         }

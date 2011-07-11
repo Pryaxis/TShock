@@ -59,6 +59,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return null;
         }
@@ -83,6 +84,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return null;
         }
@@ -103,6 +105,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return false;
         }
@@ -121,6 +124,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return false;
         }
@@ -137,6 +141,7 @@ namespace TShockAPI.DB
             }
             catch (SqliteExecutionException ex)
             {
+                Log.Error(ex.ToString());
             }
             return false;
         }
