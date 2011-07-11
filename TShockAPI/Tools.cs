@@ -30,7 +30,7 @@ namespace TShockAPI
     internal class Tools
     {
         public static Random Random = new Random();
-        private static List<Group> groups = new List<Group>();
+        //private static List<Group> groups = new List<Group>();
 
         /// <summary>
         /// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -446,69 +446,6 @@ namespace TShockAPI
             tr.Close();
         }
 
-        public static void LoadGroups()
-        {
-            groups = new List<Group>();
-            groups.Add(new SuperAdminGroup());
-
-            StreamReader sr = new StreamReader(FileTools.GroupsPath);
-            string data = sr.ReadToEnd();
-            data = data.Replace("\r", "");
-            string[] lines = data.Split('\n');
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("#"))
-                {
-                    continue;
-                }
-                string[] args = lines[i].Split(' ');
-                if (args.Length < 2)
-                {
-                    continue;
-                }
-                string name = args[0];
-                string parent = args[1];
-                Group group = null;
-                if (parent.Equals("null"))
-                {
-                    group = new Group(name);
-                }
-                else
-                {
-                    for (int j = 0; j < groups.Count; j++)
-                    {
-                        if (groups[j].Name.Equals(parent))
-                        {
-                            group = new Group(name, groups[j]);
-                            break;
-                        }
-                    }
-                }
-                if (group == null)
-                {
-                    throw new Exception("Something in the groups.txt is fucked up");
-                }
-                else
-                {
-                    for (int j = 2; j < args.Length; j++)
-                    {
-                        string permission = args[j];
-                        if (permission.StartsWith("!"))
-                        {
-                            group.NegatePermission(args[j].Replace("!", ""));
-                        }
-                        else
-                        {
-                            group.AddPermission(args[j]);
-                        }
-                    }
-                }
-                groups.Add(group);
-            }
-            sr.Close();
-        }
-
         /// <summary>
         /// Returns a Group from the name of the group
         /// </summary>
@@ -516,24 +453,22 @@ namespace TShockAPI
         public static Group GetGroup(string groupName)
         {
             //first attempt on cached groups
-            for (int i = 0; i < groups.Count; i++)
+            for (int i = 0; i < TShock.Groups.groups.Count; i++)
             {
-                if (groups[i].Name.Equals(groupName))
+                if (TShock.Groups.groups[i].Name.Equals(groupName))
                 {
-                    return groups[i];
+                    return TShock.Groups.groups[i];
                 }
             }
             //shit, it didnt work, reload and try again
-            LoadGroups();
-
-            for (int i = 0; i < groups.Count; i++)
+            TShock.Groups.LoadPermisions();
+            for (int i = 0; i < TShock.Groups.groups.Count; i++)
             {
-                if (groups[i].Name.Equals(groupName))
+                if (TShock.Groups.groups[i].Name.Equals(groupName))
                 {
-                    return groups[i];
+                    return TShock.Groups.groups[i];
                 }
             }
-
             return new Group("null");
         }
 
