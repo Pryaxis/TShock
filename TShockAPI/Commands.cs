@@ -312,6 +312,7 @@ namespace TShockAPI
                 args.Player.UserName = args.Parameters[0];
                 args.Player.IsLoggedIn = true;
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
+                Log.ConsoleInfo(args.Player.Name + " authenticated successfully as " + args.Parameters[0] + ".");
                 return;
             }
             else
