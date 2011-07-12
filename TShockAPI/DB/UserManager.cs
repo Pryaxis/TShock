@@ -94,6 +94,41 @@ namespace TShockAPI.DB
             }
         }
 
+        public int RemoveUser(string inputUser, bool ip)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    if (ip)
+                    {
+                        com.CommandText = "DELETE FROM Users WHERE IP=`@ip`";
+                        com.AddParameter("@ip", inputUser.ToLower());
+                    } else
+                    {
+                        com.CommandText = "DELETE FROM Users WHERE Username=`@name`";
+                        com.AddParameter("@name", inputUser.ToLower());
+                    }
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.RecordsAffected > 0)
+                            //Return code 1 (User removed)
+                            return 1;
+                        else
+                            //Return code 0 (Remove failed)
+                            return 0;
+                    }
+                }
+            }
+            catch (SqliteExecutionException ex)
+            {
+                //Return code 0 (Remove failed)
+                Log.Error(ex.ToString());
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Fetches the hashed password and group for a given username
         /// </summary>

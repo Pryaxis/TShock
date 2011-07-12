@@ -359,10 +359,10 @@ namespace TShockAPI
                             args.Player.SendMessage("Could not add user", Color.Green);
                         return;
                     }
-                    else
-                    {
-                        args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
-                    }
+                   args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
+                } else if (args.Parameters[0] == "del")
+                {
+                    
                 }
             }
         }
