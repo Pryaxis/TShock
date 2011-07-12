@@ -95,7 +95,6 @@ namespace TShockAPI
 #endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            Bans = new BanManager(FileTools.BansPath);
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 
             ConfigFile.ConfigRead += OnConfigRead;
