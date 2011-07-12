@@ -247,7 +247,10 @@ namespace TShockAPI
             byte tiletype = args.Data.ReadInt8();
             if (!args.Player.Group.HasPermission("canbuild"))
             {
-                args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                if (!args.Player.HasBeenSpammedWithBuildMessage)
+                {
+                    args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                }
                 args.Player.SendTileSquare(x, y);
                 return true;
             }

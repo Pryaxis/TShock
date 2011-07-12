@@ -47,7 +47,7 @@ namespace TShockAPI
         public int LoginAttempts { get; set; }
         public Vector2 TeleportCoords = new Vector2(-1, -1);
         public string UserName { get; set; }
-
+        public bool HasBeenSpammedWithBuildMessage = false;
         Player FakePlayer = null;
 
         public bool RealPlayer
