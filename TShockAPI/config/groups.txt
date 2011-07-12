@@ -42,6 +42,8 @@
 #whisper		- allow player to whisper to other players
 #adminchat		- Colors and adds a prefix to the player's chats.
 #canbuild		- allow player to build (does not bypass other checks)
+#openchests		- allow player to open protected chests
+#editsigns		- allow player to edit protected signs
 
 default null canwater canlava warp canbuild
 vip default reservedslot

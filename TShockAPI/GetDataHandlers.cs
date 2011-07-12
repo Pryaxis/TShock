@@ -110,6 +110,8 @@ namespace TShockAPI
                 {PacketTypes.PlayerKillMe, HandlePlayerKillMe},
                 {PacketTypes.LiquidSet, HandleLiquidSet},
                 {PacketTypes.PlayerSpawn, HandleSpawn},
+                {PacketTypes.ChestGetContents, HandleChestGetContents},
+                {PacketTypes.SignNew, HandleSignNew},
             };
         }
 
@@ -284,6 +286,18 @@ namespace TShockAPI
                 }
                 args.Player.SendTileSquare(x, y);
                 return true;
+            }
+            if (type == 0)
+            {
+                if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)) && (Main.tile[x, y].type == 0x0A || Main.tile[x, y].type == 0x0B)) //Door
+                {
+                    args.Player.SendTileSquare(x, y);
+                    if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                    {
+                        args.Player.SendMessage("Door protected from changes", Color.Red);
+                        return true;
+                    }
+                }
             }
             if (TShock.Config.DisableBuild)
             {
@@ -521,7 +535,7 @@ namespace TShockAPI
             if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
                 return false;
 
-            if (Main.tile[tilex, tiley].type != 0x15) //Chest
+            if (Main.tile[tilex, tiley].type != 0x15) //if not Chest
             {
                 Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
                                         tilex, tiley, Main.tile[tilex, tiley].type));
@@ -531,6 +545,13 @@ namespace TShockAPI
             if (!args.Player.Group.HasPermission("canbuild"))
             {
                 args.Player.SendMessage("You do not have permission to build!", Color.Red);
+                args.Player.SendTileSquare(tilex, tiley);
+                return true;
+            }
+            //protect empty chests
+            if (Main.tile[tilex, tiley].type == 0x15 && !args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            {
+                args.Player.SendMessage("Chest protected from changes.", Color.Red);
                 args.Player.SendTileSquare(tilex, tiley);
                 return true;
             }
@@ -593,5 +614,36 @@ namespace TShockAPI
 
             return false;
         }
+
+        private static bool HandleChestGetContents(GetDataHandlerArgs args)
+        {
+            int tilex = args.Data.ReadInt32();
+            int tiley = args.Data.ReadInt32();
+
+            if ((!args.Player.Group.HasPermission("openchests") && !args.Player.Group.HasPermission("editspawn")) && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            {
+                args.Player.SendMessage("This Chest is protected.", Color.Yellow);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool HandleSignNew(GetDataHandlerArgs args)
+        {
+            short signId = args.Data.ReadInt16();
+            int tilex = args.Data.ReadInt32();
+            int tiley = args.Data.ReadInt32();
+            // ignoring text
+
+            if ((!args.Player.Group.HasPermission("editsigns") && !args.Player.Group.HasPermission("editspawn")) && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            {
+                args.Player.SendMessage("Sign protected from editing.", Color.Yellow);
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }
