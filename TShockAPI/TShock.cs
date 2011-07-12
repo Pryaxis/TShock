@@ -94,6 +94,7 @@ namespace TShockAPI
         public override void Initialize()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
@@ -131,10 +132,10 @@ namespace TShockAPI
                         "';Pwd='" + Config.MySqlPassword + "';";
                     DB.Open();
                 }
-                catch(MySqlException ex)
+                catch (MySqlException ex)
                 {
                     Log.Error(ex.ToString());
-                    throw new Exception("MySql not setup correctly");                    
+                    throw new Exception("MySql not setup correctly");
                 }
             }
             else

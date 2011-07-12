@@ -106,7 +106,14 @@ namespace TShockAPI
         /// </summary>
         public static void SaveWorld()
         {
-            WorldGen.RealsaveWorld();
+            try
+            {
+                WorldGen.RealsaveWorld();
+            }
+            catch
+            {
+                WorldGen.saveWorld();
+            }
 
             Broadcast("World saved.", Color.Yellow);
             Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
