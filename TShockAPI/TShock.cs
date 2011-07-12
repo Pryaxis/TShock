@@ -248,13 +248,26 @@ namespace TShockAPI
         public static int AuthToken = -1;
         private void OnPostInit()
         {
-            if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
+            if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
             {
                 var r = new Random((int)DateTime.Now.ToBinary());
                 AuthToken = r.Next(100000, 10000000);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
-                Console.WriteLine("This token will display until disabled by verification.");
+                Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                TextWriter tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt"));
+                tw.WriteLine(AuthToken);
+                tw.Close();
+            } else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+            {
+                TextReader tr = new StreamReader(Path.Combine(SavePath, "authcode.txt"));
+                AuthToken = Convert.ToInt32(tr.ReadLine());
+                tr.Close();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+                Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
+                Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
             } else
             {

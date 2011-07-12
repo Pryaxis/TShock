@@ -1547,7 +1547,8 @@ namespace TShockAPI
             args.Player.SendMessage("Your new account has been verified, and the /auth system has been turned off.");
             args.Player.SendMessage("You can always use the /user command to manage players. Do not just delete the auth.lck file.");
             args.Player.SendMessage("Thankyou for using TShock! http://tshock.co/ & http://github.com/TShock/TShock");
-            FileTools.CreateFile(TShock.SavePath + "auth.lck");
+            FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
+            System.IO.File.Delete(Path.Combine(TShock.SavePath + "authcode.txt"));
             TShock.AuthToken = 0;
         }
 
