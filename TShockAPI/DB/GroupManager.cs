@@ -33,7 +33,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "trustedadmin");
-                com.AddParameter("@commands", "maintenance,cfg,butcher,cheat,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem");
+                com.AddParameter("@commands", "maintenance,cfg,butcher,cheat,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
                 com.AddParameter("@order", "1");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
@@ -63,7 +63,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "default");
-                com.AddParameter("@commands", "canwater,canlava,warp,manageusers");
+                com.AddParameter("@commands", "canwater,canlava,warp");
                 com.AddParameter("@order", "4");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
