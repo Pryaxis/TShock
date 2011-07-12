@@ -1522,6 +1522,8 @@ namespace TShockAPI
         {
             if (TShock.AuthToken == 0)
             {
+                args.Player.SendMessage("Auth is disabled. This incident has been logged.", Color.Red);
+                Log.Warn(args.Player.IP + " attempted to use /auth even though it's disabled.");
                 return;
             }
             int givenCode = Convert.ToInt32(args.Parameters[0]);
@@ -1547,6 +1549,9 @@ namespace TShockAPI
                 args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
                 return;
             }
+
+            args.Player.SendMessage("Incorrect auth code. This incident has been logged.");
+            Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
         }
 
         private static void AuthVerify(CommandArgs args)
