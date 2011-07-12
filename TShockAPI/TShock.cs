@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* TShock wouldn't be possible without:
  * Github
- * Dreamspark
  * Microsoft Visual Studio 2010
  * HostPenda
  * And you, for your continued support and devotion to the evolution of TShock
@@ -255,9 +254,11 @@ namespace TShockAPI
                 AuthToken = r.Next(100000, 10000000);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
-                Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
+                Console.WriteLine("This token will display until disabled by verification.");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
+            } else
+            {
+                AuthToken = 0;
             }
         }
 

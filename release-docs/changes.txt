@@ -24,6 +24,7 @@ Changes in API release 4:
  - User names and passwords are now accepted. Passwords are hashed with SHA512
  - Added MaximumLoginAttempts to configuration
  - Added /tphere * and /tphere all
+ - Added /auth-verify to verify and turn off the auth code system.
  
 Changes in API release 2.0.0.0:
  - Added update checker.

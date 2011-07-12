@@ -156,8 +156,9 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
             ChatCommands.Add(new Command("logs", DisplayLogs, "displaylogs"));
-            ChatCommands.Add(new Command("manageusers", ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command("manageusers", GrabUserIP, "ip"));
+            ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
+            ChatCommands.Add(new Command("root-only", GrabUserIP, "ip"));
+            ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
@@ -309,6 +310,7 @@ namespace TShockAPI
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
                 args.Player.UserName = args.Parameters[0];
+                args.Player.IsLoggedIn = true;
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                 return;
             }
@@ -1502,12 +1504,51 @@ namespace TShockAPI
                 return;
             }
             int givenCode = Convert.ToInt32(args.Parameters[0]);
-            if (givenCode == TShock.AuthToken)
+            if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
             {
                 TShock.Users.AddUser(args.Player.IP,"","","superadmin");
-                args.Player.SendMessage("SuperAdmin authenticated. Please re-connect using the same IP.");
-                TShock.AuthToken = 0;
+                args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
+                args.Player.SendMessage("/user add <username>:<password> superadmin");
+                args.Player.SendMessage("This will create the username <username> with the password <password> as part of the superadmin group.");
+                args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
+                args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
+                return;
             }
+
+            if (args.Player.Group.Name == "superadmin")
+            {
+                args.Player.SendMessage("Please disable the auth system! If you need help, consult the forums. http://tshock.co/");
+                args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
+                args.Player.SendMessage("/user add <username>:<password> superadmin");
+                args.Player.SendMessage("This will create the username <username> with the password <password> as part of the superadmin group.");
+                args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
+                args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
+                return;
+            }
+        }
+
+        private static void AuthVerify(CommandArgs args)
+        {
+            if (TShock.AuthToken == 0)
+            {
+                args.Player.SendMessage("It appears that you have already turned off the auth token.");
+                args.Player.SendMessage("If this is a mistake, delete auth.lck.");
+                return;
+            }
+
+            if (!args.Player.IsLoggedIn)
+            {
+                args.Player.SendMessage("You must be logged in to disable the auth system.");
+                args.Player.SendMessage("This is a security measure designed to prevent insecure administration setups.");
+                args.Player.SendMessage("Please re-run /auth and read the instructions!");
+                args.Player.SendMessage("If you're still confused, consult the forums. http://tshock.co/");
+            }
+
+            args.Player.SendMessage("Your new account has been verified, and the /auth system has been turned off.");
+            args.Player.SendMessage("You can always use the /user command to manage players. Do not just delete the auth.lck file.");
+            args.Player.SendMessage("Thankyou for using TShock! http://tshock.co/ & http://github.com/TShock/TShock");
+            FileTools.CreateFile(TShock.SavePath + "auth.lck");
+            TShock.AuthToken = 0;
         }
 
         private static void ThirdPerson(CommandArgs args)
