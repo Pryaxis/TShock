@@ -74,6 +74,9 @@ namespace TShockAPI.DB
 
         public bool GroupExists(string group)
         {
+            if (group == "superadmin")
+                return true;
+
             try
             {
                 using (var com = database.CreateCommand())

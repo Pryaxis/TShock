@@ -11,6 +11,7 @@ namespace TShockAPI.DB
     public class ItemManager
     {
         private IDbConnection database;
+        public List<string> ItemBans = new List<string>();
 
         public ItemManager(IDbConnection db)
         {
@@ -25,6 +26,16 @@ namespace TShockAPI.DB
                     com.CommandText =
                         "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) UNIQUE);";
                 com.ExecuteNonQuery();
+
+                com.CommandText = "SELECT *FROM ItemBans";
+
+                using (var reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                        ItemBans.Add(reader.Get<string>("ItemName"));
+
+                    reader.Close();
+                }
             }
         }
 
@@ -64,26 +75,9 @@ namespace TShockAPI.DB
 
         public bool ItemIsBanned(string name)
         {
-            try
-            {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "SELECT *FROM ItemBans WHERE ItemName=@name";
-                    com.AddParameter("@name", name);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            if (reader.Get<string>("ItemName") == name)
-                                return true;
+            if (ItemBans.Contains(name))
+                return true;
 
-                        reader.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-            }
             return false;
         }
     }
