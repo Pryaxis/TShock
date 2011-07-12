@@ -29,8 +29,8 @@ namespace TShockAPI
 {
     internal class Tools
     {
-        private static Random random = new Random();
-        private static List<Group> groups = new List<Group>();
+        public static Random Random = new Random();
+        //private static List<Group> groups = new List<Group>();
 
         /// <summary>
         /// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -202,8 +202,8 @@ namespace TShockAPI
                     break;
                 }
 
-                tileX = startTileX + random.Next(tileXRange * -1, tileXRange);
-                tileY = startTileY + random.Next(tileYRange * -1, tileYRange);
+                tileX = startTileX + Random.Next(tileXRange * -1, tileXRange);
+                tileY = startTileY + Random.Next(tileYRange * -1, tileYRange);
                 j++;
             }
             while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
@@ -250,12 +250,16 @@ namespace TShockAPI
             var found = new List<Item>();
             for (int i = 1; i < Main.maxItemTypes; i++)
             {
-                Item item = new Item();
-                item.SetDefaults(i);
-                if (item.name.ToLower() == name.ToLower())
-                    return new List<Item> { item };
-                if (item.name.ToLower().StartsWith(name.ToLower()))
-                    found.Add(item);
+                try
+                {
+                    Item item = new Item();
+                    item.SetDefaults(i);
+                    if (item.name.ToLower() == name.ToLower())
+                        return new List<Item> { item };
+                    if (item.name.ToLower().StartsWith(name.ToLower()))
+                        found.Add(item);
+                }
+                catch { }
             }
             return found;
         }
@@ -453,69 +457,6 @@ namespace TShockAPI
             tr.Close();
         }
 
-        public static void LoadGroups()
-        {
-            groups = new List<Group>();
-            groups.Add(new SuperAdminGroup());
-
-            StreamReader sr = new StreamReader(FileTools.GroupsPath);
-            string data = sr.ReadToEnd();
-            data = data.Replace("\r", "");
-            string[] lines = data.Split('\n');
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("#"))
-                {
-                    continue;
-                }
-                string[] args = lines[i].Split(' ');
-                if (args.Length < 2)
-                {
-                    continue;
-                }
-                string name = args[0];
-                string parent = args[1];
-                Group group = null;
-                if (parent.Equals("null"))
-                {
-                    group = new Group(name);
-                }
-                else
-                {
-                    for (int j = 0; j < groups.Count; j++)
-                    {
-                        if (groups[j].Name.Equals(parent))
-                        {
-                            group = new Group(name, groups[j]);
-                            break;
-                        }
-                    }
-                }
-                if (group == null)
-                {
-                    throw new Exception("Something in the groups.txt is fucked up");
-                }
-                else
-                {
-                    for (int j = 2; j < args.Length; j++)
-                    {
-                        string permission = args[j];
-                        if (permission.StartsWith("!"))
-                        {
-                            group.NegatePermission(args[j].Replace("!", ""));
-                        }
-                        else
-                        {
-                            group.AddPermission(args[j]);
-                        }
-                    }
-                }
-                groups.Add(group);
-            }
-            sr.Close();
-        }
-
         /// <summary>
         /// Returns a Group from the name of the group
         /// </summary>
@@ -523,109 +464,23 @@ namespace TShockAPI
         public static Group GetGroup(string groupName)
         {
             //first attempt on cached groups
-            for (int i = 0; i < groups.Count; i++)
+            for (int i = 0; i < TShock.Groups.groups.Count; i++)
             {
-                if (groups[i].Name.Equals(groupName))
+                if (TShock.Groups.groups[i].Name.Equals(groupName))
                 {
-                    return groups[i];
+                    return TShock.Groups.groups[i];
                 }
             }
             //shit, it didnt work, reload and try again
-            LoadGroups();
-
-            for (int i = 0; i < groups.Count; i++)
+            TShock.Groups.LoadPermisions();
+            for (int i = 0; i < TShock.Groups.groups.Count; i++)
             {
-                if (groups[i].Name.Equals(groupName))
+                if (TShock.Groups.groups[i].Name.Equals(groupName))
                 {
-                    return groups[i];
+                    return TShock.Groups.groups[i];
                 }
             }
-
             return new Group("null");
-        }
-
-        /// <summary>
-        /// Returns a Group for a ip from users.txt
-        /// </summary>
-        /// <param name="ply">string ip</param>
-        public static Group GetGroupForIP(string ip)
-        {
-            ip = GetRealIP(ip);
-
-            StreamReader sr = new StreamReader(FileTools.UsersPath);
-            string data = sr.ReadToEnd();
-            data = data.Replace("\r", "");
-            string[] lines = data.Split('\n');
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string[] args = lines[i].Split(' ');
-                if (args.Length < 2)
-                {
-                    continue;
-                }
-                if (args[0].Contains(":"))
-                {
-                    continue;
-                }
-                if (lines[i].StartsWith("#"))
-                {
-                    continue;
-                }
-                try
-                {
-                    var hi = GetIPv4Address(args[0]);
-                    if (GetIPv4Address(args[0]).Equals(ip))
-                        return GetGroup(args[1]);
-                }
-                catch (Exception ex)
-                { Log.Error(ex.ToString()); }
-            }
-            sr.Close();
-            return GetGroup("default");
-        }
-        /// <summary>
-        /// Fetches the hashed password and group for a given username
-        /// </summary>
-        /// <param name="username">string username</param>
-        /// <returns>string[] {password, group}</returns>
-        public static string[] FetchHashedPasswordAndGroup(string username)
-        {
-
-            StreamReader sr = new StreamReader(FileTools.UsersPath);
-            string data = sr.ReadToEnd();
-            data = data.Replace("\r", "");
-            string[] lines = data.Split('\n');
-            string[] result = {"null", "null"};
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string[] args = lines[i].Split(' ');
-                if (args.Length < 2)
-                {
-                    continue;
-                }
-                if (lines[i].StartsWith("#"))
-                {
-                    continue;
-                }
-                if (!lines[i].Contains(":"))
-                {
-                    continue;
-                }
-                try
-                {
-                    if (args[0].Split(':')[0].ToLower() == username.ToLower())
-                    {
-                        result = new string[] {args[0].Split(':')[1], args[1]};
-                        return result;
-                    }
-                }
-                catch (Exception ex)
-                { Log.Error(ex.ToString()); }
-            }
-            sr.Close();
-            return result;
         }
 
         /// <summary>

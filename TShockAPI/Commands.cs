@@ -33,6 +33,7 @@ using System.Net;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -121,6 +122,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("ban", BanIP, "banip"));
             ChatCommands.Add(new Command("unban", UnBan, "unban"));
             ChatCommands.Add(new Command("unban", UnBanIP, "unbanip"));
+            ChatCommands.Add(new Command("maintenance", ClearBans, "clearbans"));
             ChatCommands.Add(new Command("whitelist", Whitelist, "whitelist"));
             ChatCommands.Add(new Command("maintenance", Off, "off"));
             ChatCommands.Add(new Command("maintenance", OffNoSave, "off-nosave"));
@@ -309,10 +311,11 @@ namespace TShockAPI
             }
 
             string encrPass = Tools.HashPassword(args.Parameters[1]);
-            string[] exr = Tools.FetchHashedPasswordAndGroup(args.Parameters[0]);
+            string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
             if (exr[0].ToUpper() == encrPass.ToUpper())
             {
                 args.Player.Group = Tools.GetGroup(exr[1]);
+                args.Player.UserName = args.Parameters[0];
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                 return;
             }
@@ -337,21 +340,28 @@ namespace TShockAPI
             {
                 if (args.Parameters[0] == "add")
                 {
+                    int returnval = 0;
                     if (args.Parameters[1].Split(':').Length == 2)
                     {
-                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                        tw.WriteLine("\n" + args.Parameters[1].Split(':')[0] + ":" + Tools.HashPassword(args.Parameters[1].Split(':')[1]) + " " + args.Parameters[2]);
-                        tw.Close();
-                        args.Player.SendMessage("This player can now login!", Color.Green);
+                        if ((returnval = TShock.Users.AddUser("", args.Parameters[1].Split(':')[0], args.Parameters[1].Split(':')[1], args.Parameters[2])) == 1)
+                            args.Player.SendMessage("This player can now login!", Color.Green);
+                        else if(returnval == 2)
+                            args.Player.SendMessage("Invalid Group", Color.Green);
+                        else
+                            args.Player.SendMessage("Could not add user", Color.Green);
                         return;
                     }
                     else if (args.Parameters[1].Split(':').Length == 1)
                     {
-                        TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                        tw.WriteLine("\n" + args.Parameters[1] + " " + args.Parameters[2]);
-                        tw.Close();
-                        args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
-                        args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
+                        if ((returnval = TShock.Users.AddUser(args.Parameters[1], "", "", args.Parameters[2])) == 1)
+                        {
+                            args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
+                            args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
+                        }
+                        else if (returnval == 2)
+                            args.Player.SendMessage("Invalid Group", Color.Green);
+                        else
+                            args.Player.SendMessage("Could not add user", Color.Green);
                         return;
                     }
                     else
@@ -490,12 +500,55 @@ namespace TShockAPI
             var ban = TShock.Bans.GetBanByName(plStr);
             if (ban != null)
             {
-                TShock.Bans.RemoveBan(ban);
-                args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                if (TShock.Bans.RemoveBan(ban.IP))
+                    args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                else
+                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
+            }
+        }
+
+        static int ClearBansCode = -1;
+        private static void ClearBans(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1 && ClearBansCode == -1)
+            {
+                ClearBansCode = new Random().Next(0, short.MaxValue);
+                args.Player.SendMessage("ClearBans Code: " + ClearBansCode, Color.Red);
+                return;
+            }
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /clearbans <code>");
+                return;
+            }
+
+            int num;
+            if (!int.TryParse(args.Parameters[0], out num))
+            {
+                args.Player.SendMessage("Invalid syntax! Expecting number");
+                return;
+            }
+
+            if (num == ClearBansCode)
+            {
+                ClearBansCode = -1;
+                if (TShock.Bans.ClearBans())
+                {
+                    Log.ConsoleInfo("Bans cleared");
+                    args.Player.SendMessage("Bans cleared");
+                }
+                else
+                {
+                    args.Player.SendMessage("Failed to clear bans");
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Incorrect clear code");
             }
         }
 
@@ -516,8 +569,10 @@ namespace TShockAPI
             var ban = TShock.Bans.GetBanByIp(plStr);
             if (ban != null)
             {
-                TShock.Bans.RemoveBan(ban);
-                args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                if (TShock.Bans.RemoveBan(ban.IP))
+                    args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                else
+                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
@@ -906,10 +961,9 @@ namespace TShockAPI
                 {
                     args.Player.SendMessage("Name reserved, use a different name", Color.Red);
                 }
-                else if (WarpsManager.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
+                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
                 {
                     args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
-                    WarpsManager.WriteSettings();
                 }
                 else
                 {
@@ -925,7 +979,7 @@ namespace TShockAPI
             if (args.Parameters.Count > 0)
             {
                 string warpName = String.Join(" ", args.Parameters);
-                if (WarpsManager.DeleteWarp(warpName))
+                if (TShock.Warps.RemoveWarp(warpName))
                     args.Player.SendMessage("Deleted warp " + warpName, Color.Yellow);
                 else
                     args.Player.SendMessage("Could not find specified warp", Color.Red);
@@ -945,16 +999,18 @@ namespace TShockAPI
                     if (args.Parameters.Count > 1)
                         int.TryParse(args.Parameters[1], out page);
                     var sb = new StringBuilder();
-                    if (WarpsManager.Warps.Count > (15 * (page - 1)))
+                    List<Warp> Warps = TShock.Warps.ListAllWarps();
+
+                    if (Warps.Count > (15 * (page - 1)))
                     {
                         for (int j = (15 * (page - 1)); j < (15 * page); j++)
                         {
-                            if (WarpsManager.Warps[j].WorldWarpName == Main.worldName)
+                            if (Warps[j].WorldWarpID == Main.worldID.ToString())
                             {
                                 if (sb.Length != 0)
                                     sb.Append(", ");
-                                sb.Append("/").Append(WarpsManager.Warps[j].WarpName);
-                                if (j == WarpsManager.Warps.Count - 1)
+                                sb.Append("/").Append(Warps[j].WarpName);
+                                if (j == Warps.Count - 1)
                                 {
                                     args.Player.SendMessage(sb.ToString(), Color.Yellow);
                                     break;
@@ -967,7 +1023,7 @@ namespace TShockAPI
                             }
                         }
                     }
-                    if (WarpsManager.Warps.Count > (15 * page))
+                    if (Warps.Count > (15 * page))
                     {
                         args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
                     }
@@ -975,10 +1031,10 @@ namespace TShockAPI
                 else
                 {
                     string warpName = String.Join(" ", args.Parameters);
-                    var warp = WarpsManager.FindWarp(warpName);
-                    if (warp != Vector2.Zero)
+                    var warp = TShock.Warps.FindWarp(warpName);
+                    if (warp.WarpPos != Vector2.Zero)
                     {
-                        if (args.Player.Teleport((int)warp.X, (int)warp.Y + 3))
+                        if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
                             args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
                     }
                     else
@@ -1235,9 +1291,9 @@ namespace TShockAPI
                             if (!args.Player.TempArea.IsEmpty)
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                                if (RegionManager.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
+                                if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldName))
+                                                            regionName, Main.worldID.ToString()))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
@@ -1261,14 +1317,14 @@ namespace TShockAPI
                             string regionName = args.Parameters[1];
                             if (args.Parameters[2].ToLower() == "true")
                             {
-                                if (RegionManager.SetRegionState(regionName, true))
+                                if (TShock.Regions.SetRegionState(regionName, true))
                                     args.Player.SendMessage("Protected region " + regionName, Color.Yellow);
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else if (args.Parameters[2].ToLower() == "false")
                             {
-                                if (RegionManager.SetRegionState(regionName, false))
+                                if (TShock.Regions.SetRegionState(regionName, false))
                                     args.Player.SendMessage("Unprotected region " + regionName, Color.Yellow);
                                 else
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
@@ -1285,7 +1341,7 @@ namespace TShockAPI
                         if (args.Parameters.Count > 1)
                         {
                             string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                            if (RegionManager.DeleteRegion(regionName))
+                            if (TShock.Regions.DeleteRegion(regionName))
                                 args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
                             else
                                 args.Player.SendMessage("Could not find specified region", Color.Red);
@@ -1306,7 +1362,7 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            string playerIP = null;
+                            string playerID = "0";
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1319,12 +1375,20 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerIP = Tools.GetPlayerIP(playerName)) != null)
+                            if ((playerID = TShock.Users.GetUserID(Tools.FindPlayer(playerName)[0].UserName)) != "0")
                             {
-                                if (RegionManager.AddNewUser(regionName, playerIP))
+                                if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
-                                    RegionManager.WriteSettings();
+                                }
+                                else
+                                    args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                            }
+                            else if ((playerID = TShock.Users.GetUserID("",Tools.FindPlayer(playerName)[0].IP)) != "0")
+                            {
+                                if (TShock.Regions.AddNewUser(regionName, playerID))
+                                {
+                                    args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
                                 }
                                 else
                                     args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
@@ -1336,6 +1400,44 @@ namespace TShockAPI
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                        break;
+                    }
+                case "list":
+                    {
+                        args.Player.SendMessage("Current Regions:", Color.Green);
+                        int page = 1;
+                        if (args.Parameters.Count > 1)
+                            int.TryParse(args.Parameters[1], out page);
+                        var sb = new StringBuilder();
+
+                        List<Region> Regions = TShock.Regions.ListAllRegions();
+
+                        if (Regions.Count > (15 * (page - 1)))
+                        {
+                            for (int j = (15 * (page - 1)); j < (15 * page); j++)
+                            {
+                                if (Regions[j].RegionWorldID == Main.worldID.ToString())
+                                {
+                                    if (sb.Length != 0)
+                                        sb.Append(", ");
+                                    sb.Append(Regions[j].RegionName);
+                                    if (j == Regions.Count - 1)
+                                    {
+                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                        break;
+                                    }
+                                    if ((j + 1) % 5 == 0)
+                                    {
+                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
+                                        sb.Clear();
+                                    }
+                                }
+                            }
+                        }
+                        if (Regions.Count > (15 * page))
+                        {
+                            args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                        }
                         break;
                     }
                 case "help":
@@ -1409,11 +1511,9 @@ namespace TShockAPI
             int givenCode = Convert.ToInt32(args.Parameters[0]);
             if (givenCode == TShock.AuthToken)
             {
-                TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                tw.Write("\n" + args.Player.IP + " superadmin");
+                TShock.Users.AddUser(args.Player.IP,"","","superadmin");
                 args.Player.SendMessage("SuperAdmin authenticated. Please re-connect using the same IP.");
                 TShock.AuthToken = 0;
-                tw.Close();
             }
         }
 
