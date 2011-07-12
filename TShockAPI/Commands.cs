@@ -326,7 +326,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 3)
             {
-                args.Player.SendMessage("Syntax: /user add <ip/user:pass> [group]");
+                args.Player.SendMessage("Syntax: /user <add/del> <ip/user:pass> [group]");
                 args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
                 return;
             }
@@ -362,7 +362,28 @@ namespace TShockAPI
                    args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
                 } else if (args.Parameters[0] == "del")
                 {
-                    
+                    if (args.Parameters[1].Contains("."))
+                    {
+                        //If this isn't an IP, well...
+                        if (TShock.Users.RemoveUser(args.Parameters[1], true) == 1)
+                        {
+                            args.Player.SendMessage("IP removed successfully.", Color.Green);
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("IP wasn't removed. Was it invalid?", Color.Red);
+                        }
+                    } else
+                    {
+                        if (TShock.Users.RemoveUser(args.Parameters[1], false) == 1)
+                        {
+                            args.Player.SendMessage("Account removed successfully.", Color.Green);
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Account wasn't removed. Was it invalid?", Color.Red);
+                        }
+                    }
                 }
             }
         }
