@@ -1528,6 +1528,7 @@ namespace TShockAPI
             if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
             {
                 TShock.Users.AddUser(args.Player.IP,"","","superadmin");
+                args.Player.Group = Tools.GetGroup("superadmin");
                 args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
                 args.Player.SendMessage("/user add <username>:<password> superadmin");
                 args.Player.SendMessage("This will create the username <username> with the password <password> as part of the superadmin group.");
