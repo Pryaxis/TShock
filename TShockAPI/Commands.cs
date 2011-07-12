@@ -1467,11 +1467,9 @@ namespace TShockAPI
             int givenCode = Convert.ToInt32(args.Parameters[0]);
             if (givenCode == TShock.AuthToken)
             {
-                TextWriter tw = new StreamWriter(FileTools.UsersPath, true);
-                tw.Write("\n" + args.Player.IP + " superadmin");
+                TShock.Users.AddUser(args.Player.IP,"","","superadmin");
                 args.Player.SendMessage("SuperAdmin authenticated. Please re-connect using the same IP.");
                 TShock.AuthToken = 0;
-                tw.Close();
             }
         }
 

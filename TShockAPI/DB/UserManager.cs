@@ -36,11 +36,20 @@ namespace TShockAPI.DB
 
             using (var com = database.CreateCommand())
             {
-                com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY UNIQUE, 'Username' TEXT UNIQUE, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY UNIQUE, 'Username' TEXT UNIQUE, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS Users (ID INTEGER PRIMARY KEY UNIQUE, Username VARCHAR(255) UNIQUE, Password VARCHAR(255), UserGroup VARCHAR(255), IP VARCHAR(255));";
+                
                 com.ExecuteNonQuery();
 
-                com.CommandText = "INSERT OR IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+
                 com.AddParameter("@id", 1);
                 com.AddParameter("@ip", "127.0.0.1");
                 com.AddParameter("@group", "superadmin");

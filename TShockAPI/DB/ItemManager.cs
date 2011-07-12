@@ -18,8 +18,12 @@ namespace TShockAPI.DB
 
             using (var com = database.CreateCommand())
             {
-                com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT UNIQUE);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT UNIQUE);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) UNIQUE);";
                 com.ExecuteNonQuery();
             }
         }

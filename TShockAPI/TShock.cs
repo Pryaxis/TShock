@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using MySql.Data.MySqlClient;
 using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -107,7 +108,22 @@ namespace TShockAPI
             }
             else if (Config.StorageType.ToLower() == "mysql")
             {
-                throw new NotSupportedException("Mysql is not yet supported");
+                try
+                {
+                    DB = new MySqlConnection();
+                    DB.ConnectionString =
+                        "Server='" + Config.MySqlHost +
+                        "';Port='" + Config.MySqlPort +
+                        "';Database='" + Config.MySqlDbName +
+                        "';Uid='" + Config.MySqlUsername +
+                        "';Pwd='" + Config.MySqlPassword + "';";
+                    DB.Open();
+                }
+                catch(MySqlException ex)
+                {
+                    Log.Error(ex.ToString());
+                    throw new Exception("MySql not setup correctly");                    
+                }
             }
             else
             {

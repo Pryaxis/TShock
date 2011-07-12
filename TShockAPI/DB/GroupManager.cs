@@ -19,32 +19,49 @@ namespace TShockAPI.DB
 
             using (var com = database.CreateCommand())
             {
-                com.CommandText =
-                    "CREATE TABLE IF NOT EXISTS 'GroupList' ('ID' INTEGER PRIMARY KEY UNIQUE, 'GroupName' TEXT UNIQUE, 'Commands' TEXT, 'OrderBy' TEXT);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT UNIQUE, 'Commands' TEXT, 'OrderBy' TEXT);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText =
+                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) UNIQUE, Commands VARCHAR(255), OrderBy VARCHAR(255));";
+
                 com.ExecuteNonQuery();
 
-                com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "trustedadmin");
                 com.AddParameter("@commands", "maintenance,cfg,butcher,cheat,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem");
                 com.AddParameter("@order", "1");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
-                com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "admin");
                 com.AddParameter("@commands", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
                 com.AddParameter("@order", "2");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
-                com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "newadmin");
                 com.AddParameter("@commands", "kick,editspawn,reservedslot");
                 com.AddParameter("@order", "3");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
-                com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "default");
                 com.AddParameter("@commands", "canwater,canlava,warp,manageusers");
                 com.AddParameter("@order", "4");
