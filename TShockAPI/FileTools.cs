@@ -25,15 +25,9 @@ namespace TShockAPI
     {
         public static string RulesPath { get { return Path.Combine(TShock.SavePath, "rules.txt"); } }
         public static string MotdPath { get { return Path.Combine(TShock.SavePath, "motd.txt"); } }
-        public static string BansPath { get { return Path.Combine(TShock.SavePath, "bans.txt"); } }
         public static string WhitelistPath { get { return Path.Combine(TShock.SavePath, "whitelist.txt"); } }
-        public static string GroupsPath { get { return Path.Combine(TShock.SavePath, "groups.txt"); } }
-        public static string UsersPath { get { return Path.Combine(TShock.SavePath, "users.txt"); } }
-        public static string ItemBansPath { get { return Path.Combine(TShock.SavePath, "itembans.txt"); } }
         public static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
         public static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
-        public static string RegionsPath { get { return Path.Combine(TShock.SavePath, "regions.xml"); } }
-        public static string WarpsPath { get { return Path.Combine(TShock.SavePath, "warps.xml"); } }
 
         public static void CreateFile(string file)
         {
@@ -60,29 +54,7 @@ namespace TShockAPI
 
             CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
             CreateIfNot(MotdPath, "This server is running TShock. Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
-            CreateIfNot(BansPath);
             CreateIfNot(WhitelistPath);
-            CreateIfNot(GroupsPath, Resources.groups);
-            CreateIfNot(UsersPath, Resources.users);
-            CreateIfNot(ItemBansPath, Resources.itembans);
-
-            //Copies if using old paths (Remove in future releases, after everyone is running this version +)
-            if (File.Exists("regions.xml") && !File.Exists(RegionsPath))
-            {
-                File.Move("regions.xml", RegionsPath);
-            }
-            else
-            {
-                CreateIfNot(RegionsPath);
-            }
-            if (File.Exists("warps.xml") && !File.Exists(WarpsPath))
-            {
-                File.Move("warps.xml", WarpsPath);
-            }
-            else
-            {
-                CreateIfNot(WarpsPath);
-            }
 
             try
             {
@@ -95,7 +67,9 @@ namespace TShockAPI
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error in config file");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Log.Error("Config Exception");
                 Log.Error(ex.ToString());
             }

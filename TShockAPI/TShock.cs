@@ -24,6 +24,8 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading;
+using MySql.Data.MySqlClient;
+using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,6 +33,7 @@ using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
 using System.Text;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -44,11 +47,16 @@ namespace TShockAPI
 
         public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
         public static BanManager Bans;
+        public static WarpManager Warps;
+        public static RegionManager Regions;
         public static BackupManager Backups;
+        public static GroupManager Groups;
+        public static UserManager Users;
+        public static ItemManager Itembans;
 
         public static ConfigFile Config { get; set; }
 
-        public static IDbConnection Sql;
+        public static IDbConnection DB;
 
         public override Version Version
         {
@@ -79,8 +87,7 @@ namespace TShockAPI
 
         public override void Initialize()
         {
-            HandleCommandLine(Environment.GetCommandLineArgs());
-
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
@@ -94,8 +101,50 @@ namespace TShockAPI
             ConfigFile.ConfigRead += OnConfigRead;
             FileTools.SetupConfig();
 
-            Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
+            HandleCommandLine(Environment.GetCommandLineArgs());
 
+            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+
+            FileTools.SetupConfig();
+
+            if (Config.StorageType.ToLower() == "sqlite")
+            {
+                string sql = Path.Combine(SavePath, "tshock.sqlite");
+                DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+                DB.Open();
+            }
+            else if (Config.StorageType.ToLower() == "mysql")
+            {
+                try
+                {
+                    DB = new MySqlConnection();
+                    DB.ConnectionString =
+                        "Server='" + Config.MySqlHost +
+                        "';Port='" + Config.MySqlPort +
+                        "';Database='" + Config.MySqlDbName +
+                        "';Uid='" + Config.MySqlUsername +
+                        "';Pwd='" + Config.MySqlPassword + "';";
+                    DB.Open();
+                }
+                catch(MySqlException ex)
+                {
+                    Log.Error(ex.ToString());
+                    throw new Exception("MySql not setup correctly");                    
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid storage type");
+            }
+
+            Bans = new BanManager(DB);
+            Warps = new WarpManager(DB);
+            Regions = new RegionManager(DB);
+            Groups = new GroupManager(DB);
+            Users = new UserManager(DB);
+            Itembans = new ItemManager(DB);
+
+            Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
             GameHooks.PostInitialize += OnPostInit;
             GameHooks.Update += OnUpdate;
@@ -107,13 +156,8 @@ namespace TShockAPI
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
 
-
-            Bans.LoadBans();
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
-            RegionManager.ReadAllSettings();
-            WarpsManager.ReadAllSettings();
-            ItemManager.LoadBans();
             //RconHandler.StartThread();
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
@@ -122,7 +166,7 @@ namespace TShockAPI
 
         public override void DeInitialize()
         {
-            Bans.SaveBans();
+            DB.Close();
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
             ServerHooks.Join -= OnJoin;
@@ -203,8 +247,10 @@ namespace TShockAPI
             {
                 var r = new Random((int)DateTime.Now.ToBinary());
                 AuthToken = r.Next(100000, 10000000);
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will only display ONCE. This only works ONCE. If you don't use it and the server goes down, delete auth.lck.");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 FileTools.CreateFile(Path.Combine(SavePath, "auth.lck"));
             }
         }
@@ -247,7 +293,7 @@ namespace TShockAPI
                         var inv = player.TPlayer.inventory;
                         for (int i = 0; i < inv.Length; i++)
                         {
-                            if (inv[i] != null && ItemManager.ItemIsBanned(inv[i].name))
+                            if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
                             {
                                 player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
                                 break;
@@ -261,7 +307,7 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
-            player.Group = Tools.GetGroupForIP(player.IP);
+            player.Group = TShock.Users.GetGroupForIP(player.IP);
 
             if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
@@ -288,8 +334,6 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
-
-
         }
 
         private void OnLeave(int ply)
@@ -382,6 +426,15 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
+                var sb = new StringBuilder();
+                for (int i = 0; i < Main.maxItemTypes; i++)
+                {
+                    string itemName = Main.itemName[i];
+                    string itemID = (i).ToString();
+                    sb.Append("ItemList.Add(\"" + itemName + "\");").AppendLine();
+                }
+
+                File.WriteAllText("item.txt", sb.ToString());
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
@@ -412,7 +465,6 @@ namespace TShockAPI
                 if (Commands.HandleCommand(TSPlayer.Server, text))
                     e.Handled = true;
             }
-
         }
 
         private void GetData(GetDataEventArgs e)

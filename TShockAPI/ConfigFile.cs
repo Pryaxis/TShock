@@ -72,6 +72,17 @@ namespace TShockAPI
         public string ServerName = "";
         public string MasterServer = "127.0.0.1";
 
+        /// <summary>
+        /// Valid types are "sqlite" and "mysql"
+        /// </summary>
+        public string StorageType = "sqlite";
+
+        public string MySqlHost = "localhost";
+        public string MySqlDbName = "";
+        public string MySqlPort = "3306";
+        public string MySqlUsername = "";
+        public string MySqlPassword = "";
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

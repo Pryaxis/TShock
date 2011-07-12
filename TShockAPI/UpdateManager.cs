@@ -30,7 +30,6 @@ namespace TShockAPI
     class UpdateManager
     {
         static string updateUrl = "http://shankshock.com/tshock-update.txt";
-        public static bool updateCmd;
         public static DateTime lastcheck = DateTime.MinValue;
         public static string[] globalChanges = {};
         /// <summary>

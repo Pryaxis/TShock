@@ -1,4 +1,4 @@
-﻿/*   
+/*   
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -34,7 +34,7 @@ namespace TShockAPI
         {
             foreach (Warp nametest in Warps)
             {
-                if (name.ToLower() == nametest.WarpName.ToLower() && worldname == nametest.WorldWarpName)
+                if (name.ToLower() == nametest.WarpName.ToLower())
                 {
                     return false;
                 }

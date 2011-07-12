@@ -275,7 +275,7 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(x, y, Tools.GetPlayerIP(args.Player.Name)))
+            if (!args.Player.Group.HasPermission("editspawn") && TShock.Regions.InProtectedArea(x, y, TShock.Users.GetUserID(args.Player.UserName,args.Player.IP)))
             {
                 if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
                 {

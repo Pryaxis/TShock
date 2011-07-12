@@ -22,11 +22,12 @@ namespace TShockAPI
 {
     public class Group
     {
-        private readonly List<string> permissions = new List<string>();
+        public readonly List<string> permissions = new List<string>();
         private readonly List<string> negatedpermissions = new List<string>();
 
         public string Name { get; protected set; }
         public Group Parent { get; protected set; }
+        public int Order { get; set; }
 
         public Group(string groupname, Group parentgroup = null)
         {

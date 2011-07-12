@@ -74,12 +74,17 @@ namespace TShockAPI
 
                 while (SaveWorld.ThreadState == ThreadState.Running)
                     Thread.Sleep(50);
+                Console.WriteLine("World backed up");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
 
                 Main.worldPathName = worldname;
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Backup failed");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Log.Error("Backup failed");
                 Log.Error(ex.ToString());
             }

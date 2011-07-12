@@ -46,6 +46,7 @@ namespace TShockAPI
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
         public Vector2 TeleportCoords = new Vector2(-1, -1);
+        public string UserName { get; set; }
 
         Player FakePlayer = null;
 

@@ -86,7 +86,9 @@ namespace TShockAPI
         /// <param name="message">The message to be written.</param>
         public static void ConsoleError(String message)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.Gray;
             Write(message, LogLevel.Error);
         }
 
@@ -114,7 +116,9 @@ namespace TShockAPI
         /// <param name="message">The message to be written.</param>
         public static void ConsoleInfo(String message)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.Gray;
             Write(message, LogLevel.Info);
         }
 
