@@ -88,7 +88,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.ToString());
             }
@@ -141,7 +141,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.ToString());
             }

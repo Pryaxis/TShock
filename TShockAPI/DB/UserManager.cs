@@ -46,11 +46,10 @@ namespace TShockAPI.DB
                 com.ExecuteNonQuery();
 
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+                    com.CommandText = "INSERT OR IGNORE INTO Users (UserGroup, IP) VALUES (@group, @ip);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO Users (ID, UserGroup, IP) VALUES (@id, @group, @ip);";
+                    com.CommandText = "INSERT IGNORE INTO Users (UserGroup, IP) VALUES (@group, @ip);";
 
-                com.AddParameter("@id", 1);
                 com.AddParameter("@ip", "127.0.0.1");
                 com.AddParameter("@group", "superadmin");
                 com.ExecuteNonQuery();
@@ -86,7 +85,7 @@ namespace TShockAPI.DB
                     }
                 }                
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 //Return code 0 (Add failed)
                 Log.Error(ex.ToString());
@@ -121,7 +120,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 //Return code 0 (Remove failed)
                 Log.Error(ex.ToString());
@@ -154,7 +153,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.ToString());
             }
@@ -183,7 +182,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.ToString());
             }
@@ -219,7 +218,7 @@ namespace TShockAPI.DB
                     }
                 }
             }
-            catch (SqliteExecutionException ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.ToString());
             }
