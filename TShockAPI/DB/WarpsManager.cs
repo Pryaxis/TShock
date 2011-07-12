@@ -105,7 +105,10 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
-                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
+                        {
+                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));                            
+                        }
+                        reader.Close();
                     }
                 }
             }
@@ -128,6 +131,8 @@ namespace TShockAPI.DB
                     {
                         while (reader.Read())
                             Warps.Add(new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID")));
+
+                        reader.Close();
                     }
                 }
             }

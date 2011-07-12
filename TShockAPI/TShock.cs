@@ -312,6 +312,7 @@ namespace TShockAPI
                     if (!player.Group.HasPermission("usebanneditem"))
                     {
                         var inv = player.TPlayer.inventory;
+
                         for (int i = 0; i < inv.Length; i++)
                         {
                             if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
@@ -328,6 +329,7 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
+
             player.Group = TShock.Users.GetGroupForIP(player.IP);
 
             if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
@@ -344,8 +346,6 @@ namespace TShockAPI
                 handler.Handled = true;
                 return;
             }
-
-
 
             if (!FileTools.OnWhitelist(player.IP))
             {

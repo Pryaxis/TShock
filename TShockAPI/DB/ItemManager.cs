@@ -75,6 +75,8 @@ namespace TShockAPI.DB
                         if (reader.Read())
                             if (reader.Get<string>("ItemName") == name)
                                 return true;
+
+                        reader.Close();
                     }
                 }
             }

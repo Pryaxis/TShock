@@ -85,6 +85,8 @@ namespace TShockAPI.DB
                         while (reader.Read())
                             if (reader.Get<string>("GroupName") == group)
                                 return true;
+
+                        reader.Close();
                     }
                 }
             }
@@ -122,6 +124,8 @@ namespace TShockAPI.DB
                             }
 
                             groups.Add(group);
+
+                            reader.Close();
                         }
                     }
 

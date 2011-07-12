@@ -59,6 +59,8 @@ namespace TShockAPI.DB
                     {
                         if (reader.Read())
                             return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+
+                        reader.Close();
                     }
                 }
             }
@@ -84,6 +86,8 @@ namespace TShockAPI.DB
                     {
                         if (reader.Read())
                             return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+
+                        reader.Close();
                     }
                 }
             }

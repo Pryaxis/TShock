@@ -158,6 +158,7 @@ namespace TShockAPI.DB
                                     return true;
                             }
                         }
+                        reader.Close();
                     }
                 }
                 return false;
@@ -208,6 +209,7 @@ namespace TShockAPI.DB
                         {
                             MergedIDs = reader.Get<string>("UserIds");
                         }
+                        reader.Close();
                     }
 
                     if (MergedIDs == string.Empty)
@@ -242,6 +244,7 @@ namespace TShockAPI.DB
                     {
                         while (reader.Read())
                             Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("X2"), reader.Get<int>("Y2")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
+                        reader.Close();
                     }
                 }
             }

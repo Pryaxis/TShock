@@ -478,16 +478,7 @@ namespace TShockAPI
                     return TShock.Groups.groups[i];
                 }
             }
-            //shit, it didnt work, reload and try again
-            TShock.Groups.LoadPermisions();
-            for (int i = 0; i < TShock.Groups.groups.Count; i++)
-            {
-                if (TShock.Groups.groups[i].Name.Equals(groupName))
-                {
-                    return TShock.Groups.groups[i];
-                }
-            }
-            return new Group("null");
+            return new Group("default");
         }
 
         /// <summary>

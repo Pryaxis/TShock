@@ -77,11 +77,15 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.RecordsAffected > 0)
+                        {
                             //Return code 1 (User added)
                             return 1;
+                        }
                         else
+                        {
                             //Return code 0 (Add failed)
                             return 0;
+                        }
                     }
                 }                
             }
@@ -112,11 +116,17 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.RecordsAffected > 0)
+                        {
                             //Return code 1 (User removed)
+                            reader.Close();
                             return 1;
+                        }
                         else
+                        {
                             //Return code 0 (Remove failed)
+                            reader.Close();
                             return 0;
+                        }                        
                     }
                 }
             }
@@ -142,6 +152,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "SELECT * FROM Users WHERE Username=@name";
                     com.AddParameter("@name", username.ToLower());
+
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
@@ -150,6 +161,7 @@ namespace TShockAPI.DB
                             returndata[1] = reader.Get<string>("UserGroup");
                             return returndata;
                         }
+                        reader.Close();
                     }
                 }
             }
@@ -172,6 +184,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
                     com.AddParameter("@ip", ip);
+
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
@@ -179,6 +192,7 @@ namespace TShockAPI.DB
                             string group = reader.Get<string>("UserGroup");
                             return Tools.GetGroup(group);
                         }
+                        reader.Close();
                     }
                 }
             }
@@ -215,6 +229,7 @@ namespace TShockAPI.DB
                             string ID = reader.Get<string>("ID");
                             return ID;
                         }
+                        reader.Close();
                     }
                 }
             }
