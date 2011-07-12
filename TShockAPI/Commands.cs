@@ -312,12 +312,12 @@ namespace TShockAPI
                 args.Player.UserName = args.Parameters[0];
                 args.Player.IsLoggedIn = true;
                 args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
-                Log.ConsoleInfo(args.Player.Name + " authenticated successfully as " + args.Parameters[0] + ".");
+                Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
                 return;
             }
             else
             {
-                Log.Warn(args.Player.IP + " failed to authenticate as " + args.Parameters[0]);
+                Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
                 args.Player.LoginAttempts++;
                 return;
             }
