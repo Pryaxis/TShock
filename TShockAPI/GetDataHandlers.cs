@@ -532,7 +532,7 @@ namespace TShockAPI
             if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
                 return false;
 
-            if (Main.tile[tilex, tiley].type != 0x15) //Chest
+            if (Main.tile[tilex, tiley].type != 0x15) //if not Chest
             {
                 Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
                                         tilex, tiley, Main.tile[tilex, tiley].type));
@@ -545,15 +545,16 @@ namespace TShockAPI
                 args.Player.SendTileSquare(tilex, tiley);
                 return true;
             }
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            //protect empty chests
+            if (Main.tile[tilex, tiley].type == 0x15 && !args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
-                args.Player.SendMessage("Region protected from changes.", Color.Red);
+                args.Player.SendMessage("Chest protected from changes.", Color.Red);
                 args.Player.SendTileSquare(tilex, tiley);
                 return true;
             }
-            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)) && Main.tile[tilex, tiley].type == 0x15)
+            if (!args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
-                args.Player.SendMessage("Chest protected from changes", Color.Red);
+                args.Player.SendMessage("Region protected from changes.", Color.Red);
                 args.Player.SendTileSquare(tilex, tiley);
                 return true;
             }
