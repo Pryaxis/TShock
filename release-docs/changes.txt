@@ -2,6 +2,29 @@ For the full list of changes, please take a look at GitHub:
 https://github.com/TShock/TShock/commits/master
 From now on, all release notes aren't put here. It's too much to track, but new features will be tossed here.
 
+Changes in API release 4:
+ - Added support for SQLite
+ - Added support for MySQL
+ - Added /user command, supports adding users via in game command
+ - Added database editor for editing the MySQL + SQLite DB systems
+ - Fixed /region list and /warp list
+ - Fixed Jexius's font exploit
+ - Added /annoy
+ - Added canbuild permission
+ - Fixed mysterious chair rotation system
+ - Added /ip <player> to retrieve a player's IPv4 address
+ - Removed /buff
+ - Added command line paramater -worldpath, which changes the location where Terraria checks for worlds
+ - Fixed save world race conditions
+ - Added /login <username> <password>
+ - Fixed an instance where NPC.maxSpawns was incorrectly referenced in favor of NPC.defaultMaxSpawns
+ - Chests are ignored from kill tile abuse
+ - Added /reply (/r) to reply to a /whisper
+ - Fixed /broadcast spacing
+ - User names and passwords are now accepted. Passwords are hashed with SHA512
+ - Added MaximumLoginAttempts to configuration
+ - Added /tphere * and /tphere all
+ 
 Changes in API release 2.0.0.0:
  - Added update checker.
 

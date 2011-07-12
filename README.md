@@ -25,12 +25,3 @@ We love IRC (although a little less than Teamspeak). If you need support, or jus
 __IP__: irc.shankshock.com
 
 __Channel__: #terraria
-
-### Update FTP
-
-If you're a project contributor and you want to be able to push updates, talk to nicatronTg (shank@shankshock.com) about getting FTP access.
-
-----
-
-### Terraria Online Status:
-## __Not Released__
