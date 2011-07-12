@@ -619,7 +619,7 @@ namespace TShockAPI
 
             if ((!args.Player.Group.HasPermission("openchests") && !args.Player.Group.HasPermission("editspawn")) && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
-                args.Player.SendMessage("This Chest is protected.", Color.Red);
+                args.Player.SendMessage("This Chest is protected.", Color.Yellow);
                 return true;
             }
 
@@ -635,7 +635,7 @@ namespace TShockAPI
 
             if ((!args.Player.Group.HasPermission("editsigns") && !args.Player.Group.HasPermission("editspawn")) && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
-                args.Player.SendMessage("Sign protected from changes.", Color.Red);
+                args.Player.SendMessage("Sign protected from editing.", Color.Yellow);
                 return true;
             }
 
