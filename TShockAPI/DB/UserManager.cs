@@ -47,7 +47,7 @@ namespace TShockAPI.DB
             }
         }
 
-        public int AddUser(string ip = "" , string name = "", string password = "", string group = "default")
+        public int AddUser(string ip = "" , string name = "", string password = "", string group = "default") //I LOVE HOW THIS IS COMPLETELY NOT THE FORMAT FOR, YOU KNOW, THE DB
         {
             try
             {
