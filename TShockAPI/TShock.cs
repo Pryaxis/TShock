@@ -198,6 +198,7 @@ namespace TShockAPI
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
             if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
             {
+                Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
         }
