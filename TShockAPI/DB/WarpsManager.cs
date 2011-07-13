@@ -42,7 +42,7 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY, 'WorldID' TEXT);";
+                        "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY KEY, 'WorldID' TEXT);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
                        "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
