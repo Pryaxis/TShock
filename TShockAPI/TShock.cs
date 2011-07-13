@@ -64,6 +64,8 @@ namespace TShockAPI
 
         public static IDbConnection DB;
 
+        public static Process p;
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -93,6 +95,17 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            if (File.Exists(Path.Combine(SavePath + "tshock.pid")))
+            {
+                File.Delete(Path.Combine(SavePath + "tshock.pid"));
+            }
+
+            p = Process.GetCurrentProcess();
+            int pid = p.Id;
+            TextWriter tw = new StreamWriter(Path.Combine(SavePath + "tshock.pid"));
+            tw.Write(pid);
+            tw.Close();
+
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 #if DEBUG
