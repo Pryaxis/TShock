@@ -83,7 +83,7 @@ namespace TShockAPI.DB
             catch (Exception ex)
             {
                 //Return code 0 (Add failed)
-                Log.Error(ex.ToString());
+                Log.ConsoleError("AddUser SQL returned an error: " + ex.ToString());
                 return 0;
             }
         }
@@ -96,11 +96,11 @@ namespace TShockAPI.DB
                 {
                     if (ip)
                     {
-                        com.CommandText = "DELETE FROM Users WHERE IP=`@ip`";
+                        com.CommandText = "DELETE FROM Users WHERE IP=@ip";
                         com.AddParameter("@ip", inputUser.ToLower());
                     } else
                     {
-                        com.CommandText = "DELETE FROM Users WHERE Username=`@name`";
+                        com.CommandText = "DELETE FROM Users WHERE Username=@name";
                         com.AddParameter("@name", inputUser.ToLower());
                     }
 
@@ -124,7 +124,7 @@ namespace TShockAPI.DB
             catch (Exception ex)
             {
                 //Return code 0 (Remove failed)
-                Log.Error(ex.ToString());
+                Log.ConsoleError("RemoveUser SQL returned an error: " + ex.ToString());
                 return 0;
             }
         }
@@ -158,7 +158,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex.ToString());
             }
             return returndata;
         }
@@ -189,7 +189,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex.ToString());
             }
             return Tools.GetGroup("default");
         }
@@ -226,7 +226,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.ConsoleError("GetUserID SQL returned an error: " + ex.ToString());
             }
             return "0";
         }

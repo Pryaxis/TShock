@@ -325,7 +325,7 @@ namespace TShockAPI
 
         private static void ManageUsers(CommandArgs args)
         {
-            if (args.Parameters.Count < 3)
+            if (args.Parameters.Count < 2)
             {
                 args.Player.SendMessage("Syntax: /user <add/del> <ip/user:pass> [group]");
                 args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
@@ -337,8 +337,11 @@ namespace TShockAPI
                     if (args.Parameters[1].Split(':').Length == 2)
                     {
                         if ((returnval = TShock.Users.AddUser("", args.Parameters[1].Split(':')[0], args.Parameters[1].Split(':')[1], args.Parameters[2])) == 1)
-                            args.Player.SendMessage("This player can now login!", Color.Green);
-                        else if(returnval == 2)
+                        {
+                            args.Player.SendMessage("Account " + args.Parameters[1].Split(':')[0] + " has been added to group " + args.Parameters[2] + "!", Color.Green);
+                            Log.ConsoleInfo(args.Player.Name + " added Account " + args.Parameters[1].Split(':')[0] + " to group " + args.Parameters[2]);
+                        }
+                        else if (returnval == 2)
                             args.Player.SendMessage("Invalid Group", Color.Green);
                         else
                             args.Player.SendMessage("Could not add user", Color.Green);
@@ -350,6 +353,7 @@ namespace TShockAPI
                         {
                             args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
                             args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
+                            Log.ConsoleInfo(args.Player.Name + " added IP " + args.Parameters[1] + " to group " + args.Parameters[2]);
                         }
                         else if (returnval == 2)
                             args.Player.SendMessage("Invalid Group", Color.Green);
@@ -358,7 +362,7 @@ namespace TShockAPI
                         return;
                     }
                    args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
-                }else if (args.Parameters[0] == "del" && args.Parameters.Count == 1)
+                }else if (args.Parameters[0] == "del" && args.Parameters.Count == 2)
                 {
                     if (args.Parameters[1].Contains("."))
                     {
@@ -366,20 +370,24 @@ namespace TShockAPI
                         if (TShock.Users.RemoveUser(args.Parameters[1], true) == 1)
                         {
                             args.Player.SendMessage("IP removed successfully.", Color.Green);
+                            Log.ConsoleInfo(args.Player.Name + " successfully deleted ip: " + args.Parameters[1]);
                         }
                         else
                         {
                             args.Player.SendMessage("IP wasn't removed. Was it invalid?", Color.Red);
+                            Log.ConsoleInfo(args.Player.Name + " failed deleting invalid ip: " + args.Parameters[1]);
                         }
                     } else
                     {
                         if (TShock.Users.RemoveUser(args.Parameters[1], false) == 1)
                         {
                             args.Player.SendMessage("Account removed successfully.", Color.Green);
+                            Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1]);
                         }
                         else
                         {
                             args.Player.SendMessage("Account wasn't removed. Was it invalid?", Color.Red);
+                            Log.ConsoleInfo(args.Player.Name + " failed deleting invalid account: " + args.Parameters[1]);
                         }
                     }
                 }
