@@ -1534,7 +1534,7 @@ namespace TShockAPI
                 args.Player.Group = Tools.GetGroup("superadmin");
                 args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
                 args.Player.SendMessage("/user add <username>:<password> superadmin");
-                args.Player.SendMessage("This will create the username <username> with the password <password> as part of the superadmin group.");
+                args.Player.SendMessage("Creates: <username> with the password <password> as part of the superadmin group.");
                 args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
                 args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
                 return;
@@ -1545,7 +1545,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Please disable the auth system! If you need help, consult the forums. http://tshock.co/");
                 args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
                 args.Player.SendMessage("/user add <username>:<password> superadmin");
-                args.Player.SendMessage("This will create the username <username> with the password <password> as part of the superadmin group.");
+                args.Player.SendMessage("Creates: <username> with the password <password> as part of the superadmin group.");
                 args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
                 args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
                 return;
@@ -1570,13 +1570,14 @@ namespace TShockAPI
                 args.Player.SendMessage("This is a security measure designed to prevent insecure administration setups.");
                 args.Player.SendMessage("Please re-run /auth and read the instructions!");
                 args.Player.SendMessage("If you're still confused, consult the forums. http://tshock.co/");
+                return;
             }
 
             args.Player.SendMessage("Your new account has been verified, and the /auth system has been turned off.");
-            args.Player.SendMessage("You can always use the /user command to manage players. Do not just delete the auth.lck file.");
+            args.Player.SendMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
             args.Player.SendMessage("Thankyou for using TShock! http://tshock.co/ & http://github.com/TShock/TShock");
             FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
-            File.Delete(Path.Combine(TShock.SavePath + "authcode.txt"));
+            File.Delete("./tshock/authcode.txt");
             TShock.AuthToken = 0;
         }
 
