@@ -97,6 +97,7 @@ namespace TShockAPI
         {
             if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
             {
+                Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
 
@@ -195,6 +196,10 @@ namespace TShockAPI
             NetHooks.GetData -= GetData;
             NetHooks.GreetPlayer -= OnGreetPlayer;
             NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+            {
+                File.Delete(Path.Combine(SavePath, "tshock.pid"));
+            }
         }
 
         /// <summary>
