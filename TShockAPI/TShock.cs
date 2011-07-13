@@ -95,14 +95,14 @@ namespace TShockAPI
 
         public override void Initialize()
         {
-            if (File.Exists(Path.Combine(SavePath + "tshock.pid")))
+            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
             {
-                File.Delete(Path.Combine(SavePath + "tshock.pid"));
+                File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
 
             p = Process.GetCurrentProcess();
             int pid = p.Id;
-            TextWriter tw = new StreamWriter(Path.Combine(SavePath + "tshock.pid"));
+            TextWriter tw = new StreamWriter(Path.Combine(SavePath, "tshock.pid"));
             tw.Write(pid);
             tw.Close();
 
