@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Microsoft Visual Studio 2010
  * HostPenda
  * And you, for your continued support and devotion to the evolution of TShock
+ * Kerplunc Gaming
+ * TerrariaGSP
  */
 using System;
 using System.Collections.Generic;

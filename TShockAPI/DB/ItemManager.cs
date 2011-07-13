@@ -21,10 +21,10 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT UNIQUE);";
+                        "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT PRIMARY);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) UNIQUE);";
+                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) PRIMARY);";
                 com.ExecuteNonQuery();
 
                 com.CommandText = "SELECT *FROM ItemBans";
