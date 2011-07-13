@@ -27,7 +27,7 @@ using Community.CsharpSqlite.SQLiteClient;
 namespace TShockAPI.DB
 {
     public class UserManager
-    {        
+    {
         private IDbConnection database;
 
         public UserManager(IDbConnection db)
@@ -38,94 +38,72 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Users' ('Username' TEXT PRIMARY KEY, 'Password' TEXT, 'UserGroup' TEXT, 'IP' TEXT);";
+                        "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(15));";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS Users (Username VARCHAR(255) PRIMARY, Password VARCHAR(255), UserGroup VARCHAR(255), IP VARCHAR(255));";
-                
+                        "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
+
                 com.ExecuteNonQuery();
             }
         }
 
-        public int AddUser(string ip = "" , string name = "", string password = "", string group = "default") //I LOVE HOW THIS IS COMPLETELY NOT THE FORMAT FOR, YOU KNOW, THE DB
+
+        public void AddUser(User user)
         {
             try
             {
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@name, @password, @group, @ip);";
-                    com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@password", Tools.HashPassword(password));
+                    com.AddParameter("@name", user.Name);
+                    com.AddParameter("@password", Tools.HashPassword(user.Password));
 
-                    if(TShock.Groups.GroupExists(group))
-                        com.AddParameter("@group", group);
-                    else
-                        //Return code 2 (Group not exist)
-                        return 2;
+                    if (!TShock.Groups.GroupExists(user.Group))
+                        throw new GroupNotExistsException(user.Group);
 
-                    com.AddParameter("@ip", ip);
+                    com.AddParameter("@group", user.Group);
+                    com.AddParameter("@ip", user.Address);
 
                     using (var reader = com.ExecuteReader())
                     {
-                        if (reader.RecordsAffected > 0)
-                        {
-                            //Return code 1 (User added)
-                            return 1;
-                        }
-                        else
-                        {
-                            //Return code 0 (Add failed)
-                            return 0;
-                        }
-                    }
-                }                
-            }
-            catch (Exception ex)
-            {
-                //Return code 0 (Add failed)
-                Log.ConsoleError("AddUser SQL returned an error: " + ex.ToString());
-                return 0;
-            }
-        }
-
-        public int RemoveUser(string inputUser, bool ip)
-        {
-            try
-            {
-                using (var com = database.CreateCommand())
-                {
-                    if (ip)
-                    {
-                        com.CommandText = "DELETE FROM Users WHERE IP=@ip";
-                        com.AddParameter("@ip", inputUser.ToLower());
-                    } else
-                    {
-                        com.CommandText = "DELETE FROM Users WHERE Username=@name";
-                        com.AddParameter("@name", inputUser.ToLower());
-                    }
-
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.RecordsAffected > 0)
-                        {
-                            //Return code 1 (User removed)
-                            reader.Close();
-                            return 1;
-                        }
-                        else
-                        {
-                            //Return code 0 (Remove failed)
-                            reader.Close();
-                            return 0;
-                        }                        
+                        if (reader.RecordsAffected < 1)
+                            throw new UserExistsException(user.Name);
                     }
                 }
             }
             catch (Exception ex)
             {
-                //Return code 0 (Remove failed)
-                Log.ConsoleError("RemoveUser SQL returned an error: " + ex.ToString());
-                return 0;
+                throw new UserManagerException("AddUser SQL returned an error", ex);
+            }
+        }
+
+        public void RemoveUser(User user)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    if (!string.IsNullOrEmpty(user.Address))
+                    {
+                        com.CommandText = "DELETE FROM Users WHERE IP=@ip";
+                        com.AddParameter("@ip", user.Address);
+                    }
+                    else
+                    {
+                        com.CommandText = "DELETE FROM Users WHERE Username=@name";
+                        com.AddParameter("@name", user.Name);
+                    }
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.RecordsAffected < 1)
+                            throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserManagerException("RemoveUser SQL returned an error", ex);
             }
         }
 
@@ -183,7 +161,6 @@ namespace TShockAPI.DB
                             string group = reader.Get<string>("UserGroup");
                             return Tools.GetGroup(group);
                         }
-                        reader.Close();
                     }
                 }
             }
@@ -193,42 +170,122 @@ namespace TShockAPI.DB
             }
             return Tools.GetGroup("default");
         }
+        public User GetUserByName(string name)
+        {
+            try
+            {
+                return GetUser(new User { Name = name });
+            }
+            catch (UserManagerException)
+            {
+                return null;
+            }
+        }
+        public User GetUserByIP(string ip)
+        {
+            try
+            {
+                return GetUser(new User { Address = ip });
+            }
+            catch (UserManagerException)
+            {
+                return null;
+            }
+        }
 
-        public string GetUserID(string username = "", string IP = "")
+        public User GetUser(User user)
         {
             try
             {
                 using (var com = database.CreateCommand())
                 {
-                    if (username != "" && username != null)
+                    if (string.IsNullOrEmpty(user.Address))
                     {
                         com.CommandText = "SELECT * FROM Users WHERE Username=@name";
-                        com.AddParameter("@name", username);
-                    }
-                    else if (IP != "" && IP != null)
-                    {
-                        com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
-                        com.AddParameter("@ip", IP);
+                        com.AddParameter("@name", user.Name);
                     }
                     else
-                        return "0";
+                    {
+                        com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
+                        com.AddParameter("@ip", user.Address);
+                    }
 
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            string ID = reader.Get<string>("ID");
-                            return ID;
+                            user.ID = reader.Get<int>("ID");
+                            user.Group = reader.Get<string>("Usergroup");
+                            return user;
                         }
-                        reader.Close();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log.ConsoleError("GetUserID SQL returned an error: " + ex.ToString());
+                throw new UserManagerException("GetUserID SQL returned an error", ex);
             }
-            return "0";
+            throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+        }
+    }
+
+    public class User
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Password { get; set; }
+        public string Group { get; set; }
+        public string Address { get; set; }
+
+        public User(string ip, string name, string pass, string group)
+        {
+            Address = ip;
+            Name = name;
+            Password = pass;
+            Group = group;
+        }
+        public User()
+        {
+            Address = "";
+            Name = "";
+            Password = "";
+            Group = "";
+        }
+    }
+
+    public class UserManagerException : Exception
+    {
+        public UserManagerException(string message)
+            : base(message)
+        {
+
+        }
+        public UserManagerException(string message, Exception inner)
+            : base(message, inner)
+        {
+
+        }
+    }
+    public class UserExistsException : UserManagerException
+    {
+        public UserExistsException(string name)
+            : base("User '" + name + "' already exists")
+        {
+        }
+    }
+    public class UserNotExistException : UserManagerException
+    {
+        public UserNotExistException(string name)
+            : base("User '" + name + "' does not exist")
+        {
+        }
+    }
+
+    public class GroupNotExistsException : UserManagerException
+    {
+        public GroupNotExistsException(string group)
+            : base("Group '" + group + "' does not exist")
+        {
         }
     }
 }

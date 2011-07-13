@@ -109,7 +109,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name WorldID=@worldid";
                     com.AddParameter("@name", name);
-                    if (state)                    
+                    if (state)
                         com.AddParameter("@bool", 1);
                     else
                         com.AddParameter("@bool", 0);
@@ -127,7 +127,7 @@ namespace TShockAPI.DB
             }
         }
 
-        public bool InProtectedArea(int X, int Y, string ID)
+        public bool InProtectedArea(int X, int Y, User user)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace TShockAPI.DB
                                 Y <= Y2 &&
                                 Protected == 1)
                             {
-                                if (!SplitIDs.Contains(ID))
+                                if (!SplitIDs.Contains(user.ID.ToString()))
                                     return true;
                             }
                         }
@@ -191,7 +191,7 @@ namespace TShockAPI.DB
             return SplitIDs;
         }
 
-        public bool AddNewUser(string regionName, string ID)
+        public bool AddNewUser(string regionName, User user)
         {
             string MergedIDs = string.Empty;
 
@@ -206,23 +206,17 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
-                        {
                             MergedIDs = reader.Get<string>("UserIds");
-                        }
-                        reader.Close();
                     }
 
                     if (MergedIDs == string.Empty)
-                        MergedIDs = ID;
+                        MergedIDs = user.ID.ToString();
                     else
-                        MergedIDs = MergedIDs + "," + ID;
+                        MergedIDs = MergedIDs + "," + user.ID;
 
                     com.CommandText = "UPDATE Regions SET UserIds=@ids";
                     com.AddParameter("@ids", MergedIDs);
-                    if (com.ExecuteNonQuery() > 0)
-                        return true;
-                    else
-                        return false;
+                    return (com.ExecuteNonQuery() > 0);
                 }
             }
             catch (Exception ex)

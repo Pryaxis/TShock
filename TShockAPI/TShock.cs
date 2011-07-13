@@ -143,13 +143,15 @@ namespace TShockAPI
             {
                 try
                 {
+                    var hostport = Config.MySqlHost.Split(':');
                     DB = new MySqlConnection();
-                    DB.ConnectionString =
-                        "Server='" + Config.MySqlHost +
-                        "';Port='" + Config.MySqlPort +
-                        "';Database='" + Config.MySqlDbName +
-                        "';Uid='" + Config.MySqlUsername +
-                        "';Pwd='" + Config.MySqlPassword + "';";
+                    DB.ConnectionString = String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
+                        hostport[0],
+                        hostport.Length > 1 ? hostport[1] : "3306",
+                        Config.MySqlDbName,
+                        Config.MySqlUsername,
+                        Config.MySqlPassword
+                    );
                     DB.Open();
                 }
                 catch (MySqlException ex)

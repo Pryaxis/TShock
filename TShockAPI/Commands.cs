@@ -323,6 +323,8 @@ namespace TShockAPI
             }
         }
 
+        //Todo: Add separate help text for '/user add' and '/user del'. Also add '/user addip' and '/user delip'
+
         private static void ManageUsers(CommandArgs args)
         {
             if (args.Parameters.Count < 2)
@@ -331,66 +333,76 @@ namespace TShockAPI
                 args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
                 return;
             }
-                if (args.Parameters[0] == "add" && args.Parameters.Count > 2)
+
+            string subcmd = args.Parameters[0];
+
+            if (subcmd == "add")
+            {
+                var namepass = args.Parameters[1].Split(':');
+                var user = new User();
+
+                try
                 {
-                    int returnval = 0;
-                    if (args.Parameters[1].Split(':').Length == 2)
+                    if (args.Parameters.Count > 2)
                     {
-                        if ((returnval = TShock.Users.AddUser("", args.Parameters[1].Split(':')[0], args.Parameters[1].Split(':')[1], args.Parameters[2])) == 1)
+                        if (namepass.Length == 2)
                         {
-                            args.Player.SendMessage("Account " + args.Parameters[1].Split(':')[0] + " has been added to group " + args.Parameters[2] + "!", Color.Green);
-                            Log.ConsoleInfo(args.Player.Name + " added Account " + args.Parameters[1].Split(':')[0] + " to group " + args.Parameters[2]);
+                            user.Name = namepass[0];
+                            user.Password = namepass[1];
+                            user.Group = args.Parameters[2];
                         }
-                        else if (returnval == 2)
-                            args.Player.SendMessage("Invalid Group", Color.Green);
-                        else
-                            args.Player.SendMessage("Could not add user", Color.Green);
-                        return;
-                    }
-                    else if (args.Parameters[1].Split(':').Length == 1)
-                    {
-                        if ((returnval = TShock.Users.AddUser(args.Parameters[1], args.Parameters[1], "null", args.Parameters[2])) == 1)
+                        else if (namepass.Length == 1)
+                        {
+                            user.Address = namepass[0];
+                            user.Group = args.Parameters[2];
+                        }
+                        if (!string.IsNullOrEmpty(user.Address))
                         {
                             args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
                             args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
-                            Log.ConsoleInfo(args.Player.Name + " added IP " + args.Parameters[1] + " to group " + args.Parameters[2]);
+                            Log.ConsoleInfo(args.Player.Name + " added IP " + user.Address + " to group " + user.Group);
                         }
-                        else if (returnval == 2)
-                            args.Player.SendMessage("Invalid Group", Color.Green);
                         else
-                            args.Player.SendMessage("Could not add user", Color.Green);
-                        return;
+                        {
+                            args.Player.SendMessage("Account " + user.Name + " has been added to group " + user.Group + "!", Color.Green);
+                            Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
+                        }
                     }
-                   args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
-                }else if (args.Parameters[0] == "del" && args.Parameters.Count == 2)
-                {
-                    if (args.Parameters[1].Contains("."))
+                    else
                     {
-                        //If this isn't an IP, well...
-                        if (TShock.Users.RemoveUser(args.Parameters[1], true) == 1)
-                        {
-                            args.Player.SendMessage("IP removed successfully.", Color.Green);
-                            Log.ConsoleInfo(args.Player.Name + " successfully deleted ip: " + args.Parameters[1]);
-                        }
-                        else
-                        {
-                            args.Player.SendMessage("IP wasn't removed. Was it invalid?", Color.Red);
-                            Log.ConsoleInfo(args.Player.Name + " failed deleting invalid ip: " + args.Parameters[1]);
-                        }
-                    } else
-                    {
-                        if (TShock.Users.RemoveUser(args.Parameters[1], false) == 1)
-                        {
-                            args.Player.SendMessage("Account removed successfully.", Color.Green);
-                            Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1]);
-                        }
-                        else
-                        {
-                            args.Player.SendMessage("Account wasn't removed. Was it invalid?", Color.Red);
-                            Log.ConsoleInfo(args.Player.Name + " failed deleting invalid account: " + args.Parameters[1]);
-                        }
+                        args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
                     }
                 }
+                catch (UserManagerException ex)
+                {
+                    args.Player.SendMessage(ex.Message, Color.Green);
+                    Log.ConsoleError(ex.ToString());
+                }
+            }
+            else if (subcmd == "del" && args.Parameters.Count == 2)
+            {
+                var user = new User();
+                if (args.Parameters[1].Contains("."))
+                    user.Address = args.Parameters[1];
+                else
+                    user.Name = args.Parameters[1];
+
+                try
+                {
+                    TShock.Users.RemoveUser(user);
+                    args.Player.SendMessage("Account removed successfully.", Color.Green);
+                    Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1]);
+                }
+                catch (UserManagerException ex)
+                {
+                    args.Player.SendMessage(ex.Message, Color.Red);
+                    Log.ConsoleError(ex.ToString());
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
+            }
         }
         #endregion
 
@@ -418,7 +430,7 @@ namespace TShockAPI
             {
                 args.Player.SendMessage("Invalid player.", Color.Red);
             }
-    }
+        }
 
         private static void Kick(CommandArgs args)
         {
@@ -1383,7 +1395,7 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            string playerID = "0";
+                            User playerID;
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1396,7 +1408,7 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerID = TShock.Users.GetUserID(Tools.FindPlayer(playerName)[0].UserName)) != "0")
+                            if ((playerID = TShock.Users.GetUserByName(Tools.FindPlayer(playerName)[0].UserName)) != null)
                             {
                                 if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
@@ -1405,7 +1417,7 @@ namespace TShockAPI
                                 else
                                     args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
                             }
-                            else if ((playerID = TShock.Users.GetUserID("",Tools.FindPlayer(playerName)[0].IP)) != "0")
+                            else if ((playerID = TShock.Users.GetUserByIP(Tools.FindPlayer(playerName)[0].IP)) != null)
                             {
                                 if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
@@ -1534,13 +1546,21 @@ namespace TShockAPI
             int givenCode = Convert.ToInt32(args.Parameters[0]);
             if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
             {
-                TShock.Users.AddUser(args.Player.IP,"","","superadmin");
-                args.Player.Group = Tools.GetGroup("superadmin");
-                args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
-                args.Player.SendMessage("/user add <username>:<password> superadmin");
-                args.Player.SendMessage("Creates: <username> with the password <password> as part of the superadmin group.");
-                args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
-                args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
+                try
+                {
+                    TShock.Users.AddUser(new User(args.Player.IP, "", "", "superadmin"));
+                    args.Player.Group = Tools.GetGroup("superadmin");
+                    args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
+                    args.Player.SendMessage("/user add <username>:<password> superadmin");
+                    args.Player.SendMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+                    args.Player.SendMessage("Please use /login <username> <password> to login from now on.");
+                    args.Player.SendMessage("If you understand, please /login <username> <password> now, and type /auth-verify");
+                }
+                catch (UserManagerException ex)
+                {
+                    Log.ConsoleError(ex.ToString());
+                    args.Player.SendMessage(ex.Message);
+                }
                 return;
             }
 

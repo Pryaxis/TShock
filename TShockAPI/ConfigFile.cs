@@ -77,9 +77,8 @@ namespace TShockAPI
         /// </summary>
         public string StorageType = "sqlite";
 
-        public string MySqlHost = "localhost";
+        public string MySqlHost = "localhost:3306";
         public string MySqlDbName = "";
-        public string MySqlPort = "3306";
         public string MySqlUsername = "";
         public string MySqlPassword = "";
 
