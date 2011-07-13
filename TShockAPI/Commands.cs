@@ -346,7 +346,7 @@ namespace TShockAPI
                     }
                     else if (args.Parameters[1].Split(':').Length == 1)
                     {
-                        if ((returnval = TShock.Users.AddUser("", "", args.Parameters[2], args.Parameters[1])) == 1)
+                        if ((returnval = TShock.Users.AddUser(args.Parameters[1], "null", args.Parameters[2], args.Parameters[1])) == 1)
                         {
                             args.Player.SendMessage("IP address admin added. If they're logged in, tell them to rejoin.", Color.Green);
                             args.Player.SendMessage("WARNING: This is insecure! It would be better to use a user account instead.", Color.Red);
