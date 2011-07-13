@@ -63,7 +63,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "default");
-                com.AddParameter("@commands", "canwater,canlava,warp");
+                com.AddParameter("@commands", "canwater,canlava,warp,canbuild");
                 com.AddParameter("@order", "4");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();

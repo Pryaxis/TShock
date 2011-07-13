@@ -44,15 +44,6 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS Users (Username VARCHAR(255) UNIQUE, Password VARCHAR(255), UserGroup VARCHAR(255), IP VARCHAR(255));";
                 
                 com.ExecuteNonQuery();
-
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO Users (UserGroup, IP) VALUES (@group, @ip);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO Users (UserGroup, IP) VALUES (@group, @ip);";
-
-                com.AddParameter("@ip", "127.0.0.1");
-                com.AddParameter("@group", "superadmin");
-                com.ExecuteNonQuery();
             }
         }
 
