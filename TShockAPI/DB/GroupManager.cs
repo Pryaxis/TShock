@@ -21,10 +21,10 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT UNIQUE, 'Commands' TEXT, 'OrderBy' TEXT);";
+                        "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY, 'Commands' TEXT, 'OrderBy' TEXT);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) UNIQUE, Commands VARCHAR(255), OrderBy VARCHAR(255));";
+                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
 
                 com.ExecuteNonQuery();
 

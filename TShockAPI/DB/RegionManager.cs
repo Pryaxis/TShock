@@ -48,7 +48,7 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'X2' NUMERIC, 'Y2' NUMERIC, 'RegionName' TEXT, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), X2 INT(11), Y2 INT(11), RegionName VARCHAR(255) UNIQUE, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
+                        "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), X2 INT(11), Y2 INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
 
                 com.ExecuteNonQuery();
             }
