@@ -531,8 +531,10 @@ namespace TShockAPI
             int tiley = args.Data.ReadInt32();
             if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
                 return false;
-
-            if (Main.tile[tilex, tiley].type != 0x15) //if not Chest
+			
+			bool isChest = Chest.FindChest(tilex, tiley) == -1 ? false : true;
+			
+            if (!isChest) //if not Chest
             {
                 Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
                                         tilex, tiley, Main.tile[tilex, tiley].type));
@@ -546,7 +548,7 @@ namespace TShockAPI
                 return true;
             }
             //protect empty chests
-            if (Main.tile[tilex, tiley].type == 0x15 && !args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
+            if (isChest && !args.Player.Group.HasPermission("editspawn") && RegionManager.InProtectedArea(tilex, tiley, Tools.GetPlayerIP(args.Player.Name)))
             {
                 args.Player.SendMessage("Chest protected from changes.", Color.Red);
                 args.Player.SendTileSquare(tilex, tiley);
