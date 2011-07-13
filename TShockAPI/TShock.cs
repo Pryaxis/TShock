@@ -67,6 +67,7 @@ namespace TShockAPI
         public static IDbConnection DB;
 
         public static Process p;
+        public static bool OverridePort = false;
 
         public override Version Version
         {
@@ -264,6 +265,14 @@ namespace TShockAPI
                         Main.WorldPath = path;
                         Log.ConsoleInfo("World path has been set to " + path);
                     }
+                }
+                if (parms[i].ToLower() == "-port")
+                {
+                    int port = Convert.ToInt32(parms[++i]);
+                    Netplay.serverPort = port;
+                    Config.ServerPort = port;
+                    OverridePort = true;
+                    Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
                 }
             }
         }
@@ -701,8 +710,10 @@ namespace TShockAPI
             Main.autoSave = file.AutoSave;
             Backups.KeepFor = file.BackupKeepFor;
             Backups.Interval = file.BackupInterval;
-
-            Netplay.serverPort = file.ServerPort;
+            if (!OverridePort)
+            {
+                Netplay.serverPort = file.ServerPort;
+            }
 
             Netplay.spamCheck = file.SpamChecks;
 
