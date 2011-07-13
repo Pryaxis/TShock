@@ -331,10 +331,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
                 return;
             }
-
-            if (args.Parameters.Count > 2)
-            {
-                if (args.Parameters[0] == "add")
+                if (args.Parameters[0] == "add" && args.Parameters.Count > 2)
                 {
                     int returnval = 0;
                     if (args.Parameters[1].Split(':').Length == 2)
@@ -361,7 +358,7 @@ namespace TShockAPI
                         return;
                     }
                    args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
-                } else if (args.Parameters[0] == "del")
+                }else if (args.Parameters[0] == "del" && args.Parameters.Count == 1)
                 {
                     if (args.Parameters[1].Contains("."))
                     {
@@ -386,7 +383,6 @@ namespace TShockAPI
                         }
                     }
                 }
-            }
         }
         #endregion
 
