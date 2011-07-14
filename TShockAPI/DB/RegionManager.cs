@@ -167,8 +167,8 @@ namespace TShockAPI.DB
                 return false;
             }
         }
-
-        public bool InProtectedArea(int X, int Y, User user) //This whole thing is dumb
+        [Obsolete("Use Region.* functions for more granular control over what is returned.")]
+        public bool InProtectedArea(int X, int Y, User user)
         {
             Rectangle r = new Rectangle(X, Y, 0, 0);
             for (int i = 0; i < RegionArray.Length; i++)
@@ -179,12 +179,12 @@ namespace TShockAPI.DB
                     {
                         if (RegionArray[i].RegionAllowedIDs[j] == user.Name)
                         {
-                            return true;
+                            return false;
                         }
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         public static List<string> ListIDs(string MergedIDs)
@@ -295,9 +295,24 @@ namespace TShockAPI.DB
         {
             if (RegionArea.Intersects(point))
             {
-                //Todo: Code here
-                //Apparently we don't have access to allowed/denied user IDs here, or they aren't constructed or something
+                return true;
+            }
+            return false;
+        }
 
+        public bool HasPermissionToBuildInRegion(Rectangle point, User user)
+        {
+            if (DisableBuild == 0)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < RegionAllowedIDs.Length; i++)
+            {
+                if (RegionAllowedIDs[i] == user.Name)
+                {
+                    return true;
+                }
             }
             return false;
         }
