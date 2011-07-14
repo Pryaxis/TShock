@@ -519,5 +519,19 @@ namespace TShockAPI
             }
             return true;
         }
+
+        /// <summary>
+        /// Checks if world has hit the max number of chests
+        /// </summary>
+        /// <returns>True if the entire chest array is used</returns>
+        public static bool MaxChests()
+        {
+            for (int i = 0; i < Main.chest.Length; i++)
+            {
+                if (Main.chest[i] == null)
+                    return false;
+            }
+            return true;
+        }
     }
 }
