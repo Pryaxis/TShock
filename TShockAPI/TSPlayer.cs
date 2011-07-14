@@ -21,6 +21,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
+using TShockAPI.DB;
 using TShockAPI.Net;
 
 namespace TShockAPI

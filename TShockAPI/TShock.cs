@@ -49,7 +49,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "Skanky Hacker: The Deathly Database Part 2";
+        public static readonly string VersionCodename = "The Deathly Database Part 2";
 
         public static string SavePath = "tshock";
 
@@ -66,7 +66,7 @@ namespace TShockAPI
 
         public static IDbConnection DB;
 
-        public static Process p;
+        public static Process TShockProcess;
         public static bool OverridePort = false;
 
         public override Version Version
@@ -108,8 +108,8 @@ namespace TShockAPI
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
 
-            p = Process.GetCurrentProcess();
-            int pid = p.Id;
+            TShockProcess = Process.GetCurrentProcess();
+            int pid = TShockProcess.Id;
             TextWriter tw = new StreamWriter(Path.Combine(SavePath, "tshock.pid"));
             tw.Write(pid);
             tw.Close();
