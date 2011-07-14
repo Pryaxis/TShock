@@ -220,12 +220,12 @@ namespace TShockAPI.DB
             }
             for (int i = 0; i < RegionArray.Length; i++)
             {
-                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && !RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
                 {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         public bool InArea(int x, int y, User user)
