@@ -500,6 +500,10 @@ namespace TShockAPI
         {
             using (var sha = new SHA512CryptoServiceProvider())
             {
+                if (password == "")
+                {
+                    return "nonexistent-password";
+                }
                 var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
                 return bytes.Aggregate("", (s, b) => s + b.ToString("height"));
             }

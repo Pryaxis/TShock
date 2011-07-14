@@ -303,24 +303,31 @@ namespace TShockAPI
                 args.Player.SendMessage("If you forgot your password, there is no way to recover it.");
                 return;
             }
+            try
+            {
+                string encrPass = Tools.HashPassword(args.Parameters[1]);
+                string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
+                if (exr[0].ToUpper() == encrPass.ToUpper())
+                {
+                    args.Player.Group = Tools.GetGroup(exr[1]);
+                    args.Player.UserName = args.Parameters[0];
+                    args.Player.IsLoggedIn = true;
+                    args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
+                    Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
+                    return;
+                }
+                else
+                {
+                    Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
+                    args.Player.LoginAttempts++;
+                    return;
+                }
+            } catch (Exception e)
+            {
+                args.Player.SendMessage("There was an error processing your request. Maybe your account doesn't exist?", Color.Red);
+                return;
+            }
 
-            string encrPass = Tools.HashPassword(args.Parameters[1]);
-            string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
-            if (exr[0].ToUpper() == encrPass.ToUpper())
-            {
-                args.Player.Group = Tools.GetGroup(exr[1]);
-                args.Player.UserName = args.Parameters[0];
-                args.Player.IsLoggedIn = true;
-                args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
-                Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
-                return;
-            }
-            else
-            {
-                Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
-                args.Player.LoginAttempts++;
-                return;
-            }
         }
 
         //Todo: Add separate help text for '/user add' and '/user del'. Also add '/user addip' and '/user delip'
