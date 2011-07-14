@@ -310,7 +310,7 @@ namespace TShockAPI
                 if (exr[0].ToUpper() == encrPass.ToUpper())
                 {
                     args.Player.Group = Tools.GetGroup(exr[1]);
-                    args.Player.UserName = args.Parameters[0];
+                    args.Player.UserAccountName = args.Parameters[0];
                     args.Player.IsLoggedIn = true;
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
@@ -1418,7 +1418,7 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerID = TShock.Users.GetUserByName(Tools.FindPlayer(playerName)[0].UserName)) != null)
+                            if ((playerID = TShock.Users.GetUserByName(Tools.FindPlayer(playerName)[0].Name)) != null)
                             {
                                 if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
