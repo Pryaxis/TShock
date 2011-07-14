@@ -54,6 +54,7 @@ namespace TShockAPI.DB
 
                 com.ExecuteNonQuery();
             }
+            ReloadAllRegions();
         }
 
         public void ReloadAllRegions()
@@ -82,6 +83,7 @@ namespace TShockAPI.DB
                             string[] SplitIDs = MergedIDs.Split(',');
 
                             Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
+                            r.RegionAllowedIDs = SplitIDs;
                             RegionArray[iterationCounter] = r;
                             iterationCounter++;
                         }
@@ -112,7 +114,11 @@ namespace TShockAPI.DB
                     com.AddParameter("@userids", "");
                     com.AddParameter("@protected", 1);
                     if (com.ExecuteNonQuery() > 0)
+                    {
+                        ReloadAllRegions();
                         return true;
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -132,6 +138,7 @@ namespace TShockAPI.DB
                     com.AddParameter("@name", name.ToLower());
                     com.AddParameter("@worldid", Main.worldID.ToString());
                     com.ExecuteNonQuery();
+                    ReloadAllRegions();
                     return true;
                 }
             }
@@ -155,6 +162,7 @@ namespace TShockAPI.DB
                     else
                         com.AddParameter("@bool", 0);
                     com.AddParameter("@worldid", Main.worldID.ToString());
+                    ReloadAllRegions();
                     if (com.ExecuteNonQuery() > 0)
                         return true;
                     else
@@ -278,6 +286,7 @@ namespace TShockAPI.DB
 
                     com.CommandText = "UPDATE Regions SET UserIds=@ids";
                     com.AddParameter("@ids", MergedIDs);
+                    ReloadAllRegions();
                     return (com.ExecuteNonQuery() > 0);
                 }
             }
