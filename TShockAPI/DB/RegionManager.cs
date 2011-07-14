@@ -75,7 +75,7 @@ namespace TShockAPI.DB
                             int Y1 = reader.Get<int>("Y1");
                             int height = reader.Get<int>("height");
                             int width = reader.Get<int>("width");
-                            int Protected = reader.Get<int>("Protected"); //
+                            int Protected = reader.Get<int>("Protected");
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
                             string name = DbExt.Get<string>(reader, "RegionName");
 
