@@ -69,6 +69,8 @@ namespace TShockAPI
         public static Process TShockProcess;
         public static bool OverridePort = false;
 
+        public static double ElapsedTime;
+
         public override Version Version
         {
             get { return VersionNum; }
@@ -320,42 +322,49 @@ namespace TShockAPI
             if (Backups.IsBackupTime)
                 Backups.Backup();
 
-            foreach (TSPlayer player in TShock.Players)
+            ElapsedTime += time.ElapsedGameTime.TotalMilliseconds;
+
+            //call these every second, not every update
+            if (ElapsedTime >= 1000)
             {
-                if (player != null && player.Active)
+                ElapsedTime = 0;
+                foreach (TSPlayer player in TShock.Players)
                 {
-                    if (player.TilesDestroyed != null)
+                    if (player != null && player.Active)
                     {
-                        if (player.TileThreshold >= TShock.Config.TileThreshold)
+                        if (player.TilesDestroyed != null)
                         {
-                            if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                            if (player.TileThreshold >= TShock.Config.TileThreshold)
                             {
-                                TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
+                                if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                                {
+                                    TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
+                                }
+                                else if (player.TileThreshold > 0)
+                                {
+                                    player.TileThreshold = 0;
+                                    player.TilesDestroyed.Clear();
+                                }
+
                             }
                             else if (player.TileThreshold > 0)
                             {
                                 player.TileThreshold = 0;
                                 player.TilesDestroyed.Clear();
                             }
-
                         }
-                        else if (player.TileThreshold > 0)
-                        {
-                            player.TileThreshold = 0;
-                            player.TilesDestroyed.Clear();
-                        }
-                    }
 
-                    if (!player.Group.HasPermission("usebanneditem"))
-                    {
-                        var inv = player.TPlayer.inventory;
-
-                        for (int i = 0; i < inv.Length; i++)
+                        if (!player.Group.HasPermission("usebanneditem"))
                         {
-                            if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
+                            var inv = player.TPlayer.inventory;
+
+                            for (int i = 0; i < inv.Length; i++)
                             {
-                                player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
-                                break;
+                                if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
+                                {
+                                    player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
+                                    break;
+                                }
                             }
                         }
                     }
