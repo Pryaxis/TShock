@@ -1,6 +1,6 @@
 TShock is a server modification based upon High6's mod API that allows for basic server administration commands.
 
-__Constant builds__: http://ci.shankshock.com/
+__Constant builds__: http://ci.tshock.co/
 
 ----
 
