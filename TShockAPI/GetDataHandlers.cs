@@ -278,7 +278,7 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (!args.Player.Group.HasPermission("editspawn") && TShock.Regions.InProtectedAreaAndCantBuild(x, y, TShock.Users.GetUserByIP(args.Player.IP)))
+            if (!args.Player.Group.HasPermission("editspawn") && !TShock.Regions.CanBuild(x, y, args.Player))
             {
                 if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
                 {
@@ -537,7 +537,7 @@ namespace TShockAPI
                 args.Player.SendTileSquare(tilex, tiley);
                 return true;
             }
-            if (!args.Player.Group.HasPermission("editspawn") && TShock.Regions.InProtectedAreaAndCantBuild(tilex, tiley, TShock.Users.GetUserByName(args.Player.Name)))
+            if (!args.Player.Group.HasPermission("editspawn") && !TShock.Regions.CanBuild(tilex, tiley, args.Player))
             {
                 args.Player.SendMessage("Region protected from changes.", Color.Red);
                 args.Player.SendTileSquare(tilex, tiley);
