@@ -100,7 +100,7 @@
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="DB\RegionManager.cs" />
     <Compile Include="RconHandler.cs" />
-    <Compile Include="Region.cs" />
+    <Compile Include="RegionStore.cs" />
     <Compile Include="RememberPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

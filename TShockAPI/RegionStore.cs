@@ -6,7 +6,7 @@ using TShockAPI.DB;
 
 namespace TShockAPI
 {
-    class Region
+    class RegionStore
     {
         public int X1;
         public int X2;
@@ -14,7 +14,7 @@ namespace TShockAPI
         public int Y2;
         public int IsProtected;
         public string[] UserIDs;
-        public Region(string tX1, string tX2, string tY1, string tY2, int tIsProtected, string[] tUserIDs)
+        public RegionStore(string tX1, string tX2, string tY1, string tY2, int tIsProtected, string[] tUserIDs)
         {
             X1 = Convert.ToInt32(tX1);
             X2 = Convert.ToInt32(tX2);
@@ -24,7 +24,7 @@ namespace TShockAPI
             UserIDs = tUserIDs;
         }
 
-        public Region(int tX1, int tX2, int tY1, int tY2, int tIsProtected, string[] tUserIDs)
+        public RegionStore(int tX1, int tX2, int tY1, int tY2, int tIsProtected, string[] tUserIDs)
         {
             X1 = Convert.ToInt32(tX1);
             X2 = Convert.ToInt32(tX2);
@@ -34,7 +34,7 @@ namespace TShockAPI
             UserIDs = tUserIDs;
         }
 
-        public Region(string tX1, string tX2, string tY1, string tY2)
+        public RegionStore(string tX1, string tX2, string tY1, string tY2)
         {
             X1 = Convert.ToInt32(tX1);
             X2 = Convert.ToInt32(tX2);
@@ -42,7 +42,7 @@ namespace TShockAPI
             Y2 = Convert.ToInt32(tY2);
         }
 
-        public Region(int tX1, int tX2, int tY1, int tY2)
+        public RegionStore(int tX1, int tX2, int tY1, int tY2)
         {
             X1 = Convert.ToInt32(tX1);
             X2 = Convert.ToInt32(tX2);
