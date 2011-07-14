@@ -295,7 +295,7 @@ namespace TShockAPI
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                FileTools.CreateFile(Path.Combine(SavePath + "authcode.txt"));
+                FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
                 TextWriter tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt"));
                 tw.WriteLine(AuthToken);
                 tw.Close();
