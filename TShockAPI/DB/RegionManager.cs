@@ -33,9 +33,7 @@ namespace TShockAPI.DB
 {
     public class RegionManager
     {
-        public static List<Region> Regions = new List<Region>();
-
-        public Region[] RegionArray;
+        public List<Region> Regions = new List<Region>();
 
         private IDbConnection database;
 
@@ -67,9 +65,7 @@ namespace TShockAPI.DB
                     com.AddParameter("@worldid", Main.worldID.ToString());
                     using (var reader = com.ExecuteReader())
                     {
-                        int regionCount = reader.RecordsAffected;
-                        RegionArray = new Region[regionCount];
-                        int iterationCounter = 0;
+                        Regions.Clear();
                         while (reader.Read())
                         {
                             int X1 = reader.Get<int>("X1");
@@ -84,8 +80,7 @@ namespace TShockAPI.DB
 
                             Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
                             r.RegionAllowedIDs = SplitIDs;
-                            RegionArray[iterationCounter] = r;
-                            iterationCounter++;
+                            Regions.Add(r);
                         }
                         reader.Close();
                     }
@@ -179,13 +174,13 @@ namespace TShockAPI.DB
         public bool InProtectedAreaAndCantBuild(int X, int Y, User user)
         {
             Rectangle r = new Rectangle(X, Y, 0, 0);
-            for (int i = 0; i < RegionArray.Length; i++)
+            for (int i = 0; i < Regions.Count; i++)
             {
-                if (RegionArray[i].RegionArea.Intersects(r))
+                if (Regions[i].RegionArea.Intersects(r))
                 {
-                    for (int j = 0; j < RegionArray[i].RegionAllowedIDs.Length; j++)
+                    for (int j = 0; j < Regions[i].RegionAllowedIDs.Length; j++)
                     {
-                        if (RegionArray[i].RegionAllowedIDs[j] == user.Name)
+                        if (Regions[i].RegionAllowedIDs[j] == user.Name)
                         {
                             return false;
                         }
@@ -197,9 +192,9 @@ namespace TShockAPI.DB
 
         public bool CanBuild(int x, int y, User user)
         {
-            for (int i = 0; i < RegionArray.Length; i++)
+            for (int i = 0; i < Regions.Count; i++)
             {
-                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && Regions[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
                 {
                     return true;
                 }
@@ -218,9 +213,9 @@ namespace TShockAPI.DB
             {
                 return true;
             }
-            for (int i = 0; i < RegionArray.Length; i++)
+            for (int i = 0; i < Regions.Count; i++)
             {
-                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && !RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && !Regions[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
                 {
                     return false;
                 }
@@ -230,9 +225,9 @@ namespace TShockAPI.DB
 
         public bool InArea(int x, int y, User user)
         {
-            for (int i = 0; i < RegionArray.Length; i++)
+            for (int i = 0; i < Regions.Count; i++)
             {
-                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)))
+                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)))
                 {
                     return true;
                 }

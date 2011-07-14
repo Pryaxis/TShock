@@ -1418,7 +1418,7 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerID = TShock.Users.GetUserByName(Tools.FindPlayer(playerName)[0].Name)) != null)
+                            if ((playerID = TShock.Users.GetUserByName(Tools.FindPlayer(playerName)[0].UserAccountName)) != null)
                             {
                                 if (TShock.Regions.AddNewUser(regionName, playerID))
                                 {
