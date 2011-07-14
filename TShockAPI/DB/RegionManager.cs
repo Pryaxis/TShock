@@ -167,8 +167,8 @@ namespace TShockAPI.DB
                 return false;
             }
         }
-        [Obsolete("Use Region.* functions for more granular control over what is returned.")]
-        public bool InProtectedArea(int X, int Y, User user)
+        [Obsolete("Use CanBuild and InArea instead.")]
+        public bool InProtectedAreaAndCantBuild(int X, int Y, User user)
         {
             Rectangle r = new Rectangle(X, Y, 0, 0);
             for (int i = 0; i < RegionArray.Length; i++)
@@ -185,6 +185,51 @@ namespace TShockAPI.DB
                 }
             }
             return true;
+        }
+
+        public bool CanBuild(int x, int y, User user)
+        {
+            for (int i = 0; i < RegionArray.Length; i++)
+            {
+                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool CanBuild(int x, int y, TSPlayer ply)
+        {
+            User user = TShock.Users.GetUserByName(ply.TPlayer.name);
+            if (!ply.Group.HasPermission("canbuild"))
+            {
+                return false;
+            }
+            if (ply.Group.HasPermission("editspawn"))
+            {
+                return true;
+            }
+            for (int i = 0; i < RegionArray.Length; i++)
+            {
+                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)) && RegionArray[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool InArea(int x, int y, User user)
+        {
+            for (int i = 0; i < RegionArray.Length; i++)
+            {
+                if (RegionArray[i].InArea(new Rectangle(x, y, 0, 0)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static List<string> ListIDs(string MergedIDs)
@@ -291,7 +336,7 @@ namespace TShockAPI.DB
             RegionWorldID = string.Empty;
         }
 
-        public bool InProtectedArea(Rectangle point, User user)
+        public bool InArea(Rectangle point)
         {
             if (RegionArea.Intersects(point))
             {
