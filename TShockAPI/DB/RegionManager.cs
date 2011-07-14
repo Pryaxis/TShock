@@ -170,45 +170,21 @@ namespace TShockAPI.DB
 
         public bool InProtectedArea(int X, int Y, User user) //This whole thing is dumb
         {
-            try
+            Rectangle r = new Rectangle(X, Y, 0, 0);
+            for (int i = 0; i < RegionArray.Length; i++)
             {
-                using (var com = database.CreateCommand())
+                if (RegionArray[i].RegionArea.Intersects(r))
                 {
-                    com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    using (var reader = com.ExecuteReader())
+                    for (int j = 0; j < RegionArray[i].RegionAllowedIDs.Length; j++)
                     {
-                        while (reader.Read())
+                        if (RegionArray[i].RegionAllowedIDs[j] == user.Name)
                         {
-                            int X1 = reader.Get<int>("X1");
-                            int Y1 = reader.Get<int>("Y1");
-                            int height = reader.Get<int>("height");
-                            int width = reader.Get<int>("width");
-                            int Protected = reader.Get<int>("Protected");
-                            string MergedIDs = DbExt.Get<string>(reader, "UserIds");
-
-                            string[] SplitIDs = MergedIDs.Split(',');
-
-                            if (X >= X1 &&
-                                X <= height &&
-                                Y >= Y1 &&
-                                Y <= width &&
-                                Protected == 1)
-                            {
-                                if (!SplitIDs.Contains(user.ID.ToString()))
-                                    return true;
-                            }
+                            return true;
                         }
-                        reader.Close();
                     }
                 }
-                return false;
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-                return false;
-            }
+            return false;
         }
 
         public static List<string> ListIDs(string MergedIDs)

@@ -978,7 +978,7 @@ namespace TShockAPI
                 var plr = players[0];
                 if (plr.Teleport(args.Player.TileX, args.Player.TileY + 3))
                 {
-                    plr.SendMessage(string.Format("You were teleported to {0}.", plr.Name));
+                    plr.SendMessage(string.Format("You were teleported to {0}.", args.Player.Name));
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
                 }
 
