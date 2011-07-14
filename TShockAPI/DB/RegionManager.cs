@@ -127,7 +127,7 @@ namespace TShockAPI.DB
             }
         }
 
-        public bool InProtectedArea(int X, int Y, User user)
+        public bool InProtectedArea(int X, int Y, User user) //This whole thing is dumb
         {
             try
             {
@@ -272,6 +272,17 @@ namespace TShockAPI.DB
             RegionName = string.Empty;
             DisableBuild = 1;
             RegionWorldID = string.Empty;
+        }
+
+        public bool InProtectedArea(Rectangle point, User user)
+        {
+            if (RegionArea.Intersects(point))
+            {
+                //Todo: Code here
+                //Apparently we don't have access to allowed/denied user IDs here, or they aren't constructed or something
+
+            }
+            return false;
         }
     }
 }
