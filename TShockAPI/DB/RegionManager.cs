@@ -35,6 +35,8 @@ namespace TShockAPI.DB
     {
         public static List<Region> Regions = new List<Region>();
 
+        public Region[] RegionArray;
+
         private IDbConnection database;
 
         public RegionManager(IDbConnection db)
@@ -45,12 +47,51 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'X2' NUMERIC, 'Y2' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);";
+                        "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), X2 INT(11), Y2 INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
+                        "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), height INT(11), width INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
 
                 com.ExecuteNonQuery();
+            }
+        }
+
+        public void ReloadAllRegions()
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
+                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    using (var reader = com.ExecuteReader())
+                    {
+                        int regionCount = reader.RecordsAffected;
+                        RegionArray = new Region[regionCount];
+                        int iterationCounter = 0;
+                        while (reader.Read())
+                        {
+                            int X1 = reader.Get<int>("X1");
+                            int Y1 = reader.Get<int>("Y1");
+                            int height = reader.Get<int>("height");
+                            int width = reader.Get<int>("width");
+                            int Protected = reader.Get<int>("Protected");
+                            string MergedIDs = DbExt.Get<string>(reader, "UserIds");
+                            string name = DbExt.Get<string>(reader, "RegionName");
+
+                            string[] SplitIDs = MergedIDs.Split(',');
+
+                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
+                            RegionArray[iterationCounter] = r;
+                            iterationCounter++;
+                        }
+                        reader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
             }
         }
 
@@ -141,17 +182,17 @@ namespace TShockAPI.DB
                         {
                             int X1 = reader.Get<int>("X1");
                             int Y1 = reader.Get<int>("Y1");
-                            int X2 = reader.Get<int>("X2");
-                            int Y2 = reader.Get<int>("Y2");
+                            int height = reader.Get<int>("height");
+                            int width = reader.Get<int>("width");
                             int Protected = reader.Get<int>("Protected");
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
 
                             string[] SplitIDs = MergedIDs.Split(',');
 
                             if (X >= X1 &&
-                                X <= X2 &&
+                                X <= height &&
                                 Y >= Y1 &&
-                                Y <= Y2 &&
+                                Y <= width &&
                                 Protected == 1)
                             {
                                 if (!SplitIDs.Contains(user.ID.ToString()))
@@ -237,7 +278,7 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         while (reader.Read())
-                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("X2"), reader.Get<int>("Y2")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
+                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("height"), reader.Get<int>("width")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
                         reader.Close();
                     }
                 }
@@ -256,14 +297,14 @@ namespace TShockAPI.DB
         public string RegionName { get; set; }
         public int DisableBuild { get; set; }
         public string RegionWorldID { get; set; }
-        public string RegionAllowedIDs { get; set; }
+        public string[] RegionAllowedIDs { get; set; }
 
-        public Region(Rectangle region, string name, int disablebuild, string worldname)
+        public Region(Rectangle region, string name, int disablebuild, string RegionWorldIDz)
         {
             RegionArea = region;
             RegionName = name;
             DisableBuild = disablebuild;
-            RegionWorldID = worldname;
+            RegionWorldID = RegionWorldIDz;
         }
 
         public Region()

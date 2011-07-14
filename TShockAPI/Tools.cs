@@ -501,7 +501,7 @@ namespace TShockAPI
             using (var sha = new SHA512CryptoServiceProvider())
             {
                 var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+                return bytes.Aggregate("", (s, b) => s + b.ToString("height"));
             }
         }
 

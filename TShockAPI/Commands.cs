@@ -1443,7 +1443,7 @@ namespace TShockAPI
                             int.TryParse(args.Parameters[1], out page);
                         var sb = new StringBuilder();
 
-                        List<RegionStore> Regions = TShock.Regions.ListAllRegions();
+                        List<Region> Regions = TShock.Regions.ListAllRegions();
 
                         if (Regions.Count > (15 * (page - 1)))
                         {
