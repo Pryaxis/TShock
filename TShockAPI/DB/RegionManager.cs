@@ -152,16 +152,10 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name);
-                    if (state)
-                        com.AddParameter("@bool", 1);
-                    else
-                        com.AddParameter("@bool", 0);
+                    com.AddParameter("@bool", state ? 1 : 0);
                     com.AddParameter("@worldid", Main.worldID.ToString());
                     ReloadAllRegions();
-                    if (com.ExecuteNonQuery() > 0)
-                        return true;
-                    else
-                        return false;
+                    return (com.ExecuteNonQuery() > 0);
                 }
             }
             catch (Exception ex)
