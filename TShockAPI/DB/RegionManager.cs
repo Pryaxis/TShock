@@ -150,7 +150,7 @@ namespace TShockAPI.DB
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name WorldID=@worldid";
+                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name);
                     if (state)
                         com.AddParameter("@bool", 1);
