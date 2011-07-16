@@ -219,9 +219,11 @@ namespace TShockAPI.DB
 
         public bool InArea(int x, int y)
         {
-            for (int i = 0; i < Regions.Count; i++)
+            foreach(Region region in Regions)
             {
-                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && Regions[i].DisableBuild == 0)
+                if (x >= region.RegionArea.Left && x <= region.RegionArea.Right &&
+                    y >= region.RegionArea.Top && y <= region.RegionArea.Bottom &&
+                    region.DisableBuild == 1)
                 {
                     return true;
                 }
