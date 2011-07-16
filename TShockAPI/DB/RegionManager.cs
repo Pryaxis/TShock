@@ -217,7 +217,7 @@ namespace TShockAPI.DB
             return true;
         }
 
-        public bool InArea(int x, int y, User user)
+        public bool InArea(int x, int y)
         {
             for (int i = 0; i < Regions.Count; i++)
             {
