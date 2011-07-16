@@ -149,6 +149,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("editspawn", ToggleAntiBuild, "antibuild"));
             ChatCommands.Add(new Command("editspawn", ProtectSpawn, "protectspawn"));
             ChatCommands.Add(new Command("editspawn", Region, "region"));
+            ChatCommands.Add(new Command("editspawn", DebugRegions, "debugreg"));
             ChatCommands.Add(new Command(Help, "help"));
             ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
             ChatCommands.Add(new Command(AuthToken, "auth"));
@@ -1278,6 +1279,18 @@ namespace TShockAPI
         {
             TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
             Tools.Broadcast(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
+        }
+
+        private static void DebugRegions(CommandArgs args)
+        {
+            foreach (Region r in TShock.Regions.Regions)
+            {
+                args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height );
+                foreach (string s in r.RegionAllowedIDs)
+                {
+                    args.Player.SendMessage(r.RegionName + ": " + s);
+                }
+            }
         }
 
         private static void Region(CommandArgs args)

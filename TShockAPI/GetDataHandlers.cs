@@ -288,10 +288,6 @@ namespace TShockAPI
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
-            if (TShock.Regions.InArea(x, y))
-            {
-                args.Player.SendMessage("Tick");
-            }
             if (TShock.Config.DisableBuild)
             {
                 if (!args.Player.Group.HasPermission("editspawn"))
