@@ -1198,7 +1198,7 @@ namespace TShockAPI
             switch (args.Parameters[0])
             {
                 case "day":
-                    TSPlayer.Server.SetTime(true, 0.0);
+                    TSPlayer.Server.SetTime(true, 150.0);
                     Tools.Broadcast(string.Format("{0} set time to day.", args.Player.Name));
                     break;
                 case "night":
