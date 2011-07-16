@@ -2,7 +2,7 @@ For the full list of changes, please take a look at GitHub:
 https://github.com/TShock/TShock/commits/master
 From now on, all release notes aren't put here. It's too much to track, but new features will be tossed here.
 
-Changes in API release 4:
+Changes in API release 3:
  - Added support for SQLite
  - Added support for MySQL
  - Added /user command, supports adding users via in game command
@@ -24,8 +24,30 @@ Changes in API release 4:
  - User names and passwords are now accepted. Passwords are hashed with SHA512
  - Added MaximumLoginAttempts to configuration
  - Added /tphere * and /tphere all
- - Added /auth-verify to verify and turn off the auth code system.
- 
+ - Added /auth-verify to verify and turn off the auth code system
+ - Added the ability to Log/notify admins when commands are executed. 
+ - Added a new Configuration Flag called "DisableBuild".
+ - Added command to toggle anti-build.
+ - Added -ip commandline 
+ - Fixed hair exploit 
+ - Added /rules, reads from ./tshock/rules.txt
+ - Added AdminChatPrefix configuration option.
+ - Added ForceKillAll to kick all players.
+ - Added support to spawn all types of slimes (have to use the full exact name)
+ - Added /king to spawn king slime. 
+ - Adds protected regions. Use /region help ingame for extra help
+ - Added warps to tshock, edited some region commands 
+ - Added the ability to ban specific items for being in inventory when joining server
+ - Added /setspawn command,Sets the spawn point of the server
+ - Added HardcoreOnly 
+ - Sandgun and Dirt Rod no longer triggers a Impossible to place block. 
+ - Added /displaylogs. Toggles log output to player who executed the command.
+ - Added -configpath command line parameter to set config path. 
+ - Added broadcasting on map saves
+ - Added /tphere * and /tphere all 
+
+Still Lots More To Add! :)
+
 Changes in API release 2.0.0.0:
  - Added update checker.
 
