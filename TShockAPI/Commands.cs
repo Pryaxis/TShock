@@ -1778,7 +1778,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -1786,8 +1786,9 @@ namespace TShockAPI
                 args.Player.SendMessage("Missing item name/id", Color.Red);
                 return;
             }
-
-            var items = Tools.GetItemByIdOrName(String.Join(" ", args.Parameters));
+            int itemAmount = 0;
+            int.TryParse( args.Parameters[args.Parameters.Count - 1 ], out itemAmount );
+            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -1803,8 +1804,10 @@ namespace TShockAPI
                 {
                     if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
                     {
-                        args.Player.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
-                        args.Player.SendMessage(string.Format("Got some {0}.", item.name));
+                        if( itemAmount == 0 || itemAmount > item.maxStack )
+                            itemAmount = item.maxStack;
+                        args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                        args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount.ToString(), item.name));
                     }
                     else
                     {
@@ -1820,9 +1823,9 @@ namespace TShockAPI
 
         private static void Give(CommandArgs args)
         {
-            if (args.Parameters.Count != 2)
+            if (args.Parameters.Count < 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -1835,7 +1838,8 @@ namespace TShockAPI
                 args.Player.SendMessage("Missing player name", Color.Red);
                 return;
             }
-
+            int itemAmount = 0;
+            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
             var items = Tools.GetItemByIdOrName(args.Parameters[0]);
 
             if (items.Count == 0)
@@ -1866,9 +1870,11 @@ namespace TShockAPI
                         var plr = players[0];
                         if (plr.InventorySlotAvailable || item.name.Contains("Coin"))
                         {
-                            plr.GiveItem(item.type, item.name, item.width, item.height, item.maxStack);
-                            args.Player.SendMessage(string.Format("Gave {0} some {1}.", plr.Name, item.name));
-                            plr.SendMessage(string.Format("{0} gave you some {1}.", args.Player.Name, item.name));
+                            if (itemAmount == 0 || itemAmount > item.maxStack)
+                                itemAmount = item.maxStack;
+                            plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                            args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount.ToString(), item.name));
+                            plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount.ToString(), item.name));
                         }
                         else
                         {
