@@ -221,7 +221,7 @@ namespace TShockAPI.DB
         {
             for (int i = 0; i < Regions.Count; i++)
             {
-                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)))
+                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && Regions[i].DisableBuild == 0)
                 {
                     return true;
                 }
