@@ -505,7 +505,7 @@ namespace TShockAPI
                     return "nonexistent-password";
                 }
                 var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("height"));
+                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
         }
 
