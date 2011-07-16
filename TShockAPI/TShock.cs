@@ -313,6 +313,7 @@ namespace TShockAPI
             {
                 AuthToken = 0;
             }
+            Regions.ReloadAllRegions();
         }
 
         private void OnUpdate(GameTime time)

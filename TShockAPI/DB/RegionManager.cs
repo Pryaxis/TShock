@@ -51,8 +51,8 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), height INT(11), width INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
 
                 com.ExecuteNonQuery();
+                ReloadAllRegions();
             }
-            ReloadAllRegions();
         }
 
         public void ReloadAllRegions()

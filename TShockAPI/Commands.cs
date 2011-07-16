@@ -149,7 +149,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("editspawn", ToggleAntiBuild, "antibuild"));
             ChatCommands.Add(new Command("editspawn", ProtectSpawn, "protectspawn"));
             ChatCommands.Add(new Command("editspawn", Region, "region"));
-            ChatCommands.Add(new Command("editspawn", DebugRegions, "debugreg"));
+            ChatCommands.Add(new Command("editspawn", DebugRegions, "f1"));
             ChatCommands.Add(new Command(Help, "help"));
             ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
             ChatCommands.Add(new Command(AuthToken, "auth"));
@@ -323,7 +323,7 @@ namespace TShockAPI
                     args.Player.LoginAttempts++;
                     return;
                 }
-            } catch (Exception e)
+            } catch (Exception)
             {
                 args.Player.SendMessage("There was an error processing your request. Maybe your account doesn't exist?", Color.Red);
                 return;
