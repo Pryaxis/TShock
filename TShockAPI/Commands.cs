@@ -1373,10 +1373,10 @@ namespace TShockAPI
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region protected [name] [true/false]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
                         break;
                     }
                 case "delete":

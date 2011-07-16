@@ -336,7 +336,7 @@ namespace TShockAPI.DB
 
         public bool InArea(Rectangle point)
         {
-            if (RegionArea.Intersects(point))
+            if (RegionArea.Contains(point.X, point.Y))
             {
                 return true;
             }
