@@ -23,7 +23,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Community.CsharpSqlite.SQLiteClient;
-
 namespace TShockAPI.DB
 {
     public class UserManager
@@ -192,7 +191,6 @@ namespace TShockAPI.DB
                 return null;
             }
         }
-
         public User GetUser(User user)
         {
             try

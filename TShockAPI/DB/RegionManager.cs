@@ -164,37 +164,6 @@ namespace TShockAPI.DB
                 return false;
             }
         }
-        [Obsolete("Use CanBuild and InArea instead.")]
-        public bool InProtectedAreaAndCantBuild(int X, int Y, User user)
-        {
-            Rectangle r = new Rectangle(X, Y, 0, 0);
-            for (int i = 0; i < Regions.Count; i++)
-            {
-                if (Regions[i].RegionArea.Intersects(r))
-                {
-                    for (int j = 0; j < Regions[i].RegionAllowedIDs.Length; j++)
-                    {
-                        if (Regions[i].RegionAllowedIDs[j] == user.Name)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
-        public bool CanBuild(int x, int y, User user)
-        {
-            for (int i = 0; i < Regions.Count; i++)
-            {
-                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && Regions[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public bool CanBuild(int x, int y, TSPlayer ply)
         {
@@ -203,13 +172,9 @@ namespace TShockAPI.DB
             {
                 return false;
             }
-            if (ply.Group.HasPermission("editspawn"))
-            {
-                return true;
-            }
             for (int i = 0; i < Regions.Count; i++)
             {
-                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && !Regions[i].HasPermissionToBuildInRegion(new Rectangle(x, y, 0, 0), user))
+                if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && !Regions[i].HasPermissionToBuildInRegion(ply))
                 {
                     return false;
                 }
@@ -345,8 +310,13 @@ namespace TShockAPI.DB
             return false;
         }
 
-        public bool HasPermissionToBuildInRegion(Rectangle point, User user)
+        public bool HasPermissionToBuildInRegion(TSPlayer ply)
         {
+            if (!ply.IsLoggedIn)
+            {
+                ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
+                return false;
+            }
             if (DisableBuild == 0)
             {
                 return true;
@@ -354,7 +324,7 @@ namespace TShockAPI.DB
 
             for (int i = 0; i < RegionAllowedIDs.Length; i++)
             {
-                if (RegionAllowedIDs[i] == user.Name)
+                if (RegionAllowedIDs[i] == ply.UserAccountName)
                 {
                     return true;
                 }
