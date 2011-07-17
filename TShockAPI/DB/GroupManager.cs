@@ -68,6 +68,17 @@ namespace TShockAPI.DB
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
+
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
+                com.AddParameter("@groupname", "vip");
+                com.AddParameter("@commands", "canwater,canlava,warp,canbuild,reservedslot");
+                com.AddParameter("@order", "0");
+                com.ExecuteNonQuery();
+                com.Parameters.Clear();
+
                 LoadPermisions();
             }
         }
