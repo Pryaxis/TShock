@@ -37,7 +37,7 @@ namespace TShockAPI.DB
             {
                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(15));";
+                        "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(32));";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
                         "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
