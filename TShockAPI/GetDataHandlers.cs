@@ -332,12 +332,6 @@ namespace TShockAPI
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
-
-            if (TShock.Regions.InArea(x, y))
-            {
-                args.Player.SendMessage("Tick!");
-            }
-
             return false;
         }
 
@@ -569,10 +563,6 @@ namespace TShockAPI
                         return true;
                     }
                 }
-            }
-            if (TShock.Regions.InArea(tilex, tiley))
-            {
-                args.Player.SendMessage("Tick!");
             }
             return false;
         }
