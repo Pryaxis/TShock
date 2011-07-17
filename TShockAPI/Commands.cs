@@ -1433,7 +1433,7 @@ namespace TShockAPI
                             }
                             if ((playerID = TShock.Users.GetUserByName(playerName)) != null)
                             {
-                                if (TShock.Regions.AddNewUser(regionName, playerID))
+                                if (TShock.Regions.AddNewUser(regionName, playerName))
                                 {
                                     args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
                                 }

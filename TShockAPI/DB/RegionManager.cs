@@ -217,7 +217,7 @@ namespace TShockAPI.DB
             return SplitIDs;
         }
 
-        public bool AddNewUser(string regionName, User user)
+        public bool AddNewUser(string regionName, String userName)
         {
             string MergedIDs = string.Empty;
 
@@ -236,9 +236,9 @@ namespace TShockAPI.DB
                     }
 
                     if (MergedIDs == string.Empty)
-                        MergedIDs = user.ID.ToString();
+                        MergedIDs = userName;
                     else
-                        MergedIDs = MergedIDs + "," + user.ID;
+                        MergedIDs = MergedIDs + "," + userName;
 
                     com.CommandText = "UPDATE Regions SET UserIds=@ids";
                     com.AddParameter("@ids", MergedIDs);
