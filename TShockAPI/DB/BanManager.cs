@@ -44,6 +44,35 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS  Bans (IP VARCHAR(255) PRIMARY, Name VARCHAR(255), Reason VARCHAR(255));";
 
                 com.ExecuteNonQuery();
+
+                String file = Path.Combine( TShock.SavePath, "bans.txt" );
+                if (File.Exists(file))
+                {
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+                        String line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            String[] info = line.Split('|');
+                            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                com.CommandText = "INSERT OR IGNORE INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason);";
+                            else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                com.CommandText = "INSERT IGNORE INTO Bans SET IP=@ip, Name=@name, Reason=@reason;";
+                            com.AddParameter("@ip", info[0].Trim());
+                            com.AddParameter("@name", info[1].Trim());
+                            com.AddParameter("@reason", info[2].Trim());
+                            com.ExecuteNonQuery();
+                            com.Parameters.Clear();
+                        }
+                    }
+                    String path = Path.Combine(TShock.SavePath, "old_configs");
+                    String file2 = Path.Combine(path, "bans.txt");
+                    if (!Directory.Exists(path))
+                        System.IO.Directory.CreateDirectory(path);
+                    if (File.Exists(file2))
+                        File.Delete(file2);
+                    File.Move(file, file2);
+                }
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -78,6 +79,50 @@ namespace TShockAPI.DB
                 com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
+
+                String file = Path.Combine(TShock.SavePath, "groups.txt");
+                if (File.Exists(file))
+                {
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+                        String line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if( !line.Equals("")  && !line.Substring( 0,1 ).Equals( "#" ) )
+                            {
+                                String[] info = line.Split(' ');
+                                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
+                                String comms = "";
+                                int size = info.Length;
+                                int test = 0;
+                                bool hasOrder = int.TryParse(info[info.Length - 1], out test);
+                                if( hasOrder )
+                                    size = info.Length - 1;
+                                for (int i = 1; i < size; i++)
+                                {
+                                    if (!comms.Equals(""))
+                                        comms = comms + ",";
+                                    comms = comms + info[i].Trim();
+                                }
+                                com.AddParameter("@groupname", info[0].Trim());
+                                com.AddParameter("@commands", comms);
+                                com.AddParameter("@order", hasOrder ? info[info.Length-1] : "0");
+                                com.ExecuteNonQuery();
+                                com.Parameters.Clear();
+                            }
+                        }
+                    }
+                    String path = Path.Combine(TShock.SavePath, "old_configs");
+                    String file2 = Path.Combine(path, "groups.txt");
+                    if (!Directory.Exists(path))
+                        System.IO.Directory.CreateDirectory(path);
+                    if (File.Exists(file2))
+                        File.Delete(file2);
+                    File.Move(file, file2);
+                }
 
                 LoadPermisions();
             }
