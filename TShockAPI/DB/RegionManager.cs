@@ -242,8 +242,14 @@ namespace TShockAPI.DB
 
                     com.CommandText = "UPDATE Regions SET UserIds=@ids";
                     com.AddParameter("@ids", MergedIDs);
-                    ReloadAllRegions();
-                    return (com.ExecuteNonQuery() > 0);
+                    if (com.ExecuteNonQuery() > 0)
+                    {
+                        ReloadAllRegions();
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
