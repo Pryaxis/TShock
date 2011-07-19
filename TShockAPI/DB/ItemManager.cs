@@ -5,6 +5,7 @@ using System.Text;
 using System.Data;
 using Community.CsharpSqlite.SQLiteClient;
 using TShockAPI.DB;
+using System.IO;
 
 namespace TShockAPI.DB
 {
@@ -27,7 +28,39 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) PRIMARY);";
                 com.ExecuteNonQuery();
 
-                com.CommandText = "SELECT *FROM ItemBans";
+                String file = Path.Combine(TShock.SavePath, "itembans.txt");
+                if (File.Exists(file))
+                {
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+                        String line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (!line.Equals("") && !line.Substring( 0, 1 ).Equals("#") )
+                            {
+                                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                    com.CommandText = "INSERT OR IGNORE INTO 'ItemBans' (ItemName) VALUES (@name);";
+                                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                    com.CommandText = "INSERT IGNORE INTO ItemBans SET ItemName=@name;";
+
+                                int id = 0;
+                                int.TryParse(line, out id );
+                                com.AddParameter("@name", Tools.GetItemById( id ).name );
+                                com.ExecuteNonQuery();
+                                com.Parameters.Clear();
+                            }
+                        }
+                    }
+
+                    String path = Path.Combine(TShock.SavePath, "old_configs");
+                    String file2 = Path.Combine(path, "itembans.txt");
+                    if (!Directory.Exists(path))
+                        System.IO.Directory.CreateDirectory(path);
+                    if (File.Exists(file2))
+                        File.Delete(file2);
+                    File.Move(file, file2);
+                    com.CommandText = "SELECT *FROM ItemBans";
+                }
 
                 using (var reader = com.ExecuteReader())
                 {
