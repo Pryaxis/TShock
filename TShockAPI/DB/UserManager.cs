@@ -59,7 +59,7 @@ namespace TShockAPI.DB
                             if (TShock.Config.StorageType.ToLower() == "sqlite")
                                 com.CommandText = "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@name, @pass, @group, @ip);";
                             else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                com.CommandText = "INSERT IGNORE INTO Bans SET Username=@name, Password=@pass, Usergroup=@group, IP=@ip ;";
+                                com.CommandText = "INSERT IGNORE INTO Users SET Username=@name, Password=@pass, Usergroup=@group, IP=@ip ;";
 
                             String username = "";
                             String sha = "";
