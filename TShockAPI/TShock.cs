@@ -49,7 +49,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "The Deathly Database Part 2";
+        public static readonly string VersionCodename = "Codename: Re";
 
         public static string SavePath = "tshock";
 
@@ -376,8 +376,13 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
-
-            player.Group = TShock.Users.GetGroupForIP(player.IP);
+            if (Config.EnableDNSHostResolution)
+            {
+                player.Group = TShock.Users.GetGroupForIPExpensive(player.IP);
+            } else
+            {
+                player.Group = TShock.Users.GetGroupForIP(player.IP);
+            }
 
             if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {

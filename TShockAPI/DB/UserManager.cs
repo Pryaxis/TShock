@@ -222,6 +222,36 @@ namespace TShockAPI.DB
             }
             return Tools.GetGroup("default");
         }
+
+        public Group GetGroupForIPExpensive(string ip)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Users";
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            if (Tools.GetIPv4Address(reader.Get<string>("IP")) == ip)
+                            {
+                                string group = reader.Get<string>("UserGroup");
+                                return Tools.GetGroup(group);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex.ToString());
+            }
+            return Tools.GetGroup("default");
+        }
+
+
         public User GetUserByName(string name)
         {
             try

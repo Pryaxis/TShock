@@ -93,7 +93,9 @@ namespace TShockAPI
         public string TileKillAbuseReason = "Tile Kill abuse ({0})";
         public string HardcoreBanReason = "Death results in a ban";
         public string HardcoreKickReason = "Death results in a kick";
-        
+
+        public bool EnableDNSHostResolution = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
