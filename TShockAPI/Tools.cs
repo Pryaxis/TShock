@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Net;
@@ -479,16 +480,10 @@ namespace TShockAPI
         /// <param name="hostname">string ip</param>
         public static string GetIPv4Address(string hostname)
         {
-            string IP4Address = String.Empty;
-            foreach (IPAddress IPA in Dns.GetHostAddresses(hostname))
-            {
-                if (IPA.AddressFamily.ToString() == "InterNetwork")
-                {
-                    IP4Address = IPA.ToString();
-                    break;
-                }
-            }
-            return IP4Address;
+            //Get the ipv4 address from GetHostAddresses, if an ip is passed it will return that ip
+            var ip = Dns.GetHostAddresses(hostname).FirstOrDefault(i => i.AddressFamily == AddressFamily.InterNetwork);
+            //if the dns query was successful then return it, otherwise return an empty string
+            return ip != null ? ip.ToString() : "";
         }
 
         /// <summary>
