@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -43,6 +44,58 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
 
                 com.ExecuteNonQuery();
+
+                String file = Path.Combine(TShock.SavePath, "users.txt");
+                if (File.Exists(file))
+                {
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+                        String line;
+                        while ((line = sr.ReadLine()) != null )
+                        {
+                            if (line.Equals("") || line.Substring(0, 1).Equals("#") )
+                                continue;
+                            String[] info = line.Split(' ');
+                            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                com.CommandText = "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@name, @pass, @group, @ip);";
+                            else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                com.CommandText = "INSERT IGNORE INTO Bans SET Username=@name, Password=@pass, Usergroup=@group, IP=@ip ;";
+
+                            String username = "";
+                            String sha = "";
+                            String group = "";
+                            String ip = "";
+
+                            String[] nameSha = info[0].Split(':');
+
+                            if (nameSha.Length < 2)
+                            {
+                                username = nameSha[0];
+                                ip = nameSha[0];
+                                group = info[1];
+                            }
+                            else
+                            {
+                                username = nameSha[0];
+                                sha = nameSha[1];
+                                group = info[1];
+                            }
+                            com.AddParameter("@name", username.Trim());
+                            com.AddParameter("@pass", sha.Trim());
+                            com.AddParameter("@group", group.Trim());
+                            com.AddParameter("@ip", ip.Trim());
+                            com.ExecuteNonQuery();
+                            com.Parameters.Clear();
+                        }
+                    }
+                    String path = Path.Combine(TShock.SavePath, "old_configs");
+                    String file2 = Path.Combine(path, "users.txt");
+                    if (!Directory.Exists(path))
+                        System.IO.Directory.CreateDirectory(path);
+                    if (File.Exists(file2))
+                        File.Delete(file2);
+                    File.Move(file, file2);
+                }
             }
         }
 
