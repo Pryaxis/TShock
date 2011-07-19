@@ -66,130 +66,131 @@ namespace TShockAPI.DB
                 int updates = 0;
                 if (File.Exists(file))
                 {
-                    using (XmlReader reader = XmlReader.Create(new StreamReader(file)))
+                    XmlReader reader;
+                    reader = XmlReader.Create(new StreamReader(file));
+                    // Parse the file and display each of the nodes.
+                    while (reader.Read())
                     {
-                        // Parse the file and display each of the nodes.
-                        while (reader.Read())
+                        switch (reader.NodeType)
                         {
-                            switch (reader.NodeType)
-                            {
-                                case XmlNodeType.Element:
-                                    switch( reader.Name ) 
-                                    {
-                                        case "ProtectedRegion":
-                                            name = "";
-                                            world = "";
-                                            x1 = 0;
-                                            x2 = 0;
-                                            y1 = 0;
-                                            y2 = 0;
-                                            prot = 0;
-                                            users = 0;
-                                            ips = null;
-                                            ipstr = "";
-                                            break;
-                                        case "RegionName":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            name = reader.Value;
-                                            break;
-                                        case "Point1X":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse( reader.Value, out x1 ); 
-                                            break;
-                                        case "Point1Y":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out y1); 
-                                            break;
-                                        case "Point2X":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out x2); 
-                                            break;
-                                        case "Point2Y":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out y2); 
-                                            break;
-                                        case "Protected":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            if (reader.Value.Equals("True"))
-                                            {
-                                                prot = 0;
-                                            }
-                                            else{
-                                                prot = 1;
-                                            }
+                            case XmlNodeType.Element:
+                                switch( reader.Name ) 
+                                {
+                                    case "ProtectedRegion":
+                                        name = "";
+                                        world = "";
+                                        x1 = 0;
+                                        x2 = 0;
+                                        y1 = 0;
+                                        y2 = 0;
+                                        prot = 0;
+                                        users = 0;
+                                        ips = null;
+                                        ipstr = "";
                                         break;
-                                        case "WorldName":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            world = reader.Value;
-                                            break;
-                                        case "AllowedUserCount":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out users);
-                                            if (users > 0)
+                                    case "RegionName":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        name = reader.Value;
+                                        break;
+                                    case "Point1X":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse( reader.Value, out x1 ); 
+                                        break;
+                                    case "Point1Y":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out y1); 
+                                        break;
+                                    case "Point2X":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out x2); 
+                                        break;
+                                    case "Point2Y":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out y2); 
+                                        break;
+                                    case "Protected":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        if (reader.Value.Equals("True"))
+                                        {
+                                            prot = 0;
+                                        }
+                                        else{
+                                            prot = 1;
+                                        }
+                                    break;
+                                    case "WorldName":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        world = reader.Value;
+                                        break;
+                                    case "AllowedUserCount":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out users);
+                                        if (users > 0)
+                                        {
+                                            ips = new String[users];
+                                            for (int i = 0; i < users; i++)
                                             {
-                                                ips = new String[users];
-                                                for (int i = 0; i < users; i++)
-                                                {
-                                                    do
-                                                        reader.Read();
-                                                    while (reader.NodeType != XmlNodeType.Text);
-                                                    ips[i] = reader.Value;
-                                                }
-                                                ipstr = "";
-                                                for( int i = 0; i < ips.Length; i++ )
-                                                {
-                                                    if (ipstr != "")
-                                                        ipstr += ",";
-                                                    ipstr += ips[i];
-                                                }
-
+                                                do
+                                                    reader.Read();
+                                                while (reader.NodeType != XmlNodeType.Text);
+                                                ips[i] = reader.Value;
                                             }
-                                            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                                com.CommandText = "INSERT OR IGNORE INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
-                                            else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                                com.CommandText = "INSERT IGNORE INTO Regions SET X1=@tx, Y1=@ty, height=@height, width=@width, RegionName=@name, WorldID=@world, UserIds=@userids, Protected=@protected;";
-                                            com.AddParameter("@tx", x1);
-                                            com.AddParameter("@ty", y1);
-                                            com.AddParameter("@width", x2);
-                                            com.AddParameter("@height",y2);
-                                            com.AddParameter("@name", name);
-                                            com.AddParameter("@worldid", world);
-                                            com.AddParameter("@userids", ipstr);
-                                            com.AddParameter("@protected", prot);
-                                            updates += com.ExecuteNonQuery();
-                                            com.Parameters.Clear();
-                                            break;
-                                    }
-                                    break;
-                                case XmlNodeType.Text:
+                                            ipstr = "";
+                                            for( int i = 0; i < ips.Length; i++ )
+                                            {
+                                                if (ipstr != "")
+                                                    ipstr += ",";
+                                                ipstr += ips[i];
+                                            }
 
-                                    break;
-                                case XmlNodeType.XmlDeclaration:
-                                case XmlNodeType.ProcessingInstruction:
-                                    break;
-                                case XmlNodeType.Comment:
-                                    break;
-                                case XmlNodeType.EndElement:
+                                        }
+                                        if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                            com.CommandText = "INSERT OR IGNORE INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
+                                        else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                            com.CommandText = "INSERT IGNORE INTO Regions SET X1=@tx, Y1=@ty, height=@height, width=@width, RegionName=@name, WorldID=@world, UserIds=@userids, Protected=@protected;";
+                                        com.AddParameter("@tx", x1);
+                                        com.AddParameter("@ty", y1);
+                                        com.AddParameter("@width", x2);
+                                        com.AddParameter("@height",y2);
+                                        com.AddParameter("@name", name);
+                                        com.AddParameter("@worldid", world);
+                                        com.AddParameter("@userids", ipstr);
+                                        com.AddParameter("@protected", prot);
+                                        updates += com.ExecuteNonQuery();
+                                        com.Parameters.Clear();
+                                        break;
+                                }
+                                break;
+                            case XmlNodeType.Text:
 
-                                    break;
-                            }
+                                break;
+                            case XmlNodeType.XmlDeclaration:
+                            case XmlNodeType.ProcessingInstruction:
+                                break;
+                            case XmlNodeType.Comment:
+                                break;
+                            case XmlNodeType.EndElement:
+
+                                break;
                         }
                     }
+                    reader.Close();
+                    reader = null;
                     String path = Path.Combine(TShock.SavePath, "old_configs");
                     String file2 = Path.Combine(path, "regions.xml");
                     if (!Directory.Exists(path))
                         System.IO.Directory.CreateDirectory(path);
                     if (File.Exists(file2))
                         File.Delete(file2);
-                    File.Move(file, file2);
+                    //File.Move(file, file2);
                 }
 
                 if( updates > 0 )

@@ -18,15 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
 using System.IO;
-using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Terraria;
-using TShockAPI.DB;
 
 namespace TShockAPI.DB
 {
@@ -48,6 +44,89 @@ namespace TShockAPI.DB
                        "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
 
                 com.ExecuteNonQuery();
+
+                String file = Path.Combine(TShock.SavePath, "warps.xml");
+                String name = "";
+                String world = "";
+                int x1 = 0;
+                int y1 = 0;
+                if (File.Exists(file))
+                {
+                    XmlReader reader;
+                    using (reader = XmlReader.Create(new StreamReader(file)))
+                    {
+                        // Parse the file and display each of the nodes.
+                        while (reader.Read())
+                        {
+                            switch (reader.NodeType)
+                            {
+                                case XmlNodeType.Element:
+                                    switch (reader.Name)
+                                    {
+                                        case "Warp":
+                                            name = "";
+                                            world = "";
+                                            x1 = 0;
+                                            y1 = 0;
+                                            break;
+                                        case "WarpName":
+                                            while (reader.NodeType != XmlNodeType.Text)
+                                                reader.Read();
+                                            name = reader.Value;
+                                            break;
+                                        case "X":
+                                            while (reader.NodeType != XmlNodeType.Text)
+                                                reader.Read();
+                                            int.TryParse(reader.Value, out x1);
+                                            break;
+                                        case "Y":
+                                            while (reader.NodeType != XmlNodeType.Text)
+                                                reader.Read();
+                                            int.TryParse(reader.Value, out y1);
+                                            break;
+                                        case "WorldName":
+                                            while (reader.NodeType != XmlNodeType.Text)
+                                                reader.Read();
+                                            world = reader.Value;
+                                            break;
+                                    }
+                                    break;
+                                case XmlNodeType.Text:
+
+                                    break;
+                                case XmlNodeType.XmlDeclaration:
+                                case XmlNodeType.ProcessingInstruction:
+                                    break;
+                                case XmlNodeType.Comment:
+                                    break;
+                                case XmlNodeType.EndElement:
+                                    if (reader.Name.Equals("Warp"))
+                                    {
+                                        if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                            com.CommandText = "INSERT OR IGNORE INTO Warps VALUES (@tx, @ty,@name, @worldid);";
+                                        else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                            com.CommandText = "INSERT IGNORE INTO Warps SET X=@tx, Y=@ty, WarpName=@name, WorldID=@worldid;";
+                                        com.AddParameter("@tx", x1);
+                                        com.AddParameter("@ty", y1);
+                                        com.AddParameter("@name", name);
+                                        com.AddParameter("@worldid", world);
+                                        com.ExecuteNonQuery();
+                                        com.Parameters.Clear();
+                                    }
+                                    break;
+                            }
+                        }
+                        
+                    }
+                    reader.Close();
+                    String path = Path.Combine(TShock.SavePath, "old_configs");
+                    String file2 = Path.Combine(path, "warps.xml");
+                    if (!Directory.Exists(path))
+                        System.IO.Directory.CreateDirectory(path);
+                    if (File.Exists(file2))
+                        File.Delete(file2);
+                    //File.Move(file, file2);
+                }
             }
         }
 
