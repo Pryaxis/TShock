@@ -239,7 +239,7 @@ namespace TShockAPI.DB
                         MergedIDs = userName;
                     else
                         MergedIDs = MergedIDs + "," + userName;
-
+                    com.Parameters.Clear();
                     com.CommandText = "UPDATE Regions SET UserIds=@ids WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@ids", MergedIDs);
                     com.AddParameter("@name", regionName);
