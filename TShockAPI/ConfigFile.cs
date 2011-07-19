@@ -82,6 +82,18 @@ namespace TShockAPI
         public string MySqlUsername = "";
         public string MySqlPassword = "";
 
+        public string RangeCheckBanReason = "Placing impossible to place blocks.";
+        public string SendSectionAbuseReason = "SendSection abuse.";
+        public string NPCSpawnAbuseReason = "Spawn NPC abuse";
+        public string UpdatePlayerAbuseReason = "Update Player abuse";
+        public string ExplosiveAbuseReason = "Throwing an explosive device.";
+        public string KillMeAbuseReason = "Trying to execute KillMe on someone else.";
+        public string IllogicalLiquidUseReason = "Manipulating liquid without bucket.";
+        public string LiquidAbuseReason = "Placing impossible to place liquid.";
+        public string TileKillAbuseReason = "Tile Kill abuse ({0})";
+        public string HardcoreBanReason = "Death results in a ban";
+        public string HardcoreKickReason = "Death results in a kick";
+        
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
