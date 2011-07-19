@@ -154,8 +154,9 @@ namespace TShockAPI.DB
                     com.AddParameter("@name", name);
                     com.AddParameter("@bool", state ? 1 : 0);
                     com.AddParameter("@worldid", Main.worldID.ToString());
+                    int q = com.ExecuteNonQuery();
                     ReloadAllRegions();
-                    return (com.ExecuteNonQuery() > 0);
+                    return (q > 0);
                 }
             }
             catch (Exception ex)
