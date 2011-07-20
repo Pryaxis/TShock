@@ -157,7 +157,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
             ChatCommands.Add(new Command("logs", DisplayLogs, "displaylogs"));
-            ChatCommands.Add(new Command(RegisterUser, "register"));
+            ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
+            ChatCommands.Add(new Command(RegisterUser, "register") { DoLog = false });
             ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
             ChatCommands.Add(new Command("root-only", GrabUserIP, "ip"));
             ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
@@ -330,6 +331,40 @@ namespace TShockAPI
                 return;
             }
 
+        }
+
+        private static void PasswordUser(CommandArgs args)
+        {
+
+            try
+            {
+                if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
+                {
+                    var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
+                    string encrPass = Tools.HashPassword(args.Parameters[0]);
+                    string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Player.UserAccountName);
+                    if (exr[0].ToUpper() == encrPass.ToUpper())
+                    {
+                        args.Player.SendMessage("You changed your password!", Color.Green);
+                        TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
+                        Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of Account " + user.Name);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("You failed to change your password!", Color.Red);
+                        Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for Account: " + user.Name);
+                    }
+                }
+                else
+                {
+                    args.Player.SendMessage("Not Logged in or Invalid syntax! Proper syntax: /register <username> <password>", Color.Red);
+                }
+            }
+            catch (UserManagerException ex)
+            {
+                args.Player.SendMessage("Sorry, an error occured: " + ex.Message, Color.Green);
+                Log.ConsoleError("RegisterUser returned an error: " + ex.ToString());
+            }
         }
 
         private static void RegisterUser(CommandArgs args)
