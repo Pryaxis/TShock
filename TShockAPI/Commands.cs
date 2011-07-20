@@ -378,9 +378,18 @@ namespace TShockAPI
                     user.Password = args.Parameters[1];
                     user.Group = "default"; // FIXME -- we should get this from the DB.
 
-                    args.Player.SendMessage("Account " + user.Name + " has been registered.", Color.Green);
-                    TShock.Users.AddUser(user);
-                    Log.ConsoleInfo(args.Player.Name + " registered an Account: " + user.Name);
+                    if (TShock.Users.GetUserByName(user.Name) == null) // Cheap way of checking for existance of a user
+                    {
+                        args.Player.SendMessage("Account " + user.Name + " has been registered.", Color.Green);
+                        TShock.Users.AddUser(user);
+                        Log.ConsoleInfo(args.Player.Name + " registered an Account: " + user.Name);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Account " + user.Name + " has already been registered.", Color.Red);
+                        Log.ConsoleInfo(args.Player.Name + " failed to register an existing Account: " + user.Name); 
+                    }
+
                 }
                 else
                 {
