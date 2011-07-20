@@ -171,8 +171,8 @@ namespace TShockAPI
             Bans = new BanManager(DB);
             Warps = new WarpManager(DB);
             Regions = new RegionManager(DB);
-            Groups = new GroupManager(DB);
             Users = new UserManager(DB);
+            Groups = new GroupManager(DB);
             Itembans = new ItemManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));

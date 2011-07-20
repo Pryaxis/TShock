@@ -161,6 +161,11 @@ namespace TShockAPI.DB
             groups = new List<Group>();
             groups.Add(new SuperAdminGroup());
 
+            if (TShock.Users == null)
+            {
+                TShock.Users = new UserManager(TShock.DB);
+            }
+
             try
             {
                 using (var com = database.CreateCommand())

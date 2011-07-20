@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -59,6 +60,10 @@ namespace TShockAPI
         }
 
         public void recursePermissions( string permission ){
+            if (TShock.Users == null)
+            {
+                TShock.Users = new UserManager(TShock.DB);
+            }
             if( TShock.Groups.GroupExists( permission ) )
             {
                 Group g = Tools.GetGroup( permission );
