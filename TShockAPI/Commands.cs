@@ -386,7 +386,7 @@ namespace TShockAPI
                     }
                     else
                     {
-                        args.Player.SendMessage("Account " + user.Name + " has already been registered.", Color.Red);
+                        args.Player.SendMessage("Account " + user.Name + " has already been registered.", Color.Green);
                         Log.ConsoleInfo(args.Player.Name + " failed to register an existing Account: " + user.Name); 
                     }
 
