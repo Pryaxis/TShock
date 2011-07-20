@@ -1285,10 +1285,10 @@ namespace TShockAPI
         {
             foreach (Region r in TShock.Regions.Regions)
             {
-                args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height );
-                foreach (string s in r.RegionAllowedIDs)
+                args.Player.SendMessage(r.Name + ": P: " + r.Protected + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " + r.Area.Width + " H: " + r.Area.Height );
+                foreach (string s in r.AllowedIDs)
                 {
-                    args.Player.SendMessage(r.RegionName + ": " + s);
+                    args.Player.SendMessage(r.Name + ": " + s);
                 }
             }
         }
@@ -1463,11 +1463,11 @@ namespace TShockAPI
                         {
                             for (int j = (15 * (page - 1)); j < (15 * page); j++)
                             {
-                                if (Regions[j].RegionWorldID == Main.worldID.ToString())
+                                if (Regions[j].WorldID == Main.worldID.ToString())
                                 {
                                     if (sb.Length != 0)
                                         sb.Append(", ");
-                                    sb.Append(Regions[j].RegionName);
+                                    sb.Append(Regions[j].Name);
                                     if (j == Regions.Count - 1)
                                     {
                                         args.Player.SendMessage(sb.ToString(), Color.Yellow);

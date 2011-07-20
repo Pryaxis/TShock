@@ -52,150 +52,107 @@ namespace TShockAPI.DB
 
                 com.ExecuteNonQuery();
 
-                String file = Path.Combine(TShock.SavePath, "regions.xml");
-                String name = "";
-                String world = "";
-                int x1 = 0;
-                int x2 = 0;
-                int y1 = 0;
-                int y2 = 0;
-                int prot = 0;
-                int users = 0;
-                String[] ips;
-                String ipstr = "";
-                int updates = 0;
-                if (File.Exists(file))
+                ImportOld();
+            }
+        }
+
+        public void ImportOld()
+        {
+            String file = Path.Combine(TShock.SavePath, "regions.xml");
+            if (!File.Exists(file))
+                return;
+
+            Region region;
+            Rectangle rect;
+            using (var sr = new StreamReader(file))
+            {
+                using (var reader = XmlReader.Create(sr))
                 {
-                    XmlReader reader;
-                    reader = XmlReader.Create(new StreamReader(file));
                     // Parse the file and display each of the nodes.
                     while (reader.Read())
                     {
-                        switch (reader.NodeType)
+                        if (reader.NodeType != XmlNodeType.Element || reader.Name != "ProtectedRegion")
+                            continue;
+
+                        region = new Region();
+                        rect = new Rectangle();
+
+                        bool endregion = false;
+                        while (reader.Read() && !endregion)
                         {
-                            case XmlNodeType.Element:
-                                switch( reader.Name ) 
-                                {
-                                    case "ProtectedRegion":
-                                        name = "";
-                                        world = "";
-                                        x1 = 0;
-                                        x2 = 0;
-                                        y1 = 0;
-                                        y2 = 0;
-                                        prot = 0;
-                                        users = 0;
-                                        ips = null;
-                                        ipstr = "";
-                                        break;
-                                    case "RegionName":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        name = reader.Value;
-                                        break;
-                                    case "Point1X":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        int.TryParse( reader.Value, out x1 ); 
-                                        break;
-                                    case "Point1Y":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        int.TryParse(reader.Value, out y1); 
-                                        break;
-                                    case "Point2X":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        int.TryParse(reader.Value, out x2); 
-                                        break;
-                                    case "Point2Y":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        int.TryParse(reader.Value, out y2); 
-                                        break;
-                                    case "Protected":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        if (reader.Value.Equals("True"))
-                                        {
-                                            prot = 0;
-                                        }
-                                        else{
-                                            prot = 1;
-                                        }
+                            if (reader.NodeType != XmlNodeType.Element)
+                                continue;
+
+                            string name = reader.Name;
+
+                            while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
+
+                            switch (name)
+                            {
+                                case "RegionName":
+                                    region.Name = reader.Value;
                                     break;
-                                    case "WorldName":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        world = reader.Value;
-                                        break;
-                                    case "AllowedUserCount":
-                                        while (reader.NodeType != XmlNodeType.Text)
-                                            reader.Read();
-                                        int.TryParse(reader.Value, out users);
-                                        if (users > 0)
-                                        {
-                                            ips = new String[users];
-                                            for (int i = 0; i < users; i++)
-                                            {
-                                                do
-                                                    reader.Read();
-                                                while (reader.NodeType != XmlNodeType.Text);
-                                                ips[i] = reader.Value;
-                                            }
-                                            ipstr = "";
-                                            for( int i = 0; i < ips.Length; i++ )
-                                            {
-                                                if (ipstr != "")
-                                                    ipstr += ",";
-                                                ipstr += ips[i];
-                                            }
+                                case "Point1X":
+                                    int.TryParse(reader.Value, out rect.X);
+                                    break;
+                                case "Point1Y":
+                                    int.TryParse(reader.Value, out rect.Y);
+                                    break;
+                                case "Point2X":
+                                    int.TryParse(reader.Value, out rect.Width);
+                                    break;
+                                case "Point2Y":
+                                    int.TryParse(reader.Value, out rect.Height);
+                                    break;
+                                case "Protected":
+                                    region.Protected = reader.Value.ToLower().Equals("true");
+                                    break;
+                                case "WorldName":
+                                    region.WorldID = reader.Value;
+                                    break;
+                                case "AllowedUserCount":
+                                    break;
+                                case "IP":
+                                    region.AllowedIDs.Add(reader.Value);
+                                    break;
+                                default:
+                                    endregion = true;
+                                    break;
+                            }
+                        }
 
-                                        }
-                                        if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                            com.CommandText = "INSERT OR IGNORE INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
-                                        else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                            com.CommandText = "INSERT IGNORE INTO Regions SET X1=@tx, Y1=@ty, height=@height, width=@width, RegionName=@name, WorldID=@world, UserIds=@userids, Protected=@protected;";
-                                        com.AddParameter("@tx", x1);
-                                        com.AddParameter("@ty", y1);
-                                        com.AddParameter("@width", x2);
-                                        com.AddParameter("@height",y2);
-                                        com.AddParameter("@name", name);
-                                        com.AddParameter("@worldid", world);
-                                        com.AddParameter("@userids", ipstr);
-                                        com.AddParameter("@protected", prot);
-                                        updates += com.ExecuteNonQuery();
-                                        com.Parameters.Clear();
-                                        break;
-                                }
-                                break;
-                            case XmlNodeType.Text:
-
-                                break;
-                            case XmlNodeType.XmlDeclaration:
-                            case XmlNodeType.ProcessingInstruction:
-                                break;
-                            case XmlNodeType.Comment:
-                                break;
-                            case XmlNodeType.EndElement:
-
-                                break;
+                        region.Area = rect;
+                        using (var com = database.CreateCommand())
+                        {
+                            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                com.CommandText =
+                                    "INSERT OR IGNORE INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
+                            else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                com.CommandText =
+                                    "INSERT IGNORE INTO Regions SET X1=@tx, Y1=@ty, height=@height, width=@width, RegionName=@name, WorldID=@world, UserIds=@userids, Protected=@protected;";
+                            com.AddParameter("@tx", region.Area.X);
+                            com.AddParameter("@ty", region.Area.Y);
+                            com.AddParameter("@width", region.Area.Width);
+                            com.AddParameter("@height", region.Area.Height);
+                            com.AddParameter("@name", region.Name);
+                            com.AddParameter("@worldid", region.WorldID);
+                            //Todo: What should this be? We don't really have a way to go from ips to userids
+                            com.AddParameter("@userids", ""/*string.Join(",", region.AllowedIDs)*/);
+                            com.AddParameter("@protected", region.Protected);
+                            int num = com.ExecuteNonQuery();
                         }
                     }
-                    reader.Close();
-                    reader = null;
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "regions.xml");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    //File.Move(file, file2);
                 }
-
-                if( updates > 0 )
-                    ReloadAllRegions();
             }
+            String path = Path.Combine(TShock.SavePath, "old_configs");
+            String file2 = Path.Combine(path, "regions.xml");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            if (File.Exists(file2))
+                File.Delete(file2);
+            File.Move(file, file2);
+
+            ReloadAllRegions();
         }
 
         public void ReloadAllRegions()
@@ -219,10 +176,8 @@ namespace TShockAPI.DB
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
                             string name = DbExt.Get<string>(reader, "RegionName");
 
-                            string[] SplitIDs = MergedIDs.Split(',');
-
-                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
-                            r.RegionAllowedIDs = SplitIDs;
+                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
+                            r.AllowedIDs = MergedIDs.Split(',').ToList();
                             Regions.Add(r);
                         }
                         reader.Close();
@@ -235,7 +190,7 @@ namespace TShockAPI.DB
             }
         }
 
-        public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
+        public bool AddRegion(Region region)
         {
             try
             {
@@ -243,14 +198,14 @@ namespace TShockAPI.DB
                 {
                     com.CommandText =
                         "INSERT INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
-                    com.AddParameter("@tx", tx);
-                    com.AddParameter("@ty", ty);
-                    com.AddParameter("@width", width + tx);
-                    com.AddParameter("@height", height + ty);
-                    com.AddParameter("@name", regionname.ToLower());
-                    com.AddParameter("@worldid", worldid);
-                    com.AddParameter("@userids", "");
-                    com.AddParameter("@protected", 1);
+                    com.AddParameter("@tx", region.Area.X);
+                    com.AddParameter("@ty", region.Area.Y);
+                    com.AddParameter("@width", region.Area.Right);
+                    com.AddParameter("@height", region.Area.Bottom);
+                    com.AddParameter("@name", region.Name);
+                    com.AddParameter("@worldid", region.WorldID);
+                    com.AddParameter("@userids", string.Join(",", region.AllowedIDs));
+                    com.AddParameter("@protected", region.Protected);
                     if (com.ExecuteNonQuery() > 0)
                     {
                         ReloadAllRegions();
@@ -264,6 +219,11 @@ namespace TShockAPI.DB
                 Log.Error(ex.ToString());
             }
             return false;
+        }
+
+        public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
+        {
+            return AddRegion(new Region { Area = new Rectangle(tx, ty, width, height), Name = regionname, WorldID = worldid });
         }
 
         public bool DeleteRegion(string name)
@@ -328,11 +288,11 @@ namespace TShockAPI.DB
 
         public bool InArea(int x, int y)
         {
-            foreach(Region region in Regions)
+            foreach (Region region in Regions)
             {
-                if (x >= region.RegionArea.Left && x <= region.RegionArea.Right &&
-                    y >= region.RegionArea.Top && y <= region.RegionArea.Bottom &&
-                    region.DisableBuild == 1)
+                if (x >= region.Area.Left && x <= region.Area.Right &&
+                    y >= region.Area.Top && y <= region.Area.Bottom &&
+                    region.Protected)
                 {
                     return true;
                 }
@@ -392,7 +352,8 @@ namespace TShockAPI.DB
                     {
                         ReloadAllRegions();
                         return true;
-                    } else
+                    }
+                    else
                     {
                         return false;
                     }
@@ -416,7 +377,7 @@ namespace TShockAPI.DB
                     using (var reader = com.ExecuteReader())
                     {
                         while (reader.Read())
-                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("height"), reader.Get<int>("width")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
+                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("height"), reader.Get<int>("width")), reader.Get<string>("RegionName"), reader.Get<int>("Protected") != 0, reader.Get<string>("WorldID")));
                         reader.Close();
                     }
                 }
@@ -431,35 +392,33 @@ namespace TShockAPI.DB
 
     public class Region
     {
-        public Rectangle RegionArea { get; set; }
-        public string RegionName { get; set; }
-        public int DisableBuild { get; set; }
-        public string RegionWorldID { get; set; }
-        public string[] RegionAllowedIDs { get; set; }
+        public Rectangle Area { get; set; }
+        public string Name { get; set; }
+        public bool Protected { get; set; }
+        public string WorldID { get; set; }
+        public List<string> AllowedIDs { get; set; }
 
-        public Region(Rectangle region, string name, int disablebuild, string RegionWorldIDz)
+        public Region(Rectangle region, string name, bool disablebuild, string worldid)
+            : this()
         {
-            RegionArea = region;
-            RegionName = name;
-            DisableBuild = disablebuild;
-            RegionWorldID = RegionWorldIDz;
+            Area = region;
+            Name = name;
+            Protected = disablebuild;
+            WorldID = worldid;
         }
 
         public Region()
         {
-            RegionArea = Rectangle.Empty;
-            RegionName = string.Empty;
-            DisableBuild = 1;
-            RegionWorldID = string.Empty;
+            Area = Rectangle.Empty;
+            Name = string.Empty;
+            Protected = true;
+            WorldID = string.Empty;
+            AllowedIDs = new List<string>();
         }
 
         public bool InArea(Rectangle point)
         {
-            if (RegionArea.Contains(point.X, point.Y))
-            {
-                return true;
-            }
-            return false;
+            return Area.Contains(point.X, point.Y);
         }
 
         public bool HasPermissionToBuildInRegion(TSPlayer ply)
@@ -469,14 +428,12 @@ namespace TShockAPI.DB
                 ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
                 return false;
             }
-            if (DisableBuild == 0)
-            {
+            if (!Protected)
                 return true;
-            }
 
-            for (int i = 0; i < RegionAllowedIDs.Length; i++)
+            for (int i = 0; i < AllowedIDs.Count; i++)
             {
-                if (RegionAllowedIDs[i] == ply.UserAccountName)
+                if (AllowedIDs[i] == ply.UserAccountName)
                 {
                     return true;
                 }

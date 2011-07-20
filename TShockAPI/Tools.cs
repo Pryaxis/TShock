@@ -156,15 +156,7 @@ namespace TShockAPI
         /// <returns>int playerCount</returns>
         public static int ActivePlayers()
         {
-            int num = 0;
-            foreach (TSPlayer player in TShock.Players)
-            {
-                if (player != null && player.Active)
-                {
-                    num++;
-                }
-            }
-            return num;
+            return TShock.Players.Count(player => player != null && player.Active);
         }
 
         /// <summary>
@@ -464,11 +456,11 @@ namespace TShockAPI
         public static Group GetGroup(string groupName)
         {
             //first attempt on cached groups
-            for (int i = 0; i < TShock.Groups.groups.Count; i++)
+            foreach (Group t in TShock.Groups.groups)
             {
-                if (TShock.Groups.groups[i].Name.Equals(groupName))
+                if (t.Name.Equals(groupName))
                 {
-                    return TShock.Groups.groups[i];
+                    return t;
                 }
             }
             return new Group("default");
@@ -493,12 +485,10 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
+            if (string.IsNullOrEmpty(password))
+                throw new NullReferenceException("Password can not be empty or null!");
             using (var sha = new SHA512CryptoServiceProvider())
             {
-                if (password == "")
-                {
-                    return "nonexistent-password";
-                }
                 var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
                 return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
@@ -511,12 +501,7 @@ namespace TShockAPI
         /// <returns>True if the string only contains printable characters</returns>
         public static bool ValidString(string str)
         {
-            foreach (var c in str)
-            {
-                if (c < 0x20 || c > 0xA9)
-                    return false;
-            }
-            return true;
+            return str.All(c => c >= 0x20 && c <= 0xA9);
         }
 
         /// <summary>
@@ -525,12 +510,7 @@ namespace TShockAPI
         /// <returns>True if the entire chest array is used</returns>
         public static bool MaxChests()
         {
-            for (int i = 0; i < Main.chest.Length; i++)
-            {
-                if (Main.chest[i] == null)
-                    return false;
-            }
-            return true;
+            return Main.chest.All(t => t != null);
         }
     }
 }
