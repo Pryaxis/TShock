@@ -157,6 +157,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
             ChatCommands.Add(new Command("logs", DisplayLogs, "displaylogs"));
+            ChatCommands.Add(new Command(RegisterUser, "register"));
             ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
             ChatCommands.Add(new Command("root-only", GrabUserIP, "ip"));
             ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
@@ -329,6 +330,33 @@ namespace TShockAPI
                 return;
             }
 
+        }
+
+        private static void RegisterUser(CommandArgs args)
+        {
+            try
+            {
+                if (args.Parameters.Count == 2)
+                {
+                    var user = new User();
+                    user.Name = args.Parameters[0];
+                    user.Password = args.Parameters[1];
+                    user.Group = "default"; // FIXME -- we should get this from the DB.
+
+                    args.Player.SendMessage("Account " + user.Name + " has been registered.", Color.Green);
+                    TShock.Users.AddUser(user);
+                    Log.ConsoleInfo(args.Player.Name + " registered an Account: " + user.Name);
+                }
+                else
+                {
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /register <username> <password>", Color.Red);
+                }
+            }
+            catch (UserManagerException ex)
+            {
+                args.Player.SendMessage("Sorry, an error occured: " + ex.Message, Color.Green);
+                Log.ConsoleError("RegisterUser returned an error: " + ex.ToString());
+            }
         }
 
         //Todo: Add separate help text for '/user add' and '/user del'. Also add '/user addip' and '/user delip'
