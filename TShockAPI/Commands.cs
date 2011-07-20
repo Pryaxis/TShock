@@ -357,7 +357,7 @@ namespace TShockAPI
                 }
                 else
                 {
-                    args.Player.SendMessage("Not Logged in or Invalid syntax! Proper syntax: /register <username> <password>", Color.Red);
+                    args.Player.SendMessage("Not Logged in or Invalid syntax! Proper syntax: /password <oldpassword> <newpassword>", Color.Red);
                 }
             }
             catch (UserManagerException ex)
