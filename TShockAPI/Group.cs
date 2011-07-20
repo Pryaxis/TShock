@@ -55,7 +55,20 @@ namespace TShockAPI
 
         public void AddPermission(string permission)
         {
-            permissions.Add(permission);
+            recursePermissions(permission);
+        }
+
+        public void recursePermissions( string permission ){
+            if( TShock.Groups.GroupExists( permission ) )
+            {
+                Group g = Tools.GetGroup( permission );
+                foreach( string perm in g.permissions )
+                {
+                    recursePermissions( perm );
+                }
+            }
+            else
+                permissions.Add(permission);
         }
     }
 
