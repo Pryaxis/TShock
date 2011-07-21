@@ -1078,7 +1078,7 @@ namespace TShockAPI
                 {
                     args.Player.SendMessage("Name reserved, use a different name", Color.Red);
                 }
-                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
+                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
                 {
                     args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
                 }
@@ -1122,7 +1122,7 @@ namespace TShockAPI
                     {
                         for (int j = (15 * (page - 1)); j < (15 * page); j++)
                         {
-                            if (Warps[j].WorldWarpID == Main.worldID.ToString())
+                            if (Warps[j].WorldWarpID == Main.worldName)
                             {
                                 if (sb.Length != 0)
                                     sb.Append(", ");
@@ -1422,7 +1422,7 @@ namespace TShockAPI
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldID.ToString()))
+                                                            regionName, Main.worldName))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
@@ -1536,7 +1536,7 @@ namespace TShockAPI
                         {
                             for (int j = (15 * (page - 1)); j < (15 * page); j++)
                             {
-                                if (Regions[j].RegionWorldID == Main.worldID.ToString())
+                                if (Regions[j].RegionWorldID == Main.worldName)
                                 {
                                     if (sb.Length != 0)
                                         sb.Append(", ");

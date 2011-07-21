@@ -35,7 +35,7 @@ namespace TShockAPI.DB
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "trustedadmin");
                 com.AddParameter("@commands", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
-                com.AddParameter("@order", "1");
+                com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
@@ -45,7 +45,7 @@ namespace TShockAPI.DB
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "admin");
                 com.AddParameter("@commands", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-                com.AddParameter("@order", "2");
+                com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
@@ -55,7 +55,7 @@ namespace TShockAPI.DB
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "newadmin");
                 com.AddParameter("@commands", "kick,editspawn,reservedslot");
-                com.AddParameter("@order", "3");
+                com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 
@@ -65,7 +65,7 @@ namespace TShockAPI.DB
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "default");
                 com.AddParameter("@commands", "canwater,canlava,warp,canbuild");
-                com.AddParameter("@order", "4");
+                com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
 

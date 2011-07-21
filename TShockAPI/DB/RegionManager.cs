@@ -212,7 +212,7 @@ namespace TShockAPI.DB
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.AddParameter("@worldid", Main.worldName);
                     using (var reader = com.ExecuteReader())
                     {
                         Regions.Clear();
@@ -228,7 +228,7 @@ namespace TShockAPI.DB
 
                             string[] SplitIDs = MergedIDs.Split(',');
 
-                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
+                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldName);
                             r.RegionAllowedIDs = new int[SplitIDs.Length];
                             try
                             {
@@ -295,7 +295,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "DELETE FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.AddParameter("@worldid", Main.worldName);
                     com.ExecuteNonQuery();
                     ReloadAllRegions();
                     return true;
@@ -317,7 +317,7 @@ namespace TShockAPI.DB
                     com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name);
                     com.AddParameter("@bool", state ? 1 : 0);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.AddParameter("@worldid", Main.worldName);
                     int q = com.ExecuteNonQuery();
                     ReloadAllRegions();
                     return (q > 0);
@@ -392,7 +392,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "SELECT * FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", regionName);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.AddParameter("@worldid", Main.worldName);
                     string MergedIDs = string.Empty;
                     using (var reader = com.ExecuteReader())
                     {
@@ -408,7 +408,7 @@ namespace TShockAPI.DB
                     com.CommandText = "UPDATE Regions SET UserIds=@ids WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@ids", MergedIDs);
                     com.AddParameter("@name", regionName);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.AddParameter("@worldid", Main.worldName);
                     if (com.ExecuteNonQuery() > 0)
                     {
                         ReloadAllRegions();
