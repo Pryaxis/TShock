@@ -34,7 +34,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "trustedadmin");
-                com.AddParameter("@commands", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
+                com.AddParameter("@commands", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
                 com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
@@ -44,7 +44,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "admin");
-                com.AddParameter("@commands", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
+                com.AddParameter("@commands", "newadmin,ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
                 com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
@@ -54,7 +54,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "newadmin");
-                com.AddParameter("@commands", "kick,editspawn,reservedslot");
+                com.AddParameter("@commands", "default,kick,editspawn,reservedslot");
                 com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
@@ -75,7 +75,7 @@ namespace TShockAPI.DB
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
                 com.AddParameter("@groupname", "vip");
-                com.AddParameter("@commands", "canwater,canlava,warp,canbuild,reservedslot");
+                com.AddParameter("@commands", "default,canwater,canlava,warp,canbuild,reservedslot");
                 com.AddParameter("@order", "0");
                 com.ExecuteNonQuery();
                 com.Parameters.Clear();
