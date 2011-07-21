@@ -110,7 +110,14 @@ namespace TShockAPI
                 {PacketTypes.PlayerKillMe, HandlePlayerKillMe},
                 {PacketTypes.LiquidSet, HandleLiquidSet},
                 {PacketTypes.PlayerSpawn, HandleSpawn},
+                {PacketTypes.SyncPlayers, HandleSync},
             };
+        }
+
+        private static bool HandleSync(GetDataHandlerArgs args)
+        {
+            Debug.WriteLine("FUCK SYNCS");
+            return true;
         }
 
         public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)

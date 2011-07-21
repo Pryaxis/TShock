@@ -187,6 +187,7 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+            NetHooks.SendData += new NetHooks.SendDataD(NetHooks_SendData);
 
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
@@ -194,6 +195,14 @@ namespace TShockAPI
 
             Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
+        }
+
+        void NetHooks_SendData(SendDataEventArgs e)
+        {
+            if (e.MsgID == PacketTypes.PlayerActive)
+            {
+                //Debug.WriteLine("Send: {0} ({1:X2})", (byte)e.MsgID, e.MsgID.ToString());
+            }
         }
 
         public override void DeInitialize()
@@ -557,8 +566,8 @@ namespace TShockAPI
                 return;
             }
 
-            if (Main.verboseNetplay)
-                Debug.WriteLine("{0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
+            //if (type == PacketTypes.SyncPlayers)
+                //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
             if ((TShock.Config.BanKillTileAbusers || TShock.Config.KickKillTileAbusers) && player.TileThreshold >= TShock.Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
@@ -738,57 +747,5 @@ namespace TShockAPI
         }
 
 
-        static readonly Dictionary<byte, string> MsgNames = new Dictionary<byte, string>()
-        {
-            {1, "Connect Request"},
-            {2, "Disconnect"},
-            {3, "Continue Connecting"},
-            {4, "Player Info"},
-            {5, "Player Slot"},
-            {6, "Continue Connecting (2)"},
-            {7, "World Info"},
-            {8, "Tile Get Section"},
-            {9, "Status"},
-            {10, "Tile Send Section"},
-            {11, "Tile Frame Section"},
-            {12, "Player Spawn"},
-            {13, "Player Update"},
-            {14, "Player Active"},
-            {15, "Sync Players"},
-            {16, "Player HP"},
-            {17, "Tile"},
-            {18, "Time Set"},
-            {19, "Door Use"},
-            {20, "Tile Send Square"},
-            {21, "Item Drop"},
-            {22, "Item Owner"},
-            {23, "Npc Update"},
-            {24, "Npc Item Strike"},
-            {25, "Chat Text"},
-            {26, "Player Damage"},
-            {27, "Projectile New"},
-            {28, "Npc Strike"},
-            {29, "Projectile Destroy"},
-            {30, "Toggle PVP"},
-            {31, "Chest Get Contents"},
-            {32, "Chest Item"},
-            {33, "Chest Open"},
-            {34, "Tile Kill"},
-            {35, "Effect Heal"},
-            {36, "Zones"},
-            {37, "Password Requied"},
-            {38, "Password Send"},
-            {39, "Item Unown"},
-            {40, "Npc Talk"},
-            {41, "Player Animation"},
-            {42, "Player Mana"},
-            {43, "Effect Mana"},
-            {44, "Player Kill Me"},
-            {45, "Player Team"},
-            {46, "Sign Read"},
-            {47, "Sign New"},
-            {48, "Liquid Set"},
-            {49, "Player Spawn Self"},
-        };
     }
 }
