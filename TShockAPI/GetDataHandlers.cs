@@ -116,8 +116,12 @@ namespace TShockAPI
 
         private static bool HandleSync(GetDataHandlerArgs args)
         {
-            Debug.WriteLine("FUCK SYNCS");
-            return true;
+            if (TShock.Config.EnableAntiLag)
+            {
+                Debug.WriteLine("FUCK SYNCS");
+                return true;
+            }
+            return false;
         }
 
         public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)

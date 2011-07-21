@@ -97,6 +97,8 @@ namespace TShockAPI
         public bool EnableDNSHostResolution = false;
 
         public bool EnableBanOnUsernames = false;
+
+        public bool EnableAntiLag = true;
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
