@@ -172,6 +172,7 @@ namespace TShockAPI
             Warps = new WarpManager(DB);
             Regions = new RegionManager(DB);
             Groups = new GroupManager(DB);
+            Groups.LoadPermisions();
             Users = new UserManager(DB);
             Itembans = new ItemManager(DB);
 

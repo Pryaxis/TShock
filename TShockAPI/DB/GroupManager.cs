@@ -107,7 +107,7 @@ namespace TShockAPI.DB
                                         comms = comms + ",";
                                     comms = comms + info[i].Trim();
                                 }
-                                com.AddParameter("@groupname", info[0].Trim());
+                                com.AddParameter("@groupname", info[0].Trim().ToString());
                                 com.AddParameter("@commands", comms);
                                 com.AddParameter("@order", hasOrder ? info[info.Length-1] : "0");
                                 com.ExecuteNonQuery();
@@ -123,8 +123,6 @@ namespace TShockAPI.DB
                         File.Delete(file2);
                     File.Move(file, file2);
                 }
-
-                LoadPermisions();
             }
         }
 
@@ -133,6 +131,7 @@ namespace TShockAPI.DB
             if (group == "superadmin")
                 return true;
 
+            
             try
             {
                 using (var com = database.CreateCommand())
@@ -171,23 +170,19 @@ namespace TShockAPI.DB
                         while (reader.Read())
                         {
                             Group group = null;
-                            string groupname = reader.Get<string>("GroupName");
-                            int order = Int32.Parse(reader.Get<string>("OrderBy"));
+                            string groupname = reader.Get<String>("GroupName");
                             group = new Group(groupname);
-                            group.Order = order;
 
                             //Inherit Given commands
-                            foreach (string perm in reader.Get<string>("Commands").Split(','))
+                            String[] commands = reader.Get<String>("Commands").Split(',');
+                            for( int i = 0; i < commands.Length; i++ )
                             {
-                                group.AddPermission(perm);
+                                group.AddPermission(commands[i].Trim());
                             }
-
                             groups.Add(group);
-
-                            reader.Close();
                         }
                     }
-
+                    /** ORDER BY IS DUMB
                     //Inherit all commands from group below in order, unless Order is 0 (unique groups anyone)
                     foreach (Group group in groups)
                     {
@@ -201,7 +196,7 @@ namespace TShockAPI.DB
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
             }
             catch (Exception ex)
