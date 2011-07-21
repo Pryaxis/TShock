@@ -26,4 +26,4 @@ We love IRC (although a little less than Teamspeak). If you need support, or jus
 
 __IP__: irc.shankshock.com
 
-__Channel__: #terraria
+__Channel__: #terraria-dev or #terraria
