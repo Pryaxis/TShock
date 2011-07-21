@@ -146,9 +146,16 @@ namespace TShockAPI.DB
                                             ipstr = "";
                                             for( int i = 0; i < ips.Length; i++ )
                                             {
-                                                if (ipstr != "")
-                                                    ipstr += ",";
-                                                ipstr += ips[i];
+                                                try
+                                                {
+                                                    if (ipstr != "")
+                                                        ipstr += ",";
+                                                    ipstr += TShock.Users.GetUserID(ips[i]);
+                                                } catch (Exception e)
+                                                {
+                                                    Log.Error("An IP address failed to import. It wasn't a user in the new user system.");
+                                                }
+                                                
                                             }
 
                                         }
