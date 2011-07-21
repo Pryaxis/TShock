@@ -102,6 +102,10 @@ namespace TShockAPI.DB
 
         public Ban GetBanByName(string name, bool casesensitive = true)
         {
+            if (!TShock.Config.EnableBanOnUsernames)
+            {
+                return null;
+            }
             try
             {
                 using (var com = database.CreateCommand())
