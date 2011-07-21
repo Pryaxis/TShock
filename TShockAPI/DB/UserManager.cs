@@ -193,6 +193,32 @@ namespace TShockAPI.DB
             return returndata;
         }
 
+        public int GetUserID(string username)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM Users WHERE Username=@name";
+                    com.AddParameter("@name", username.ToLower());
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return reader.Get<int>("ID");
+                        }
+                        reader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex.ToString());
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Returns a Group for a ip from the database
         /// </summary>

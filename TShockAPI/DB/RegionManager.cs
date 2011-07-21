@@ -222,7 +222,21 @@ namespace TShockAPI.DB
                             string[] SplitIDs = MergedIDs.Split(',');
 
                             Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
-                            r.RegionAllowedIDs = SplitIDs;
+                            r.RegionAllowedIDs = new int[SplitIDs.Length];
+                            try
+                            {
+                                for (int i = 0; i < SplitIDs.Length; i++)
+                                {
+                                    r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
+                                }
+                            } catch (Exception e)
+                            {
+                                Log.Error("Your database contains invalid UserIDs (they should be ints).");
+                                Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+                                Log.Error(e.Message);
+                                continue;
+                            }
+
                             Regions.Add(r);
                         }
                         reader.Close();
@@ -363,7 +377,7 @@ namespace TShockAPI.DB
 
         public bool AddNewUser(string regionName, String userName)
         {
-            string MergedIDs = string.Empty;
+
 
             try
             {
@@ -372,7 +386,7 @@ namespace TShockAPI.DB
                     com.CommandText = "SELECT * FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", regionName);
                     com.AddParameter("@worldid", Main.worldID.ToString());
-
+                    string MergedIDs = string.Empty;
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
@@ -380,9 +394,9 @@ namespace TShockAPI.DB
                     }
 
                     if (MergedIDs == string.Empty)
-                        MergedIDs = userName;
+                        MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
                     else
-                        MergedIDs = MergedIDs + "," + userName;
+                        MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
                     com.Parameters.Clear();
                     com.CommandText = "UPDATE Regions SET UserIds=@ids WHERE RegionName=@name AND WorldID=@worldid";
                     com.AddParameter("@ids", MergedIDs);
@@ -435,7 +449,7 @@ namespace TShockAPI.DB
         public string RegionName { get; set; }
         public int DisableBuild { get; set; }
         public string RegionWorldID { get; set; }
-        public string[] RegionAllowedIDs { get; set; }
+        public int[] RegionAllowedIDs { get; set; }
 
         public Region(Rectangle region, string name, int disablebuild, string RegionWorldIDz)
         {
@@ -476,7 +490,7 @@ namespace TShockAPI.DB
 
             for (int i = 0; i < RegionAllowedIDs.Length; i++)
             {
-                if (RegionAllowedIDs[i] == ply.UserAccountName)
+                if (RegionAllowedIDs[i] == ply.UserID)
                 {
                     return true;
                 }

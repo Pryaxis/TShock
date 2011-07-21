@@ -312,6 +312,7 @@ namespace TShockAPI
                 {
                     args.Player.Group = Tools.GetGroup(exr[1]);
                     args.Player.UserAccountName = args.Parameters[0];
+                    args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
@@ -1286,7 +1287,7 @@ namespace TShockAPI
             foreach (Region r in TShock.Regions.Regions)
             {
                 args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height );
-                foreach (string s in r.RegionAllowedIDs)
+                foreach (int s in r.RegionAllowedIDs)
                 {
                     args.Player.SendMessage(r.RegionName + ": " + s);
                 }

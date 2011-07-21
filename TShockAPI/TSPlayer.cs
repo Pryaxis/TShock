@@ -50,6 +50,7 @@ namespace TShockAPI
         public string UserAccountName { get; set; }
         public bool HasBeenSpammedWithBuildMessage = false;
         public bool IsLoggedIn = false;
+        public int UserID = -1;
         Player FakePlayer = null;
 
         public bool RealPlayer
