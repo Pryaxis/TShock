@@ -1053,7 +1053,7 @@ namespace TShockAPI
                             {
                                 if (sb.Length != 0)
                                     sb.Append(", ");
-                                sb.Append("/").Append(Warps[j].WarpName);
+                                sb.Append(Warps[j].WarpName);
                                 if (j == Warps.Count - 1)
                                 {
                                     args.Player.SendMessage(sb.ToString(), Color.Yellow);
