@@ -99,7 +99,10 @@ namespace TShockAPI.DB
             }
         }
 
-
+        /// <summary>
+        /// Adds a given username to the database
+        /// </summary>
+        /// <param name="user">User user</param>
         public void AddUser(User user)
         {
             try
@@ -129,6 +132,10 @@ namespace TShockAPI.DB
             }
         }
 
+        /// <summary>
+        /// Removes a given username from the database
+        /// </summary>
+        /// <param name="user">User user</param>
         public void RemoveUser(User user)
         {
             try
@@ -158,6 +165,68 @@ namespace TShockAPI.DB
                 throw new UserManagerException("RemoveUser SQL returned an error", ex);
             }
         }
+
+
+        /// <summary>
+        /// Sets the Hashed Password for a given username
+        /// </summary>
+        /// <param name="user">User user</param>
+        /// <param name="group">string password</param>
+        public void SetUserPassword(User user, string password)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "UPDATE Users SET Password = @password WHERE Username = @name;";
+                    com.AddParameter("@name", user.Name);
+                    com.AddParameter("@password", Tools.HashPassword(password));
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.RecordsAffected < 1)
+                            throw new UserExistsException(user.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserManagerException("SetUserPassword SQL returned an error", ex);
+            }
+        }
+
+        /// <summary>
+        /// Sets the group for a given username
+        /// </summary>
+        /// <param name="user">User user</param>
+        /// <param name="group">string group</param>
+        public void SetUserGroup(User user, string group)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "UPDATE Users SET UserGroup = @group WHERE Username = @name;";
+                    com.AddParameter("@name", user.Name);
+
+                    if (!TShock.Groups.GroupExists(group))
+                        throw new GroupNotExistsException(group);
+
+                    com.AddParameter("@group", group);
+
+                    using (var reader = com.ExecuteReader())
+                    {
+                        if (reader.RecordsAffected < 1)
+                            throw new UserExistsException(user.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserManagerException("SetUserGroup SQL returned an error", ex);
+            }
+        }
+
 
         /// <summary>
         /// Fetches the hashed password and group for a given username
