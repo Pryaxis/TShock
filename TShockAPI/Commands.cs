@@ -375,7 +375,7 @@ namespace TShockAPI
                 if (args.Parameters.Count == 2)
                 {
                     var user = new User();
-                    user.Name = args.Parameters[0];
+                    user.Name = args.Parameters[0].ToLower();
                     user.Password = args.Parameters[1];
                     user.Group = "default"; // FIXME -- we should get this from the DB.
 
