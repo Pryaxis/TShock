@@ -1556,7 +1556,7 @@ namespace TShockAPI
                         }
                         if (Regions.Count > (15 * page))
                         {
-                            args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 1)), Color.Yellow);
                         }
                         break;
                     }
