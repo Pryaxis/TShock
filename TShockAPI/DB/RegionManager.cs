@@ -490,7 +490,11 @@ namespace TShockAPI.DB
         {
             if (!ply.IsLoggedIn)
             {
-                ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
+                if (!ply.HasBeenNaggedAboutLoggingIn)
+                {
+                    ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
+                    ply.HasBeenNaggedAboutLoggingIn = true;
+                }
                 return false;
             }
             if (DisableBuild == 0)

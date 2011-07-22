@@ -51,6 +51,7 @@ namespace TShockAPI
         public bool HasBeenSpammedWithBuildMessage = false;
         public bool IsLoggedIn = false;
         public int UserID = -1;
+        public bool HasBeenNaggedAboutLoggingIn = false;
         Player FakePlayer = null;
 
         public bool RealPlayer
