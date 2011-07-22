@@ -167,6 +167,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
             ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
+            ChatCommands.Add(new Command("cfg", ConvertWaR, "convert"));
             if (TShock.Config.DistributationAgent != "terraria-online")
             {
                 ChatCommands.Add(new Command("kill", Kill, "kill"));
@@ -717,6 +718,22 @@ namespace TShockAPI
         #endregion Player Management Commands
 
         #region Server Maintenence Commands
+
+        public static void ConvertWaR(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("This command will dump all users from both Regions and Warps.");
+                args.Player.SendMessage("This command will also change all Worlds to reference this WorldID.");
+                args.Player.SendMessage("You must manually fix multi-world configurations.");
+                args.Player.SendMessage("To confirm this: /convert yes");
+            } else if (args.Parameters[0] == "yes")
+            {
+                TShock.Warps.ConvertDB();
+                TShock.Regions.ConvertDB();
+                args.Player.SendMessage("Convert complete. You need to re-allow users after they register.");
+            }
+        }
 
         private static void Broadcast(CommandArgs args)
         {

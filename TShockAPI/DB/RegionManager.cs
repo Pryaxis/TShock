@@ -151,7 +151,7 @@ namespace TShockAPI.DB
                                                     if (ipstr != "")
                                                         ipstr += ",";
                                                     ipstr += TShock.Users.GetUserID(ips[i]);
-                                                } catch (Exception e)
+                                                } catch (Exception)
                                                 {
                                                     Log.Error("An IP address failed to import. It wasn't a user in the new user system.");
                                                 }
@@ -205,6 +205,28 @@ namespace TShockAPI.DB
             }
         }
 
+        public void ConvertDB()
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "UPDATE Regions SET WorldID=@worldid";
+                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.ExecuteNonQuery();
+                    com.Parameters.Clear();
+                    com.CommandText = "UPDATE Regions SET UserIds=@UserIds";
+                    com.AddParameter("@UserIds", "");
+                    com.ExecuteNonQuery();
+                    ReloadAllRegions();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+        } 
+
         public void ReloadAllRegions()
         {
             try
@@ -212,7 +234,7 @@ namespace TShockAPI.DB
                 using (var com = database.CreateCommand())
                 {
                     com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldName);
+                    com.AddParameter("@worldid", Main.worldID.ToString());
                     using (var reader = com.ExecuteReader())
                     {
                         Regions.Clear();
@@ -234,7 +256,7 @@ namespace TShockAPI.DB
                             {
                                 for (int i = 0; i < SplitIDs.Length; i++)
                                 {
-                                    if (SplitIDs.Length == 0)
+                                    if (SplitIDs.Length == 1 && SplitIDs[0].Equals(""))
                                     {
                                         break;
                                     }

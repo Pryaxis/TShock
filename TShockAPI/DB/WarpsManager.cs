@@ -130,6 +130,23 @@ namespace TShockAPI.DB
             }
         }
 
+        public void ConvertDB()
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "UPDATE Warps SET WorldID=@worldid";
+                    com.AddParameter("@worldid", Main.worldID.ToString());
+                    com.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+        } 
+
         public bool AddWarp(int x, int y, string name, string worldid)
         {
             try
