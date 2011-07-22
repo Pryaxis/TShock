@@ -332,7 +332,6 @@ namespace TShockAPI.DB
 
         public bool CanBuild(int x, int y, TSPlayer ply)
         {
-            User user = TShock.Users.GetUserByName(ply.TPlayer.name);
             if (!ply.Group.HasPermission("canbuild"))
             {
                 return false;
