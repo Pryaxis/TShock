@@ -326,6 +326,8 @@ namespace TShockAPI
             Regions.ReloadAllRegions();
         }
 
+
+        private DateTime LastCheck = DateTime.UtcNow;
         private void OnUpdate(GameTime time)
         {
             UpdateManager.UpdateProcedureCheck();
@@ -333,12 +335,10 @@ namespace TShockAPI
             if (Backups.IsBackupTime)
                 Backups.Backup();
 
-            ElapsedTime += time.ElapsedGameTime.TotalMilliseconds;
-
             //call these every second, not every update
-            if (ElapsedTime >= 1000)
+            if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
             {
-                ElapsedTime = 0;
+                LastCheck = DateTime.UtcNow;
                 foreach (TSPlayer player in TShock.Players)
                 {
                     if (player != null && player.Active)
