@@ -45,6 +45,16 @@ namespace TShockAPI
                 return true;
             if (Parent != null)
                 return Parent.HasPermission(permission);
+            bool ret = false;
+            foreach( string g in permissions )
+            {
+                if (TShock.Groups.GroupExists(g))
+                {
+                    ret = checkGroupForPermission(g, permission);
+                    if (ret)
+                        return true;
+                }
+            }
             return false;
         }
 
@@ -55,27 +65,33 @@ namespace TShockAPI
 
         public void AddPermission(string permission)
         {
-            recursePermissions(permission, new List<String>());
+            permissions.Add(permission);
         }
 
-        public void recursePermissions( string permission, List<String> used){
-            if (used.Contains(permission))
+        private bool checkGroupForPermission(String g, String permission )
+        {
+            bool ret = false;
+            if( !TShock.Groups.GroupExists( g  ) )
             {
-                return;
-            }
-            else if( TShock.Groups.GroupExists( permission ) )
-            {
-                used.Add(permission);
-                Group g = Tools.GetGroup(permission);
-                foreach (string perm in g.permissions)
-                {
-                    recursePermissions(perm, used);
-                }
+                if( g.Equals(permission) )
+                    return true;
             }
             else
             {
-                permissions.Add(permission);
+                Group group = Tools.GetGroup(g);
+                foreach (String perm in group.permissions)
+                {
+                    if( perm.Equals( permission ) )
+                    {
+                        return true;
+                    }
+                    ret = checkGroupForPermission( perm, permission );
+
+                    if( ret )
+                        return ret;
+                }
             }
+            return ret;
         }
     }
 
