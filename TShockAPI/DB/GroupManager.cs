@@ -131,27 +131,13 @@ namespace TShockAPI.DB
             if (group == "superadmin")
                 return true;
 
-            
-            try
-            {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "SELECT * FROM Grouplist WHERE GroupName=@groupname";
-                    com.AddParameter("@groupname", group);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            if (reader.Get<string>("GroupName") == group)
-                                return true;
 
-                        reader.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
+            foreach (Group g in groups)
             {
-                Log.Error(ex.ToString());
+                if (g.Name.Equals(group))
+                    return true;
             }
+
             return false;
         }
 
