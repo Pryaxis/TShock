@@ -109,7 +109,6 @@ namespace TShockAPI.DB
 
         public bool ItemIsBanned(string name)
         {
-            System.Console.WriteLine(name);
             if (ItemBans.Contains(name))
                 return true;
 
