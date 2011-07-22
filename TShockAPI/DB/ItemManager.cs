@@ -59,8 +59,9 @@ namespace TShockAPI.DB
                     if (File.Exists(file2))
                         File.Delete(file2);
                     File.Move(file, file2);
-                    com.CommandText = "SELECT *FROM ItemBans";
                 }
+
+                com.CommandText = "SELECT * FROM ItemBans";
 
                 using (var reader = com.ExecuteReader())
                 {
@@ -108,6 +109,7 @@ namespace TShockAPI.DB
 
         public bool ItemIsBanned(string name)
         {
+            System.Console.WriteLine(name);
             if (ItemBans.Contains(name))
                 return true;
 
