@@ -351,14 +351,8 @@ namespace TShockAPI
                                 {
                                     TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                                 }
-                                else if (player.TileThreshold > 0)
-                                {
-                                    player.TileThreshold = 0;
-                                    player.TilesDestroyed.Clear();
-                                }
-
                             }
-                            else if (player.TileThreshold > 0)
+                            if (player.TileThreshold > 0)
                             {
                                 player.TileThreshold = 0;
                                 player.TilesDestroyed.Clear();
