@@ -234,6 +234,10 @@ namespace TShockAPI.DB
                             {
                                 for (int i = 0; i < SplitIDs.Length; i++)
                                 {
+                                    if (SplitIDs.Length == 0)
+                                    {
+                                        break;
+                                    }
                                     r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
                                 }
                             } catch (Exception e)
@@ -241,7 +245,7 @@ namespace TShockAPI.DB
                                 Log.Error("Your database contains invalid UserIDs (they should be ints).");
                                 Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
                                 Log.Error(e.Message);
-                                continue;
+                                Log.Error(e.StackTrace);
                             }
 
                             Regions.Add(r);
