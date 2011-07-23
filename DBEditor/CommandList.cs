@@ -33,7 +33,10 @@ namespace TShockDBEditor
             CommandList.Add("logs");
             CommandList.Add("kill");
             CommandList.Add("butcher");
-            CommandList.Add("cheat");
+            CommandList.Add("item");
+            CommandList.Add("heal");
+            CommandList.Add("whisper");
+            CommandList.Add("annoy");
             CommandList.Add("immunetokick");
             CommandList.Add("immunetoban");
             CommandList.Add("ignorecheatdetection");

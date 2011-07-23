@@ -110,6 +110,7 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
+            //When adding new perm in here, add new perm to CommandList in DBEditor
             ChatCommands.Add(new Command("kick", Kick, "kick"));
             ChatCommands.Add(new Command("ban", Ban, "ban"));
             ChatCommands.Add(new Command("ban", BanIP, "banip"));
