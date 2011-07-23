@@ -1098,7 +1098,7 @@ namespace TShockAPI
                 {
                     args.Player.SendMessage("Name reserved, use a different name", Color.Red);
                 }
-                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
+                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
                 {
                     args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
                 }
@@ -1153,7 +1153,7 @@ namespace TShockAPI
                     page--; //Substract 1 as pages are parsed starting at 1 and not 0
                 }
 
-                var warps = TShock.Warps.ListAllWarps(Main.worldName);
+                var warps = TShock.Warps.ListAllWarps(Main.worldID.ToString());
 
                 //Check if they are trying to access a page that doesn't exist.
                 int pagecount = warps.Count / pagelimit;
@@ -1580,7 +1580,7 @@ namespace TShockAPI
                             page--; //Substract 1 as pages are parsed starting at 1 and not 0
                         }
 
-                        var regions = TShock.Regions.ListAllRegions(Main.worldName);
+                        var regions = TShock.Regions.ListAllRegions(Main.worldID.ToString());
 
                         //Check if they are trying to access a page that doesn't exist.
                         int pagecount = regions.Count / pagelimit;

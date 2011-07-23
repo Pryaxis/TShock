@@ -177,7 +177,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", Main.worldName);
+                    com.AddParameter("@worldid", Main.worldID.ToString());
                     com.ExecuteNonQuery();
                     return true;
                 }
