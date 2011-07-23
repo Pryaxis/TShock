@@ -151,7 +151,7 @@ namespace TShockAPI.DB
                                                     if (ipstr != "")
                                                         ipstr += ",";
                                                     ipstr += TShock.Users.GetUserID(ips[i]);
-                                                } catch (Exception)
+                                                } catch (Exception e)
                                                 {
                                                     Log.Error("An IP address failed to import. It wasn't a user in the new user system.");
                                                 }
@@ -200,8 +200,7 @@ namespace TShockAPI.DB
                     //File.Move(file, file2);
                 }
 
-                if( updates > 0 )
-                    ReloadAllRegions();
+                ReloadAllRegions();
             }
         }
 
@@ -247,9 +246,9 @@ namespace TShockAPI.DB
                             int Protected = reader.Get<int>("Protected");
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
                             string name = DbExt.Get<string>(reader, "RegionName");
-
+                            System.Console.WriteLine(MergedIDs);
                             string[] SplitIDs = MergedIDs.Split(',');
-
+                            System.Console.WriteLine(SplitIDs.Length);
                             Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldName);
                             r.RegionAllowedIDs = new int[SplitIDs.Length];
                             try
@@ -260,6 +259,7 @@ namespace TShockAPI.DB
                                     {
                                         break;
                                     }
+                                    //System.Console.WriteLine(SplitIDs[i]);
                                     r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
                                 }
                             } catch (Exception e)
