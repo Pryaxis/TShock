@@ -156,6 +156,8 @@ namespace TShockAPI
             }
 
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+            Backups.KeepFor = Config.BackupKeepFor;
+            Backups.Interval = Config.BackupInterval;
             Bans = new BanManager(DB);
             Warps = new WarpManager(DB);
             Users = new UserManager(DB);
@@ -715,8 +717,11 @@ namespace TShockAPI
             NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
             Main.autoSave = file.AutoSave;
-            Backups.KeepFor = file.BackupKeepFor;
-            Backups.Interval = file.BackupInterval;
+            if (Backups != null)
+            {
+                Backups.KeepFor = file.BackupKeepFor;
+                Backups.Interval = file.BackupInterval;
+            }
             if (!OverridePort)
             {
                 Netplay.serverPort = file.ServerPort;
