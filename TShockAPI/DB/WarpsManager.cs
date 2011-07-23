@@ -197,7 +197,7 @@ namespace TShockAPI.DB
                 {
                     com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
                     com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", Main.worldName);
+                    com.AddParameter("@worldid", Main.worldID.ToString());
                     using (var reader = com.ExecuteReader())
                     {
                         if (reader.Read())
