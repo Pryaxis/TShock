@@ -1561,40 +1561,56 @@ namespace TShockAPI
                     }
                 case "list":
                     {
-                        args.Player.SendMessage("Current Regions:", Color.Green);
-                        int page = 1;
+                        //How many regions per page
+                        const int pagelimit = 15;
+                        //How many regions per line
+                        const int perline = 5;
+                        //Pages start at 0 but are displayed and parsed at 1
+                        int page = 0;
+
+
                         if (args.Parameters.Count > 1)
-                            int.TryParse(args.Parameters[1], out page);
-                        var sb = new StringBuilder();
-
-                        List<Region> Regions = TShock.Regions.ListAllRegions();
-
-                        if (Regions.Count > (15 * (page - 1)))
                         {
-                            for (int j = (15 * (page - 1)); j < (15 * page); j++)
+                            if (!int.TryParse(args.Parameters[1], out page) || page < 1)
                             {
-                                if (Regions[j].RegionWorldID == Main.worldName)
-                                {
-                                    if (sb.Length != 0)
-                                        sb.Append(", ");
-                                    sb.Append(Regions[j].RegionName);
-                                    if (j == Regions.Count - 1)
-                                    {
-                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                        break;
-                                    }
-                                    if ((j + 1) % 5 == 0)
-                                    {
-                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                        sb.Clear();
-                                    }
-                                }
+                                args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
+                                return;
                             }
+                            page--; //Substract 1 as pages are parsed starting at 1 and not 0
                         }
-                        if (Regions.Count > (15 * page))
+
+                        var regions = TShock.Regions.ListAllRegions(Main.worldName);
+
+                        //Check if they are trying to access a page that doesn't exist.
+                        int pagecount = regions.Count / pagelimit;
+                        if (page > pagecount)
+                        {
+                            args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
+                            return;
+                        }
+
+                        //Display the current page and the number of pages.
+                        args.Player.SendMessage(string.Format("Current Regions ({0}/{1}):", page + 1, pagecount + 1), Color.Green);
+
+                        //Add up to pagelimit names to a list
+                        var nameslist = new List<string>();
+                        for (int i = 0; i < pagelimit && i + (page * pagelimit) < regions.Count; i++)
+                        {
+                            nameslist.Add(regions[i].RegionName);
+                        }
+
+                        //convert the list to an array for joining
+                        var names = nameslist.ToArray();
+                        for (int i = 0; i < names.Length; i += perline)
+                        {
+                            args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
+                        }
+
+                        if (page < pagecount)
                         {
                             args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 1)), Color.Yellow);
                         }
+
                         break;
                     }
                 case "help":
