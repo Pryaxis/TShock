@@ -1460,7 +1460,7 @@ namespace TShockAPI
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldName))
+                                                            regionName, Main.worldID.toString()))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
