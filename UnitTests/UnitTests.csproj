@@ -40,6 +40,10 @@
       <HintPath>..\TShockAPI\SqlBins\Community.CsharpSqlite.SQLiteClient.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\TShockAPI\SqlBins\MySql.Data.dll</HintPath>
     </Reference>
@@ -56,6 +60,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TShockAPI\TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
     </Reference>
+    <Reference Include="XNAHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TShockAPI\TerrariaServerBins\XNAHelpers.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
@@ -66,6 +74,7 @@
     <Compile Include="BanManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemManagerTest.cs" />
+    <Compile Include="RegionManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TShockAPI\TShockAPI.csproj">
@@ -78,6 +87,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ItemManagerTest.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RegionManagerTest.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

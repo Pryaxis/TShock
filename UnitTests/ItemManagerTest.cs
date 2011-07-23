@@ -60,12 +60,12 @@ namespace UnitTests
             //
             ItemManager manager = new ItemManager(DB);
             Assert.IsNotNull(manager);
-            Assert.AreEqual( false, manager.ItemIsBanned("Dirt Block"), "Item isn't banned" );
+            Assert.IsFalse( manager.ItemIsBanned("Dirt Block"), "Item isn't banned" );
             manager.AddNewBan("Dirt Block");
-            Assert.AreEqual(true, manager.ItemIsBanned("Dirt Block"), "New item is added");
-            Assert.AreEqual(false, manager.ItemIsBanned("Green Brick"), "Item isn't banned");
+            Assert.IsTrue( manager.ItemIsBanned("Dirt Block"), "New item is added");
+            Assert.IsFalse( manager.ItemIsBanned("Green Brick"), "Item isn't banned");
             manager.AddNewBan("Green Brick");
-            Assert.AreEqual(true, manager.ItemIsBanned("Green Brick"), "New item is added");
+            Assert.IsTrue( manager.ItemIsBanned("Green Brick"), "New item is added");
             Assert.AreEqual(2, manager.ItemBans.Count, "Adding both items");
             manager.AddNewBan("Green Brick" );
             Assert.AreEqual(2, manager.ItemBans.Count, "Adding duplicate items");
