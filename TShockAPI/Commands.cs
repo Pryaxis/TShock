@@ -429,7 +429,7 @@ namespace TShockAPI
                     {
                         if (namepass.Length == 2)
                         {
-                            user.Name = namepass[0];
+                            user.Name = namepass[0].ToLower();
                             user.Password = namepass[1];
                             user.Group = args.Parameters[2];
                         }
