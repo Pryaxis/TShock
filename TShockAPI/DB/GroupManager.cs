@@ -28,101 +28,84 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
 
                 com.ExecuteNonQuery();
+            }
 
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", "trustedadmin");
-                com.AddParameter("@commands", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-                com.Parameters.Clear();
-
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", "admin");
-                com.AddParameter("@commands", "newadmin,ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-                com.Parameters.Clear();
-
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", "newadmin");
-                com.AddParameter("@commands", "default,kick,editspawn,reservedslot");
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-                com.Parameters.Clear();
-
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", "default");
-                com.AddParameter("@commands", "canwater,canlava,warp,canbuild");
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-                com.Parameters.Clear();
+            //Add default groups
+            AddGroup("trustedadmin", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
+            AddGroup("admin", "newadmin,ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
+            AddGroup("newadmin", "default,kick,editspawn,reservedslot");
+            AddGroup("default", "canwater,canlava,warp,canbuild");
+            AddGroup("vip", "default,canwater,canlava,warp,canbuild,reservedslot");
 
 
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", "vip");
-                com.AddParameter("@commands", "default,canwater,canlava,warp,canbuild,reservedslot");
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-                com.Parameters.Clear();
-
-                String file = Path.Combine(TShock.SavePath, "groups.txt");
-                if (File.Exists(file))
+            String file = Path.Combine(TShock.SavePath, "groups.txt");
+            if (File.Exists(file))
+            {
+                using (StreamReader sr = new StreamReader(file))
                 {
-                    using (StreamReader sr = new StreamReader(file))
+                    String line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        String line;
-                        while ((line = sr.ReadLine()) != null)
+                        if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
                         {
-                            if( !line.Equals("")  && !line.Substring( 0,1 ).Equals( "#" ) )
+                            String[] info = line.Split(' ');
+                            String comms = "";
+                            int size = info.Length;
+                            int test = 0;
+                            bool hasOrder = int.TryParse(info[info.Length - 1], out test);
+                            if (hasOrder)
+                                size = info.Length - 1;
+                            for (int i = 1; i < size; i++)
                             {
-                                String[] info = line.Split(' ');
+                                if (!comms.Equals(""))
+                                    comms = comms + ",";
+                                comms = comms + info[i].Trim();
+                            }
+                            using (var com = database.CreateCommand())
+                            {
                                 if (TShock.Config.StorageType.ToLower() == "sqlite")
                                     com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
                                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                                     com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                                String comms = "";
-                                int size = info.Length;
-                                int test = 0;
-                                bool hasOrder = int.TryParse(info[info.Length - 1], out test);
-                                if( hasOrder )
-                                    size = info.Length - 1;
-                                for (int i = 1; i < size; i++)
-                                {
-                                    if (!comms.Equals(""))
-                                        comms = comms + ",";
-                                    comms = comms + info[i].Trim();
-                                }
-                                com.AddParameter("@groupname", info[0].Trim().ToString());
+
+                                com.AddParameter("@groupname", info[0].Trim());
                                 com.AddParameter("@commands", comms);
-                                com.AddParameter("@order", hasOrder ? info[info.Length-1] : "0");
+                                com.AddParameter("@order", hasOrder ? info[info.Length - 1] : "0");
                                 com.ExecuteNonQuery();
-                                com.Parameters.Clear();
                             }
                         }
                     }
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "groups.txt");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    File.Move(file, file2);
                 }
+                String path = Path.Combine(TShock.SavePath, "old_configs");
+                String file2 = Path.Combine(path, "groups.txt");
+                if (!Directory.Exists(path))
+                    System.IO.Directory.CreateDirectory(path);
+                if (File.Exists(file2))
+                    File.Delete(file2);
+                File.Move(file, file2);
+            }
+
+        }
+
+        /// <summary>
+        /// Adds group with name and permissions if it does not exist.
+        /// </summary>
+        /// <param name="name">name of group</param>
+        /// <param name="commands">permissions</param>
+        public void AddGroup(string name, string commands)
+        {
+            using (var com = database.CreateCommand())
+            {
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText =
+                        "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText =
+                        "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
+                com.AddParameter("@groupname", name);
+                com.AddParameter("@commands", commands);
+                com.AddParameter("@order", "0");
+                com.ExecuteNonQuery();
             }
         }
 
@@ -166,7 +149,7 @@ namespace TShockAPI.DB
 
                             //Inherit Given commands
                             String[] commands = reader.Get<String>("Commands").Split(',');
-                            for( int i = 0; i < commands.Length; i++ )
+                            for (int i = 0; i < commands.Length; i++)
                             {
                                 group.AddPermission(commands[i].Trim());
                             }
