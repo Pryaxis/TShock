@@ -75,14 +75,19 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TerrariaServer">
-      <HintPath>TerrariaServerBins\TerrariaServer.exe</HintPath>
+    <Reference Include="TerrariaServer, Version=1.0.4.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\TerrariaServerBins\TerrariaServer.exe</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="TerrariaServerAPI">
-      <HintPath>TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
+    <Reference Include="TerrariaServerAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
     </Reference>
-    <Reference Include="XNAHelpers">
-      <HintPath>TerrariaServerBins\XNAHelpers.dll</HintPath>
+    <Reference Include="XNAHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TerrariaServerBins\XNAHelpers.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
