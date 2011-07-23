@@ -63,6 +63,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BanManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemManagerTest.cs" />
   </ItemGroup>
@@ -73,6 +74,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BanManagerTest.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ItemManagerTest.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
