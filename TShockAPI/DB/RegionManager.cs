@@ -74,7 +74,7 @@ namespace TShockAPI.DB
                         switch (reader.NodeType)
                         {
                             case XmlNodeType.Element:
-                                switch( reader.Name ) 
+                                switch (reader.Name)
                                 {
                                     case "ProtectedRegion":
                                         name = "";
@@ -96,22 +96,22 @@ namespace TShockAPI.DB
                                     case "Point1X":
                                         while (reader.NodeType != XmlNodeType.Text)
                                             reader.Read();
-                                        int.TryParse( reader.Value, out x1 ); 
+                                        int.TryParse(reader.Value, out x1);
                                         break;
                                     case "Point1Y":
                                         while (reader.NodeType != XmlNodeType.Text)
                                             reader.Read();
-                                        int.TryParse(reader.Value, out y1); 
+                                        int.TryParse(reader.Value, out y1);
                                         break;
                                     case "Point2X":
                                         while (reader.NodeType != XmlNodeType.Text)
                                             reader.Read();
-                                        int.TryParse(reader.Value, out x2); 
+                                        int.TryParse(reader.Value, out x2);
                                         break;
                                     case "Point2Y":
                                         while (reader.NodeType != XmlNodeType.Text)
                                             reader.Read();
-                                        int.TryParse(reader.Value, out y2); 
+                                        int.TryParse(reader.Value, out y2);
                                         break;
                                     case "Protected":
                                         while (reader.NodeType != XmlNodeType.Text)
@@ -120,10 +120,11 @@ namespace TShockAPI.DB
                                         {
                                             prot = 0;
                                         }
-                                        else{
+                                        else
+                                        {
                                             prot = 1;
                                         }
-                                    break;
+                                        break;
                                     case "WorldName":
                                         while (reader.NodeType != XmlNodeType.Text)
                                             reader.Read();
@@ -144,18 +145,19 @@ namespace TShockAPI.DB
                                                 ips[i] = reader.Value;
                                             }
                                             ipstr = "";
-                                            for( int i = 0; i < ips.Length; i++ )
+                                            for (int i = 0; i < ips.Length; i++)
                                             {
                                                 try
                                                 {
                                                     if (ipstr != "")
                                                         ipstr += ",";
                                                     ipstr += TShock.Users.GetUserID(ips[i]);
-                                                } catch (Exception)
+                                                }
+                                                catch (Exception)
                                                 {
                                                     Log.Error("An IP address failed to import. It wasn't a user in the new user system.");
                                                 }
-                                                
+
                                             }
 
                                         }
@@ -166,7 +168,7 @@ namespace TShockAPI.DB
                                         com.AddParameter("@tx", x1);
                                         com.AddParameter("@ty", y1);
                                         com.AddParameter("@width", x2);
-                                        com.AddParameter("@height",y2);
+                                        com.AddParameter("@height", y2);
                                         com.AddParameter("@name", name);
                                         com.AddParameter("@worldid", world);
                                         com.AddParameter("@userids", ipstr);
@@ -200,7 +202,7 @@ namespace TShockAPI.DB
                     //File.Move(file, file2);
                 }
 
-                if( updates > 0 )
+                if (updates > 0)
                     ReloadAllRegions();
             }
         }
@@ -225,7 +227,7 @@ namespace TShockAPI.DB
             {
                 Log.Error(ex.ToString());
             }
-        } 
+        }
 
         public void ReloadAllRegions()
         {
@@ -262,7 +264,8 @@ namespace TShockAPI.DB
                                     }
                                     r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
                                 }
-                            } catch (Exception e)
+                            }
+                            catch (Exception e)
                             {
                                 Log.Error("Your database contains invalid UserIDs (they should be ints).");
                                 Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
@@ -374,7 +377,7 @@ namespace TShockAPI.DB
 
         public bool InArea(int x, int y)
         {
-            foreach(Region region in Regions)
+            foreach (Region region in Regions)
             {
                 if (x >= region.RegionArea.Left && x <= region.RegionArea.Right &&
                     y >= region.RegionArea.Top && y <= region.RegionArea.Bottom &&
@@ -438,7 +441,8 @@ namespace TShockAPI.DB
                     {
                         ReloadAllRegions();
                         return true;
-                    } else
+                    }
+                    else
                     {
                         return false;
                     }
@@ -451,19 +455,24 @@ namespace TShockAPI.DB
             }
         }
 
-        public List<Region> ListAllRegions()
+        /// <summary>
+        /// Gets all the regions names from world
+        /// </summary>
+        /// <param name="worldid">World name to get regions from</param>
+        /// <returns>List of regions with only their names</returns>
+        public List<Region> ListAllRegions(string worldid)
         {
-            List<Region> Regions = new List<Region>();
+            var regions = new List<Region>();
             try
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "SELECT * FROM Regions";
+                    com.CommandText = "SELECT RegionName FROM Regions WHERE WorldID=@worldid";
+                    com.AddParameter("@worldid", worldid);
                     using (var reader = com.ExecuteReader())
                     {
                         while (reader.Read())
-                            Regions.Add(new Region(new Rectangle(reader.Get<int>("X1"), reader.Get<int>("Y1"), reader.Get<int>("height"), reader.Get<int>("width")), reader.Get<string>("RegionName"), reader.Get<int>("Protected"), reader.Get<string>("WorldID")));
-                        reader.Close();
+                            regions.Add(new Region { RegionName = reader.Get<string>("RegionName") });
                     }
                 }
             }
@@ -471,7 +480,7 @@ namespace TShockAPI.DB
             {
                 Log.Error(ex.ToString());
             }
-            return Regions;
+            return regions;
         }
     }
 
