@@ -100,12 +100,8 @@ namespace TShockAPI.DB
 
         public void RemoveBan(string itemname)
         {
-            if (ItemIsBanned(itemname))
+            if (!ItemIsBanned(itemname))
                 return;
-            else
-            {
-                ItemBans.Remove(itemname);
-            }
             try
             {
                 using (var com = database.CreateCommand())
@@ -113,12 +109,11 @@ namespace TShockAPI.DB
                     com.CommandText = "Delete FROM 'ItemBans' WHERE ItemName=@itemname;";
                     com.AddParameter("@itemname", Tools.GetItemByName(itemname)[0].name);
                     com.ExecuteNonQuery();
-                    
+                    ItemBans.Remove(itemname);
                 }
             }
             catch (Exception ex)
             {
-                ItemBans.Remove(itemname);
                 Log.Error(ex.ToString());
             }
         }
