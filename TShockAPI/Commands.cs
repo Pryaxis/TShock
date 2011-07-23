@@ -138,6 +138,9 @@ namespace TShockAPI
             ChatCommands.Add(new Command("warp", UseWarp, "warp"));
             ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
             ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
+            ChatCommands.Add(new Command("managegroup", AddGroup, "addGroup"));
+            ChatCommands.Add(new Command("managegroup", DeleteGroup, "delGroup"));
+            ChatCommands.Add(new Command("managegroup", ModifyGroup, "modGroup"));
             ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
             ChatCommands.Add(new Command("cfg", Reload, "reload"));
             ChatCommands.Add(new Command("cfg", DebugConfiguration, "debug-config"));
@@ -1204,6 +1207,72 @@ namespace TShockAPI
 
         #endregion Teleport Commands
 
+
+        #region Group Management
+
+        private static void AddGroup(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                String groupname = args.Parameters[0];
+                args.Parameters.RemoveAt(0);
+                String permissions = String.Join(",", args.Parameters );
+
+                String response = TShock.Groups.addGroup(groupname, permissions);
+                if( response.Length > 0 )
+                    args.Player.SendMessage(response, Color.Green);
+            }
+            else
+            {
+                args.Player.SendMessage("Incorrect format: /addGroup <group name> [optional permissions]", Color.Red);
+            }
+        }
+
+        private static void DeleteGroup(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                String groupname = args.Parameters[0];
+
+                String response = TShock.Groups.delGroup(groupname);
+                if (response.Length > 0)
+                    args.Player.SendMessage(response, Color.Green);
+            }
+            else
+            {
+                args.Player.SendMessage("Incorrect format: /delGroup <group name>", Color.Red);
+            }
+        }
+
+        private static void ModifyGroup(CommandArgs args)
+        {
+            if (args.Parameters.Count > 2)
+            {
+                String com = args.Parameters[0];
+                args.Parameters.RemoveAt(0);
+
+                String groupname = args.Parameters[0];
+                args.Parameters.RemoveAt(0);
+
+                if (com.Equals("add"))
+                {
+                    String response = TShock.Groups.addPermission(groupname, args.Parameters);
+                    if (response.Length > 0)
+                        args.Player.SendMessage(response, Color.Green);
+                    return;
+                }
+                else if (com.Equals("del") || com.Equals("delete"))
+                {
+                    String response = TShock.Groups.delPermission(groupname, args.Parameters);
+                    if (response.Length > 0)
+                        args.Player.SendMessage(response, Color.Green);
+                    return;
+                }
+            }
+            args.Player.SendMessage("Incorrect format: /modGroup add|del <group name> <permission to add or remove>", Color.Red);
+        }
+
+        #endregion Group Management
         #region Server Config Commands
 
         private static void SetSpawn(CommandArgs args)
@@ -1966,8 +2035,13 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
             var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            args.Parameters.RemoveAt(0);
+            string plStr = args.Parameters[0];
+            args.Parameters.RemoveAt(0);
+            if( args.Parameters.Count > 0 )
+                int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
+            
 
             if (items.Count == 0)
             {
@@ -1982,7 +2056,6 @@ namespace TShockAPI
                 var item = items[0];
                 if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    string plStr = args.Parameters[1];
                     var players = Tools.FindPlayer(plStr);
                     if (players.Count == 0)
                     {

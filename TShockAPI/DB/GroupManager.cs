@@ -37,7 +37,6 @@ namespace TShockAPI.DB
             AddGroup("default", "canwater,canlava,warp,canbuild");
             AddGroup("vip", "default,canwater,canlava,warp,canbuild,reservedslot");
 
-
             String file = Path.Combine(TShock.SavePath, "groups.txt");
             if (File.Exists(file))
             {
@@ -122,6 +121,96 @@ namespace TShockAPI.DB
             }
 
             return false;
+        }
+
+        public String addGroup(String name, String permissions)
+        {
+            String message = "";
+            if( GroupExists( name ) )
+                return "Error: Group already exists.  Use /modGroup to change permissions.";
+            using (var com = database.CreateCommand())
+            {
+                if (TShock.Config.StorageType.ToLower() == "sqlite")
+                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
+                else if (TShock.Config.StorageType.ToLower() == "mysql")
+                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
+                com.AddParameter("@groupname", name);
+                com.AddParameter("@commands", permissions);
+                com.AddParameter("@order", "0");
+                if (com.ExecuteNonQuery() == 1)
+                    message = "Group " + name + " has been created successfully.";
+                Group g = new Group(name);
+                g.permissions.Add(permissions);
+                groups.Add(g);
+            }
+            return message;
+        }
+
+        public String delGroup(String name)
+        {
+            String message = "";
+            if (!GroupExists(name))
+                return "Error: Group doesn't exists.";
+            using (var com = database.CreateCommand())
+            {
+                com.CommandText = "Delete FROM GroupList WHERE GroupName=@groupname;";
+                com.AddParameter("@groupname", name);
+                if (com.ExecuteNonQuery() == 1)
+                    message = "Group " + name + " has been deleted successfully.";
+                groups.Remove(Tools.GetGroup(name));
+            }
+            return message;
+        }
+
+        public String addPermission(String name, List<String> permissions)
+        {
+            String message = "";
+            if (!GroupExists(name))
+                return "Error: Group doesn't exists.";
+            using (var com = database.CreateCommand())
+            {
+                Group g = Tools.GetGroup(name);
+                List<String> perm = g.permissions;
+                foreach (String p in permissions)
+                {
+                    if (!perm.Contains(p))
+                    {
+                        if (perm.Count > 0 && perm[0].Equals(""))
+                            perm[0] = p;
+                        else
+                            g.permissions.Add(p);
+                    }
+                }
+                com.CommandText = "UPDATE GroupList SET Commands=@perm WHERE GroupName=@name;";
+                com.AddParameter("@perm", String.Join(",", perm));
+                com.AddParameter("@name", name);
+                if (com.ExecuteNonQuery() == 1)
+                    message = "Group " + name + " has been modified successfully.";
+            }
+            return message;
+        }
+
+        public String delPermission(String name, List<String> permissions)
+        {
+            String message = "";
+            if (!GroupExists(name))
+                return "Error: Group doesn't exists.";
+            using (var com = database.CreateCommand())
+            {
+                Group g = Tools.GetGroup(name);
+                List<String> perm = g.permissions;
+                foreach (String p in permissions)
+                {
+                    if (perm.Contains(p))
+                        g.permissions.Remove(p);
+                }
+                com.CommandText = "UPDATE GroupList SET Commands=@perm WHERE GroupName=@name;";
+                com.AddParameter("@perm", String.Join(",", perm));
+                com.AddParameter("@name", name);
+                if (com.ExecuteNonQuery() == 1)
+                    message = "Group " + name + " has been modified successfully.";
+            }
+            return message;
         }
 
         public void LoadPermisions()

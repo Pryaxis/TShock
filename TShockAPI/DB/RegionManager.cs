@@ -201,7 +201,6 @@ namespace TShockAPI.DB
                         File.Delete(file2);
                     //File.Move(file, file2);
                 }
-
                 if (updates > 0)
                     ReloadAllRegions();
             }
@@ -249,7 +248,7 @@ namespace TShockAPI.DB
                             int Protected = reader.Get<int>("Protected");
                             string MergedIDs = DbExt.Get<string>(reader, "UserIds");
                             string name = DbExt.Get<string>(reader, "RegionName");
-
+                            System.Console.WriteLine(MergedIDs);
                             string[] SplitIDs = MergedIDs.Split(',');
 
                             Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
@@ -262,6 +261,7 @@ namespace TShockAPI.DB
                                     {
                                         break;
                                     }
+                                    //System.Console.WriteLine(SplitIDs[i]);
                                     r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
                                 }
                             }
@@ -303,7 +303,7 @@ namespace TShockAPI.DB
                     com.AddParameter("@protected", 1);
                     if (com.ExecuteNonQuery() > 0)
                     {
-                        ReloadAllRegions();
+                        Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, 0, worldid));
                         return true;
                     }
 
