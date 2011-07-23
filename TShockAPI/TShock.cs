@@ -100,6 +100,9 @@ namespace TShockAPI
 
         public override void Initialize()
         {
+            if (!Directory.Exists(SavePath))
+                Directory.CreateDirectory(SavePath);
+
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
@@ -107,10 +110,6 @@ namespace TShockAPI
 #endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            if (!Directory.Exists(SavePath))
-            {
-                Directory.CreateDirectory(SavePath);
-            }
 
             if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
             {
