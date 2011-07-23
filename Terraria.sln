@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockDBEditor", "..\dbeditor\DBEditor\TShockDBEditor.csproj", "{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockDBEditor", "DBEditor\TShockDBEditor.csproj", "{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

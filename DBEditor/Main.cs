@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.IO;
-using MySql.Data.MySqlClient;
 using Community.CsharpSqlite.SQLiteClient;
+using MySql.Data.MySqlClient;
+
 using System.Windows.Forms;
 
 namespace TShockDBEditor
