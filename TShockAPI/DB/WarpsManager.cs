@@ -116,7 +116,7 @@ namespace TShockAPI.DB
                                     break;
                             }
                         }
-                        
+
                     }
                     reader.Close();
                     String path = Path.Combine(TShock.SavePath, "old_configs");
@@ -145,7 +145,7 @@ namespace TShockAPI.DB
             {
                 Log.Error(ex.ToString());
             }
-        } 
+        }
 
         public bool AddWarp(int x, int y, string name, string worldid)
         {
@@ -202,7 +202,7 @@ namespace TShockAPI.DB
                     {
                         if (reader.Read())
                         {
-                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));                            
+                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
                         }
                         reader.Close();
                     }
@@ -215,20 +215,24 @@ namespace TShockAPI.DB
             return new Warp();
         }
 
-        public List<Warp> ListAllWarps()
+        /// <summary>
+        /// Gets all the warps names from world
+        /// </summary>
+        /// <param name="worldid">World name to get warps from</param>
+        /// <returns>List of warps with only their names</returns>
+        public List<Warp> ListAllWarps(string worldid)
         {
-            List<Warp> Warps = new List<Warp>();
+            var warps = new List<Warp>();
             try
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "SELECT * FROM Warps";
+                    com.CommandText = "SELECT WarpName FROM Warps WHERE WorldID=@worldid";
+                    com.AddParameter("@worldid", worldid);
                     using (var reader = com.ExecuteReader())
                     {
                         while (reader.Read())
-                            Warps.Add(new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID")));
-
-                        reader.Close();
+                            warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
                     }
                 }
             }
@@ -236,7 +240,7 @@ namespace TShockAPI.DB
             {
                 Log.Error(ex.ToString());
             }
-            return Warps;
+            return warps;
         }
     }
 
