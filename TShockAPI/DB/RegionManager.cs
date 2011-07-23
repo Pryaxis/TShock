@@ -295,8 +295,8 @@ namespace TShockAPI.DB
                         "INSERT INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
                     com.AddParameter("@tx", tx);
                     com.AddParameter("@ty", ty);
-                    com.AddParameter("@width", width + tx);
-                    com.AddParameter("@height", height + ty);
+                    com.AddParameter("@width", width);
+                    com.AddParameter("@height", height);
                     com.AddParameter("@name", regionname.ToLower());
                     com.AddParameter("@worldid", worldid);
                     com.AddParameter("@userids", "");
