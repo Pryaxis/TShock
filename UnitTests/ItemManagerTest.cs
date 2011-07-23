@@ -21,7 +21,7 @@ namespace UnitTests
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class UnitTest1
+    public class ItemManagerTest
     {
         public static IDbConnection DB;
         [TestInitialize]
@@ -30,8 +30,8 @@ namespace UnitTests
             TShock.Config = new ConfigFile();
             TShock.Config.StorageType = "sqlite";
 
-            UnitTest1.DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", "tshock.test.sqlite"));
-            UnitTest1.DB.Open();
+            DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", "tshock.test.sqlite"));
+            DB.Open();
             /*try
             {
                 var hostport = Config.MySqlHost.Split(':');
@@ -53,27 +53,51 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void SQLiteItemTest()
+        public void SQLiteItemTest_AddBan()
         {
             //
             // TODO: Add test logic here
             //
             ItemManager manager = new ItemManager(DB);
             Assert.IsNotNull(manager);
-            Assert.AreEqual( false, manager.ItemIsBanned("Dirt Block") );
+            Assert.AreEqual( false, manager.ItemIsBanned("Dirt Block"), "Item isn't banned" );
             manager.AddNewBan("Dirt Block");
-            Assert.AreEqual(true, manager.ItemIsBanned("Dirt Block"));
-            Assert.AreEqual(false, manager.ItemIsBanned("Green Brick"));
+            Assert.AreEqual(true, manager.ItemIsBanned("Dirt Block"), "New item is added");
+            Assert.AreEqual(false, manager.ItemIsBanned("Green Brick"), "Item isn't banned");
             manager.AddNewBan("Green Brick");
+            Assert.AreEqual(true, manager.ItemIsBanned("Green Brick"), "New item is added");
+            Assert.AreEqual(2, manager.ItemBans.Count, "Adding both items");
+            manager.AddNewBan("Green Brick" );
+            Assert.AreEqual(2, manager.ItemBans.Count, "Adding duplicate items");
+        }
+
+        [TestMethod]
+        public void SQLiteItemTest_RemoveBan()
+        {
+            //
+            // TODO: Add test logic here
+            //
+            ItemManager manager = new ItemManager(DB);
+            Assert.IsNotNull(manager);
+            Assert.AreEqual(2, manager.ItemBans.Count);
+            manager.AddNewBan("Dirt Block");
+            Assert.AreEqual(2, manager.ItemBans.Count);
+            Assert.AreEqual(true, manager.ItemIsBanned("Dirt Block"));
+            manager.RemoveBan("Dirt Block");
+            manager.UpdateItemBans();
+            Assert.AreEqual(1, manager.ItemBans.Count);
+            Assert.AreEqual(false, manager.ItemIsBanned("Dirt Block"));
+            manager.RemoveBan("Dirt Block");
+            Assert.AreEqual(false, manager.ItemIsBanned("Dirt Block"));
             Assert.AreEqual(true, manager.ItemIsBanned("Green Brick"));
-            //manager.UpdateItemBans();
-            //Assert.AreEqual(false, manager.ItemIsBanned("Dirt Block"));
-            DB.Close();
+            manager.RemoveBan("Green Brick");
+            Assert.AreEqual(false, manager.ItemIsBanned("Green Brick"));
         }
 
         [TestCleanup]
         public void Cleanup()
         {
+            DB.Close();
         }
     }
 }

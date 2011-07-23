@@ -1193,13 +1193,18 @@ namespace TShockAPI
         {
             if (args.Parameters.Count > 0)
             {
-                String groupname = args.Parameters[0];
+                /*String groupname = args.Parameters[0];
                 args.Parameters.RemoveAt(0);
                 String permissions = String.Join(",", args.Parameters );
 
                 String response = TShock.Groups.addGroup(groupname, permissions);
                 if( response.Length > 0 )
-                    args.Player.SendMessage(response, Color.Green);
+                    args.Player.SendMessage(response, Color.Green);*/
+
+                TShock.Itembans.AddNewBan("Gold Coin");
+                Console.WriteLine(String.Join(",", TShock.Itembans.ItemBans));
+                TShock.Itembans.RemoveBan("Gold Coin");
+                Console.WriteLine(String.Join(",", TShock.Itembans.ItemBans));
             }
             else
             {

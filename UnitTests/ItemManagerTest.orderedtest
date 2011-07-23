@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="ItemManagerTest" storage="c:\users\virus\git\tshock\unittests\itemmanagertest.orderedtest" id="b9c6b3d7-52d8-4b49-bfbf-933efa073ca8" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="851eff7f-13e8-7778-e7ca-71ff3ce24234" name="SQLiteItemTest_AddBan" storage="bin\release\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="26cf8396-064b-1c1d-c511-37969c68dfbd" name="SQLiteItemTest_RemoveBan" storage="bin\release\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

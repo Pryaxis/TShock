@@ -64,13 +64,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="ItemManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TShockAPI\TShockAPI.csproj">
       <Project>{49606449-072B-4CF5-8088-AA49DA586694}</Project>
       <Name>TShockAPI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ItemManagerTest.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -88,7 +88,8 @@ namespace TShockAPI.DB
                     com.CommandText = "INSERT INTO ItemBans (ItemName) VALUES (@itemname);";
                     com.AddParameter("@itemname", Tools.GetItemByName(itemname)[0].name);
                     com.ExecuteNonQuery();
-                    ItemBans.Add(itemname);
+                    if( !ItemIsBanned( itemname ) )
+                        ItemBans.Add(itemname);
                 }
             }
             catch (Exception ex)
@@ -99,18 +100,25 @@ namespace TShockAPI.DB
 
         public void RemoveBan(string itemname)
         {
+            if (ItemIsBanned(itemname))
+                return;
+            else
+            {
+                ItemBans.Remove(itemname);
+            }
             try
             {
                 using (var com = database.CreateCommand())
                 {
-                    com.CommandText = "DELETE FROM ItemBans WHERE ItemName=@itemname;";
+                    com.CommandText = "Delete FROM 'ItemBans' WHERE ItemName=@itemname;";
                     com.AddParameter("@itemname", Tools.GetItemByName(itemname)[0].name);
                     com.ExecuteNonQuery();
-                    ItemBans.Remove(itemname);
+                    
                 }
             }
             catch (Exception ex)
             {
+                ItemBans.Remove(itemname);
                 Log.Error(ex.ToString());
             }
         }
