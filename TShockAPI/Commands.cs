@@ -1945,9 +1945,12 @@ namespace TShockAPI
                 args.Player.SendMessage("Missing item name/id", Color.Red);
                 return;
             }
-            int itemAmount = 0;
-            int.TryParse( args.Parameters[args.Parameters.Count - 1 ], out itemAmount );
             var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            args.Parameters.RemoveAt(0);
+            int itemAmount = 0;
+            if( args.Parameters.Count > 0 )
+                int.TryParse( args.Parameters[0], out itemAmount );
+            
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -1998,8 +2001,13 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
             var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            args.Parameters.RemoveAt(0);
+            string plStr = args.Parameters[0];
+            args.Parameters.RemoveAt(0);
+            if( args.Parameters.Count > 0 )
+                int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
+            
 
             if (items.Count == 0)
             {
@@ -2014,7 +2022,6 @@ namespace TShockAPI
                 var item = items[0];
                 if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    string plStr = args.Parameters[1];
                     var players = Tools.FindPlayer(plStr);
                     if (players.Count == 0)
                     {
