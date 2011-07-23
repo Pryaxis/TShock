@@ -101,22 +101,7 @@ namespace TShockAPI
         public override void Initialize()
         {
             if (!Directory.Exists(SavePath))
-            {
                 Directory.CreateDirectory(SavePath);
-            }
-            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-            {
-                Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
-                File.Delete(Path.Combine(SavePath, "tshock.pid"));
-            }
-
-            TShockProcess = Process.GetCurrentProcess();
-            int pid = TShockProcess.Id;
-            TextWriter tw = new StreamWriter(Path.Combine(SavePath, "tshock.pid"));
-            tw.Write(pid);
-            tw.Close();
-
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
@@ -125,16 +110,18 @@ namespace TShockAPI
 #endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+
+            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+            {
+                Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
+                File.Delete(Path.Combine(SavePath, "tshock.pid"));
+            }
+            File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
 
             ConfigFile.ConfigRead += OnConfigRead;
             FileTools.SetupConfig();
 
             HandleCommandLine(Environment.GetCommandLineArgs());
-
-            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-
-            FileTools.SetupConfig();
 
             if (Config.StorageType.ToLower() == "sqlite")
             {
@@ -168,6 +155,9 @@ namespace TShockAPI
                 throw new Exception("Invalid storage type");
             }
 
+            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+            Backups.KeepFor = Config.BackupKeepFor;
+            Backups.Interval = Config.BackupInterval;
             Bans = new BanManager(DB);
             Warps = new WarpManager(DB);
             Users = new UserManager(DB);
@@ -727,8 +717,11 @@ namespace TShockAPI
             NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
             Main.autoSave = file.AutoSave;
-            Backups.KeepFor = file.BackupKeepFor;
-            Backups.Interval = file.BackupInterval;
+            if (Backups != null)
+            {
+                Backups.KeepFor = file.BackupKeepFor;
+                Backups.Interval = file.BackupInterval;
+            }
             if (!OverridePort)
             {
                 Netplay.serverPort = file.ServerPort;

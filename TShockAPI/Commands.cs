@@ -110,6 +110,7 @@ namespace TShockAPI
 
         public static void InitCommands()
         {
+            //When adding new perm in here, add new perm to CommandList in DBEditor
             ChatCommands.Add(new Command("kick", Kick, "kick"));
             ChatCommands.Add(new Command("ban", Ban, "ban"));
             ChatCommands.Add(new Command("ban", BanIP, "banip"));
@@ -330,7 +331,8 @@ namespace TShockAPI
                     args.Player.LoginAttempts++;
                     return;
                 }
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 args.Player.SendMessage("There was an error processing your request. Maybe your account doesn't exist?", Color.Red);
                 return;
@@ -392,7 +394,7 @@ namespace TShockAPI
                     else
                     {
                         args.Player.SendMessage("Account " + user.Name + " has already been registered.", Color.Green);
-                        Log.ConsoleInfo(args.Player.Name + " failed to register an existing Account: " + user.Name); 
+                        Log.ConsoleInfo(args.Player.Name + " failed to register an existing Account: " + user.Name);
                     }
 
                 }
@@ -432,7 +434,7 @@ namespace TShockAPI
                     {
                         if (namepass.Length == 2)
                         {
-                            user.Name = namepass[0];
+                            user.Name = namepass[0].ToLower();
                             user.Password = namepass[1];
                             user.Group = args.Parameters[2];
                         }
@@ -730,7 +732,8 @@ namespace TShockAPI
                 args.Player.SendMessage("This command will also change all Worlds to reference this WorldID.");
                 args.Player.SendMessage("You must manually fix multi-world configurations.");
                 args.Player.SendMessage("To confirm this: /convert yes");
-            } else if (args.Parameters[0] == "yes")
+            }
+            else if (args.Parameters[0] == "yes")
             {
                 TShock.Warps.ConvertDB();
                 TShock.Regions.ConvertDB();
@@ -1098,7 +1101,7 @@ namespace TShockAPI
                 {
                     args.Player.SendMessage("Name reserved, use a different name", Color.Red);
                 }
-                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldName))
+                else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
                 {
                     args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
                 }
@@ -1127,61 +1130,79 @@ namespace TShockAPI
 
         private static void UseWarp(CommandArgs args)
         {
-            if (args.Parameters.Count > 0)
+            if (args.Parameters.Count < 1)
             {
-                if (args.Parameters[0].Equals("list"))
-                {
-                    args.Player.SendMessage("Current Warps:", Color.Green);
-                    int page = 1;
-                    if (args.Parameters.Count > 1)
-                        int.TryParse(args.Parameters[1], out page);
-                    var sb = new StringBuilder();
-                    List<Warp> Warps = TShock.Warps.ListAllWarps();
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /warp [name] or /warp list <page>", Color.Red);
+                return;
+            }
 
-                    if (Warps.Count > (15 * (page - 1)))
-                    {
-                        for (int j = (15 * (page - 1)); j < (15 * page); j++)
-                        {
-                            if (Warps[j].WorldWarpID == Main.worldName)
-                            {
-                                if (sb.Length != 0)
-                                    sb.Append(", ");
-                                sb.Append(Warps[j].WarpName);
-                                if (j == Warps.Count - 1)
-                                {
-                                    args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                    break;
-                                }
-                                if ((j + 1) % 5 == 0)
-                                {
-                                    args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                    sb.Clear();
-                                }
-                            }
-                        }
-                    }
-                    if (Warps.Count > (15 * page))
-                    {
-                        args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
-                    }
-                }
-                else
+            if (args.Parameters[0].Equals("list"))
+            {
+                //How many warps per page
+                const int pagelimit = 15;
+                //How many warps per line
+                const int perline = 5;
+                //Pages start at 0 but are displayed and parsed at 1
+                int page = 0;
+
+
+                if (args.Parameters.Count > 1)
                 {
-                    string warpName = String.Join(" ", args.Parameters);
-                    var warp = TShock.Warps.FindWarp(warpName);
-                    if (warp.WarpPos != Vector2.Zero)
+                    if (!int.TryParse(args.Parameters[1], out page) || page < 1)
                     {
-                        if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
-                            args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
+                        args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
+                        return;
                     }
-                    else
-                    {
-                        args.Player.SendMessage("Specified warp not found", Color.Red);
-                    }
+                    page--; //Substract 1 as pages are parsed starting at 1 and not 0
+                }
+
+                var warps = TShock.Warps.ListAllWarps(Main.worldID.ToString());
+
+                //Check if they are trying to access a page that doesn't exist.
+                int pagecount = warps.Count / pagelimit;
+                if (page > pagecount)
+                {
+                    args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
+                    return;
+                }
+
+                //Display the current page and the number of pages.
+                args.Player.SendMessage(string.Format("Current Warps ({0}/{1}):", page + 1, pagecount + 1), Color.Green);
+
+                //Add up to pagelimit names to a list
+                var nameslist = new List<string>();
+                for (int i = 0; i < pagelimit && i + (page * pagelimit) < warps.Count; i++)
+                {
+                    nameslist.Add(warps[i].WarpName);
+                }
+
+                //convert the list to an array for joining
+                var names = nameslist.ToArray();
+                for (int i = 0; i < names.Length; i += perline)
+                {
+                    args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
+                }
+
+                if (page < pagecount)
+                {
+                    args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
                 }
             }
             else
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /warp [name] or warp list", Color.Red);
+            {
+                string warpName = String.Join(" ", args.Parameters);
+                var warp = TShock.Warps.FindWarp(warpName);
+                if (warp.WarpPos != Vector2.Zero)
+                {
+                    if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                        args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
+                }
+                else
+                {
+                    args.Player.SendMessage("Specified warp not found", Color.Red);
+                }
+            }
+
         }
 
         #endregion Teleport Commands
@@ -1444,7 +1465,7 @@ namespace TShockAPI
         {
             foreach (Region r in TShock.Regions.Regions)
             {
-                args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height );
+                args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height);
                 foreach (int s in r.RegionAllowedIDs)
                 {
                     args.Player.SendMessage(r.RegionName + ": " + s);
@@ -1508,7 +1529,7 @@ namespace TShockAPI
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
                                                             args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldName))
+                                                            regionName, Main.worldID.ToString()))
                                 {
                                     args.Player.TempArea = Rectangle.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
@@ -1610,40 +1631,56 @@ namespace TShockAPI
                     }
                 case "list":
                     {
-                        args.Player.SendMessage("Current Regions:", Color.Green);
-                        int page = 1;
+                        //How many regions per page
+                        const int pagelimit = 15;
+                        //How many regions per line
+                        const int perline = 5;
+                        //Pages start at 0 but are displayed and parsed at 1
+                        int page = 0;
+
+
                         if (args.Parameters.Count > 1)
-                            int.TryParse(args.Parameters[1], out page);
-                        var sb = new StringBuilder();
-
-                        List<Region> Regions = TShock.Regions.ListAllRegions();
-
-                        if (Regions.Count > (15 * (page - 1)))
                         {
-                            for (int j = (15 * (page - 1)); j < (15 * page); j++)
+                            if (!int.TryParse(args.Parameters[1], out page) || page < 1)
                             {
-                                if (Regions[j].RegionWorldID == Main.worldName)
-                                {
-                                    if (sb.Length != 0)
-                                        sb.Append(", ");
-                                    sb.Append(Regions[j].RegionName);
-                                    if (j == Regions.Count - 1)
-                                    {
-                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                        break;
-                                    }
-                                    if ((j + 1) % 5 == 0)
-                                    {
-                                        args.Player.SendMessage(sb.ToString(), Color.Yellow);
-                                        sb.Clear();
-                                    }
-                                }
+                                args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
+                                return;
                             }
+                            page--; //Substract 1 as pages are parsed starting at 1 and not 0
                         }
-                        if (Regions.Count > (15 * page))
+
+                        var regions = TShock.Regions.ListAllRegions(Main.worldID.ToString());
+
+                        //Check if they are trying to access a page that doesn't exist.
+                        int pagecount = regions.Count / pagelimit;
+                        if (page > pagecount)
+                        {
+                            args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
+                            return;
+                        }
+
+                        //Display the current page and the number of pages.
+                        args.Player.SendMessage(string.Format("Current Regions ({0}/{1}):", page + 1, pagecount + 1), Color.Green);
+
+                        //Add up to pagelimit names to a list
+                        var nameslist = new List<string>();
+                        for (int i = 0; i < pagelimit && i + (page * pagelimit) < regions.Count; i++)
+                        {
+                            nameslist.Add(regions[i].RegionName);
+                        }
+
+                        //convert the list to an array for joining
+                        var names = nameslist.ToArray();
+                        for (int i = 0; i < names.Length; i += perline)
+                        {
+                            args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
+                        }
+
+                        if (page < pagecount)
                         {
                             args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 1)), Color.Yellow);
                         }
+
                         break;
                     }
                 case "help":
@@ -1945,12 +1982,9 @@ namespace TShockAPI
                 args.Player.SendMessage("Missing item name/id", Color.Red);
                 return;
             }
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
-            args.Parameters.RemoveAt(0);
             int itemAmount = 0;
-            if( args.Parameters.Count > 0 )
-                int.TryParse( args.Parameters[0], out itemAmount );
-            
+            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
+            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -1966,7 +2000,7 @@ namespace TShockAPI
                 {
                     if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
                     {
-                        if( itemAmount == 0 || itemAmount > item.maxStack )
+                        if (itemAmount == 0 || itemAmount > item.maxStack)
                             itemAmount = item.maxStack;
                         args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
                         args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount.ToString(), item.name));
