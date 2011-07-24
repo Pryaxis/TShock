@@ -18,17 +18,15 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
-            {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT, 'OrderBy' TEXT);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
+            string query;
+            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                query =
+                    "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT, 'OrderBy' TEXT);";
+            else
+                query =
+                    "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
 
-                com.ExecuteNonQuery();
-            }
+            db.Query(query);
 
             //Add default groups
             AddGroup("trustedadmin", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
@@ -60,18 +58,14 @@ namespace TShockAPI.DB
                                     comms = comms + ",";
                                 comms = comms + info[i].Trim();
                             }
-                            using (var com = database.CreateCommand())
-                            {
-                                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
 
-                                com.AddParameter("@groupname", info[0].Trim());
-                                com.AddParameter("@commands", comms);
-                                com.AddParameter("@order", hasOrder ? info[info.Length - 1] : "0");
-                                com.ExecuteNonQuery();
-                            }
+                            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                                query = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@0, @1, @2);";
+                            else if (TShock.Config.StorageType.ToLower() == "mysql")
+                                query = "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1, OrderBy=@2;";
+
+                            db.Query(query, info[0].Trim(), comms, hasOrder ? info[info.Length - 1] : "0");
+
                         }
                     }
                 }
@@ -86,27 +80,6 @@ namespace TShockAPI.DB
 
         }
 
-        /// <summary>
-        /// Adds group with name and permissions if it does not exist.
-        /// </summary>
-        /// <param name="name">name of group</param>
-        /// <param name="commands">permissions</param>
-        public void AddGroup(string name, string commands)
-        {
-            using (var com = database.CreateCommand())
-            {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                        "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", name);
-                com.AddParameter("@commands", commands);
-                com.AddParameter("@order", "0");
-                com.ExecuteNonQuery();
-            }
-        }
 
         public bool GroupExists(string group)
         {
@@ -123,93 +96,74 @@ namespace TShockAPI.DB
             return false;
         }
 
-        public String addGroup(String name, String permissions)
+        /// <summary>
+        /// Adds group with name and permissions if it does not exist.
+        /// </summary>
+        /// <param name="name">name of group</param>
+        /// <param name="permissions">permissions</param>
+        public String AddGroup(String name, String permissions)
         {
             String message = "";
-            if( GroupExists( name ) )
+            if (GroupExists(name))
                 return "Error: Group already exists.  Use /modGroup to change permissions.";
-            using (var com = database.CreateCommand())
-            {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@groupname, @commands, @order);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText = "INSERT IGNORE INTO GroupList SET GroupName=@groupname, Commands=@commands, OrderBy=@order;";
-                com.AddParameter("@groupname", name);
-                com.AddParameter("@commands", permissions);
-                com.AddParameter("@order", "0");
-                if (com.ExecuteNonQuery() == 1)
-                    message = "Group " + name + " has been created successfully.";
-                Group g = new Group(name);
-                g.permissions.Add(permissions);
-                groups.Add(g);
-            }
+
+
+
+            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@0, @1, @2);" :
+                "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1, OrderBy=@2;";
+            if (database.Query(query, name, permissions, "0") == 1)
+                message = "Group " + name + " has been created successfully.";
+            Group g = new Group(name);
+            g.permissions.Add(permissions);
+            groups.Add(g);
+
             return message;
         }
 
-        public String delGroup(String name)
+        public String DeleteGroup(String name)
         {
             String message = "";
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
-            using (var com = database.CreateCommand())
-            {
-                com.CommandText = "Delete FROM GroupList WHERE GroupName=@groupname;";
-                com.AddParameter("@groupname", name);
-                if (com.ExecuteNonQuery() == 1)
-                    message = "Group " + name + " has been deleted successfully.";
-                groups.Remove(Tools.GetGroup(name));
-            }
+
+            if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
+                message = "Group " + name + " has been deleted successfully.";
+            groups.Remove(Tools.GetGroup(name));
+
             return message;
         }
 
-        public String addPermission(String name, List<String> permissions)
+        public String AddPermissions(String name, List<String> permissions)
         {
             String message = "";
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
-            using (var com = database.CreateCommand())
-            {
-                Group g = Tools.GetGroup(name);
-                List<String> perm = g.permissions;
-                foreach (String p in permissions)
-                {
-                    if (!perm.Contains(p))
-                    {
-                        if (perm.Count > 0 && perm[0].Equals(""))
-                            perm[0] = p;
-                        else
-                            g.permissions.Add(p);
-                    }
-                }
-                com.CommandText = "UPDATE GroupList SET Commands=@perm WHERE GroupName=@name;";
-                com.AddParameter("@perm", String.Join(",", perm));
-                com.AddParameter("@name", name);
-                if (com.ExecuteNonQuery() == 1)
-                    message = "Group " + name + " has been modified successfully.";
-            }
+
+            var group = Tools.GetGroup(name);
+            //Add existing permissions (without duplicating)
+            permissions.AddRange(group.permissions.Where(s => !permissions.Contains(s)));
+
+            if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", String.Join(",", permissions), name) != 0)
+                message = "Group " + name + " has been modified successfully.";
+
             return message;
         }
 
-        public String delPermission(String name, List<String> permissions)
+        public String DeletePermissions(String name, List<String> permissions)
         {
             String message = "";
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
-            using (var com = database.CreateCommand())
-            {
-                Group g = Tools.GetGroup(name);
-                List<String> perm = g.permissions;
-                foreach (String p in permissions)
-                {
-                    if (perm.Contains(p))
-                        g.permissions.Remove(p);
-                }
-                com.CommandText = "UPDATE GroupList SET Commands=@perm WHERE GroupName=@name;";
-                com.AddParameter("@perm", String.Join(",", perm));
-                com.AddParameter("@name", name);
-                if (com.ExecuteNonQuery() == 1)
-                    message = "Group " + name + " has been modified successfully.";
-            }
+
+            var group = Tools.GetGroup(name);
+
+            //Only get permissions that exist in the group.
+            var newperms = permissions.Where(s => group.permissions.Contains(s));
+
+            if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", String.Join(",", newperms), name) != 0)
+                message = "Group " + name + " has been modified successfully.";
+
             return message;
         }
 
@@ -220,41 +174,23 @@ namespace TShockAPI.DB
 
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "SELECT * FROM Grouplist;";
-                    using (var reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Group group = null;
-                            string groupname = reader.Get<String>("GroupName");
-                            group = new Group(groupname);
 
-                            //Inherit Given commands
-                            String[] commands = reader.Get<String>("Commands").Split(',');
-                            for (int i = 0; i < commands.Length; i++)
-                            {
-                                group.AddPermission(commands[i].Trim());
-                            }
-                            groups.Add(group);
-                        }
-                    }
-                    /** ORDER BY IS DUMB
-                    //Inherit all commands from group below in order, unless Order is 0 (unique groups anyone)
-                    foreach (Group group in groups)
+                using (var reader = database.QueryReader("SELECT * FROM Grouplist;"))
+                {
+                    while (reader.Read())
                     {
-                        if (group.Order != 0 && group.Order < groups.Count)
+                        Group group = null;
+                        string groupname = reader.Get<String>("GroupName");
+                        group = new Group(groupname);
+
+                        //Inherit Given commands
+                        String[] commands = reader.Get<String>("Commands").Split(',');
+                        for (int i = 0; i < commands.Length; i++)
                         {
-                            for (int i = group.Order + 1; i < groups.Count; i++)
-                            {
-                                for (int j = 0; j < groups[i].permissions.Count; j++)
-                                {
-                                    group.AddPermission(groups[i].permissions[j]);
-                                }
-                            }
+                            group.AddPermission(commands[i].Trim());
                         }
-                    }*/
+                        groups.Add(group);
+                    }
                 }
             }
             catch (Exception ex)

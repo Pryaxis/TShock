@@ -43,14 +43,11 @@ namespace TShockAPI.DB
 
             using (var com = database.CreateCommand())
             {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
+                string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);":
                         "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), height INT(11), width INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
 
-                com.ExecuteNonQuery();
+                database.Query(query);
 
                 String file = Path.Combine(TShock.SavePath, "regions.xml");
                 String name = "";

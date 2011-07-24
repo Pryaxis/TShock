@@ -34,45 +34,39 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
+            string query;
+            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                query =
+                    "CREATE TABLE IF NOT EXISTS 'Bans' ('IP' TEXT PRIMARY KEY, 'Name' TEXT, 'Reason' TEXT);";
+            else
+                query =
+                    "CREATE TABLE IF NOT EXISTS  Bans (IP VARCHAR(255) PRIMARY, Name VARCHAR(255), Reason VARCHAR(255));";
+
+            db.Query(query);
+
+            String file = Path.Combine(TShock.SavePath, "bans.txt");
+            if (File.Exists(file))
             {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Bans' ('IP' TEXT PRIMARY KEY, 'Name' TEXT, 'Reason' TEXT);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS  Bans (IP VARCHAR(255) PRIMARY, Name VARCHAR(255), Reason VARCHAR(255));";
-
-                com.ExecuteNonQuery();
-
-                String file = Path.Combine( TShock.SavePath, "bans.txt" );
-                if (File.Exists(file))
+                using (StreamReader sr = new StreamReader(file))
                 {
-                    using (StreamReader sr = new StreamReader(file))
+                    String line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        String line;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            String[] info = line.Split('|');
-                            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                com.CommandText = "INSERT OR IGNORE INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason);";
-                            else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                com.CommandText = "INSERT IGNORE INTO Bans SET IP=@ip, Name=@name, Reason=@reason;";
-                            com.AddParameter("@ip", info[0].Trim());
-                            com.AddParameter("@name", info[1].Trim());
-                            com.AddParameter("@reason", info[2].Trim());
-                            com.ExecuteNonQuery();
-                            com.Parameters.Clear();
-                        }
+                        String[] info = line.Split('|');
+                        if (TShock.Config.StorageType.ToLower() == "sqlite")
+                            query = "INSERT OR IGNORE INTO Bans (IP, Name, Reason) VALUES (@0, @1, @2);";
+                        else
+                            query = "INSERT IGNORE INTO Bans SET IP=@0, Name=@1, Reason=@2;";
+                        db.Query(query, info[0].Trim(), info[1].Trim(), info[2].Trim());
                     }
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "bans.txt");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    File.Move(file, file2);
                 }
+                String path = Path.Combine(TShock.SavePath, "old_configs");
+                String file2 = Path.Combine(path, "bans.txt");
+                if (!Directory.Exists(path))
+                    System.IO.Directory.CreateDirectory(path);
+                if (File.Exists(file2))
+                    File.Delete(file2);
+                File.Move(file, file2);
             }
         }
 
@@ -80,17 +74,10 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT * FROM Bans WHERE IP=@0", ip))
                 {
-                    com.CommandText = "SELECT * FROM Bans WHERE IP=@ip";
-                    com.AddParameter("@ip", ip);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
-
-                        reader.Close();
-                    }
+                    if (reader.Read())
+                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
                 }
             }
             catch (Exception ex)
@@ -108,20 +95,14 @@ namespace TShockAPI.DB
             }
             try
             {
-                using (var com = database.CreateCommand())
+                var namecol = casesensitive ? "Name" : "UPPER(Name)";
+                if (!casesensitive)
+                    name = name.ToUpper();
+                using (var reader = database.QueryReader("SELECT * FROM Bans WHERE " + namecol + "=@0", name))
                 {
-                    var namecol = casesensitive ? "Name" : "UPPER(Name)";
-                    if (!casesensitive)
-                        name = name.ToUpper();
-                    com.CommandText = "SELECT * FROM Bans WHERE " + namecol + "=@name";
-                    com.AddParameter("@name", name);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                    if (reader.Read())
+                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
 
-                        reader.Close();
-                    }
                 }
             }
             catch (Exception ex)
@@ -135,15 +116,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "INSERT INTO Bans (IP, Name, Reason) VALUES (@ip, @name, @reason);";
-                    com.AddParameter("@ip", ip);
-                    com.AddParameter("@name", name);
-                    com.AddParameter("@reason", reason);
-                    com.ExecuteNonQuery();
-                }
-                return true;
+                return database.Query("INSERT INTO Bans (IP, Name, Reason) VALUES (@0, @1, @2);", ip, name, reason) != 0;
             }
             catch (Exception ex)
             {
@@ -156,13 +129,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "DELETE FROM Bans WHERE IP=@ip";
-                    com.AddParameter("@ip", ip);
-                    com.ExecuteNonQuery();
-                    return true;
-                }
+                return database.Query("DELETE FROM Bans WHERE IP=@ip", ip) != 0;
             }
             catch (Exception ex)
             {
@@ -174,12 +141,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "DELETE FROM Bans";
-                    com.ExecuteNonQuery();
-                    return true;
-                }
+                return database.Query("DELETE FROM Bans") != 0;
             }
             catch (Exception ex)
             {

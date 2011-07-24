@@ -1218,7 +1218,7 @@ namespace TShockAPI
                 args.Parameters.RemoveAt(0);
                 String permissions = String.Join(",", args.Parameters );
 
-                String response = TShock.Groups.addGroup(groupname, permissions);
+                String response = TShock.Groups.AddGroup(groupname, permissions);
                 if( response.Length > 0 )
                     args.Player.SendMessage(response, Color.Green);
             }
@@ -1234,7 +1234,7 @@ namespace TShockAPI
             {
                 String groupname = args.Parameters[0];
 
-                String response = TShock.Groups.delGroup(groupname);
+                String response = TShock.Groups.DeleteGroup(groupname);
                 if (response.Length > 0)
                     args.Player.SendMessage(response, Color.Green);
             }
@@ -1256,14 +1256,14 @@ namespace TShockAPI
 
                 if (com.Equals("add"))
                 {
-                    String response = TShock.Groups.addPermission(groupname, args.Parameters);
+                    String response = TShock.Groups.AddPermissions(groupname, args.Parameters);
                     if (response.Length > 0)
                         args.Player.SendMessage(response, Color.Green);
                     return;
                 }
                 else if (com.Equals("del") || com.Equals("delete"))
                 {
-                    String response = TShock.Groups.delPermission(groupname, args.Parameters);
+                    String response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
                     if (response.Length > 0)
                         args.Player.SendMessage(response, Color.Green);
                     return;
