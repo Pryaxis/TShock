@@ -44,7 +44,7 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);":
+                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);" :
                         "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), height INT(11), width INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
 
                 database.Query(query);
@@ -122,22 +122,13 @@ namespace TShockAPI.DB
                         region.Area = rect;
                         using (var com = database.CreateCommand())
                         {
-                            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                com.CommandText =
-                                    "INSERT OR IGNORE INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
-                            else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                com.CommandText =
-                                    "INSERT IGNORE INTO Regions SET X1=@tx, Y1=@ty, height=@height, width=@width, RegionName=@name, WorldID=@world, UserIds=@userids, Protected=@protected;";
-                            com.AddParameter("@tx", region.Area.X);
-                            com.AddParameter("@ty", region.Area.Y);
-                            com.AddParameter("@width", region.Area.Width);
-                            com.AddParameter("@height", region.Area.Height);
-                            com.AddParameter("@name", region.Name);
-                            com.AddParameter("@worldid", region.WorldID);
+                            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                                "INSERT OR IGNORE INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);" :
+                                "INSERT IGNORE INTO Regions SET X1=@0, Y1=@1, height=@2, width=@3, RegionName=@4, WorldID=@5, UserIds=@6, Protected=@7;";
+                            database.Query(query, region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Name, region.WorldID, "", region.DisableBuild);
+
                             //Todo: What should this be? We don't really have a way to go from ips to userids
-                            com.AddParameter("@userids", ""/*string.Join(",", region.AllowedIDs)*/);
-                            com.AddParameter("@protected", region.DisableBuild);
-                            int num = com.ExecuteNonQuery();
+                            /*string.Join(",", region.AllowedIDs)*/
                         }
                     }
                 }
@@ -157,17 +148,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Regions SET WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    com.ExecuteNonQuery();
-                    com.Parameters.Clear();
-                    com.CommandText = "UPDATE Regions SET UserIds=@UserIds";
-                    com.AddParameter("@UserIds", "");
-                    com.ExecuteNonQuery();
-                    ReloadAllRegions();
-                }
+                database.Query("UPDATE Regions SET WorldID=@0, UserIds=''", Main.worldID.ToString());
+                ReloadAllRegions();
             }
             catch (Exception ex)
             {
@@ -179,60 +161,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    using (var reader = com.ExecuteReader())
-                    {
-                        Regions.Clear();
-                        while (reader.Read())
-                        {
-                            int X1 = reader.Get<int>("X1");
-                            int Y1 = reader.Get<int>("Y1");
-                            int height = reader.Get<int>("height");
-                            int width = reader.Get<int>("width");
-                            int Protected = reader.Get<int>("Protected");
-                            string MergedIDs = DbExt.Get<string>(reader, "UserIds");
-                            string name = DbExt.Get<string>(reader, "RegionName");
-
-                            string[] SplitIDs = MergedIDs.Split(',');
-
-                            Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
-                            try
-                            {
-                                for (int i = 0; i < SplitIDs.Length; i++)
-                                {
-                                    r.AllowedIDs.Add(Convert.ToInt32(SplitIDs[i]));
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Error("Your database contains invalid UserIDs (they should be ints).");
-                                Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-                                Log.Error(e.Message);
-                                Log.Error(e.StackTrace);
-                            }
-
-                            Regions.Add(r);
-                        }
-                        reader.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-            }
-        }
-
-        public void ReloadForUnitTest(String n)
-        {
-            using (var com = database.CreateCommand())
-            {
-                com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
-                com.AddParameter("@worldid", n);
-                using (var reader = com.ExecuteReader())
+                using (var reader = database.QueryReader("SELECT * FROM Regions WHERE WorldID=@0", Main.worldID.ToString()))
                 {
                     Regions.Clear();
                     while (reader.Read())
@@ -244,6 +173,7 @@ namespace TShockAPI.DB
                         int Protected = reader.Get<int>("Protected");
                         string MergedIDs = DbExt.Get<string>(reader, "UserIds");
                         string name = DbExt.Get<string>(reader, "RegionName");
+
                         string[] SplitIDs = MergedIDs.Split(',');
 
                         Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
@@ -251,7 +181,7 @@ namespace TShockAPI.DB
                         {
                             for (int i = 0; i < SplitIDs.Length; i++)
                             {
-                                r.AllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
+                                r.AllowedIDs.Add(Convert.ToInt32(SplitIDs[i]));
                             }
                         }
                         catch (Exception e)
@@ -264,32 +194,60 @@ namespace TShockAPI.DB
 
                         Regions.Add(r);
                     }
-                    reader.Close();
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+        }
+
+        public void ReloadForUnitTest(String n)
+        {
+
+            using (var reader = database.QueryReader("SELECT * FROM Regions WHERE WorldID=@0", n))
+            {
+                Regions.Clear();
+                while (reader.Read())
+                {
+                    int X1 = reader.Get<int>("X1");
+                    int Y1 = reader.Get<int>("Y1");
+                    int height = reader.Get<int>("height");
+                    int width = reader.Get<int>("width");
+                    int Protected = reader.Get<int>("Protected");
+                    string MergedIDs = DbExt.Get<string>(reader, "UserIds");
+                    string name = DbExt.Get<string>(reader, "RegionName");
+                    string[] SplitIDs = MergedIDs.Split(',');
+
+                    Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
+                    try
+                    {
+                        for (int i = 0; i < SplitIDs.Length; i++)
+                        {
+                            r.AllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Your database contains invalid UserIDs (they should be ints).");
+                        Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+                        Log.Error(e.Message);
+                        Log.Error(e.StackTrace);
+                    }
+
+                    Regions.Add(r);
+                }
+            }
+
         }
 
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText =
-                        "INSERT INTO Regions VALUES (@tx, @ty, @height, @width, @name, @worldid, @userids, @protected);";
-                    com.AddParameter("@tx", tx);
-                    com.AddParameter("@ty", ty);
-                    com.AddParameter("@width", width);
-                    com.AddParameter("@height", height);
-                    com.AddParameter("@name", regionname.ToLower());
-                    com.AddParameter("@worldid", worldid);
-                    com.AddParameter("@userids", "");
-                    com.AddParameter("@protected", 1);
-                    com.ExecuteNonQuery();
-                    Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, true, worldid));
-                    return true;
-
-                }
+                database.Query("INSERT INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", tx, ty, width, height, regionname, worldid, "", 1);
+                Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, true, worldid));
+                return true;
             }
             catch (Exception ex)
             {
@@ -302,15 +260,9 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "DELETE FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    com.ExecuteNonQuery();
-                    Regions.Remove(getRegion(name));
-                    return true;
-                }
+                database.Query("DELETE FROM Regions WHERE RegionName=@0 AND WorldID=@1", name, Main.worldID.ToString());
+                Regions.Remove(getRegion(name));
+                return true;
             }
             catch (Exception ex)
             {
@@ -323,16 +275,9 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", name);
-                    com.AddParameter("@bool", state ? 1 : 0);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    com.ExecuteNonQuery();
-                    getRegion(name).DisableBuild = state;
-                    return true;
-                }
+                database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name, Main.worldID.ToString());
+                getRegion(name).DisableBuild = state;
+                return true;
             }
             catch (Exception ex)
             {
@@ -345,16 +290,9 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", name);
-                    com.AddParameter("@bool", state ? 1 : 0);
-                    com.AddParameter("@worldid", world);
-                    com.ExecuteNonQuery();
-                    getRegion(name).DisableBuild = state;
-                    return true;
-                }
+                database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name, world);
+                getRegion(name).DisableBuild = state;
+                return true;
             }
             catch (Exception ex)
             {
@@ -412,7 +350,7 @@ namespace TShockAPI.DB
                 }
             }*/
             String[] s = MergedIDs.Split(',');
-            for( int i = 0; i < s.Length; i++ )
+            for (int i = 0; i < s.Length; i++)
             {
                 if (!s[i].Equals(""))
                     SplitIDs.Add(s[i]);
@@ -422,47 +360,31 @@ namespace TShockAPI.DB
 
         public bool AddNewUser(string regionName, String userName)
         {
-
-
             try
             {
-                using (var com = database.CreateCommand())
+                string MergedIDs = string.Empty;
+                using (var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName, Main.worldID.ToString()))
                 {
-                    com.CommandText = "SELECT * FROM Regions WHERE RegionName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", regionName);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    string MergedIDs = string.Empty;
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            MergedIDs = reader.Get<string>("UserIds");
-                    }
+                    if (reader.Read())
+                        MergedIDs = reader.Get<string>("UserIds");
+                }
 
-                    if (MergedIDs == string.Empty)
-                        MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
-                    else
-                        MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
-                    com.Parameters.Clear();
-                    com.CommandText = "UPDATE Regions SET UserIds=@ids WHERE RegionName=@name AND WorldID=@worldid";
-                    com.AddParameter("@ids", MergedIDs);
-                    com.AddParameter("@name", regionName);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    if (com.ExecuteNonQuery() > 0)
-                    {
-                        ReloadAllRegions();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                if (MergedIDs == string.Empty)
+                    MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
+                else
+                    MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
+
+                if (database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", MergedIDs, regionName, Main.worldID.ToString()) > 0)
+                {
+                    ReloadAllRegions();
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex.ToString());
-                return false;
             }
+            return false;
         }
 
         /// <summary>
@@ -475,15 +397,10 @@ namespace TShockAPI.DB
             var regions = new List<Region>();
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT RegionName FROM Regions WHERE WorldID=@0", worldid))
                 {
-                    com.CommandText = "SELECT RegionName FROM Regions WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", worldid);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            regions.Add(new Region { Name = reader.Get<string>("RegionName") });
-                    }
+                    while (reader.Read())
+                        regions.Add(new Region { Name = reader.Get<string>("RegionName") });
                 }
             }
             catch (Exception ex)
@@ -513,7 +430,7 @@ namespace TShockAPI.DB
         public List<int> AllowedIDs { get; set; }
 
         public Region(Rectangle region, string name, bool disablebuild, string RegionWorldIDz)
-            :this()
+            : this()
         {
             Area = region;
             Name = name;

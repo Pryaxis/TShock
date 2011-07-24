@@ -34,112 +34,96 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
+            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY KEY, 'WorldID' TEXT);" :
+                "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
+
+            database.Query(query);
+
+            String file = Path.Combine(TShock.SavePath, "warps.xml");
+            String name = "";
+            String world = "";
+            int x1 = 0;
+            int y1 = 0;
+            if (File.Exists(file))
             {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY KEY, 'WorldID' TEXT);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                       "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
-
-                com.ExecuteNonQuery();
-
-                String file = Path.Combine(TShock.SavePath, "warps.xml");
-                String name = "";
-                String world = "";
-                int x1 = 0;
-                int y1 = 0;
-                if (File.Exists(file))
+                XmlReader reader;
+                using (reader = XmlReader.Create(new StreamReader(file)))
                 {
-                    XmlReader reader;
-                    using (reader = XmlReader.Create(new StreamReader(file)))
+                    // Parse the file and display each of the nodes.
+                    while (reader.Read())
                     {
-                        // Parse the file and display each of the nodes.
-                        while (reader.Read())
+                        switch (reader.NodeType)
                         {
-                            switch (reader.NodeType)
-                            {
-                                case XmlNodeType.Element:
-                                    switch (reader.Name)
-                                    {
-                                        case "Warp":
-                                            name = "";
-                                            world = "";
-                                            x1 = 0;
-                                            y1 = 0;
-                                            break;
-                                        case "WarpName":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            name = reader.Value;
-                                            break;
-                                        case "X":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out x1);
-                                            break;
-                                        case "Y":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            int.TryParse(reader.Value, out y1);
-                                            break;
-                                        case "WorldName":
-                                            while (reader.NodeType != XmlNodeType.Text)
-                                                reader.Read();
-                                            world = reader.Value;
-                                            break;
-                                    }
-                                    break;
-                                case XmlNodeType.Text:
+                            case XmlNodeType.Element:
+                                switch (reader.Name)
+                                {
+                                    case "Warp":
+                                        name = "";
+                                        world = "";
+                                        x1 = 0;
+                                        y1 = 0;
+                                        break;
+                                    case "WarpName":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        name = reader.Value;
+                                        break;
+                                    case "X":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out x1);
+                                        break;
+                                    case "Y":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        int.TryParse(reader.Value, out y1);
+                                        break;
+                                    case "WorldName":
+                                        while (reader.NodeType != XmlNodeType.Text)
+                                            reader.Read();
+                                        world = reader.Value;
+                                        break;
+                                }
+                                break;
+                            case XmlNodeType.Text:
 
-                                    break;
-                                case XmlNodeType.XmlDeclaration:
-                                case XmlNodeType.ProcessingInstruction:
-                                    break;
-                                case XmlNodeType.Comment:
-                                    break;
-                                case XmlNodeType.EndElement:
-                                    if (reader.Name.Equals("Warp"))
-                                    {
-                                        if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                            com.CommandText = "INSERT OR IGNORE INTO Warps VALUES (@tx, @ty,@name, @worldid);";
-                                        else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                            com.CommandText = "INSERT IGNORE INTO Warps SET X=@tx, Y=@ty, WarpName=@name, WorldID=@worldid;";
-                                        com.AddParameter("@tx", x1);
-                                        com.AddParameter("@ty", y1);
-                                        com.AddParameter("@name", name);
-                                        com.AddParameter("@worldid", world);
-                                        com.ExecuteNonQuery();
-                                        com.Parameters.Clear();
-                                    }
-                                    break;
-                            }
+                                break;
+                            case XmlNodeType.XmlDeclaration:
+                            case XmlNodeType.ProcessingInstruction:
+                                break;
+                            case XmlNodeType.Comment:
+                                break;
+                            case XmlNodeType.EndElement:
+                                if (reader.Name.Equals("Warp"))
+                                {
+                                    query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                                        "INSERT OR IGNORE INTO Warps VALUES (@0, @1,@2, @3);" :
+                                        "INSERT IGNORE INTO Warps SET X=@0, Y=@1, WarpName=@2, WorldID=@3;";
+                                    database.Query(query, x1, y1, name, world);
+                                }
+                                break;
                         }
-
                     }
-                    reader.Close();
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "warps.xml");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    //File.Move(file, file2);
+
                 }
+                reader.Close();
+                String path = Path.Combine(TShock.SavePath, "old_configs");
+                String file2 = Path.Combine(path, "warps.xml");
+                if (!Directory.Exists(path))
+                    System.IO.Directory.CreateDirectory(path);
+                if (File.Exists(file2))
+                    File.Delete(file2);
+                //File.Move(file, file2);
             }
+
         }
 
         public void ConvertDB()
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Warps SET WorldID=@worldid";
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    com.ExecuteNonQuery();
-                }
+                database.Query("UPDATE Warps SET WorldID=@0", Main.worldID.ToString());
             }
             catch (Exception ex)
             {
@@ -151,16 +135,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "INSERT INTO Warps (X, Y, WarpName, WorldID) VALUES (@x, @y, @name, @worldid);";
-                    com.AddParameter("@x", x);
-                    com.AddParameter("@y", y);
-                    com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", worldid);
-                    com.ExecuteNonQuery();
-                    return true;
-                }
+                database.Query("INSERT INTO Warps (X, Y, WarpName, WorldID) VALUES (@0, @1, @2, @3);", x, y, name, worldid);
+                return true;
             }
             catch (Exception ex)
             {
@@ -173,14 +149,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "DELETE FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", name.ToLower());
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    com.ExecuteNonQuery();
-                    return true;
-                }
+                database.Query("DELETE FROM Warps WHERE WarpName=@0 AND WorldID=@1", name, Main.worldID.ToString());
+                return true;
             }
             catch (Exception ex)
             {
@@ -193,18 +163,11 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT * FROM Warps WHERE WarpName=@0 AND WorldID=@1", name, Main.worldID.ToString()))
                 {
-                    com.CommandText = "SELECT * FROM Warps WHERE WarpName=@name AND WorldID=@worldid";
-                    com.AddParameter("@name", name);
-                    com.AddParameter("@worldid", Main.worldID.ToString());
-                    using (var reader = com.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
-                        }
-                        reader.Close();
+                        return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
                     }
                 }
             }
@@ -225,15 +188,10 @@ namespace TShockAPI.DB
             var warps = new List<Warp>();
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT WarpName FROM Warps WHERE WorldID=@0", worldid))
                 {
-                    com.CommandText = "SELECT WarpName FROM Warps WHERE WorldID=@worldid";
-                    com.AddParameter("@worldid", worldid);
-                    using (var reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
-                    }
+                    while (reader.Read())
+                        warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
                 }
             }
             catch (Exception ex)

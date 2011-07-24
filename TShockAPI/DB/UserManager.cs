@@ -34,69 +34,60 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
+
+            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(32));" :
+                "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
+
+            database.Query(query);
+
+            String file = Path.Combine(TShock.SavePath, "users.txt");
+            if (File.Exists(file))
             {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(32));";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
-
-                com.ExecuteNonQuery();
-
-                String file = Path.Combine(TShock.SavePath, "users.txt");
-                if (File.Exists(file))
+                using (StreamReader sr = new StreamReader(file))
                 {
-                    using (StreamReader sr = new StreamReader(file))
+                    String line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        String line;
-                        while ((line = sr.ReadLine()) != null )
+                        if (line.Equals("") || line.Substring(0, 1).Equals("#"))
+                            continue;
+                        String[] info = line.Split(' ');
+                        String username = "";
+                        String sha = "";
+                        String group = "";
+                        String ip = "";
+
+                        String[] nameSha = info[0].Split(':');
+
+                        if (nameSha.Length < 2)
                         {
-                            if (line.Equals("") || line.Substring(0, 1).Equals("#") )
-                                continue;
-                            String[] info = line.Split(' ');
-                            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                com.CommandText = "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@name, @pass, @group, @ip);";
-                            else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                com.CommandText = "INSERT IGNORE INTO Users SET Username=@name, Password=@pass, Usergroup=@group, IP=@ip ;";
-
-                            String username = "";
-                            String sha = "";
-                            String group = "";
-                            String ip = "";
-
-                            String[] nameSha = info[0].Split(':');
-
-                            if (nameSha.Length < 2)
-                            {
-                                username = nameSha[0];
-                                ip = nameSha[0];
-                                group = info[1];
-                            }
-                            else
-                            {
-                                username = nameSha[0];
-                                sha = nameSha[1];
-                                group = info[1];
-                            }
-                            com.AddParameter("@name", username.Trim());
-                            com.AddParameter("@pass", sha.Trim());
-                            com.AddParameter("@group", group.Trim());
-                            com.AddParameter("@ip", ip.Trim());
-                            com.ExecuteNonQuery();
-                            com.Parameters.Clear();
+                            username = nameSha[0];
+                            ip = nameSha[0];
+                            group = info[1];
                         }
+                        else
+                        {
+                            username = nameSha[0];
+                            sha = nameSha[1];
+                            group = info[1];
+                        }
+
+                        query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                            "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@0, @1, @2, @3)" :
+                            "INSERT IGNORE INTO Users SET Username=@0, Password=@1, Usergroup=@2, IP=@3";
+
+                        database.Query(query, username.Trim(), sha.Trim(), group.Trim(), ip.Trim());
                     }
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "users.txt");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    File.Move(file, file2);
                 }
+                String path = Path.Combine(TShock.SavePath, "old_configs");
+                String file2 = Path.Combine(path, "users.txt");
+                if (!Directory.Exists(path))
+                    System.IO.Directory.CreateDirectory(path);
+                if (File.Exists(file2))
+                    File.Delete(file2);
+                File.Move(file, file2);
             }
+
         }
 
         /// <summary>
@@ -107,24 +98,11 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@name, @password, @group, @ip);";
-                    com.AddParameter("@name", user.Name);
-                    com.AddParameter("@password", Tools.HashPassword(user.Password));
+                if (!TShock.Groups.GroupExists(user.Group))
+                    throw new GroupNotExistsException(user.Group);
 
-                    if (!TShock.Groups.GroupExists(user.Group))
-                        throw new GroupNotExistsException(user.Group);
-
-                    com.AddParameter("@group", user.Group);
-                    com.AddParameter("@ip", user.Address);
-
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.RecordsAffected < 1)
-                            throw new UserExistsException(user.Name);
-                    }
-                }
+                if (database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name, Tools.HashPassword(user.Password), user.Group, user.Address) < 1)
+                    throw new UserExistsException(user.Name);
             }
             catch (Exception ex)
             {
@@ -140,25 +118,18 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                int affected = -1;
+                if (!string.IsNullOrEmpty(user.Address))
                 {
-                    if (!string.IsNullOrEmpty(user.Address))
-                    {
-                        com.CommandText = "DELETE FROM Users WHERE IP=@ip";
-                        com.AddParameter("@ip", user.Address);
-                    }
-                    else
-                    {
-                        com.CommandText = "DELETE FROM Users WHERE Username=@name";
-                        com.AddParameter("@name", user.Name);
-                    }
-
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.RecordsAffected < 1)
-                            throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
-                    }
+                    affected = database.Query("DELETE FROM Users WHERE IP=@0", user.Address);
                 }
+                else
+                {
+                    affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
+                }
+
+                if (affected < 1)
+                    throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
             }
             catch (Exception ex)
             {
@@ -176,18 +147,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Users SET Password = @password WHERE Username = @name;";
-                    com.AddParameter("@name", user.Name);
-                    com.AddParameter("@password", Tools.HashPassword(password));
-
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.RecordsAffected < 1)
-                            throw new UserExistsException(user.Name);
-                    }
-                }
+                if (database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", Tools.HashPassword(password), user.Name) < 1)
+                    throw new UserExistsException(user.Name);
             }
             catch (Exception ex)
             {
@@ -204,22 +165,11 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "UPDATE Users SET UserGroup = @group WHERE Username = @name;";
-                    com.AddParameter("@name", user.Name);
+                if (!TShock.Groups.GroupExists(group))
+                    throw new GroupNotExistsException(group);
 
-                    if (!TShock.Groups.GroupExists(group))
-                        throw new GroupNotExistsException(group);
-
-                    com.AddParameter("@group", group);
-
-                    using (var reader = com.ExecuteReader())
-                    {
-                        if (reader.RecordsAffected < 1)
-                            throw new UserExistsException(user.Name);
-                    }
-                }
+                if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) < 1)
+                    throw new UserExistsException(user.Name);
             }
             catch (Exception ex)
             {
@@ -238,21 +188,15 @@ namespace TShockAPI.DB
             string[] returndata = new string[2];
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
                 {
-                    com.CommandText = "SELECT * FROM Users WHERE Username=@name";
-                    com.AddParameter("@name", username.ToLower());
-
-                    using (var reader = com.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            returndata[0] = reader.Get<string>("Password");
-                            returndata[1] = reader.Get<string>("UserGroup");
-                            return returndata;
-                        }
-                        reader.Close();
+                        returndata[0] = reader.Get<string>("Password");
+                        returndata[1] = reader.Get<string>("UserGroup");
+                        return returndata;
                     }
+                    reader.Close();
                 }
             }
             catch (Exception ex)
@@ -266,18 +210,11 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
                 {
-                    com.CommandText = "SELECT * FROM Users WHERE Username=@name";
-                    com.AddParameter("@name", username.ToLower());
-
-                    using (var reader = com.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            return reader.Get<int>("ID");
-                        }
-                        reader.Close();
+                        return reader.Get<int>("ID");
                     }
                 }
             }
@@ -296,18 +233,12 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT * FROM Users WHERE IP=@0", ip))
                 {
-                    com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
-                    com.AddParameter("@ip", ip);
-
-                    using (var reader = com.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            string group = reader.Get<string>("UserGroup");
-                            return Tools.GetGroup(group);
-                        }
+                        string group = reader.Get<string>("UserGroup");
+                        return Tools.GetGroup(group);
                     }
                 }
             }
@@ -322,19 +253,13 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                using (var reader = database.QueryReader("SELECT IP, UserGroup FROM Users"))
                 {
-                    com.CommandText = "SELECT * FROM Users";
-
-                    using (var reader = com.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while(reader.Read())
+                        if (Tools.GetIPv4Address(reader.Get<string>("IP")) == ip)
                         {
-                            if (Tools.GetIPv4Address(reader.Get<string>("IP")) == ip)
-                            {
-                                string group = reader.Get<string>("UserGroup");
-                                return Tools.GetGroup(group);
-                            }
+                            return Tools.GetGroup(reader.Get<string>("UserGroup"));
                         }
                     }
                 }
@@ -373,27 +298,23 @@ namespace TShockAPI.DB
         {
             try
             {
-                using (var com = database.CreateCommand())
+                IDataReader result;
+                if (string.IsNullOrEmpty(user.Address))
                 {
-                    if (string.IsNullOrEmpty(user.Address))
-                    {
-                        com.CommandText = "SELECT * FROM Users WHERE Username=@name";
-                        com.AddParameter("@name", user.Name);
-                    }
-                    else
-                    {
-                        com.CommandText = "SELECT * FROM Users WHERE IP=@ip";
-                        com.AddParameter("@ip", user.Address);
-                    }
+                    result = database.QueryReader("SELECT * FROM Users WHERE Username=@0", user.Name);
+                }
+                else
+                {
+                    result = database.QueryReader("SELECT * FROM Users WHERE IP=@0", user.Address);
+                }
 
-                    using (var reader = com.ExecuteReader())
+                using (var reader = result)
+                {
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            user.ID = reader.Get<int>("ID");
-                            user.Group = reader.Get<string>("Usergroup");
-                            return user;
-                        }
+                        user.ID = reader.Get<int>("ID");
+                        user.Group = reader.Get<string>("Usergroup");
+                        return user;
                     }
                 }
             }
