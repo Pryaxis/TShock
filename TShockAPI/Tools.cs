@@ -502,8 +502,8 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
-            if (string.IsNullOrEmpty(password))
-                throw new NullReferenceException("Password can not be null/empty");
+            if (string.IsNullOrEmpty(password) || password == "non-existant password")
+                return "non-existant password";
             var bytes = HashAlgo.ComputeHash(Encoding.ASCII.GetBytes(password));
             return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
         }
