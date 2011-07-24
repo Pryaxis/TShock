@@ -285,6 +285,56 @@ namespace TShockAPI.DB
             }
         }
 
+        public void ReloadForUnitTest(String n)
+        {
+            using (var com = database.CreateCommand())
+            {
+                com.CommandText = "SELECT * FROM Regions WHERE WorldID=@worldid";
+                com.AddParameter("@worldid", n);
+                using (var reader = com.ExecuteReader())
+                {
+                    Regions.Clear();
+                    while (reader.Read())
+                    {
+                        int X1 = reader.Get<int>("X1");
+                        int Y1 = reader.Get<int>("Y1");
+                        int height = reader.Get<int>("height");
+                        int width = reader.Get<int>("width");
+                        int Protected = reader.Get<int>("Protected");
+                        string MergedIDs = DbExt.Get<string>(reader, "UserIds");
+                        string name = DbExt.Get<string>(reader, "RegionName");
+                        System.Console.WriteLine(MergedIDs);
+                        string[] SplitIDs = MergedIDs.Split(',');
+
+                        Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected, Main.worldID.ToString());
+                        r.RegionAllowedIDs = new int[SplitIDs.Length];
+                        try
+                        {
+                            for (int i = 0; i < SplitIDs.Length; i++)
+                            {
+                                if (SplitIDs.Length == 1 && SplitIDs[0].Equals(""))
+                                {
+                                    break;
+                                }
+                                //System.Console.WriteLine(SplitIDs[i]);
+                                r.RegionAllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error("Your database contains invalid UserIDs (they should be ints).");
+                            Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+                            Log.Error(e.Message);
+                            Log.Error(e.StackTrace);
+                        }
+
+                        Regions.Add(r);
+                    }
+                    reader.Close();
+                }
+            }
+        }
+
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
             try
@@ -301,11 +351,9 @@ namespace TShockAPI.DB
                     com.AddParameter("@worldid", worldid);
                     com.AddParameter("@userids", "");
                     com.AddParameter("@protected", 1);
-                    if (com.ExecuteNonQuery() > 0)
-                    {
-                        Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, 0, worldid));
-                        return true;
-                    }
+                    com.ExecuteNonQuery();
+                    Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, 0, worldid));
+                    return true;
 
                 }
             }
@@ -326,7 +374,7 @@ namespace TShockAPI.DB
                     com.AddParameter("@name", name.ToLower());
                     com.AddParameter("@worldid", Main.worldID.ToString());
                     com.ExecuteNonQuery();
-                    ReloadAllRegions();
+                    Regions.Remove(getRegion(name));
                     return true;
                 }
             }
@@ -347,9 +395,31 @@ namespace TShockAPI.DB
                     com.AddParameter("@name", name);
                     com.AddParameter("@bool", state ? 1 : 0);
                     com.AddParameter("@worldid", Main.worldID.ToString());
-                    int q = com.ExecuteNonQuery();
-                    ReloadAllRegions();
-                    return (q > 0);
+                    com.ExecuteNonQuery();
+                    getRegion(name).DisableBuild = state ? 1 : 0;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+                return false;
+            }
+        }
+
+        public bool SetRegionStateTest(string name, string world, bool state)
+        {
+            try
+            {
+                using (var com = database.CreateCommand())
+                {
+                    com.CommandText = "UPDATE Regions SET Protected=@bool WHERE RegionName=@name AND WorldID=@worldid";
+                    com.AddParameter("@name", name);
+                    com.AddParameter("@bool", state ? 1 : 0);
+                    com.AddParameter("@worldid", world);
+                    com.ExecuteNonQuery();
+                    getRegion(name).DisableBuild = state ? 1 : 0;
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -392,7 +462,7 @@ namespace TShockAPI.DB
         public static List<string> ListIDs(string MergedIDs)
         {
             List<string> SplitIDs = new List<string>();
-            var sb = new StringBuilder();
+            /*var sb = new StringBuilder();
             for (int i = 0; i < MergedIDs.Length; i++)
             {
                 char c = MergedIDs[i];
@@ -406,6 +476,12 @@ namespace TShockAPI.DB
                     SplitIDs.Add(sb.ToString());
                     sb.Clear();
                 }
+            }*/
+            String[] s = MergedIDs.Split(',');
+            for( int i = 0; i < s.Length; i++ )
+            {
+                if (!s[i].Equals(""))
+                    SplitIDs.Add(s[i]);
             }
             return SplitIDs;
         }
@@ -481,6 +557,16 @@ namespace TShockAPI.DB
                 Log.Error(ex.ToString());
             }
             return regions;
+        }
+
+        public Region getRegion(String name)
+        {
+            foreach (Region r in Regions)
+            {
+                if (r.RegionName.Equals(name))
+                    return r;
+            }
+            return new Region();
         }
     }
 

@@ -29,51 +29,91 @@ namespace UnitTests
             DB.Open();
 
             manager = new RegionManager(DB);
+            manager.ReloadForUnitTest("test");
         }
 
 
         [TestMethod]
         public void AddRegion()
         {
-            Region r = new Region( new Rectangle(100,100,100,100), "test", 0, "test world");
+            Region r = new Region( new Rectangle(100,100,100,100), "test", 1, "test");
             Assert.IsTrue(manager.AddRegion(r.RegionArea.X, r.RegionArea.Y, r.RegionArea.Width, r.RegionArea.Height, r.RegionName, r.RegionWorldID));
             Assert.AreEqual(1, manager.Regions.Count);
+            Assert.IsNotNull(manager.getRegion("test"));
 
-            Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", 0, "test world");
+            Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", 1, "test");
             manager.AddRegion(r2.RegionArea.X, r2.RegionArea.Y, r2.RegionArea.Width, r2.RegionArea.Height, r2.RegionName, r2.RegionWorldID);
             Assert.AreEqual(2, manager.Regions.Count);
+            Assert.IsNotNull(manager.getRegion("test2"));
         }
 
         [TestMethod]
         public void DeleteRegion()
         {
+            Assert.IsTrue(2 == manager.Regions.Count);
             Assert.IsTrue(manager.DeleteRegion("test"));
+            Assert.IsTrue(1 == manager.Regions.Count);
             Assert.IsTrue(manager.DeleteRegion("test2"));
-            Assert.AreEqual(0, manager.Regions.Count);
+            Assert.IsTrue(0 == manager.Regions.Count);
         }
 
         [TestMethod]
         public void InRegion()
         {
-            //
-            // TODO: Add test logic here
-            //
+            Assert.IsTrue(manager.InArea(100, 100));
+            Assert.IsTrue(manager.InArea(150, 150));
+            Assert.IsTrue(manager.InArea(200, 200));
+            Assert.IsTrue(manager.InArea(201, 201));
+            Assert.IsTrue(manager.InArea(251, 251));
+            Assert.IsTrue(manager.InArea(301, 301));
+            Assert.IsFalse(manager.InArea(311, 311));
+            Assert.IsFalse(manager.InArea(99, 99));
         }
 
         [TestMethod]
-        public void TestMethod2()
+        public void SetRegionState()
         {
-            //
-            // TODO: Add test logic here
-            //
+            Assert.IsTrue(manager.getRegion("test").DisableBuild == 1);
+            manager.SetRegionStateTest("test", "test", false);
+            Assert.IsTrue(manager.getRegion("test").DisableBuild == 0);
+            manager.SetRegionStateTest("test", "test", true);
+            Assert.IsTrue(manager.getRegion("test").DisableBuild == 1);
+            Assert.IsTrue(manager.getRegion("test2").DisableBuild == 1);
+            manager.SetRegionStateTest("test2", "test", false);
+            Assert.IsTrue(manager.getRegion("test2").DisableBuild == 0);
+            manager.SetRegionStateTest("test2", "test", true);
+            Assert.IsTrue(manager.getRegion("test2").DisableBuild == 1);
         }
 
         [TestMethod]
-        public void TestMethod3()
+        public void CanBuild()
         {
-            //
-            // TODO: Add test logic here
-            //
+            /**
+             * For now, this test is useless.  Need to implement user groups so we can alter Canbuild permission.
+             */
+            TSPlayer t = new TSPlayer(0);
+            Assert.IsFalse( manager.CanBuild( 100,100,t) );
+        }
+
+        [TestMethod]
+        public void AddUser()
+        {
+            /**
+             * For now, this test is useless.  Need to implement users so we have names to get ids from.
+             */
+        }
+
+        [TestMethod]
+        public void ListID()
+        {
+            Assert.IsTrue(RegionManager.ListIDs("1,2,3,4,5").Count == 5);
+            Assert.IsTrue(RegionManager.ListIDs("").Count == 0);
+        }
+
+        [TestMethod]
+        public void ListRegions()
+        {
+            //needs a little more work.
         }
 
         [TestCleanup]
