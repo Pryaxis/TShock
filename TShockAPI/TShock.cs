@@ -222,6 +222,25 @@ namespace TShockAPI
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Log.Error(e.ExceptionObject.ToString());
+
+            if (e.ExceptionObject.ToString().Contains("Terraria.Netplay.ListenForClients") ||
+                e.ExceptionObject.ToString().Contains("Terraria.Netplay.ServerLoop"))
+            {
+                var sb = new List<string>();
+                for (int i = 0; i < Netplay.serverSock.Length; i++)
+                {
+                    if (Netplay.serverSock[i] == null)
+                    {
+                        sb.Add("Sock[" + i + "]");
+                    }
+                    else if (Netplay.serverSock[i].tcpClient == null)
+                    {
+                        sb.Add("Tcp[" + i + "]");
+                    }
+                }
+                Log.Error(string.Join(", ", sb));
+            }
+            
             if (e.IsTerminating)
             {
                 if (Main.worldPathName != null)
