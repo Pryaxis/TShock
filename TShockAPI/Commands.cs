@@ -1465,10 +1465,10 @@ namespace TShockAPI
         {
             foreach (Region r in TShock.Regions.Regions)
             {
-                args.Player.SendMessage(r.RegionName + ": P: " + r.DisableBuild + " X: " + r.RegionArea.X + " Y: " + r.RegionArea.Y + " W: " + r.RegionArea.Width + " H: " + r.RegionArea.Height);
-                foreach (int s in r.RegionAllowedIDs)
+                args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " + r.Area.Width + " H: " + r.Area.Height);
+                foreach (int s in r.AllowedIDs)
                 {
-                    args.Player.SendMessage(r.RegionName + ": " + s);
+                    args.Player.SendMessage(r.Name + ": " + s);
                 }
             }
         }
@@ -1666,7 +1666,7 @@ namespace TShockAPI
                         var nameslist = new List<string>();
                         for (int i = 0; i < pagelimit && i + (page * pagelimit) < regions.Count; i++)
                         {
-                            nameslist.Add(regions[i].RegionName);
+                            nameslist.Add(regions[i].Name);
                         }
 
                         //convert the list to an array for joining
