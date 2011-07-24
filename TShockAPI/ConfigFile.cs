@@ -99,6 +99,12 @@ namespace TShockAPI
         public bool EnableBanOnUsernames = false;
 
         public bool EnableAntiLag = true;
+
+        /// <summary>
+        /// Valid types are "sha512", "sha256", "md5"
+        /// </summary>
+        public string HashAlgorithm = "sha512";
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

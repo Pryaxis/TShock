@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading;
 using MySql.Data.MySqlClient;
 using Community.CsharpSqlite.SQLiteClient;
@@ -240,7 +241,7 @@ namespace TShockAPI
                 }
                 Log.Error(string.Join(", ", sb));
             }
-            
+
             if (e.IsTerminating)
             {
                 if (Main.worldPathName != null)
@@ -318,7 +319,8 @@ namespace TShockAPI
                 TextWriter tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt"));
                 tw.WriteLine(AuthToken);
                 tw.Close();
-            } else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+            }
+            else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
             {
                 TextReader tr = new StreamReader(Path.Combine(SavePath, "authcode.txt"));
                 AuthToken = Convert.ToInt32(tr.ReadLine());
@@ -328,7 +330,8 @@ namespace TShockAPI
                 Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
-            } else
+            }
+            else
             {
                 AuthToken = 0;
             }
@@ -392,7 +395,8 @@ namespace TShockAPI
             if (Config.EnableDNSHostResolution)
             {
                 player.Group = TShock.Users.GetGroupForIPExpensive(player.IP);
-            } else
+            }
+            else
             {
                 player.Group = TShock.Users.GetGroupForIP(player.IP);
             }
@@ -570,7 +574,7 @@ namespace TShockAPI
             }
 
             //if (type == PacketTypes.SyncPlayers)
-                //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
+            //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
             if ((TShock.Config.BanKillTileAbusers || TShock.Config.KickKillTileAbusers) && player.TileThreshold >= TShock.Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
@@ -750,6 +754,23 @@ namespace TShockAPI
 
             RconHandler.Password = file.RconPassword;
             RconHandler.ListenPort = file.RconPort;
+
+            Type hash;
+            if (Tools.HashTypes.TryGetValue(file.HashAlgorithm, out hash))
+            {
+                lock (Tools.HashAlgo)
+                {
+                    if (!Tools.HashAlgo.GetType().Equals(hash))
+                    {
+                        Tools.HashAlgo.Dispose();
+                        Tools.HashAlgo = (HashAlgorithm) Activator.CreateInstance(Tools.HashTypes[file.HashAlgorithm]);
+                    }
+                }
+            }
+            else
+            {
+                Log.ConsoleError("Invalid or not supported hashing algorithm: " + file.HashAlgorithm);
+            }
         }
 
 

@@ -312,7 +312,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void ForceKickAll(string reason)
         {
-            foreach(TSPlayer player in TShock.Players)
+            foreach (TSPlayer player in TShock.Players)
             {
                 if (player != null && player.Active)
                 {
@@ -486,6 +486,15 @@ namespace TShockAPI
             return ip != null ? ip.ToString() : "";
         }
 
+        public static HashAlgorithm HashAlgo = new MD5Cng();
+
+        public static readonly Dictionary<string, Type> HashTypes = new Dictionary<string, Type>()
+        {
+            {"sha512", typeof(SHA512Managed)},
+            {"sha256", typeof(SHA256Managed)},
+            {"md5", typeof(MD5Cng)},
+        };
+
         /// <summary>
         /// Returns a Sha256 string for a given string
         /// </summary>
@@ -493,15 +502,10 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
-            using (var sha = new SHA512CryptoServiceProvider())
-            {
-                if (password == "")
-                {
-                    return "nonexistent-password";
-                }
-                var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
-            }
+            if (string.IsNullOrEmpty(password))
+                throw new NullReferenceException("Password can not be null/empty");
+            var bytes = HashAlgo.ComputeHash(Encoding.ASCII.GetBytes(password));
+            return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
         }
 
         /// <summary>
