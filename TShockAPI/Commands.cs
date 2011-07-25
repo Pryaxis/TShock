@@ -143,8 +143,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("managegroup", ModifyGroup, "modGroup"));
             ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
             ChatCommands.Add(new Command("cfg", Reload, "reload"));
-            ChatCommands.Add(new Command("cfg", DebugConfiguration, "debug-config"));
-            ChatCommands.Add(new Command("cfg", Password, "password"));
+            ChatCommands.Add(new Command("cfg", ShowConfiguration, "showconfig"));
+            ChatCommands.Add(new Command("cfg", ServerPassword, "serverpassword"));
             ChatCommands.Add(new Command("cfg", Save, "save"));
             ChatCommands.Add(new Command("cfg", MaxSpawns, "maxspawns"));
             ChatCommands.Add(new Command("cfg", SpawnRate, "spawnrate"));
@@ -414,15 +414,18 @@ namespace TShockAPI
 
         private static void ManageUsers(CommandArgs args)
         {
-            if (args.Parameters.Count < 2)
-            {
-                args.Player.SendMessage("Syntax: /user <add/del> <ip/user:pass> [group]");
-                args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
-                return;
-            }
+            // This guy needs to go away for the help later on to take effect.
+
+            //if (args.Parameters.Count < 2)
+            //{
+            //    args.Player.SendMessage("Syntax: /user <add/del> <ip/user:pass> [group]");
+            //    args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
+            //    return;
+            //}
 
             string subcmd = args.Parameters[0];
 
+            // Add requires a username:password pair/ip address and a group specified.
             if (subcmd == "add")
             {
                 var namepass = args.Parameters[1].Split(':');
@@ -469,6 +472,7 @@ namespace TShockAPI
                     Log.ConsoleError(ex.ToString());
                 }
             }
+            // User deletion requires a username
             else if (subcmd == "del" && args.Parameters.Count == 2)
             {
                 var user = new User();
@@ -489,12 +493,85 @@ namespace TShockAPI
                     Log.ConsoleError(ex.ToString());
                 }
             }
+            // Password changing requires a username, and a new password to set
+            else if (subcmd == "password")
+            {
+                var user = new User();
+                user.Name = args.Parameters[1];
+
+                try
+                {
+
+                    if (args.Parameters.Count == 3)
+                    {
+                        args.Player.SendMessage("Changed the password of " + user.Name + "!", Color.Green);
+                        TShock.Users.SetUserPassword(user, args.Parameters[2]);
+                        Log.ConsoleInfo(args.Player.Name + " changed the password of Account " + user.Name);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Invalid user password syntax. Try /user help.", Color.Red);
+                    }
+                }
+                catch (UserManagerException ex)
+                {
+                    args.Player.SendMessage(ex.Message, Color.Green);
+                    Log.ConsoleError(ex.ToString());
+                }
+            }
+            // Group changing requires a username or IP address, and a new group to set
+            else if (subcmd == "group")
+            {
+                var user = new User();
+                if (args.Parameters[1].Contains("."))
+                    user.Address = args.Parameters[1];
+                else
+                    user.Name = args.Parameters[1];
+
+                try
+                {
+
+                    if (args.Parameters.Count == 3)
+                    {
+                        if (!string.IsNullOrEmpty(user.Address))
+                        {
+                            args.Player.SendMessage("IP Address " + user.Address + " has been changed to group " + args.Parameters[2] + "!", Color.Green);
+                            TShock.Users.SetUserGroup(user, args.Parameters[2]);
+                            Log.ConsoleInfo(args.Player.Name + " changed IP Address " + user.Address + " to group " + args.Parameters[2]);
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!", Color.Green);
+                            TShock.Users.SetUserGroup(user, args.Parameters[2]);
+                            Log.ConsoleInfo(args.Player.Name + " changed Account " + user.Name + " to group " + args.Parameters[2]);
+                        }
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Invalid user group syntax. Try /user help.", Color.Red);
+                    }
+                }
+                catch (UserManagerException ex)
+                {
+                    args.Player.SendMessage(ex.Message, Color.Green);
+                    Log.ConsoleError(ex.ToString());
+                }
+            }
+            else if (subcmd == "help")
+            {
+                args.Player.SendMessage("Help for user subcommands:");
+                args.Player.SendMessage("/user add username:password group   -- Adds a specified user");
+                args.Player.SendMessage("/user del username                  -- Removes a specified user");
+                args.Player.SendMessage("/user password username newpassword -- Changes a user's password");
+                args.Player.SendMessage("/user group username newgroup       -- Changes a user's group");
+            }
             else
             {
-                args.Player.SendMessage("Invalid syntax. Try /user help.", Color.Red);
+                args.Player.SendMessage("Invalid user syntax. Try /user help.", Color.Red);
             }
         }
         #endregion
+
 
         #region Player Management Commands
 
@@ -1207,7 +1284,6 @@ namespace TShockAPI
 
         #endregion Teleport Commands
 
-
         #region Group Management
 
         private static void AddGroup(CommandArgs args)
@@ -1273,6 +1349,7 @@ namespace TShockAPI
         }
 
         #endregion Group Management
+
         #region Server Config Commands
 
         private static void SetSpawn(CommandArgs args)
@@ -1285,7 +1362,7 @@ namespace TShockAPI
             SaveWorld.Start();
         }
 
-        private static void DebugConfiguration(CommandArgs args)
+        private static void ShowConfiguration(CommandArgs args)
         {
             args.Player.SendMessage("TShock Config:");
             string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
@@ -1313,7 +1390,7 @@ namespace TShockAPI
             args.Player.SendMessage("Configuration reload complete. Some changes may require server restart.");
         }
 
-        private static void Password(CommandArgs args)
+        private static void ServerPassword(CommandArgs args)
         {
             if (args.Parameters.Count != 1)
             {

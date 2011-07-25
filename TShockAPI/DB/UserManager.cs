@@ -147,8 +147,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                if (database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", Tools.HashPassword(password), user.Name) < 1)
-                    throw new UserExistsException(user.Name);
+                if (database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", Tools.HashPassword(password), user.Name) == 0)
+                    throw new UserNotExistException(user.Name);
             }
             catch (Exception ex)
             {
@@ -168,8 +168,8 @@ namespace TShockAPI.DB
                 if (!TShock.Groups.GroupExists(group))
                     throw new GroupNotExistsException(group);
 
-                if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) < 1)
-                    throw new UserExistsException(user.Name);
+                if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
+                    throw new UserNotExistException(user.Name);
             }
             catch (Exception ex)
             {
