@@ -41,7 +41,7 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS 'Bans' ('IP' TEXT PRIMARY KEY, 'Name' TEXT, 'Reason' TEXT);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS  Bans (IP VARCHAR(255) PRIMARY, Name VARCHAR(255), Reason VARCHAR(255));";
+                        "CREATE TABLE IF NOT EXISTS  Bans (`IP` VARCHAR(255), `Name` VARCHAR(255), `Reason` VARCHAR(255), PRIMARY KEY (`IP`));";
 
                 com.ExecuteNonQuery();
 

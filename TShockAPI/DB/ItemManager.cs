@@ -25,7 +25,7 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT PRIMARY KEY);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) PRIMARY);";
+                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255), PRIMARY KEY (`ItemName`));";
                 com.ExecuteNonQuery();
 
                 String file = Path.Combine(TShock.SavePath, "itembans.txt");

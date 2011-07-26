@@ -25,7 +25,7 @@ namespace TShockAPI.DB
                         "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT, 'OrderBy' TEXT);";
                 else if (TShock.Config.StorageType.ToLower() == "mysql")
                     com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
+                        "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255), Commands VARCHAR(255), OrderBy VARCHAR(255), PRIMARY KEY (`GroupName`));";
 
                 com.ExecuteNonQuery();
             }
