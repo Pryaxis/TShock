@@ -32,16 +32,14 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
-using MySql.Data.MySqlClient;
 using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+using MySql.Data.MySqlClient;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
-using System.Text;
 using TShockAPI.DB;
 
 namespace TShockAPI
@@ -68,7 +66,7 @@ namespace TShockAPI
         public static IDbConnection DB;
 
         public static Process TShockProcess;
-        public static bool OverridePort = false;
+        public static bool OverridePort;
 
         public static double ElapsedTime;
 
@@ -136,13 +134,14 @@ namespace TShockAPI
                 {
                     var hostport = Config.MySqlHost.Split(':');
                     DB = new MySqlConnection();
-                    DB.ConnectionString = String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
-                        hostport[0],
-                        hostport.Length > 1 ? hostport[1] : "3306",
-                        Config.MySqlDbName,
-                        Config.MySqlUsername,
-                        Config.MySqlPassword
-                    );
+                    DB.ConnectionString =
+                        String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
+                                      hostport[0],
+                                      hostport.Length > 1 ? hostport[1] : "3306",
+                                      Config.MySqlDbName,
+                                      Config.MySqlUsername,
+                                      Config.MySqlPassword
+                            );
                     DB.Open();
                 }
                 catch (MySqlException ex)
@@ -178,17 +177,17 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-            NetHooks.SendData += new NetHooks.SendDataD(NetHooks_SendData);
+            NetHooks.SendData += NetHooks_SendData;
 
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
             //RconHandler.StartThread();
 
-            Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
+            Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
         }
 
-        void NetHooks_SendData(SendDataEventArgs e)
+        private void NetHooks_SendData(SendDataEventArgs e)
         {
             if (e.MsgID == PacketTypes.PlayerActive)
             {
@@ -305,11 +304,12 @@ namespace TShockAPI
          */
 
         public static int AuthToken = -1;
+
         private void OnPostInit()
         {
             if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
             {
-                var r = new Random((int)DateTime.Now.ToBinary());
+                var r = new Random((int) DateTime.Now.ToBinary());
                 AuthToken = r.Next(100000, 10000000);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
@@ -326,7 +326,8 @@ namespace TShockAPI
                 AuthToken = Convert.ToInt32(tr.ReadLine());
                 tr.Close();
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+                Console.WriteLine(
+                    "TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
                 Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -340,6 +341,7 @@ namespace TShockAPI
 
 
         private DateTime LastCheck = DateTime.UtcNow;
+
         private void OnUpdate(GameTime time)
         {
             UpdateManager.UpdateProcedureCheck();
@@ -351,13 +353,13 @@ namespace TShockAPI
             if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
             {
                 LastCheck = DateTime.UtcNow;
-                foreach (TSPlayer player in TShock.Players)
+                foreach (TSPlayer player in Players)
                 {
                     if (player != null && player.Active)
                     {
                         if (player.TilesDestroyed != null)
                         {
-                            if (player.TileThreshold >= TShock.Config.TileThreshold)
+                            if (player.TileThreshold >= Config.TileThreshold)
                             {
                                 if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
                                 {
@@ -377,7 +379,7 @@ namespace TShockAPI
 
                             for (int i = 0; i < inv.Length; i++)
                             {
-                                if (inv[i] != null && TShock.Itembans.ItemIsBanned(inv[i].name))
+                                if (inv[i] != null && Itembans.ItemIsBanned(inv[i].name))
                                 {
                                     player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
                                     break;
@@ -394,14 +396,14 @@ namespace TShockAPI
             var player = new TSPlayer(ply);
             if (Config.EnableDNSHostResolution)
             {
-                player.Group = TShock.Users.GetGroupForIPExpensive(player.IP);
+                player.Group = Users.GetGroupForIPExpensive(player.IP);
             }
             else
             {
-                player.Group = TShock.Users.GetGroupForIP(player.IP);
+                player.Group = Users.GetGroupForIP(player.IP);
             }
 
-            if (Tools.ActivePlayers() + 1 > TShock.Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
+            if (Tools.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
                 Tools.ForceKick(player, "Server is full");
                 handler.Handled = true;
@@ -435,11 +437,11 @@ namespace TShockAPI
             {
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
-                if (TShock.Config.RememberLeavePos)
+                if (Config.RememberLeavePos)
                 {
                     RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(tsplr.IP,
-                                                                                 new Vector2(tsplr.X / 16,
-                                                                                             (tsplr.Y / 16) + 3)));
+                                                                                 new Vector2(tsplr.X/16,
+                                                                                             (tsplr.Y/16) + 3)));
                     RemeberedPosManager.WriteSettings();
                 }
             }
@@ -469,8 +471,9 @@ namespace TShockAPI
 
             if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && Config.AdminChatEnabled)
             {
-                Tools.Broadcast(TShock.Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
-                                (byte)TShock.Config.AdminChatRGB[0], (byte)TShock.Config.AdminChatRGB[1], (byte)TShock.Config.AdminChatRGB[2]);
+                Tools.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
+                                (byte) Config.AdminChatRGB[0], (byte) Config.AdminChatRGB[1],
+                                (byte) Config.AdminChatRGB[2]);
                 e.Handled = true;
                 return;
             }
@@ -534,7 +537,8 @@ namespace TShockAPI
                     if (player != null && player.Active)
                     {
                         count++;
-                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}]", player.Name, player.IP, player.Group.Name));
+                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}]", player.Name, player.IP,
+                                                                  player.Group.Name));
                     }
                 }
                 TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
@@ -546,8 +550,8 @@ namespace TShockAPI
             }
             else if (text == "autosave")
             {
-                Main.autoSave = TShock.Config.AutoSave = !TShock.Config.AutoSave;
-                Log.ConsoleInfo("AutoSave " + (TShock.Config.AutoSave ? "Enabled" : "Disabled"));
+                Main.autoSave = Config.AutoSave = !Config.AutoSave;
+                Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
                 e.Handled = true;
             }
             else if (text.StartsWith("/"))
@@ -577,7 +581,8 @@ namespace TShockAPI
             //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((TShock.Config.BanKillTileAbusers || TShock.Config.KickKillTileAbusers) && player.TileThreshold >= TShock.Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
+            if ((Config.BanKillTileAbusers || Config.KickKillTileAbusers) &&
+                player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
             {
                 Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
                 e.Handled = true;
@@ -618,7 +623,9 @@ namespace TShockAPI
             if (Config.AlwaysPvP)
             {
                 player.SetPvP(true);
-                player.SendMessage("PvP is forced! Enable PvP else you can't deal damage to other people. (People can kill you)", Color.Red);
+                player.SendMessage(
+                    "PvP is forced! Enable PvP else you can't deal damage to other people. (People can kill you)",
+                    Color.Red);
             }
             if (player.Group.HasPermission("causeevents") && Config.InfiniteInvasion)
             {
@@ -630,7 +637,7 @@ namespace TShockAPI
                 {
                     if (playerIP.IP == player.IP)
                     {
-                        player.Teleport((int)playerIP.Pos.X, (int)playerIP.Pos.Y);
+                        player.Teleport((int) playerIP.Pos.X, (int) playerIP.Pos.Y);
                         RemeberedPosManager.RemeberedPosistions.Remove(playerIP);
                         RemeberedPosManager.WriteSettings();
                         break;
@@ -667,13 +674,13 @@ namespace TShockAPI
         public static void StartInvasion()
         {
             Main.invasionType = 1;
-            if (TShock.Config.InfiniteInvasion)
+            if (Config.InfiniteInvasion)
             {
                 Main.invasionSize = 20000000;
             }
             else
             {
-                Main.invasionSize = 100 + (TShock.Config.InvasionMultiplier * Tools.ActivePlayers());
+                Main.invasionSize = 100 + (Config.InvasionMultiplier*Tools.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -687,13 +694,14 @@ namespace TShockAPI
             }
         }
 
-        static int KillCount = 0;
+        private static int KillCount;
+
         public static void IncrementKills()
         {
             KillCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (KillCount % 100 == 0)
+            if (KillCount%100 == 0)
             {
                 switch (random)
                 {
@@ -723,15 +731,15 @@ namespace TShockAPI
         {
             Vector2 tile = new Vector2(x, y);
             Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-            return Vector2.Distance(spawn, tile) <= TShock.Config.SpawnProtectionRadius;
+            return Vector2.Distance(spawn, tile) <= Config.SpawnProtectionRadius;
         }
 
         public static bool HackedHealth(TSPlayer player)
         {
             return (player.TPlayer.statManaMax > 200) ||
-                    (player.TPlayer.statMana > 200) ||
-                    (player.TPlayer.statLifeMax > 400) ||
-                    (player.TPlayer.statLife > 400);
+                   (player.TPlayer.statMana > 200) ||
+                   (player.TPlayer.statLifeMax > 400) ||
+                   (player.TPlayer.statLife > 400);
         }
 
         public void OnConfigRead(ConfigFile file)
@@ -772,7 +780,5 @@ namespace TShockAPI
                 Log.ConsoleError("Invalid or not supported hashing algorithm: " + file.HashAlgorithm);
             }
         }
-
-
     }
 }

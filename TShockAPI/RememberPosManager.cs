@@ -18,12 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using Terraria;
-using Microsoft.Xna.Framework;
 using System.Xml;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI
 {

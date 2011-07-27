@@ -18,12 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 using Terraria;
 
 namespace TShockAPI
@@ -36,7 +35,7 @@ namespace TShockAPI
         public static int ListenPort;
         public static bool ContinueServer = true;
         public static string Response = "";
-        private static bool Started = false;
+        private static bool Started;
         private static UdpClient listener;
 
         public static void StartThread()
@@ -55,9 +54,9 @@ namespace TShockAPI
             try
             {
                 Console.WriteLine(string.Format("RconHandler is running at UDP port {0} and password is {1}",
-                    ListenPort.ToString(),
+                    ListenPort,
                     Password));
-                Thread listen = new Thread(new ThreadStart(Listener));
+                Thread listen = new Thread(Listener);
                 listen.Start();
                 while (true)
                 {
@@ -87,7 +86,7 @@ namespace TShockAPI
                 catch (SocketException e)
                 {
                     if (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
-                        Log.ConsoleError("Could not bind to " + ListenPort.ToString() + ". Are you sure you don't have another instance running?");
+                        Log.ConsoleError("Could not bind to " + ListenPort + ". Are you sure you don't have another instance running?");
                 }
                 catch (Exception e)
                 {
@@ -150,7 +149,7 @@ namespace TShockAPI
                                 args[1] = args[0] = "";
                                 string command = string.Join(" ", args.ToArray());
                                 command = command.TrimEnd(' ').TrimEnd('\0').TrimStart(' ');
-                                Log.ConsoleInfo("Rcon from " + EP.ToString() + ":" + command);
+                                Log.ConsoleInfo("Rcon from " + EP + ":" + command);
                                 Response = "";
                                 response = ExecuteCommand(command);
                                 response += "\n" + Response;
@@ -160,7 +159,7 @@ namespace TShockAPI
                             else
                             {
                                 response = "Bad rconpassword.\n";
-                                Log.ConsoleInfo("Bad rconpassword from " + EP.ToString());
+                                Log.ConsoleInfo("Bad rconpassword from " + EP);
                             }
                         }
                         else
@@ -186,7 +185,7 @@ namespace TShockAPI
                 var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString(),
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0);
                 if (challenge != "")
                     infostring += @"\challenge\" + challenge;
@@ -205,7 +204,7 @@ namespace TShockAPI
                 var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
                     Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
-                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum.ToString(),
+                    TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0) + "\n";
                 if (challenge != "")
                     statusstring += @"\challenge\" + challenge;
@@ -260,7 +259,7 @@ namespace TShockAPI
                     if (player != null && player.Active)
                     {
                         count++;
-                        Response += (string.Format("{0} 0 0 {1}({2})  {3} {4} 0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint.ToString())) + "\n";
+                        Response += (string.Format("{0} 0 0 {1}({2})  {3} {4} 0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint)) + "\n";
                     }
                 }
             }
@@ -334,7 +333,7 @@ namespace TShockAPI
                         catch (SocketException e)
                         {
                             if (e.SocketErrorCode == SocketError.AddressAlreadyInUse)
-                                Log.ConsoleError("Could not bind to " + ListenPort.ToString() + ". Are you sure you don't have another instance running?");
+                                Log.ConsoleError("Could not bind to " + ListenPort + ". Are you sure you don't have another instance running?");
                         }
                         catch (Exception e)
                         {

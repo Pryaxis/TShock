@@ -17,12 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Linq;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -370,7 +369,7 @@ namespace TShockAPI
             catch (UserManagerException ex)
             {
                 args.Player.SendMessage("Sorry, an error occured: " + ex.Message, Color.Green);
-                Log.ConsoleError("RegisterUser returned an error: " + ex.ToString());
+                Log.ConsoleError("RegisterUser returned an error: " + ex);
             }
         }
 
@@ -406,7 +405,7 @@ namespace TShockAPI
             catch (UserManagerException ex)
             {
                 args.Player.SendMessage("Sorry, an error occured: " + ex.Message, Color.Green);
-                Log.ConsoleError("RegisterUser returned an error: " + ex.ToString());
+                Log.ConsoleError("RegisterUser returned an error: " + ex);
             }
         }
 
@@ -936,7 +935,7 @@ namespace TShockAPI
                 return;
             }
             NPC eater = Tools.GetNPCById(13);
-            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
         }
 
@@ -955,7 +954,7 @@ namespace TShockAPI
             }
             NPC eye = Tools.GetNPCById(4);
             TSPlayer.Server.SetTime(false, 0.0);
-            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
         }
 
@@ -973,7 +972,7 @@ namespace TShockAPI
                 return;
             }
             NPC king = Tools.GetNPCById(50);
-            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
         }
 
@@ -992,7 +991,7 @@ namespace TShockAPI
             }
             NPC skeletron = Tools.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
-            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
         }
 
@@ -1014,10 +1013,10 @@ namespace TShockAPI
             NPC king = Tools.GetNPCById(50);
             NPC skeletron = Tools.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
-            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
-            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
-            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
-            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, (int)args.Player.TileX, (int)args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
         }
 
@@ -1054,7 +1053,7 @@ namespace TShockAPI
                 var npc = npcs[0];
                 if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
                 {
-                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, (int)args.Player.TileX, (int)args.Player.TileY, 50, 20);
+                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
                     Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
                 }
                 else
@@ -1988,8 +1987,8 @@ namespace TShockAPI
             else
             {
                 var ply = players[0];
-                args.Player.SendMessage("Annoying " + ply.Name + " for " + annoy.ToString() + " seconds.");
-                (new Thread(new ParameterizedThreadStart(ply.Whoopie))).Start(annoy);
+                args.Player.SendMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
+                (new Thread(ply.Whoopie)).Start(annoy);
             }
         }
         #endregion General Commands
@@ -2080,7 +2079,7 @@ namespace TShockAPI
                         if (itemAmount == 0 || itemAmount > item.maxStack)
                             itemAmount = item.maxStack;
                         args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
-                        args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount.ToString(), item.name));
+                        args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
                     }
                     else
                     {
@@ -2150,8 +2149,8 @@ namespace TShockAPI
                             if (itemAmount == 0 || itemAmount > item.maxStack)
                                 itemAmount = item.maxStack;
                             plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
-                            args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount.ToString(), item.name));
-                            plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount.ToString(), item.name));
+                            args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
+                            plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
                         }
                         else
                         {

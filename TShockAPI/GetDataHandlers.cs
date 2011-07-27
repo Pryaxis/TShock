@@ -340,7 +340,7 @@ namespace TShockAPI
 
             if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
             {
-                args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds).ToString() + " milliseconds before placing/destroying tiles", Color.Red);
+                args.Player.SendMessage("Please wait another " + (1000 - (DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds) + " milliseconds before placing/destroying tiles", Color.Red);
                 args.Player.SendTileSquare(x, y);
                 return true;
             }

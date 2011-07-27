@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
-using TShockAPI.DB;
 using TShockAPI.Net;
 
 namespace TShockAPI
@@ -38,21 +38,21 @@ namespace TShockAPI
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
-        public Rectangle TempArea = new Rectangle();
+        public Rectangle TempArea;
         public DateTime LastExplosive { get; set; }
         public DateTime LastTileChangeNotify { get; set; }
-        public bool InitSpawn = false;
+        public bool InitSpawn;
         public bool DisplayLogs = true;
         public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
         public Vector2 TeleportCoords = new Vector2(-1, -1);
         public string UserAccountName { get; set; }
-        public bool HasBeenSpammedWithBuildMessage = false;
-        public bool IsLoggedIn = false;
+        public bool HasBeenSpammedWithBuildMessage;
+        public bool IsLoggedIn;
         public int UserID = -1;
-        public bool HasBeenNaggedAboutLoggingIn = false;
-        Player FakePlayer = null;
+        public bool HasBeenNaggedAboutLoggingIn;
+        Player FakePlayer;
 
         public bool RealPlayer
         {
@@ -241,7 +241,7 @@ namespace TShockAPI
         {
             try
             {
-                SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)));
+                SendData(PacketTypes.TileSendSquare, "", size, (x - (size / 2)), (y - (size / 2)));
                 return true;
             }
             catch (Exception ex)
@@ -253,7 +253,7 @@ namespace TShockAPI
 
         public virtual void GiveItem(int type, string name, int width, int height, int stack)
         {
-            int itemid = Terraria.Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
+            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
             // This is for special pickaxe/hammers/swords etc
             Main.item[itemid].SetDefaults(name);
             // The set default overrides the wet and stack set by NewItem
@@ -310,18 +310,18 @@ namespace TShockAPI
             {
                 Main.player[0].inventory[player].SetDefaults("Whoopie Cushion");
                 Main.player[0].inventory[player].stack = 1;
-                SendData(TerrariaAPI.PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
+                SendData(PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
                 Main.player[player].position = TPlayer.position;
                 Main.player[player].selectedItem = 0;
                 Main.player[player].controlUseItem = true;
-                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
-                System.Threading.Thread.Sleep(500);
+                SendData(PacketTypes.PlayerUpdate, number: player);
+                Thread.Sleep(500);
                 Main.player[player].controlUseItem = false;
-                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
-                System.Threading.Thread.Sleep(50);
+                SendData(PacketTypes.PlayerUpdate, number: player);
+                Thread.Sleep(50);
             }
             Main.player[0].inventory[0] = oriinv;
-            SendData(TerrariaAPI.PacketTypes.PlayerSlot, oriinv.name, player, 0f);
+            SendData(PacketTypes.PlayerSlot, oriinv.name, player, 0f);
         }
 
         //Todo: Separate this into a few functions. SendTo, SendToAll, etc
@@ -423,7 +423,7 @@ namespace TShockAPI
             // Send all players updated tile sqaures
             foreach (Vector2 coords in destroyedTiles.Keys)
             {
-                TSPlayer.All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
+                All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }
         }
     }

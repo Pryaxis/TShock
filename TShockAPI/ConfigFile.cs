@@ -27,9 +27,9 @@ namespace TShockAPI
         public int DefaultMaximumSpawns = 4;
         public int DefaultSpawnRate = 700;
         public int ServerPort = 7777;
-        public bool EnableWhitelist = false;
-        public bool InfiniteInvasion = false;
-        public bool AlwaysPvP = false;
+        public bool EnableWhitelist;
+        public bool InfiniteInvasion;
+        public bool AlwaysPvP;
         public bool KickCheaters = true;
         public bool BanCheaters = true;
         public bool KickGriefers = true;
@@ -44,24 +44,24 @@ namespace TShockAPI
         public string DistributationAgent = "facepunch";
         public int MaxSlots = 8;
         public bool RangeChecks = true;
-        public bool SpamChecks = false;
-        public bool DisableBuild = false;
+        public bool SpamChecks;
+        public bool DisableBuild;
         public int TileThreshold = 60;
 
         public float[] AdminChatRGB = { 255, 0, 0 };
         public string AdminChatPrefix = "(Admin) ";
         public bool AdminChatEnabled = true;
 
-        public int PvpThrottle = 0;
+        public int PvpThrottle;
 
-        public int BackupInterval = 0;
+        public int BackupInterval;
         public int BackupKeepFor = 60;
 
-        public bool RememberLeavePos = false;
+        public bool RememberLeavePos;
 
-        public bool HardcoreOnly = false;
-        public bool KickOnHardcoreDeath = false;
-        public bool BanOnHardcoreDeath = false;
+        public bool HardcoreOnly;
+        public bool KickOnHardcoreDeath;
+        public bool BanOnHardcoreDeath;
 
         public bool AutoSave = true;
 
@@ -94,9 +94,9 @@ namespace TShockAPI
         public string HardcoreBanReason = "Death results in a ban";
         public string HardcoreKickReason = "Death results in a kick";
 
-        public bool EnableDNSHostResolution = false;
+        public bool EnableDNSHostResolution;
 
-        public bool EnableBanOnUsernames = false;
+        public bool EnableBanOnUsernames;
 
         public bool EnableAntiLag = true;
 

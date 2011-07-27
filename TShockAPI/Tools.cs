@@ -18,13 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
-using System.Linq;
 
 namespace TShockAPI
 {
@@ -488,8 +488,8 @@ namespace TShockAPI
 
         public static HashAlgorithm HashAlgo = new MD5Cng();
 
-        public static readonly Dictionary<string, Type> HashTypes = new Dictionary<string, Type>()
-        {
+        public static readonly Dictionary<string, Type> HashTypes = new Dictionary<string, Type>
+                                                                        {
             {"sha512", typeof(SHA512Managed)},
             {"sha256", typeof(SHA256Managed)},
             {"md5", typeof(MD5Cng)},

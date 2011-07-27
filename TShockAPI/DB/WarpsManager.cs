@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using Microsoft.Xna.Framework;
 using System.Xml;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace TShockAPI.DB
@@ -111,7 +111,7 @@ namespace TShockAPI.DB
                 String path = Path.Combine(TShock.SavePath, "old_configs");
                 String file2 = Path.Combine(path, "warps.xml");
                 if (!Directory.Exists(path))
-                    System.IO.Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                 if (File.Exists(file2))
                     File.Delete(file2);
                 //File.Move(file, file2);

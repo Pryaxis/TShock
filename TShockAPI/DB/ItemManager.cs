@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
-using Community.CsharpSqlite.SQLiteClient;
-using TShockAPI.DB;
 using System.IO;
 
 namespace TShockAPI.DB
@@ -50,7 +46,7 @@ namespace TShockAPI.DB
                 String path = Path.Combine(TShock.SavePath, "old_configs");
                 String file2 = Path.Combine(path, "itembans.txt");
                 if (!Directory.Exists(path))
-                    System.IO.Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                 if (File.Exists(file2))
                     File.Delete(file2);
                 File.Move(file, file2);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace TShockAPI.DB
 {
@@ -55,8 +53,8 @@ namespace TShockAPI.DB
             return parm;
         }
 
-        static Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>()
-        {
+        static Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>
+                                                                                {
             {typeof(bool), (s, i) => s.GetBoolean(i)},
             {typeof(byte), (s, i) => s.GetByte(i)},
             {typeof(Int16), (s, i) => s.GetInt16(i)},

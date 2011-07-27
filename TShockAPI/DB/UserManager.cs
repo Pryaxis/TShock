@@ -18,12 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using Community.CsharpSqlite.SQLiteClient;
+using System.IO;
+
 namespace TShockAPI.DB
 {
     public class UserManager
@@ -82,7 +79,7 @@ namespace TShockAPI.DB
                 String path = Path.Combine(TShock.SavePath, "old_configs");
                 String file2 = Path.Combine(path, "users.txt");
                 if (!Directory.Exists(path))
-                    System.IO.Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                 if (File.Exists(file2))
                     File.Delete(file2);
                 File.Move(file, file2);
@@ -201,7 +198,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex.ToString());
+                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
             }
             return returndata;
         }
@@ -220,7 +217,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex.ToString());
+                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
             }
             return -1;
         }
@@ -244,7 +241,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex.ToString());
+                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
             }
             return Tools.GetGroup("default");
         }
@@ -266,7 +263,7 @@ namespace TShockAPI.DB
             }
             catch (Exception ex)
             {
-                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex.ToString());
+                Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
             }
             return Tools.GetGroup("default");
         }

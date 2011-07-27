@@ -18,16 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.IO;
 using System.Data;
-using TShockAPI.DB;
-using Community.CsharpSqlite.SQLiteClient;
+using System.IO;
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Terraria;
-
 
 namespace TShockAPI.DB
 {
@@ -171,8 +166,8 @@ namespace TShockAPI.DB
                         int height = reader.Get<int>("height");
                         int width = reader.Get<int>("width");
                         int Protected = reader.Get<int>("Protected");
-                        string MergedIDs = DbExt.Get<string>(reader, "UserIds");
-                        string name = DbExt.Get<string>(reader, "RegionName");
+                        string MergedIDs = reader.Get<string>("UserIds");
+                        string name = reader.Get<string>("RegionName");
 
                         string[] SplitIDs = MergedIDs.Split(',');
 
@@ -215,8 +210,8 @@ namespace TShockAPI.DB
                     int height = reader.Get<int>("height");
                     int width = reader.Get<int>("width");
                     int Protected = reader.Get<int>("Protected");
-                    string MergedIDs = DbExt.Get<string>(reader, "UserIds");
-                    string name = DbExt.Get<string>(reader, "RegionName");
+                    string MergedIDs = reader.Get<string>("UserIds");
+                    string name = reader.Get<string>("RegionName");
                     string[] SplitIDs = MergedIDs.Split(',');
 
                     Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
