@@ -44,17 +44,14 @@ namespace TShockAPI.DB
                     else if (TShock.Config.StorageType.ToLower() == "mysql")
                         sb.Append(column.Name + " VARCHAR(255) ");
                 }
+
                 if (column.Unique)
-                {                    
-                    if (columns.Count != count)
-                    {
-                        sb.Append("UNIQUE, ");
-                    }
-                    else
-                        sb.Append("UNIQUE) ");
-                }
+                    sb.Append("UNIQUE ");
+
                 if (columns.Count == count)
                     sb.Append(")");
+                else
+                    sb.Append(", ");
             }
 
             using (var com = database.CreateCommand())
@@ -106,12 +103,12 @@ namespace TShockAPI.DB
                         count++;
                         if (Values.Count != count)
                         {
-                            sb.Append("@" + columnname.Name + ", ");
+                            sb.Append("@" + columnname.Name.ToLower() + ", ");
                             com.AddParameter("@" + columnname.Name.ToLower(), columnname.Value);
                         }
                         else
                         {
-                            sb.Append("@" + columnname.Name + ") ");
+                            sb.Append("@" + columnname.Name.ToLower() + ") ");
                             com.AddParameter("@" + columnname.Name.ToLower(), columnname.Value);
                         }
                     }
@@ -126,12 +123,12 @@ namespace TShockAPI.DB
                         count++;
                         if (Values.Count != count)
                         {
-                            sb.Append("@" + columnname.Name + "=" + columnname.Value + ", ");
+                            sb.Append("@" + columnname.Name.ToLower() + "=" + columnname.Value + ", ");
                             com.AddParameter("@" + columnname.Name.ToLower(), columnname.Value);
                         }
                         else
                         {
-                            sb.Append("@" + columnname.Name + "=" + columnname.Value + ") ");
+                            sb.Append("@" + columnname.Name.ToLower() + "=" + columnname.Value + ") ");
                             com.AddParameter("@" + columnname.Name.ToLower(), columnname.Value);
                         }
                     }
@@ -148,16 +145,19 @@ namespace TShockAPI.DB
                         count++;
                         if (Values.Count != count)
                         {
-                            sb.Append("@" + columnname.Name + "=" + columnname.Value + "-where" + " AND ");
+                            sb.Append("@" + columnname.Name.ToLower() + "-where" + "=" + columnname.Value + " AND ");
                             com.AddParameter("@" + columnname.Name.ToLower() + "-where", columnname.Value);
                         }
                         else
                         {
-                            sb.Append("@" + columnname.Name + "=" + columnname.Value + "-where" + ";");
+                            sb.Append("@" + columnname.Name.ToLower() + "-where" + "=" + columnname.Value + ";");
                             com.AddParameter("@" + columnname.Name.ToLower() + "-where", columnname.Value);
                         }
                     }
                 }
+
+                com.CommandText = sb.ToString();
+                com.ExecuteNonQuery();
             }
         }
     }
