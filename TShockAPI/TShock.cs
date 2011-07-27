@@ -155,6 +155,7 @@ namespace TShockAPI
                 throw new Exception("Invalid storage type");
             }
 
+            DBTools.database = DB;
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
             Backups.KeepFor = Config.BackupKeepFor;
             Backups.Interval = Config.BackupInterval;
