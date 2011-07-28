@@ -93,7 +93,7 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\BanManager.cs" />
-    <Compile Include="DB\DBTools.cs" />
+    <Compile Include="DBTools.cs" />
     <Compile Include="DB\ItemManager.cs" />
     <Compile Include="DB\DbExt.cs" />
     <Compile Include="DB\GroupManager.cs" />

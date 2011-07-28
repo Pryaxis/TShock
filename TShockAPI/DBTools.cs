@@ -5,13 +5,19 @@ using System.Linq;
 using System.Text;
 using TShockAPI.DB;
 
-namespace TShockAPI.DB
+namespace TShockAPI
 {
     public class DBTools
     {
-        public static IDbConnection database;
+        internal static IDbConnection database;
 
-        public static void CreateTable(string name, bool IfNotExists, List<Column> columns)
+        /// <summary>
+        /// Creates a Table, within the current open DB
+        /// </summary>
+        /// <param name="name">Name of the Table</param>
+        /// <param name="columns">The list of columns that the Table will have</param>
+        /// <param name="IfNotExists">Only try create Table if it does not exist</param>
+        public static void CreateTable(string name, List<Column> columns, bool IfNotExists =true)
         {
             //Build up Creation string :)
             StringBuilder sb = new StringBuilder();
@@ -57,11 +63,17 @@ namespace TShockAPI.DB
             using (var com = database.CreateCommand())
             {
                 com.CommandText = sb.ToString();
-                com.ExecuteNonQuery();
             }
         }
 
-        public static void InsertTable(string tablename, bool Ignore, List<ColumnData> Values, List<ColumnData> WhereAndStatements)
+        /// <summary>
+        /// Inserts a list of values into a Table, if conditions are met
+        /// </summary>
+        /// <param name="tablename">Name of the Table</param>
+        /// <param name="Ignore">Ignore insert if feild is unique and there is already a exact entry</param>
+        /// <param name="Values">The list of values to enter into the table</param>
+        /// <param name="WhereStatements">The list of where statements that must be met, can be an empty list</param>
+        public static int InsertTable(string tablename, bool Ignore, List<ColumnData> Values, List<ColumnData> WhereStatements)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT ");
@@ -135,12 +147,12 @@ namespace TShockAPI.DB
                 }
 
                 //Where Statement (if any)
-                if (WhereAndStatements.Count > 0)
+                if (WhereStatements.Count > 0)
                 {
                     sb.Append("WHERE ");
                     int count = 0;
 
-                    foreach (ColumnData columnname in WhereAndStatements)
+                    foreach (ColumnData columnname in WhereStatements)
                     {
                         count++;
                         if (Values.Count != count)
@@ -157,10 +169,18 @@ namespace TShockAPI.DB
                 }
 
                 com.CommandText = sb.ToString();
-                com.ExecuteNonQuery();
+
+                using (var reader = com.ExecuteReader())
+                    return reader.RecordsAffected;
             }
         }
 
+        /// <summary>
+        /// Returns a list of values from a given Table, where conditions are met
+        /// </summary>
+        /// <param name="tablename">Name of the Table</param>
+        /// <param name="getcolumn">The name of the column you are getting the values from</param>
+        /// <param name="WhereStatements">The list of where statements that must be met, can be an empty list</param>
         public static List<object> ReadTable(string tablename, string getcolumn, List<ColumnData> WhereStatements)
         {
             StringBuilder sb = new StringBuilder();
@@ -198,8 +218,49 @@ namespace TShockAPI.DB
                         ReturnedValues.Add(reader.Get<object>(getcolumn));
                 }
             }
-
             return ReturnedValues;
+        }
+
+        /// <summary>
+        /// Sets values in a Table, where statements are met
+        /// </summary>
+        /// <param name="tablename">Name of the Table</param>
+        /// <param name="setcolumn">The column data you are setting</param>
+        /// <param name="WhereStatements">The list of where statements that must be met, can be an empty list</param>
+        public static int SetTable(string tablename, ColumnData setcolumn, List<ColumnData> WhereStatements)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("UPDATE " + tablename + " SET " + setcolumn.Name + "=@setcolumn ");
+
+            using (var com = database.CreateCommand())
+            {
+                //Where Statement (if any)
+                if (WhereStatements.Count > 0)
+                {
+                    sb.Append("WHERE ");
+                    int count = 0;
+
+                    foreach (ColumnData columnname in WhereStatements)
+                    {
+                        count++;
+                        if (WhereStatements.Count != count)
+                        {
+                            sb.Append(columnname.Name + " =" + columnname.Value + " AND ");
+                        }
+                        else
+                        {
+                            sb.Append(columnname.Name + " =" + columnname.Value);
+                        }
+                    }
+                }
+
+                com.CommandText = sb.ToString();
+                com.AddParameter("@setcolumn", setcolumn.Value);
+
+                using (var reader = com.ExecuteReader())
+                    return reader.RecordsAffected;
+            }
         }
     }
 
@@ -210,7 +271,14 @@ namespace TShockAPI.DB
         public bool Unique { get; set; }
         public string Parameters { get; set; }
 
-        public Column(string name, bool unique, string type, string parameters)
+        /// <summary>
+        /// The class for creating a new column type
+        /// </summary>
+        /// <param name="name">Name of the column</param>
+        /// <param name="unique">Whether there can be more than one exact value in the column</param>
+        /// <param name="type">The type of column, currently the api only supports "string" or "int"</param>
+        /// <param name="parameters">Extra SQL parameters given, can cause errors cross different SQL (SQLite and MySql)</param>
+        public Column(string name, bool unique, string type, string parameters = "")
         {
             Name = name;
             Type = type;
@@ -232,6 +300,11 @@ namespace TShockAPI.DB
         public string Name { get; set; }
         public object Value { get; set; }
 
+        /// <summary>
+        /// The class for testing, inserting or setting column data
+        /// </summary>
+        /// <param name="name">Column Name</param>
+        /// <param name="value">Column Value</param>
         public ColumnData(string name, object value)
         {
             Name = name;
