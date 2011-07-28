@@ -160,6 +160,47 @@ namespace TShockAPI.DB
                 com.ExecuteNonQuery();
             }
         }
+
+        public static List<object> ReadTable(string tablename, string getcolumn, List<ColumnData> WhereStatements)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<object> ReturnedValues = new List<object>();
+
+            sb.Append("SELECT * FROM " + tablename + " ");
+
+            using (var com = database.CreateCommand())
+            {
+                //Where Statement (if any)
+                if (WhereStatements.Count > 0)
+                {
+                    sb.Append("WHERE ");
+                    int count = 0;
+
+                    foreach (ColumnData columnname in WhereStatements)
+                    {
+                        count++;
+                        if (WhereStatements.Count != count)
+                        {
+                            sb.Append(columnname.Name + " =" + columnname.Value + " AND ");
+                        }
+                        else
+                        {
+                            sb.Append(columnname.Name + " =" + columnname.Value);
+                        }
+                    }
+                }
+
+                com.CommandText = sb.ToString();
+
+                using (var reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                        ReturnedValues.Add(reader.Get<object>(getcolumn));
+                }
+            }
+
+            return ReturnedValues;
+        }
     }
 
     public class Column
