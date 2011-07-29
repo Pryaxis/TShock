@@ -18,11 +18,16 @@ namespace TShockAPI.DB
 
             string query;
             if (TShock.Config.StorageType.ToLower() == "sqlite")
-                query =
-                    "CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT, 'OrderBy' TEXT);";
+            {
+                db.Query("CREATE TABLE IF NOT EXISTS 'GroupList' (GroupName TEXT PRIMARY KEY, Commands TEXT, 'OrderBy' TEXT);");
+                query = "CREATE TEMPORARY TABLE GroupList_backup('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO GroupList_backup SELECT 'GroupName','Commands' FROM GroupList; DROP TABLE GroupList; CREATE TABLE IF NOT EXISTS GroupList('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO 'GroupList' SELECT 'GroupName','Commands' FROM GroupList_backup; DROP TABLE GroupList_backup;";
+            }
             else
+            {
                 query =
-                    "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255), OrderBy VARCHAR(255));";
+                    "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255));";
+                db.Query("ALTER TABLE GroupList DROP COLUMN OrderBy");
+            }
 
             db.Query(query);
 
@@ -46,10 +51,6 @@ namespace TShockAPI.DB
                             String[] info = line.Split(' ');
                             String comms = "";
                             int size = info.Length;
-                            int test = 0;
-                            bool hasOrder = int.TryParse(info[info.Length - 1], out test);
-                            if (hasOrder)
-                                size = info.Length - 1;
                             for (int i = 1; i < size; i++)
                             {
                                 if (!comms.Equals(""))
@@ -58,11 +59,11 @@ namespace TShockAPI.DB
                             }
 
                             if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                query = "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@0, @1, @2);";
+                                query = "INSERT OR IGNORE INTO GroupList (GroupName, Commands) VALUES (@0, @1);";
                             else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                query = "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1, OrderBy=@2;";
+                                query = "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1;";
 
-                            db.Query(query, info[0].Trim(), comms, hasOrder ? info[info.Length - 1] : "0");
+                            db.Query(query, info[0].Trim(), comms);
 
                         }
                     }
@@ -105,12 +106,10 @@ namespace TShockAPI.DB
             if (GroupExists(name))
                 return "Error: Group already exists.  Use /modGroup to change permissions.";
 
-
-
             string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                "INSERT OR IGNORE INTO GroupList (GroupName, Commands, OrderBy) VALUES (@0, @1, @2);" :
-                "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1, OrderBy=@2;";
-            if (database.Query(query, name, permissions, "0") == 1)
+                "INSERT OR IGNORE INTO GroupList (GroupName, Commands) VALUES (@0, @1);" :
+                "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1";
+            if (database.Query(query, name, permissions) == 1)
                 message = "Group " + name + " has been created successfully.";
             Group g = new Group(name);
             g.permissions.Add(permissions);

@@ -52,7 +52,7 @@ namespace TShockAPI
                 }
 
                 if (column.Unique)
-                    sb.Append("UNIQUE ");
+                    sb.Append("UNIQUE");
 
                 if (columns.Count == count)
                     sb.Append(")");
@@ -60,10 +60,7 @@ namespace TShockAPI
                     sb.Append(", ");
             }
 
-            using (var com = database.CreateCommand())
-            {
-                com.CommandText = sb.ToString();
-            }
+            database.Query(sb.ToString());
         }
 
         /// <summary>

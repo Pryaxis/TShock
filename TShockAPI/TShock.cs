@@ -156,6 +156,7 @@ namespace TShockAPI
             }
 
             DBTools.database = DB;
+
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
             Backups.KeepFor = Config.BackupKeepFor;
             Backups.Interval = Config.BackupInterval;
