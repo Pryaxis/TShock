@@ -25,6 +25,7 @@
 #tphere			- allow a player to teleport players to their position
 #managewarp		- allow player to add/delete warp locations
 #managegroup	- allow player to add/delete/modify groups
+#manageitem		- allow a player to add/delete item bans
 #editspawn		- allow player to enable/disable build protection
 #cfg			- allow player to view/change tshock configuration
 #time			- allow player to change time

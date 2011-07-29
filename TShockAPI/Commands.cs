@@ -140,6 +140,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command("managegroup", AddGroup, "addGroup"));
             ChatCommands.Add(new Command("managegroup", DeleteGroup, "delGroup"));
             ChatCommands.Add(new Command("managegroup", ModifyGroup, "modGroup"));
+            ChatCommands.Add(new Command("manageitem", AddItem, "addItem"));
+            ChatCommands.Add(new Command("manageitem", DeleteItem, "delItem"));
             ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
             ChatCommands.Add(new Command("cfg", Reload, "reload"));
             ChatCommands.Add(new Command("cfg", ShowConfiguration, "showconfig"));
@@ -1348,6 +1350,76 @@ namespace TShockAPI
         }
 
         #endregion Group Management
+
+        #region Item Management
+       
+        private static void AddItem(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+                if (items.Count == 0)
+                {
+                    args.Player.SendMessage("Invalid item type!", Color.Red);
+                }
+                else if (items.Count > 1)
+                {
+                    args.Player.SendMessage(string.Format("More than one ({0}) item matched!", items.Count), Color.Red);
+                }
+                else
+                {
+                    var item = items[0];
+                    if (item.type >= 1)
+                    {
+                        TShock.Itembans.AddNewBan(args.Parameters[0]);
+                        args.Player.SendMessage(Tools.GetItemByIdOrName(args.Parameters[0])[0].name + " has been banned.", Color.Green);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Invalid item type!", Color.Red);
+                    }
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Invalid use: /addItem \"item name\" or /addItem ##", Color.Red);
+            }
+        }
+
+        private static void DeleteItem(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+                if (items.Count == 0)
+                {
+                    args.Player.SendMessage("Invalid item type!", Color.Red);
+                }
+                else if (items.Count > 1)
+                {
+                    args.Player.SendMessage(string.Format("More than one ({0}) item matched!", items.Count), Color.Red);
+                }
+                else
+                {
+                    var item = items[0];
+                    if (item.type >= 1)
+                    {
+                        TShock.Itembans.RemoveBan(args.Parameters[0]);
+                        args.Player.SendMessage(Tools.GetItemByIdOrName(args.Parameters[0])[0].name + " has been unbanned.", Color.Green);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Invalid item type!", Color.Red);
+                    }
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Invalid use: /delItem \"item name\" or /delItem ##", Color.Red);
+            }
+        }
+
+        #endregion Item Management
 
         #region Server Config Commands
 
