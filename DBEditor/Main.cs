@@ -728,5 +728,10 @@ namespace TShockDBEditor
                 return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
         }
+
+        private void TShockDBEditor_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

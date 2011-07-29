@@ -82,6 +82,8 @@
             this.label14 = new System.Windows.Forms.Label();
             this.lst_userlist = new System.Windows.Forms.ListBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.lst_bans = new System.Windows.Forms.ListBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.lbl_newbanstatus = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -99,7 +101,6 @@
             this.label19 = new System.Windows.Forms.Label();
             this.txt_banreason = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.lst_bans = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btn_OpenLocalDB = new System.Windows.Forms.Button();
@@ -115,7 +116,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -125,12 +125,12 @@
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // itemListBanned
@@ -675,6 +675,25 @@
             this.tabPage6.Text = "Ban Manager";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.lst_bans);
+            this.groupBox7.Location = new System.Drawing.Point(6, 23);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(284, 352);
+            this.groupBox7.TabIndex = 13;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Ban List";
+            // 
+            // lst_bans
+            // 
+            this.lst_bans.FormattingEnabled = true;
+            this.lst_bans.Location = new System.Drawing.Point(6, 19);
+            this.lst_bans.Name = "lst_bans";
+            this.lst_bans.Size = new System.Drawing.Size(272, 329);
+            this.lst_bans.TabIndex = 0;
+            this.lst_bans.SelectedIndexChanged += new System.EventHandler(this.lst_bans_SelectedIndexChanged);
+            // 
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.lbl_newbanstatus);
@@ -839,15 +858,6 @@
             this.label18.TabIndex = 4;
             this.label18.Text = "Name:";
             // 
-            // lst_bans
-            // 
-            this.lst_bans.FormattingEnabled = true;
-            this.lst_bans.Location = new System.Drawing.Point(6, 19);
-            this.lst_bans.Name = "lst_bans";
-            this.lst_bans.Size = new System.Drawing.Size(272, 329);
-            this.lst_bans.TabIndex = 0;
-            this.lst_bans.SelectedIndexChanged += new System.EventHandler(this.lst_bans_SelectedIndexChanged);
-            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage3);
@@ -992,16 +1002,6 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Hostname:";
             // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.lst_bans);
-            this.groupBox7.Location = new System.Drawing.Point(6, 23);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(284, 352);
-            this.groupBox7.TabIndex = 13;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Ban List";
-            // 
             // TShockDBEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1011,6 +1011,7 @@
             this.Controls.Add(this.tabControl);
             this.Name = "TShockDBEditor";
             this.Text = "TShockDBEditor";
+            this.Load += new System.EventHandler(this.TShockDBEditor_Load);
             this.tabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -1026,6 +1027,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.tabPage6.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -1034,7 +1036,6 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
