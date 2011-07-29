@@ -1651,6 +1651,13 @@ namespace TShockAPI
 
                         var regions = TShock.Regions.ListAllRegions(Main.worldID.ToString());
 
+                        // Are there even any regions to display?
+                        if (regions.Count == 0)
+                        {
+                            args.Player.SendMessage("There are currently no regions defined.", Color.Red);
+                            return;
+                        }
+
                         //Check if they are trying to access a page that doesn't exist.
                         int pagecount = regions.Count / pagelimit;
                         if (page > pagecount)
