@@ -382,7 +382,7 @@ namespace TShockAPI
                     var user = new User();
                     user.Name = args.Parameters[0].ToLower();
                     user.Password = args.Parameters[1];
-                    user.Group = "default"; // FIXME -- we should get this from the DB.
+                    user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB.
 
                     if (TShock.Users.GetUserByName(user.Name) == null) // Cheap way of checking for existance of a user
                     {

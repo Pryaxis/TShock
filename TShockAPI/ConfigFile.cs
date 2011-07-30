@@ -100,6 +100,8 @@ namespace TShockAPI
 
         public bool EnableAntiLag = true;
 
+        public string DefaultRegistrationGroupName = "default";
+
         /// <summary>
         /// Valid types are "sha512", "sha256", "md5"
         /// </summary>
