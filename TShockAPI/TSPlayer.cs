@@ -296,6 +296,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
+        public virtual void SetTeam(int team)
+        {
+            Main.player[Index].team = team;
+            SendData(PacketTypes.PlayerTeam, "", Index);
+        }
+
         public virtual void Whoopie(object time)
         {
             var time2 = (int)time;

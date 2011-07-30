@@ -5,21 +5,23 @@ using System.Text;
 
 namespace TShockDBEditor
 {
-    public class Commandlist
+    public class TShockCommandsList
     {
-        public static List<string> CommandList = new List<string>();
-
-        public static void AddCommands()
+        public static void AddRemainingTShockCommands()
         {
+            List<string> CommandList = new List<string>();
+
             CommandList.Add("reservedslot");
             CommandList.Add("canwater");
             CommandList.Add("canlava");
+            CommandList.Add("canbuild");
+            CommandList.Add("adminchat");
             CommandList.Add("warp");
             CommandList.Add("kick");
             CommandList.Add("ban");
             CommandList.Add("unban");
             CommandList.Add("whitelist");
-            CommandList.Add("maintenace");
+            CommandList.Add("maintenance");
             CommandList.Add("causeevents");
             CommandList.Add("spawnboss");
             CommandList.Add("spawnmob");
@@ -42,6 +44,12 @@ namespace TShockDBEditor
             CommandList.Add("ignorecheatdetection");
             CommandList.Add("ignoregriefdetection");
             CommandList.Add("usebanneditem");
+
+            foreach (string command in CommandList)
+            {
+                if (!TShockDBEditor.CommandList.Contains(command))
+                    TShockDBEditor.CommandList.Add(command);
+            }
         }
     }
 }

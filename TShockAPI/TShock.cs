@@ -155,6 +155,8 @@ namespace TShockAPI
                 throw new Exception("Invalid storage type");
             }
 
+            DBTools.database = DB;
+
             Backups = new BackupManager(Path.Combine(SavePath, "backups"));
             Backups.KeepFor = Config.BackupKeepFor;
             Backups.Interval = Config.BackupInterval;
@@ -612,6 +614,8 @@ namespace TShockAPI
                 e.Handled = true;
                 return;
             }
+
+            player.SendData(PacketTypes.WorldInfo);
 
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 

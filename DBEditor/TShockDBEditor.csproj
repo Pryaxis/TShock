@@ -74,8 +74,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Group.cs" />
     <Compile Include="CommandList.cs" />
+    <Compile Include="Group.cs" />
     <Compile Include="DbExt.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>

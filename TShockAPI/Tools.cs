@@ -28,7 +28,7 @@ using Terraria;
 
 namespace TShockAPI
 {
-    internal class Tools
+    public class Tools
     {
         public static Random Random = new Random();
         //private static List<Group> groups = new List<Group>();

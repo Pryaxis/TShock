@@ -64,6 +64,7 @@ namespace TShockAPI.DB
             {typeof(decimal), (s, i) => s.GetDecimal(i)},
             {typeof(float), (s, i) => s.GetFloat(i)},
             {typeof(double), (s, i) => s.GetDouble(i)},
+            {typeof(object), (s, i) => s.GetValue(i)},
         };
 
         public static T Get<T>(this IDataReader reader, string column)
