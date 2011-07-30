@@ -102,6 +102,8 @@ namespace TShockAPI
 
         public string DefaultRegistrationGroupName = "default";
 
+        public bool DisableSpewLogs = true;
+
         /// <summary>
         /// Valid types are "sha512", "sha256", "md5"
         /// </summary>
