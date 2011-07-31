@@ -496,7 +496,8 @@ namespace TShockAPI
                 Tools.Broadcast("<" + tsplr.Name + "> " + text,
                                 tsplr.Group.R, tsplr.Group.G,
                                 tsplr.Group.B);
-                Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
+                //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
+                e.Handled = true;
             }
         }
 
