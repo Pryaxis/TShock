@@ -187,9 +187,12 @@ namespace TShockAPI.DB
                             group.AddPermission(commands[i].Trim());
                         }
                         String[] chatcolour = reader.Get<String>("ChatColor").Split(',');
-                        byte.TryParse(chatcolour[0], out group.R);
-                        byte.TryParse(chatcolour[1], out group.G);
-                        byte.TryParse(chatcolour[2], out group.B);
+                        if (chatcolour.Length == 3)
+                        {
+                            byte.TryParse(chatcolour[0], out group.R);
+                            byte.TryParse(chatcolour[1], out group.G);
+                            byte.TryParse(chatcolour[2], out group.B);
+                        }
                         groups.Add(group);
                     }
                 }
