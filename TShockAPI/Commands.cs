@@ -1,4 +1,4 @@
-﻿/*   
+/*   
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -704,15 +704,18 @@ namespace TShockAPI
                 if (TShock.Bans.RemoveBan(ban.IP))
                     args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
                 else
-                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                    args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else if (!TShock.Config.EnableBanOnUsernames)
             {
                 ban = TShock.Bans.GetBanByIp(plStr);
-                if (TShock.Bans.RemoveBan(ban.IP))
+
+                if (ban == null)
+                    args.Player.SendMessage(string.Format("Failed to unban {0}, not found.", args.Parameters[0]), Color.Red);
+                else if (TShock.Bans.RemoveBan(ban.IP))
                     args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
                 else
-                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                    args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
@@ -781,7 +784,7 @@ namespace TShockAPI
                 if (TShock.Bans.RemoveBan(ban.IP))
                     args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
                 else
-                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                    args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
             else
             {
