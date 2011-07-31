@@ -706,6 +706,14 @@ namespace TShockAPI
                 else
                     args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
             }
+            else if (!TShock.Config.EnableBanOnUsernames)
+            {
+                ban = TShock.Bans.GetBanByIp(plStr);
+                if (TShock.Bans.RemoveBan(ban.IP))
+                    args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                else
+                    args.Player.SendMessage(string.Format("Failed to Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+            }
             else
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
