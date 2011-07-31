@@ -520,15 +520,6 @@ namespace TShockAPI
             if (text.StartsWith("exit"))
             {
                 Tools.ForceKickAll("Server shutting down!");
-                var sb = new StringBuilder();
-                for (int i = 0; i < Main.maxItemTypes; i++)
-                {
-                    string itemName = Main.itemName[i];
-                    string itemID = (i).ToString();
-                    sb.Append("ItemList.Add(\"" + itemName + "\");").AppendLine();
-                }
-
-                File.WriteAllText("item.txt", sb.ToString());
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
