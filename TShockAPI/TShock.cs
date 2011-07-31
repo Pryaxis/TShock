@@ -473,8 +473,8 @@ namespace TShockAPI
             if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && Config.AdminChatEnabled)
             {
                 Tools.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
-                                (byte) Config.AdminChatRGB[0], (byte) Config.AdminChatRGB[1],
-                                (byte) Config.AdminChatRGB[2]);
+                                tsplr.Group.R, tsplr.Group.G,
+                                tsplr.Group.B);
                 e.Handled = true;
                 return;
             }
@@ -493,6 +493,9 @@ namespace TShockAPI
             }
             else
             {
+                Tools.Broadcast("<" + tsplr.Name + "> " + text,
+                                tsplr.Group.R, tsplr.Group.G,
+                                tsplr.Group.B);
                 Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
             }
         }

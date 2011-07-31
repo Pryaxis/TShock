@@ -16,20 +16,20 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            string query;
+            string query = "";
+
             if (TShock.Config.StorageType.ToLower() == "sqlite")
             {
                 db.Query("CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT);");
-                query = "CREATE TEMPORARY TABLE 'GroupList_backup' ('GroupName' TEXT, 'Commands' TEXT); INSERT INTO 'GroupList_backup' SELECT GroupName,Commands FROM 'GroupList'; DROP TABLE 'GroupList'; CREATE TABLE 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO 'GroupList' SELECT GroupName,Commands FROM 'GroupList_backup'; DROP TABLE 'GroupList_backup';";
+                db.Query("CREATE TEMPORARY TABLE 'GroupList_backup' ('GroupName' TEXT, 'Commands' TEXT); INSERT INTO 'GroupList_backup' SELECT GroupName,Commands FROM 'GroupList'; DROP TABLE 'GroupList'; CREATE TABLE 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO 'GroupList' SELECT GroupName,Commands FROM 'GroupList_backup'; DROP TABLE 'GroupList_backup';");
+                db.Query("ALTER TABLE 'GroupList' ADD COLUMN 'ChatColor' TEXT");
             }
             else
             {
-                query =
-                    "CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255));";
+                db.Query("CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255));");
                 db.Query("ALTER TABLE GroupList DROP COLUMN OrderBy");
+                db.Query("ALTER TABLE GroupList ADD COLUMN ChatColor VARCHAR(255)");
             }
-
-            db.Query(query);
 
             //Add default groups
             AddGroup("trustedadmin", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
@@ -100,18 +100,18 @@ namespace TShockAPI.DB
         /// </summary>
         /// <param name="name">name of group</param>
         /// <param name="permissions">permissions</param>
-        public String AddGroup(String name, String permissions)
+        public String AddGroup(String name, String permissions, String ChatColor = "255,255,255")
         {
             String message = "";
             if (GroupExists(name))
                 return "Error: Group already exists.  Use /modGroup to change permissions.";
 
             string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                "INSERT OR IGNORE INTO GroupList (GroupName, Commands) VALUES (@0, @1);" :
+                "INSERT OR IGNORE INTO GroupList (GroupName, Commands, ChatColor) VALUES (@0, @1, @2);" :
                 "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1";
-            if (database.Query(query, name, permissions) == 1)
+            if (database.Query(query, name, permissions, ChatColor) == 1)
                 message = "Group " + name + " has been created successfully.";
-            Group g = new Group(name);
+            Group g = new Group(name, null, ChatColor);
             g.permissions.Add(permissions);
             groups.Add(g);
 

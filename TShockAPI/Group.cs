@@ -29,10 +29,17 @@ namespace TShockAPI
         public Group Parent { get; protected set; }
         public int Order { get; set; }
 
-        public Group(string groupname, Group parentgroup = null)
+        public byte R = 255;
+        public byte G = 255;
+        public byte B = 255;
+
+        public Group(string groupname, Group parentgroup = null, string ChatColor = "255,255,255")
         {
             Name = groupname;
             Parent = parentgroup;
+            byte.TryParse(ChatColor.Split(',')[0], out R);
+            byte.TryParse(ChatColor.Split(',')[1], out G);
+            byte.TryParse(ChatColor.Split(',')[2], out B);
         }
 
         public virtual bool HasPermission(string permission)
@@ -100,6 +107,9 @@ namespace TShockAPI
         public SuperAdminGroup()
             : base("superadmin")
         {
+            R = (byte)TShock.Config.SuperAdminChatRGB[0];
+            G = (byte)TShock.Config.SuperAdminChatRGB[1];
+            B = (byte)TShock.Config.SuperAdminChatRGB[2];
         }
 
         public override bool HasPermission(string permission)

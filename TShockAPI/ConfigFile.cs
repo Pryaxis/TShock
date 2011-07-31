@@ -48,7 +48,7 @@ namespace TShockAPI
         public bool DisableBuild;
         public int TileThreshold = 60;
 
-        public float[] AdminChatRGB = { 255, 0, 0 };
+        public float[] SuperAdminChatRGB = { 255, 0, 0 };
         public string AdminChatPrefix = "(Admin) ";
         public bool AdminChatEnabled = true;
 
