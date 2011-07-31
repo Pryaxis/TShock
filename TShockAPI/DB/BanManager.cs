@@ -1,4 +1,4 @@
-﻿/*   
+/*   
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -125,7 +125,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                return database.Query("DELETE FROM Bans WHERE IP=@ip", ip) != 0;
+                return database.Query("DELETE FROM Bans WHERE IP=@0", ip) != 0;
             }
             catch (Exception ex)
             {
