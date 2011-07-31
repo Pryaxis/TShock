@@ -109,7 +109,7 @@
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="DB\RegionManager.cs" />
     <Compile Include="RconHandler.cs" />
-    <Compile Include="RememberPosManager.cs" />
+    <Compile Include="DB\RememberPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

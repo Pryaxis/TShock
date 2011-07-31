@@ -60,6 +60,7 @@ namespace TShockAPI
         public static GroupManager Groups;
         public static UserManager Users;
         public static ItemManager Itembans;
+        public static RemeberedPosManager RememberedPos;
 
         public static ConfigFile Config { get; set; }
 
@@ -167,6 +168,7 @@ namespace TShockAPI
             Groups.LoadPermisions();
             Regions = new RegionManager(DB);
             Itembans = new ItemManager(DB);
+            RememberedPos = new RemeberedPosManager(DB);
 
             Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -441,10 +443,7 @@ namespace TShockAPI
 
                 if (Config.RememberLeavePos)
                 {
-                    RemeberedPosManager.RemeberedPosistions.Add(new RemeberedPos(tsplr.IP,
-                                                                                 new Vector2(tsplr.X/16,
-                                                                                             (tsplr.Y/16) + 3)));
-                    RemeberedPosManager.WriteSettings();
+                    RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int)(tsplr.X / 16), (int)(tsplr.Y / 16));
                 }
             }
         }
@@ -615,7 +614,8 @@ namespace TShockAPI
                 return;
             }
 
-            player.SendData(PacketTypes.WorldInfo);
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+            NetMessage.syncPlayers();
 
             Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
@@ -637,16 +637,9 @@ namespace TShockAPI
             }
             if (Config.RememberLeavePos)
             {
-                foreach (RemeberedPos playerIP in RemeberedPosManager.RemeberedPosistions)
-                {
-                    if (playerIP.IP == player.IP)
-                    {
-                        player.Teleport((int) playerIP.Pos.X, (int) playerIP.Pos.Y);
-                        RemeberedPosManager.RemeberedPosistions.Remove(playerIP);
-                        RemeberedPosManager.WriteSettings();
-                        break;
-                    }
-                }
+                var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
+                player.Teleport((int)pos.X, (int)pos.Y);
+                player.SendTileSquare((int)pos.X, (int)pos.Y);
             }
             e.Handled = true;
         }
