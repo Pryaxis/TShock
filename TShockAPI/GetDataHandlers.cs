@@ -414,6 +414,18 @@ namespace TShockAPI
             byte owner = args.Data.ReadInt8();
             byte type = args.Data.ReadInt8();
 
+            if (ident > Main.maxProjectiles || ident < 0)
+            {
+                Tools.HandleGriefer(args.Player, TShock.Config.ExplosiveAbuseReason);
+                return true;
+            }
+
+            if ((vely == 0f || velx == 0f) && type == 23)
+            {
+                Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
+                return true;
+            }
+
             if (type == 29 || type == 28 || type == 37)
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));

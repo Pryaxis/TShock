@@ -93,6 +93,7 @@ namespace TShockAPI
         public string TileKillAbuseReason = "Tile Kill abuse ({0})";
         public string HardcoreBanReason = "Death results in a ban";
         public string HardcoreKickReason = "Death results in a kick";
+        public string ProjectileAbuseReason = "Projectile abuse";
 
         public bool EnableDNSHostResolution;
 
