@@ -127,7 +127,6 @@ namespace TShockAPI
             {
                 string sql = Path.Combine(SavePath, "tshock.sqlite");
                 DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
-                DB.Open();
             }
             else if (Config.StorageType.ToLower() == "mysql")
             {
@@ -201,7 +200,6 @@ namespace TShockAPI
 
         public override void DeInitialize()
         {
-            DB.Close();
             GameHooks.PostInitialize -= OnPostInit;
             GameHooks.Update -= OnUpdate;
             ServerHooks.Join -= OnJoin;
