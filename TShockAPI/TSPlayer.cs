@@ -191,41 +191,13 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tilex, tiley, 150))
+            if (!SendTileSquare(tilex, tiley))
             {
                 SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
                 return false;
             }
 
-            if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
-            {
-                int spX = TPlayer.SpawnX;
-                int spY = TPlayer.SpawnY;
-                Main.tile[spX, spY].active = false;
-                SendTileSquare(spX, spY);
-                Spawn();
-                Main.tile[spX, spY].active = true;
-                SendTileSquare(spX, spY);
-                oldSpawn = new Vector2(spX, spY);
-            }
-            else
-            {
-                //Checks if Player has spawn point set (Server may think player does not have spawn)
-                if (oldSpawn != Vector2.Zero)
-                {
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = false;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    Spawn();
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = true;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    NetMessage.syncPlayers();
-                }
-                //Player has no spawn point set
-                else
-                {
-                    Spawn();
-                }
-            }
+            Spawn();
 
             SendTeleport(Main.spawnTileX, Main.spawnTileY);
 
