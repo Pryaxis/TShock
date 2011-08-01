@@ -5,42 +5,48 @@ using System.Data;
 namespace TShockAPI.DB
 {
     public static class DbExt
-    {    
+    {
 
         /// <summary>
         /// Executes a query on a database.
         /// </summary>
-        /// <param name="db">Database to query</param>
+        /// <param name="olddb">Database to query</param>
         /// <param name="query">Query string with parameters as @0, @1, etc.</param>
         /// <param name="args">Parameters to be put in the query</param>
         /// <returns>Rows affected by query</returns>
-        public static int Query(this IDbConnection db, string query, params object[] args)
+        public static int Query(this IDbConnection olddb, string query, params object[] args)
         {
-            using (var com = db.CreateCommand())
+            using (var db = olddb.CloneEx())
             {
-                com.CommandText = query;
-                for (int i = 0; i < args.Length; i++)
-                    com.AddParameter("@" + i, args[i]);
+                db.Open();
+                using (var com = db.CreateCommand())
+                {
+                    com.CommandText = query;
+                    for (int i = 0; i < args.Length; i++)
+                        com.AddParameter("@" + i, args[i]);
 
-                return com.ExecuteNonQuery();
+                    return com.ExecuteNonQuery();
+                }
             }
         }
         /// <summary>
         /// Executes a query on a database.
         /// </summary>
-        /// <param name="db">Database to query</param>
+        /// <param name="olddb">Database to query</param>
         /// <param name="query">Query string with parameters as @0, @1, etc.</param>
         /// <param name="args">Parameters to be put in the query</param>
         /// <returns>Query result as IDataReader</returns>
-        public static IDataReader QueryReader(this IDbConnection db, string query, params object[] args)
+        public static QueryResult QueryReader(this IDbConnection olddb, string query, params object[] args)
         {
+            var db = olddb.CloneEx();
+            db.Open();
             using (var com = db.CreateCommand())
             {
                 com.CommandText = query;
                 for (int i = 0; i < args.Length; i++)
                     com.AddParameter("@" + i, args[i]);
 
-                return com.ExecuteReader();
+                return new QueryResult(db, com.ExecuteReader());
             }
         }
 
@@ -53,8 +59,15 @@ namespace TShockAPI.DB
             return parm;
         }
 
-        static Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>
-                                                                                {
+        public static IDbConnection CloneEx(this IDbConnection conn)
+        {
+            var clone = (IDbConnection)Activator.CreateInstance(conn.GetType());
+            clone.ConnectionString = conn.ConnectionString;
+            return clone;
+        }
+
+        static Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>()
+        {
             {typeof(bool), (s, i) => s.GetBoolean(i)},
             {typeof(byte), (s, i) => s.GetByte(i)},
             {typeof(Int16), (s, i) => s.GetInt16(i)},
@@ -64,7 +77,6 @@ namespace TShockAPI.DB
             {typeof(decimal), (s, i) => s.GetDecimal(i)},
             {typeof(float), (s, i) => s.GetFloat(i)},
             {typeof(double), (s, i) => s.GetDouble(i)},
-            {typeof(object), (s, i) => s.GetValue(i)},
         };
 
         public static T Get<T>(this IDataReader reader, string column)
@@ -80,4 +92,34 @@ namespace TShockAPI.DB
             throw new NotImplementedException();
         }
     }
+
+
+    public class QueryResult : IDisposable
+    {
+        public IDbConnection Connection { get; protected set; }
+        public IDataReader Reader { get; protected set; }
+
+        public QueryResult(IDbConnection conn, IDataReader reader)
+        {
+            Connection = conn;
+            Reader = reader;
+        }
+
+        public void Dispose()
+        {
+            Reader.Dispose();
+            Connection.Dispose();
+        }
+
+        public bool Read()
+        {
+            return Reader.Read();
+        }
+
+        public T Get<T>(string column)
+        {
+            return Reader.Get<T>(Reader.GetOrdinal(column));
+        }
+    }
+
 }
