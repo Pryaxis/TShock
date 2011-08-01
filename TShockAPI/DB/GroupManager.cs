@@ -171,8 +171,7 @@ namespace TShockAPI.DB
 
             try
             {
-
-                using (var reader = database.QueryReader("SELECT * FROM Grouplist;"))
+                using (var reader = database.QueryReader("SELECT * FROM Grouplist"))
                 {
                     while (reader.Read())
                     {
@@ -186,13 +185,17 @@ namespace TShockAPI.DB
                         {
                             group.AddPermission(commands[i].Trim());
                         }
-                        String[] chatcolour = reader.Get<String>("ChatColor").Split(',');
-                        if (chatcolour.Length == 3)
+                        try
                         {
-                            byte.TryParse(chatcolour[0], out group.R);
-                            byte.TryParse(chatcolour[1], out group.G);
-                            byte.TryParse(chatcolour[2], out group.B);
+                            String[] chatcolour = reader.Get<String>("ChatColor").Split(',');
+                            if (chatcolour.Length == 3)
+                            {
+                                byte.TryParse(chatcolour[0], out group.R);
+                                byte.TryParse(chatcolour[1], out group.G);
+                                byte.TryParse(chatcolour[2], out group.B);
+                            }
                         }
+                        catch { }
                         groups.Add(group);
                     }
                 }
