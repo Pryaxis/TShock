@@ -51,7 +51,19 @@ namespace TShockAPI
                     continue;
 
                 byte[] buff = buffers[i].GetBytes(BytesPerUpdate);
-                Netplay.serverSock[i].networkStream.Write(buff, 0, buff.Length);
+                if (buff == null)
+                    continue;
+
+                try
+                {
+                    Netplay.serverSock[i].tcpClient.Client.Send(buff);
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                catch (SocketException)
+                {
+                }
             }
         }
 
