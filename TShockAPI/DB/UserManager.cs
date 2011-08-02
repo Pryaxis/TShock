@@ -193,7 +193,6 @@ namespace TShockAPI.DB
                         returndata[1] = reader.Get<string>("UserGroup");
                         return returndata;
                     }
-                    reader.Close();
                 }
             }
             catch (Exception ex)
@@ -295,7 +294,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                IDataReader result;
+                QueryResult result;
                 if (string.IsNullOrEmpty(user.Address))
                 {
                     result = database.QueryReader("SELECT * FROM Users WHERE Username=@0", user.Name);

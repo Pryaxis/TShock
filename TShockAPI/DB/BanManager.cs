@@ -73,7 +73,7 @@ namespace TShockAPI.DB
                 using (var reader = database.QueryReader("SELECT * FROM Bans WHERE IP=@0", ip))
                 {
                     if (reader.Read())
-                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                        return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"));
                 }
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace TShockAPI.DB
                 using (var reader = database.QueryReader("SELECT * FROM Bans WHERE " + namecol + "=@0", name))
                 {
                     if (reader.Read())
-                        return new Ban((string)reader["IP"], (string)reader["Name"], (string)reader["Reason"]);
+                        return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"));
 
                 }
             }
