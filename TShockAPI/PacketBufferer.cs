@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -25,7 +26,8 @@ namespace TShockAPI
         public PacketBufferer()
         {
             BytesPerUpdate = 0xFFFF;
-            buffers.ForEach(p => p = new PacketBuffer());
+            for (int i = 0; i < buffers.Length; i++)
+                buffers[i] = new PacketBuffer();
 
             ServerHooks.SendBytes += ServerHooks_SendBytes;
             ServerHooks.SocketReset += ServerHooks_SocketReset;
@@ -56,6 +58,8 @@ namespace TShockAPI
 
                 try
                 {
+                    Debug.WriteLine("Sent: {0} - {1}", i, buffers[i].Packets);
+                    buffers[i].Packets = 0;
                     Netplay.serverSock[i].tcpClient.Client.Send(buff);
                 }
                 catch (ObjectDisposedException)
@@ -78,6 +82,7 @@ namespace TShockAPI
             e.Handled = true;
             lock (buffers[socket.whoAmI])
             {
+                buffers[socket.whoAmI].Packets++;
                 buffers[socket.whoAmI].AddRange(new MemoryStream(buffer, offset, count).ToArray());
             }
         }
@@ -87,6 +92,7 @@ namespace TShockAPI
 
     public class PacketBuffer : List<byte>
     {
+        public int Packets { get; set; }
         public byte[] GetBytes(int max)
         {
             lock (this)
