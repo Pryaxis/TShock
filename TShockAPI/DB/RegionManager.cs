@@ -1,4 +1,4 @@
-﻿/*   
+/*   
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -172,11 +172,18 @@ namespace TShockAPI.DB
                         string[] SplitIDs = MergedIDs.Split(',');
 
                         Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
+
                         try
                         {
                             for (int i = 0; i < SplitIDs.Length; i++)
                             {
-                                r.AllowedIDs.Add(Convert.ToInt32(SplitIDs[i]));
+                                int id;
+
+                                if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
+                                    r.AllowedIDs.Add(id);
+                                else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
+                                                            // but we only want to let the user know if it's really a nonparsable integer.
+                                    Log.Warn("One of your UserIDs is not a usable integer: " + SplitIDs[i]);
                             }
                         }
                         catch (Exception e)
@@ -219,7 +226,13 @@ namespace TShockAPI.DB
                     {
                         for (int i = 0; i < SplitIDs.Length; i++)
                         {
-                            r.AllowedIDs[i] = Convert.ToInt32(SplitIDs[i]);
+                            int id;
+
+                            if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
+                                r.AllowedIDs.Add(id);
+                            else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
+                                // but we only want to let the user know if it's really a nonparsable integer.
+                                Log.Warn("UnitTest: One of your UserIDs is not a usable integer: " + SplitIDs[i]);
                         }
                     }
                     catch (Exception e)
