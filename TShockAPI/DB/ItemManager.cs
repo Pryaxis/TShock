@@ -58,15 +58,11 @@ namespace TShockAPI.DB
         public void UpdateItemBans()
         {
             ItemBans.Clear();
-            using (var com = database.CreateCommand())
-            {
-                com.CommandText = "SELECT * FROM ItemBans";
 
-                using (var reader = com.ExecuteReader())
-                {
-                    while (reader != null && reader.Read())
-                        ItemBans.Add(reader.Get<string>("ItemName"));
-                }
+            using (var reader = database.QueryReader("SELECT * FROM ItemBans"))
+            {
+                while (reader != null && reader.Read())
+                    ItemBans.Add(reader.Get<string>("ItemName"));
             }
         }
         public void AddNewBan(string itemname = "")
