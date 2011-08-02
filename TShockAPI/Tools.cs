@@ -25,6 +25,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Terraria;
+using TerrariaAPI;
 
 namespace TShockAPI
 {

@@ -38,6 +38,11 @@ namespace TShockAPI.DB
                 "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY KEY, 'WorldID' TEXT);" :
                 "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
 
+            if (TShock.Config.StorageType.ToLower() == "sqlite")
+                db.Query("ALTER TABLE 'Warps' ADD COLUMN 'Private' TEXT");
+            else
+                db.Query("ALTER TABLE Warps ADD COLUMN Private VARCHAR(255)");
+
             database.Query(query);
 
             String file = Path.Combine(TShock.SavePath, "warps.xml");
@@ -167,7 +172,14 @@ namespace TShockAPI.DB
                 {
                     if (reader.Read())
                     {
-                        return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"));
+                        try
+                        {
+                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), reader.Get<string>("Private"));
+                        }
+                        catch
+                        {
+                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), "0");
+                        }
                     }
                 }
             }
@@ -183,15 +195,25 @@ namespace TShockAPI.DB
         /// </summary>
         /// <param name="worldid">World name to get warps from</param>
         /// <returns>List of warps with only their names</returns>
-        public List<Warp> ListAllWarps(string worldid)
+        public List<Warp> ListAllPublicWarps(string worldid)
         {
             var warps = new List<Warp>();
             try
             {
-                using (var reader = database.QueryReader("SELECT WarpName FROM Warps WHERE WorldID=@0", worldid))
+                using (var reader = database.QueryReader("SELECT * FROM Warps WHERE WorldID=@0", worldid))
                 {
                     while (reader.Read())
-                        warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
+                    {
+                        try
+                        {
+                            if (reader.Get<String>("Private") == "0" || reader.Get<String>("Private") == null)
+                                warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
+                        }
+                        catch
+                        {
+                            warps.Add(new Warp { WarpName = reader.Get<string>("WarpName") });
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -200,6 +222,28 @@ namespace TShockAPI.DB
             }
             return warps;
         }
+
+        /// <summary>
+        /// Gets all the warps names from world
+        /// </summary>
+        /// <param name="worldid">World name to get warps from</param>
+        /// <returns>List of warps with only their names</returns>
+        public bool HideWarp(string warp, bool state)
+        {
+            try
+            {
+                string query = "UPDATE Warps SET Private=@0 WHERE WarpName=@1 AND WorldID=@2";
+
+                database.Query(query, state ? "1" : "0", warp, Main.worldID.ToString());
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+                return false;
+            }
+        }
     }
 
     public class Warp
@@ -207,12 +251,14 @@ namespace TShockAPI.DB
         public Vector2 WarpPos { get; set; }
         public string WarpName { get; set; }
         public string WorldWarpID { get; set; }
+        public string Private { get; set; }
 
-        public Warp(Vector2 warppos, string name, string worldname)
+        public Warp(Vector2 warppos, string name, string worldid, string hidden)
         {
             WarpPos = warppos;
             WarpName = name;
-            WorldWarpID = worldname;
+            WorldWarpID = worldid;
+            Private = hidden;
         }
 
         public Warp()
@@ -220,6 +266,7 @@ namespace TShockAPI.DB
             WarpPos = Vector2.Zero;
             WarpName = null;
             WorldWarpID = string.Empty;
+            Private = "0";
         }
     }
 }
