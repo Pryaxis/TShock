@@ -110,6 +110,8 @@ namespace TShockAPI
         /// </summary>
         public string HashAlgorithm = "sha512";
 
+        public bool BufferPackets = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

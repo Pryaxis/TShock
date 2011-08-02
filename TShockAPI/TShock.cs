@@ -61,15 +61,11 @@ namespace TShockAPI
         public static UserManager Users;
         public static ItemManager Itembans;
         public static RemeberedPosManager RememberedPos;
-
         public static ConfigFile Config { get; set; }
-
         public static IDbConnection DB;
-
-        public static Process TShockProcess;
         public static bool OverridePort;
+        PacketBufferer bufferer;
 
-        public static double ElapsedTime;
 
         public override Version Version
         {
@@ -185,6 +181,9 @@ namespace TShockAPI
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
             //RconHandler.StartThread();
+
+            if (Config.BufferPackets)
+                bufferer = new PacketBufferer();
 
             Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
