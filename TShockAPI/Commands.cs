@@ -137,6 +137,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("warp", UseWarp, "warp"));
             ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
             ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
+            ChatCommands.Add(new Command("managewarp", HideWarp, "hidewarp"));
             ChatCommands.Add(new Command("managegroup", AddGroup, "addGroup"));
             ChatCommands.Add(new Command("managegroup", DeleteGroup, "delGroup"));
             ChatCommands.Add(new Command("managegroup", ModifyGroup, "modGroup"));
@@ -1217,6 +1218,31 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /delwarp [name]", Color.Red);
         }
 
+        private static void HideWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count > 1)
+            {
+                string warpName = String.Join(" ", args.Parameters);
+                bool state = false;
+                if (Boolean.TryParse(args.Parameters[1], out state))
+                {
+                    if (TShock.Warps.HideWarp(args.Parameters[0], state))
+                    {
+                        if (state)
+                            args.Player.SendMessage("Made warp " + warpName + " private", Color.Yellow);
+                        else
+                            args.Player.SendMessage("Made warp " + warpName + " public", Color.Yellow);
+                    }
+                    else
+                        args.Player.SendMessage("Could not find specified warp", Color.Red);
+                }
+                else
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);                
+            }
+            else
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
+        }
+
         private static void UseWarp(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
@@ -1245,7 +1271,7 @@ namespace TShockAPI
                     page--; //Substract 1 as pages are parsed starting at 1 and not 0
                 }
 
-                var warps = TShock.Warps.ListAllWarps(Main.worldID.ToString());
+                var warps = TShock.Warps.ListAllPublicWarps(Main.worldID.ToString());
 
                 //Check if they are trying to access a page that doesn't exist.
                 int pagecount = warps.Count / pagelimit;

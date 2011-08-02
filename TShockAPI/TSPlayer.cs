@@ -52,6 +52,7 @@ namespace TShockAPI
         public bool IsLoggedIn;
         public int UserID = -1;
         public bool HasBeenNaggedAboutLoggingIn;
+        public bool TpLock = false;
         Player FakePlayer;
 
         public bool RealPlayer
@@ -184,24 +185,29 @@ namespace TShockAPI
 
         public bool Teleport(int tilex, int tiley)
         {
-            InitSpawn = false;
-
-            SendTeleport(tilex, tiley);
-
-            //150 Should avoid all client crash errors
-            //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
-            //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tilex, tiley))
+            if (!TpLock)
             {
-                SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
-                return false;
+                InitSpawn = false;
+
+                SendTeleport(tilex, tiley);
+
+                //150 Should avoid all client crash errors
+                //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
+                //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
+                if (!SendTileSquare(tilex, tiley))
+                {
+                    SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
+                    return false;
+                }
+
+                Spawn();
+
+                SendTeleport(Main.spawnTileX, Main.spawnTileY);
+
+                return true;
             }
-
-            Spawn();
-
-            SendTeleport(Main.spawnTileX, Main.spawnTileY);
-
-            return true;
+            SendMessage("Cannot teleport due to TP Lock", Color.Red);
+            return false;
         }
 
         public void Spawn()
