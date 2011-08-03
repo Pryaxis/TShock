@@ -71,7 +71,7 @@ namespace TShockAPI.DB
             var name = conn.GetType().Name;
             if (name == "SqliteConnection")
                 return SqlType.Sqlite;
-            if (name == "MysqlConnection")
+            if (name == "MySqlConnection")
                 return SqlType.Mysql;
             return SqlType.Unknown;
         }

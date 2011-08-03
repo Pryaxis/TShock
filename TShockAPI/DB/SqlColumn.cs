@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -9,7 +6,8 @@ namespace TShockAPI.DB
     {
         //Required
         public string Name { get; set; }
-        public string Type { get; set; }
+        public MySqlDbType Type { get; set; }
+
 
         //Optional
         public bool Unique { get; set; }
@@ -18,10 +16,20 @@ namespace TShockAPI.DB
         public bool NotNull { get; set; }
         public string DefaultValue { get; set; }
 
-        public SqlColumn(string name, string type)
+        /// <summary>
+        /// Length of the data type, null = default
+        /// </summary>
+        public int? Length { get; set; }
+
+        public SqlColumn(string name, MySqlDbType type)
+            : this(name, type, null)
+        {
+        }
+        public SqlColumn(string name, MySqlDbType type, int? length)
         {
             Name = name;
             Type = type;
+            Length = length;
         }
     }
 }

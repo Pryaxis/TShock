@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -36,9 +37,10 @@ namespace TShockAPI.DB
             var columns = GetColumns(table);
             if (columns.Count > 0)
             {
-                if (table.Columns.All(c => columns.Contains(c.Name)))
+                if (!table.Columns.All(c => columns.Contains(c.Name)) || !columns.All(c => table.Columns.Any(c2 => c2.Name == c)))
                 {
-                    
+                    var from = new SqlTable(table.Name, columns.Select(s => new SqlColumn(s, MySqlDbType.String)).ToList());
+                    database.Query(creator.AlterTable(from, table));
                 }
             }
             else
@@ -61,7 +63,11 @@ namespace TShockAPI.DB
             }
             else if (name == SqlType.Mysql)
             {
-                throw new NotImplementedException();
+                using (var reader = database.QueryReader("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_NAME=@0 AND TABLE_SCHEMA=@1", table.Name, database.Database))
+                {
+                    while (reader.Read())
+                        ret.Add(reader.Get<string>("COLUMN_NAME"));
+                }
             }
             else
             {

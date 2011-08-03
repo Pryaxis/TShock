@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -18,13 +19,13 @@ namespace TShockAPI.DB
 
             string query = "";
 
-            var table = new SqlTable("GroupList",
-                new SqlColumn("GroupName", "TEXT") { Primary = true },
-                new SqlColumn("Commands", "TEXT"),
-                new SqlColumn("ChatColor", "TEXT")
+            /*var table = new SqlTable("GroupList",
+                new SqlColumn("GroupName", MySqlDbType.VarChar, 32) { Primary = true },
+                new SqlColumn("Commands", MySqlDbType.Text),
+                new SqlColumn("ChatColor", MySqlDbType.Text)
             );
 
-            //new SqlTableCreator(db).EnsureExists(table);
+            new SqlTableCreator(db, new MysqlQueryCreator()).EnsureExists(table);*/
 
 
             if (db.GetSqlType() == SqlType.Sqlite)
