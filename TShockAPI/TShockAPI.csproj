@@ -94,13 +94,14 @@
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\BanManager.cs" />
     <Compile Include="DBTools.cs" />
-    <Compile Include="DB\IQueryCreator.cs" />
+    <Compile Include="DB\IQueryBuilder.cs" />
     <Compile Include="DB\ItemManager.cs" />
     <Compile Include="DB\SqlColumn.cs" />
     <Compile Include="DB\SqlTable.cs" />
     <Compile Include="Extensions\DbExt.cs" />
     <Compile Include="DB\GroupManager.cs" />
     <Compile Include="DB\UserManager.cs" />
+    <Compile Include="Extensions\RandomExt.cs" />
     <Compile Include="Extensions\StringExt.cs" />
     <Compile Include="IPackable.cs" />
     <Compile Include="Commands.cs" />

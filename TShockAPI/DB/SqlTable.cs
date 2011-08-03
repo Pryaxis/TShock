@@ -24,8 +24,8 @@ namespace TShockAPI.DB
     public class SqlTableCreator
     {
         IDbConnection database;
-        IQueryCreator creator;
-        public SqlTableCreator(IDbConnection db, IQueryCreator provider)
+        IQueryBuilder creator;
+        public SqlTableCreator(IDbConnection db, IQueryBuilder provider)
         {
             database = db;
             creator = provider;
