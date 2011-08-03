@@ -22,6 +22,7 @@ using System.Data;
 using System.IO;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using MySql.Data.MySqlClient;
 using Terraria;
 
 namespace TShockAPI.DB
@@ -34,16 +35,15 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                "CREATE TABLE IF NOT EXISTS 'Warps' ('X' NUMERIC, 'Y' NUMERIC, 'WarpName' TEXT PRIMARY KEY, 'WorldID' TEXT);" :
-                "CREATE TABLE IF NOT EXISTS Warps (X INT(11), Y INT(11), WarpName VARCHAR(255) PRIMARY, WorldID VARCHAR(255));";
-
-            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                db.Query("ALTER TABLE 'Warps' ADD COLUMN 'Private' TEXT");
-            else
-                db.Query("ALTER TABLE Warps ADD COLUMN Private VARCHAR(255)");
-
-            database.Query(query);
+            var table = new SqlTable("Warps",
+                new SqlColumn("WarpName", MySqlDbType.VarChar, 50) { Primary = true},
+                new SqlColumn("X", MySqlDbType.Int32),
+                new SqlColumn("Y", MySqlDbType.Int32),
+                new SqlColumn("WorldID", MySqlDbType.Text),
+                new SqlColumn("Private", MySqlDbType.Text)
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
             String file = Path.Combine(TShock.SavePath, "warps.xml");
             String name = "";
@@ -102,7 +102,7 @@ namespace TShockAPI.DB
                             case XmlNodeType.EndElement:
                                 if (reader.Name.Equals("Warp"))
                                 {
-                                    query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                                    string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
                                         "INSERT OR IGNORE INTO Warps VALUES (@0, @1,@2, @3);" :
                                         "INSERT IGNORE INTO Warps SET X=@0, Y=@1, WarpName=@2, WorldID=@3;";
                                     database.Query(query, x1, y1, name, world);

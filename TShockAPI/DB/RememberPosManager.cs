@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Data;
 using Microsoft.Xna.Framework;
+using MySql.Data.MySqlClient;
 using Terraria;
 
 namespace TShockAPI.DB
@@ -33,15 +34,15 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            string query;
-            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                query =
-                    "CREATE TABLE IF NOT EXISTS 'RememberedPos' ('Name' TEXT PRIMARY KEY, 'IP' TEXT, 'X' NUMERIC, 'Y' NUMERIC, 'WorldID' TEXT);";
-            else
-                query =
-                    "CREATE TABLE IF NOT EXISTS RememberedPos (Name VARCHAR(255) PRIMARY, IP VARCHAR(255), X INT(11), Y INT(11), WorldID VARCHAR(255));";
-
-            db.Query(query);
+            var table = new SqlTable("RememberedPos",
+                new SqlColumn("Name", MySqlDbType.VarChar, 50) { Primary = true },
+                new SqlColumn("IP", MySqlDbType.Text),
+                new SqlColumn("X", MySqlDbType.Int32),
+                new SqlColumn("Y", MySqlDbType.Int32),
+                new SqlColumn("WorldID", MySqlDbType.Text)
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
         }
 
         public Vector2 GetLeavePos(string name, string IP)

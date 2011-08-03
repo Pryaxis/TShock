@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Data;
 using System.IO;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -30,15 +31,13 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            string query;
-            if (TShock.Config.StorageType.ToLower() == "sqlite")
-                query =
-                    "CREATE TABLE IF NOT EXISTS 'Bans' ('IP' TEXT PRIMARY KEY, 'Name' TEXT, 'Reason' TEXT);";
-            else
-                query =
-                    "CREATE TABLE IF NOT EXISTS  Bans (IP VARCHAR(255) PRIMARY, Name VARCHAR(255), Reason VARCHAR(255));";
-
-            db.Query(query);
+            var table = new SqlTable("Bans",
+                new SqlColumn("IP", MySqlDbType.String, 16) { Primary = true },
+                new SqlColumn("Name", MySqlDbType.Text),
+                new SqlColumn("Reason", MySqlDbType.Text)
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
             String file = Path.Combine(TShock.SavePath, "bans.txt");
             if (File.Exists(file))
@@ -49,6 +48,7 @@ namespace TShockAPI.DB
                     while ((line = sr.ReadLine()) != null)
                     {
                         String[] info = line.Split('|');
+                        string query;
                         if (TShock.Config.StorageType.ToLower() == "sqlite")
                             query = "INSERT OR IGNORE INTO Bans (IP, Name, Reason) VALUES (@0, @1, @2);";
                         else

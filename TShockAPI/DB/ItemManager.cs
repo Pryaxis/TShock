@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -14,11 +15,11 @@ namespace TShockAPI.DB
         {
             database = db;
 
-
-            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                    "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT PRIMARY KEY);" :
-                    "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) PRIMARY);";
-            database.Query(query);
+            var table = new SqlTable("ItemBans",
+                new SqlColumn("ItemName", MySqlDbType.VarChar, 50) { Primary = true }
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
             String file = Path.Combine(TShock.SavePath, "itembans.txt");
             if (File.Exists(file))
@@ -31,7 +32,7 @@ namespace TShockAPI.DB
                         if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
                         {
 
-                            query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
                                 "INSERT OR IGNORE INTO 'ItemBans' (ItemName) VALUES (@0);" :
                                 "INSERT IGNORE INTO ItemBans SET ItemName=@0;";
 

@@ -17,29 +17,13 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            string query = "";
-
-            /*var table = new SqlTable("GroupList",
+            var table = new SqlTable("GroupList",
                 new SqlColumn("GroupName", MySqlDbType.VarChar, 32) { Primary = true },
                 new SqlColumn("Commands", MySqlDbType.Text),
                 new SqlColumn("ChatColor", MySqlDbType.Text)
             );
-
-            new SqlTableCreator(db, new MysqlQueryCreator()).EnsureExists(table);*/
-
-
-            if (db.GetSqlType() == SqlType.Sqlite)
-            {
-                db.Query("CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT);");
-                db.Query("CREATE TEMPORARY TABLE 'GroupList_backup' ('GroupName' TEXT, 'Commands' TEXT); INSERT INTO 'GroupList_backup' SELECT GroupName,Commands FROM 'GroupList'; DROP TABLE 'GroupList'; CREATE TABLE 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO 'GroupList' SELECT GroupName,Commands FROM 'GroupList_backup'; DROP TABLE 'GroupList_backup';");
-                db.Query("ALTER TABLE 'GroupList' ADD COLUMN 'ChatColor' TEXT");
-            }
-            else
-            {
-                db.Query("CREATE TABLE IF NOT EXISTS GroupList (GroupName VARCHAR(255) PRIMARY, Commands VARCHAR(255));");
-                db.Query("ALTER TABLE GroupList DROP COLUMN OrderBy");
-                db.Query("ALTER TABLE GroupList ADD COLUMN ChatColor VARCHAR(255)");
-            }
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
             //Add default groups
             AddGroup("trustedadmin", "admin,maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
@@ -68,6 +52,7 @@ namespace TShockAPI.DB
                                 comms = comms + info[i].Trim();
                             }
 
+                            string query = "";
                             if (TShock.Config.StorageType.ToLower() == "sqlite")
                                 query = "INSERT OR IGNORE INTO GroupList (GroupName, Commands) VALUES (@0, @1);";
                             else if (TShock.Config.StorageType.ToLower() == "mysql")
@@ -195,17 +180,13 @@ namespace TShockAPI.DB
                         {
                             group.AddPermission(commands[i].Trim());
                         }
-                        try
+                        String[] chatcolour = (reader.Get<String>("ChatColor") ?? "").Split(',');
+                        if (chatcolour.Length == 3)
                         {
-                            String[] chatcolour = reader.Get<String>("ChatColor").Split(',');
-                            if (chatcolour.Length == 3)
-                            {
-                                byte.TryParse(chatcolour[0], out group.R);
-                                byte.TryParse(chatcolour[1], out group.G);
-                                byte.TryParse(chatcolour[2], out group.B);
-                            }
+                            byte.TryParse(chatcolour[0], out group.R);
+                            byte.TryParse(chatcolour[1], out group.G);
+                            byte.TryParse(chatcolour[2], out group.B);
                         }
-                        catch { }
                         groups.Add(group);
                     }
                 }

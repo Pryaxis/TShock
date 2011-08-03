@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Data;
 using System.IO;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -31,12 +32,15 @@ namespace TShockAPI.DB
         {
             database = db;
 
-
-            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'Username' VARCHAR(32) UNIQUE, 'Password' VARCHAR(64), 'Usergroup' TEXT, 'IP' VARCHAR(32));" :
-                "CREATE TABLE IF NOT EXISTS Users (ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, Username VARCHAR(32) UNIQUE, Password VARCHAR(64), Usergroup VARCHAR(255), IP VARCHAR(15));";
-
-            database.Query(query);
+            var table = new SqlTable("Users",
+                new SqlColumn("ID", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
+                new SqlColumn("Username", MySqlDbType.VarChar, 32) { Unique = true },
+                new SqlColumn("Password", MySqlDbType.VarChar, 64),
+                new SqlColumn("Usergroup", MySqlDbType.Text),
+                new SqlColumn("IP", MySqlDbType.VarChar, 32)
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
             String file = Path.Combine(TShock.SavePath, "users.txt");
             if (File.Exists(file))
@@ -69,7 +73,7 @@ namespace TShockAPI.DB
                             group = info[1];
                         }
 
-                        query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                        string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
                             "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@0, @1, @2, @3)" :
                             "INSERT IGNORE INTO Users SET Username=@0, Password=@1, Usergroup=@2, IP=@3";
 

@@ -22,6 +22,7 @@ using System.Data;
 using System.IO;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using MySql.Data.MySqlClient;
 using Terraria;
 
 namespace TShockAPI.DB
@@ -36,17 +37,21 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
-            {
-                string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                    "CREATE TABLE IF NOT EXISTS 'Regions' ('X1' NUMERIC, 'Y1' NUMERIC, 'height' NUMERIC, 'width' NUMERIC, 'RegionName' TEXT PRIMARY KEY, 'WorldID' TEXT, 'UserIds' TEXT, 'Protected' NUMERIC);" :
-                        "CREATE TABLE IF NOT EXISTS Regions (X1 INT(11), Y1 INT(11), height INT(11), width INT(11), RegionName VARCHAR(255) PRIMARY, WorldID VARCHAR(255), UserIds VARCHAR(255), Protected INT(1));";
+            var table = new SqlTable("Regions",
+                new SqlColumn("X1", MySqlDbType.Int32),
+                new SqlColumn("Y1", MySqlDbType.Int32),
+                new SqlColumn("height", MySqlDbType.Int32),
+                new SqlColumn("width", MySqlDbType.Int32),
+                new SqlColumn("RegionName", MySqlDbType.VarChar, 50) { Primary = true },
+                new SqlColumn("WorldID", MySqlDbType.Text),
+                new SqlColumn("UserIds", MySqlDbType.Text),
+                new SqlColumn("Protected", MySqlDbType.Int32)
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
 
-                database.Query(query);
+            ImportOld();
 
-
-                ImportOld();
-            }
         }
 
         public void ImportOld()
@@ -182,7 +187,7 @@ namespace TShockAPI.DB
                                 if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
                                     r.AllowedIDs.Add(id);
                                 else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
-                                                            // but we only want to let the user know if it's really a nonparsable integer.
+                                    // but we only want to let the user know if it's really a nonparsable integer.
                                     Log.Warn("One of your UserIDs is not a usable integer: " + SplitIDs[i]);
                             }
                         }
