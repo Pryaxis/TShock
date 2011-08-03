@@ -18,7 +18,16 @@ namespace TShockAPI.DB
 
             string query = "";
 
-            if (TShock.Config.StorageType.ToLower() == "sqlite")
+            var table = new SqlTable("GroupList",
+                new SqlColumn("GroupName", "TEXT") { Primary = true },
+                new SqlColumn("Commands", "TEXT"),
+                new SqlColumn("ChatColor", "TEXT")
+            );
+
+            //new SqlTableCreator(db).EnsureExists(table);
+
+
+            if (db.GetSqlType() == SqlType.Sqlite)
             {
                 db.Query("CREATE TABLE IF NOT EXISTS 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT);");
                 db.Query("CREATE TEMPORARY TABLE 'GroupList_backup' ('GroupName' TEXT, 'Commands' TEXT); INSERT INTO 'GroupList_backup' SELECT GroupName,Commands FROM 'GroupList'; DROP TABLE 'GroupList'; CREATE TABLE 'GroupList' ('GroupName' TEXT PRIMARY KEY, 'Commands' TEXT); INSERT INTO 'GroupList' SELECT GroupName,Commands FROM 'GroupList_backup'; DROP TABLE 'GroupList_backup';");

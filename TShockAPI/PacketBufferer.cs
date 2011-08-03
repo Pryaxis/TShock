@@ -58,7 +58,7 @@ namespace TShockAPI
 
                 try
                 {
-                    Debug.WriteLine("Sent: {0} - {1}", i, buffers[i].Packets);
+                    //Debug.WriteLine("Sent: {0} - {1}", i, buffers[i].Packets);
                     buffers[i].Packets = 0;
                     Netplay.serverSock[i].tcpClient.Client.Send(buff);
                 }

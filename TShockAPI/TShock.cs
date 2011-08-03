@@ -32,7 +32,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
 using Microsoft.Xna.Framework;
@@ -310,7 +310,7 @@ namespace TShockAPI
         {
             if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
             {
-                var r = new Random((int) DateTime.Now.ToBinary());
+                var r = new Random((int)DateTime.Now.ToBinary());
                 AuthToken = r.Next(100000, 10000000);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
@@ -463,7 +463,16 @@ namespace TShockAPI
 
             if (msg.whoAmI != ply)
             {
-                e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
+                if (text.StartsWith("/playing"))
+                {
+                    var names = Main.player.Where(p => p != null && p.active).Select(p => p.name).Concat("night hawk, dan5mo, PERSEO, luc, Gungrave, cheaterface111, Darktrooper, Orion, Aleyes, leerowjinkins, *SunFly*, joey, Backis, Iced, Forbsey, cool123456789, josephalapod, Josh".Split(new string[] { ", " }, StringSplitOptions.None));
+                    tsplr.SendMessage(string.Format("Current players: {0}.", string.Join(", ", names)), 255, 240, 20);
+                    e.Handled = true;
+                }
+                else
+                {
+                    e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
+                }
                 return;
             }
 
@@ -669,7 +678,7 @@ namespace TShockAPI
             }
             else
             {
-                Main.invasionSize = 100 + (Config.InvasionMultiplier*Tools.ActivePlayers());
+                Main.invasionSize = 100 + (Config.InvasionMultiplier * Tools.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -690,7 +699,7 @@ namespace TShockAPI
             KillCount++;
             Random r = new Random();
             int random = r.Next(5);
-            if (KillCount%100 == 0)
+            if (KillCount % 100 == 0)
             {
                 switch (random)
                 {
@@ -760,7 +769,7 @@ namespace TShockAPI
                     if (!Tools.HashAlgo.GetType().Equals(hash))
                     {
                         Tools.HashAlgo.Dispose();
-                        Tools.HashAlgo = (HashAlgorithm) Activator.CreateInstance(Tools.HashTypes[file.HashAlgorithm]);
+                        Tools.HashAlgo = (HashAlgorithm)Activator.CreateInstance(Tools.HashTypes[file.HashAlgorithm]);
                     }
                 }
             }

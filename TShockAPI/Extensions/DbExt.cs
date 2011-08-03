@@ -66,7 +66,17 @@ namespace TShockAPI.DB
             return clone;
         }
 
-        static Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>()
+        public static SqlType GetSqlType(this IDbConnection conn)
+        {
+            var name = conn.GetType().Name;
+            if (name == "SqliteConnection")
+                return SqlType.Sqlite;
+            if (name == "MysqlConnection")
+                return SqlType.Mysql;
+            return SqlType.Unknown;
+        }
+
+        static readonly Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>()
         {
             {typeof(bool), (s, i) => s.GetBoolean(i)},
             {typeof(byte), (s, i) => s.GetByte(i)},
@@ -93,6 +103,12 @@ namespace TShockAPI.DB
         }
     }
 
+    public enum SqlType
+    {
+        Unknown,
+        Sqlite,
+        Mysql
+    }
 
     public class QueryResult : IDisposable
     {
@@ -115,7 +131,6 @@ namespace TShockAPI.DB
         {
             return Reader.Read();
         }
-
         public T Get<T>(string column)
         {
             return Reader.Get<T>(Reader.GetOrdinal(column));
