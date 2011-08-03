@@ -5,12 +5,12 @@ using System.Text;
 
 namespace TShockAPI.DB
 {
-    public interface IQuery
+    public interface IQueryCreator
     {
         string CreateTable(SqlTable table);
     }
 
-    public class SqliteQuery : IQuery
+    public class SqliteQueryCreator : IQueryCreator
     {
         public string CreateTable(SqlTable table)
         {
@@ -18,7 +18,7 @@ namespace TShockAPI.DB
             return "CREATE TABLE '{0}' ({1})".SFormat(table.Name, string.Join(", ", columns));
         }
     }
-    public class MysqlQuery : IQuery
+    public class MysqlQueryCreator : IQueryCreator
     {
         public string CreateTable(SqlTable table)
         {

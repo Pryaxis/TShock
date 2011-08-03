@@ -94,7 +94,7 @@
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\BanManager.cs" />
     <Compile Include="DBTools.cs" />
-    <Compile Include="DB\IQuery.cs" />
+    <Compile Include="DB\IQueryCreator.cs" />
     <Compile Include="DB\ItemManager.cs" />
     <Compile Include="DB\SqlColumn.cs" />
     <Compile Include="DB\SqlTable.cs" />

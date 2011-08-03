@@ -24,11 +24,11 @@ namespace TShockAPI.DB
     public class SqlTableCreator
     {
         IDbConnection database;
-        IQuery query;
-        public SqlTableCreator(IDbConnection db, IQuery provider)
+        IQueryCreator creator;
+        public SqlTableCreator(IDbConnection db, IQueryCreator provider)
         {
             database = db;
-            query = provider;
+            creator = provider;
         }
 
         public void EnsureExists(SqlTable table)
@@ -43,7 +43,7 @@ namespace TShockAPI.DB
             }
             else
             {
-                database.Query(query.CreateTable(table));
+                database.Query(creator.CreateTable(table));
             }
         }
 
