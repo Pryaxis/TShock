@@ -176,7 +176,6 @@ namespace TShockAPI
             NetHooks.GetData += GetData;
             NetHooks.GreetPlayer += OnGreetPlayer;
             NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-            NetHooks.SendData += NetHooks_SendData;
 
             GetDataHandlers.InitGetDataHandler();
             Commands.InitCommands();
@@ -187,14 +186,6 @@ namespace TShockAPI
 
             Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
             Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
-        }
-
-        private void NetHooks_SendData(SendDataEventArgs e)
-        {
-            if (e.MsgID == PacketTypes.PlayerActive)
-            {
-                //Debug.WriteLine("Send: {0} ({1:X2})", (byte)e.MsgID, e.MsgID.ToString());
-            }
         }
 
         public override void DeInitialize()
