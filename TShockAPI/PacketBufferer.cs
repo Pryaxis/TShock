@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Terraria;
+using TerrariaAPI;
 using TerrariaAPI.Hooks;
 
 namespace TShockAPI
@@ -23,11 +24,22 @@ namespace TShockAPI
 
         PacketBuffer[] buffers = new PacketBuffer[Netplay.serverSock.Length];
 
+        int[] Bytes = new int[52];
+        int[] Packets = new int[52];
+
+        Command dump;
+        Command flush;
+
         public PacketBufferer()
         {
             BytesPerUpdate = 0xFFFF;
             for (int i = 0; i < buffers.Length; i++)
                 buffers[i] = new PacketBuffer();
+
+            dump = new Command("superadmin", Dump, "netdump");
+            flush = new Command("superadmin", Flush, "netflush");
+            Commands.ChatCommands.Add(dump);
+            Commands.ChatCommands.Add(flush);
 
             ServerHooks.SendBytes += ServerHooks_SendBytes;
             ServerHooks.SocketReset += ServerHooks_SocketReset;
@@ -36,11 +48,28 @@ namespace TShockAPI
 
         public void Dispose()
         {
-            GameHooks.PostUpdate -= GameHooks_Update;
+            Commands.ChatCommands.Remove(dump);
+            Commands.ChatCommands.Remove(flush);
             ServerHooks.SendBytes -= ServerHooks_SendBytes;
             ServerHooks.SocketReset -= ServerHooks_SocketReset;
+            GameHooks.PostUpdate -= GameHooks_Update;
         }
 
+        void Dump(CommandArgs args)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("{0}{1}{2}".SFormat("Name:".PadRight(25, ' '), "Packets".PadRight(10, ' '), "Bytes"));
+            for (int i = 1; i < Bytes.Length; i++)
+            {
+                sb.AppendLine("{0}{1}{2}".SFormat((Enum.GetName(typeof(PacketTypes), i) + ":").PadRight(25, ' '), Packets[i].ToString().PadRight(10, ' '), Bytes[i]));
+            }
+            File.WriteAllText(Path.Combine(TShock.SavePath, "dmp.txt"), sb.ToString());
+        }
+        void Flush(CommandArgs args)
+        {
+            Bytes = new int[52];
+            Packets = new int[52];
+        }
 
         void GameHooks_Update(GameTime obj)
         {
@@ -58,8 +87,6 @@ namespace TShockAPI
 
                 try
                 {
-                    //Debug.WriteLine("Sent: {0} - {1}", i, buffers[i].Packets);
-                    buffers[i].Packets = 0;
                     Netplay.serverSock[i].tcpClient.Client.Send(buff);
                 }
                 catch (ObjectDisposedException)
@@ -82,7 +109,9 @@ namespace TShockAPI
             e.Handled = true;
             lock (buffers[socket.whoAmI])
             {
-                buffers[socket.whoAmI].Packets++;
+                var pt = buffer[offset + 4];
+                Packets[pt]++;
+                Bytes[pt] += (count - offset);
                 buffers[socket.whoAmI].AddRange(new MemoryStream(buffer, offset, count).ToArray());
             }
         }
@@ -92,7 +121,6 @@ namespace TShockAPI
 
     public class PacketBuffer : List<byte>
     {
-        public int Packets { get; set; }
         public byte[] GetBytes(int max)
         {
             lock (this)
