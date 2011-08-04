@@ -107,85 +107,95 @@ namespace TShockAPI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 
-            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+            try
             {
-                Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
-                File.Delete(Path.Combine(SavePath, "tshock.pid"));
-            }
-            File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
 
-            ConfigFile.ConfigRead += OnConfigRead;
-            FileTools.SetupConfig();
-
-            HandleCommandLine(Environment.GetCommandLineArgs());
-
-            if (Config.StorageType.ToLower() == "sqlite")
-            {
-                string sql = Path.Combine(SavePath, "tshock.sqlite");
-                DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
-            }
-            else if (Config.StorageType.ToLower() == "mysql")
-            {
-                try
+                if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
-                    var hostport = Config.MySqlHost.Split(':');
-                    DB = new MySqlConnection();
-                    DB.ConnectionString =
-                        String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
-                                      hostport[0],
-                                      hostport.Length > 1 ? hostport[1] : "3306",
-                                      Config.MySqlDbName,
-                                      Config.MySqlUsername,
-                                      Config.MySqlPassword
-                            );
-                    DB.Open();
+                    Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
+                    File.Delete(Path.Combine(SavePath, "tshock.pid"));
                 }
-                catch (MySqlException ex)
+                File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
+
+                ConfigFile.ConfigRead += OnConfigRead;
+                FileTools.SetupConfig();
+
+                HandleCommandLine(Environment.GetCommandLineArgs());
+
+                if (Config.StorageType.ToLower() == "sqlite")
                 {
-                    Log.Error(ex.ToString());
-                    throw new Exception("MySql not setup correctly");
+                    string sql = Path.Combine(SavePath, "tshock.sqlite");
+                    DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
                 }
+                else if (Config.StorageType.ToLower() == "mysql")
+                {
+                    try
+                    {
+                        var hostport = Config.MySqlHost.Split(':');
+                        DB = new MySqlConnection();
+                        DB.ConnectionString =
+                            String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
+                                          hostport[0],
+                                          hostport.Length > 1 ? hostport[1] : "3306",
+                                          Config.MySqlDbName,
+                                          Config.MySqlUsername,
+                                          Config.MySqlPassword
+                                );
+                    }
+                    catch (MySqlException ex)
+                    {
+                        Log.Error(ex.ToString());
+                        throw new Exception("MySql not setup correctly");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Invalid storage type");
+                }
+
+                DBTools.database = DB;
+
+                Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+                Backups.KeepFor = Config.BackupKeepFor;
+                Backups.Interval = Config.BackupInterval;
+                Bans = new BanManager(DB);
+                Warps = new WarpManager(DB);
+                Users = new UserManager(DB);
+                Groups = new GroupManager(DB);
+                Groups.LoadPermisions();
+                Regions = new RegionManager(DB);
+                Itembans = new ItemManager(DB);
+                RememberedPos = new RemeberedPosManager(DB);
+
+                Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
+
+                GameHooks.PostInitialize += OnPostInit;
+                GameHooks.Update += OnUpdate;
+                ServerHooks.Join += OnJoin;
+                ServerHooks.Leave += OnLeave;
+                ServerHooks.Chat += OnChat;
+                ServerHooks.Command += ServerHooks_OnCommand;
+                NetHooks.GetData += GetData;
+                NetHooks.GreetPlayer += OnGreetPlayer;
+                NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+
+                GetDataHandlers.InitGetDataHandler();
+                Commands.InitCommands();
+                //RconHandler.StartThread();
+
+                if (Config.BufferPackets)
+                    bufferer = new PacketBufferer();
+
+                Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
+                Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
+
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception("Invalid storage type");
+                Log.Error("Fatal Startup Exception");
+                Log.Error(ex.ToString());
+                Environment.Exit(1);
             }
-
-            DBTools.database = DB;
-
-            Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-            Backups.KeepFor = Config.BackupKeepFor;
-            Backups.Interval = Config.BackupInterval;
-            Bans = new BanManager(DB);
-            Warps = new WarpManager(DB);
-            Users = new UserManager(DB);
-            Groups = new GroupManager(DB);
-            Groups.LoadPermisions();
-            Regions = new RegionManager(DB);
-            Itembans = new ItemManager(DB);
-            RememberedPos = new RemeberedPosManager(DB);
-
-            Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
-
-            GameHooks.PostInitialize += OnPostInit;
-            GameHooks.Update += OnUpdate;
-            ServerHooks.Join += OnJoin;
-            ServerHooks.Leave += OnLeave;
-            ServerHooks.Chat += OnChat;
-            ServerHooks.Command += ServerHooks_OnCommand;
-            NetHooks.GetData += GetData;
-            NetHooks.GreetPlayer += OnGreetPlayer;
-            NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-
-            GetDataHandlers.InitGetDataHandler();
-            Commands.InitCommands();
-            //RconHandler.StartThread();
-
-            if (Config.BufferPackets)
-                bufferer = new PacketBufferer();
-
-            Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
-            Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
         }
 
         public override void DeInitialize()
@@ -240,7 +250,6 @@ namespace TShockAPI
                     Main.worldPathName += ".crash";
                     WorldGen.saveWorld();
                 }
-                DeInitialize();
             }
         }
 
