@@ -56,7 +56,7 @@ namespace TShockAPI.DB
             {MySqlDbType.TinyText, "TEXT"},
             {MySqlDbType.MediumText, "TEXT"},
             {MySqlDbType.LongText, "TEXT"},
-            {MySqlDbType.Int32, "NUMERIC"},
+            {MySqlDbType.Int32, "INTEGER"},
         };
         public string DbTypeToString(MySqlDbType type, int? length)
         {
