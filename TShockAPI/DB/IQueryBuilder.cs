@@ -13,6 +13,9 @@ namespace TShockAPI.DB
         string CreateTable(SqlTable table);
         string AlterTable(SqlTable from, SqlTable to);
         string DbTypeToString(MySqlDbType type, int? length);
+        string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres);
+        string InsertValues(string table, List<SqlValue> values);
+        string ReadColumn(string table, List<SqlValue> wheres);
     }
 
     public class SqliteQueryCreator : IQueryBuilder
@@ -44,9 +47,79 @@ namespace TShockAPI.DB
                 CREATE TABLE "main"."Bans" ("IP" TEXT PRIMARY KEY ,"Name" TEXT)
                 INSERT INTO "main"."Bans" SELECT "IP","Name" FROM "main"."oXHFcGcd04oXHFcGcd04_Bans"
                 DROP TABLE "main"."oXHFcGcd04oXHFcGcd04_Bans"
+             * 
+             * Twitchy - Oh. I get it!
              */
         }
+        public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
+        {
+            var sbvalues = new StringBuilder();
+            var sbwheres = new StringBuilder();
+            int count = 0;
+            foreach (SqlValue value in values)
+            {
+                sbvalues.Append(value.Name + "=" + value.Value.ToString());
+                if (count != values.Count - 1)
+                    sbvalues.Append(",");
+                count++;
+            }
+            count = 0;
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbvalues.Append(" AND ");
+                count++;
+            }
 
+            if (wheres.Count > 0)
+                return "UPDATE '{0}' SET {1} WHERE {2}".SFormat(table, sbvalues.ToString(), sbwheres.ToString());
+            else
+                return "UPDATE '{0}' SET {1}".SFormat(table, sbvalues.ToString());
+        }
+        public string InsertValues(string table, List<SqlValue> values)
+        {
+            var sbnames = new StringBuilder();
+            var sbvalues = new StringBuilder();
+            int count = 0;
+
+            foreach (SqlValue name in values)
+            {
+                sbnames.Append(name.Name);
+
+                if (count != values.Count - 1)
+                    sbnames.Append(", ");
+                count++;
+            }
+            count = 0;
+            foreach (SqlValue value in values)
+            {
+                sbvalues.Append(value.Value.ToString());
+                if (count != values.Count - 1)
+                    sbvalues.Append(", ");
+                count++;
+            }
+
+            return "INSERT INTO '{0}' ({1}) VALUES ({2})".SFormat(table, sbnames.ToString(), sbvalues.ToString());
+        }
+        public string ReadColumn(string table, List<SqlValue> wheres)
+        {
+            var sbwheres = new StringBuilder();
+            int count = 0;
+
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbwheres.Append(" AND ");
+                count++;
+            }
+
+            if(wheres.Count > 0)
+                return "SELECT * FROM {0} WHERE {1}".SFormat(table, sbwheres.ToString());
+            else
+                return "SELECT * FROM {0}".SFormat(table);
+        }
 
         static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
         {
@@ -92,7 +165,75 @@ namespace TShockAPI.DB
             var drop = "DROP TABLE {0}_{1}".SFormat(rstr, from.Name);
             return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
         }
+        public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
+        {
+            var sbvalues = new StringBuilder();
+            var sbwheres = new StringBuilder();
+            int count = 0;
+            foreach (SqlValue value in values)
+            {
+                sbvalues.Append(value.Name + "=" + value.Value.ToString());
+                if (count != values.Count - 1)
+                    sbvalues.Append("AND");
+                count++;
+            }
+            count = 0;
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbvalues.Append(" AND ");
+                count++;
+            }
 
+            if (wheres.Count > 0)
+                return "UPDATE {0} SET {1} WHERE {2}".SFormat(table, sbvalues.ToString(), sbwheres.ToString());
+            else
+                return "UPDATE {0} SET {1}".SFormat(table, sbvalues.ToString());
+        }
+        public string InsertValues(string table, List<SqlValue> values)
+        {
+            var sbnames = new StringBuilder();
+            var sbvalues = new StringBuilder();
+            int count = 0;
+
+            foreach (SqlValue name in values)
+            {
+                sbnames.Append(name.Name);
+
+                if (count != values.Count - 1)
+                    sbnames.Append(", ");
+                count++;
+            }
+            count = 0;
+            foreach (SqlValue value in values)
+            {
+                sbvalues.Append(value.Value.ToString());
+                if (count != values.Count - 1)
+                    sbvalues.Append(", ");
+                count++;
+            }
+
+            return "INSERT INTO {0} ({1}) VALUES ({2})".SFormat(table, sbnames.ToString(), sbvalues.ToString());
+        }
+        public string ReadColumn(string table, List<SqlValue> wheres)
+        {
+            var sbwheres = new StringBuilder();
+            int count = 0;
+
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbwheres.Append(" AND ");
+                count++;
+            }
+
+            if (wheres.Count > 0)
+                return "SELECT * FROM {0} WHERE {1}".SFormat(table, sbwheres.ToString());
+            else
+                return "SELECT * FROM {0}".SFormat(table);
+        }
 
         static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
         {            
