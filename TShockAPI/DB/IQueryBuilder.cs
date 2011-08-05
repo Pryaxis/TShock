@@ -143,9 +143,9 @@ namespace TShockAPI.DB
     {
         public string CreateTable(SqlTable table)
         {
-            var columns = table.Columns.Select(c => "{0} {1} {2} {3}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "", c.AutoIncrement ? "AUTOINCREMENT" : "", c.NotNull ? "NOT NULL" : ""));
+            var columns = table.Columns.Select(c => "{0} {1} {2} {3}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "", c.AutoIncrement ? "AUTO_INCREMENT" : "", c.NotNull ? "NOT NULL" : ""));
             var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-            return "CREATE TABLE {0} ({1}) {2}".SFormat(table.Name, string.Join(", ", columns), uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
+            return "CREATE TABLE {0} ({1} {2})".SFormat(table.Name, string.Join(", ", columns), uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
         }
         static Random rand = new Random();
         /// <summary>

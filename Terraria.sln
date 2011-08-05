@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Local.testsettings = Local.testsettings
 		Terraria.vsmdi = Terraria.vsmdi
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
 Global
@@ -47,6 +46,12 @@ Global
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Release|x86.ActiveCfg = Release|x86
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Release|x86.Build.0 = Release|x86
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
