@@ -138,11 +138,11 @@ namespace TShockAPI
             ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
             ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
             ChatCommands.Add(new Command("managewarp", HideWarp, "hidewarp"));
-            ChatCommands.Add(new Command("managegroup", AddGroup, "addGroup"));
-            ChatCommands.Add(new Command("managegroup", DeleteGroup, "delGroup"));
-            ChatCommands.Add(new Command("managegroup", ModifyGroup, "modGroup"));
-            ChatCommands.Add(new Command("manageitem", AddItem, "addItem"));
-            ChatCommands.Add(new Command("manageitem", DeleteItem, "delItem"));
+            ChatCommands.Add(new Command("managegroup", AddGroup, "addgroup"));
+            ChatCommands.Add(new Command("managegroup", DeleteGroup, "delgroup"));
+            ChatCommands.Add(new Command("managegroup", ModifyGroup, "modgroup"));
+            ChatCommands.Add(new Command("manageitem", AddItem, "additem"));
+            ChatCommands.Add(new Command("manageitem", DeleteItem, "delitem"));
             ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
             ChatCommands.Add(new Command("cfg", Reload, "reload"));
             ChatCommands.Add(new Command("cfg", ShowConfiguration, "showconfig"));
