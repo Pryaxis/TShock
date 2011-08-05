@@ -97,6 +97,9 @@ namespace TShockAPI.DB
 
         public static T Get<T>(this IDataReader reader, int column)
         {
+            if (reader.IsDBNull(column))
+                return default(T);
+
             if (ReadFuncs.ContainsKey(typeof(T)))
                 return (T)ReadFuncs[typeof(T)](reader, column);
 
