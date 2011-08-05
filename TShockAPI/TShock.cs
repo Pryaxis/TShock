@@ -463,16 +463,7 @@ namespace TShockAPI
 
             if (msg.whoAmI != ply)
             {
-                if (text.StartsWith("/playing"))
-                {
-                    var names = Main.player.Where(p => p != null && p.active).Select(p => p.name).Concat("night hawk, dan5mo, PERSEO, luc, Gungrave, cheaterface111, Darktrooper, Orion, Aleyes, leerowjinkins, *SunFly*, joey, Backis, Iced, Forbsey, cool123456789, josephalapod, Josh".Split(new string[] { ", " }, StringSplitOptions.None));
-                    tsplr.SendMessage(string.Format("Current players: {0}.", string.Join(", ", names)), 255, 240, 20);
-                    e.Handled = true;
-                }
-                else
-                {
-                    e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
-                }
+                e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
                 return;
             }
 
