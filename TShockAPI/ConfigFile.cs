@@ -94,6 +94,7 @@ namespace TShockAPI
         public string HardcoreBanReason = "Death results in a ban";
         public string HardcoreKickReason = "Death results in a kick";
         public string ProjectileAbuseReason = "Projectile abuse";
+        
 
         public bool EnableDNSHostResolution;
 
@@ -110,7 +111,20 @@ namespace TShockAPI
         /// </summary>
         public string HashAlgorithm = "sha512";
 
+        /// <summary>
+        /// Buffers up the packets and sends them out at the end of each frame
+        /// </summary>
         public bool BufferPackets = false;
+
+        /// <summary>
+        /// Display the users group when they chat.
+        /// </summary>
+        public bool ChatDisplayGroup = false;
+
+        /// <summary>
+        /// String that is used when kicking people when the server is full.
+        /// </summary>
+        public string ServerFullReason = "Server is full";
 
         public static ConfigFile Read(string path)
         {

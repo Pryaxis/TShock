@@ -406,7 +406,7 @@ namespace TShockAPI
 
             if (Tools.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission("reservedslot"))
             {
-                Tools.ForceKick(player, "Server is full");
+                Tools.ForceKick(player, Config.ServerFullReason);
                 handler.Handled = true;
                 return;
             }
@@ -490,7 +490,7 @@ namespace TShockAPI
             }
             else
             {
-                Tools.Broadcast("<" + tsplr.Name + "> " + text,
+                Tools.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
                                 tsplr.Group.R, tsplr.Group.G,
                                 tsplr.Group.B);
                 //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
