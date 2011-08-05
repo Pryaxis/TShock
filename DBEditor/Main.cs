@@ -18,6 +18,7 @@ namespace TShockDBEditor
     {
         public OpenFileDialog dialog = new OpenFileDialog();
         public List<Group> groups = new List<Group>();
+        public static List<string> CommandList = new List<string>();
         public IDbConnection DB;
         public string dbtype = "";
 
@@ -25,7 +26,6 @@ namespace TShockDBEditor
         {
             InitializeComponent();
             Itemlist.AddItems();
-            Commandlist.AddCommands();
             dialog.FileOk += new CancelEventHandler(dialog_FileOk);
             dialog.Filter = "SQLite Database (*.sqlite)|*.sqlite";
         }
@@ -50,6 +50,7 @@ namespace TShockDBEditor
                         itemListBanned.Items.Add(reader.Get<string>("ItemName"));
                 }
             }
+
             using (var com = DB.CreateCommand())
             {
                 com.CommandText =
@@ -68,6 +69,21 @@ namespace TShockDBEditor
                         lst_newusergrplist.Items.Add(reader.Get<string>("GroupName"));
                     }
                 }
+
+                using (var reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        foreach (string command in reader.Get<string>("Commands").Split(','))
+                        {
+                            if (!lst_groupList.Items.Contains(command))
+                                if (!CommandList.Contains(command))
+                                    CommandList.Add(command);
+                        }
+                    }
+                }
+
+                TShockCommandsList.AddRemainingTShockCommands();
             }
             using (var com = DB.CreateCommand())
             {
@@ -203,7 +219,10 @@ namespace TShockDBEditor
 
         private void lst_groupList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateGroupIndex(lst_groupList.SelectedIndex);
+            if ((string)lst_groupList.SelectedItem != "superadmin")
+                UpdateGroupIndex(lst_groupList.SelectedIndex);
+            else
+                lst_groupList.SelectedIndex = -1;
         }
 
         private void UpdateGroupIndex(int index)
@@ -238,10 +257,10 @@ namespace TShockDBEditor
                     if (lbl_grpchild.Text == "")
                         lbl_grpchild.Text = "none";
 
-                    for (int i = 0; i < Commandlist.CommandList.Count; i++)
+                    for (int i = 0; i < CommandList.Count; i++)
                     {
-                        if (!lst_AvailableCmds.Items.Contains(Commandlist.CommandList[i]))
-                            lst_bannedCmds.Items.Add(Commandlist.CommandList[i]);
+                        if (!lst_AvailableCmds.Items.Contains(CommandList[i]))
+                            lst_bannedCmds.Items.Add(CommandList[i]);
                     }
                 }
             }
@@ -535,6 +554,8 @@ namespace TShockDBEditor
 
         #endregion
 
+        #region UserTab
+
         private void lst_userlist_SelectedIndexChanged(object sender, EventArgs e)
         {
             txt_username.Text = "None Selected";
@@ -727,6 +748,13 @@ namespace TShockDBEditor
                 var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
                 return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
+        }
+
+        #endregion
+
+        private void TShockDBEditor_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

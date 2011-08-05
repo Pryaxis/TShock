@@ -24,6 +24,7 @@ namespace UnitTests
     public class ItemManagerTest
     {
         public static IDbConnection DB;
+        public static ItemManager manager;
         [TestInitialize]
         public void Initialize()
         {
@@ -32,33 +33,12 @@ namespace UnitTests
 
             DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", "tshock.test.sqlite"));
             DB.Open();
-            /*try
-            {
-                var hostport = Config.MySqlHost.Split(':');
-                DB = new MySqlConnection();
-                DB.ConnectionString = String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
-                    hostport[0],
-                    hostport.Length > 1 ? hostport[1] : "3306",
-                    Config.MySqlDbName,
-                    Config.MySqlUsername,
-                    Config.MySqlPassword
-                );
-                DB.Open();
-            }
-            catch (MySqlException ex)
-            {
-                Log.Error(ex.ToString());
-                throw new Exception("MySql not setup correctly");
-            }*/
+            manager = new ItemManager(DB);
         }
 
         [TestMethod]
         public void SQLiteItemTest_AddBan()
         {
-            //
-            // TODO: Add test logic here
-            //
-            ItemManager manager = new ItemManager(DB);
             Assert.IsNotNull(manager);
             Assert.IsFalse( manager.ItemIsBanned("Dirt Block"), "Item isn't banned" );
             manager.AddNewBan("Dirt Block");
@@ -74,10 +54,7 @@ namespace UnitTests
         [TestMethod]
         public void SQLiteItemTest_RemoveBan()
         {
-            //
-            // TODO: Add test logic here
-            //
-            ItemManager manager = new ItemManager(DB);
+            manager = new ItemManager(DB);
             Assert.IsNotNull(manager);
             Assert.AreEqual(2, manager.ItemBans.Count);
             manager.AddNewBan("Dirt Block");

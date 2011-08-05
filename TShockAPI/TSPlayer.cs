@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
-using TShockAPI.DB;
 using TShockAPI.Net;
 
 namespace TShockAPI
@@ -38,21 +38,22 @@ namespace TShockAPI
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
-        public Rectangle TempArea = new Rectangle();
+        public Rectangle TempArea;
         public DateTime LastExplosive { get; set; }
         public DateTime LastTileChangeNotify { get; set; }
-        public bool InitSpawn = false;
+        public bool InitSpawn;
         public bool DisplayLogs = true;
         public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
         public Vector2 TeleportCoords = new Vector2(-1, -1);
         public string UserAccountName { get; set; }
-        public bool HasBeenSpammedWithBuildMessage = false;
-        public bool IsLoggedIn = false;
+        public bool HasBeenSpammedWithBuildMessage;
+        public bool IsLoggedIn;
         public int UserID = -1;
-        public bool HasBeenNaggedAboutLoggingIn = false;
-        Player FakePlayer = null;
+        public bool HasBeenNaggedAboutLoggingIn;
+        public bool TpLock = false;
+        Player FakePlayer;
 
         public bool RealPlayer
         {
@@ -184,52 +185,29 @@ namespace TShockAPI
 
         public bool Teleport(int tilex, int tiley)
         {
-            InitSpawn = false;
-
-            SendTeleport(tilex, tiley);
-
-            //150 Should avoid all client crash errors
-            //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
-            //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tilex, tiley, 150))
+            if (!TpLock)
             {
-                SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
-                return false;
-            }
+                InitSpawn = false;
 
-            if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
-            {
-                int spX = TPlayer.SpawnX;
-                int spY = TPlayer.SpawnY;
-                Main.tile[spX, spY].active = false;
-                SendTileSquare(spX, spY);
+                SendTeleport(tilex, tiley);
+
+                //150 Should avoid all client crash errors
+                //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
+                //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
+                if (!SendTileSquare(tilex, tiley))
+                {
+                    SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
+                    return false;
+                }
+
                 Spawn();
-                Main.tile[spX, spY].active = true;
-                SendTileSquare(spX, spY);
-                oldSpawn = new Vector2(spX, spY);
-            }
-            else
-            {
-                //Checks if Player has spawn point set (Server may think player does not have spawn)
-                if (oldSpawn != Vector2.Zero)
-                {
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = false;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    Spawn();
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = true;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    NetMessage.syncPlayers();
-                }
-                //Player has no spawn point set
-                else
-                {
-                    Spawn();
-                }
-            }
 
-            SendTeleport(Main.spawnTileX, Main.spawnTileY);
+                SendTeleport(Main.spawnTileX, Main.spawnTileY);
 
-            return true;
+                return true;
+            }
+            SendMessage("Cannot teleport due to TP Lock", Color.Red);
+            return false;
         }
 
         public void Spawn()
@@ -241,7 +219,7 @@ namespace TShockAPI
         {
             try
             {
-                SendData(PacketTypes.TileSendSquare, "", size, (float)(x - (size / 2)), (float)(y - (size / 2)));
+                SendData(PacketTypes.TileSendSquare, "", size, (x - (size / 2)), (y - (size / 2)));
                 return true;
             }
             catch (Exception ex)
@@ -253,7 +231,7 @@ namespace TShockAPI
 
         public virtual void GiveItem(int type, string name, int width, int height, int stack)
         {
-            int itemid = Terraria.Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
+            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
             // This is for special pickaxe/hammers/swords etc
             Main.item[itemid].SetDefaults(name);
             // The set default overrides the wet and stack set by NewItem
@@ -296,6 +274,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
         }
 
+        public virtual void SetTeam(int team)
+        {
+            Main.player[Index].team = team;
+            SendData(PacketTypes.PlayerTeam, "", Index);
+        }
+
         public virtual void Whoopie(object time)
         {
             var time2 = (int)time;
@@ -310,18 +294,18 @@ namespace TShockAPI
             {
                 Main.player[0].inventory[player].SetDefaults("Whoopie Cushion");
                 Main.player[0].inventory[player].stack = 1;
-                SendData(TerrariaAPI.PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
+                SendData(PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
                 Main.player[player].position = TPlayer.position;
                 Main.player[player].selectedItem = 0;
                 Main.player[player].controlUseItem = true;
-                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
-                System.Threading.Thread.Sleep(500);
+                SendData(PacketTypes.PlayerUpdate, number: player);
+                Thread.Sleep(500);
                 Main.player[player].controlUseItem = false;
-                SendData(TerrariaAPI.PacketTypes.PlayerUpdate, number: player);
-                System.Threading.Thread.Sleep(50);
+                SendData(PacketTypes.PlayerUpdate, number: player);
+                Thread.Sleep(50);
             }
             Main.player[0].inventory[0] = oriinv;
-            SendData(TerrariaAPI.PacketTypes.PlayerSlot, oriinv.name, player, 0f);
+            SendData(PacketTypes.PlayerSlot, oriinv.name, player, 0f);
         }
 
         //Todo: Separate this into a few functions. SendTo, SendToAll, etc
@@ -423,7 +407,7 @@ namespace TShockAPI
             // Send all players updated tile sqaures
             foreach (Vector2 coords in destroyedTiles.Keys)
             {
-                TSPlayer.All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
+                All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }
         }
     }

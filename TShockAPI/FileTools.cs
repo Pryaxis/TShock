@@ -17,17 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.IO;
-using Terraria;
 
 namespace TShockAPI
 {
-    internal class FileTools
+    public class FileTools
     {
-        public static string RulesPath { get { return Path.Combine(TShock.SavePath, "rules.txt"); } }
-        public static string MotdPath { get { return Path.Combine(TShock.SavePath, "motd.txt"); } }
-        public static string WhitelistPath { get { return Path.Combine(TShock.SavePath, "whitelist.txt"); } }
-        public static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
-        public static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
+        internal static string RulesPath { get { return Path.Combine(TShock.SavePath, "rules.txt"); } }
+        internal static string MotdPath { get { return Path.Combine(TShock.SavePath, "motd.txt"); } }
+        internal static string WhitelistPath { get { return Path.Combine(TShock.SavePath, "whitelist.txt"); } }
+        internal static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
+        internal static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
 
         public static void CreateFile(string file)
         {

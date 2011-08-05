@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
-using Community.CsharpSqlite.SQLiteClient;
-using TShockAPI.DB;
 using System.IO;
+using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
@@ -18,48 +15,42 @@ namespace TShockAPI.DB
         {
             database = db;
 
-            using (var com = database.CreateCommand())
+            var table = new SqlTable("ItemBans",
+                new SqlColumn("ItemName", MySqlDbType.VarChar, 50) { Primary = true }
+            );
+            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
+            creator.EnsureExists(table);
+
+            String file = Path.Combine(TShock.SavePath, "itembans.txt");
+            if (File.Exists(file))
             {
-                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS 'ItemBans' ('ItemName' TEXT PRIMARY KEY);";
-                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                    com.CommandText =
-                        "CREATE TABLE IF NOT EXISTS ItemBans (ItemName VARCHAR(255) PRIMARY);";
-                com.ExecuteNonQuery();
-
-                String file = Path.Combine(TShock.SavePath, "itembans.txt");
-                if (File.Exists(file))
+                using (StreamReader sr = new StreamReader(file))
                 {
-                    using (StreamReader sr = new StreamReader(file))
+                    String line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        String line;
-                        while ((line = sr.ReadLine()) != null)
+                        if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
                         {
-                            if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
-                            {
-                                if (TShock.Config.StorageType.ToLower() == "sqlite")
-                                    com.CommandText = "INSERT OR IGNORE INTO 'ItemBans' (ItemName) VALUES (@name);";
-                                else if (TShock.Config.StorageType.ToLower() == "mysql")
-                                    com.CommandText = "INSERT IGNORE INTO ItemBans SET ItemName=@name;";
 
-                                int id = 0;
-                                int.TryParse(line, out id);
-                                com.AddParameter("@name", Tools.GetItemById(id).name);
-                                com.ExecuteNonQuery();
-                                com.Parameters.Clear();
-                            }
+                            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                                "INSERT OR IGNORE INTO 'ItemBans' (ItemName) VALUES (@0);" :
+                                "INSERT IGNORE INTO ItemBans SET ItemName=@0;";
+
+                            int id = 0;
+                            int.TryParse(line, out id);
+
+                            database.Query(query, Tools.GetItemById(id).name);
                         }
                     }
-
-                    String path = Path.Combine(TShock.SavePath, "old_configs");
-                    String file2 = Path.Combine(path, "itembans.txt");
-                    if (!Directory.Exists(path))
-                        System.IO.Directory.CreateDirectory(path);
-                    if (File.Exists(file2))
-                        File.Delete(file2);
-                    File.Move(file, file2);
                 }
+
+                String path = Path.Combine(TShock.SavePath, "old_configs");
+                String file2 = Path.Combine(path, "itembans.txt");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                if (File.Exists(file2))
+                    File.Delete(file2);
+                File.Move(file, file2);
             }
 
             UpdateItemBans();
@@ -68,29 +59,20 @@ namespace TShockAPI.DB
         public void UpdateItemBans()
         {
             ItemBans.Clear();
-            using (var com = database.CreateCommand())
-            {
-                com.CommandText = "SELECT * FROM ItemBans";
 
-                using (var reader = com.ExecuteReader())
-                {
-                    while (reader!=null&&reader.Read())
-                        ItemBans.Add(reader.Get<string>("ItemName"));
-                }
+            using (var reader = database.QueryReader("SELECT * FROM ItemBans"))
+            {
+                while (reader != null && reader.Read())
+                    ItemBans.Add(reader.Get<string>("ItemName"));
             }
         }
         public void AddNewBan(string itemname = "")
         {
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "INSERT INTO ItemBans (ItemName) VALUES (@itemname);";
-                    com.AddParameter("@itemname", Tools.GetItemByName(itemname)[0].name);
-                    com.ExecuteNonQuery();
-                    if( !ItemIsBanned( itemname ) )
-                        ItemBans.Add(itemname);
-                }
+                database.Query("INSERT INTO ItemBans (ItemName) VALUES (@0);", Tools.GetItemByName(itemname)[0].name);
+                if (!ItemIsBanned(itemname))
+                    ItemBans.Add(itemname);
             }
             catch (Exception ex)
             {
@@ -104,13 +86,8 @@ namespace TShockAPI.DB
                 return;
             try
             {
-                using (var com = database.CreateCommand())
-                {
-                    com.CommandText = "Delete FROM 'ItemBans' WHERE ItemName=@itemname;";
-                    com.AddParameter("@itemname", Tools.GetItemByName(itemname)[0].name);
-                    com.ExecuteNonQuery();
-                    ItemBans.Remove(itemname);
-                }
+                database.Query("Delete FROM 'ItemBans' WHERE ItemName=@0;", Tools.GetItemByName(itemname)[0].name);
+                ItemBans.Remove(itemname);
             }
             catch (Exception ex)
             {

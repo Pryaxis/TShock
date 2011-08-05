@@ -18,17 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Net;
 using Microsoft.Xna.Framework;
 using Terraria;
-using System.Linq;
+using TerrariaAPI;
 
 namespace TShockAPI
 {
-    internal class Tools
+    public class Tools
     {
         public static Random Random = new Random();
         //private static List<Group> groups = new List<Group>();
@@ -145,7 +146,7 @@ namespace TShockAPI
             TSPlayer.Server.SendMessage(log, color);
             foreach (TSPlayer player in TShock.Players)
             {
-                if (player != null && player.Active && player.Group.HasPermission("logs") && player.DisplayLogs)
+                if (player != null && player.Active && player.Group.HasPermission("logs") && player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
                     player.SendMessage(log, color);
             }
         }
@@ -312,7 +313,7 @@ namespace TShockAPI
         /// <param name="reason">string reason</param>
         public static void ForceKickAll(string reason)
         {
-            foreach(TSPlayer player in TShock.Players)
+            foreach (TSPlayer player in TShock.Players)
             {
                 if (player != null && player.Active)
                 {
@@ -486,6 +487,15 @@ namespace TShockAPI
             return ip != null ? ip.ToString() : "";
         }
 
+        public static HashAlgorithm HashAlgo = new MD5Cng();
+
+        public static readonly Dictionary<string, Type> HashTypes = new Dictionary<string, Type>
+                                                                        {
+            {"sha512", typeof(SHA512Managed)},
+            {"sha256", typeof(SHA256Managed)},
+            {"md5", typeof(MD5Cng)},
+        };
+
         /// <summary>
         /// Returns a Sha256 string for a given string
         /// </summary>
@@ -493,15 +503,10 @@ namespace TShockAPI
         /// <returns>string sha256</returns>
         public static string HashPassword(string password)
         {
-            using (var sha = new SHA512CryptoServiceProvider())
-            {
-                if (password == "")
-                {
-                    return "nonexistent-password";
-                }
-                var bytes = sha.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
-            }
+            if (string.IsNullOrEmpty(password) || password == "non-existant password")
+                return "non-existant password";
+            var bytes = HashAlgo.ComputeHash(Encoding.ASCII.GetBytes(password));
+            return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
         }
 
         /// <summary>

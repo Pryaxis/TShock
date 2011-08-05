@@ -32,7 +32,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\serverplugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -93,22 +93,31 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\BanManager.cs" />
+    <Compile Include="DBTools.cs" />
+    <Compile Include="DB\IQueryBuilder.cs" />
     <Compile Include="DB\ItemManager.cs" />
-    <Compile Include="DB\DbExt.cs" />
+    <Compile Include="DB\SqlColumn.cs" />
+    <Compile Include="DB\SqlTable.cs" />
+    <Compile Include="DB\SqlValue.cs" />
+    <Compile Include="Extensions\DbExt.cs" />
     <Compile Include="DB\GroupManager.cs" />
     <Compile Include="DB\UserManager.cs" />
+    <Compile Include="Extensions\RandomExt.cs" />
+    <Compile Include="Extensions\StringExt.cs" />
     <Compile Include="IPackable.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="GetDataHandlers.cs" />
     <Compile Include="Group.cs" />
+    <Compile Include="Extensions\LinqExt.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Net\NetTile.cs" />
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="DB\RegionManager.cs" />
+    <Compile Include="PacketBufferer.cs" />
     <Compile Include="RconHandler.cs" />
-    <Compile Include="RememberPosManager.cs" />
+    <Compile Include="DB\RememberPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
