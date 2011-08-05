@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
@@ -26,6 +22,7 @@ namespace TShockAPI
 
         int[] Bytes = new int[52];
         int[] Packets = new int[52];
+        int[] Compressed = new int[52];
 
         Command dump;
         Command flush;
@@ -36,10 +33,12 @@ namespace TShockAPI
             for (int i = 0; i < buffers.Length; i++)
                 buffers[i] = new PacketBuffer();
 
+#if DEBUG_NET
             dump = new Command("superadmin", Dump, "netdump");
             flush = new Command("superadmin", Flush, "netflush");
             Commands.ChatCommands.Add(dump);
             Commands.ChatCommands.Add(flush);
+#endif
 
             ServerHooks.SendBytes += ServerHooks_SendBytes;
             ServerHooks.SocketReset += ServerHooks_SocketReset;
@@ -48,8 +47,10 @@ namespace TShockAPI
 
         public void Dispose()
         {
+#if DEBUG_NET
             Commands.ChatCommands.Remove(dump);
             Commands.ChatCommands.Remove(flush);
+#endif
             ServerHooks.SendBytes -= ServerHooks_SendBytes;
             ServerHooks.SocketReset -= ServerHooks_SocketReset;
             GameHooks.PostUpdate -= GameHooks_Update;
@@ -58,17 +59,19 @@ namespace TShockAPI
         void Dump(CommandArgs args)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("{0}{1}{2}".SFormat("Name:".PadRight(25, ' '), "Packets".PadRight(10, ' '), "Bytes"));
+            sb.AppendLine("{0,-25}{1,-25}{2,-25}{3}".SFormat("Name:", "Packets", "Bytes", "Compression"));
             for (int i = 1; i < Bytes.Length; i++)
             {
-                sb.AppendLine("{0}{1}{2}".SFormat((Enum.GetName(typeof(PacketTypes), i) + ":").PadRight(25, ' '), Packets[i].ToString().PadRight(10, ' '), Bytes[i]));
+                sb.AppendLine("{0,-25}{1,-25}{2,-25}{3}".SFormat(Enum.GetName(typeof(PacketTypes), i) + ":", Packets[i], Bytes[i], Compressed[i]));
             }
             File.WriteAllText(Path.Combine(TShock.SavePath, "dmp.txt"), sb.ToString());
         }
+
         void Flush(CommandArgs args)
         {
             Bytes = new int[52];
             Packets = new int[52];
+            Compressed = new int[52];
         }
 
         void GameHooks_Update(GameTime obj)
@@ -109,14 +112,30 @@ namespace TShockAPI
             e.Handled = true;
             lock (buffers[socket.whoAmI])
             {
+#if DEBUG_NET
+                int size = (count - offset);
                 var pt = buffer[offset + 4];
+
                 Packets[pt]++;
-                Bytes[pt] += (count - offset);
+                Bytes[pt] += size;
+                Compressed[pt] += Compress(buffer, offset, count);
+#endif
                 buffers[socket.whoAmI].AddRange(new MemoryStream(buffer, offset, count).ToArray());
             }
         }
-
-
+#if DEBUG_NET
+        static int Compress(byte[] buffer, int offset, int count)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var gzip = new GZipStream(ms, CompressionMode.Compress, true))
+                {
+                    gzip.Write(buffer, offset, count);
+                }
+                return (int)ms.Length;
+            }
+        }
+#endif
     }
 
     public class PacketBuffer : List<byte>
