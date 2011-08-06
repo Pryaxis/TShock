@@ -54,6 +54,7 @@ namespace TShockAPI.DB
 
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void ImportOld()
         {
             String file = Path.Combine(TShock.SavePath, "regions.xml");
@@ -62,77 +63,74 @@ namespace TShockAPI.DB
 
             Region region;
             Rectangle rect;
-            using (var sr = new StreamReader(file))
+
+            using (var reader = XmlReader.Create(new StreamReader(file), new XmlReaderSettings { CloseInput = true }))
             {
-                using (var reader = XmlReader.Create(sr))
+                // Parse the file and display each of the nodes.
+                while (reader.Read())
                 {
-                    // Parse the file and display each of the nodes.
-                    while (reader.Read())
+                    if (reader.NodeType != XmlNodeType.Element || reader.Name != "ProtectedRegion")
+                        continue;
+
+                    region = new Region();
+                    rect = new Rectangle();
+
+                    bool endregion = false;
+                    while (reader.Read() && !endregion)
                     {
-                        if (reader.NodeType != XmlNodeType.Element || reader.Name != "ProtectedRegion")
+                        if (reader.NodeType != XmlNodeType.Element)
                             continue;
 
-                        region = new Region();
-                        rect = new Rectangle();
+                        string name = reader.Name;
 
-                        bool endregion = false;
-                        while (reader.Read() && !endregion)
+                        while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
+
+                        switch (name)
                         {
-                            if (reader.NodeType != XmlNodeType.Element)
-                                continue;
-
-                            string name = reader.Name;
-
-                            while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
-
-                            switch (name)
-                            {
-                                case "RegionName":
-                                    region.Name = reader.Value;
-                                    break;
-                                case "Point1X":
-                                    int.TryParse(reader.Value, out rect.X);
-                                    break;
-                                case "Point1Y":
-                                    int.TryParse(reader.Value, out rect.Y);
-                                    break;
-                                case "Point2X":
-                                    int.TryParse(reader.Value, out rect.Width);
-                                    break;
-                                case "Point2Y":
-                                    int.TryParse(reader.Value, out rect.Height);
-                                    break;
-                                case "Protected":
-                                    region.DisableBuild = reader.Value.ToLower().Equals("true");
-                                    break;
-                                case "WorldName":
-                                    region.WorldID = reader.Value;
-                                    break;
-                                case "AllowedUserCount":
-                                    break;
-                                case "IP":
-                                    region.AllowedIDs.Add(int.Parse(reader.Value));
-                                    break;
-                                default:
-                                    endregion = true;
-                                    break;
-                            }
-                        }
-
-                        region.Area = rect;
-                        using (var com = database.CreateCommand())
-                        {
-                            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                                "INSERT OR IGNORE INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);" :
-                                "INSERT IGNORE INTO Regions SET X1=@0, Y1=@1, height=@2, width=@3, RegionName=@4, WorldID=@5, UserIds=@6, Protected=@7;";
-                            database.Query(query, region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Name, region.WorldID, "", region.DisableBuild);
-
-                            //Todo: What should this be? We don't really have a way to go from ips to userids
-                            /*string.Join(",", region.AllowedIDs)*/
+                            case "RegionName":
+                                region.Name = reader.Value;
+                                break;
+                            case "Point1X":
+                                int.TryParse(reader.Value, out rect.X);
+                                break;
+                            case "Point1Y":
+                                int.TryParse(reader.Value, out rect.Y);
+                                break;
+                            case "Point2X":
+                                int.TryParse(reader.Value, out rect.Width);
+                                break;
+                            case "Point2Y":
+                                int.TryParse(reader.Value, out rect.Height);
+                                break;
+                            case "Protected":
+                                region.DisableBuild = reader.Value.ToLower().Equals("true");
+                                break;
+                            case "WorldName":
+                                region.WorldID = reader.Value;
+                                break;
+                            case "AllowedUserCount":
+                                break;
+                            case "IP":
+                                region.AllowedIDs.Add(int.Parse(reader.Value));
+                                break;
+                            default:
+                                endregion = true;
+                                break;
                         }
                     }
+
+                    region.Area = rect;
+                    string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                        "INSERT OR IGNORE INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);" :
+                        "INSERT IGNORE INTO Regions SET X1=@0, Y1=@1, height=@2, width=@3, RegionName=@4, WorldID=@5, UserIds=@6, Protected=@7;";
+                    database.Query(query, region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Name, region.WorldID, "", region.DisableBuild);
+
+                    //Todo: What should this be? We don't really have a way to go from ips to userids
+                    /*string.Join(",", region.AllowedIDs)*/
+
                 }
             }
+
             String path = Path.Combine(TShock.SavePath, "old_configs");
             String file2 = Path.Combine(path, "regions.xml");
             if (!Directory.Exists(path))

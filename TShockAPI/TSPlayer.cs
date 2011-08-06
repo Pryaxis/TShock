@@ -178,9 +178,11 @@ namespace TShockAPI
             };
 
 
-            var ms = new MemoryStream();
-            msg.PackFull(ms);
-            SendRawData(ms.ToArray());
+            using (var ms = new MemoryStream())
+            {
+                msg.PackFull(ms);
+                SendRawData(ms.ToArray());
+            }
         }
 
         public bool Teleport(int tilex, int tiley)

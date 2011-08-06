@@ -797,9 +797,10 @@ namespace TShockAPI
         {
             if (args.Parameters.Count == 1)
             {
-                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
-                tw.WriteLine(args.Parameters[0]);
-                tw.Close();
+                using (var tw = new StreamWriter(FileTools.WhitelistPath, true))
+                {
+                    tw.WriteLine(args.Parameters[0]);
+                }
                 args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
             }
         }
@@ -862,31 +863,38 @@ namespace TShockAPI
             ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private static void UpdateNow(CommandArgs args)
         {
             Process TServer = Process.GetCurrentProcess();
 
-            StreamWriter sw = new StreamWriter("pid");
-            sw.Write(TServer.Id);
-            sw.Close();
+            using (var sw = new StreamWriter("pid"))
+            {
+                sw.Write(TServer.Id);
+            }
 
-            sw = new StreamWriter("pn");
-            sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
-            sw.Close();
+            using (var sw = new StreamWriter("pn"))
+            {
+                sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
+            }
 
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "TShock");
-            byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("user-agent", "TShock");
+                byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
 
-            BinaryWriter bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create));
-            bw.Write(updatefile);
-            bw.Close();
+                using (var bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create)))
+                {
+                    bw.Write(updatefile);
+                }
+            }
 
             Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
 
             Tools.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
+
         }
 
         #endregion Server Maintenence Commands
@@ -1237,7 +1245,7 @@ namespace TShockAPI
                         args.Player.SendMessage("Could not find specified warp", Color.Red);
                 }
                 else
-                    args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);                
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
             }
             else
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
@@ -1330,10 +1338,10 @@ namespace TShockAPI
             {
                 String groupname = args.Parameters[0];
                 args.Parameters.RemoveAt(0);
-                String permissions = String.Join(",", args.Parameters );
+                String permissions = String.Join(",", args.Parameters);
 
                 String response = TShock.Groups.AddGroup(groupname, permissions);
-                if( response.Length > 0 )
+                if (response.Length > 0)
                     args.Player.SendMessage(response, Color.Green);
             }
             else
@@ -1389,7 +1397,7 @@ namespace TShockAPI
         #endregion Group Management
 
         #region Item Management
-       
+
         private static void AddItem(CommandArgs args)
         {
             if (args.Parameters.Count > 0)
@@ -2231,9 +2239,9 @@ namespace TShockAPI
             args.Parameters.RemoveAt(0);
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
-            if( args.Parameters.Count > 0 )
+            if (args.Parameters.Count > 0)
                 int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-            
+
 
             if (items.Count == 0)
             {

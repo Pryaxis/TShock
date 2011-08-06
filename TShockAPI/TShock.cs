@@ -94,6 +94,7 @@ namespace TShockAPI
             Order = 0;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
             if (!Directory.Exists(SavePath))
@@ -315,15 +316,17 @@ namespace TShockAPI
                 Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
-                TextWriter tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt"));
-                tw.WriteLine(AuthToken);
-                tw.Close();
+                using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
+                {
+                    tw.WriteLine(AuthToken);
+                }
             }
             else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
             {
-                TextReader tr = new StreamReader(Path.Combine(SavePath, "authcode.txt"));
-                AuthToken = Convert.ToInt32(tr.ReadLine());
-                tr.Close();
+                using (var tr = new StreamReader(Path.Combine(SavePath, "authcode.txt")))
+                {
+                    AuthToken = Convert.ToInt32(tr.ReadLine());
+                }
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(
                     "TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");

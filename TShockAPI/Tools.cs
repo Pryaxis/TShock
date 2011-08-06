@@ -428,34 +428,36 @@ namespace TShockAPI
         public static void ShowFileToUser(TSPlayer player, string file)
         {
             string foo = "";
-            TextReader tr = new StreamReader(Path.Combine(TShock.SavePath, file));
-            while ((foo = tr.ReadLine()) != null)
+            using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
             {
-                foo = foo.Replace("%map%", Main.worldName);
-                foo = foo.Replace("%players%", GetPlayers());
-                if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
+                while ((foo = tr.ReadLine()) != null)
                 {
-                    string possibleColor = foo.Substring(0, 13);
-                    foo = foo.Remove(0, 13);
-                    float[] pC = { 0, 0, 0 };
-                    possibleColor = possibleColor.Replace("%", "");
-                    string[] pCc = possibleColor.Split(',');
-                    if (pCc.Length == 3)
+                    foo = foo.Replace("%map%", Main.worldName);
+                    foo = foo.Replace("%players%", GetPlayers());
+                    if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
                     {
-                        try
+                        string possibleColor = foo.Substring(0, 13);
+                        foo = foo.Remove(0, 13);
+                        float[] pC = {0, 0, 0};
+                        possibleColor = possibleColor.Replace("%", "");
+                        string[] pCc = possibleColor.Split(',');
+                        if (pCc.Length == 3)
                         {
-                            player.SendMessage(foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]), (byte)Convert.ToInt32(pCc[2]));
-                            continue;
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e.ToString());
+                            try
+                            {
+                                player.SendMessage(foo, (byte) Convert.ToInt32(pCc[0]), (byte) Convert.ToInt32(pCc[1]),
+                                                   (byte) Convert.ToInt32(pCc[2]));
+                                continue;
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error(e.ToString());
+                            }
                         }
                     }
+                    player.SendMessage(foo);
                 }
-                player.SendMessage(foo);
             }
-            tr.Close();
         }
 
         /// <summary>

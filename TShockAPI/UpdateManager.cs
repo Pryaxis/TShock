@@ -55,26 +55,28 @@ namespace TShockAPI
         /// <returns></returns>
         private static bool ServerIsOutOfDate()
         {
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent",
-                               "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
-            try
+            using (var client = new WebClient())
             {
-                string updateString = client.DownloadString(updateUrl);
-                string[] changes = updateString.Split(',');
-                Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
-                                                    Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
-                if (TShock.VersionNum.CompareTo(updateVersion) < 0)
+                client.Headers.Add("user-agent",
+                                   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+                try
                 {
-                    globalChanges = changes;
-                    return true;
+                    string updateString = client.DownloadString(updateUrl);
+                    string[] changes = updateString.Split(',');
+                    Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
+                                                        Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
+                    if (TShock.VersionNum.CompareTo(updateVersion) < 0)
+                    {
+                        globalChanges = changes;
+                        return true;
+                    }
                 }
+                catch (Exception e)
+                {
+                    Log.Error(e.ToString());
+                }
+                return false;
             }
-            catch (Exception e)
-            {
-                Log.Error(e.ToString());
-            }
-            return false;
         }
 
         private static void NotifyAdministrators(string[] changes)

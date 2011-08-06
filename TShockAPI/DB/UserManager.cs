@@ -350,6 +350,7 @@ namespace TShockAPI.DB
         }
     }
 
+    [Serializable]
     public class UserManagerException : Exception
     {
         public UserManagerException(string message)
@@ -363,6 +364,7 @@ namespace TShockAPI.DB
 
         }
     }
+    [Serializable]
     public class UserExistsException : UserManagerException
     {
         public UserExistsException(string name)
@@ -370,6 +372,7 @@ namespace TShockAPI.DB
         {
         }
     }
+    [Serializable]
     public class UserNotExistException : UserManagerException
     {
         public UserNotExistException(string name)
@@ -377,7 +380,7 @@ namespace TShockAPI.DB
         {
         }
     }
-
+    [Serializable]
     public class GroupNotExistsException : UserManagerException
     {
         public GroupNotExistsException(string group)
