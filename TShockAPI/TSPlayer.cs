@@ -200,7 +200,35 @@ namespace TShockAPI
                     return false;
                 }
 
-                Spawn();
+                if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
+                {
+                    int spX = TPlayer.SpawnX;
+                    int spY = TPlayer.SpawnY;
+                    Main.tile[spX, spY].active = false;
+                    SendTileSquare(spX, spY);
+                    Spawn();
+                    Main.tile[spX, spY].active = true;
+                    SendTileSquare(spX, spY);
+                    oldSpawn = new Vector2(spX, spY);
+                }
+                else
+                {
+                    //Checks if Player has spawn point set (Server may think player does not have spawn)
+                    if (oldSpawn != Vector2.Zero)
+                    {
+                        Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = false;
+                        SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
+                        Spawn();
+                        Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = true;
+                        SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
+                        NetMessage.syncPlayers();
+                    }
+                      //Player has no spawn point set
+                    else
+                    {
+                        Spawn();
+                    }
+                }
 
                 SendTeleport(Main.spawnTileX, Main.spawnTileY);
 
