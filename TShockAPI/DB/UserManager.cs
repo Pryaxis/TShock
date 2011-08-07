@@ -178,34 +178,6 @@ namespace TShockAPI.DB
             }
         }
 
-
-        /// <summary>
-        /// Fetches the hashed password and group for a given username
-        /// </summary>
-        /// <param name="username">string username</param>
-        /// <returns>string[] {password, group}</returns>
-        public string[] FetchHashedPasswordAndGroup(string username)
-        {
-            string[] returndata = new string[2];
-            try
-            {
-                using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
-                {
-                    if (reader.Read())
-                    {
-                        returndata[0] = reader.Get<string>("Password");
-                        returndata[1] = reader.Get<string>("UserGroup");
-                        return returndata;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
-            }
-            return returndata;
-        }
-
         public int GetUserID(string username)
         {
             try
@@ -314,6 +286,9 @@ namespace TShockAPI.DB
                     {
                         user.ID = reader.Get<int>("ID");
                         user.Group = reader.Get<string>("Usergroup");
+                        user.Password = reader.Get<string>("Password");
+                        user.Name = reader.Get<string>("Username");
+                        user.Address = reader.Get<string>("IP");
                         return user;
                     }
                 }

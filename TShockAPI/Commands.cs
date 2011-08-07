@@ -316,10 +316,10 @@ namespace TShockAPI
             try
             {
                 string encrPass = Tools.HashPassword(args.Parameters[1]);
-                string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
-                if (exr[0].ToUpper() == encrPass.ToUpper())
+                var user = TShock.Users.GetUserByName(args.Parameters[0]);
+                if (user.Password.ToUpper() == encrPass.ToUpper())
                 {
-                    args.Player.Group = Tools.GetGroup(exr[1]);
+                    args.Player.Group = Tools.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
                     args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
@@ -351,8 +351,7 @@ namespace TShockAPI
                 {
                     var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
                     string encrPass = Tools.HashPassword(args.Parameters[0]);
-                    string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Player.UserAccountName);
-                    if (exr[0].ToUpper() == encrPass.ToUpper())
+                    if (user.Password.ToUpper() == encrPass.ToUpper())
                     {
                         args.Player.SendMessage("You changed your password!", Color.Green);
                         TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
