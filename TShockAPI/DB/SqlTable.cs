@@ -76,5 +76,10 @@ namespace TShockAPI.DB
 
             return ret;
         }
+
+        public void DeleteRow(string table, List<SqlValue> wheres)
+        {
+            database.Query(creator.DeleteRow(table, wheres));
+        }
     }
 }
