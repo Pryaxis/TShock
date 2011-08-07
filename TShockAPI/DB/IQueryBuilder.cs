@@ -68,7 +68,7 @@ namespace TShockAPI.DB
             {
                 sbwheres.Append(where.Name + "=" + where.Value.ToString());
                 if (count != wheres.Count - 1)
-                    sbvalues.Append(" AND ");
+                    sbwheres.Append(" AND ");
                 count++;
             }
 
@@ -99,7 +99,6 @@ namespace TShockAPI.DB
                     sbvalues.Append(", ");
                 count++;
             }
-
             return "INSERT INTO '{0}' ({1}) VALUES ({2})".SFormat(table, sbnames.ToString(), sbvalues.ToString());
         }
         public string ReadColumn(string table, List<SqlValue> wheres)
@@ -182,7 +181,7 @@ namespace TShockAPI.DB
             {
                 sbwheres.Append(where.Name + "=" + where.Value.ToString());
                 if (count != wheres.Count - 1)
-                    sbvalues.Append(" AND ");
+                    sbwheres.Append(" AND ");
                 count++;
             }
 
