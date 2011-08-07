@@ -448,54 +448,57 @@ namespace TShockAPI
 
         private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
         {
-            var tsplr = Players[msg.whoAmI];
-            if (tsplr == null)
+            if (!e.Handled)
             {
-                e.Handled = true;
-                return;
-            }
-
-            if (!Tools.ValidString(text))
-            {
-                Tools.Kick(tsplr, "Unprintable character in chat");
-                e.Handled = true;
-                return;
-            }
-
-            if (msg.whoAmI != ply)
-            {
-                e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
-                return;
-            }
-
-            if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && Config.AdminChatEnabled)
-            {
-                Tools.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
-                                tsplr.Group.R, tsplr.Group.G,
-                                tsplr.Group.B);
-                e.Handled = true;
-                return;
-            }
-
-            if (text.StartsWith("/"))
-            {
-                try
+                var tsplr = Players[msg.whoAmI];
+                if (tsplr == null)
                 {
-                    e.Handled = Commands.HandleCommand(tsplr, text);
+                    e.Handled = true;
+                    return;
                 }
-                catch (Exception ex)
+
+                if (!Tools.ValidString(text))
                 {
-                    Log.ConsoleError("Command exception");
-                    Log.Error(ex.ToString());
+                    Tools.Kick(tsplr, "Unprintable character in chat");
+                    e.Handled = true;
+                    return;
                 }
-            }
-            else
-            {
-                Tools.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
-                                tsplr.Group.R, tsplr.Group.G,
-                                tsplr.Group.B);
-                //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
-                e.Handled = true;
+
+                if (msg.whoAmI != ply)
+                {
+                    e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
+                    return;
+                }
+
+                if (tsplr.Group.HasPermission("adminchat") && !text.StartsWith("/") && Config.AdminChatEnabled)
+                {
+                    Tools.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
+                                    tsplr.Group.R, tsplr.Group.G,
+                                    tsplr.Group.B);
+                    e.Handled = true;
+                    return;
+                }
+
+                if (text.StartsWith("/"))
+                {
+                    try
+                    {
+                        e.Handled = Commands.HandleCommand(tsplr, text);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ConsoleError("Command exception");
+                        Log.Error(ex.ToString());
+                    }
+                }
+                else
+                {
+                    Tools.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
+                                    tsplr.Group.R, tsplr.Group.G,
+                                    tsplr.Group.B);
+                    //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
+                    e.Handled = true;
+                }
             }
         }
 
@@ -557,42 +560,45 @@ namespace TShockAPI
 
         private void GetData(GetDataEventArgs e)
         {
-            PacketTypes type = e.MsgID;
-            var player = Players[e.Msg.whoAmI];
-            if (player == null)
+            if (!e.Handled)
             {
-                e.Handled = true;
-                return;
-            }
-
-            if (!player.ConnectionAlive)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            //if (type == PacketTypes.SyncPlayers)
-            //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
-
-            // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((Config.BanKillTileAbusers || Config.KickKillTileAbusers) &&
-                player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
-            {
-                Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
-                e.Handled = true;
-            }
-            else
-            {
-                using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+                PacketTypes type = e.MsgID;
+                var player = Players[e.Msg.whoAmI];
+                if (player == null)
                 {
-                    try
+                    e.Handled = true;
+                    return;
+                }
+
+                if (!player.ConnectionAlive)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                //if (type == PacketTypes.SyncPlayers)
+                //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
+
+                // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
+                if ((Config.BanKillTileAbusers || Config.KickKillTileAbusers) &&
+                    player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission("ignoregriefdetection"))
+                {
+                    Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
+                    e.Handled = true;
+                }
+                else
+                {
+                    using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
                     {
-                        if (GetDataHandlers.HandlerGetData(type, player, data))
-                            e.Handled = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex.ToString());
+                        try
+                        {
+                            if (GetDataHandlers.HandlerGetData(type, player, data))
+                                e.Handled = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex.ToString());
+                        }
                     }
                 }
             }
