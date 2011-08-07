@@ -317,7 +317,11 @@ namespace TShockAPI
             {
                 string encrPass = Tools.HashPassword(args.Parameters[1]);
                 var user = TShock.Users.GetUserByName(args.Parameters[0]);
-                if (user.Password.ToUpper() == encrPass.ToUpper())
+                if (user == null)
+                {
+                    args.Player.SendMessage("User by that name does not exist");
+                }
+                else if (user.Password.ToUpper() == encrPass.ToUpper())
                 {
                     args.Player.Group = Tools.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
@@ -325,19 +329,18 @@ namespace TShockAPI
                     args.Player.IsLoggedIn = true;
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
-                    return;
                 }
                 else
                 {
+                    args.Player.SendMessage("Incorrect password", Color.LimeGreen);
                     Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
                     args.Player.LoginAttempts++;
-                    return;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                args.Player.SendMessage("There was an error processing your request. Maybe your account doesn't exist?", Color.Red);
-                return;
+                args.Player.SendMessage("There was an error processing your request.", Color.Red);
+                Log.Error(ex.ToString());
             }
 
         }
