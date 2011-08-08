@@ -1505,7 +1505,8 @@ namespace TShockAPI
         private static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
-            args.Player.SendMessage("Configuration reload complete. Some changes may require server restart.");
+            TShock.Groups.LoadPermisions();
+            args.Player.SendMessage("Configuration & Permissions reload complete. Some changes may require server restart.");
         }
 
         private static void ServerPassword(CommandArgs args)
