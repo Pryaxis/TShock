@@ -1683,25 +1683,19 @@ namespace TShockAPI
                         {
                             if (args.Parameters[1] == "1")
                             {
-                                args.Player.TempArea.X = args.Player.TileX;
-                                args.Player.TempArea.Y = args.Player.TileY;
-                                args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
+                                if (!args.Player.AwaitingTemp2)
+                                    args.Player.AwaitingTemp1 = true;
+                                else
+                                    args.Player.SendMessage("Awaiting you to Set Point 2", Color.Yellow);
                             }
                             else if (args.Parameters[1] == "2")
                             {
                                 if (args.Player.TempArea.X != 0)
                                 {
-                                    if (args.Player.TileX > args.Player.TempArea.X && args.Player.TileY > args.Player.TempArea.Y)
-                                    {
-                                        args.Player.TempArea.Width = args.Player.TileX - args.Player.TempArea.X;
-                                        args.Player.TempArea.Height = (args.Player.TileY + 3) - args.Player.TempArea.Y;
-                                        args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
-                                    }
+                                    if (!args.Player.AwaitingTemp1)
+                                        args.Player.AwaitingTemp2 = true;
                                     else
-                                    {
-                                        args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
-                                        args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
-                                    }
+                                        args.Player.SendMessage("Awaiting you to Set Point 1", Color.Yellow);
                                 }
                                 else
                                 {
@@ -1785,6 +1779,8 @@ namespace TShockAPI
                     {
                         args.Player.TempArea = Rectangle.Empty;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
+                        args.Player.AwaitingTemp1 = false;
+                        args.Player.AwaitingTemp2 = false;
                         break;
                     }
                 case "allow":

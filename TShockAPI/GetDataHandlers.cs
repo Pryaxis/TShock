@@ -256,6 +256,37 @@ namespace TShockAPI
             int x = args.Data.ReadInt32();
             int y = args.Data.ReadInt32();
             byte tiletype = args.Data.ReadInt8();
+
+            if (args.Player.AwaitingTemp1)
+            {
+                args.Player.TempArea.X = x;
+                args.Player.TempArea.Y = y;
+                args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
+                args.Player.SendTileSquare(x, y);
+                args.Player.AwaitingTemp1 = false;
+                return true;
+            }
+
+            if (args.Player.AwaitingTemp2)
+            {
+                if (x > args.Player.TempArea.X && y > args.Player.TempArea.Y)
+                {
+                    args.Player.TempArea.Width = x - args.Player.TempArea.X;
+                    args.Player.TempArea.Height = y - args.Player.TempArea.Y;
+                    args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
+                    args.Player.SendTileSquare(x, y);
+                    args.Player.AwaitingTemp2 = false;
+                }
+                else
+                {
+                    args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
+                    args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
+                    args.Player.SendTileSquare(x, y);
+                    args.Player.AwaitingTemp2 = false;
+                }
+                return true;
+            }
+
             if (!args.Player.Group.HasPermission("canbuild"))
             {
                 if (!args.Player.HasBeenSpammedWithBuildMessage)
