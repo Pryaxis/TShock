@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using MySql.Data.MySqlClient;
@@ -169,31 +170,30 @@ namespace TShockAPI.DB
                         int height = reader.Get<int>("height");
                         int width = reader.Get<int>("width");
                         int Protected = reader.Get<int>("Protected");
-                        string MergedIDs = reader.Get<string>("UserIds");
+                        string mergedids = reader.Get<string>("UserIds");
                         string name = reader.Get<string>("RegionName");
 
-                        string[] SplitIDs = MergedIDs.Split(',');
+                        string[] splitids = mergedids.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
 
                         try
                         {
-                            for (int i = 0; i < SplitIDs.Length; i++)
+                            for (int i = 0; i < splitids.Length; i++)
                             {
                                 int id;
 
-                                if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
+                                if (Int32.TryParse(splitids[i], out id)) // if unparsable, it's not an int, so silently skip
                                     r.AllowedIDs.Add(id);
-                                else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
-                                    // but we only want to let the user know if it's really a nonparsable integer.
-                                    Log.Warn("One of your UserIDs is not a usable integer: " + SplitIDs[i]);
+                                else
+                                    Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
                             }
                         }
                         catch (Exception e)
                         {
                             Log.Error("Your database contains invalid UserIDs (they should be ints).");
                             Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-                            Log.Error(e.Message);
+                            Log.Error(e.ToString());
                             Log.Error(e.StackTrace);
                         }
 
@@ -344,29 +344,7 @@ namespace TShockAPI.DB
 
         public static List<string> ListIDs(string MergedIDs)
         {
-            List<string> SplitIDs = new List<string>();
-            /*var sb = new StringBuilder();
-            for (int i = 0; i < MergedIDs.Length; i++)
-            {
-                char c = MergedIDs[i];
-
-                if (c != ',')
-                {
-                    sb.Append(c);
-                }
-                else if (sb.Length > 0)
-                {
-                    SplitIDs.Add(sb.ToString());
-                    sb.Clear();
-                }
-            }*/
-            String[] s = MergedIDs.Split(',');
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (!s[i].Equals(""))
-                    SplitIDs.Add(s[i]);
-            }
-            return SplitIDs;
+            return  MergedIDs.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
         public bool AddNewUser(string regionName, String userName)
@@ -380,7 +358,7 @@ namespace TShockAPI.DB
                         MergedIDs = reader.Get<string>("UserIds");
                 }
 
-                if (MergedIDs == string.Empty)
+                if (string.IsNullOrEmpty(MergedIDs))
                     MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
                 else
                     MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
