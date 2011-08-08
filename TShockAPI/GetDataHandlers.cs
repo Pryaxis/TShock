@@ -578,6 +578,36 @@ namespace TShockAPI
             if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
                 return false;
 
+            if (args.Player.AwaitingTemp1)
+            {
+                args.Player.TempArea.X = tilex;
+                args.Player.TempArea.Y = tiley;
+                args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
+                args.Player.SendTileSquare(tilex, tiley);
+                args.Player.AwaitingTemp1 = false;
+                return true;
+            }
+
+            if (args.Player.AwaitingTemp2)
+            {
+                if (tilex > args.Player.TempArea.X && tiley > args.Player.TempArea.Y)
+                {
+                    args.Player.TempArea.Width = tilex - args.Player.TempArea.X;
+                    args.Player.TempArea.Height = tiley - args.Player.TempArea.Y;
+                    args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
+                    args.Player.SendTileSquare(tilex, tiley);
+                    args.Player.AwaitingTemp2 = false;
+                }
+                else
+                {
+                    args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
+                    args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
+                    args.Player.SendTileSquare(tilex, tiley);
+                    args.Player.AwaitingTemp2 = false;
+                }
+                return true;
+            }
+
             if (Main.tile[tilex, tiley].type != 0x15 && (!Tools.MaxChests() && Main.tile[tilex, tiley].type != 0)) //Chest
             {
                 Log.Debug(string.Format("TileKill(TileXY:{0}_{1}, Type:{2})",
