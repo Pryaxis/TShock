@@ -1684,7 +1684,10 @@ namespace TShockAPI
                             if (args.Parameters[1] == "1")
                             {
                                 if (!args.Player.AwaitingTemp2)
+                                {
+                                    args.Player.SendMessage("Hit a block to Set Point 1", Color.Yellow);
                                     args.Player.AwaitingTemp1 = true;
+                                }
                                 else
                                     args.Player.SendMessage("Awaiting you to Set Point 2", Color.Yellow);
                             }
@@ -1693,7 +1696,10 @@ namespace TShockAPI
                                 if (args.Player.TempArea.X != 0)
                                 {
                                     if (!args.Player.AwaitingTemp1)
+                                    {
+                                        args.Player.SendMessage("Hit a block to Set Point 2", Color.Yellow);
                                         args.Player.AwaitingTemp2 = true;
+                                    }
                                     else
                                         args.Player.SendMessage("Awaiting you to Set Point 1", Color.Yellow);
                                 }
