@@ -166,7 +166,7 @@ namespace TShockAPI.DB
 
             try
             {
-                using (var reader = database.QueryReader("SELECT * FROM Grouplist"))
+                using (var reader = database.QueryReader("SELECT * FROM GroupList"))
                 {
                     while (reader.Read())
                     {
