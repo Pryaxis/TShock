@@ -35,9 +35,9 @@ namespace TShockAPI.DB
             var table = new SqlTable("Users",
                 new SqlColumn("ID", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
                 new SqlColumn("Username", MySqlDbType.VarChar, 32) { Unique = true },
-                new SqlColumn("Password", MySqlDbType.VarChar, 64),
+                new SqlColumn("Password", MySqlDbType.VarChar, 128),
                 new SqlColumn("Usergroup", MySqlDbType.Text),
-                new SqlColumn("IP", MySqlDbType.VarChar, 32)
+                new SqlColumn("IP", MySqlDbType.VarChar, 16)
             );
             var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
             creator.EnsureExists(table);
