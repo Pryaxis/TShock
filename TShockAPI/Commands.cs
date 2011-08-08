@@ -385,7 +385,7 @@ namespace TShockAPI
                 if (args.Parameters.Count == 2)
                 {
                     var user = new User();
-                    user.Name = args.Parameters[0].ToLower();
+                    user.Name = args.Parameters[0];
                     user.Password = args.Parameters[1];
                     user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB.
 
@@ -441,7 +441,7 @@ namespace TShockAPI
                     {
                         if (namepass.Length == 2)
                         {
-                            user.Name = namepass[0].ToLower();
+                            user.Name = namepass[0];
                             user.Password = namepass[1];
                             user.Group = args.Parameters[2];
                         }
