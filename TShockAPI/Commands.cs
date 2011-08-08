@@ -1296,7 +1296,7 @@ namespace TShockAPI
 
                 //Add up to pagelimit names to a list
                 var nameslist = new List<string>();
-                for (int i = 0; i < pagelimit && i + (page * pagelimit) < warps.Count; i++)
+                for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < warps.Count; i++)
                 {
                     nameslist.Add(warps[i].WarpName);
                 }
@@ -1310,7 +1310,7 @@ namespace TShockAPI
 
                 if (page < pagecount)
                 {
-                    args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                    args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 2)), Color.Yellow);
                 }
             }
             else
@@ -1868,7 +1868,7 @@ namespace TShockAPI
 
                         //Add up to pagelimit names to a list
                         var nameslist = new List<string>();
-                        for (int i = 0; i < pagelimit && i + (page * pagelimit) < regions.Count; i++)
+                        for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < regions.Count; i++) 
                         {
                             nameslist.Add(regions[i].Name);
                         }
@@ -1882,7 +1882,7 @@ namespace TShockAPI
 
                         if (page < pagecount)
                         {
-                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 1)), Color.Yellow);
+                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 2)), Color.Yellow);
                         }
 
                         break;
