@@ -114,7 +114,7 @@ namespace TShockAPI
         /// <summary>
         /// Buffers up the packets and sends them out at the end of each frame
         /// </summary>
-        public bool BufferPackets = false;
+        public bool BufferPackets = true;
 
         /// <summary>
         /// Display the users group when they chat.

@@ -303,7 +303,7 @@ namespace TShockAPI
                 All.SendMessage(string.Format("{0} has {1} PvP!", Name, pvp ? "enabled" : "disabled"), Main.teamColor[Team]);
             }
             //Broadcast anyways to keep players synced
-            NetMessage.SendData((int)PacketTypes.TogglePVP, -1, -1, "", Index);
+            NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", Index);
         }
 
         public virtual void SetTeam(int team)
@@ -424,7 +424,7 @@ namespace TShockAPI
         public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
         {
             Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-            NetMessage.SendData((int)PacketTypes.NPCStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
+            NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
         public void RevertKillTile(Dictionary<Vector2, Tile> destroyedTiles)
