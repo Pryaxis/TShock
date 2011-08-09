@@ -39,6 +39,8 @@ namespace TShockAPI
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
         public Rectangle TempArea;
+        public bool AwaitingTemp1 { get; set; }
+        public bool AwaitingTemp2 { get; set; }
         public DateTime LastExplosive { get; set; }
         public DateTime LastTileChangeNotify { get; set; }
         public bool InitSpawn;
@@ -178,9 +180,11 @@ namespace TShockAPI
             };
 
 
-            var ms = new MemoryStream();
-            msg.PackFull(ms);
-            SendRawData(ms.ToArray());
+            using (var ms = new MemoryStream())
+            {
+                msg.PackFull(ms);
+                SendRawData(ms.ToArray());
+            }
         }
 
         public bool Teleport(int tilex, int tiley)

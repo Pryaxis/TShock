@@ -24,8 +24,10 @@ namespace TShockAPI
         int[] Packets = new int[52];
         int[] Compressed = new int[52];
 
+#if DEBUG_NET
         Command dump;
         Command flush;
+#endif
 
         public PacketBufferer()
         {
@@ -45,15 +47,29 @@ namespace TShockAPI
             GameHooks.PostUpdate += GameHooks_Update;
         }
 
+        ~PacketBufferer()
+        {
+            Dispose(false);
+        }
+
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
 #if DEBUG_NET
-            Commands.ChatCommands.Remove(dump);
-            Commands.ChatCommands.Remove(flush);
+                Commands.ChatCommands.Remove(dump);
+                Commands.ChatCommands.Remove(flush);
 #endif
             NetHooks.SendBytes -= ServerHooks_SendBytes;
             ServerHooks.SocketReset -= ServerHooks_SocketReset;
             GameHooks.PostUpdate -= GameHooks_Update;
+            }
         }
 
         void Dump(CommandArgs args)
@@ -120,7 +136,10 @@ namespace TShockAPI
                 Bytes[pt] += size;
                 Compressed[pt] += Compress(buffer, offset, count);
 #endif
-                buffers[socket.whoAmI].AddRange(new MemoryStream(buffer, offset, count).ToArray());
+                using (var ms = new MemoryStream(buffer, offset, count))
+                {
+                    buffers[socket.whoAmI].AddRange(ms.ToArray());
+                }
             }
         }
 #if DEBUG_NET

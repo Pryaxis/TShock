@@ -166,7 +166,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
             ChatCommands.Add(new Command(RegisterUser, "register") { DoLog = false });
             ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command("root-only", GrabUserIP, "ip"));
+            ChatCommands.Add(new Command("root-only", GrabUserUserInfo, "userinfo", "ui"));
             ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
@@ -316,28 +316,31 @@ namespace TShockAPI
             try
             {
                 string encrPass = Tools.HashPassword(args.Parameters[1]);
-                string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Parameters[0]);
-                if (exr[0].ToUpper() == encrPass.ToUpper())
+                var user = TShock.Users.GetUserByName(args.Parameters[0]);
+                if (user == null)
                 {
-                    args.Player.Group = Tools.GetGroup(exr[1]);
+                    args.Player.SendMessage("User by that name does not exist");
+                }
+                else if (user.Password.ToUpper() == encrPass.ToUpper())
+                {
+                    args.Player.Group = Tools.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
                     args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
-                    return;
                 }
                 else
                 {
+                    args.Player.SendMessage("Incorrect password", Color.LimeGreen);
                     Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
                     args.Player.LoginAttempts++;
-                    return;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                args.Player.SendMessage("There was an error processing your request. Maybe your account doesn't exist?", Color.Red);
-                return;
+                args.Player.SendMessage("There was an error processing your request.", Color.Red);
+                Log.Error(ex.ToString());
             }
 
         }
@@ -351,8 +354,7 @@ namespace TShockAPI
                 {
                     var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
                     string encrPass = Tools.HashPassword(args.Parameters[0]);
-                    string[] exr = TShock.Users.FetchHashedPasswordAndGroup(args.Player.UserAccountName);
-                    if (exr[0].ToUpper() == encrPass.ToUpper())
+                    if (user.Password.ToUpper() == encrPass.ToUpper())
                     {
                         args.Player.SendMessage("You changed your password!", Color.Green);
                         TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
@@ -383,7 +385,7 @@ namespace TShockAPI
                 if (args.Parameters.Count == 2)
                 {
                     var user = new User();
-                    user.Name = args.Parameters[0].ToLower();
+                    user.Name = args.Parameters[0];
                     user.Password = args.Parameters[1];
                     user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB.
 
@@ -439,7 +441,7 @@ namespace TShockAPI
                     {
                         if (namepass.Length == 2)
                         {
-                            user.Name = namepass[0].ToLower();
+                            user.Name = namepass[0];
                             user.Password = namepass[1];
                             user.Group = args.Parameters[2];
                         }
@@ -577,11 +579,11 @@ namespace TShockAPI
 
         #region Player Management Commands
 
-        private static void GrabUserIP(CommandArgs args)
+        private static void GrabUserUserInfo(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /ip <player>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /userinfo <player>", Color.Red);
                 return;
             }
 
@@ -593,7 +595,7 @@ namespace TShockAPI
             }
             try
             {
-                args.Player.SendMessage(players[0].IP, Color.Green);
+                args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName, Color.Green);
             }
             catch (Exception)
             {
@@ -797,9 +799,10 @@ namespace TShockAPI
         {
             if (args.Parameters.Count == 1)
             {
-                TextWriter tw = new StreamWriter(FileTools.WhitelistPath, true);
-                tw.WriteLine(args.Parameters[0]);
-                tw.Close();
+                using (var tw = new StreamWriter(FileTools.WhitelistPath, true))
+                {
+                    tw.WriteLine(args.Parameters[0]);
+                }
                 args.Player.SendMessage("Added " + args.Parameters[0] + " to the whitelist.");
             }
         }
@@ -862,31 +865,38 @@ namespace TShockAPI
             ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private static void UpdateNow(CommandArgs args)
         {
             Process TServer = Process.GetCurrentProcess();
 
-            StreamWriter sw = new StreamWriter("pid");
-            sw.Write(TServer.Id);
-            sw.Close();
+            using (var sw = new StreamWriter("pid"))
+            {
+                sw.Write(TServer.Id);
+            }
 
-            sw = new StreamWriter("pn");
-            sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
-            sw.Close();
+            using (var sw = new StreamWriter("pn"))
+            {
+                sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
+            }
 
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "TShock");
-            byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("user-agent", "TShock");
+                byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
 
-            BinaryWriter bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create));
-            bw.Write(updatefile);
-            bw.Close();
+                using (var bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create)))
+                {
+                    bw.Write(updatefile);
+                }
+            }
 
             Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
 
             Tools.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
+
         }
 
         #endregion Server Maintenence Commands
@@ -1237,7 +1247,7 @@ namespace TShockAPI
                         args.Player.SendMessage("Could not find specified warp", Color.Red);
                 }
                 else
-                    args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);                
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
             }
             else
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
@@ -1286,7 +1296,7 @@ namespace TShockAPI
 
                 //Add up to pagelimit names to a list
                 var nameslist = new List<string>();
-                for (int i = 0; i < pagelimit && i + (page * pagelimit) < warps.Count; i++)
+                for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < warps.Count; i++)
                 {
                     nameslist.Add(warps[i].WarpName);
                 }
@@ -1300,7 +1310,7 @@ namespace TShockAPI
 
                 if (page < pagecount)
                 {
-                    args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 1)), Color.Yellow);
+                    args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 2)), Color.Yellow);
                 }
             }
             else
@@ -1330,10 +1340,10 @@ namespace TShockAPI
             {
                 String groupname = args.Parameters[0];
                 args.Parameters.RemoveAt(0);
-                String permissions = String.Join(",", args.Parameters );
+                String permissions = String.Join(",", args.Parameters);
 
                 String response = TShock.Groups.AddGroup(groupname, permissions);
-                if( response.Length > 0 )
+                if (response.Length > 0)
                     args.Player.SendMessage(response, Color.Green);
             }
             else
@@ -1389,7 +1399,7 @@ namespace TShockAPI
         #endregion Group Management
 
         #region Item Management
-       
+
         private static void AddItem(CommandArgs args)
         {
             if (args.Parameters.Count > 0)
@@ -1495,7 +1505,8 @@ namespace TShockAPI
         private static void Reload(CommandArgs args)
         {
             FileTools.SetupConfig();
-            args.Player.SendMessage("Configuration reload complete. Some changes may require server restart.");
+            TShock.Groups.LoadPermisions();
+            args.Player.SendMessage("Configuration & Permissions reload complete. Some changes may require server restart.");
         }
 
         private static void ServerPassword(CommandArgs args)
@@ -1673,25 +1684,25 @@ namespace TShockAPI
                         {
                             if (args.Parameters[1] == "1")
                             {
-                                args.Player.TempArea.X = args.Player.TileX;
-                                args.Player.TempArea.Y = args.Player.TileY;
-                                args.Player.SendMessage("Set Temp Point 1", Color.Yellow);
+                                if (!args.Player.AwaitingTemp2)
+                                {
+                                    args.Player.SendMessage("Hit a block to Set Point 1", Color.Yellow);
+                                    args.Player.AwaitingTemp1 = true;
+                                }
+                                else
+                                    args.Player.SendMessage("Awaiting you to Set Point 2", Color.Yellow);
                             }
                             else if (args.Parameters[1] == "2")
                             {
                                 if (args.Player.TempArea.X != 0)
                                 {
-                                    if (args.Player.TileX > args.Player.TempArea.X && args.Player.TileY > args.Player.TempArea.Y)
+                                    if (!args.Player.AwaitingTemp1)
                                     {
-                                        args.Player.TempArea.Width = args.Player.TileX - args.Player.TempArea.X;
-                                        args.Player.TempArea.Height = (args.Player.TileY + 3) - args.Player.TempArea.Y;
-                                        args.Player.SendMessage("Set Temp Point 2", Color.Yellow);
+                                        args.Player.SendMessage("Hit a block to Set Point 2", Color.Yellow);
+                                        args.Player.AwaitingTemp2 = true;
                                     }
                                     else
-                                    {
-                                        args.Player.SendMessage("Point 2 must be below and right of Point 1", Color.Yellow);
-                                        args.Player.SendMessage("Use /region clear to start again", Color.Yellow);
-                                    }
+                                        args.Player.SendMessage("Awaiting you to Set Point 1", Color.Yellow);
                                 }
                                 else
                                 {
@@ -1775,6 +1786,8 @@ namespace TShockAPI
                     {
                         args.Player.TempArea = Rectangle.Empty;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
+                        args.Player.AwaitingTemp1 = false;
+                        args.Player.AwaitingTemp2 = false;
                         break;
                     }
                 case "allow":
@@ -1856,7 +1869,7 @@ namespace TShockAPI
 
                         //Add up to pagelimit names to a list
                         var nameslist = new List<string>();
-                        for (int i = 0; i < pagelimit && i + (page * pagelimit) < regions.Count; i++)
+                        for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < regions.Count; i++)
                         {
                             nameslist.Add(regions[i].Name);
                         }
@@ -1870,7 +1883,7 @@ namespace TShockAPI
 
                         if (page < pagecount)
                         {
-                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 1)), Color.Yellow);
+                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 2)), Color.Yellow);
                         }
 
                         break;
@@ -2231,9 +2244,9 @@ namespace TShockAPI
             args.Parameters.RemoveAt(0);
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
-            if( args.Parameters.Count > 0 )
+            if (args.Parameters.Count > 0)
                 int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-            
+
 
             if (items.Count == 0)
             {

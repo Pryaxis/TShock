@@ -35,9 +35,9 @@ namespace TShockAPI.DB
             var table = new SqlTable("Users",
                 new SqlColumn("ID", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
                 new SqlColumn("Username", MySqlDbType.VarChar, 32) { Unique = true },
-                new SqlColumn("Password", MySqlDbType.VarChar, 64),
+                new SqlColumn("Password", MySqlDbType.VarChar, 128),
                 new SqlColumn("Usergroup", MySqlDbType.Text),
-                new SqlColumn("IP", MySqlDbType.VarChar, 32)
+                new SqlColumn("IP", MySqlDbType.VarChar, 16)
             );
             var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
             creator.EnsureExists(table);
@@ -178,34 +178,6 @@ namespace TShockAPI.DB
             }
         }
 
-
-        /// <summary>
-        /// Fetches the hashed password and group for a given username
-        /// </summary>
-        /// <param name="username">string username</param>
-        /// <returns>string[] {password, group}</returns>
-        public string[] FetchHashedPasswordAndGroup(string username)
-        {
-            string[] returndata = new string[2];
-            try
-            {
-                using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
-                {
-                    if (reader.Read())
-                    {
-                        returndata[0] = reader.Get<string>("Password");
-                        returndata[1] = reader.Get<string>("UserGroup");
-                        return returndata;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
-            }
-            return returndata;
-        }
-
         public int GetUserID(string username)
         {
             try
@@ -314,6 +286,9 @@ namespace TShockAPI.DB
                     {
                         user.ID = reader.Get<int>("ID");
                         user.Group = reader.Get<string>("Usergroup");
+                        user.Password = reader.Get<string>("Password");
+                        user.Name = reader.Get<string>("Username");
+                        user.Address = reader.Get<string>("IP");
                         return user;
                     }
                 }
@@ -350,6 +325,7 @@ namespace TShockAPI.DB
         }
     }
 
+    [Serializable]
     public class UserManagerException : Exception
     {
         public UserManagerException(string message)
@@ -363,6 +339,7 @@ namespace TShockAPI.DB
 
         }
     }
+    [Serializable]
     public class UserExistsException : UserManagerException
     {
         public UserExistsException(string name)
@@ -370,6 +347,7 @@ namespace TShockAPI.DB
         {
         }
     }
+    [Serializable]
     public class UserNotExistException : UserManagerException
     {
         public UserNotExistException(string name)
@@ -377,7 +355,7 @@ namespace TShockAPI.DB
         {
         }
     }
-
+    [Serializable]
     public class GroupNotExistsException : UserManagerException
     {
         public GroupNotExistsException(string group)

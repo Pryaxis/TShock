@@ -73,7 +73,7 @@ namespace TShockAPI
                 Log.Error(ex.ToString());
             }
 
-            
+
         }
 
         /// <summary>
@@ -88,26 +88,25 @@ namespace TShockAPI
                 return true;
             }
             CreateIfNot(WhitelistPath, "127.0.0.1");
-            TextReader tr = new StreamReader(WhitelistPath);
-            string whitelist = tr.ReadToEnd();
-            ip = Tools.GetRealIP(ip);
-            bool contains = whitelist.Contains(ip);
-            if (!contains)
+            using (var tr = new StreamReader(WhitelistPath))
             {
-                var char2 = Environment.NewLine.ToCharArray();
-                var array = whitelist.Split(Environment.NewLine.ToCharArray());
-                foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                string whitelist = tr.ReadToEnd();
+                ip = Tools.GetRealIP(ip);
+                bool contains = whitelist.Contains(ip);
+                if (!contains)
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
-                    contains = Tools.GetIPv4Address(line).Equals(ip);
-                    if (contains)
-                        return true;
+                    foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                    {
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+                        contains = Tools.GetIPv4Address(line).Equals(ip);
+                        if (contains)
+                            return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-            else
                 return true;
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace TShockAPI.DB
         string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres);
         string InsertValues(string table, List<SqlValue> values);
         string ReadColumn(string table, List<SqlValue> wheres);
+        string DeleteRow(string table, List<SqlValue> wheres);
     }
 
     public class SqliteQueryCreator : IQueryBuilder
@@ -51,6 +52,22 @@ namespace TShockAPI.DB
              * Twitchy - Oh. I get it!
              */
         }
+        public string DeleteRow(string table, List<SqlValue> wheres)
+        {
+            var sbwheres = new StringBuilder();
+            int count = 0;
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbwheres.Append(" AND ");
+                count++;
+            }
+            if (wheres.Count > 0)
+                return "DELETE FROM '{0}' WHERE {1} ".SFormat(table, sbwheres.ToString());
+            else
+                return "DELETE FROM '{0}'".SFormat(table, sbwheres.ToString());
+        }
         public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
         {
             var sbvalues = new StringBuilder();
@@ -68,7 +85,7 @@ namespace TShockAPI.DB
             {
                 sbwheres.Append(where.Name + "=" + where.Value.ToString());
                 if (count != wheres.Count - 1)
-                    sbvalues.Append(" AND ");
+                    sbwheres.Append(" AND ");
                 count++;
             }
 
@@ -99,7 +116,6 @@ namespace TShockAPI.DB
                     sbvalues.Append(", ");
                 count++;
             }
-
             return "INSERT INTO '{0}' ({1}) VALUES ({2})".SFormat(table, sbnames.ToString(), sbvalues.ToString());
         }
         public string ReadColumn(string table, List<SqlValue> wheres)
@@ -165,6 +181,22 @@ namespace TShockAPI.DB
             var drop = "DROP TABLE {0}_{1}".SFormat(rstr, from.Name);
             return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
         }
+        public string DeleteRow(string table, List<SqlValue> wheres)
+        {
+            var sbwheres = new StringBuilder();
+            int count = 0;
+            foreach (SqlValue where in wheres)
+            {
+                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                if (count != wheres.Count - 1)
+                    sbwheres.Append(" AND ");
+                count++;
+            }
+            if (wheres.Count > 0)
+                return "DELETE FROM {0} WHERE {1} ".SFormat(table, sbwheres.ToString());
+            else
+                return "DELETE FROM {0}".SFormat(table, sbwheres.ToString());
+        }
         public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
         {
             var sbvalues = new StringBuilder();
@@ -182,7 +214,7 @@ namespace TShockAPI.DB
             {
                 sbwheres.Append(where.Name + "=" + where.Value.ToString());
                 if (count != wheres.Count - 1)
-                    sbvalues.Append(" AND ");
+                    sbwheres.Append(" AND ");
                 count++;
             }
 

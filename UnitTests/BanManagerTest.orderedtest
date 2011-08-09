@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<OrderedTest name="BanManagerTest" storage="c:\users\shank\dropbox\design and development\csharp\tshock\unittests\banmanagertest.orderedtest" id="f28695ef-8181-4996-8783-b5059ce904b1" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+<OrderedTest name="banmanagertest" storage="c:\users\virus\git\tshock\unittests\banmanagertest.orderedtest" id="f28695ef-8181-4996-8783-b5059ce904b1" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <TestLinks>
-    <TestLink id="58b9a622-39c1-640a-6713-3ee97b0d99e2" name="TestDBNotNull" storage="bin\debug\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="7cc70e31-eeb8-f6b8-afa2-17bf975873ed" name="TestBansDBNotNull" storage="bin\debug\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="67a76536-c5c2-4d99-515a-498708451061" name="AddBanTest" storage="bin\debug\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="9265845c-1bec-1156-2e22-1a64c5bd689f" name="FindBanTest" storage="bin\debug\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </TestLinks>

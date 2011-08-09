@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using MySql.Data.MySqlClient;
@@ -54,6 +55,7 @@ namespace TShockAPI.DB
 
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void ImportOld()
         {
             String file = Path.Combine(TShock.SavePath, "regions.xml");
@@ -62,77 +64,74 @@ namespace TShockAPI.DB
 
             Region region;
             Rectangle rect;
-            using (var sr = new StreamReader(file))
+
+            using (var reader = XmlReader.Create(new StreamReader(file), new XmlReaderSettings { CloseInput = true }))
             {
-                using (var reader = XmlReader.Create(sr))
+                // Parse the file and display each of the nodes.
+                while (reader.Read())
                 {
-                    // Parse the file and display each of the nodes.
-                    while (reader.Read())
+                    if (reader.NodeType != XmlNodeType.Element || reader.Name != "ProtectedRegion")
+                        continue;
+
+                    region = new Region();
+                    rect = new Rectangle();
+
+                    bool endregion = false;
+                    while (reader.Read() && !endregion)
                     {
-                        if (reader.NodeType != XmlNodeType.Element || reader.Name != "ProtectedRegion")
+                        if (reader.NodeType != XmlNodeType.Element)
                             continue;
 
-                        region = new Region();
-                        rect = new Rectangle();
+                        string name = reader.Name;
 
-                        bool endregion = false;
-                        while (reader.Read() && !endregion)
+                        while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
+
+                        switch (name)
                         {
-                            if (reader.NodeType != XmlNodeType.Element)
-                                continue;
-
-                            string name = reader.Name;
-
-                            while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
-
-                            switch (name)
-                            {
-                                case "RegionName":
-                                    region.Name = reader.Value;
-                                    break;
-                                case "Point1X":
-                                    int.TryParse(reader.Value, out rect.X);
-                                    break;
-                                case "Point1Y":
-                                    int.TryParse(reader.Value, out rect.Y);
-                                    break;
-                                case "Point2X":
-                                    int.TryParse(reader.Value, out rect.Width);
-                                    break;
-                                case "Point2Y":
-                                    int.TryParse(reader.Value, out rect.Height);
-                                    break;
-                                case "Protected":
-                                    region.DisableBuild = reader.Value.ToLower().Equals("true");
-                                    break;
-                                case "WorldName":
-                                    region.WorldID = reader.Value;
-                                    break;
-                                case "AllowedUserCount":
-                                    break;
-                                case "IP":
-                                    region.AllowedIDs.Add(int.Parse(reader.Value));
-                                    break;
-                                default:
-                                    endregion = true;
-                                    break;
-                            }
-                        }
-
-                        region.Area = rect;
-                        using (var com = database.CreateCommand())
-                        {
-                            string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
-                                "INSERT OR IGNORE INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);" :
-                                "INSERT IGNORE INTO Regions SET X1=@0, Y1=@1, height=@2, width=@3, RegionName=@4, WorldID=@5, UserIds=@6, Protected=@7;";
-                            database.Query(query, region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Name, region.WorldID, "", region.DisableBuild);
-
-                            //Todo: What should this be? We don't really have a way to go from ips to userids
-                            /*string.Join(",", region.AllowedIDs)*/
+                            case "RegionName":
+                                region.Name = reader.Value;
+                                break;
+                            case "Point1X":
+                                int.TryParse(reader.Value, out rect.X);
+                                break;
+                            case "Point1Y":
+                                int.TryParse(reader.Value, out rect.Y);
+                                break;
+                            case "Point2X":
+                                int.TryParse(reader.Value, out rect.Width);
+                                break;
+                            case "Point2Y":
+                                int.TryParse(reader.Value, out rect.Height);
+                                break;
+                            case "Protected":
+                                region.DisableBuild = reader.Value.ToLower().Equals("true");
+                                break;
+                            case "WorldName":
+                                region.WorldID = reader.Value;
+                                break;
+                            case "AllowedUserCount":
+                                break;
+                            case "IP":
+                                region.AllowedIDs.Add(int.Parse(reader.Value));
+                                break;
+                            default:
+                                endregion = true;
+                                break;
                         }
                     }
+
+                    region.Area = rect;
+                    string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
+                        "INSERT OR IGNORE INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);" :
+                        "INSERT IGNORE INTO Regions SET X1=@0, Y1=@1, height=@2, width=@3, RegionName=@4, WorldID=@5, UserIds=@6, Protected=@7;";
+                    database.Query(query, region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Name, region.WorldID, "", region.DisableBuild);
+
+                    //Todo: What should this be? We don't really have a way to go from ips to userids
+                    /*string.Join(",", region.AllowedIDs)*/
+
                 }
             }
+
             String path = Path.Combine(TShock.SavePath, "old_configs");
             String file2 = Path.Combine(path, "regions.xml");
             if (!Directory.Exists(path))
@@ -171,31 +170,30 @@ namespace TShockAPI.DB
                         int height = reader.Get<int>("height");
                         int width = reader.Get<int>("width");
                         int Protected = reader.Get<int>("Protected");
-                        string MergedIDs = reader.Get<string>("UserIds");
+                        string mergedids = reader.Get<string>("UserIds");
                         string name = reader.Get<string>("RegionName");
 
-                        string[] SplitIDs = MergedIDs.Split(',');
+                        string[] splitids = mergedids.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
 
                         try
                         {
-                            for (int i = 0; i < SplitIDs.Length; i++)
+                            for (int i = 0; i < splitids.Length; i++)
                             {
                                 int id;
 
-                                if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
+                                if (Int32.TryParse(splitids[i], out id)) // if unparsable, it's not an int, so silently skip
                                     r.AllowedIDs.Add(id);
-                                else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
-                                    // but we only want to let the user know if it's really a nonparsable integer.
-                                    Log.Warn("One of your UserIDs is not a usable integer: " + SplitIDs[i]);
+                                else
+                                    Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
                             }
                         }
                         catch (Exception e)
                         {
                             Log.Error("Your database contains invalid UserIDs (they should be ints).");
                             Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-                            Log.Error(e.Message);
+                            Log.Error(e.ToString());
                             Log.Error(e.StackTrace);
                         }
 
@@ -346,29 +344,7 @@ namespace TShockAPI.DB
 
         public static List<string> ListIDs(string MergedIDs)
         {
-            List<string> SplitIDs = new List<string>();
-            /*var sb = new StringBuilder();
-            for (int i = 0; i < MergedIDs.Length; i++)
-            {
-                char c = MergedIDs[i];
-
-                if (c != ',')
-                {
-                    sb.Append(c);
-                }
-                else if (sb.Length > 0)
-                {
-                    SplitIDs.Add(sb.ToString());
-                    sb.Clear();
-                }
-            }*/
-            String[] s = MergedIDs.Split(',');
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (!s[i].Equals(""))
-                    SplitIDs.Add(s[i]);
-            }
-            return SplitIDs;
+            return  MergedIDs.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
         public bool AddNewUser(string regionName, String userName)
@@ -382,7 +358,7 @@ namespace TShockAPI.DB
                         MergedIDs = reader.Get<string>("UserIds");
                 }
 
-                if (MergedIDs == string.Empty)
+                if (string.IsNullOrEmpty(MergedIDs))
                     MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
                 else
                     MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));

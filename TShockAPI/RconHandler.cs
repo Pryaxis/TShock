@@ -24,6 +24,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Terraria;
+using XNAHelpers;
 
 namespace TShockAPI
 {
@@ -116,11 +117,13 @@ namespace TShockAPI
             try
             {
                 var EP = new IPEndPoint(IPAddress.Any, port);
-                UdpClient client = new UdpClient();
-                client.Connect(hostname, port);
-                client.Client.ReceiveTimeout = 500;
-                client.Send(bytes, bytes.Length);
-                response = Encoding.UTF8.GetString(client.Receive(ref EP));
+                using (var client = new UdpClient())
+                {
+                    client.Connect(hostname, port);
+                    client.Client.ReceiveTimeout = 500;
+                    client.Send(bytes, bytes.Length);
+                    response = Encoding.UTF8.GetString(client.Receive(ref EP));
+                }
             }
             catch (Exception e)
             {
@@ -244,7 +247,7 @@ namespace TShockAPI
                     if (player != null && player.Active)
                     {
                         count++;
-                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}]", player.Name, player.IP, player.Group.Name));
+                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP, player.Group.Name, player.UserAccountName));
                     }
                 }
                 TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
@@ -259,7 +262,7 @@ namespace TShockAPI
                     if (player != null && player.Active)
                     {
                         count++;
-                        Response += (string.Format("{0} 0 0 {1}({2})  {3} {4} 0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint)) + "\n";
+                        Response += (string.Format("{0} 0 0 {1}({2})  {3} {4} 0 0", count, player.Name, player.Group.Name, Netplay.serverSock[player.Index].tcpClient.Client.RemoteEndPoint, "")) + "\n";
                     }
                 }
             }
@@ -288,17 +291,18 @@ namespace TShockAPI
         private static byte[] ConstructPacket(string response, bool print)
         {
             var oob = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
-            MemoryStream stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(oob);
-            if (print)
-                writer.Write(Encoding.UTF8.GetBytes(string.Format("print\n{0}", response)));
-            else
-                writer.Write(Encoding.UTF8.GetBytes(response));
-            var trimmedpacket = new byte[(int)stream.Length];
-            var packet = stream.GetBuffer();
-            Array.Copy(packet, trimmedpacket, (int)stream.Length);
-            return trimmedpacket;
+            using (var stream = new MemoryStream())
+            {
+                stream.WriteBytes(oob);
+                if (print)
+                    stream.WriteBytes(Encoding.UTF8.GetBytes(string.Format("print\n{0}", response)));
+                else
+                    stream.WriteBytes(Encoding.UTF8.GetBytes(response));
+                var trimmedpacket = new byte[(int)stream.Length];
+                var packet = stream.GetBuffer();
+                Array.Copy(packet, trimmedpacket, (int)stream.Length);
+                return trimmedpacket;
+            }
         }
 
         private static byte[] PadPacket(byte[] packet)

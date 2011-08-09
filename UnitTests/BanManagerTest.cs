@@ -29,7 +29,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void TestDBNotNull()
+        public void TestBansDBNotNull()
         {
             Assert.IsNotNull(Bans);
         }
