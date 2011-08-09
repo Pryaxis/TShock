@@ -166,7 +166,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
             ChatCommands.Add(new Command(RegisterUser, "register") { DoLog = false });
             ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command("root-only", GrabUserIP, "ip"));
+            ChatCommands.Add(new Command("root-only", GrabUserUserInfo, "userinfo", "ui"));
             ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
             ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
@@ -579,11 +579,11 @@ namespace TShockAPI
 
         #region Player Management Commands
 
-        private static void GrabUserIP(CommandArgs args)
+        private static void GrabUserUserInfo(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /ip <player>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /userinfo <player>", Color.Red);
                 return;
             }
 
@@ -595,7 +595,7 @@ namespace TShockAPI
             }
             try
             {
-                args.Player.SendMessage(players[0].IP, Color.Green);
+                args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName, Color.Green);
             }
             catch (Exception)
             {
