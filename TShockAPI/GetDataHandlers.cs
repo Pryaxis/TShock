@@ -599,7 +599,8 @@ namespace TShockAPI
 
             if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
             {
-                if (args.TPlayer.hardCore && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+                /*if (args.TPlayer.hardCore && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+                {
                     if (args.TPlayer.selectedItem != 50)
                     {
                         if (TShock.Config.BanOnHardcoreDeath)
@@ -613,6 +614,7 @@ namespace TShockAPI
                         }
                         return true;
                     }
+                }*/
             }
             else
                 args.Player.InitSpawn = true;
