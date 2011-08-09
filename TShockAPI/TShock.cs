@@ -534,8 +534,8 @@ namespace TShockAPI
                     if (player != null && player.Active)
                     {
                         count++;
-                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}]", player.Name, player.IP,
-                                                                  player.Group.Name));
+                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+                                                                  player.Group.Name, player.UserAccountName));
                     }
                 }
                 TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
