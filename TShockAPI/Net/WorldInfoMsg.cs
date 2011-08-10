@@ -61,19 +61,19 @@ namespace TShockAPI.Net
         }
         public void Pack(Stream stream)
         {
-            stream.Write(Time);
-            stream.Write(DayTime);
-            stream.Write(MoonPhase);
-            stream.Write(BloodMoon);
-            stream.Write(MaxTilesX);
-            stream.Write(MaxTilesY);
-            stream.Write(SpawnX);
-            stream.Write(SpawnY);
-            stream.Write(WorldSurface);
-            stream.Write(RockLayer);
-            stream.Write(WorldID);
-            stream.Write((byte)WorldFlags);
-            stream.Write(Encoding.ASCII.GetBytes(WorldName));
+            stream.WriteInt32(Time);
+            stream.WriteBoolean(DayTime);
+            stream.WriteInt8(MoonPhase);
+            stream.WriteBoolean(BloodMoon);
+            stream.WriteInt32(MaxTilesX);
+            stream.WriteInt32(MaxTilesY);
+            stream.WriteInt32(SpawnX);
+            stream.WriteInt32(SpawnY);
+            stream.WriteInt32(WorldSurface);
+            stream.WriteInt32(RockLayer);
+            stream.WriteInt32(WorldID);
+            stream.WriteInt8((byte)WorldFlags);
+            stream.WriteBytes(Encoding.ASCII.GetBytes(WorldName));
         }
 
         public void Unpack(Stream stream)
