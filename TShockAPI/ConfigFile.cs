@@ -107,7 +107,7 @@ namespace TShockAPI
         public bool DisableSpewLogs = true;
 
         /// <summary>
-        /// Valid types are "sha512", "sha256", "md5"
+        /// Valid types are "sha512", "sha256", "md5", append with "-xp" for the xp supported algorithms
         /// </summary>
         public string HashAlgorithm = "sha512";
 

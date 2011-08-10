@@ -438,15 +438,15 @@ namespace TShockAPI
                     {
                         string possibleColor = foo.Substring(0, 13);
                         foo = foo.Remove(0, 13);
-                        float[] pC = {0, 0, 0};
+                        float[] pC = { 0, 0, 0 };
                         possibleColor = possibleColor.Replace("%", "");
                         string[] pCc = possibleColor.Split(',');
                         if (pCc.Length == 3)
                         {
                             try
                             {
-                                player.SendMessage(foo, (byte) Convert.ToInt32(pCc[0]), (byte) Convert.ToInt32(pCc[1]),
-                                                   (byte) Convert.ToInt32(pCc[2]));
+                                player.SendMessage(foo, (byte)Convert.ToInt32(pCc[0]), (byte)Convert.ToInt32(pCc[1]),
+                                                   (byte)Convert.ToInt32(pCc[2]));
                                 continue;
                             }
                             catch (Exception e)
@@ -489,13 +489,16 @@ namespace TShockAPI
             return ip != null ? ip.ToString() : "";
         }
 
-        public static HashAlgorithm HashAlgo = new MD5Cng();
+        public static string HashAlgo = "md5";
 
-        public static readonly Dictionary<string, Type> HashTypes = new Dictionary<string, Type>
-                                                                        {
-            {"sha512", typeof(SHA512Managed)},
-            {"sha256", typeof(SHA256Managed)},
-            {"md5", typeof(MD5Cng)},
+        public static readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
+        {
+            {"sha512", () => new SHA512Managed()},
+            {"sha256", () => new SHA256Managed()},
+            {"md5", () => new MD5Cng()},
+            {"sha512-xp", () => SHA512.Create()},
+            {"sha256-xp", () => SHA256.Create()},
+            {"md5-xp", () => MD5.Create()},
         };
 
         /// <summary>
@@ -507,8 +510,16 @@ namespace TShockAPI
         {
             if (string.IsNullOrEmpty(password) || password == "non-existant password")
                 return "non-existant password";
-            var bytes = HashAlgo.ComputeHash(Encoding.ASCII.GetBytes(password));
-            return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+
+            Func<HashAlgorithm> func;
+            if (!HashTypes.TryGetValue(HashAlgo.ToLower(), out func))
+                throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(HashAlgo.ToLower()));
+
+            using (var hash = func())
+            {
+                var bytes = hash.ComputeHash(Encoding.ASCII.GetBytes(password));
+                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+            }
         }
 
         /// <summary>
