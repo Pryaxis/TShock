@@ -33,7 +33,7 @@ namespace TShockAPI.Net
         DownedBoss2 = 4,
         DownedBoss3 = 8,
     }
-    public class WorldInfoMsg : IPackable
+    public class WorldInfoMsg : BaseMsg
     {
         public int Time { get; set; }
         public bool DayTime { get; set; }
@@ -48,18 +48,14 @@ namespace TShockAPI.Net
         public int WorldID { get; set; }
         public WorldInfoFlag WorldFlags { get; set; }
         public string WorldName { get; set; }
-        public void PackFull(Stream stream)
+        public override PacketTypes ID
         {
-            long start = stream.Position;
-            stream.WriteInt32(1);
-            stream.WriteInt8((byte)PacketTypes.WorldInfo);
-            Pack(stream);
-            long end = stream.Position;
-            stream.Position = start;
-            stream.WriteInt32((int)(end - start) - 4);
-            stream.Position = end;
+            get
+            {
+                return PacketTypes.WorldInfo;
+            }
         }
-        public void Pack(Stream stream)
+        public override void Pack(Stream stream)
         {
             stream.WriteInt32(Time);
             stream.WriteBoolean(DayTime);
@@ -74,11 +70,6 @@ namespace TShockAPI.Net
             stream.WriteInt32(WorldID);
             stream.WriteInt8((byte)WorldFlags);
             stream.WriteBytes(Encoding.ASCII.GetBytes(WorldName));
-        }
-
-        public void Unpack(Stream stream)
-        {
-            throw new NotImplementedException();
         }
     }
 }

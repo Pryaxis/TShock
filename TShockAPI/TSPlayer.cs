@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 using TShockAPI.Net;
+using XNAHelpers;
 
 namespace TShockAPI
 {
@@ -157,31 +158,32 @@ namespace TShockAPI
             SendData(PacketTypes.Disconnect, reason);
         }
 
-        void SendTeleport(int tilex, int tiley)
+
+        void SendWorldInfo(int tilex, int tiley, bool fakeid)
         {
-            var msg = new WorldInfoMsg
-            {
-                Time = (int)Main.time,
-                DayTime = Main.dayTime,
-                MoonPhase = (byte)Main.moonPhase,
-                BloodMoon = Main.bloodMoon,
-                MaxTilesX = Main.maxTilesX,
-                MaxTilesY = Main.maxTilesY,
-                SpawnX = tilex,
-                SpawnY = tiley,
-                WorldSurface = (int)Main.worldSurface,
-                RockLayer = (int)Main.rockLayer,
-                WorldID = Main.worldID,
-                WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
-                (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
-                (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-                (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
-                WorldName = Main.worldName
-            };
-
-
             using (var ms = new MemoryStream())
             {
+                var msg = new WorldInfoMsg
+                {
+                    Time = (int)Main.time,
+                    DayTime = Main.dayTime,
+                    MoonPhase = (byte)Main.moonPhase,
+                    BloodMoon = Main.bloodMoon,
+                    MaxTilesX = Main.maxTilesX,
+                    MaxTilesY = Main.maxTilesY,
+                    SpawnX = tilex,
+                    SpawnY = tiley,
+                    WorldSurface = (int)Main.worldSurface,
+                    RockLayer = (int)Main.rockLayer,
+                    //Sending a fake world id causes the client to not be able to find a stored spawnx/y.
+                    //This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
+                    WorldID = !fakeid ? Main.worldID : -1,
+                    WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
+                    (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
+                    (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
+                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
+                    WorldName = Main.worldName
+                };
                 msg.PackFull(ms);
                 SendRawData(ms.ToArray());
             }
@@ -191,7 +193,8 @@ namespace TShockAPI
         {
             InitSpawn = false;
 
-            SendTeleport(tilex, tiley);
+
+            SendWorldInfo(tilex, tiley, true);
 
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
@@ -202,44 +205,31 @@ namespace TShockAPI
                 return false;
             }
 
-            if (TPlayer.SpawnX > 0 && TPlayer.SpawnY > 0)
-            {
-                int spX = TPlayer.SpawnX;
-                int spY = TPlayer.SpawnY;
-                Main.tile[spX, spY].active = false;
-                SendTileSquare(spX, spY);
-                Spawn();
-                Main.tile[spX, spY].active = true;
-                SendTileSquare(spX, spY);
-                oldSpawn = new Vector2(spX, spY);
-            }
-            else
-            {
-                //Checks if Player has spawn point set (Server may think player does not have spawn)
-                if (oldSpawn != Vector2.Zero)
-                {
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = false;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    Spawn();
-                    Main.tile[(int)oldSpawn.X, (int)oldSpawn.Y].active = true;
-                    SendTileSquare((int)oldSpawn.X, (int)oldSpawn.Y);
-                    NetMessage.syncPlayers();
-                }
-                //Player has no spawn point set
-                else
-                {
-                    Spawn();
-                }
-            }
+            Spawn(-1, -1);
 
-            SendTeleport(Main.spawnTileX, Main.spawnTileY);
+            SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
 
             return true;
         }
 
         public void Spawn()
         {
-            SendData(PacketTypes.PlayerSpawn, "", Index, 0.0f, 0.0f, 0.0f);
+            Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
+        }
+
+        public void Spawn(int tilex, int tiley)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var msg = new SpawnMsg()
+                {
+                    PlayerIndex = (byte)Index,
+                    TileX = tilex,
+                    TileY = tiley
+                };
+                msg.PackFull(ms);
+                SendRawData(ms.ToArray());
+            }
         }
 
         public virtual bool SendTileSquare(int x, int y, int size = 10)
