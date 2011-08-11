@@ -666,22 +666,22 @@ namespace TShockAPI
 
             if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
             {
-                /*if (args.TPlayer.hardCore && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+                if (args.TPlayer.difficulty == 1 && (TShock.Config.KickOnMediumcoreDeath || TShock.Config.BanOnMediumcoreDeath))
                 {
                     if (args.TPlayer.selectedItem != 50)
                     {
-                        if (TShock.Config.BanOnHardcoreDeath)
+                        if (TShock.Config.BanOnMediumcoreDeath)
                         {
-                            if (!Tools.Ban(args.Player, TShock.Config.HardcoreBanReason))
+                            if (!Tools.Ban(args.Player, TShock.Config.MediumcoreBanReason))
                                 Tools.ForceKick(args.Player, "Death results in a ban, but can't ban you");
                         }
                         else
                         {
-                            Tools.ForceKick(args.Player, TShock.Config.HardcoreKickReason);
+                            Tools.ForceKick(args.Player, TShock.Config.MediumcoreKickReason);
                         }
                         return true;
                     }
-                }*/
+                }
             }
             else
                 args.Player.InitSpawn = true;
