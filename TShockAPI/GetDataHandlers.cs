@@ -147,7 +147,7 @@ namespace TShockAPI
             byte hair = args.Data.ReadInt8();
             byte male = args.Data.ReadInt8();
             args.Data.Position += 21;
-            bool difficulty = args.Data.ReadBoolean();
+            byte difficulty = args.Data.ReadInt8();
             string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
 
             if (hair >= Main.maxHair)
@@ -180,11 +180,16 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, "Sent client info more than once");
             }
-            /*if (TShock.Config.HardcoreOnly && !hardcore)
+            if (TShock.Config.MediumcoreOnly && difficulty < 1)
+            {
+                Tools.ForceKick(args.Player, "Server is set to mediumcore and above characters only!");
+                return true;
+            }
+            if (TShock.Config.HardcoreOnly && difficulty < 2)
             {
                 Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
                 return true;
-            }*/
+            }
 
             args.Player.ReceivedInfo = true;
             return false;

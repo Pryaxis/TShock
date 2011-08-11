@@ -60,8 +60,9 @@ namespace TShockAPI
         public bool RememberLeavePos;
 
         public bool HardcoreOnly;
-        public bool KickOnHardcoreDeath;
-        public bool BanOnHardcoreDeath;
+        public bool MediumcoreOnly;
+        public bool KickOnMediumcoreDeath;
+        public bool BanOnMediumcoreDeath;
 
         public bool AutoSave = true;
 
@@ -91,8 +92,8 @@ namespace TShockAPI
         public string IllogicalLiquidUseReason = "Manipulating liquid without bucket.";
         public string LiquidAbuseReason = "Placing impossible to place liquid.";
         public string TileKillAbuseReason = "Tile Kill abuse ({0})";
-        public string HardcoreBanReason = "Death results in a ban";
-        public string HardcoreKickReason = "Death results in a kick";
+        public string MediumcoreBanReason = "Death results in a ban";
+        public string MediumcoreKickReason = "Death results in a kick";
         public string ProjectileAbuseReason = "Projectile abuse";
         
 
