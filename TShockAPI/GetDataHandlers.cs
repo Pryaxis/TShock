@@ -452,7 +452,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if ((vely == 0f || velx == 0f) && type == 23)
+            if (type == 23 && float.IsNaN((float)Math.Sqrt((double)(velx * velx + vely * vely))))
             {
                 Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
                 return true;
