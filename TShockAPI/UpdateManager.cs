@@ -16,17 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace TShockAPI
 {
     class UpdateManager
     {
-        static string updateUrl = "http://shankshock.com/tshock-update.txt";
+        static string updateUrl = "http://shankshock.com/tshock-update.json";
         public static DateTime lastcheck = DateTime.MinValue;
-        public static string[] globalChanges = {};
         /// <summary>
         /// Check once every X minutes.
         /// </summary>
@@ -43,9 +44,10 @@ namespace TShockAPI
 
         public static void CheckUpdate(object o)
         {
-            if (ServerIsOutOfDate())
+            var updates = ServerIsOutOfDate();
+            if (updates != null)
             {
-                NotifyAdministrators(globalChanges);
+                NotifyAdministrators(updates);
             }
         }
 
@@ -53,7 +55,7 @@ namespace TShockAPI
         /// Checks to see if the server is out of date.
         /// </summary>
         /// <returns></returns>
-        private static bool ServerIsOutOfDate()
+        private static Dictionary<string, string> ServerIsOutOfDate()
         {
             using (var client = new WebClient())
             {
@@ -61,26 +63,23 @@ namespace TShockAPI
                                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
                 try
                 {
-                    string updateString = client.DownloadString(updateUrl);
-                    string[] changes = updateString.Split(',');
-                    Version updateVersion = new Version(Convert.ToInt32(changes[0]), Convert.ToInt32(changes[1]),
-                                                        Convert.ToInt32(changes[2]), Convert.ToInt32(changes[3]));
-                    if (TShock.VersionNum.CompareTo(updateVersion) < 0)
-                    {
-                        globalChanges = changes;
-                        return true;
-                    }
+                    string updatejson = client.DownloadString(updateUrl);
+                    var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
+                    var version = new Version(update["version"]);
+                    if (TShock.VersionNum.CompareTo(version) < 0)
+                        return update;
                 }
                 catch (Exception e)
                 {
                     Log.Error(e.ToString());
                 }
-                return false;
+                return null;
             }
         }
 
-        private static void NotifyAdministrators(string[] changes)
+        private static void NotifyAdministrators(Dictionary<string, string> update)
         {
+            var changes = update["changes"].Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             NotifyAdministrator(TSPlayer.Server, changes);
             foreach (TSPlayer player in TShock.Players)
             {
@@ -94,7 +93,7 @@ namespace TShockAPI
         private static void NotifyAdministrator(TSPlayer player, string[] changes)
         {
             player.SendMessage("The server is out of date.", Color.Red);
-            for (int j = 4; j < changes.Length; j++)
+            for (int j = 0; j < changes.Length; j++)
             {
                 player.SendMessage(changes[j], Color.Red);
             }
