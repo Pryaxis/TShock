@@ -331,7 +331,7 @@ namespace TShockAPI
             {
                 if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
                 {
-                    args.Player.SendMessage("Region protected from changes.", Color.Red);
+                    args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y) + " protected from changes.", Color.Red);
                     args.Player.LastTileChangeNotify = DateTime.UtcNow;
                 }
                 args.Player.SendTileSquare(x, y);
