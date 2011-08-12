@@ -232,7 +232,7 @@ namespace TShockAPI
                 }
             }
 
-            SendTeleport(Main.spawnTileX, Main.spawnTileY);
+            SendTeleport(tilex, tiley);
 
             return true;
         }
