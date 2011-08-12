@@ -263,6 +263,14 @@ namespace TShockAPI
             int y = args.Data.ReadInt32();
             byte tiletype = args.Data.ReadInt8();
 
+            if (args.Player.AwaitingName)
+            {
+                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y), Color.Yellow);
+                args.Player.SendTileSquare(x, y);
+                args.Player.AwaitingName = false;
+                return true;
+            }
+            
             if (args.Player.AwaitingTemp1)
             {
                 args.Player.TempArea.X = x;
@@ -583,6 +591,14 @@ namespace TShockAPI
             int tiley = args.Data.ReadInt32();
             if (tilex < 0 || tilex >= Main.maxTilesX || tiley < 0 || tiley >= Main.maxTilesY)
                 return false;
+
+            if (args.Player.AwaitingName)
+            {
+                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(tilex, tiley) , Color.Yellow);
+                args.Player.SendTileSquare(tilex, tiley);
+                args.Player.AwaitingName = false;
+                return true;
+            }
 
             if (args.Player.AwaitingTemp1)
             {
