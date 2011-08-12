@@ -1678,6 +1678,16 @@ namespace TShockAPI
             }
             switch (cmd)
             {
+
+                case "name":
+                    {
+                        {
+                            args.Player.SendMessage("Hit a block to get the name of the region", Color.Yellow);
+                            args.Player.AwaitingName = true;
+                        }
+                        break;
+                    }
+
                 case "set":
                     {
                         if (args.Parameters.Count == 2)
@@ -1893,6 +1903,7 @@ namespace TShockAPI
                     {
                         args.Player.SendMessage("Avialable region commands:", Color.Green);
                         args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]", Color.Yellow);
+                        args.Player.SendMessage("/region name (provides region name)", Color.Yellow);
                         args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
                         args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
                         break;
