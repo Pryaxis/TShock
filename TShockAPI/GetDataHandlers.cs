@@ -335,6 +335,12 @@ namespace TShockAPI
                     return true;
                 }
             }
+            if (type == 3)
+                if (tiletype >= Main.maxWallTypes)
+                {
+                    Tools.HandleGriefer(args.Player, string.Format(TShock.Config.TileAbuseReason, "Wall type out of bounds"));
+                    return true;
+                }
             if (!args.Player.Group.HasPermission("editspawn") && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
                 if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
