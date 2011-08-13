@@ -202,6 +202,8 @@ namespace TShockAPI
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
             if (!SendTileSquare(tilex, tiley, 150))
             {
+                InitSpawn = true;
+                SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
                 SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
                 return false;
             }
