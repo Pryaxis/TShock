@@ -339,20 +339,7 @@ namespace TShockAPI
             if (!RealPlayer || !ConnectionAlive)
                 return false;
 
-            try
-            {
-                if (Netplay.serverSock[Index].tcpClient.Connected)
-                {
-                    Netplay.serverSock[Index].networkStream.Write(data, 0, data.Length);
-                    return true;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-            }
-            return false;
+            return TShock.SendBytes(Netplay.serverSock[Index], data);
         }
     }
 

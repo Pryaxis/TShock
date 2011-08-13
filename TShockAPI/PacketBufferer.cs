@@ -123,9 +123,13 @@ namespace TShockAPI
             buffers[socket.whoAmI] = new PacketBuffer();
         }
 
-        void ServerHooks_SendBytes(ServerSock socket, byte[] buffer, int offset, int count, HandledEventArgs e)
+        public void SendBytes(ServerSock socket, byte[] buffer)
         {
-            e.Handled = true;
+            SendBytes(socket, buffer, 0, buffer.Length);
+        }
+
+        public void SendBytes(ServerSock socket, byte[] buffer, int offset, int count)
+        {
             lock (buffers[socket.whoAmI])
             {
 #if DEBUG_NET
@@ -141,6 +145,12 @@ namespace TShockAPI
                     buffers[socket.whoAmI].AddRange(ms.ToArray());
                 }
             }
+        }
+
+        void ServerHooks_SendBytes(ServerSock socket, byte[] buffer, int offset, int count, HandledEventArgs e)
+        {
+            e.Handled = true;
+            SendBytes(socket, buffer, offset, count);
         }
 #if DEBUG_NET
         static int Compress(byte[] buffer, int offset, int count)
