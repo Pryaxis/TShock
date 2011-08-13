@@ -318,6 +318,11 @@ namespace TShockAPI
                 int tileX = Math.Abs(x);
                 int tileY = Math.Abs(y);
 
+                if (tiletype >= ((type == 1) ? Main.maxTileSets : Main.maxWallTypes))
+                {
+                    Tools.HandleGriefer(args.Player, string.Format(TShock.Config.TileAbuseReason, "Invalid tile type"));
+                    return true;
+                }
                 if (TShock.Config.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
                     if (!(type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
@@ -335,12 +340,6 @@ namespace TShockAPI
                     return true;
                 }
             }
-            if (type == 3)
-                if (tiletype >= Main.maxWallTypes)
-                {
-                    Tools.HandleGriefer(args.Player, string.Format(TShock.Config.TileAbuseReason, "Wall type out of bounds"));
-                    return true;
-                }
             if (!args.Player.Group.HasPermission("editspawn") && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
                 if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
