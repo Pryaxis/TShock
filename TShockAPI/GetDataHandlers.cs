@@ -111,17 +111,8 @@ namespace TShockAPI
                 {PacketTypes.LiquidSet, HandleLiquidSet},
                 {PacketTypes.PlayerSpawn, HandleSpawn},
                 {PacketTypes.SyncPlayers, HandleSync},
+                {PacketTypes.PlayerSlot, HandlePlayerSlot},
             };
-        }
-
-        private static bool HandleSync(GetDataHandlerArgs args)
-        {
-            if (TShock.Config.EnableAntiLag)
-            {
-                Debug.WriteLine("FUCK SYNCS");
-                return true;
-            }
-            return false;
         }
 
         public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)
@@ -138,6 +129,26 @@ namespace TShockAPI
                     Log.Error(ex.ToString());
                 }
             }
+            return false;
+        }
+
+        private static bool HandleSync(GetDataHandlerArgs args)
+        {
+            return TShock.Config.EnableAntiLag;
+        }
+
+        private static bool HandlePlayerSlot(GetDataHandlerArgs args)
+        {
+            int plr = args.Data.ReadInt8();
+            int slot = args.Data.ReadInt8();
+            int stack = args.Data.ReadInt8();
+            string itemname = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
+
+            if (!args.Player.Group.HasPermission("usebanneditem") && TShock.Itembans.ItemIsBanned(itemname))
+            {
+                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
+            }
+
             return false;
         }
 
@@ -270,7 +281,7 @@ namespace TShockAPI
                 args.Player.AwaitingName = false;
                 return true;
             }
-            
+
             if (args.Player.AwaitingTemp1)
             {
                 args.Player.TempArea.X = x;
@@ -594,7 +605,7 @@ namespace TShockAPI
 
             if (args.Player.AwaitingName)
             {
-                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(tilex, tiley) , Color.Yellow);
+                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(tilex, tiley), Color.Yellow);
                 args.Player.SendTileSquare(tilex, tiley);
                 args.Player.AwaitingName = false;
                 return true;

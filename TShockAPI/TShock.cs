@@ -375,20 +375,6 @@ namespace TShockAPI
                                 player.TilesDestroyed.Clear();
                             }
                         }
-
-                        if (!player.Group.HasPermission("usebanneditem"))
-                        {
-                            var inv = player.TPlayer.inventory;
-
-                            for (int i = 0; i < inv.Length; i++)
-                            {
-                                if (inv[i] != null && Itembans.ItemIsBanned(inv[i].name))
-                                {
-                                    player.Disconnect("Using banned item: " + inv[i].name + ", remove it and rejoin");
-                                    break;
-                                }
-                            }
-                        }
                     }
                 }
             }
