@@ -112,7 +112,7 @@ namespace TShockAPI
                 {PacketTypes.PlayerSpawn, HandleSpawn},
                 {PacketTypes.SyncPlayers, HandleSync},
                 {PacketTypes.ChestGetContents, HandleChest},
-                {PacketTypes.SignNew, HandleSign}
+                {PacketTypes.SignNew, HandleSign},
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
             };
         }
