@@ -111,6 +111,8 @@ namespace TShockAPI
                 {PacketTypes.LiquidSet, HandleLiquidSet},
                 {PacketTypes.PlayerSpawn, HandleSpawn},
                 {PacketTypes.SyncPlayers, HandleSync},
+                {PacketTypes.ChestGetContents, HandleChest},
+                {PacketTypes.SignNew, HandleSign}
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
             };
         }
@@ -329,6 +331,11 @@ namespace TShockAPI
                 int tileX = Math.Abs(x);
                 int tileY = Math.Abs(y);
 
+                if (tiletype >= ((type == 1) ? Main.maxTileSets : Main.maxWallTypes))
+                {
+                    Tools.HandleGriefer(args.Player, string.Format(TShock.Config.TileAbuseReason, "Invalid tile type"));
+                    return true;
+                }
                 if (TShock.Config.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
                     if (!(type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
@@ -577,7 +584,7 @@ namespace TShockAPI
             {
                 Log.Debug(string.Format("Liquid(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Amount:{6})",
                                         plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), liquid));
-                return Tools.HandleGriefer(args.Player, TShock.Config.LiquidAbuseReason); ;
+                return Tools.HandleGriefer(args.Player, TShock.Config.LiquidAbuseReason);
             }
 
             if (TShock.Config.SpawnProtection)
@@ -713,6 +720,29 @@ namespace TShockAPI
             else
                 args.Player.InitSpawn = true;
 
+            return false;
+        }
+
+        private static bool HandleChest(GetDataHandlerArgs args)
+        {
+            var x = args.Data.ReadInt32();
+            var y = args.Data.ReadInt32();
+            if (TShock.Config.RangeChecks && ((Math.Abs(args.Player.TileX - x) > 32) || (Math.Abs(args.Player.TileY - y) > 32)))
+            {
+                return Tools.HandleGriefer(args.Player, TShock.Config.RangeCheckBanReason);
+            }
+            return false;
+        }
+
+        private static bool HandleSign(GetDataHandlerArgs args)
+        {
+            var id = args.Data.ReadInt16();
+            var x = args.Data.ReadInt32();
+            var y = args.Data.ReadInt32();
+            if (TShock.Config.RangeChecks && ((Math.Abs(args.Player.TileX - x) > 32) || (Math.Abs(args.Player.TileY - y) > 32)))
+            {
+                return Tools.HandleGriefer(args.Player, TShock.Config.RangeCheckBanReason);
+            }
             return false;
         }
     }
