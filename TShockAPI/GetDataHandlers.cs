@@ -144,11 +144,16 @@ namespace TShockAPI
             int plr = args.Data.ReadInt8();
             int slot = args.Data.ReadInt8();
             int stack = args.Data.ReadInt8();
-            string itemname = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
+            int namelength = (int)(args.Data.Length - args.Data.Position - 1);
 
-            if (!args.Player.Group.HasPermission("usebanneditem") && TShock.Itembans.ItemIsBanned(itemname))
+            if (namelength > 0)
             {
-                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
+                string itemname = Encoding.ASCII.GetString(args.Data.ReadBytes(namelength));
+
+                if (!args.Player.Group.HasPermission("usebanneditem") && TShock.Itembans.ItemIsBanned(itemname))
+                {
+                    args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
+                }
             }
 
             return false;
