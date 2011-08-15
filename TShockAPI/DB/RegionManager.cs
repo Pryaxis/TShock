@@ -256,7 +256,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                database.Query("INSERT INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", tx, ty, width, height, regionname, worldid, "", 1);
+                database.Query("INSERT INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", tx, ty, height, width, regionname, worldid, "", 1);
                 Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, true, worldid));
                 return true;
             }
@@ -377,11 +377,14 @@ namespace TShockAPI.DB
                 else
                     MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
 
-                if (database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", MergedIDs, regionName, Main.worldID.ToString()) > 0)
+                int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", MergedIDs,
+                                       regionName, Main.worldID.ToString());
+                foreach (var r in Regions)
                 {
-                    ReloadAllRegions();
-                    return true;
+                    if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
+                        r.setAllowedIDs( MergedIDs );
                 }
+                return q != 0;
             }
             catch (Exception ex)
             {
@@ -483,6 +486,20 @@ namespace TShockAPI.DB
                 }
             }
             return false;
+        }
+
+        public void setAllowedIDs( String ids )
+        {
+            String[] id_arr = ids.Split(',');
+            List<int> id_list = new List<int>();
+            foreach( String id in id_arr )
+            {
+                int i = 0;
+                int.TryParse(id, out i);
+                if( i != 0 )
+                    id_list.Add( i );
+            }
+            AllowedIDs = id_list;
         }
     }
 }

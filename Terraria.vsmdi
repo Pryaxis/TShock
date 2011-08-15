@@ -5,6 +5,7 @@
       <TestLink id="7601a790-d2fb-45d2-a612-1ae4de84eb61" name="regionmanagertest" storage="unittests\regionmanagertest.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
       <TestLink id="f28695ef-8181-4996-8783-b5059ce904b1" name="banmanagertest" storage="unittests\banmanagertest.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
       <TestLink id="b9c6b3d7-52d8-4b49-bfbf-933efa073ca8" name="itemmanagertest" storage="unittests\itemmanagertest.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="ec2aa146-8548-415b-a9f5-80472ce3c7d9" name="groupmanagertest" storage="unittests\groupmanagertest.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     </TestLinks>
   </TestList>
   <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
