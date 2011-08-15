@@ -26,6 +26,7 @@
 #managewarp		- allow player to add/delete warp locations
 #managegroup	- allow player to add/delete/modify groups
 #manageitem		- allow a player to add/delete item bans
+#manageregion   - allow a user to create/edit regions
 #editspawn		- allow player to enable/disable build protection
 #cfg			- allow player to view/change tshock configuration
 #time			- allow player to change time
