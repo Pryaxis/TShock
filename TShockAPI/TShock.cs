@@ -30,9 +30,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Linq;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
@@ -66,6 +64,11 @@ namespace TShockAPI
         public static IDbConnection DB;
         public static bool OverridePort;
         static PacketBufferer bufferer;
+
+        /// <summary>
+        /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
+        /// </summary>
+        public static event Action Initialized;
 
 
         public override Version Version
@@ -189,6 +192,8 @@ namespace TShockAPI
                 Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
                 Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
+                if (Initialized != null)
+                    Initialized();
             }
             catch (Exception ex)
             {
