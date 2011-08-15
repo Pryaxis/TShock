@@ -52,6 +52,7 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
 
             ImportOld();
+            ReloadAllRegions();
 
         }
 
@@ -361,6 +362,20 @@ namespace TShockAPI.DB
             return  MergedIDs.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
+        public bool RemoveUser(string regionName, string userName )
+        {
+            Region r = getRegion(regionName);
+            if( r != null )
+            {
+                r.RemoveID(TShock.Users.GetUserID(userName));
+                string ids = string.Join(",", r.AllowedIDs);
+                int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", ids,
+                                       regionName, Main.worldID.ToString());
+                if (q > 0)
+                    return true;
+            }
+            return false;
+        }
         public bool AddNewUser(string regionName, String userName)
         {
             try
@@ -420,7 +435,7 @@ namespace TShockAPI.DB
         {
             foreach (Region r in Regions)
             {
-                if (r.Name.Equals(name))
+                if (r.Name.Equals(name) && r.WorldID == Main.worldID.ToString())
                     return r;
             }
             return new Region();
@@ -500,6 +515,20 @@ namespace TShockAPI.DB
                     id_list.Add( i );
             }
             AllowedIDs = id_list;
+        }
+
+        public void RemoveID(int id)
+        {
+            var index = -1;
+            for (int i = 0; i < AllowedIDs.Count; i++ )
+            {
+                if (AllowedIDs[i] == id)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            AllowedIDs.RemoveAt( index );
         }
     }
 }

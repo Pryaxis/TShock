@@ -154,7 +154,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command("pvpfun", Slap, "slap"));
             ChatCommands.Add(new Command("editspawn", ToggleAntiBuild, "antibuild"));
             ChatCommands.Add(new Command("editspawn", ProtectSpawn, "protectspawn"));
-            ChatCommands.Add(new Command("editspawn", Region, "region"));
+            ChatCommands.Add(new Command("manageregion", Region, "region"));
             ChatCommands.Add(new Command("editspawn", DebugRegions, "debugreg"));
             ChatCommands.Add(new Command(Help, "help"));
             ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
@@ -1837,6 +1837,41 @@ namespace TShockAPI
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
                         break;
                     }
+                case "remove":
+                    if (args.Parameters.Count > 2)
+                        {
+                            string playerName = args.Parameters[1];
+                            string regionName = "";
+                            User playerID;
+
+                            for (int i = 2; i < args.Parameters.Count; i++)
+                            {
+                                if (regionName == "")
+                                {
+                                    regionName = args.Parameters[2];
+                                }
+                                else
+                                {
+                                    regionName = regionName + " " + args.Parameters[i];
+                                }
+                            }
+                            if ((playerID = TShock.Users.GetUserByName(playerName)) != null)
+                            {
+                                if (TShock.Regions.RemoveUser(regionName, playerName))
+                                {
+                                    args.Player.SendMessage("Removed user " + playerName + " from " + regionName, Color.Yellow);
+                                }
+                                else
+                                    args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                            }
+                            else
+                            {
+                                args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+                            }
+                        }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                        break;
                 case "list":
                     {
                         //How many regions per page
