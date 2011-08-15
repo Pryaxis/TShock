@@ -309,11 +309,12 @@ namespace TShockAPI
                 if (Main.player[i] != null & Main.player[i].active && i != Index)
                     player = i;
             SendMessage("You are now being annoyed.", Color.Red);
-            var oriinv = Main.player[0].inventory[player];
-            while ((DateTime.UtcNow - launch).TotalSeconds < time2)
+            var oriinv = Main.player[player].inventory[0];
+            var startname = Name;
+            while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
             {
-                Main.player[0].inventory[player].SetDefaults("Whoopie Cushion");
-                Main.player[0].inventory[player].stack = 1;
+                Main.player[player].inventory[0].SetDefaults("Whoopie Cushion");
+                Main.player[player].inventory[0].stack = 1;
                 SendData(PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
                 Main.player[player].position = TPlayer.position;
                 Main.player[player].selectedItem = 0;
@@ -324,7 +325,7 @@ namespace TShockAPI
                 SendData(PacketTypes.PlayerUpdate, number: player);
                 Thread.Sleep(50);
             }
-            Main.player[0].inventory[0] = oriinv;
+            Main.player[player].inventory[0] = oriinv;
             SendData(PacketTypes.PlayerSlot, oriinv.name, player, 0f);
         }
 
