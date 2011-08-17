@@ -250,7 +250,7 @@ namespace TShockAPI
 
             if (e.IsTerminating)
             {
-                if (Main.worldPathName != null)
+                if (Main.worldPathName != null && Config.SaveWorldOnCrash)
                 {
                     Main.worldPathName += ".crash";
                     WorldGen.saveWorld();
@@ -669,7 +669,7 @@ namespace TShockAPI
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.Warn(ex.ToString());
             }
             return false;
         }
