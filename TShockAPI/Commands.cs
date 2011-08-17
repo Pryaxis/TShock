@@ -174,14 +174,11 @@ namespace TShockAPI
             ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
             ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
             ChatCommands.Add(new Command("cfg", ConvertWaR, "convert"));
-            if (TShock.Config.DistributationAgent != "terraria-online")
-            {
-                ChatCommands.Add(new Command("kill", Kill, "kill"));
-                ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
-                ChatCommands.Add(new Command("item", Item, "item", "i"));
-                ChatCommands.Add(new Command("item", Give, "give"));
-                ChatCommands.Add(new Command("heal", Heal, "heal"));
-            }
+            ChatCommands.Add(new Command("kill", Kill, "kill"));
+            ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
+            ChatCommands.Add(new Command("item", Item, "item", "i"));
+            ChatCommands.Add(new Command("item", Give, "give"));
+            ChatCommands.Add(new Command("heal", Heal, "heal"));
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1839,39 +1836,38 @@ namespace TShockAPI
                     }
                 case "remove":
                     if (args.Parameters.Count > 2)
-                        {
-                            string playerName = args.Parameters[1];
-                            string regionName = "";
-                            User playerID;
+                    {
+                        string playerName = args.Parameters[1];
+                        string regionName = "";
 
-                            for (int i = 2; i < args.Parameters.Count; i++)
+                        for (int i = 2; i < args.Parameters.Count; i++)
+                        {
+                            if (regionName == "")
                             {
-                                if (regionName == "")
-                                {
-                                    regionName = args.Parameters[2];
-                                }
-                                else
-                                {
-                                    regionName = regionName + " " + args.Parameters[i];
-                                }
-                            }
-                            if ((playerID = TShock.Users.GetUserByName(playerName)) != null)
-                            {
-                                if (TShock.Regions.RemoveUser(regionName, playerName))
-                                {
-                                    args.Player.SendMessage("Removed user " + playerName + " from " + regionName, Color.Yellow);
-                                }
-                                else
-                                    args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                                regionName = args.Parameters[2];
                             }
                             else
                             {
-                                args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+                                regionName = regionName + " " + args.Parameters[i];
                             }
                         }
+                        if (TShock.Users.GetUserByName(playerName) != null)
+                        {
+                            if (TShock.Regions.RemoveUser(regionName, playerName))
+                            {
+                                args.Player.SendMessage("Removed user " + playerName + " from " + regionName, Color.Yellow);
+                            }
+                            else
+                                args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+                        }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
-                        break;
+                        {
+                            args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+                        }
+                    }
+                    else
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                    break;
                 case "list":
                     {
                         //How many regions per page
