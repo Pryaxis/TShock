@@ -23,44 +23,43 @@ namespace TShockAPI
     public class Group
     {
         public readonly List<string> permissions = new List<string>();
-        private readonly List<string> negatedpermissions = new List<string>();
+        public readonly List<string> negatedpermissions = new List<string>();
 
-        public string Name { get; protected set; }
-        public Group Parent { get; protected set; }
+        public string Name { get; set; }
+        public Group Parent { get; set; }
         public int Order { get; set; }
 
         public byte R = 255;
         public byte G = 255;
         public byte B = 255;
 
-        public Group(string groupname, Group parentgroup = null, string ChatColor = "255,255,255")
+        public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255")
         {
             Name = groupname;
             Parent = parentgroup;
-            byte.TryParse(ChatColor.Split(',')[0], out R);
-            byte.TryParse(ChatColor.Split(',')[1], out G);
-            byte.TryParse(ChatColor.Split(',')[2], out B);
+            byte.TryParse(chatcolor.Split(',')[0], out R);
+            byte.TryParse(chatcolor.Split(',')[1], out G);
+            byte.TryParse(chatcolor.Split(',')[2], out B);
         }
 
         public virtual bool HasPermission(string permission)
         {
-            if (string.IsNullOrEmpty(permission))
-                return true;
-            if (negatedpermissions.Contains(permission))
-                return false;
-            if (permissions.Contains(permission))
-                return true;
-            if (Parent != null)
-                return Parent.HasPermission(permission);
-            bool ret = false;
-            foreach( string g in permissions )
+            var cur = this;
+            var traversed = new List<Group>();
+            while (cur != null)
             {
-                if (TShock.Groups.GroupExists(g))
+                if (string.IsNullOrEmpty(permission))
+                    return true;
+                if (cur.negatedpermissions.Contains(permission))
+                    return false;
+                if (cur.permissions.Contains(permission))
+                    return true;
+                if (traversed.Contains(cur))
                 {
-                    ret = checkGroupForPermission(g, permission);
-                    if (ret)
-                        return true;
+                    throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
                 }
+                traversed.Add(cur);
+                cur = cur.Parent;
             }
             return false;
         }
@@ -73,32 +72,6 @@ namespace TShockAPI
         public void AddPermission(string permission)
         {
             permissions.Add(permission);
-        }
-
-        private bool checkGroupForPermission(String g, String permission )
-        {
-            bool ret = false;
-            if( !TShock.Groups.GroupExists( g  ) )
-            {
-                if( g.Equals(permission) )
-                    return true;
-            }
-            else
-            {
-                Group group = Tools.GetGroup(g);
-                foreach (String perm in group.permissions)
-                {
-                    if( perm.Equals( permission ) )
-                    {
-                        return true;
-                    }
-                    ret = checkGroupForPermission( perm, permission );
-
-                    if( ret )
-                        return ret;
-                }
-            }
-            return ret;
         }
     }
 
