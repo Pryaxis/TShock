@@ -1687,54 +1687,36 @@ namespace TShockAPI
 
                 case "set":
                     {
-                        if (args.Parameters.Count == 2)
+                        int choice = 0;
+                        if (args.Parameters.Count == 2 &&
+                            int.TryParse(args.Parameters[1], out choice) &&
+                            choice >= 1 && choice <= 2)
                         {
-                            if (args.Parameters[1] == "1")
-                            {
-                                if (!args.Player.AwaitingTemp2)
-                                {
-                                    args.Player.SendMessage("Hit a block to Set Point 1", Color.Yellow);
-                                    args.Player.AwaitingTemp1 = true;
-                                }
-                                else
-                                    args.Player.SendMessage("Awaiting you to Set Point 2", Color.Yellow);
-                            }
-                            else if (args.Parameters[1] == "2")
-                            {
-                                if (args.Player.TempArea.X != 0)
-                                {
-                                    if (!args.Player.AwaitingTemp1)
-                                    {
-                                        args.Player.SendMessage("Hit a block to Set Point 2", Color.Yellow);
-                                        args.Player.AwaitingTemp2 = true;
-                                    }
-                                    else
-                                        args.Player.SendMessage("Awaiting you to Set Point 1", Color.Yellow);
-                                }
-                                else
-                                {
-                                    args.Player.SendMessage("You have not set Point 1 yet", Color.Red);
-                                }
-                            }
-                            else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
+                            args.Player.SendMessage("Hit a block to Set Point " + choice, Color.Yellow);
+                            args.Player.AwaitingTempPoint = choice;
                         }
                         else
+                        {
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
+                        }
                         break;
                     }
                 case "define":
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            if (!args.Player.TempArea.IsEmpty)
+                            if (!args.Player.TempPoints.Any(p => p == Point.Zero))
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                                if (TShock.Regions.AddRegion(args.Player.TempArea.X, args.Player.TempArea.Y,
-                                                            args.Player.TempArea.Width, args.Player.TempArea.Height,
-                                                            regionName, Main.worldID.ToString()))
+                                var x = Math.Min(args.Player.TempPoints[0].X, args.Player.TempPoints[1].X);
+                                var y = Math.Min(args.Player.TempPoints[0].Y, args.Player.TempPoints[1].Y);
+                                var width = Math.Abs(args.Player.TempPoints[0].X - args.Player.TempPoints[1].X);
+                                var height = Math.Abs(args.Player.TempPoints[0].Y - args.Player.TempPoints[1].Y);
+
+                                if (TShock.Regions.AddRegion(x, y, width, height, regionName, Main.worldID.ToString()))
                                 {
-                                    args.Player.TempArea = Rectangle.Empty;
+                                    args.Player.TempPoints[0] = Point.Zero;
+                                    args.Player.TempPoints[1] = Point.Zero;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
                                 }
                                 else
@@ -1743,7 +1725,9 @@ namespace TShockAPI
                                 }
                             }
                             else
+                            {
                                 args.Player.SendMessage("Points not set up yet", Color.Red);
+                            }
                         }
                         else
                             args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
@@ -1791,10 +1775,10 @@ namespace TShockAPI
                     }
                 case "clear":
                     {
-                        args.Player.TempArea = Rectangle.Empty;
+                        args.Player.TempPoints[0] = Point.Zero;
+                        args.Player.TempPoints[1] = Point.Zero;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
-                        args.Player.AwaitingTemp1 = false;
-                        args.Player.AwaitingTemp2 = false;
+                        args.Player.AwaitingTempPoint = 0;
                         break;
                     }
                 case "allow":
@@ -1803,7 +1787,6 @@ namespace TShockAPI
                         {
                             string playerName = args.Parameters[1];
                             string regionName = "";
-                            User playerID;
 
                             for (int i = 2; i < args.Parameters.Count; i++)
                             {
@@ -1816,7 +1799,7 @@ namespace TShockAPI
                                     regionName = regionName + " " + args.Parameters[i];
                                 }
                             }
-                            if ((playerID = TShock.Users.GetUserByName(playerName)) != null)
+                            if (TShock.Users.GetUserByName(playerName) != null)
                             {
                                 if (TShock.Regions.AddNewUser(regionName, playerName))
                                 {

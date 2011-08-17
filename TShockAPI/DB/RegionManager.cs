@@ -41,8 +41,8 @@ namespace TShockAPI.DB
             var table = new SqlTable("Regions",
                 new SqlColumn("X1", MySqlDbType.Int32),
                 new SqlColumn("Y1", MySqlDbType.Int32),
-                new SqlColumn("height", MySqlDbType.Int32),
                 new SqlColumn("width", MySqlDbType.Int32),
+                new SqlColumn("height", MySqlDbType.Int32),
                 new SqlColumn("RegionName", MySqlDbType.VarChar, 50) { Primary = true },
                 new SqlColumn("WorldID", MySqlDbType.Text),
                 new SqlColumn("UserIds", MySqlDbType.Text),
@@ -257,7 +257,8 @@ namespace TShockAPI.DB
         {
             try
             {
-                database.Query("INSERT INTO Regions VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", tx, ty, height, width, regionname, worldid, "", 1);
+                database.Query("INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);",
+                    tx, ty, width, height, regionname, worldid, "", 1);
                 Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, true, worldid));
                 return true;
             }

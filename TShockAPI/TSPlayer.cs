@@ -39,9 +39,8 @@ namespace TShockAPI
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
         public DateTime LastPvpChange { get; protected set; }
-        public Rectangle TempArea;
-        public bool AwaitingTemp1 { get; set; }
-        public bool AwaitingTemp2 { get; set; }
+        public Point[] TempPoints = new Point[2];
+        public int AwaitingTempPoint { get; set; }
         public bool AwaitingName { get; set; }
         public DateTime LastExplosive { get; set; }
         public DateTime LastTileChangeNotify { get; set; }
