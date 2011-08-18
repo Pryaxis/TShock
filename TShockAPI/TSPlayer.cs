@@ -156,7 +156,6 @@ namespace TShockAPI
         public virtual void Disconnect(string reason)
         {
             SendData(PacketTypes.Disconnect, reason);
-            Flush();
         }
 
         public virtual void Flush()

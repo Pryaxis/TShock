@@ -110,22 +110,18 @@ namespace TShockAPI
                 if (socket == null || !socket.active)
                     return false;
 
-                if (!socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
+                if (buffers[socket.whoAmI].Count < 1)
                     return false;
 
                 byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
                 if (buff == null)
                     return false;
 
-
-                socket.tcpClient.Client.Send(buff);
-                return true;
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (SocketException)
-            {
+                if (SendBytes(socket, buff))
+                {
+                    buffers[socket.whoAmI].Pop(buff.Length);
+                    return true;
+                }
             }
             catch (Exception e)
             {
@@ -140,12 +136,16 @@ namespace TShockAPI
             buffers[socket.whoAmI] = new PacketBuffer();
         }
 
-        public void SendBytes(ServerSock socket, byte[] buffer)
+        public bool SendBytes(ServerSock socket, byte[] buffer)
         {
-            SendBytes(socket, buffer, 0, buffer.Length);
+            return SendBytes(socket, buffer, 0, buffer.Length);
+        }
+        public void BufferBytes(ServerSock socket, byte[] buffer)
+        {
+            BufferBytes(socket, buffer, 0, buffer.Length);
         }
 
-        public void SendBytes(ServerSock socket, byte[] buffer, int offset, int count)
+        public void BufferBytes(ServerSock socket, byte[] buffer, int offset, int count)
         {
             lock (buffers[socket.whoAmI])
             {
@@ -164,10 +164,29 @@ namespace TShockAPI
             }
         }
 
+        public bool SendBytes(ServerSock socket, byte[] buffer, int offset, int count)
+        {
+            try
+            {
+                if (socket.tcpClient.Client != null && socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
+                {
+                    socket.tcpClient.Client.Send(buffer, offset, count, SocketFlags.None);
+                    return true;
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (SocketException)
+            {
+            }
+            return false;
+        }
+
         void ServerHooks_SendBytes(ServerSock socket, byte[] buffer, int offset, int count, HandledEventArgs e)
         {
             e.Handled = true;
-            SendBytes(socket, buffer, offset, count);
+            BufferBytes(socket, buffer, offset, count);
         }
 #if DEBUG_NET
         static int Compress(byte[] buffer, int offset, int count)
@@ -195,8 +214,15 @@ namespace TShockAPI
 
                 var ret = new byte[Math.Min(max, this.Count)];
                 this.CopyTo(0, ret, 0, ret.Length);
-                this.RemoveRange(0, ret.Length);
                 return ret;
+            }
+        }
+
+        public void Pop(int count)
+        {
+            lock (this)
+            {
+                this.RemoveRange(0, count);
             }
         }
     }
