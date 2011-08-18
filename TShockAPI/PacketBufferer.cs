@@ -92,29 +92,46 @@ namespace TShockAPI
 
         void GameHooks_Update(GameTime obj)
         {
+            FlushAll();
+        }
+
+        public void FlushAll()
+        {
             for (int i = 0; i < Netplay.serverSock.Length; i++)
             {
-                if (Netplay.serverSock[i] == null || !Netplay.serverSock[i].active)
-                    continue;
-
-                if (!Netplay.serverSock[i].tcpClient.Client.Poll(0, SelectMode.SelectWrite))
-                    continue;
-
-                byte[] buff = buffers[i].GetBytes(BytesPerUpdate);
-                if (buff == null)
-                    continue;
-
-                try
-                {
-                    Netplay.serverSock[i].tcpClient.Client.Send(buff);
-                }
-                catch (ObjectDisposedException)
-                {
-                }
-                catch (SocketException)
-                {
-                }
+                Flush(Netplay.serverSock[i]);
             }
+        }
+
+        public bool Flush(ServerSock socket)
+        {
+            try
+            {
+                if (socket == null || !socket.active)
+                    return false;
+
+                if (!socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
+                    return false;
+
+                byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
+                if (buff == null)
+                    return false;
+
+
+                socket.tcpClient.Client.Send(buff);
+                return true;
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (SocketException)
+            {
+            }
+            catch (Exception e)
+            {
+                Log.ConsoleError(e.ToString());
+            }
+            return false;
         }
 
 

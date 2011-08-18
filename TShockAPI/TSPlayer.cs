@@ -156,6 +156,16 @@ namespace TShockAPI
         public virtual void Disconnect(string reason)
         {
             SendData(PacketTypes.Disconnect, reason);
+            Flush();
+        }
+
+        public virtual void Flush()
+        {
+            var sock = Netplay.serverSock[Index];
+            if (sock == null)
+                return;
+
+            TShock.PacketBuffer.Flush(sock);
         }
 
 
