@@ -316,7 +316,7 @@ namespace TShockAPI.DB
 
         public bool CanBuild(int x, int y, TSPlayer ply)
         {
-            if (!ply.Group.HasPermission("canbuild"))
+            if (!ply.Group.HasPermission(Permissions.canbuild))
             {
                 return false;
             }

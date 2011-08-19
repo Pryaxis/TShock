@@ -83,7 +83,7 @@ namespace TShockAPI
             NotifyAdministrator(TSPlayer.Server, changes);
             foreach (TSPlayer player in TShock.Players)
             {
-                if (player != null && player.Active && player.Group.HasPermission("maintenance"))
+                if (player != null && player.Active && player.Group.HasPermission(Permissions.maintenance))
                 {
                     NotifyAdministrator(player, changes);
                 }

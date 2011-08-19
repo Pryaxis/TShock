@@ -146,7 +146,7 @@ namespace TShockAPI
             TSPlayer.Server.SendMessage(log, color);
             foreach (TSPlayer player in TShock.Players)
             {
-                if (player != null && player.Active && player.Group.HasPermission("logs") && player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
+                if (player != null && player.Active && player.Group.HasPermission(Permissions.logs) && player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
                     player.SendMessage(log, color);
             }
         }
@@ -344,7 +344,7 @@ namespace TShockAPI
         {
             if (!player.ConnectionAlive)
                 return true;
-            if (!player.Group.HasPermission("immunetokick"))
+            if (!player.Group.HasPermission(Permissions.immunetokick))
             {
                 string playerName = player.Name;
                 player.Disconnect(string.Format("Kicked: {0}", reason));
@@ -367,7 +367,7 @@ namespace TShockAPI
         {
             if (!player.ConnectionAlive)
                 return true;
-            if (!player.Group.HasPermission("immunetoban"))
+            if (!player.Group.HasPermission(Permissions.immunetoban))
             {
                 string ip = player.IP;
                 string playerName = player.Name;
@@ -390,17 +390,17 @@ namespace TShockAPI
 
         public static bool HandleGriefer(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanGriefers, TShock.Config.KickGriefers, reason);
+            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanGriefers, TShock.Config.KickGriefers, reason);
         }
 
         public static bool HandleTntUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers, reason);
+            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers, reason);
         }
 
         public static bool HandleExplosivesUser(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignoregriefdetection", TShock.Config.BanExplosives, TShock.Config.KickExplosives, reason);
+            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanExplosives, TShock.Config.KickExplosives, reason);
         }
 
         private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)

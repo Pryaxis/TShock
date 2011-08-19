@@ -110,75 +110,75 @@ namespace TShockAPI
         public static void InitCommands()
         {
             //When adding new perm in here, add new perm to CommandList in DBEditor
-            ChatCommands.Add(new Command("kick", Kick, "kick"));
-            ChatCommands.Add(new Command("ban", Ban, "ban"));
-            ChatCommands.Add(new Command("ban", BanIP, "banip"));
-            ChatCommands.Add(new Command("unban", UnBan, "unban"));
-            ChatCommands.Add(new Command("unban", UnBanIP, "unbanip"));
-            ChatCommands.Add(new Command("maintenance", ClearBans, "clearbans"));
-            ChatCommands.Add(new Command("whitelist", Whitelist, "whitelist"));
-            ChatCommands.Add(new Command("maintenance", Off, "off"));
-            ChatCommands.Add(new Command("maintenance", OffNoSave, "off-nosave"));
-            ChatCommands.Add(new Command("maintenance", CheckUpdates, "checkupdates"));
-            ChatCommands.Add(new Command("causeevents", DropMeteor, "dropmeteor"));
-            ChatCommands.Add(new Command("causeevents", Star, "star"));
-            ChatCommands.Add(new Command("causeevents", Bloodmoon, "bloodmoon"));
-            ChatCommands.Add(new Command("causeevents", Invade, "invade"));
-            ChatCommands.Add(new Command("spawnboss", Eater, "eater"));
-            ChatCommands.Add(new Command("spawnboss", Eye, "eye"));
-            ChatCommands.Add(new Command("spawnboss", King, "king"));
-            ChatCommands.Add(new Command("spawnboss", Skeletron, "skeletron"));
-            ChatCommands.Add(new Command("spawnboss", Hardcore, "hardcore"));
-            ChatCommands.Add(new Command("spawnmob", SpawnMob, "spawnmob", "sm"));
-            ChatCommands.Add(new Command("tp", Home, "home"));
-            ChatCommands.Add(new Command("tp", Spawn, "spawn"));
-            ChatCommands.Add(new Command("tp", TP, "tp"));
-            ChatCommands.Add(new Command("tphere", TPHere, "tphere"));
-            ChatCommands.Add(new Command("warp", UseWarp, "warp"));
-            ChatCommands.Add(new Command("managewarp", SetWarp, "setwarp"));
-            ChatCommands.Add(new Command("managewarp", DeleteWarp, "delwarp"));
-            ChatCommands.Add(new Command("managewarp", HideWarp, "hidewarp"));
-            ChatCommands.Add(new Command("managegroup", AddGroup, "addgroup"));
-            ChatCommands.Add(new Command("managegroup", DeleteGroup, "delgroup"));
-            ChatCommands.Add(new Command("managegroup", ModifyGroup, "modgroup"));
-            ChatCommands.Add(new Command("manageitem", AddItem, "additem"));
-            ChatCommands.Add(new Command("manageitem", DeleteItem, "delitem"));
-            ChatCommands.Add(new Command("cfg", SetSpawn, "setspawn"));
-            ChatCommands.Add(new Command("cfg", Reload, "reload"));
-            ChatCommands.Add(new Command("cfg", ShowConfiguration, "showconfig"));
-            ChatCommands.Add(new Command("cfg", ServerPassword, "serverpassword"));
-            ChatCommands.Add(new Command("cfg", Save, "save"));
-            ChatCommands.Add(new Command("cfg", MaxSpawns, "maxspawns"));
-            ChatCommands.Add(new Command("cfg", SpawnRate, "spawnrate"));
-            ChatCommands.Add(new Command("time", Time, "time"));
-            ChatCommands.Add(new Command("pvpfun", Slap, "slap"));
-            ChatCommands.Add(new Command("editspawn", ToggleAntiBuild, "antibuild"));
-            ChatCommands.Add(new Command("editspawn", ProtectSpawn, "protectspawn"));
-            ChatCommands.Add(new Command("manageregion", Region, "region"));
-            ChatCommands.Add(new Command("editspawn", DebugRegions, "debugreg"));
+            ChatCommands.Add(new Command( Permissions.kick, Kick, "kick"));
+            ChatCommands.Add(new Command(Permissions.ban, Ban, "ban"));
+            ChatCommands.Add(new Command(Permissions.ban, BanIP, "banip"));
+            ChatCommands.Add(new Command(Permissions.ban, UnBan, "unban"));
+            ChatCommands.Add(new Command(Permissions.ban, UnBanIP, "unbanip"));
+            ChatCommands.Add(new Command(Permissions.maintenance, ClearBans, "clearbans"));
+            ChatCommands.Add(new Command(Permissions.whitelist, Whitelist, "whitelist"));
+            ChatCommands.Add(new Command(Permissions.maintenance, Off, "off"));
+            ChatCommands.Add(new Command(Permissions.maintenance, OffNoSave, "off-nosave"));
+            ChatCommands.Add(new Command(Permissions.maintenance, CheckUpdates, "checkupdates"));
+            ChatCommands.Add(new Command(Permissions.causeevents, DropMeteor, "dropmeteor"));
+            ChatCommands.Add(new Command(Permissions.causeevents, Star, "star"));
+            ChatCommands.Add(new Command(Permissions.causeevents, Bloodmoon, "bloodmoon"));
+            ChatCommands.Add(new Command(Permissions.causeevents, Invade, "invade"));
+            ChatCommands.Add(new Command(Permissions.spawnboss, Eater, "eater"));
+            ChatCommands.Add(new Command(Permissions.spawnboss, Eye, "eye"));
+            ChatCommands.Add(new Command(Permissions.spawnboss, King, "king"));
+            ChatCommands.Add(new Command(Permissions.spawnboss, Skeletron, "skeletron"));
+            ChatCommands.Add(new Command(Permissions.spawnboss, Hardcore, "hardcore"));
+            ChatCommands.Add(new Command(Permissions.spawnmob, SpawnMob, "spawnmob", "sm"));
+            ChatCommands.Add(new Command(Permissions.tp, Home, "home"));
+            ChatCommands.Add(new Command(Permissions.tp, Spawn, "spawn"));
+            ChatCommands.Add(new Command(Permissions.tp, TP, "tp"));
+            ChatCommands.Add(new Command(Permissions.tphere, TPHere, "tphere"));
+            ChatCommands.Add(new Command(Permissions.warp, UseWarp, "warp"));
+            ChatCommands.Add(new Command(Permissions.managewarp, SetWarp, "setwarp"));
+            ChatCommands.Add(new Command(Permissions.managewarp, DeleteWarp, "delwarp"));
+            ChatCommands.Add(new Command(Permissions.managewarp, HideWarp, "hidewarp"));
+            ChatCommands.Add(new Command(Permissions.managewarp, AddGroup, "addgroup"));
+            ChatCommands.Add(new Command(Permissions.managewarp, DeleteGroup, "delgroup"));
+            ChatCommands.Add(new Command(Permissions.managewarp, ModifyGroup, "modgroup"));
+            ChatCommands.Add(new Command(Permissions.manageitem, AddItem, "additem"));
+            ChatCommands.Add(new Command(Permissions.manageitem, DeleteItem, "delitem"));
+            ChatCommands.Add(new Command(Permissions.cfg, SetSpawn, "setspawn"));
+            ChatCommands.Add(new Command(Permissions.cfg, Reload, "reload"));
+            ChatCommands.Add(new Command(Permissions.cfg, ShowConfiguration, "showconfig"));
+            ChatCommands.Add(new Command(Permissions.cfg, ServerPassword, "serverpassword"));
+            ChatCommands.Add(new Command(Permissions.cfg, Save, "save"));
+            ChatCommands.Add(new Command(Permissions.cfg, MaxSpawns, "maxspawns"));
+            ChatCommands.Add(new Command(Permissions.cfg, SpawnRate, "spawnrate"));
+            ChatCommands.Add(new Command(Permissions.time, Time, "time"));
+            ChatCommands.Add(new Command(Permissions.pvpfun, Slap, "slap"));
+            ChatCommands.Add(new Command(Permissions.editspawn, ToggleAntiBuild, "antibuild"));
+            ChatCommands.Add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn"));
+            ChatCommands.Add(new Command(Permissions.manageregion, Region, "region"));
+            ChatCommands.Add(new Command(Permissions.editspawn, DebugRegions, "debugreg"));
             ChatCommands.Add(new Command(Help, "help"));
             ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
             ChatCommands.Add(new Command(AuthToken, "auth"));
             ChatCommands.Add(new Command(ThirdPerson, "me"));
             ChatCommands.Add(new Command(PartyChat, "p"));
             ChatCommands.Add(new Command(Rules, "rules"));
-            ChatCommands.Add(new Command("logs", DisplayLogs, "displaylogs"));
+            ChatCommands.Add(new Command(Permissions.logs, DisplayLogs, "displaylogs"));
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
             ChatCommands.Add(new Command(RegisterUser, "register") { DoLog = false });
-            ChatCommands.Add(new Command("root-only", ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command("root-only", GrabUserUserInfo, "userinfo", "ui"));
-            ChatCommands.Add(new Command("root-only", AuthVerify, "auth-verify"));
+            ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui"));
+            ChatCommands.Add(new Command(Permissions.rootonly, AuthVerify, "auth-verify"));
             ChatCommands.Add(new Command(AttemptLogin, "login") { DoLog = false });
-            ChatCommands.Add(new Command("cfg", Broadcast, "broadcast", "bc"));
-            ChatCommands.Add(new Command("whisper", Whisper, "whisper", "w", "tell"));
-            ChatCommands.Add(new Command("whisper", Reply, "reply", "r"));
-            ChatCommands.Add(new Command("annoy", Annoy, "annoy"));
-            ChatCommands.Add(new Command("cfg", ConvertWaR, "convert"));
-            ChatCommands.Add(new Command("kill", Kill, "kill"));
-            ChatCommands.Add(new Command("butcher", Butcher, "butcher"));
-            ChatCommands.Add(new Command("item", Item, "item", "i"));
-            ChatCommands.Add(new Command("item", Give, "give"));
-            ChatCommands.Add(new Command("heal", Heal, "heal"));
+            ChatCommands.Add(new Command(Permissions.cfg, Broadcast, "broadcast", "bc"));
+            ChatCommands.Add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell"));
+            ChatCommands.Add(new Command(Permissions.whisper, Reply, "reply", "r"));
+            ChatCommands.Add(new Command(Permissions.annoy, Annoy, "annoy"));
+            ChatCommands.Add(new Command(Permissions.cfg, ConvertWaR, "convert"));
+            ChatCommands.Add(new Command(Permissions.kill, Kill, "kill"));
+            ChatCommands.Add(new Command(Permissions.butcher, Butcher, "butcher"));
+            ChatCommands.Add(new Command(Permissions.item, Item, "item", "i"));
+            ChatCommands.Add(new Command(Permissions.item, Give, "give"));
+            ChatCommands.Add(new Command(Permissions.heal, Heal, "heal"));
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1627,7 +1627,7 @@ namespace TShockAPI
                 {
                     int.TryParse(args.Parameters[1], out damage);
                 }
-                if (!args.Player.Group.HasPermission("kill"))
+                if (!args.Player.Group.HasPermission(Permissions.kill))
                 {
                     damage = Tools.Clamp(damage, 15, 0);
                 }
