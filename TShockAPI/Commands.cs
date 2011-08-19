@@ -140,9 +140,9 @@ namespace TShockAPI
             add(Permissions.managewarp, SetWarp, "setwarp");
             add(Permissions.managewarp, DeleteWarp, "delwarp");
             add(Permissions.managewarp, HideWarp, "hidewarp");
-            add(Permissions.managewarp, AddGroup, "addgroup");
-            add(Permissions.managewarp, DeleteGroup, "delgroup");
-            add(Permissions.managewarp, ModifyGroup, "modgroup");
+            add(Permissions.managegroup, AddGroup, "addgroup");
+            add(Permissions.managegroup, DeleteGroup, "delgroup");
+            add(Permissions.managegroup, ModifyGroup, "modgroup");
             add(Permissions.manageitem, AddItem, "additem");
             add(Permissions.manageitem, DeleteItem, "delitem");
             add(Permissions.cfg, SetSpawn, "setspawn");
