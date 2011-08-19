@@ -483,10 +483,17 @@ namespace TShockAPI
         /// <param name="hostname">string ip</param>
         public static string GetIPv4Address(string hostname)
         {
-            //Get the ipv4 address from GetHostAddresses, if an ip is passed it will return that ip
-            var ip = Dns.GetHostAddresses(hostname).FirstOrDefault(i => i.AddressFamily == AddressFamily.InterNetwork);
-            //if the dns query was successful then return it, otherwise return an empty string
-            return ip != null ? ip.ToString() : "";
+            try
+            {
+                //Get the ipv4 address from GetHostAddresses, if an ip is passed it will return that ip
+                var ip = Dns.GetHostAddresses(hostname).FirstOrDefault(i => i.AddressFamily == AddressFamily.InterNetwork);
+                //if the dns query was successful then return it, otherwise return an empty string
+                return ip != null ? ip.ToString() : "";
+            }
+            catch (SocketException)
+            {
+            }
+            return "";
         }
 
         public static string HashAlgo = "md5";

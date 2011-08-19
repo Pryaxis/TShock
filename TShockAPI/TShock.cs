@@ -719,6 +719,7 @@ namespace TShockAPI
                         senddisconnect(Netplay.serverSock[i], e.text);
                     }
                 }
+                e.Handled = true;
             }
         }
 
