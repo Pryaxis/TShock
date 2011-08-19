@@ -238,7 +238,7 @@ namespace TShockAPI
 
                 var def = field.GetValue(defaults);
 
-                sb.AppendLine("# {0}  ".SFormat(name));
+                sb.AppendLine("## {0}  ".SFormat(name));
                 sb.AppendLine("**Type:** {0}  ".SFormat(type));
                 sb.AppendLine("**Description:** {0}  ".SFormat(desc));
                 sb.AppendLine("**Default:** \"{0}\"  ".SFormat(def));

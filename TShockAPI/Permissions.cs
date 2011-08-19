@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -122,15 +123,48 @@ namespace TShockAPI
         [Description("")]
         public static readonly string heal;
 
-
-
-
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
             {
                 field.SetValue(null, field.Name);
             }
+        }
+
+        static List<Command> GetCommands(string perm)
+        {
+            if (Commands.ChatCommands.Count < 1)
+                Commands.InitCommands();
+            return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
+        }
+
+        static void DumpDescriptions()
+        {
+            var sb = new StringBuilder();
+            foreach (var field in typeof(Permissions).GetFields())
+            {
+                var name = field.Name;
+
+                var descattr = field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
+                var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : "None";
+
+                var commands = GetCommands(name);
+                foreach (var c in commands)
+                {
+                    for (var i = 0; i < c.Names.Count; i++)
+                    {
+                        c.Names[i] = "/" + c.Names[i];
+                    }
+                }
+                var strs = commands.Select(c => c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+
+                sb.AppendLine("## <a name=\"{0}\">{0}  ".SFormat(name));
+                sb.AppendLine("**Description:** {0}  ".SFormat(desc));
+                sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
+                sb.AppendLine();
+            }
+
+            File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
         }
     }
 
