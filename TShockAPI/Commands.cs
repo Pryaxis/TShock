@@ -57,19 +57,19 @@ namespace TShockAPI
         public string Name { get { return Names[0]; } }
         public List<string> Names { get; protected set; }
         public bool DoLog { get; set; }
-        private string permission;
+        public string Permission { get; protected set; }
         private CommandDelegate command;
 
         public Command(string permissionneeded, CommandDelegate cmd, params string[] names)
             : this(cmd, names)
         {
-            permission = permissionneeded;
+            Permission = permissionneeded;
         }
         public Command(CommandDelegate cmd, params string[] names)
         {
             if (names == null || names.Length < 1)
                 throw new NotSupportedException();
-            permission = null;
+            Permission = null;
             Names = new List<string>(names);
             command = cmd;
             DoLog = true;
@@ -77,7 +77,7 @@ namespace TShockAPI
 
         public bool Run(string msg, TSPlayer ply, List<string> parms)
         {
-            if (!ply.Group.HasPermission(permission))
+            if (!ply.Group.HasPermission(Permission))
                 return false;
 
             try
@@ -100,7 +100,7 @@ namespace TShockAPI
 
         public bool CanRun(TSPlayer ply)
         {
-            return ply.Group.HasPermission(permission);
+            return ply.Group.HasPermission(Permission);
         }
     }
     public static class Commands
@@ -155,7 +155,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(Permissions.editspawn, ToggleAntiBuild, "antibuild"));
             ChatCommands.Add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn"));
             ChatCommands.Add(new Command(Permissions.manageregion, Region, "region"));
-            ChatCommands.Add(new Command(Permissions.editspawn, DebugRegions, "debugreg"));
+            ChatCommands.Add(new Command(Permissions.manageregion, DebugRegions, "debugreg"));
             ChatCommands.Add(new Command(Help, "help"));
             ChatCommands.Add(new Command(Playing, "playing", "online", "who"));
             ChatCommands.Add(new Command(AuthToken, "auth"));
