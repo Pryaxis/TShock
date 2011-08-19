@@ -957,6 +957,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /eater [amount]", Color.Red);
                 return;
             }
+            amount = Math.Min(amount, Main.maxNPCs);
             NPC eater = Tools.GetNPCById(13);
             TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
@@ -975,6 +976,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /eye [amount]", Color.Red);
                 return;
             }
+            amount = Math.Min(amount, Main.maxNPCs);
             NPC eye = Tools.GetNPCById(4);
             TSPlayer.Server.SetTime(false, 0.0);
             TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
@@ -994,6 +996,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /king [amount]", Color.Red);
                 return;
             }
+            amount = Math.Min(amount, Main.maxNPCs);
             NPC king = Tools.GetNPCById(50);
             TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
             Tools.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
@@ -1012,6 +1015,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /skeletron [amount]", Color.Red);
                 return;
             }
+            amount = Math.Min(amount, Main.maxNPCs);
             NPC skeletron = Tools.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
             TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
@@ -1031,6 +1035,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /hardcore [amount]", Color.Red);
                 return;
             }
+            amount = Math.Min(amount, Main.maxNPCs / 4);
             NPC eater = Tools.GetNPCById(13);
             NPC eye = Tools.GetNPCById(4);
             NPC king = Tools.GetNPCById(50);
@@ -1061,6 +1066,8 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
                 return;
             }
+
+            amount = Math.Min(amount, Main.maxNPCs);
 
             var npcs = Tools.GetNPCByIdOrName(args.Parameters[0]);
             if (npcs.Count == 0)
