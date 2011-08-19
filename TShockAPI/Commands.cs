@@ -1921,6 +1921,24 @@ namespace TShockAPI
 
                         break;
                     }
+                case "info":
+                    {
+                        if (args.Parameters.Count > 1)
+                        {
+                            string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
+                            Region r = TShock.Regions.getRegion(regionName);
+
+                            args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " + r.Area.Width + " H: " + r.Area.Height);
+                            foreach (int s in r.AllowedIDs)
+                            {
+                                args.Player.SendMessage(r.Name + ": " + TShock.Users.GetUserByID(s).Name);
+                            }
+                        }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region info [name]", Color.Red);
+
+                        break;
+                    }
                 case "help":
                 default:
                     {

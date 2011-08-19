@@ -255,6 +255,17 @@ namespace TShockAPI.DB
                 return null;
             }
         }
+        public User GetUserByID(int id)
+        {
+            try
+            {
+                return GetUser(new User { ID = id });
+            }
+            catch (UserManagerException)
+            {
+                return null;
+            }
+        }
         public User GetUserByIP(string ip)
         {
             try
