@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -56,7 +57,7 @@ namespace TShockAPI.DB
 
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void ImportOld()
         {
             String file = Path.Combine(TShock.SavePath, "regions.xml");
@@ -255,6 +256,10 @@ namespace TShockAPI.DB
 
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
+            if (TShock.Regions.getRegion(regionname) == null)
+            {
+                return false;
+            }
             try
             {
                 database.Query("INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);",
