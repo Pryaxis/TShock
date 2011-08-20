@@ -2177,11 +2177,11 @@ namespace TShockAPI
 
         private static void Item(CommandArgs args)
         {
-            if (args.Parameters.Count < 1)
-            {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount]", Color.Red);
-                return;
-            }
+            //if (args.Parameters.Count < 1)
+            //{
+                //args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount]", Color.Red);
+                //return;
+            //}
             if (args.Parameters[0].Length == 0)
             {
                 args.Player.SendMessage("Missing item name/id", Color.Red);
@@ -2189,7 +2189,23 @@ namespace TShockAPI
             }
             int itemAmount = 0;
             int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            if (args.Parameters.Count == 0)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+
+            }
+
+            if (args.Parameters.Count == 1)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0] + " " + args.Parameters[1]);
+
+            }
+            if (args.Parameters.Count == 2)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0] + " " + args.Parameters[1] + " " + args.Parameters[2]);
+
+            }
+
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -2224,11 +2240,11 @@ namespace TShockAPI
 
         private static void Give(CommandArgs args)
         {
-            if (args.Parameters.Count < 2)
-            {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount]", Color.Red);
-                return;
-            }
+            //if (args.Parameters.Count < 2)
+            //{
+                //args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount]", Color.Red);
+                //return;
+            //}
             if (args.Parameters[0].Length == 0)
             {
                 args.Player.SendMessage("Missing item name/id", Color.Red);
@@ -2240,8 +2256,30 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
-            args.Parameters.RemoveAt(0);
+            
+            if (args.Parameters.Count == 0)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+                args.Parameters.RemoveAt(0);
+
+
+            }
+
+            if (args.Parameters.Count == 1)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0] + " " + args.Parameters[1]);
+                args.Parameters.RemoveAt(0);
+                args.Parameters.RemoveAt(1);
+
+            }
+            if (args.Parameters.Count == 2)
+            {
+                var items = Tools.GetItemByIdOrName(args.Parameters[0] + " " + args.Parameters[1] + " " + args.Parameters[2]);
+                args.Parameters.RemoveAt(0);
+                args.Parameters.RemoveAt(1);
+                args.Parameters.RemoveAt(2);
+            }
+
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
             if (args.Parameters.Count > 0)
