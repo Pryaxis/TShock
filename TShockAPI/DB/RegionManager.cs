@@ -256,7 +256,7 @@ namespace TShockAPI.DB
 
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
-            if (TShock.Regions.getRegion(regionname) == null)
+            if (TShock.Regions.GetRegionByName(regionname) == null)
             {
                 return false;
             }
@@ -279,7 +279,8 @@ namespace TShockAPI.DB
             try
             {
                 database.Query("DELETE FROM Regions WHERE RegionName=@0 AND WorldID=@1", name, Main.worldID.ToString());
-                Regions.Remove(getRegion(name));
+                var worldid = Main.worldID.ToString();
+                Regions.RemoveAll(r => r.Name == name && r.WorldID == worldid);
                 return true;
             }
             catch (Exception ex)
@@ -294,7 +295,9 @@ namespace TShockAPI.DB
             try
             {
                 database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name, Main.worldID.ToString());
-                getRegion(name).DisableBuild = state;
+                var region = GetRegionByName(name);
+                if (region != null)
+                    region.DisableBuild = state;
                 return true;
             }
             catch (Exception ex)
@@ -309,7 +312,9 @@ namespace TShockAPI.DB
             try
             {
                 database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name, world);
-                getRegion(name).DisableBuild = state;
+                var region = GetRegionByName(name);
+                if (region != null)
+                    region.DisableBuild = state;
                 return true;
             }
             catch (Exception ex)
@@ -370,7 +375,7 @@ namespace TShockAPI.DB
 
         public bool RemoveUser(string regionName, string userName )
         {
-            Region r = getRegion(regionName);
+            Region r = GetRegionByName(regionName);
             if( r != null )
             {
                 r.RemoveID(TShock.Users.GetUserID(userName));
@@ -437,14 +442,9 @@ namespace TShockAPI.DB
             return regions;
         }
 
-        public Region getRegion(String name)
+        public Region GetRegionByName(String name)
         {
-            foreach (Region r in Regions)
-            {
-                if (r.Name.Equals(name) && r.WorldID == Main.worldID.ToString())
-                    return r;
-            }
-            return new Region();
+            return Regions.FirstOrDefault(r => r.Name.Equals(name) && r.WorldID == Main.worldID.ToString());
         }
     }
 

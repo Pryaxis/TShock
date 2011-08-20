@@ -383,9 +383,9 @@ namespace TShockAPI
                                 player.TilesDestroyed.Clear();
                             }
                         }
-                        if (CheckPlayerCollision(player.TileX, player.TileY))
-                            player.SendMessage("You are currently nocliping!", Color.Red);
-                        if (player.LastDeath != null && player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
+                        /*if (CheckPlayerCollision(player.TileX, player.TileY))
+                            player.SendMessage("You are currently nocliping!", Color.Red);*/
+                        if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
                         {
                             player.Spawn();
                             player.ForceSpawn = false;
