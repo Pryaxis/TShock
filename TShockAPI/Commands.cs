@@ -181,6 +181,7 @@ namespace TShockAPI
             add(Permissions.item, Item, "item", "i");
             add(Permissions.item, Give, "give");
             add(Permissions.heal, Heal, "heal");
+            add(Permissions.buff, Buff, "buff");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -2395,6 +2396,38 @@ namespace TShockAPI
             }
         }
 
+        //TODO: Add player and time arguments
+        private static void Buff(CommandArgs args)
+        {
+            if (args.Parameters.Count != 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name>", Color.Red);
+                return;
+            }
+            int id = 0;
+            if (!int.TryParse(args.Parameters[0], out id))
+            {
+                var found = Tools.GetBuffByName(args.Parameters[0]);
+                if (found.Count == 0)
+                {
+                    args.Player.SendMessage("Invalid buff name!", Color.Red);
+                    return;
+                }
+                else if (found.Count > 1)
+                {
+                    args.Player.SendMessage(string.Format("More than one ({0}) buff matched!", found.Count), Color.Red);
+                    return;
+                }
+                id = found[0];
+            }
+            if (id > 0 && id < Main.maxBuffs)
+            {
+                //args.TPlayer.AddBuff(id, 60);
+                args.Player.SetBuff(id);
+                args.Player.SendMessage(string.Format("You have just buffed yourself with {0} - {1}!",
+                    Tools.GetBuffName(id), Tools.GetBuffDescription(id)), Color.Green);
+            }
+        }
         #endregion Cheat Comamnds
     }
 }

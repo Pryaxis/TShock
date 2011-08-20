@@ -306,6 +306,30 @@ namespace TShockAPI
             return found;
         }
 
+        public static string GetBuffName(int id)
+        {
+            return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
+        }
+        public static string GetBuffDescription(int id)
+        {
+            return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
+        }
+        public static List<int> GetBuffByName(string name)
+        {
+            for (int i = 1; i < Main.maxBuffs; i++)
+            {
+                if (Main.buffName[i].ToLower() == name)
+                    return new List<int> { i };
+            }
+            var found = new List<int>();
+            for (int i = 1; i < Main.maxBuffs; i++)
+            {
+                if (Main.buffName[i].ToLower().StartsWith(name.ToLower()))
+                    found.Add(i);
+            }
+            return found;
+        }
+
         /// <summary>
         /// Kicks all player from the server without checking for immunetokick permission.
         /// </summary>

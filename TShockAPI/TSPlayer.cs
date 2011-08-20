@@ -337,6 +337,11 @@ namespace TShockAPI
             SendData(PacketTypes.PlayerSlot, oriinv.name, player, 0f);
         }
 
+        public virtual void SetBuff(int type, int time = 3600)
+        {
+            SendData(PacketTypes.PlayerAddBuff, number: Index, number2: (float)type, number3: (float)time);
+        }
+
         //Todo: Separate this into a few functions. SendTo, SendToAll, etc
         public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {

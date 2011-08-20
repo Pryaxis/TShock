@@ -126,6 +126,9 @@ namespace TShockAPI
         [Description("")]
         public static readonly string heal;
 
+        [Description("User can buff players")]
+        public static readonly string buff;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
