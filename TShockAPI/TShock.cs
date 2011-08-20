@@ -815,14 +815,20 @@ namespace TShockAPI
 
         public static bool CheckPlayerCollision(int x, int y)
         {
-            for (int i = x; i < x + 2; i++)
+            if (x + 1 <= Main.maxTilesX && y + 3 <= Main.maxTilesY
+                && x >= 0 && y >= 0)
             {
-                for (int h = y; h < y + 4; h++)
+                for (int i = x; i < x + 2; i++)
                 {
-                    if (!Main.tile[i, h].active || !GetDataHandlers.BlacklistTiles[Main.tile[i, h].type])
-                        return false;
+                    for (int h = y; h < y + 4; h++)
+                    {
+                        if (!Main.tile[i, h].active || !GetDataHandlers.BlacklistTiles[Main.tile[i, h].type])
+                            return false;
+                    }
                 }
             }
+            else
+                return false;
             return true;
         }
 
