@@ -153,6 +153,8 @@ namespace TShockAPI
         [Description("")]
         public string TileAbuseReason = "Tile abuse ({0})";
         [Description("")]
+        public string GriefClientReason = "Grief client detected ({0})";
+        [Description("")]
         public bool EnableDNSHostResolution;
         [Description("")]
         public bool EnableBanOnUsernames;

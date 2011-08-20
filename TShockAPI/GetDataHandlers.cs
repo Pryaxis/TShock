@@ -114,7 +114,7 @@ namespace TShockAPI
                 {PacketTypes.ChestGetContents, HandleChest},
                 {PacketTypes.SignNew, HandleSign},
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
-                {PacketTypes.TileGetSection, HandleGetSection}
+                {PacketTypes.TileGetSection, HandleGetSection},
             };
         }
 
@@ -152,9 +152,10 @@ namespace TShockAPI
                 string itemname = Encoding.ASCII.GetString(args.Data.ReadBytes(namelength));
 
                 if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
-                {
                     args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
-                }
+                if (itemname == "KANNIBALE BLADE"
+                    || itemname == "Super Gel")
+                    return Tools.HandleCheater(args.Player, string.Format(TShock.Config.GriefClientReason, "KANNIBALE"));
             }
 
             return false;
