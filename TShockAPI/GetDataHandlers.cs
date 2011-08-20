@@ -48,7 +48,7 @@ namespace TShockAPI
     public static class GetDataHandlers
     {
         private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
-        private static bool[] BlacklistTiles;
+        public static bool[] BlacklistTiles;
 
         public static void InitGetDataHandler()
         {

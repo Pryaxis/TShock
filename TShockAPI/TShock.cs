@@ -819,7 +819,7 @@ namespace TShockAPI
             {
                 for (int h = y; h < y + 4; h++)
                 {
-                    if (!Main.tile[i, h].active || Main.tile[i, h].type == 2)
+                    if (!Main.tile[i, h].active || !GetDataHandlers.BlacklistTiles[Main.tile[i, h].type])
                         return false;
                 }
             }
