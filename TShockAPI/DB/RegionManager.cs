@@ -256,7 +256,7 @@ namespace TShockAPI.DB
 
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
-            if (TShock.Regions.GetRegionByName(regionname) == null)
+            if (TShock.Regions.GetRegionByName(regionname) != null)
             {
                 return false;
             }
