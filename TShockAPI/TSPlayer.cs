@@ -58,6 +58,8 @@ namespace TShockAPI
         public bool TpLock = false;
         Player FakePlayer;
         public List<Vector2> RequestedSections = new List<Vector2>();
+        public DateTime LastDeath { get; set; }
+        public bool ForceSpawn = false;
 
         public bool RealPlayer
         {

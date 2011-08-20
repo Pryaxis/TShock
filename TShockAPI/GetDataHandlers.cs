@@ -500,6 +500,8 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, TShock.Config.KillMeAbuseReason);
             }
+            args.Player.LastDeath = DateTime.Now;
+            args.Player.ForceSpawn = true;
             return false;
         }
 
