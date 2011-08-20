@@ -114,6 +114,7 @@ namespace TShockAPI
                 {PacketTypes.ChestGetContents, HandleChest},
                 {PacketTypes.SignNew, HandleSign},
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
+                {PacketTypes.TileGetSection, HandleGetSection}
             };
         }
 
@@ -690,6 +691,17 @@ namespace TShockAPI
             {
                 return Tools.HandleGriefer(args.Player, TShock.Config.RangeCheckBanReason);
             }
+            return false;
+        }
+
+        private static bool HandleGetSection(GetDataHandlerArgs args)
+        {
+            var x = args.Data.ReadInt32();
+            var y = args.Data.ReadInt32();
+
+            if (args.Player.RequestedSections.Contains(new Vector2(x, y)))
+                return true;
+            args.Player.RequestedSections.Add(new Vector2(x, y));
             return false;
         }
     }
