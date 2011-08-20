@@ -1938,7 +1938,8 @@ namespace TShockAPI
                             args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " + r.Area.Width + " H: " + r.Area.Height);
                             foreach (int s in r.AllowedIDs)
                             {
-                                args.Player.SendMessage(r.Name + ": " + TShock.Users.GetUserByID(s).Name);
+                                var user = TShock.Users.GetUserByID(s);
+                                args.Player.SendMessage(r.Name + ": " + (user != null ? user.Name : "Unknown"));
                             }
                         }
                         else
