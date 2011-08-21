@@ -182,6 +182,7 @@ namespace TShockAPI
             add(Permissions.item, Give, "give");
             add(Permissions.heal, Heal, "heal");
             add(Permissions.buff, Buff, "buff");
+            add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -2409,7 +2410,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name> <time(seconds*60)>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name> [time(seconds*60)]", Color.Red);
                 return;
             }
             int id = 0;
@@ -2433,13 +2434,62 @@ namespace TShockAPI
             }
             if (id > 0 && id < Main.maxBuffs)
             {
-                //args.TPlayer.AddBuff(id, 60);
                 args.Player.SetBuff(id, time);
                 args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
-                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), Math.Round(((decimal)time / 60), 2)), Color.Green);
+                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
             }
             else
                 args.Player.SendMessage("Invalid buff ID!", Color.Red);
+        }
+
+        private static void GBuff(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /gbuff <player> <buff id/name> [time(seconds*60)]", Color.Red);
+                return;
+            }
+            int id = 0;
+            int time = 3600;
+            var foundplr = Tools.FindPlayer(args.Parameters[0]);
+            if (foundplr.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+                return;
+            }
+            else if (foundplr.Count > 1)
+            {
+                args.Player.SendMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count), Color.Red);
+                return;
+            }
+            else
+            {
+                if (!int.TryParse(args.Parameters[1], out id))
+                {
+                    var found = Tools.GetBuffByName(args.Parameters[0]);
+                    if (found.Count == 0)
+                    {
+                        args.Player.SendMessage("Invalid buff name!", Color.Red);
+                        return;
+                    }
+                    else if (found.Count > 1)
+                    {
+                        args.Player.SendMessage(string.Format("More than one ({0}) buff matched!", found.Count), Color.Red);
+                        return;
+                    }
+                    id = found[0];
+                    if (args.Parameters.Count == 3)
+                        int.TryParse(args.Parameters[2], out time);
+                }
+                if (id > 0 && id < Main.maxBuffs)
+                {
+                    args.Player.SetBuff(id, time);
+                    args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
+                        Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                }
+                else
+                    args.Player.SendMessage("Invalid buff ID!", Color.Red);
+            }
         }
         #endregion Cheat Comamnds
     }

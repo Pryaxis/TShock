@@ -126,8 +126,11 @@ namespace TShockAPI
         [Description("")]
         public static readonly string heal;
 
-        [Description("User can buff players")]
+        [Description("User can buff self")]
         public static readonly string buff;
+
+        [Description("User can buff other players")]
+        public static readonly string buffplayer;
 
         static Permissions()
         {
