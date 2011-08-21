@@ -285,7 +285,14 @@ namespace TShockAPI
 
             if (args.Player.AwaitingName)
             {
-                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y), Color.Yellow);
+                if (TShock.Regions.InAreaRegionName(x, y) == null)
+                {
+                    args.Player.SendMessage("Region is not protected", Color.Yellow);
+                }
+                else
+                {
+                    args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y), Color.Yellow);
+                }
                 args.Player.SendTileSquare(x, y);
                 args.Player.AwaitingName = false;
                 return true;
