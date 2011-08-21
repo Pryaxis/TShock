@@ -2405,15 +2405,15 @@ namespace TShockAPI
             }
         }
 
-        //TODO: Add player and time arguments
         private static void Buff(CommandArgs args)
         {
-            if (args.Parameters.Count != 1)
+            if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name>", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name> <time(seconds*60)>", Color.Red);
                 return;
             }
             int id = 0;
+            int time = 3600;
             if (!int.TryParse(args.Parameters[0], out id))
             {
                 var found = Tools.GetBuffByName(args.Parameters[0]);
@@ -2428,14 +2428,18 @@ namespace TShockAPI
                     return;
                 }
                 id = found[0];
+                if (args.Parameters.Count == 2)
+                    int.TryParse(args.Parameters[1], out time);
             }
             if (id > 0 && id < Main.maxBuffs)
             {
                 //args.TPlayer.AddBuff(id, 60);
-                args.Player.SetBuff(id);
-                args.Player.SendMessage(string.Format("You have just buffed yourself with {0} - {1}!",
-                    Tools.GetBuffName(id), Tools.GetBuffDescription(id)), Color.Green);
+                args.Player.SetBuff(id, time);
+                args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
+                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), Math.Round(((decimal)time / 60), 2)), Color.Green);
             }
+            else
+                args.Player.SendMessage("Invalid buff ID!", Color.Red);
         }
         #endregion Cheat Comamnds
     }
