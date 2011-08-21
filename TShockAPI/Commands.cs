@@ -2434,6 +2434,8 @@ namespace TShockAPI
             }
             if (id > 0 && id < Main.maxBuffs)
             {
+                if (time < 0 || time > short.MaxValue)
+                    time = 3600;
                 args.Player.SetBuff(id, time);
                 args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
                     Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
@@ -2466,7 +2468,7 @@ namespace TShockAPI
             {
                 if (!int.TryParse(args.Parameters[1], out id))
                 {
-                    var found = Tools.GetBuffByName(args.Parameters[0]);
+                    var found = Tools.GetBuffByName(args.Parameters[1]);
                     if (found.Count == 0)
                     {
                         args.Player.SendMessage("Invalid buff name!", Color.Red);
@@ -2483,9 +2485,13 @@ namespace TShockAPI
                 }
                 if (id > 0 && id < Main.maxBuffs)
                 {
-                    args.Player.SetBuff(id, time);
-                    args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
-                        Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                    if (time < 0 || time > short.MaxValue)
+                        time = 3600;
+                    foundplr[0].SetBuff(id, time);
+                    args.Player.SendMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
+                        foundplr[0].Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                    foundplr[0].SendMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
+                        args.Player.Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
                 }
                 else
                     args.Player.SendMessage("Invalid buff ID!", Color.Red);
