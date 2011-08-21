@@ -315,29 +315,13 @@ namespace TShockAPI
         {
             var time2 = (int)time;
             var launch = DateTime.UtcNow;
-            var player = 0;
-            for (int i = 0; i < Main.maxPlayers; i++)
-                if (Main.player[i] != null & Main.player[i].active && i != Index)
-                    player = i;
-            SendMessage("You are now being annoyed.", Color.Red);
-            var oriinv = Main.player[player].inventory[0];
             var startname = Name;
+            SendMessage("You are now being annoyed.", Color.Red);
             while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
             {
-                Main.player[player].inventory[0].SetDefaults("Whoopie Cushion");
-                Main.player[player].inventory[0].stack = 1;
-                SendData(PacketTypes.PlayerSlot, "Whoopie Cushion", player, 0f);
-                Main.player[player].position = TPlayer.position;
-                Main.player[player].selectedItem = 0;
-                Main.player[player].controlUseItem = true;
-                SendData(PacketTypes.PlayerUpdate, number: player);
-                Thread.Sleep(500);
-                Main.player[player].controlUseItem = false;
-                SendData(PacketTypes.PlayerUpdate, number: player);
+                SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
                 Thread.Sleep(50);
             }
-            Main.player[player].inventory[0] = oriinv;
-            SendData(PacketTypes.PlayerSlot, oriinv.name, player, 0f);
         }
 
         public virtual void SetBuff(int type, int time = 3600)
