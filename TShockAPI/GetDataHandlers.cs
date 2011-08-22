@@ -156,6 +156,9 @@ namespace TShockAPI
                 if (itemname == "KANNIBALE BLADE"
                     || itemname == "Super Gel")
                     return Tools.HandleCheater(args.Player, string.Format(TShock.Config.GriefClientReason, "KANNIBALE"));
+                if (Tools.GetItemByName(itemname).Count == 0 && !args.Player.Group.HasPermission(Permissions.ignorecheatdetection)
+                    && TShock.Config.KickCustomItems)
+                    args.Player.Disconnect("Using custom item: " + itemname + ", remove it and region");
             }
 
             return false;

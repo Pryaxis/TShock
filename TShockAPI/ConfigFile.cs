@@ -181,6 +181,9 @@ namespace TShockAPI
         [Description("This will save the world if Terraria crashes from an unhandled exception.")]
         public bool SaveWorldOnCrash = true;
 
+        [Description("This is kick players who have custom items in their inventory (via a mod)")]
+        public bool KickCustomItems = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
