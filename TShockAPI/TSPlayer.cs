@@ -57,6 +57,9 @@ namespace TShockAPI
         public bool TpLock = false;
         Player FakePlayer;
 
+        // added to track ddos exploit available in Kannibale 1.9
+        public int sectionrequestsmade = 0;
+
         public bool RealPlayer
         {
             get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }

@@ -577,6 +577,30 @@ namespace TShockAPI
                 return;
             }
 
+            // Addition to  detect and ban Kannibale 1.9 .ddos for Terraria 1.0.6.1
+            if (e.MsgID == PacketTypes.TileGetSection)
+            {
+                // These are not needed at the moment but they are left here as potentially useful code
+                //int sectionx = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+                //int sectiony = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+
+                // Kannibale 1.9 does a denial of service by flooding the server with TileGetSection for -1, -1
+
+                // As of 1.0.6.1, it seems that Terraria only requests TileGetSection when the player spawns
+                // Tested scenarios:  Entering game for first time, reentering game, dying and spawning at
+                // default spawn, setting new spawn and then dying and respawning at it.
+                // exiting game, re-entering with custom spawn set.
+                             
+                player.sectionrequestsmade += 1;
+
+                if (player.sectionrequestsmade > 5) // arbitrary number, only saw the client request once, but might be possible for more
+                {
+                    Tools.Ban(player, Config.SendSectionAbuseReason); // technically this should probably be GetSectionAbuse
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             //if (type == PacketTypes.SyncPlayers)
             //Debug.WriteLine("Recv: {0:X} ({2}): {3} ({1:XX})", player.Index, (byte)type, player.TPlayer.dead ? "dead " : "alive", type.ToString());
 
