@@ -712,9 +712,12 @@ namespace TShockAPI
             var x = args.Data.ReadInt32();
             var y = args.Data.ReadInt32();
 
-            if (args.Player.RequestedSections.Contains(new Vector2(x, y)))
+            if (args.Player.RequestedSection)
+            {
+                Tools.ForceKick(args.Player, "Requested sections more than once.");
                 return true;
-            args.Player.RequestedSections.Add(new Vector2(x, y));
+            }
+            args.Player.RequestedSection = true;
             return false;
         }
     }

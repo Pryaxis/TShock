@@ -57,7 +57,7 @@ namespace TShockAPI
         public bool HasBeenNaggedAboutLoggingIn;
         public bool TpLock = false;
         Player FakePlayer;
-        public List<Vector2> RequestedSections = new List<Vector2>();
+        public bool RequestedSection = false;
         public DateTime LastDeath { get; set; }
         public bool ForceSpawn = false;
 
