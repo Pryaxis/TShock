@@ -356,7 +356,7 @@ namespace TShockAPI
             if (!player.ConnectionAlive)
                 return;
             player.Disconnect(reason);
-            Log.Info(string.Format("{0} was force kicked for : {1}", player.IP, reason));
+            Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
         }
 
         /// <summary>
