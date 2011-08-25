@@ -705,6 +705,7 @@ namespace TShockAPI
                 {
                     if (sock == null || !sock.active)
                         return;
+                    sock.kill = true;
                     using (var ms = new MemoryStream())
                     {
                         new DisconnectMsg {Reason = str}.PackFull(ms);
