@@ -1426,8 +1426,8 @@ namespace TShockAPI
                     var item = items[0];
                     if (item.type >= 1)
                     {
-                        TShock.Itembans.AddNewBan(args.Parameters[0]);
-                        args.Player.SendMessage(Tools.GetItemByIdOrName(args.Parameters[0])[0].name + " has been banned.", Color.Green);
+                        TShock.Itembans.AddNewBan(item.name);
+                        args.Player.SendMessage(item.name + " has been banned.", Color.Green);
                     }
                     else
                     {
@@ -1459,8 +1459,8 @@ namespace TShockAPI
                     var item = items[0];
                     if (item.type >= 1)
                     {
-                        TShock.Itembans.RemoveBan(args.Parameters[0]);
-                        args.Player.SendMessage(Tools.GetItemByIdOrName(args.Parameters[0])[0].name + " has been unbanned.", Color.Green);
+                        TShock.Itembans.RemoveBan(item.name);
+                        args.Player.SendMessage(item.name + " has been unbanned.", Color.Green);
                     }
                     else
                     {
