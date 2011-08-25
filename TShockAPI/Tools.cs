@@ -372,7 +372,7 @@ namespace TShockAPI
             {
                 string playerName = player.Name;
                 player.Disconnect(string.Format("Kicked: {0}", reason));
-                Log.Info(string.Format("Kicked {0} for : {1}", playerName, reason));
+                Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
                 else
@@ -397,7 +397,7 @@ namespace TShockAPI
                 string playerName = player.Name;
                 TShock.Bans.AddBan(ip, playerName, reason);
                 player.Disconnect(string.Format("Banned: {0}", reason));
-                Log.Info(string.Format("Banned {0} for : {1}", playerName, reason));
+                Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
                 if (adminUserName.Length == 0)
                     Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
                 else
