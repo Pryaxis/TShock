@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Xml;
-using Microsoft.Xna.Framework;
 using MySql.Data.MySqlClient;
 using Terraria;
 
@@ -173,11 +173,11 @@ namespace TShockAPI.DB
                     {
                         try
                         {
-                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), reader.Get<string>("Private"));
+                            return new Warp(new PointF(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), reader.Get<string>("Private"));
                         }
                         catch
                         {
-                            return new Warp(new Vector2(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), "0");
+                            return new Warp(new PointF(reader.Get<int>("X"), reader.Get<int>("Y")), reader.Get<string>("WarpName"), reader.Get<string>("WorldID"), "0");
                         }
                     }
                 }
@@ -247,12 +247,12 @@ namespace TShockAPI.DB
 
     public class Warp
     {
-        public Vector2 WarpPos { get; set; }
+        public PointF WarpPos { get; set; }
         public string WarpName { get; set; }
         public string WorldWarpID { get; set; }
         public string Private { get; set; }
 
-        public Warp(Vector2 warppos, string name, string worldid, string hidden)
+        public Warp(PointF warppos, string name, string worldid, string hidden)
         {
             WarpPos = warppos;
             WarpName = name;
@@ -262,7 +262,7 @@ namespace TShockAPI.DB
 
         public Warp()
         {
-            WarpPos = Vector2.Zero;
+            WarpPos = PointF.Empty;
             WarpName = null;
             WorldWarpID = string.Empty;
             Private = "0";

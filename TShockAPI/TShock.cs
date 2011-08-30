@@ -28,13 +28,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Linq;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
-using Microsoft.Xna.Framework;
 using MySql.Data.MySqlClient;
 using Terraria;
 using TerrariaAPI;
@@ -353,7 +353,7 @@ namespace TShockAPI
 
         private DateTime LastCheck = DateTime.UtcNow;
 
-        private void OnUpdate(GameTime time)
+        private void OnUpdate()
         {
             UpdateManager.UpdateProcedureCheck();
 
@@ -801,9 +801,16 @@ namespace TShockAPI
 
         public static bool CheckSpawn(int x, int y)
         {
-            Vector2 tile = new Vector2(x, y);
-            Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-            return Vector2.Distance(spawn, tile) <= Config.SpawnProtectionRadius;
+            PointF tile = new PointF(x, y);
+            PointF spawn = new PointF(Main.spawnTileX, Main.spawnTileY);
+            return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
+        }
+        public static float Distance(PointF value1, PointF value2)
+        {
+            float num2 = value1.X - value2.X;
+            float num = value1.Y - value2.Y;
+            float num3 = (num2 * num2) + (num * num);
+            return (float)Math.Sqrt((double)num3);
         }
 
         public static bool HackedHealth(TSPlayer player)

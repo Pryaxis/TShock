@@ -18,14 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using Microsoft.Xna.Framework;
 using Terraria;
 using TShockAPI.DB;
+using Region = TShockAPI.DB.Region;
 
 namespace TShockAPI
 {
@@ -916,7 +917,7 @@ namespace TShockAPI
             int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
             penis57 *= 0x10;
             int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-            Vector2 vector = new Vector2(penis57, penis58);
+            PointF vector = new PointF(penis57, penis58);
             float speedX = Main.rand.Next(-100, 0x65);
             float speedY = Main.rand.Next(200) + 100;
             float penis61 = (float)Math.Sqrt(((speedX * speedX) + (speedY * speedY)));
@@ -1325,7 +1326,7 @@ namespace TShockAPI
             {
                 string warpName = String.Join(" ", args.Parameters);
                 var warp = TShock.Warps.FindWarp(warpName);
-                if (warp.WarpPos != Vector2.Zero)
+                if (warp.WarpPos != PointF.Empty)
                 {
                     if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
                         args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
@@ -1716,7 +1717,7 @@ namespace TShockAPI
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            if (!args.Player.TempPoints.Any(p => p == Point.Zero))
+                            if (!args.Player.TempPoints.Any(p => p == PointF.Empty))
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 var x = Math.Min(args.Player.TempPoints[0].X, args.Player.TempPoints[1].X);
@@ -1726,8 +1727,8 @@ namespace TShockAPI
 
                                 if (TShock.Regions.AddRegion(x, y, width, height, regionName, Main.worldID.ToString()))
                                 {
-                                    args.Player.TempPoints[0] = Point.Zero;
-                                    args.Player.TempPoints[1] = Point.Zero;
+                                    args.Player.TempPoints[0] = Point.Empty;
+                                    args.Player.TempPoints[1] = Point.Empty;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
                                 }
                                 else
@@ -1786,8 +1787,8 @@ namespace TShockAPI
                     }
                 case "clear":
                     {
-                        args.Player.TempPoints[0] = Point.Zero;
-                        args.Player.TempPoints[1] = Point.Zero;
+                        args.Player.TempPoints[0] = Point.Empty;
+                        args.Player.TempPoints[1] = Point.Empty;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
                         args.Player.AwaitingTempPoint = 0;
                         break;

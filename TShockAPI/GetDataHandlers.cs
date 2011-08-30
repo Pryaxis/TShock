@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 using TShockAPI.Net;
@@ -393,7 +393,7 @@ namespace TShockAPI
             if (type == 0 && BlacklistTiles[Main.tile[x, y].type] && args.Player.Active)
             {
                 args.Player.TileThreshold++;
-                var coords = new Vector2(x, y);
+                var coords = new PointF(x, y);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
