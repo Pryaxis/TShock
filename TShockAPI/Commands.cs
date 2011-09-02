@@ -183,6 +183,7 @@ namespace TShockAPI
             add(Permissions.heal, Heal, "heal");
             add(Permissions.buff, Buff, "buff");
             add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
+            add(Permissions.grow, Grow, "grow");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -2496,6 +2497,43 @@ namespace TShockAPI
                 else
                     args.Player.SendMessage("Invalid buff ID!", Color.Red);
             }
+        }
+
+        private static void Grow(CommandArgs args)
+        {
+            if (args.Parameters.Count != 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /grow [tree/epictree/mushroom/cactus/herb]", Color.Red);
+                return;
+            }
+            var name = "Fail";
+            switch (args.Parameters[0].ToLower())
+            {
+                case "tree":
+                    WorldGen.GrowTree(args.Player.TileX, args.Player.TileY);
+                    name = "Tree";
+                    break;
+                case "epictree":
+                    WorldGen.GrowEpicTree(args.Player.TileX, args.Player.TileY);
+                    name = "Epic Tree";
+                    break;
+                case "mushroom":
+                    WorldGen.GrowShroom(args.Player.TileX, args.Player.TileY);
+                    name = "Mushroom";
+                    break;
+                case "cactus":
+                    WorldGen.GrowCactus(args.Player.TileX, args.Player.TileY);
+                    name = "Cactus";
+                    break;
+                case "herb":
+                    WorldGen.GrowAlch(args.Player.TileX, args.Player.TileY);
+                    name = "Herb";
+                    break;
+                default:
+                    args.Player.SendMessage("Unknown plant!", Color.Red);
+                    return;
+            }
+            args.Player.SendMessage("You have grown a " + name, Color.Green);
         }
         #endregion Cheat Comamnds
     }

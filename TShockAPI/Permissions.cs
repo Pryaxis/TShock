@@ -132,6 +132,9 @@ namespace TShockAPI
         [Description("User can buff other players")]
         public static readonly string buffplayer;
 
+        [Description("")]
+        public static readonly string grow;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
