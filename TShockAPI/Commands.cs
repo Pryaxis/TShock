@@ -2410,11 +2410,11 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name> [time(seconds*60)]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /buff <buff id/name> [time(seconds)]", Color.Red);
                 return;
             }
             int id = 0;
-            int time = 3600;
+            int time = 60;
             if (!int.TryParse(args.Parameters[0], out id))
             {
                 var found = Tools.GetBuffByName(args.Parameters[0]);
@@ -2429,16 +2429,16 @@ namespace TShockAPI
                     return;
                 }
                 id = found[0];
-                if (args.Parameters.Count == 2)
-                    int.TryParse(args.Parameters[1], out time);
             }
+            if (args.Parameters.Count == 2)
+                int.TryParse(args.Parameters[1], out time);
             if (id > 0 && id < Main.maxBuffs)
             {
                 if (time < 0 || time > short.MaxValue)
-                    time = 3600;
-                args.Player.SetBuff(id, time);
+                    time = 60;
+                args.Player.SetBuff(id, time * 60);
                 args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
-                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
             }
             else
                 args.Player.SendMessage("Invalid buff ID!", Color.Red);
@@ -2448,11 +2448,11 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /gbuff <player> <buff id/name> [time(seconds*60)]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /gbuff <player> <buff id/name> [time(seconds)]", Color.Red);
                 return;
             }
             int id = 0;
-            int time = 3600;
+            int time = 60;
             var foundplr = Tools.FindPlayer(args.Parameters[0]);
             if (foundplr.Count == 0)
             {
@@ -2480,18 +2480,18 @@ namespace TShockAPI
                         return;
                     }
                     id = found[0];
-                    if (args.Parameters.Count == 3)
-                        int.TryParse(args.Parameters[2], out time);
                 }
+                if (args.Parameters.Count == 3)
+                    int.TryParse(args.Parameters[2], out time);
                 if (id > 0 && id < Main.maxBuffs)
                 {
                     if (time < 0 || time > short.MaxValue)
-                        time = 3600;
-                    foundplr[0].SetBuff(id, time);
+                        time = 60;
+                    foundplr[0].SetBuff(id, time * 60);
                     args.Player.SendMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
-                        foundplr[0].Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                        foundplr[0].Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
                     foundplr[0].SendMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
-                        args.Player.Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time / 60)), Color.Green);
+                        args.Player.Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
                 }
                 else
                     args.Player.SendMessage("Invalid buff ID!", Color.Red);
