@@ -2507,26 +2507,55 @@ namespace TShockAPI
                 return;
             }
             var name = "Fail";
+            var x = args.Player.TileX;
+            var y = args.Player.TileY;
             switch (args.Parameters[0].ToLower())
             {
                 case "tree":
-                    WorldGen.GrowTree(args.Player.TileX, args.Player.TileY);
+                    for (int i = x - 1; i < x + 2; i++)
+                    {
+                        Main.tile[i, y].active = true;
+                        Main.tile[i, y].type = 2;
+                        Main.tile[i, y].wall = 0;
+                    }
+                    Main.tile[x, y - 1].wall = 0;
+                    WorldGen.GrowTree(x, y);
                     name = "Tree";
                     break;
                 case "epictree":
-                    WorldGen.GrowEpicTree(args.Player.TileX, args.Player.TileY);
+                    for (int i = x - 1; i < x + 2; i++)
+                    {
+                        Main.tile[i, y].active = true;
+                        Main.tile[i, y].type = 2;
+                        Main.tile[i, y].wall = 0;
+                    }
+                    Main.tile[x, y - 1].wall = 0;
+                    Main.tile[x, y - 1].liquid = 0;
+                    Main.tile[x, y - 1].active = true;
+                    WorldGen.GrowEpicTree(x, y);
                     name = "Epic Tree";
                     break;
                 case "mushroom":
-                    WorldGen.GrowShroom(args.Player.TileX, args.Player.TileY);
+                    for (int i = x - 1; i < x + 2; i++)
+                    {
+                        Main.tile[i, y].active = true;
+                        Main.tile[i, y].type = 70;
+                        Main.tile[i, y].wall = 0;
+                    }
+                    Main.tile[x, y - 1].wall = 0;
+                    WorldGen.GrowShroom(x, y);
                     name = "Mushroom";
                     break;
                 case "cactus":
-                    WorldGen.GrowCactus(args.Player.TileX, args.Player.TileY);
+                    Main.tile[x, y].type = 53;
+                    WorldGen.GrowCactus(x, y);
                     name = "Cactus";
                     break;
                 case "herb":
-                    WorldGen.GrowAlch(args.Player.TileX, args.Player.TileY);
+                    Main.tile[x, y].active = true;
+                    Main.tile[x, y].frameX = 36;
+                    Main.tile[x, y].type = 83;
+                    WorldGen.GrowAlch(x, y);
                     name = "Herb";
                     break;
                 default:
