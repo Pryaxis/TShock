@@ -103,6 +103,7 @@
     <Compile Include="DB\UserManager.cs" />
     <Compile Include="Extensions\RandomExt.cs" />
     <Compile Include="Extensions\StringExt.cs" />
+    <Compile Include="GeoIPCountry.cs" />
     <Compile Include="IPackable.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConfigFile.cs" />

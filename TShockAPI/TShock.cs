@@ -65,6 +65,7 @@ namespace TShockAPI
         public static IDbConnection DB;
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
+        public static MaxMind.GeoIPCountry Geo;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -170,6 +171,8 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
+                if (Config.EnableGeoIP)
+                    Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
 
                 Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -620,7 +623,15 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
             NetMessage.syncPlayers();
 
-            Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
+            if (Config.EnableGeoIP)
+            {
+                var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
+                player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", player.Name, player.IP, player.Group.Name, player.Country));
+                Tools.Broadcast(player.Name + " is from the " + player.Country, Color.Yellow);
+            }
+            else
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
             Tools.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
