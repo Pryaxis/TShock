@@ -30,6 +30,7 @@ namespace UnitTests
             DB.Open();
 
             manager = new RegionManager(DB);
+            TShock.Regions = manager;
             manager.ReloadForUnitTest("test");
         }
 
@@ -40,12 +41,12 @@ namespace UnitTests
             Region r = new Region( new Rectangle(100,100,100,100), "test", true, "test");
             Assert.IsTrue(manager.AddRegion(r.Area.X, r.Area.Y, r.Area.Width, r.Area.Height, r.Name, r.WorldID));
             Assert.AreEqual(1, manager.Regions.Count);
-            Assert.IsNotNull(manager.GetRegionByName("test"));
+            Assert.IsNotNull(manager.ZacksGetRegionByName("test"));
 
             Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", true, "test");
             manager.AddRegion(r2.Area.X, r2.Area.Y, r2.Area.Width, r2.Area.Height, r2.Name, r2.WorldID);
             Assert.AreEqual(2, manager.Regions.Count);
-            Assert.IsNotNull(manager.GetRegionByName("test2"));
+            Assert.IsNotNull(manager.ZacksGetRegionByName("test2"));
         }
 
         [TestMethod]
@@ -74,16 +75,16 @@ namespace UnitTests
         [TestMethod]
         public void SetRegionState()
         {
-            Assert.IsTrue(manager.GetRegionByName("test").DisableBuild);
+            Assert.IsTrue(manager.ZacksGetRegionByName("test").DisableBuild);
             manager.SetRegionStateTest("test", "test", false);
-            Assert.IsTrue(!manager.GetRegionByName("test").DisableBuild);
+            Assert.IsTrue(!manager.ZacksGetRegionByName("test").DisableBuild);
             manager.SetRegionStateTest("test", "test", true);
-            Assert.IsTrue(manager.GetRegionByName("test").DisableBuild);
-            Assert.IsTrue(manager.GetRegionByName("test2").DisableBuild);
+            Assert.IsTrue(manager.ZacksGetRegionByName("test").DisableBuild);
+            Assert.IsTrue(manager.ZacksGetRegionByName("test2").DisableBuild);
             manager.SetRegionStateTest("test2", "test", false);
-            Assert.IsTrue(!manager.GetRegionByName("test2").DisableBuild);
+            Assert.IsTrue(!manager.ZacksGetRegionByName("test2").DisableBuild);
             manager.SetRegionStateTest("test2", "test", true);
-            Assert.IsTrue(manager.GetRegionByName("test2").DisableBuild);
+            Assert.IsTrue(manager.ZacksGetRegionByName("test2").DisableBuild);
         }
 
         [TestMethod]
