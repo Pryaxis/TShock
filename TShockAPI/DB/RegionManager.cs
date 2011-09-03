@@ -20,10 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Microsoft.Xna.Framework;
 using MySql.Data.MySqlClient;
 using Terraria;
 
@@ -88,22 +88,28 @@ namespace TShockAPI.DB
 
                         while (reader.Read() && reader.NodeType != XmlNodeType.Text) ;
 
+                        int t = 0;
+
                         switch (name)
                         {
                             case "RegionName":
                                 region.Name = reader.Value;
                                 break;
                             case "Point1X":
-                                int.TryParse(reader.Value, out rect.X);
+                                int.TryParse(reader.Value, out t);
+                                rect.X = t;
                                 break;
                             case "Point1Y":
-                                int.TryParse(reader.Value, out rect.Y);
+                                int.TryParse(reader.Value, out t);
+                                rect.Y = t;
                                 break;
                             case "Point2X":
-                                int.TryParse(reader.Value, out rect.Width);
+                                int.TryParse(reader.Value, out t);
+                                rect.Width = t;
                                 break;
                             case "Point2Y":
-                                int.TryParse(reader.Value, out rect.Height);
+                                int.TryParse(reader.Value, out t);
+                                rect.Height = t;
                                 break;
                             case "Protected":
                                 region.DisableBuild = reader.Value.ToLower().Equals("true");
@@ -175,7 +181,7 @@ namespace TShockAPI.DB
                         string mergedids = reader.Get<string>("UserIds");
                         string name = reader.Get<string>("RegionName");
 
-                        string[] splitids = mergedids.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] splitids = mergedids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
 
@@ -370,13 +376,13 @@ namespace TShockAPI.DB
 
         public static List<string> ListIDs(string MergedIDs)
         {
-            return  MergedIDs.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            return MergedIDs.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
-        public bool RemoveUser(string regionName, string userName )
+        public bool RemoveUser(string regionName, string userName)
         {
             Region r = GetRegionByName(regionName);
-            if( r != null )
+            if (r != null)
             {
                 r.RemoveID(TShock.Users.GetUserID(userName));
                 string ids = string.Join(",", r.AllowedIDs);
@@ -408,7 +414,7 @@ namespace TShockAPI.DB
                 foreach (var r in Regions)
                 {
                     if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
-                        r.setAllowedIDs( MergedIDs );
+                        r.setAllowedIDs(MergedIDs);
                 }
                 return q != 0;
             }
@@ -509,16 +515,16 @@ namespace TShockAPI.DB
             return false;
         }
 
-        public void setAllowedIDs( String ids )
+        public void setAllowedIDs(String ids)
         {
             String[] id_arr = ids.Split(',');
             List<int> id_list = new List<int>();
-            foreach( String id in id_arr )
+            foreach (String id in id_arr)
             {
                 int i = 0;
                 int.TryParse(id, out i);
-                if( i != 0 )
-                    id_list.Add( i );
+                if (i != 0)
+                    id_list.Add(i);
             }
             AllowedIDs = id_list;
         }
@@ -526,7 +532,7 @@ namespace TShockAPI.DB
         public void RemoveID(int id)
         {
             var index = -1;
-            for (int i = 0; i < AllowedIDs.Count; i++ )
+            for (int i = 0; i < AllowedIDs.Count; i++)
             {
                 if (AllowedIDs[i] == id)
                 {
@@ -534,7 +540,7 @@ namespace TShockAPI.DB
                     break;
                 }
             }
-            AllowedIDs.RemoveAt( index );
+            AllowedIDs.RemoveAt(index);
         }
     }
 }
