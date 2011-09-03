@@ -262,7 +262,7 @@ namespace TShockAPI.DB
 
         public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
         {
-            if (TShock.Regions.GetRegionByName(regionname) != null)
+            if (GetRegionByName(regionname) != null)
             {
                 return false;
             }
@@ -451,6 +451,16 @@ namespace TShockAPI.DB
         public Region GetRegionByName(String name)
         {
             return Regions.FirstOrDefault(r => r.Name.Equals(name) && r.WorldID == Main.worldID.ToString());
+        }
+
+        public Region ZacksGetRegionByName(String name)
+        {
+            foreach (Region r in Regions)
+            {
+                if (r.Name.Equals(name))
+                    return r;
+            }
+            return null;
         }
     }
 

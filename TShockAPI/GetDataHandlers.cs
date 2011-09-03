@@ -213,7 +213,7 @@ namespace TShockAPI
                 Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
                 return true;
             }
-
+            args.Player.Difficulty = difficulty;
             args.Player.ReceivedInfo = true;
             return false;
         }
@@ -480,7 +480,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 23 && float.IsNaN((float)Math.Sqrt((double)(velx * velx + vely * vely))))
+            if (type == 23 && (vely == 0f || velx == 0f)) //float.IsNaN((float)Math.Sqrt((double)(velx * velx + vely * vely))))
             {
                 Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
                 return true;
@@ -511,7 +511,8 @@ namespace TShockAPI
                 return Tools.HandleGriefer(args.Player, TShock.Config.KillMeAbuseReason);
             }
             args.Player.LastDeath = DateTime.Now;
-            args.Player.ForceSpawn = true;
+            if (args.Player.Difficulty != 2)
+                args.Player.ForceSpawn = true;
             return false;
         }
 

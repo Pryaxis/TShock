@@ -184,6 +184,9 @@ namespace TShockAPI
         [Description("This is kick players who have custom items in their inventory (via a mod)")]
         public bool KickCustomItems = false;
 
+        [Description("This will announce a player's location on join")]
+        public bool EnableGeoIP = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
