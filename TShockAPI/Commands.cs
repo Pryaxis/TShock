@@ -2508,7 +2508,7 @@ namespace TShockAPI
             }
             var name = "Fail";
             var x = args.Player.TileX;
-            var y = args.Player.TileY;
+            var y = args.Player.TileY + 3;
             switch (args.Parameters[0].ToLower())
             {
                 case "tree":
