@@ -213,7 +213,7 @@ namespace TShockAPI
                 Tools.ForceKick(args.Player, "Server is set to hardcore characters only!");
                 return true;
             }
-
+            args.Player.Difficulty = difficulty;
             args.Player.ReceivedInfo = true;
             return false;
         }
@@ -511,7 +511,8 @@ namespace TShockAPI
                 return Tools.HandleGriefer(args.Player, TShock.Config.KillMeAbuseReason);
             }
             args.Player.LastDeath = DateTime.Now;
-            args.Player.ForceSpawn = true;
+            if (args.Player.Difficulty != 2)
+                args.Player.ForceSpawn = true;
             return false;
         }
 
