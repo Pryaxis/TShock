@@ -18,10 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* TShock wouldn't be possible without:
  * Github
  * Microsoft Visual Studio 2010
- * HostPenda
+ * Adrenic
  * And you, for your continued support and devotion to the evolution of TShock
  * Kerplunc Gaming
  * TerrariaGSP
+ * XNS Technology Group (Xenon Servers)
  */
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "Yes, we're adding Logblock style functionality soon, don't worry.";
+        public static readonly string VersionCodename = "And believe me, we are still alive.";
 
         public static string SavePath = "tshock";
 
