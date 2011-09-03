@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Data;
 using TShockAPI;
 using Community.CsharpSqlite.SQLiteClient;
 using TShockAPI.DB;
-using Microsoft.Xna.Framework;
+using Region = TShockAPI.DB.Region;
 
 namespace UnitTests
 {
@@ -39,12 +40,12 @@ namespace UnitTests
             Region r = new Region( new Rectangle(100,100,100,100), "test", true, "test");
             Assert.IsTrue(manager.AddRegion(r.Area.X, r.Area.Y, r.Area.Width, r.Area.Height, r.Name, r.WorldID));
             Assert.AreEqual(1, manager.Regions.Count);
-            Assert.IsNotNull(manager.getRegion("test"));
+            Assert.IsNotNull(manager.GetRegionByName("test"));
 
             Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", true, "test");
             manager.AddRegion(r2.Area.X, r2.Area.Y, r2.Area.Width, r2.Area.Height, r2.Name, r2.WorldID);
             Assert.AreEqual(2, manager.Regions.Count);
-            Assert.IsNotNull(manager.getRegion("test2"));
+            Assert.IsNotNull(manager.GetRegionByName("test2"));
         }
 
         [TestMethod]
@@ -73,16 +74,16 @@ namespace UnitTests
         [TestMethod]
         public void SetRegionState()
         {
-            Assert.IsTrue(manager.getRegion("test").DisableBuild);
+            Assert.IsTrue(manager.GetRegionByName("test").DisableBuild);
             manager.SetRegionStateTest("test", "test", false);
-            Assert.IsTrue(!manager.getRegion("test").DisableBuild);
+            Assert.IsTrue(!manager.GetRegionByName("test").DisableBuild);
             manager.SetRegionStateTest("test", "test", true);
-            Assert.IsTrue(manager.getRegion("test").DisableBuild);
-            Assert.IsTrue(manager.getRegion("test2").DisableBuild);
+            Assert.IsTrue(manager.GetRegionByName("test").DisableBuild);
+            Assert.IsTrue(manager.GetRegionByName("test2").DisableBuild);
             manager.SetRegionStateTest("test2", "test", false);
-            Assert.IsTrue(!manager.getRegion("test2").DisableBuild);
+            Assert.IsTrue(!manager.GetRegionByName("test2").DisableBuild);
             manager.SetRegionStateTest("test2", "test", true);
-            Assert.IsTrue(manager.getRegion("test2").DisableBuild);
+            Assert.IsTrue(manager.GetRegionByName("test2").DisableBuild);
         }
 
         [TestMethod]
