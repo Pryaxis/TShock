@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<OrderedTest name="regionmanagertest" storage="c:\users\virus\git\tshock\unittests\regionmanagertest.orderedtest" id="7601a790-d2fb-45d2-a612-1ae4de84eb61" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <Execution id="e2bb6bb7-7bc7-43d5-bb81-e2d13d377599" />
+<OrderedTest name="regionmanagertest" storage="c:\users\shank\dropbox\design and development\csharp\tshock\unittests\regionmanagertest.orderedtest" id="7601a790-d2fb-45d2-a612-1ae4de84eb61" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Execution id="41a9a1cc-4b4c-466c-b54a-8bd056d3489f" />
   <TestLinks>
     <TestLink id="8d92e80b-8c9d-7a14-5c3a-eba6790be784" name="AddRegion" storage="bin\release\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="57686a56-2684-8c17-1564-ed9a3c37b167" name="InRegion" storage="bin\release\unittests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
