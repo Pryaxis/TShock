@@ -36,10 +36,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 
 
-<<<<<<< HEAD
 [assembly: AssemblyVersion("3.2.8.0903")]
 [assembly: AssemblyFileVersion("3.2.8.0903")]
-=======
-[assembly: AssemblyVersion("3.2.8.0830")]
-[assembly: AssemblyFileVersion("3.2.8.0830")]
->>>>>>> remotes/origin/general-devel-mono
