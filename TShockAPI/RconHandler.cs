@@ -38,13 +38,30 @@ namespace TShockAPI
         public static string Response = "";
         private static bool Started;
         private static UdpClient listener;
+        private static Thread startThread;
+        private static Thread heartbeat;
+        private static Thread listen;
+
+        public static void ShutdownAllThreads()
+        {
+            if (Started)
+            {
+                startThread.Abort();
+                heartbeat.Abort();
+                listen.Abort();
+                Started = false;
+            }
+        }
 
         public static void StartThread()
         {
             if (!Started)
             {
-                (new Thread(Start)).Start();
-                (new Thread(SendHeartbeat)).Start();
+                startThread = new Thread(Start);
+                startThread.Start();
+
+                heartbeat = new Thread(SendHeartbeat);
+                heartbeat.Start();
             }
             Started = true;
         }
@@ -57,7 +74,7 @@ namespace TShockAPI
                 Console.WriteLine(string.Format("RconHandler is running at UDP port {0} and password is {1}",
                     ListenPort,
                     Password));
-                Thread listen = new Thread(Listener);
+                listen = new Thread(Listener);
                 listen.Start();
                 while (true)
                 {
@@ -161,8 +178,8 @@ namespace TShockAPI
                             }
                             else
                             {
-                                response = "Bad rconpassword.\n";
-                                Log.ConsoleInfo("Bad rconpassword from " + EP);
+                                response = "Bad rcon password.\n";
+                                Log.ConsoleInfo("Bad rcon password from " + EP);
                             }
                         }
                         else
@@ -170,7 +187,7 @@ namespace TShockAPI
                     }
                     else
                     {
-                        response = "No rconpassword set on the server.\n";
+                        response = "No rcon password set on the server.\n";
                         Log.Info("No password for rcon set");
                     }
                 }
@@ -328,7 +345,7 @@ namespace TShockAPI
             {
                 if ((DateTime.UtcNow - LastHeartbeat).Seconds >= 30)
                 {
-                    var packet = ConstructPacket("heartbeat TERRARIA", false);
+                    var packet = ConstructPacket("heartbeat TerrariaShock", false);
                     if (listener == null)
                         try
                         {
