@@ -137,6 +137,7 @@ namespace TShockAPI
             add(Permissions.tp, Spawn, "spawn");
             add(Permissions.tp, TP, "tp");
             add(Permissions.tphere, TPHere, "tphere");
+            add(Permissions.tphere, SendWarp, "sendwarp", "sw");
             add(Permissions.warp, UseWarp, "warp");
             add(Permissions.managewarp, SetWarp, "setwarp");
             add(Permissions.managewarp, DeleteWarp, "delwarp");
@@ -1199,6 +1200,42 @@ namespace TShockAPI
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
                 }
 
+            }
+        }
+
+        private static void SendWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /sendwarp [player] [warpname]", Color.Red);
+                return;
+            }
+
+            var foundplr = Tools.FindPlayer(args.Parameters[0]);
+            if (foundplr.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+                return;
+            }
+            else if (foundplr.Count > 1)
+            {
+                args.Player.SendMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count), Color.Red);
+                return;
+            }
+            string warpName = String.Join(" ", args.Parameters[1]);
+            var warp = TShock.Warps.FindWarp(warpName);
+            var plr = foundplr[0];
+            if (warp.WarpPos != PointF.Empty)
+            {
+                if (plr.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                {
+                    plr.SendMessage(string.Format("{0} Warped you to {1}", args.Player.Name, warpName), Color.Yellow);
+                    args.Player.SendMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName), Color.Yellow);
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Specified warp not found", Color.Red);
             }
         }
 
