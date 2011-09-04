@@ -113,7 +113,7 @@ namespace TShockAPI.DB
 
             string query = (TShock.Config.StorageType.ToLower() == "sqlite") ?
                 "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);" :
-                "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@1, ChatColor=@1";
+                "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
             if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
                 message = "Group " + name + " has been created successfully.";
 
