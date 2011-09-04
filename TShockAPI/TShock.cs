@@ -67,6 +67,7 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
+        public static bool PostInit = false;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -190,7 +191,7 @@ namespace TShockAPI
 
                 GetDataHandlers.InitGetDataHandler();
                 Commands.InitCommands();
-                //RconHandler.StartThread();
+                RconHandler.StartThread();
 
                 if (Config.BufferPackets)
                     PacketBuffer = new PacketBufferer();
@@ -359,6 +360,11 @@ namespace TShockAPI
 
         private void OnUpdate()
         {
+            if (!PostInit)
+            {
+                OnPostInit();
+                PostInit = true;
+            }
             UpdateManager.UpdateProcedureCheck();
 
             if (Backups.IsBackupTime)
