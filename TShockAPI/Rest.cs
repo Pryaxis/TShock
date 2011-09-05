@@ -44,10 +44,12 @@ namespace TShockAPI
             Ip = ip;
             Port = port;
             Start();
+            Console.WriteLine("TShock REST API loaded on " + ip + ":" + port + ".");
         }
         public virtual void Stop()
         {
             listener.Stop();
+            Console.WriteLine("TShock REST API disabled.");
         }
 
         public void Register(string path, RestCommandD callback)

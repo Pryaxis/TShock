@@ -16,14 +16,47 @@ namespace TShockAPI {
 
         public void RegisterRestfulCommands()
         {
-            Rest.Register(new RestCommand("/HelloWorld/name/{username}", usertest));
-            //Rest.Register(new RestCommand("/wizard/{username}", wizard));
+            Rest.Register(new RestCommand("/status", Status));
+            //RegisterExamples();
         }
 
         #region RestMethods
 
+        object Status(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        {
+            var ReturnBlock = new Dictionary<string, string>();
+            if (TShock.Config.EnableTokenEndpointAuthentication)
+            {
+                ReturnBlock.Add("status", "403");
+                ReturnBlock.Add("error", "Server settings require a token for this API call.");
+                return ReturnBlock;
+            }
+            ReturnBlock.Add("status", "200");
+            ReturnBlock.Add("name", TShock.Config.ServerNickname);
+            ReturnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
+            ReturnBlock.Add("playercount", Convert.ToString(TShock.Players.Count()));
+            string CurrentPlayers = "";
+            foreach (TSPlayer tplayer in TShock.Players)
+            {
+                CurrentPlayers += tplayer.Name + ", ";
+            }
+
+            ReturnBlock.Add("players", CurrentPlayers);
+            return ReturnBlock;
+        }
+
+        #endregion
+
+        #region RestExampleMethods
+
+        public void RegisterExamples()
+        {
+            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest));
+            Rest.Register(new RestCommand("/wizard/{username}", Wizard));
+        }
+
         //The Wizard example, for demonstrating the response convention:
-        object wizard(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        object Wizard(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
         {
             var returnBack = new Dictionary<string, string>();
             returnBack.Add("status", "200"); //Keep this in everything, 200 = ok, etc. Standard http status codes.
@@ -33,7 +66,7 @@ namespace TShockAPI {
         }
 
         //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
-        object usertest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        object UserTest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
         {
             var ret = new Dictionary<string, string>();
             var type = parameters["type"];
