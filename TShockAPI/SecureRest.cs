@@ -22,7 +22,7 @@ namespace TShockAPI
             : base(ip, port)
         {
             Tokens = new Dictionary<string, object>();
-            Register(new RestCommand("/token/create/{username}/{password}", Newtoken) { RequiesToken = false });
+            Register(new RestCommand("/token/create/{username}/{password}", NewToken) { RequiesToken = false });
             Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiesToken = true});
         }
 
@@ -40,7 +40,7 @@ namespace TShockAPI
             return new Dictionary<string, string> { { "status", "200" }, { "response", "Requested token was successfully destroyed." } };
         }
 
-        object Newtoken(RestVerbs verbs, IParameterCollection parameters)
+        object NewToken(RestVerbs verbs, IParameterCollection parameters)
         {
             var user = verbs["username"];
             var pass = verbs["password"];
