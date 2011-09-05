@@ -19,10 +19,52 @@ namespace TShockAPI {
         {
             Rest.Register(new RestCommand("/status", Status) {RequiesToken = false});
             Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiesToken = true });
+
+            Rest.Register(new RestCommand("/users/{user}/info", UserInfo) {RequiesToken = true});
+            Rest.Register(new RestCommand("/users/{user}/destroy", UserDestroy) {RequiesToken = true});
+
             //RegisterExamples();
         } 
 
         #region RestMethods
+
+        object UserDestroy(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var user = TShock.Users.GetUserByName(verbs["user"]);
+            if (user == null)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does't exist." } };
+            }
+            var ReturnBlock = new Dictionary<string, string>();
+            try
+            {
+                TShock.Users.RemoveUser(user);
+            } catch (Exception)
+            {
+                ReturnBlock.Add("status", "400");
+                ReturnBlock.Add("error", "The specified user was unable to be removed.");
+                return ReturnBlock;
+            }
+            ReturnBlock.Add("status", "200");
+            ReturnBlock.Add("response", "User deleted successfully.");
+            return ReturnBlock;
+        }
+
+        object UserInfo(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var user = TShock.Users.GetUserByName(verbs["user"]);
+            if (user == null)
+            {
+                return new Dictionary<string, string>
+                           {{"status", "400"}, {"error", "The specified user account does't exist."}};
+            }
+
+            var ReturnBlock = new Dictionary<string, string>();
+            ReturnBlock.Add("status", "200");
+            ReturnBlock.Add("group", user.Group);
+            ReturnBlock.Add("id", user.ID.ToString());
+            return ReturnBlock;
+        }
 
         object TokenTest(RestVerbs verbs, IParameterCollection parameters)
         {
