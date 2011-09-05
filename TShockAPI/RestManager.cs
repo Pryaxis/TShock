@@ -24,11 +24,52 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
             Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
 
+            Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiesToken = true });
+            Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiesToken = true });
+            
+
             Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
             //RegisterExamples();
-        } 
+        }
 
         #region RestMethods
+
+        object TokenTest(RestVerbs verbs, IParameterCollection parameters)
+        {
+            return new Dictionary<string, string> { { "status", "200" }, { "response", "Token is valid and was passed through correctly." } };
+        }
+
+        object Status(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            if (TShock.Config.EnableTokenEndpointAuthentication)
+            {
+                returnBlock.Add("status", "403");
+                returnBlock.Add("error", "Server settings require a token for this API call.");
+                return returnBlock;
+            }
+            string CurrentPlayers = "";
+            int PlayerCount = 0;
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    CurrentPlayers += Main.player[i].name + ", ";
+                    PlayerCount++;
+                }
+            }
+            returnBlock.Add("status", "200");
+            returnBlock.Add("name", TShock.Config.ServerNickname);
+            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
+            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
+            returnBlock.Add("players", CurrentPlayers);
+
+            return returnBlock;
+        }
+
+        #endregion
+
+        #region RestUserMethods
         
         object UserList(RestVerbs verbs, IParameterCollection parameters)
         {
@@ -121,37 +162,45 @@ namespace TShockAPI {
             return returnBlock;
         }
 
-        object TokenTest(RestVerbs verbs, IParameterCollection parameters)
-        {
-            return new Dictionary<string, string>
-                       {{"status", "200"}, {"response", "Token is valid and was passed through correctly."}};
-        }
+        #endregion
 
-        object Status(RestVerbs verbs, IParameterCollection parameters)
+        #region RestBanMethods
+
+        object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
         {
-            var returnBlock = new Dictionary<string, string>();
-            if (TShock.Config.EnableTokenEndpointAuthentication)
+            var ban = TShock.Bans.GetBanByName(verbs["user"]);
+            if (ban == null)
             {
-                returnBlock.Add("status", "403");
-                returnBlock.Add("error", "Server settings require a token for this API call.");
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban doesn't exist." } };
+            }
+            var returnBlock = new Dictionary<string, string>();
+            try
+            {
+                TShock.Bans.RemoveBan(ban.IP);
+            }
+            catch (Exception)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specified ban was unable to be removed.");
                 return returnBlock;
             }
-            string CurrentPlayers = "";
-            int PlayerCount = 0;
-            for (int i = 0; i < Main.player.Length; i++ )
-            {
-                if (Main.player[i].active)
-                {
-                    CurrentPlayers += Main.player[i].name + ", ";
-                    PlayerCount++;
-                }
-            }
             returnBlock.Add("status", "200");
-            returnBlock.Add("name", TShock.Config.ServerNickname);
-            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
-            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
-            returnBlock.Add("players", CurrentPlayers);
+            returnBlock.Add("response", "Ban deleted successfully.");
+            return returnBlock;
+        }
 
+        object BanInfo(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var ban = TShock.Bans.GetBanByName(verbs["user"]);
+            if (ban == null)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban doesn't exist." } };
+            }
+
+            var returnBlock = new Dictionary<string, string>();
+            returnBlock.Add("status", "200");
+            returnBlock.Add("reason", ban.Reason);
+            returnBlock.Add("ip", ban.IP);
             return returnBlock;
         }
 
