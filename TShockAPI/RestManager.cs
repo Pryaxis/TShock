@@ -170,9 +170,34 @@ namespace TShockAPI {
         object BanCreate(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBlock = new Dictionary<string, string>();
+            var ip = parameters["ip"];
+            var name = parameters["name"];
+            var reason = parameters["reason"];
+
+            if (ip == null && name == null)
+            {
+                returnBlock.Add("Error", "Required parameter missing.");
+                return returnBlock;
+            }
+
+            if (ip == null)
+            {
+                ip = "";
+            }
+
+            if (name == null)
+            {
+                name = "";
+            }
+
+            if (reason == null)
+            {
+                reason = "";
+            }
+
             try
             {
-                TShock.Bans.AddBan(parameters["ip"], parameters["name"], parameters["reason"]);
+                TShock.Bans.AddBan(ip, name, reason);
             }
             catch (Exception)
             {
