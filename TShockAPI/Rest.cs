@@ -98,9 +98,9 @@ namespace TShockAPI
                 var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
                 if (obj != null)
                     return obj;
-
+                 
             }
-            return new Dictionary<string, string> { { "Error", "Invalid request" } };
+            return new Dictionary<string, string> { { "status", "404" }, {"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."} };
         }
 
         protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)

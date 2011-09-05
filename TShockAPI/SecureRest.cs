@@ -24,7 +24,7 @@ namespace TShockAPI
             var pass = verbs["password"];
 
             if (Verify != null && !Verify(user, pass))
-                return new Dictionary<string, string> { { "Error", "Failed to verify username/password" } };
+                return new Dictionary<string, string> { { "status", "401" } , { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
 
             string hash = string.Empty;
             var rand = new Random();
@@ -37,7 +37,7 @@ namespace TShockAPI
 
             Tokens.Add(hash, new Object());
 
-            return new Dictionary<string, string> { { "Token", hash } }; ;
+            return new Dictionary<string, string> { { "status", "200" } , { "token", hash } }; ;
         }
         protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
         {
@@ -45,11 +45,11 @@ namespace TShockAPI
             {
                 var strtoken = parms["token"];
                 if (strtoken == null)
-                    return new Dictionary<string, string> { { "Error", "Token Missing" } };
+                    return new Dictionary<string, string> { { "status", "401" }, { "error", "Not authorized. The specified API endpoint requires a token." } };
 
                 object token;
                 if (!Tokens.TryGetValue(strtoken, out token))
-                    return new Dictionary<string, string> { { "Error", "Token Invalid" } };
+                    return new Dictionary<string, string> { { "status", "403" }, { "error", "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." } };
             }
             return base.ExecuteCommand(cmd, verbs, parms);
         }
