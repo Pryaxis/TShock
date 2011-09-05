@@ -535,22 +535,32 @@ namespace TShockAPI
         /// <summary>
         /// Returns a Sha256 string for a given string
         /// </summary>
-        /// <param name="password">string password</param>
+        /// <param name="bytes">bytes to hash</param>
         /// <returns>string sha256</returns>
-        public static string HashPassword(string password)
+        public static string HashPassword(byte[] bytes)
         {
-            if (string.IsNullOrEmpty(password) || password == "non-existant password")
-                return "non-existant password";
-
+            if (bytes == null)
+                throw new NullReferenceException("bytes");
             Func<HashAlgorithm> func;
             if (!HashTypes.TryGetValue(HashAlgo.ToLower(), out func))
                 throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(HashAlgo.ToLower()));
 
             using (var hash = func())
             {
-                var bytes = hash.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+                var ret = hash.ComputeHash(bytes);
+                return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
+        }
+        /// <summary>
+        /// Returns a Sha256 string for a given string
+        /// </summary>
+        /// <param name="bytes">bytes to hash</param>
+        /// <returns>string sha256</returns>
+        public static string HashPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password) || password == "non-existant password")
+                return "non-existant password";
+            return HashPassword(Encoding.UTF8.GetBytes(password));
         }
 
         /// <summary>
