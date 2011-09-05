@@ -17,9 +17,21 @@ namespace TShockAPI {
         public void RegisterRestfulCommands()
         {
             Rest.Register(new RestCommand("/HelloWorld/name/{username}", usertest));
+            //Rest.Register(new RestCommand("/wizard/{username}", wizard));
         }
 
         #region RestMethods
+
+        //The Wizard example, for demonstrating the response convention:
+        object wizard(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        {
+            var returnBack = new Dictionary<string, string>();
+            returnBack.Add("status", "200"); //Keep this in everything, 200 = ok, etc. Standard http status codes.
+            returnBack.Add("error", "(If this failed, you would have a different status code and provide the error object.)"); //And only include this if the status isn't 200 or a failure
+            returnBack.Add("Verified Wizard", "You're a wizard, " + verbs["username"]); //Outline any api calls and possible responses in some form of documentation somewhere
+            return returnBack;
+        }
+
         //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
         object usertest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
         {
