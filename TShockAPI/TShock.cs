@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Linq;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
+using HttpServer;
 using MySql.Data.MySqlClient;
 using Terraria;
 using TerrariaAPI;
@@ -67,6 +68,7 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
+        public static Rest RestApi;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -172,6 +174,7 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
+                RestApi = new Rest(IPAddress.Any, 8080);
                 if (Config.EnableGeoIP)
                     Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
 
@@ -200,6 +203,8 @@ namespace TShockAPI
 
                 if (Initialized != null)
                     Initialized();
+
+                RestApi.Register(new RestCommand("/users", usertest));
             }
             catch (Exception ex)
             {
@@ -226,7 +231,21 @@ namespace TShockAPI
                 Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
+            RestApi.Dispose();
             //RconHandler.ShutdownAllThreads();
+        }
+
+        //http://127.0.0.1:8080/users?type=status
+        string usertest(IParameterCollection parameters, RequestEventArgs request)
+        {
+            var type = parameters["type"];
+            if (type == null)
+                return "Invalid Type";
+            if (type == "status")
+            {
+                return "Users online here";
+            }
+            return null;
         }
 
         /// <summary>
@@ -353,6 +372,7 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
+            RestApi.Start();
         }
 
 
