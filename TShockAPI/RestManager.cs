@@ -24,6 +24,7 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
             Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
 
+            Rest.Register(new RestCommand("/bans/create", BanCreate) { RequiesToken = true });
             Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiesToken = true });
             Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiesToken = true });
             
@@ -129,7 +130,7 @@ namespace TShockAPI {
             var user = TShock.Users.GetUserByName(verbs["user"]);
             if (user == null)
             {
-                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does't exist." } };
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
             }
             var returnBlock = new Dictionary<string, string>();
             try
@@ -152,7 +153,7 @@ namespace TShockAPI {
             if (user == null)
             {
                 return new Dictionary<string, string>
-                           {{"status", "400"}, {"error", "The specified user account does't exist."}};
+                           {{"status", "400"}, {"error", "The specified user account does not exist."}};
             }
 
             var returnBlock = new Dictionary<string, string>();
@@ -166,14 +167,49 @@ namespace TShockAPI {
 
         #region RestBanMethods
 
+        object BanCreate(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            try
+            {
+                TShock.Bans.AddBan(parameters["ip"], parameters["name"], parameters["reason"]);
+            }
+            catch (Exception)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specified ban was unable to be created.");
+                return returnBlock;
+            }
+            returnBlock.Add("status", "200");
+            returnBlock.Add("response", "Ban created successfully.");
+            return returnBlock;            
+        }
+
         object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
         {
-            var ban = TShock.Bans.GetBanByName(verbs["user"]);
+            var returnBlock = new Dictionary<string, string>();
+
+            var type = parameters["type"];
+            if (type == null)
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            var ban = new DB.Ban();
+            if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+            else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+            else
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
             if (ban == null)
             {
-                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban doesn't exist." } };
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
             }
-            var returnBlock = new Dictionary<string, string>();
+            
             try
             {
                 TShock.Bans.RemoveBan(ban.IP);
@@ -191,16 +227,33 @@ namespace TShockAPI {
 
         object BanInfo(RestVerbs verbs, IParameterCollection parameters)
         {
-            var ban = TShock.Bans.GetBanByName(verbs["user"]);
-            if (ban == null)
+            var returnBlock = new Dictionary<string, string>();
+
+            var type = parameters["type"];
+            if (type == null)
             {
-                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban doesn't exist." } };
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
             }
 
-            var returnBlock = new Dictionary<string, string>();
+            var ban = new DB.Ban();
+            if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+            else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+            else
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            if (ban == null)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+            }
+
             returnBlock.Add("status", "200");
-            returnBlock.Add("reason", ban.Reason);
+            returnBlock.Add("name", ban.Name);
             returnBlock.Add("ip", ban.IP);
+            returnBlock.Add("reason", ban.Reason);
             return returnBlock;
         }
 
