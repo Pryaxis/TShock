@@ -15,9 +15,9 @@ namespace TShockAPI
     /// Rest command delegate
     /// </summary>
     /// <param name="parameters">Parameters in the url</param>
-    /// <param name="request">Http request</param>
+    /// <param name="verbs">{x} in urltemplate</param>
     /// <returns>Response object or null to not handle request</returns>
-    public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request);
+    public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
     public class Rest : IDisposable
     {
         readonly List<RestCommand> commands = new List<RestCommand>();
@@ -64,7 +64,7 @@ namespace TShockAPI
 
         protected virtual void OnRequest(object sender, RequestEventArgs e)
         {
-            var obj = Process(sender, e);
+            var obj = ProcessRequest(sender, e);
             if (obj == null)
                 throw new NullReferenceException("obj");
             var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
@@ -74,23 +74,38 @@ namespace TShockAPI
             return;
         }
 
-        protected virtual object Process(object sender, RequestEventArgs e)
+        protected virtual object ProcessRequest(object sender, RequestEventArgs e)
         {
             foreach (var com in commands)
             {
-                var matches = Regex.Matches(e.Request.Uri.AbsolutePath, com.UriMatch);
-                if (matches.Count == com.UriNames.Length)
+                var verbs = new RestVerbs();
+                if (com.HasVerbs)
                 {
-                    var verbs = new RestVerbs();
-                    for (int i = 0; i < matches.Count; i++)
-                        verbs.Add(com.UriNames[i], matches[i].Groups[1].Value);
+                    var match = Regex.Match(e.Request.Uri.AbsolutePath, com.UriVerbMatch);
+                    if (!match.Success)
+                        continue;
+                    if ((match.Groups.Count - 1) != com.UriVerbs.Length)
+                        continue;
 
-                    var obj = com.Callback(verbs, e.Request.Parameters, e);
-                    if (obj != null)
-                        return obj;
+                    for (int i = 0; i < com.UriVerbs.Length; i++)
+                        verbs.Add(com.UriVerbs[i], match.Groups[i + 1].Value);
                 }
+                else if (com.UriTemplate.ToLower() != e.Request.Uri.AbsolutePath.ToLower())
+                {
+                    continue;
+                }
+
+                var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
+                if (obj != null)
+                    return obj;
+
             }
             return new Dictionary<string, string> { { "Error", "Invalid request" } };
+        }
+
+        protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
+        {
+            return cmd.Callback(verbs, parms);
         }
 
         #region Dispose
@@ -125,18 +140,43 @@ namespace TShockAPI
 
     public class RestCommand
     {
+        public string Name { get; protected set; }
         public string UriTemplate { get; protected set; }
-        public string UriMatch { get; protected set; }
-        public string[] UriNames { get; protected set; }
+        public string UriVerbMatch { get; protected set; }
+        public string[] UriVerbs { get; protected set; }
         public RestCommandD Callback { get; protected set; }
+        public bool RequiesToken { get; set; }
 
-        public RestCommand(string uritemplate, RestCommandD callback)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name">Used for identification</param>
+        /// <param name="uritemplate">Url template</param>
+        /// <param name="callback">Rest Command callback</param>
+        public RestCommand(string name, string uritemplate, RestCommandD callback)
         {
+            Name = name;
             UriTemplate = uritemplate;
-            UriMatch = string.Join("([^/]*)", Regex.Split(uritemplate, "\\{[^\\{\\}]*\\}"));
+            UriVerbMatch = string.Join("([^/]*)", Regex.Split(uritemplate, "\\{[^\\{\\}]*\\}"));
             var matches = Regex.Matches(uritemplate, "\\{([^\\{\\}]*)\\}");
-            UriNames = (from Match match in matches select match.Groups[1].Value).ToArray();
+            UriVerbs = (from Match match in matches select match.Groups[1].Value).ToArray();
             Callback = callback;
+            RequiesToken = true;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uritemplate">Url template</param>
+        /// <param name="callback">Rest Command callback</param>
+        public RestCommand(string uritemplate, RestCommandD callback)
+            : this(string.Empty, uritemplate, callback)
+        {
+
+        }
+
+        public bool HasVerbs
+        {
+            get { return UriVerbs.Length > 0; }
         }
     }
 }

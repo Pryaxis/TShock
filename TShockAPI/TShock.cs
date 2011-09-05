@@ -176,7 +176,7 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                RestApi = new Rest(IPAddress.Any, 8080);
+                RestApi = new SecureRest(IPAddress.Any, 8080);
                 RestManager = new RestManager(RestApi);
                 RestManager.RegisterRestfulCommands();
                 if (Config.EnableGeoIP)
