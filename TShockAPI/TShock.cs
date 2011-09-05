@@ -69,7 +69,7 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
-        public static Rest RestApi;
+        public static SecureRest RestApi;
         public static RestManager RestManager;
 
         /// <summary>
@@ -177,6 +177,7 @@ namespace TShockAPI
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
                 RestApi = new SecureRest(IPAddress.Any, 8080);
+                RestApi.Verify += RestApi_Verify;
                 RestManager = new RestManager(RestApi);
                 RestManager.RegisterRestfulCommands();
                 if (Config.EnableGeoIP)
@@ -214,6 +215,27 @@ namespace TShockAPI
                 Log.Error(ex.ToString());
                 Environment.Exit(1);
             }
+        }
+
+        RestObject RestApi_Verify(string username, string password)
+        {
+            var userAccount = TShock.Users.GetUserByName(username);
+            if (userAccount == null)
+            {
+                return new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
+            }
+
+            if (Tools.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
+            {
+                return new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
+            }
+
+            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+            {
+                return new RestObject("403", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)");
+            }
+
+            return new RestObject("200"); //Maybe return some user info too?
         }
 
         public override void DeInitialize()
