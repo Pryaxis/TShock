@@ -190,7 +190,7 @@ namespace TShockAPI
 
                 GetDataHandlers.InitGetDataHandler();
                 Commands.InitCommands();
-                RconHandler.StartThread();
+                //RconHandler.StartThread();
 
                 if (Config.BufferPackets)
                     PacketBuffer = new PacketBufferer();
@@ -226,7 +226,7 @@ namespace TShockAPI
                 Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
-            RconHandler.ShutdownAllThreads();
+            //RconHandler.ShutdownAllThreads();
         }
 
         /// <summary>
