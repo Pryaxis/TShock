@@ -25,6 +25,8 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
 
             Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
+
+            Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
             //RegisterExamples();
         } 
 
@@ -152,6 +154,19 @@ namespace TShockAPI {
             returnBlock.Add("playercount", Convert.ToString(PlayerCount));
             returnBlock.Add("players", CurrentPlayers);
 
+            return returnBlock;
+        }
+
+        object WorldRead(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            returnBlock.Add("status", "200");
+            returnBlock.Add("name", Main.worldName);
+            returnBlock.Add("size", Main.maxTilesX + "*" + Main.maxTilesY);
+            returnBlock.Add("time", Main.time.ToString());
+            returnBlock.Add("daytime", Main.dayTime.ToString());
+            returnBlock.Add("bloodmoon", Main.bloodMoon.ToString());
+            returnBlock.Add("invasionsize", Main.invasionSize.ToString());
             return returnBlock;
         }
 
