@@ -20,13 +20,50 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/status", Status) {RequiesToken = false});
             Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiesToken = true });
 
-            Rest.Register(new RestCommand("/users/{user}/info", UserInfo) {RequiesToken = true});
-            Rest.Register(new RestCommand("/users/{user}/destroy", UserDestroy) {RequiesToken = true});
-
+            Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) {RequiesToken = true});
+            Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
+            Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
             //RegisterExamples();
         } 
 
         #region RestMethods
+
+        object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            var password = parameters["password"];
+            var group = parameters["group"];
+
+            if (group == null && password == null)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "No parameters were passed.");
+                return returnBlock;
+            }
+
+            var user = TShock.Users.GetUserByName(verbs["user"]);
+            if (user == null)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specefied user doesn't exist.");
+                return returnBlock;
+            }
+
+            if (password != null)
+            {
+                TShock.Users.SetUserPassword(user, password);
+                returnBlock.Add("password-response", "Password updated successfully.");
+            }
+
+            if (group != null)
+            {
+                TShock.Users.SetUserGroup(user, group);
+                returnBlock.Add("group-response", "Group updated successfully.");
+            }
+
+            returnBlock.Add("status", "200");
+            return returnBlock;
+        }
 
         object UserDestroy(RestVerbs verbs, IParameterCollection parameters)
         {
@@ -35,19 +72,19 @@ namespace TShockAPI {
             {
                 return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does't exist." } };
             }
-            var ReturnBlock = new Dictionary<string, string>();
+            var returnBlock = new Dictionary<string, string>();
             try
             {
                 TShock.Users.RemoveUser(user);
             } catch (Exception)
             {
-                ReturnBlock.Add("status", "400");
-                ReturnBlock.Add("error", "The specified user was unable to be removed.");
-                return ReturnBlock;
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specified user was unable to be removed.");
+                return returnBlock;
             }
-            ReturnBlock.Add("status", "200");
-            ReturnBlock.Add("response", "User deleted successfully.");
-            return ReturnBlock;
+            returnBlock.Add("status", "200");
+            returnBlock.Add("response", "User deleted successfully.");
+            return returnBlock;
         }
 
         object UserInfo(RestVerbs verbs, IParameterCollection parameters)
@@ -59,11 +96,11 @@ namespace TShockAPI {
                            {{"status", "400"}, {"error", "The specified user account does't exist."}};
             }
 
-            var ReturnBlock = new Dictionary<string, string>();
-            ReturnBlock.Add("status", "200");
-            ReturnBlock.Add("group", user.Group);
-            ReturnBlock.Add("id", user.ID.ToString());
-            return ReturnBlock;
+            var returnBlock = new Dictionary<string, string>();
+            returnBlock.Add("status", "200");
+            returnBlock.Add("group", user.Group);
+            returnBlock.Add("id", user.ID.ToString());
+            return returnBlock;
         }
 
         object TokenTest(RestVerbs verbs, IParameterCollection parameters)
@@ -74,12 +111,12 @@ namespace TShockAPI {
 
         object Status(RestVerbs verbs, IParameterCollection parameters)
         {
-            var ReturnBlock = new Dictionary<string, string>();
+            var returnBlock = new Dictionary<string, string>();
             if (TShock.Config.EnableTokenEndpointAuthentication)
             {
-                ReturnBlock.Add("status", "403");
-                ReturnBlock.Add("error", "Server settings require a token for this API call.");
-                return ReturnBlock;
+                returnBlock.Add("status", "403");
+                returnBlock.Add("error", "Server settings require a token for this API call.");
+                return returnBlock;
             }
             string CurrentPlayers = "";
             int PlayerCount = 0;
@@ -91,13 +128,13 @@ namespace TShockAPI {
                     PlayerCount++;
                 }
             }
-            ReturnBlock.Add("status", "200");
-            ReturnBlock.Add("name", TShock.Config.ServerNickname);
-            ReturnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
-            ReturnBlock.Add("playercount", Convert.ToString(PlayerCount));
-            ReturnBlock.Add("players", CurrentPlayers);
+            returnBlock.Add("status", "200");
+            returnBlock.Add("name", TShock.Config.ServerNickname);
+            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
+            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
+            returnBlock.Add("players", CurrentPlayers);
 
-            return ReturnBlock;
+            return returnBlock;
         }
 
         #endregion

@@ -16,7 +16,7 @@ namespace TShockAPI
             : base(ip, port)
         {
             Tokens = new Dictionary<string, object>();
-            Register(new RestCommand("/token/new/{username}/{password}", newtoken) { RequiesToken = false });
+            Register(new RestCommand("/token/create/{username}/{password}", newtoken) { RequiesToken = false });
             Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiesToken = true});
         }
 
