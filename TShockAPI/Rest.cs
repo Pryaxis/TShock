@@ -17,21 +17,33 @@ namespace TShockAPI
     /// <param name="parameters">Parameters in the url</param>
     /// <param name="request">Http request</param>
     /// <returns>Response object or null to not handle request</returns>
-    public delegate object RestCommandD(Dictionary<string,string> verbs, IParameterCollection parameters, RequestEventArgs request);
+    public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request);
     public class Rest : IDisposable
     {
         readonly List<RestCommand> commands = new List<RestCommand>();
         HttpListener listener;
+        public IPAddress Ip { get; set; }
+        public int Port { get; set; }
 
         public Rest(IPAddress ip, int port)
         {
-            listener = HttpListener.Create(ip, port);
-            listener.RequestReceived += OnRequest;
+            Ip = ip;
+            Port = port;
         }
-
         public void Start()
         {
-            listener.Start(int.MaxValue);
+            if (listener != null)
+            {
+                listener = HttpListener.Create(Ip, Port);
+                listener.RequestReceived += OnRequest;
+                listener.Start(int.MaxValue);
+            }
+        }
+        public void Start(IPAddress ip, int port)
+        {
+            Ip = ip;
+            Port = port;
+            Start();
         }
         public void Stop()
         {
@@ -67,7 +79,7 @@ namespace TShockAPI
                 var matches = Regex.Matches(e.Request.Uri.AbsolutePath, com.UriMatch);
                 if (matches.Count == com.UriNames.Length)
                 {
-                    var verbs = new Dictionary<string, string>();
+                    var verbs = new RestVerbs();
                     for (int i = 0; i < matches.Count; i++)
                         verbs.Add(com.UriNames[i], matches[i].Groups[1].Value);
 
@@ -102,6 +114,11 @@ namespace TShockAPI
         }
 
         #endregion
+    }
+
+    public class RestVerbs : Dictionary<string, string>
+    {
+
     }
 
     public class RestCommand

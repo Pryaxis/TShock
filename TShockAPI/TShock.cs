@@ -203,7 +203,7 @@ namespace TShockAPI
                 Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
                 if (Initialized != null)
-                    Initialized();
+                    Initialized(); 
 
                 RestApi.Register(new RestCommand("/HelloWorld/name/{username}", usertest));
             }
@@ -237,7 +237,7 @@ namespace TShockAPI
         }
 
         //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
-        object usertest(Dictionary<string,string> verbs, IParameterCollection parameters, RequestEventArgs request)
+        object usertest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
         {
             var ret = new Dictionary<string, string>();
             var type = parameters["type"];
