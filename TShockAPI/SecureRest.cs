@@ -50,7 +50,7 @@ namespace TShockAPI
                 obj = Verify(user, pass);
 
             if (obj == null)
-                obj = new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
+                obj = new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 
             if (obj.Error != null)
                 return obj;

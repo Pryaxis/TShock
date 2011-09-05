@@ -222,20 +222,20 @@ namespace TShockAPI
             var userAccount = TShock.Users.GetUserByName(username);
             if (userAccount == null)
             {
-                return new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
             }
 
             if (Tools.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
             {
-                return new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
             }
 
             if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
             {
-                return new RestObject("403", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)");
+                return new RestObject("403") { Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" };
             }
 
-            return new RestObject("200"); //Maybe return some user info too?
+            return new RestObject("200") { Response = "Successful login" }; //Maybe return some user info too?
         }
 
         public override void DeInitialize()

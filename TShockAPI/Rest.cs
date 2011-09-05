@@ -154,15 +154,15 @@ namespace TShockAPI
             get { return SafeGet("error"); }
             set { SafeSet("error", value); }
         }
+        public string Response
+        {
+            get { return SafeGet("response"); }
+            set { SafeSet("response", value); }
+        }
 
         public RestObject(string status)
         {
             Status = status;
-        }
-        public RestObject(string status, string error)
-            : this(status)
-        {
-            Error = error;
         }
 
         /// <summary>
