@@ -17,11 +17,30 @@ namespace TShockAPI
         {
             Tokens = new Dictionary<string, object>();
             Register(new RestCommand("/token/new/{username}/{password}", newtoken) { RequiesToken = false });
+            Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiesToken = true});
         }
+
+        object DestroyToken(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var token = verbs["token"];
+            try
+            {
+                Tokens.Remove(token);
+            }
+            catch (Exception)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified token queued for destruction failed to be deleted." } };
+            }
+            return new Dictionary<string, string> { { "status", "200" }, { "response", "Requested token was successfully destroyed." } };
+        }
+
         object newtoken(RestVerbs verbs, IParameterCollection parameters)
         {
             var user = verbs["username"];
             var pass = verbs["password"];
+
+            if (Verify != null && !Verify(user, pass))
+                return new Dictionary<string, string> { { "status", "401" } , { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
 
             var userAccount = TShock.Users.GetUserByName(user);
             if (userAccount == null)
@@ -36,11 +55,8 @@ namespace TShockAPI
 
             if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
             {
-                return new Dictionary<string, string> { { "status", "403" }, { "error", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"} };
+                return new Dictionary<string, string> { { "status", "403" }, { "error", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" } };
             }
-
-            if (Verify != null && !Verify(user, pass))
-                return new Dictionary<string, string> { { "status", "401" } , { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
 
             string hash = string.Empty;
             var rand = new Random();
@@ -55,6 +71,7 @@ namespace TShockAPI
 
             return new Dictionary<string, string> { { "status", "200" } , { "token", hash } }; ;
         }
+
         protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
         {
             if (cmd.RequiesToken)
