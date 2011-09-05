@@ -67,7 +67,7 @@ namespace TShockAPI
                 hash = Tools.HashPassword(randbytes);
             } while (Tokens.ContainsKey(hash));
 
-            Tokens.Add(hash, new Object());
+            Tokens.Add(hash, user);
 
             return new Dictionary<string, string> { { "status", "200" } , { "token", hash } }; ;
         }
