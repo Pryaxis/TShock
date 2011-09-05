@@ -21,7 +21,7 @@ namespace TShockAPI {
 
         #region RestMethods
         //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
-        object usertest(Dictionary<string, string> verbs, IParameterCollection parameters, RequestEventArgs request)
+        object usertest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
         {
             var ret = new Dictionary<string, string>();
             var type = parameters["type"];
@@ -38,15 +38,5 @@ namespace TShockAPI {
             return null;
         }
         #endregion
-
-        public void Start()
-        {
-            Rest.Start();
-        }
-
-        public void Dispose()
-        {
-            Rest.Dispose();
-        }
     }
 }

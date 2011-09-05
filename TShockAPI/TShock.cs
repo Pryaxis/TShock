@@ -69,7 +69,8 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
-        public static RestManager RestApi;
+        public static Rest RestApi;
+        public static RestManager RestManager;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -175,7 +176,9 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                RestApi = new RestManager(new Rest(IPAddress.Any, 8080));
+                RestApi = new Rest(IPAddress.Any, 8080);
+                RestManager = new RestManager(RestApi);
+                RestManager.RegisterRestfulCommands();
                 if (Config.EnableGeoIP)
                     Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
 
@@ -203,10 +206,7 @@ namespace TShockAPI
                 Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
                 if (Initialized != null)
-                    Initialized(); 
-
-                RestApi.RegisterRestfulCommands();
-
+                    Initialized();
             }
             catch (Exception ex)
             {
