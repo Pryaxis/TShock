@@ -180,7 +180,8 @@ namespace TShockAPI {
 
             if (ip == null && name == null)
             {
-                returnBlock.Add("Error", "Required parameter missing.");
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Required parameters were missing from this API endpoint.");
                 return returnBlock;
             }
 
