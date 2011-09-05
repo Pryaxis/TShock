@@ -23,11 +23,29 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) {RequiesToken = true});
             Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
             Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
+
+            Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
             //RegisterExamples();
         } 
 
         #region RestMethods
         
+        object UserList(RestVerbs verbs, IParameterCollection parameters)
+        {
+            string players = "";
+            for (int i = 0; i < Main.player.Length; i++ )
+            {
+                if (Main.player[i].active)
+                {
+                    players += Main.player[i].name + ", ";
+                }
+            }
+            var returnBlock = new Dictionary<string, string>();
+            returnBlock.Add("status", "200");
+            returnBlock.Add("players", players);
+            return returnBlock;
+        }
+
         object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBlock = new Dictionary<string, string>();
