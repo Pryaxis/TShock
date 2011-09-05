@@ -18,10 +18,17 @@ namespace TShockAPI {
         public void RegisterRestfulCommands()
         {
             Rest.Register(new RestCommand("/status", Status) {RequiesToken = false});
+            Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiesToken = true });
             //RegisterExamples();
         } 
 
         #region RestMethods
+
+        object TokenTest(RestVerbs verbs, IParameterCollection parameters)
+        {
+            return new Dictionary<string, string>
+                       {{"status", "200"}, {"response", "Token is valid and was passed through correctly."}};
+        }
 
         object Status(RestVerbs verbs, IParameterCollection parameters)
         {

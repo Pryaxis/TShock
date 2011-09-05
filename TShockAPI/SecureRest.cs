@@ -23,6 +23,22 @@ namespace TShockAPI
             var user = verbs["username"];
             var pass = verbs["password"];
 
+            var userAccount = TShock.Users.GetUserByName(user);
+            if (userAccount == null)
+            {
+                return new Dictionary<string, string> { { "status", "401" }, { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
+            }
+
+            if (Tools.HashPassword(pass).ToUpper() != userAccount.Password.ToUpper())
+            {
+                return new Dictionary<string, string> { { "status", "401" }, { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
+            }
+
+            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+            {
+                return new Dictionary<string, string> { { "status", "403" }, { "error", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"} };
+            }
+
             if (Verify != null && !Verify(user, pass))
                 return new Dictionary<string, string> { { "status", "401" } , { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
 
