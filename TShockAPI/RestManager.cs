@@ -23,7 +23,7 @@ namespace TShockAPI {
         #region RestMethods
 
         //The Wizard example, for demonstrating the response convention:
-        object wizard(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        object wizard(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBack = new Dictionary<string, string>();
             returnBack.Add("status", "200"); //Keep this in everything, 200 = ok, etc. Standard http status codes.
@@ -33,7 +33,7 @@ namespace TShockAPI {
         }
 
         //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
-        object usertest(RestVerbs verbs, IParameterCollection parameters, RequestEventArgs request)
+        object usertest(RestVerbs verbs, IParameterCollection parameters)
         {
             var ret = new Dictionary<string, string>();
             var type = parameters["type"];
