@@ -30,9 +30,9 @@ namespace TShockAPI
             Ip = ip;
             Port = port;
         }
-        public void Start()
+        public virtual void Start()
         {
-            if (listener != null)
+            if (listener == null)
             {
                 listener = HttpListener.Create(Ip, Port);
                 listener.RequestReceived += OnRequest;
@@ -45,7 +45,7 @@ namespace TShockAPI
             Port = port;
             Start();
         }
-        public void Stop()
+        public virtual void Stop()
         {
             listener.Stop();
         }
@@ -55,12 +55,12 @@ namespace TShockAPI
             Register(new RestCommand(path, callback));
         }
 
-        public void Register(RestCommand com)
+        public virtual void Register(RestCommand com)
         {
             commands.Add(com);
         }
 
-        void OnRequest(object sender, RequestEventArgs e)
+        protected virtual void OnRequest(object sender, RequestEventArgs e)
         {
             var obj = Process(sender, e);
             if (obj == null)
