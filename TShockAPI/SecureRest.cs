@@ -7,7 +7,13 @@ using HttpServer;
 
 namespace TShockAPI
 {
-    public delegate bool VerifyD(string username, string password);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="username">Username to verify</param>
+    /// <param name="password">Password to verify</param>
+    /// <returns>Returning a restobject with a null error means a successful verification.</returns>
+    public delegate RestObject VerifyD(string username, string password);
     public class SecureRest : Rest
     {
         public Dictionary<string, object> Tokens { get; protected set; }
@@ -39,26 +45,17 @@ namespace TShockAPI
             var user = verbs["username"];
             var pass = verbs["password"];
 
-            if (Verify != null && !Verify(user, pass))
-                return new Dictionary<string, string> { { "status", "401" } , { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
+            RestObject obj = null;
+            if (Verify != null)
+                obj = Verify(user, pass);
 
-            var userAccount = TShock.Users.GetUserByName(user);
-            if (userAccount == null)
-            {
-                return new Dictionary<string, string> { { "status", "401" }, { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
-            }
+            if (obj == null)
+                obj = new RestObject("401", "Invalid username/password combination provided. Please re-submit your query with a correct pair.");
 
-            if (Tools.HashPassword(pass).ToUpper() != userAccount.Password.ToUpper())
-            {
-                return new Dictionary<string, string> { { "status", "401" }, { "error", "Invalid username/password combination provided. Please re-submit your query with a correct pair." } };
-            }
+            if (obj.Error != null)
+                return obj;
 
-            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
-            {
-                return new Dictionary<string, string> { { "status", "403" }, { "error", "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" } };
-            }
-
-            string hash = string.Empty;
+            string hash;
             var rand = new Random();
             var randbytes = new byte[20];
             do
@@ -69,7 +66,8 @@ namespace TShockAPI
 
             Tokens.Add(hash, user);
 
-            return new Dictionary<string, string> { { "status", "200" } , { "token", hash } }; ;
+            obj.SafeSet("token", hash);
+            return obj;
         }
 
         protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)

@@ -52,10 +52,15 @@ namespace TShockAPI
 
         public void Register(string path, RestCommandD callback)
         {
-            Register(new RestCommand(path, callback));
+            AddCommand(new RestCommand(path, callback));
         }
 
-        public virtual void Register(RestCommand com)
+        public void Register(RestCommand com)
+        {
+            AddCommand(com);
+        }
+
+        protected void AddCommand(RestCommand com)
         {
             commands.Add(com);
         }
@@ -65,6 +70,7 @@ namespace TShockAPI
             var obj = ProcessRequest(sender, e);
             if (obj == null)
                 throw new NullReferenceException("obj");
+
             var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
             e.Response.Connection.Type = ConnectionType.Close;
             e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
@@ -134,6 +140,64 @@ namespace TShockAPI
     public class RestVerbs : Dictionary<string, string>
     {
 
+    }
+
+    public class RestObject : Dictionary<string, string>
+    {
+        public string Status
+        {
+            get { return SafeGet("status"); }
+            set { SafeSet("status", value); }
+        }
+        public string Error
+        {
+            get { return SafeGet("error"); }
+            set { SafeSet("error", value); }
+        }
+
+        public RestObject(string status)
+        {
+            Status = status;
+        }
+        public RestObject(string status, string error)
+            : this(status)
+        {
+            Error = error;
+        }
+
+        /// <summary>
+        /// Gets value safely.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>Returns null if key does not exist.</returns>
+        public string SafeGet(string key)
+        {
+            string ret;
+            if (TryGetValue(key, out ret))
+                return ret;
+            return null;
+        }
+        /// <summary>
+        /// Sets/Adds value safely. If null it will remove.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SafeSet(string key, string value)
+        {
+            if (!ContainsKey(key))
+            {
+                if (value == null)
+                    return;
+                Add(key, value);
+            }
+            else
+            {
+                if (value != null)
+                    this[key] = value;
+                else
+                Remove(key);
+            }
+        }
     }
 
     public class RestCommand
