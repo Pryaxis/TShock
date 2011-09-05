@@ -79,12 +79,15 @@ namespace Rests
 
         protected virtual object ProcessRequest(object sender, RequestEventArgs e)
         {
+            var uri = e.Request.Uri.AbsolutePath;
+            uri = uri.TrimEnd('/');
+
             foreach (var com in commands)
             {
                 var verbs = new RestVerbs();
                 if (com.HasVerbs)
                 {
-                    var match = Regex.Match(e.Request.Uri.AbsolutePath, com.UriVerbMatch);
+                    var match = Regex.Match(uri, com.UriVerbMatch);
                     if (!match.Success)
                         continue;
                     if ((match.Groups.Count - 1) != com.UriVerbs.Length)
@@ -93,7 +96,7 @@ namespace Rests
                     for (int i = 0; i < com.UriVerbs.Length; i++)
                         verbs.Add(com.UriVerbs[i], match.Groups[i + 1].Value);
                 }
-                else if (com.UriTemplate.ToLower() != e.Request.Uri.AbsolutePath.ToLower())
+                else if (com.UriTemplate.ToLower() != uri.ToLower())
                 {
                     continue;
                 }

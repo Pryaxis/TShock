@@ -22,7 +22,7 @@ namespace Rests
         {
             Name = name;
             UriTemplate = uritemplate;
-            UriVerbMatch = string.Join("([^/]*)", Regex.Split(uritemplate, "\\{[^\\{\\}]*\\}"));
+            UriVerbMatch = string.Format("^{0}$", string.Join("([^/]*)", Regex.Split(uritemplate, "\\{[^\\{\\}]*\\}")));
             var matches = Regex.Matches(uritemplate, "\\{([^\\{\\}]*)\\}");
             UriVerbs = (from Match match in matches select match.Groups[1].Value).ToArray();
             Callback = callback;
