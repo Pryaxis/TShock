@@ -24,15 +24,57 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
             Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
 
+            Rest.Register(new RestCommand("/bans/create", BanCreate) { RequiesToken = true });
+            Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiesToken = true });
+            Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiesToken = true });
+            
+
             Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
 
             Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
             Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiesToken = true });
             Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiesToken = true });
             //RegisterExamples();
-        } 
+        }
 
         #region RestMethods
+
+        object TokenTest(RestVerbs verbs, IParameterCollection parameters)
+        {
+            return new Dictionary<string, string> { { "status", "200" }, { "response", "Token is valid and was passed through correctly." } };
+        }
+
+        object Status(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            if (TShock.Config.EnableTokenEndpointAuthentication)
+            {
+                returnBlock.Add("status", "403");
+                returnBlock.Add("error", "Server settings require a token for this API call.");
+                return returnBlock;
+            }
+            string CurrentPlayers = "";
+            int PlayerCount = 0;
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    CurrentPlayers += Main.player[i].name + ", ";
+                    PlayerCount++;
+                }
+            }
+            returnBlock.Add("status", "200");
+            returnBlock.Add("name", TShock.Config.ServerNickname);
+            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
+            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
+            returnBlock.Add("players", CurrentPlayers);
+
+            return returnBlock;
+        }
+
+        #endregion
+
+        #region RestUserMethods
         
         object UserList(RestVerbs verbs, IParameterCollection parameters)
         {
@@ -92,7 +134,7 @@ namespace TShockAPI {
             var user = TShock.Users.GetUserByName(verbs["user"]);
             if (user == null)
             {
-                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does't exist." } };
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
             }
             var returnBlock = new Dictionary<string, string>();
             try
@@ -115,7 +157,7 @@ namespace TShockAPI {
             if (user == null)
             {
                 return new Dictionary<string, string>
-                           {{"status", "400"}, {"error", "The specified user account does't exist."}};
+                           {{"status", "400"}, {"error", "The specified user account does not exist."}};
             }
 
             var returnBlock = new Dictionary<string, string>();
@@ -125,40 +167,103 @@ namespace TShockAPI {
             return returnBlock;
         }
 
-        object TokenTest(RestVerbs verbs, IParameterCollection parameters)
-        {
-            return new Dictionary<string, string>
-                       {{"status", "200"}, {"response", "Token is valid and was passed through correctly."}};
-        }
+        #endregion
 
-        object Status(RestVerbs verbs, IParameterCollection parameters)
+        #region RestBanMethods
+
+        object BanCreate(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBlock = new Dictionary<string, string>();
-            if (TShock.Config.EnableTokenEndpointAuthentication)
+            try
             {
-                returnBlock.Add("status", "403");
-                returnBlock.Add("error", "Server settings require a token for this API call.");
+                TShock.Bans.AddBan(parameters["ip"], parameters["name"], parameters["reason"]);
+            }
+            catch (Exception)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specified ban was unable to be created.");
                 return returnBlock;
             }
-            string CurrentPlayers = "";
-            int PlayerCount = 0;
-            for (int i = 0; i < Main.player.Length; i++ )
+            returnBlock.Add("status", "200");
+            returnBlock.Add("response", "Ban created successfully.");
+            return returnBlock;            
+        }
+
+        object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+
+            var type = parameters["type"];
+            if (type == null)
             {
-                if (Main.player[i].active)
-                {
-                    CurrentPlayers += Main.player[i].name + ", ";
-                    PlayerCount++;
-                }
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            var ban = new DB.Ban();
+            if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+            else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+            else
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            if (ban == null)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+            }
+            
+            try
+            {
+                TShock.Bans.RemoveBan(ban.IP);
+            }
+            catch (Exception)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "The specified ban was unable to be removed.");
+                return returnBlock;
             }
             returnBlock.Add("status", "200");
-            returnBlock.Add("name", TShock.Config.ServerNickname);
-            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
-            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
-            returnBlock.Add("players", CurrentPlayers);
-
+            returnBlock.Add("response", "Ban deleted successfully.");
             return returnBlock;
         }
 
+        object BanInfo(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+
+            var type = parameters["type"];
+            if (type == null)
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            var ban = new DB.Ban();
+            if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+            else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+            else
+            {
+                returnBlock.Add("Error", "Invalid Type");
+                return returnBlock;
+            }
+
+            if (ban == null)
+            {
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+            }
+
+            returnBlock.Add("status", "200");
+            returnBlock.Add("name", ban.Name);
+            returnBlock.Add("ip", ban.IP);
+            returnBlock.Add("reason", ban.Reason);
+            return returnBlock;
+        }
+
+        #endregion
+
+        #region RestWorldMethods
         object WorldRead(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBlock = new Dictionary<string, string>();
@@ -203,7 +308,6 @@ namespace TShockAPI {
             returnBlock.Add("response", "Blood Moon has been set to " + bloodmoon.ToString());
             return returnBlock;
         }
-
         #endregion
 
         #region RestExampleMethods
