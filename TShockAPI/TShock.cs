@@ -236,14 +236,19 @@ namespace TShockAPI
         }
 
         //http://127.0.0.1:8080/users?type=status
-        string usertest(IParameterCollection parameters, RequestEventArgs request)
+        object usertest(IParameterCollection parameters, RequestEventArgs request)
         {
+            var ret = new Dictionary<string, string>();
             var type = parameters["type"];
             if (type == null)
-                return "Invalid Type";
+            {
+                ret.Add("Error", "Invalid Type");
+                return ret;
+            }
             if (type == "status")
             {
-                return "Users online here";
+                ret.Add("Users", "Info here");
+                return ret;
             }
             return null;
         }

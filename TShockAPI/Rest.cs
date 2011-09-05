@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using HttpServer;
 using HttpServer.Headers;
+using Newtonsoft.Json;
 using HttpListener = HttpServer.HttpListener;
 
 namespace TShockAPI
@@ -14,8 +15,8 @@ namespace TShockAPI
     /// </summary>
     /// <param name="parameters">Parameters in the url</param>
     /// <param name="request">Http request</param>
-    /// <returns>Response body or null to not handle request</returns>
-    public delegate string RestCommandD(IParameterCollection parameters, RequestEventArgs request);
+    /// <returns>Response object or null to not handle request</returns>
+    public delegate object RestCommandD(IParameterCollection parameters, RequestEventArgs request);
     public class Rest : IDisposable
     {
         List<RestCommand> commands = new List<RestCommand>();
@@ -51,9 +52,10 @@ namespace TShockAPI
             var coms = commands.Where(r => r.Path.ToLower().Equals(e.Request.Uri.AbsolutePath.ToLower()));
             foreach (var com in coms)
             {
-                var str = com.Callback(e.Request.Parameters, e);
-                if (str != null)
+                var obj = com.Callback(e.Request.Parameters, e);
+                if (obj != null)
                 {
+                    var str = JsonConvert.SerializeObject(this, Formatting.Indented);
                     e.Response.Connection.Type = ConnectionType.Close;
                     e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
                     e.Response.Status = HttpStatusCode.OK;
