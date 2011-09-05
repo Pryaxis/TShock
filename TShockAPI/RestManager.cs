@@ -27,6 +27,8 @@ namespace TShockAPI {
             Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
 
             Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
+            Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiesToken = true });
+            Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiesToken = true });
             //RegisterExamples();
         } 
 
@@ -167,6 +169,38 @@ namespace TShockAPI {
             returnBlock.Add("daytime", Main.dayTime.ToString());
             returnBlock.Add("bloodmoon", Main.bloodMoon.ToString());
             returnBlock.Add("invasionsize", Main.invasionSize.ToString());
+            return returnBlock;
+        }
+
+        object WorldMeteor(RestVerbs verbs, IParameterCollection parameters)
+        {
+            WorldGen.dropMeteor();
+            var returnBlock = new Dictionary<string, string>();
+            returnBlock.Add("status", "200");
+            returnBlock.Add("response", "Meteor has been spawned.");
+            return returnBlock;
+        }
+
+        object WorldBloodmoon(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, string>();
+            var bloodmoonVerb = verbs["bool"];
+            bool bloodmoon;
+            if (bloodmoonVerb == null)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "No parameter was passed.");
+                return returnBlock;
+            }
+            if (!bool.TryParse(bloodmoonVerb, out bloodmoon))
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Unable to parse parameter.");
+                return returnBlock;
+            }
+            Main.bloodMoon = bloodmoon;
+            returnBlock.Add("status", "200");
+            returnBlock.Add("response", "Blood Moon has been set to " + bloodmoon.ToString());
             return returnBlock;
         }
 
