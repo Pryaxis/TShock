@@ -49,23 +49,26 @@ namespace TShockAPI
 
         void OnRequest(object sender, RequestEventArgs e)
         {
+            var obj = Process(sender, e);
+            if (obj == null)
+                throw new NullReferenceException("obj");
+            var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
+            e.Response.Connection.Type = ConnectionType.Close;
+            e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
+            e.Response.Status = HttpStatusCode.OK;
+            return;
+        }
+
+        protected virtual object Process(object sender, RequestEventArgs e)
+        {
             var coms = commands.Where(r => r.Path.ToLower().Equals(e.Request.Uri.AbsolutePath.ToLower()));
             foreach (var com in coms)
             {
                 var obj = com.Callback(e.Request.Parameters, e);
                 if (obj != null)
-                {
-                    var str = JsonConvert.SerializeObject(this, Formatting.Indented);
-                    e.Response.Connection.Type = ConnectionType.Close;
-                    e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
-                    e.Response.Status = HttpStatusCode.OK;
-                    return;
-                }
+                    return obj;
             }
-            string error = "Error: Invalid request";
-            e.Response.Connection.Type = ConnectionType.Close;
-            e.Response.Body.Write(Encoding.ASCII.GetBytes(error), 0, error.Length);
-            e.Response.Status = HttpStatusCode.InternalServerError;
+            return new Dictionary<string, string> { { "Error", "Invalid request" } };
         }
 
         #region Dispose
