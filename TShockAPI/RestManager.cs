@@ -27,7 +27,7 @@ namespace TShockAPI {
         } 
 
         #region RestMethods
-
+        //
         object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
         {
             var returnBlock = new Dictionary<string, string>();
