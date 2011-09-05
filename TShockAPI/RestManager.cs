@@ -57,8 +57,8 @@ namespace TShockAPI {
 
         public void RegisterExamples()
         {
-            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest));
-            Rest.Register(new RestCommand("/wizard/{username}", Wizard));
+            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) {RequiesToken = false});
+            Rest.Register(new RestCommand("/wizard/{username}", Wizard) {RequiesToken = false});
         }
 
         //The Wizard example, for demonstrating the response convention:
