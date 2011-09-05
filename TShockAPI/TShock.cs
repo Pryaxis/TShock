@@ -39,6 +39,7 @@ using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
 using HttpServer;
 using MySql.Data.MySqlClient;
+using Rests;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;

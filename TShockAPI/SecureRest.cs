@@ -4,8 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using HttpServer;
+using TShockAPI;
 
-namespace TShockAPI
+namespace Rests
 {
     /// <summary>
     /// 
@@ -23,7 +24,7 @@ namespace TShockAPI
         {
             Tokens = new Dictionary<string, object>();
             Register(new RestCommand("/token/create/{username}/{password}", NewToken) { RequiesToken = false });
-            Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiesToken = true});
+            Register(new RestCommand("/token/destroy/{token}", DestroyToken) { RequiesToken = true });
         }
 
         object DestroyToken(RestVerbs verbs, IParameterCollection parameters)
@@ -66,7 +67,7 @@ namespace TShockAPI
 
             Tokens.Add(hash, user);
 
-            obj.SafeSet("token", hash);
+            obj["token"] = hash;
             return obj;
         }
 

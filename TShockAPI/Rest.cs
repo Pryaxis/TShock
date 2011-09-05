@@ -9,7 +9,7 @@ using HttpServer.Headers;
 using Newtonsoft.Json;
 using HttpListener = HttpServer.HttpListener;
 
-namespace TShockAPI
+namespace Rests
 {
     /// <summary>
     /// Rest command delegate
@@ -102,9 +102,9 @@ namespace TShockAPI
                 var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
                 if (obj != null)
                     return obj;
-                 
+
             }
-            return new Dictionary<string, string> { { "status", "404" }, {"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."} };
+            return new Dictionary<string, string> { { "status", "404" }, { "error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints." } };
         }
 
         protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
@@ -146,18 +146,18 @@ namespace TShockAPI
     {
         public string Status
         {
-            get { return SafeGet("status"); }
-            set { SafeSet("status", value); }
+            get { return this["status"]; }
+            set { this["status"] = value; }
         }
         public string Error
         {
-            get { return SafeGet("error"); }
-            set { SafeSet("error", value); }
+            get { return this["error"]; }
+            set { this["error"] = value; }
         }
         public string Response
         {
-            get { return SafeGet("response"); }
-            set { SafeSet("response", value); }
+            get { return this["response"]; }
+            set { this["response"] = value; }
         }
 
         public RestObject(string status)
@@ -166,36 +166,35 @@ namespace TShockAPI
         }
 
         /// <summary>
-        /// Gets value safely.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>Returns null if key does not exist.</returns>
-        public string SafeGet(string key)
-        {
-            string ret;
-            if (TryGetValue(key, out ret))
-                return ret;
-            return null;
-        }
-        /// <summary>
-        /// Sets/Adds value safely. If null it will remove.
+        /// Gets value safely, if it does not exist, return null. Sets/Adds value safely, if null it will remove.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void SafeSet(string key, string value)
+        /// <returns>Returns null if key does not exist.</returns>
+        public new string this[string key]
         {
-            if (!ContainsKey(key))
+            get
             {
-                if (value == null)
-                    return;
-                Add(key, value);
+                string ret;
+                if (TryGetValue(key, out ret))
+                    return ret;
+                return null;
             }
-            else
+            set
             {
-                if (value != null)
-                    this[key] = value;
+                if (!ContainsKey(key))
+                {
+                    if (value == null)
+                        return;
+                    Add(key, value);
+                }
                 else
-                Remove(key);
+                {
+                    if (value != null)
+                        base[key] = value;
+                    else
+                        Remove(key);
+                }
             }
         }
     }
