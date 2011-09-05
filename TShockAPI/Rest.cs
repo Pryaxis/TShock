@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using HttpServer;
 using HttpServer.Headers;
 using Newtonsoft.Json;
@@ -16,10 +17,10 @@ namespace TShockAPI
     /// <param name="parameters">Parameters in the url</param>
     /// <param name="request">Http request</param>
     /// <returns>Response object or null to not handle request</returns>
-    public delegate object RestCommandD(IParameterCollection parameters, RequestEventArgs request);
+    public delegate object RestCommandD(Dictionary<string,string> verbs, IParameterCollection parameters, RequestEventArgs request);
     public class Rest : IDisposable
     {
-        List<RestCommand> commands = new List<RestCommand>();
+        readonly List<RestCommand> commands = new List<RestCommand>();
         HttpListener listener;
 
         public Rest(IPAddress ip, int port)
@@ -61,12 +62,19 @@ namespace TShockAPI
 
         protected virtual object Process(object sender, RequestEventArgs e)
         {
-            var coms = commands.Where(r => r.Path.ToLower().Equals(e.Request.Uri.AbsolutePath.ToLower()));
-            foreach (var com in coms)
+            foreach (var com in commands)
             {
-                var obj = com.Callback(e.Request.Parameters, e);
-                if (obj != null)
-                    return obj;
+                var matches = Regex.Matches(e.Request.Uri.AbsolutePath, com.UriMatch);
+                if (matches.Count == com.UriNames.Length)
+                {
+                    var verbs = new Dictionary<string, string>();
+                    for (int i = 0; i < matches.Count; i++)
+                        verbs.Add(com.UriNames[i], matches[i].Groups[1].Value);
+
+                    var obj = com.Callback(verbs, e.Request.Parameters, e);
+                    if (obj != null)
+                        return obj;
+                }
             }
             return new Dictionary<string, string> { { "Error", "Invalid request" } };
         }
@@ -98,12 +106,17 @@ namespace TShockAPI
 
     public class RestCommand
     {
-        public string Path { get; protected set; }
+        public string UriTemplate { get; protected set; }
+        public string UriMatch { get; protected set; }
+        public string[] UriNames { get; protected set; }
         public RestCommandD Callback { get; protected set; }
 
-        public RestCommand(string path, RestCommandD callback)
+        public RestCommand(string uritemplate, RestCommandD callback)
         {
-            Path = path;
+            UriTemplate = uritemplate;
+            UriMatch = string.Join("([^/]*)", Regex.Split(uritemplate, "\\{[^\\{\\}]*\\}"));
+            var matches = Regex.Matches(uritemplate, "\\{([^\\{\\}]*)\\}");
+            UriNames = (from Match match in matches select match.Groups[1].Value).ToArray();
             Callback = callback;
         }
     }

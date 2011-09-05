@@ -34,6 +34,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
 using HttpServer;
@@ -204,7 +205,7 @@ namespace TShockAPI
                 if (Initialized != null)
                     Initialized();
 
-                RestApi.Register(new RestCommand("/users", usertest));
+                RestApi.Register(new RestCommand("/HelloWorld/name/{username}", usertest));
             }
             catch (Exception ex)
             {
@@ -235,8 +236,8 @@ namespace TShockAPI
             //RconHandler.ShutdownAllThreads();
         }
 
-        //http://127.0.0.1:8080/users?type=status
-        object usertest(IParameterCollection parameters, RequestEventArgs request)
+        //http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
+        object usertest(Dictionary<string,string> verbs, IParameterCollection parameters, RequestEventArgs request)
         {
             var ret = new Dictionary<string, string>();
             var type = parameters["type"];
