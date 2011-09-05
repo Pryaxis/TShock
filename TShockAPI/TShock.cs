@@ -179,6 +179,7 @@ namespace TShockAPI
                 RememberedPos = new RemeberedPosManager(DB);
                 RestApi = new SecureRest(IPAddress.Any, 8080);
                 RestApi.Verify += RestApi_Verify;
+                RestApi.Port = Config.RestApiPort;
                 RestManager = new RestManager(RestApi);
                 RestManager.RegisterRestfulCommands();
                 if (Config.EnableGeoIP)
@@ -307,6 +308,7 @@ namespace TShockAPI
                     if (IPAddress.TryParse(parms[++i], out ip))
                     {
                         Netplay.serverListenIP = ip;
+                        RestApi.Ip = ip;
                         Console.Write("Using IP: {0}", ip);
                     }
                     else
@@ -384,7 +386,8 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
-            RestApi.Start();
+            if (Config.RestApiEnabled)
+                RestApi.Start();
         }
 
 

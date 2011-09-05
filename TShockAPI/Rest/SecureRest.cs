@@ -58,11 +58,11 @@ namespace Rests
 
             string hash;
             var rand = new Random();
-            var randbytes = new byte[20];
+            var randbytes = new byte[32];
             do
             {
                 rand.NextBytes(randbytes);
-                hash = Tools.HashPassword(randbytes);
+                hash = randbytes.Aggregate("", (s, b) => s + b.ToString("X2"));
             } while (Tokens.ContainsKey(hash));
 
             Tokens.Add(hash, user);
@@ -70,6 +70,8 @@ namespace Rests
             obj["token"] = hash;
             return obj;
         }
+
+
 
         protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
         {

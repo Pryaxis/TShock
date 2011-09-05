@@ -193,6 +193,12 @@ namespace TShockAPI
         [Description("This is used when the API endpoint /status is queried.")]
         public string ServerNickname = "TShock Server";
 
+        [Description("Enable/Disable the rest api.")]
+        public bool RestApiEnabled = true;
+
+        [Description("This is the port which the rest api will listen on.")]
+        public int RestApiPort = 8080;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
