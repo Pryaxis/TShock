@@ -34,9 +34,12 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
+using HttpServer;
 using MySql.Data.MySqlClient;
+using Rests;
 using Terraria;
 using TerrariaAPI;
 using TerrariaAPI.Hooks;
@@ -67,6 +70,8 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
+        public static SecureRest RestApi;
+        public static RestManager RestManager;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -172,8 +177,15 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                if (Config.EnableGeoIP)
-                    Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
+                RestApi = new SecureRest(IPAddress.Any, 8080);
+                RestApi.Verify += RestApi_Verify;
+                RestApi.Port = Config.RestApiPort;
+                RestManager = new RestManager(RestApi);
+                RestManager.RegisterRestfulCommands();
+
+                var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+                if (Config.EnableGeoIP && File.Exists(geoippath))
+                    Geo = new MaxMind.GeoIPCountry(geoippath);
 
                 Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -209,6 +221,27 @@ namespace TShockAPI
             }
         }
 
+        RestObject RestApi_Verify(string username, string password)
+        {
+            var userAccount = TShock.Users.GetUserByName(username);
+            if (userAccount == null)
+            {
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+            }
+
+            if (Tools.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
+            {
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+            }
+
+            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+            {
+                return new RestObject("403") { Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" };
+            }
+
+            return new RestObject("200") { Response = "Successful login" }; //Maybe return some user info too?
+        }
+
         public override void DeInitialize()
         {
             GameHooks.PostInitialize -= OnPostInit;
@@ -226,6 +259,7 @@ namespace TShockAPI
                 Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
                 File.Delete(Path.Combine(SavePath, "tshock.pid"));
             }
+            RestApi.Dispose();
             //RconHandler.ShutdownAllThreads();
         }
 
@@ -276,6 +310,7 @@ namespace TShockAPI
                     if (IPAddress.TryParse(parms[++i], out ip))
                     {
                         Netplay.serverListenIP = ip;
+                        RestApi.Ip = ip;
                         Console.Write("Using IP: {0}", ip);
                     }
                     else
@@ -353,6 +388,8 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
+            if (Config.RestApiEnabled)
+                RestApi.Start();
         }
 
 
@@ -625,7 +662,7 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
             NetMessage.syncPlayers();
 
-            if (Config.EnableGeoIP)
+            if (Config.EnableGeoIP && Geo != null)
             {
                 var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
                 player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);

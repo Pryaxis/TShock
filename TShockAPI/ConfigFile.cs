@@ -187,6 +187,18 @@ namespace TShockAPI
         [Description("This will announce a player's location on join")]
         public bool EnableGeoIP = false;
 
+        [Description("This will turn on a token requirement for the /status API endpoint.")]
+        public bool EnableTokenEndpointAuthentication = false;
+
+        [Description("This is used when the API endpoint /status is queried.")]
+        public string ServerNickname = "TShock Server";
+
+        [Description("Enable/Disable the rest api.")]
+        public bool RestApiEnabled = false;
+
+        [Description("This is the port which the rest api will listen on.")]
+        public int RestApiPort = 7878;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
