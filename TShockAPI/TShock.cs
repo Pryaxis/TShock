@@ -182,8 +182,10 @@ namespace TShockAPI
                 RestApi.Port = Config.RestApiPort;
                 RestManager = new RestManager(RestApi);
                 RestManager.RegisterRestfulCommands();
-                if (Config.EnableGeoIP)
-                    Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
+
+                var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+                if (Config.EnableGeoIP && File.Exists(geoippath))
+                    Geo = new MaxMind.GeoIPCountry(geoippath);
 
                 Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -660,7 +662,7 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
             NetMessage.syncPlayers();
 
-            if (Config.EnableGeoIP)
+            if (Config.EnableGeoIP && Geo != null)
             {
                 var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
                 player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);

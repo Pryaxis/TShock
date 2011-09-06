@@ -48,7 +48,6 @@ namespace TShockAPI
 
         object Status(RestVerbs verbs, IParameterCollection parameters)
         {
-
             if (TShock.Config.EnableTokenEndpointAuthentication)
                 return new RestObject("403") { Error = "Server settings require a token for this API call." };
 
