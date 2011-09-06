@@ -480,11 +480,17 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 23 && (vely == 0f || velx == 0f)) //float.IsNaN((float)Math.Sqrt((double)(velx * velx + vely * vely))))
+            if (type == 23)
             {
-                Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
-                return true;
+                if (velx == 0f && vely == 0f && dmg == 99)
+                {
+                    Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
+                    return true;
+                }
+                else if (velx == 0f || vely == 0f)
+                    return true;
             }
+
 
             if (type == 29 || type == 28 || type == 37)
             {
