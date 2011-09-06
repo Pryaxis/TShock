@@ -6,7 +6,8 @@ using HttpServer;
 using Rests;
 using Terraria;
 
-namespace TShockAPI {
+namespace TShockAPI
+{
 
     public class RestManager
     {
@@ -18,19 +19,19 @@ namespace TShockAPI {
 
         public void RegisterRestfulCommands()
         {
-            Rest.Register(new RestCommand("/status", Status) {RequiesToken = false});
+            Rest.Register(new RestCommand("/status", Status) { RequiesToken = false });
             Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiesToken = true });
 
-            Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) {RequiesToken = true});
-            Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiesToken = true});
-            Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiesToken = true});
+            Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) { RequiesToken = true });
+            Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) { RequiesToken = true });
+            Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) { RequiesToken = true });
 
             Rest.Register(new RestCommand("/bans/create", BanCreate) { RequiesToken = true });
             Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiesToken = true });
             Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiesToken = true });
-            
 
-            Rest.Register(new RestCommand("/lists/players", UserList) {RequiesToken = true});
+
+            Rest.Register(new RestCommand("/lists/players", UserList) { RequiesToken = true });
 
             Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
             Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiesToken = true });
@@ -47,63 +48,33 @@ namespace TShockAPI {
 
         object Status(RestVerbs verbs, IParameterCollection parameters)
         {
-            var returnBlock = new Dictionary<string, string>();
-            if (TShock.Config.EnableTokenEndpointAuthentication)
-            {
-                returnBlock.Add("status", "403");
-                returnBlock.Add("error", "Server settings require a token for this API call.");
-                return returnBlock;
-            }
-            string currentPlayers = "";
-            int playerCount = 0;
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                if (Main.player[i].active)
-                {
-                    if (i == 0)
-                    {
-                        currentPlayers += Main.player[i].name;
-                    }
-                    else
-                    {
-                        currentPlayers += ", " + Main.player[i].name;
-                    }
-                    playerCount++;
-                }
-            }
-            returnBlock.Add("status", "200");
-            returnBlock.Add("name", TShock.Config.ServerNickname);
-            returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
-            returnBlock.Add("playercount", Convert.ToString(playerCount));
-            returnBlock.Add("players", currentPlayers);
 
-            return returnBlock;
+            if (TShock.Config.EnableTokenEndpointAuthentication)
+                return new RestObject("403") { Error = "Server settings require a token for this API call." };
+
+            var activeplayers = Main.player.Where(p => p != null && p.active).ToList();
+            string currentPlayers = string.Join(", ", activeplayers.Select(p => p.name));
+
+            var ret = new RestObject("200");
+            ret["name"] = TShock.Config.ServerNickname;
+            ret["port"] = Convert.ToString(TShock.Config.ServerPort);
+            ret["playercount"] = Convert.ToString(activeplayers.Count());
+            ret["players"] = currentPlayers;
+
+            return ret;
         }
 
         #endregion
 
         #region RestUserMethods
-        
+
         object UserList(RestVerbs verbs, IParameterCollection parameters)
         {
-            string players = "";
-            for (int i = 0; i < Main.player.Length; i++ )
-            {
-                if (Main.player[i].active)
-                {
-                    if (i == 0)
-                    {
-                        players += Main.player[i].name;
-                    } else
-                    {
-                        players += ", " + Main.player[i].name;
-                    }
-                }
-            }
-            var returnBlock = new Dictionary<string, string>();
-            returnBlock.Add("status", "200");
-            returnBlock.Add("players", players);
-            return returnBlock;
+            var activeplayers = Main.player.Where(p => p != null && p.active).ToList();
+            string currentPlayers = string.Join(", ", activeplayers.Select(p => p.name));
+            var ret = new RestObject("200");
+            ret["players"] = currentPlayers;
+            return ret;
         }
 
         object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
@@ -154,7 +125,8 @@ namespace TShockAPI {
             try
             {
                 TShock.Users.RemoveUser(user);
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 returnBlock.Add("status", "400");
                 returnBlock.Add("error", "The specified user was unable to be removed.");
@@ -170,8 +142,7 @@ namespace TShockAPI {
             var user = TShock.Users.GetUserByName(verbs["user"]);
             if (user == null)
             {
-                return new Dictionary<string, string>
-                           {{"status", "400"}, {"error", "The specified user account does not exist."}};
+                return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
             }
 
             var returnBlock = new Dictionary<string, string>();
@@ -226,7 +197,7 @@ namespace TShockAPI {
             }
             returnBlock.Add("status", "200");
             returnBlock.Add("response", "Ban created successfully.");
-            return returnBlock;            
+            return returnBlock;
         }
 
         object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
@@ -253,7 +224,7 @@ namespace TShockAPI {
             {
                 return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
             }
-            
+
             try
             {
                 TShock.Bans.RemoveBan(ban.IP);
@@ -354,8 +325,8 @@ namespace TShockAPI {
 
         public void RegisterExamples()
         {
-            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) {RequiesToken = false});
-            Rest.Register(new RestCommand("/wizard/{username}", Wizard) {RequiesToken = false});
+            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) { RequiesToken = false });
+            Rest.Register(new RestCommand("/wizard/{username}", Wizard) { RequiesToken = false });
         }
 
         //The Wizard example, for demonstrating the response convention:

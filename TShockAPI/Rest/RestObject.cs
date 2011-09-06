@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace Rests
 {
+    [Serializable]
     public class RestObject : Dictionary<string, string>
     {
         public string Status
