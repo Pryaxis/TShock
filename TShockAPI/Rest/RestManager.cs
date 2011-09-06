@@ -54,21 +54,28 @@ namespace TShockAPI {
                 returnBlock.Add("error", "Server settings require a token for this API call.");
                 return returnBlock;
             }
-            string CurrentPlayers = "";
-            int PlayerCount = 0;
+            string currentPlayers = "";
+            int playerCount = 0;
             for (int i = 0; i < Main.player.Length; i++)
             {
                 if (Main.player[i].active)
                 {
-                    CurrentPlayers += Main.player[i].name + ", ";
-                    PlayerCount++;
+                    if (i == 0)
+                    {
+                        currentPlayers += Main.player[i].name;
+                    }
+                    else
+                    {
+                        currentPlayers += ", " + Main.player[i].name;
+                    }
+                    playerCount++;
                 }
             }
             returnBlock.Add("status", "200");
             returnBlock.Add("name", TShock.Config.ServerNickname);
             returnBlock.Add("port", Convert.ToString(TShock.Config.ServerPort));
-            returnBlock.Add("playercount", Convert.ToString(PlayerCount));
-            returnBlock.Add("players", CurrentPlayers);
+            returnBlock.Add("playercount", Convert.ToString(playerCount));
+            returnBlock.Add("players", currentPlayers);
 
             return returnBlock;
         }
@@ -84,7 +91,13 @@ namespace TShockAPI {
             {
                 if (Main.player[i].active)
                 {
-                    players += Main.player[i].name + ", ";
+                    if (i == 0)
+                    {
+                        players += Main.player[i].name;
+                    } else
+                    {
+                        players += ", " + Main.player[i].name;
+                    }
                 }
             }
             var returnBlock = new Dictionary<string, string>();
