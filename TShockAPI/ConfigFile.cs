@@ -194,7 +194,7 @@ namespace TShockAPI
         public string ServerNickname = "TShock Server";
 
         [Description("Enable/Disable the rest api.")]
-        public bool RestApiEnabled = true;
+        public bool RestApiEnabled = false;
 
         [Description("This is the port which the rest api will listen on.")]
         public int RestApiPort = 7878;
