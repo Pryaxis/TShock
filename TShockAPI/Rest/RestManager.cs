@@ -36,6 +36,8 @@ namespace TShockAPI
             Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
             Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiesToken = true });
             Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiesToken = true });
+
+            Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiesToken = true });
             //RegisterExamples();
         }
 
@@ -316,6 +318,38 @@ namespace TShockAPI
             Main.bloodMoon = bloodmoon;
             returnBlock.Add("status", "200");
             returnBlock.Add("response", "Blood Moon has been set to " + bloodmoon.ToString());
+            return returnBlock;
+        }
+        #endregion
+
+        #region RestPlayerMethods
+        object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, object>();
+            var playerParam = parameters["player"];
+            var found = Tools.FindPlayer(playerParam.ToString());
+            if (found.Count == 0)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Player " + playerParam.ToString() + " was not found");
+            }
+            else if (found.Count > 1)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Player " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+            }
+            else if (found.Count == 1)
+            {
+                var player = found[0];
+                returnBlock.Add("status", "200");
+                returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
+                returnBlock.Add("ip", player.IP);
+                returnBlock.Add("group", player.Group.Name);
+                returnBlock.Add("position", player.TileX.ToString() + "," + player.TileY.ToString());
+                var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
+                returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
+                returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
+            }
             return returnBlock;
         }
         #endregion
