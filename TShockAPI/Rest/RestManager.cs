@@ -276,14 +276,14 @@ namespace TShockAPI
         #region RestWorldMethods
         object WorldRead(RestVerbs verbs, IParameterCollection parameters)
         {
-            var returnBlock = new Dictionary<string, string>();
+            var returnBlock = new Dictionary<string, object>();
             returnBlock.Add("status", "200");
             returnBlock.Add("name", Main.worldName);
             returnBlock.Add("size", Main.maxTilesX + "*" + Main.maxTilesY);
-            returnBlock.Add("time", Main.time.ToString());
-            returnBlock.Add("daytime", Main.dayTime.ToString());
-            returnBlock.Add("bloodmoon", Main.bloodMoon.ToString());
-            returnBlock.Add("invasionsize", Main.invasionSize.ToString());
+            returnBlock.Add("time", Main.time);
+            returnBlock.Add("daytime", Main.dayTime);
+            returnBlock.Add("bloodmoon", Main.bloodMoon);
+            returnBlock.Add("invasionsize", Main.invasionSize);
             return returnBlock;
         }
 
