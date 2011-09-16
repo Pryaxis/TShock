@@ -349,6 +349,13 @@ namespace TShockAPI
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
+                if (type == 1 && tiletype == 21 && Tools.MaxChests())
+                {
+                    args.Player.SendMessage("Reached world's max chest limit, unable to place more!", Color.Red);
+                    Log.Info("Reached world's chest limit, unable to place more.");
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             }
             if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
