@@ -52,7 +52,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "And believe me, we are still alive.";
+        public static readonly string VersionCodename = "Try the new slim model.";
 
         public static string SavePath = "tshock";
 
@@ -177,7 +177,7 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                RestApi = new SecureRest(IPAddress.Any, 8080);
+                RestApi = new SecureRest(Netplay.serverListenIP, 8080);
                 RestApi.Verify += RestApi_Verify;
                 RestApi.Port = Config.RestApiPort;
                 RestManager = new RestManager(RestApi);
@@ -310,7 +310,6 @@ namespace TShockAPI
                     if (IPAddress.TryParse(parms[++i], out ip))
                     {
                         Netplay.serverListenIP = ip;
-                        RestApi.Ip = ip;
                         Console.Write("Using IP: {0}", ip);
                     }
                     else

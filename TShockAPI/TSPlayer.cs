@@ -32,7 +32,7 @@ namespace TShockAPI
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileThreshold { get; set; }
-        public Dictionary<PointF, Tile> TilesDestroyed { get; protected set; }
+        public Dictionary<PointF, TileData> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -145,14 +145,14 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<PointF, Tile>();
+            TilesDestroyed = new Dictionary<PointF, TileData>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<PointF, Tile>();
+            TilesDestroyed = new Dictionary<PointF, TileData>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -213,7 +213,7 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tilex, tiley, 150))
+            if (!SendTileSquare(tilex, tiley))
             {
                 InitSpawn = true;
                 SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
@@ -406,12 +406,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<PointF, Tile> destroyedTiles)
+        public void RevertKillTile(Dictionary<PointF, TileData> destroyedTiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<PointF, Tile> entry in destroyedTiles)
+            foreach (KeyValuePair<PointF, TileData> entry in destroyedTiles)
             {
-                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
                 Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }

@@ -349,6 +349,13 @@ namespace TShockAPI
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
+                if (type == 1 && tiletype == 21 && Tools.MaxChests())
+                {
+                    args.Player.SendMessage("Reached world's max chest limit, unable to place more!", Color.Red);
+                    Log.Info("Reached world's chest limit, unable to place more.");
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             }
             if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
@@ -395,7 +402,7 @@ namespace TShockAPI
                 args.Player.TileThreshold++;
                 var coords = new PointF(x, y);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
-                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
+                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y].Data);
             }
 
             if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
@@ -480,11 +487,17 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 23 && (vely == 0f || velx == 0f)) //float.IsNaN((float)Math.Sqrt((double)(velx * velx + vely * vely))))
+            if (type == 23)
             {
-                Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
-                return true;
+                if (velx == 0f && vely == 0f && dmg == 99)
+                {
+                    Tools.HandleGriefer(args.Player, TShock.Config.ProjectileAbuseReason);
+                    return true;
+                }
+                else if (velx == 0f || vely == 0f)
+                    return true;
             }
+
 
             if (type == 29 || type == 28 || type == 37)
             {
