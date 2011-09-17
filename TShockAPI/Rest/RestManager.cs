@@ -39,6 +39,7 @@ namespace TShockAPI
 
             Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiesToken = true });
             Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiesToken = true });
+            Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiesToken = true });
             //RegisterExamples();
         }
 
@@ -376,6 +377,32 @@ namespace TShockAPI
                 Tools.ForceKick(player, reason == null ? "Kicked via web" : reason.ToString());
                 returnBlock.Add("status", "200");
                 returnBlock.Add("response", "Player " + player.Name + " was kicked");
+            }
+            return returnBlock;
+        }
+        object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, object>();
+            var playerParam = parameters["player"];
+            var found = Tools.FindPlayer(playerParam.ToString());
+            var reason = verbs["reason"];
+            if (found.Count == 0)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
+            }
+            else if (found.Count > 1)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+            }
+            else if (found.Count == 1)
+            {
+                var player = found[0];
+                TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason.ToString());
+                Tools.ForceKick(player, reason == null ? "Banned via web" : reason.ToString());
+                returnBlock.Add("status", "200");
+                returnBlock.Add("response", "Player " + player.Name + " was banned");
             }
             return returnBlock;
         }
