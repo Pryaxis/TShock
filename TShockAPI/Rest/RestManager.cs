@@ -38,6 +38,7 @@ namespace TShockAPI
             Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiesToken = true });
 
             Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiesToken = true });
+            Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiesToken = true });
             //RegisterExamples();
         }
 
@@ -331,17 +332,18 @@ namespace TShockAPI
             if (found.Count == 0)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Player " + playerParam.ToString() + " was not found");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
             }
             else if (found.Count > 1)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Player " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
             }
             else if (found.Count == 1)
             {
                 var player = found[0];
                 returnBlock.Add("status", "200");
+                returnBlock.Add("nickname", player.Name);
                 returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
                 returnBlock.Add("ip", player.IP);
                 returnBlock.Add("group", player.Group.Name);
@@ -349,6 +351,31 @@ namespace TShockAPI
                 var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
                 returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
                 returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
+            }
+            return returnBlock;
+        }
+        object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var returnBlock = new Dictionary<string, object>();
+            var playerParam = parameters["player"];
+            var found = Tools.FindPlayer(playerParam.ToString());
+            var reason = verbs["reason"];
+            if (found.Count == 0)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
+            }
+            else if (found.Count > 1)
+            {
+                returnBlock.Add("status", "400");
+                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+            }
+            else if (found.Count == 1)
+            {
+                var player = found[0];
+                Tools.ForceKick(player, reason == null ? "Kicked via web" : reason.ToString());
+                returnBlock.Add("status", "200");
+                returnBlock.Add("response", "Player " + player.Name + " was kicked");
             }
             return returnBlock;
         }
