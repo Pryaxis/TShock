@@ -165,6 +165,7 @@ namespace TShockAPI
             add(null, AuthToken, "auth");
             add(null, ThirdPerson, "me");
             add(null, PartyChat, "p");
+            add(null, Motd, "motd");
             add(null, Rules, "rules");
             add(Permissions.logs, DisplayLogs, "displaylogs");
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
@@ -2153,6 +2154,11 @@ namespace TShockAPI
             {
                 args.Player.SendMessage("You are not in a party!", 255, 240, 20);
             }
+        }
+        
+        private static void Motd(CommandArgs args)
+        {
+            Tools.ShowFileToUser(args.Player, "motd.txt");
         }
 
         private static void Rules(CommandArgs args)
