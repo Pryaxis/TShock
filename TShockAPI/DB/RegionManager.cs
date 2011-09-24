@@ -378,6 +378,68 @@ namespace TShockAPI.DB
         {
             return MergedIDs.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
+        
+        public bool resizeRegion(string regionName, int addAmount, int direction)
+        {
+            //0 = up
+            //1 = right
+            //2 = down
+            //3 = left
+            int X = 0;
+            int Y = 0;
+            int height = 0;
+            int width = 0;
+            try
+            {
+                using (var reader = database.QueryReader("SELECT X1, Y1, height, width FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName, Main.worldID.ToString()))
+                {
+                    if (reader.Read())
+                        X = reader.Get<int>("X1");
+                        width = reader.Get<int>("width");
+                        Y = reader.Get<int>("Y1");
+                        height = reader.Get<int>("height");
+                }
+                    if (!(direction == 0))
+                    {
+                        if (!(direction == 1))
+                        {
+                            if (!(direction == 2))
+                            {
+                                if (!(direction == 3))
+                                {
+                                    return false;
+                                }
+                                else
+                                {
+                                    X -= addAmount;
+                                    width += addAmount;
+                                }
+                            }
+                            else
+                            {
+                                height += addAmount;
+                            }
+                        }
+                        else
+                        {
+                            width += addAmount;
+                        }
+                    }
+                    else
+                    {
+                        Y -= addAmount;
+                        height += addAmount;
+                    }
+                    int q = database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID=@5", X, Y, width, height, regionName, Main.worldID.ToString());
+                    if (q > 0)
+                        return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+            return false;
+        }
 
         public bool RemoveUser(string regionName, string userName)
         {
