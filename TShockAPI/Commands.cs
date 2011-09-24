@@ -1,4 +1,4 @@
-/*   
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -36,7 +36,7 @@ namespace TShockAPI
         public string Message { get; private set; }
         public TSPlayer Player { get; private set; }
         /// <summary>
-        /// Parameters passed to the arguement. Does not include the command name. 
+        /// Parameters passed to the arguement. Does not include the command name.
         /// IE '/kick "jerk face"' will only have 1 argument
         /// </summary>
         public List<string> Parameters { get; private set; }
