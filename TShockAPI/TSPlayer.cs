@@ -17,13 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.IO;
 using System.Threading;
 using Terraria;
-using TerrariaAPI;
+
 using TShockAPI.Net;
-using XNAHelpers;
 
 namespace TShockAPI
 {
@@ -32,7 +31,7 @@ namespace TShockAPI
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileThreshold { get; set; }
-        public Dictionary<PointF, TileData> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -46,10 +45,10 @@ namespace TShockAPI
         public DateTime LastTileChangeNotify { get; set; }
         public bool InitSpawn;
         public bool DisplayLogs = true;
-        public PointF oldSpawn = PointF.Empty;
+        public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
-        public PointF TeleportCoords = new PointF(-1, -1);
+        public Vector2 TeleportCoords = new Vector2(-1, -1);
         public string UserAccountName { get; set; }
         public bool HasBeenSpammedWithBuildMessage;
         public bool IsLoggedIn;
@@ -69,7 +68,7 @@ namespace TShockAPI
         }
         public bool ConnectionAlive
         {
-            get { return RealPlayer ? Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
+            get { return RealPlayer && (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill); }
         }
         public string IP
         {
@@ -145,14 +144,14 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<PointF, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<PointF, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -406,17 +405,17 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<PointF, TileData> destroyedTiles)
+        public void RevertKillTile(Dictionary<Vector2, TileData> destroyedTiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<PointF, TileData> entry in destroyedTiles)
+            foreach (KeyValuePair<Vector2, TileData> entry in destroyedTiles)
             {
                 Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
                 Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }
             // Send all players updated tile sqaures
-            foreach (PointF coords in destroyedTiles.Keys)
+            foreach (Vector2 coords in destroyedTiles.Keys)
             {
                 All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }

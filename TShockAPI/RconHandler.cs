@@ -24,7 +24,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Terraria;
-using XNAHelpers;
+using System.IO.Streams;
 
 namespace TShockAPI
 {

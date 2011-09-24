@@ -29,20 +29,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
-using HttpServer;
+using Hooks;
 using MySql.Data.MySqlClient;
 using Rests;
 using Terraria;
-using TerrariaAPI;
-using TerrariaAPI.Hooks;
 using TShockAPI.DB;
 using TShockAPI.Net;
 
@@ -242,25 +237,29 @@ namespace TShockAPI
             return new RestObject("200") { Response = "Successful login" }; //Maybe return some user info too?
         }
 
-        public override void DeInitialize()
+        protected override void  Dispose(bool disposing)
         {
-            GameHooks.PostInitialize -= OnPostInit;
-            GameHooks.Update -= OnUpdate;
-            ServerHooks.Join -= OnJoin;
-            ServerHooks.Leave -= OnLeave;
-            ServerHooks.Chat -= OnChat;
-            ServerHooks.Command -= ServerHooks_OnCommand;
-            NetHooks.GetData -= OnGetData;
-            NetHooks.SendData -= NetHooks_SendData;
-            NetHooks.GreetPlayer -= OnGreetPlayer;
-            NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+            if (disposing)
             {
-                Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
-                File.Delete(Path.Combine(SavePath, "tshock.pid"));
+                GameHooks.PostInitialize -= OnPostInit;
+                GameHooks.Update -= OnUpdate;
+                ServerHooks.Join -= OnJoin;
+                ServerHooks.Leave -= OnLeave;
+                ServerHooks.Chat -= OnChat;
+                ServerHooks.Command -= ServerHooks_OnCommand;
+                NetHooks.GetData -= OnGetData;
+                NetHooks.SendData -= NetHooks_SendData;
+                NetHooks.GreetPlayer -= OnGreetPlayer;
+                NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+                if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+                {
+                    Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
+                    File.Delete(Path.Combine(SavePath, "tshock.pid"));
+                }
+                RestApi.Dispose();
             }
-            RestApi.Dispose();
-            //RconHandler.ShutdownAllThreads();
+
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -850,11 +849,11 @@ namespace TShockAPI
 
         public static bool CheckSpawn(int x, int y)
         {
-            PointF tile = new PointF(x, y);
-            PointF spawn = new PointF(Main.spawnTileX, Main.spawnTileY);
+            Vector2 tile = new Vector2(x, y);
+            Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
             return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
         }
-        public static float Distance(PointF value1, PointF value2)
+        public static float Distance(Vector2 value1, Vector2 value2)
         {
             float num2 = value1.X - value2.X;
             float num = value1.Y - value2.Y;

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Data;
-using System.Drawing;
+
 using MySql.Data.MySqlClient;
 using Terraria;
 
@@ -43,7 +43,7 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
         }
 
-        public PointF GetLeavePos(string name, string IP)
+        public Vector2 GetLeavePos(string name, string IP)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace TShockAPI.DB
                 {
                     if (reader.Read())
                     {
-                        return new PointF(reader.Get<int>("X"), reader.Get<int>("Y"));
+                        return new Vector2(reader.Get<int>("X"), reader.Get<int>("Y"));
                     }
                 }
             }
@@ -60,12 +60,12 @@ namespace TShockAPI.DB
                 Log.Error(ex.ToString());
             }
 
-            return new PointF();
+            return new Vector2();
         }
 
         public void InsertLeavePos(string name, string IP, int X, int Y)
         {
-            if (GetLeavePos(name, IP) == PointF.Empty)
+            if (GetLeavePos(name, IP) == Vector2.Zero)
             {
                 try
                 {
