@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -127,7 +127,6 @@ namespace TShockAPI
             TSPlayer.All.SendMessage(msg, red, green, blue);
             TSPlayer.Server.SendMessage(msg, red, green, blue);
             Log.Info(string.Format("Broadcast: {0}", msg));
-
         }
 
         public static void Broadcast(string msg, Color color)
