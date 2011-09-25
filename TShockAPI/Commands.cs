@@ -351,7 +351,6 @@ namespace TShockAPI
 
         private static void PasswordUser(CommandArgs args)
         {
-
             try
             {
                 if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
@@ -900,7 +899,6 @@ namespace TShockAPI
             Tools.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
-
         }
 
         #endregion Server Maintenence Commands
@@ -1374,7 +1372,6 @@ namespace TShockAPI
                     args.Player.SendMessage("Specified warp not found", Color.Red);
                 }
             }
-
         }
 
         #endregion Teleport Commands
@@ -1577,7 +1574,6 @@ namespace TShockAPI
 
         private static void MaxSpawns(CommandArgs args)
         {
-
             if (args.Parameters.Count != 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>", Color.Red);
@@ -1725,7 +1721,6 @@ namespace TShockAPI
             }
             switch (cmd)
             {
-
                 case "name":
                     {
                         {
@@ -1734,7 +1729,6 @@ namespace TShockAPI
                         }
                         break;
                     }
-
                 case "set":
                     {
                         int choice = 0;
@@ -2000,7 +1994,6 @@ namespace TShockAPI
                         break;
                     }
             }
-
         }
 
         #endregion World Protection Commands
@@ -2222,6 +2215,7 @@ namespace TShockAPI
                 (new Thread(ply.Whoopie)).Start(annoy);
             }
         }
+
         #endregion General Commands
 
         #region Cheat Commands
@@ -2602,6 +2596,7 @@ namespace TShockAPI
             }
             args.Player.SendMessage("You have grown a " + name, Color.Green);
         }
+
         #endregion Cheat Comamnds
     }
 }
