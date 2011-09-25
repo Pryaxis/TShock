@@ -10,7 +10,7 @@ namespace Rests
         public string UriVerbMatch { get; protected set; }
         public string[] UriVerbs { get; protected set; }
         public RestCommandD Callback { get; protected set; }
-        public bool RequiesToken { get; set; }
+        public bool RequiresToken { get; set; }
 
         /// <summary>
         /// 
@@ -26,7 +26,7 @@ namespace Rests
             var matches = Regex.Matches(uritemplate, "\\{([^\\{\\}]*)\\}");
             UriVerbs = (from Match match in matches select match.Groups[1].Value).ToArray();
             Callback = callback;
-            RequiesToken = true;
+            RequiresToken = true;
         }
         /// <summary>
         /// 

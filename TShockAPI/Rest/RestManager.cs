@@ -19,27 +19,27 @@ namespace TShockAPI
 
         public void RegisterRestfulCommands()
         {
-            Rest.Register(new RestCommand("/status", Status) { RequiesToken = false });
-            Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiesToken = true });
+            Rest.Register(new RestCommand("/status", Status) { RequiresToken = false });
+            Rest.Register(new RestCommand("/tokentest", TokenTest) { RequiresToken = true });
 
-            Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) { RequiesToken = true });
-            Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) { RequiesToken = true });
-            Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) { RequiesToken = true });
+            Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) { RequiresToken = true });
+            Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) { RequiresToken = true });
+            Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) { RequiresToken = true });
 
-            Rest.Register(new RestCommand("/bans/create", BanCreate) { RequiesToken = true });
-            Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiesToken = true });
-            Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiesToken = true });
+            Rest.Register(new RestCommand("/bans/create", BanCreate) { RequiresToken = true });
+            Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
+            Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiresToken = true });
 
 
-            Rest.Register(new RestCommand("/lists/players", UserList) { RequiesToken = true });
+            Rest.Register(new RestCommand("/lists/players", UserList) { RequiresToken = true });
 
-            Rest.Register(new RestCommand("/world/read", WorldRead) { RequiesToken = true });
-            Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiesToken = true });
-            Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiesToken = true });
+            Rest.Register(new RestCommand("/world/read", WorldRead) { RequiresToken = true });
+            Rest.Register(new RestCommand("/world/meteor", WorldMeteor) { RequiresToken = true });
+            Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) { RequiresToken = true });
 
-            Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiesToken = true });
-            Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiesToken = true });
-            Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiesToken = true });
+            Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiresToken = true });
+            Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiresToken = true });
+            Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiresToken = true });
             //RegisterExamples();
         }
 
@@ -412,8 +412,8 @@ namespace TShockAPI
 
         public void RegisterExamples()
         {
-            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) { RequiesToken = false });
-            Rest.Register(new RestCommand("/wizard/{username}", Wizard) { RequiesToken = false });
+            Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) { RequiresToken = false });
+            Rest.Register(new RestCommand("/wizard/{username}", Wizard) { RequiresToken = false });
         }
 
         //The Wizard example, for demonstrating the response convention:

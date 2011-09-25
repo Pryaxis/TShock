@@ -23,8 +23,8 @@ namespace Rests
             : base(ip, port)
         {
             Tokens = new Dictionary<string, object>();
-            Register(new RestCommand("/token/create/{username}/{password}", NewToken) { RequiesToken = false });
-            Register(new RestCommand("/token/destroy/{token}", DestroyToken) { RequiesToken = true });
+            Register(new RestCommand("/token/create/{username}/{password}", NewToken) { RequiresToken = false });
+            Register(new RestCommand("/token/destroy/{token}", DestroyToken) { RequiresToken = true });
         }
 
         object DestroyToken(RestVerbs verbs, IParameterCollection parameters)
@@ -75,7 +75,7 @@ namespace Rests
 
         protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
         {
-            if (cmd.RequiesToken)
+            if (cmd.RequiresToken)
             {
                 var strtoken = parms["token"];
                 if (strtoken == null)
