@@ -224,6 +224,9 @@ namespace TShockAPI
 
             SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
 
+            TPlayer.position.X = tilex;
+            TPlayer.position.Y = tiley;
+
             return true;
         }
 
