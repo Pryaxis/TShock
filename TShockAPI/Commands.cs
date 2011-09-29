@@ -2600,7 +2600,8 @@ namespace TShockAPI
                     args.Player.SendMessage("Unknown plant!", Color.Red);
                     return;
             }
-            args.Player.SendMessage("You have grown a " + name, Color.Green);
+            args.Player.SendTileSquare(x, y);
+            args.Player.SendMessage("Tried to grow a " + name, Color.Green);
         }
 
         #endregion Cheat Comamnds
