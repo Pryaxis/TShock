@@ -431,6 +431,13 @@ namespace TShockAPI
             //    return;
             //}
 
+            // This guy needs to be here so that people don't get exceptions when they type /user
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid user syntax. Try /user help.", Color.Red);
+                return;
+            }
+
             string subcmd = args.Parameters[0];
 
             // Add requires a username:password pair/ip address and a group specified.
