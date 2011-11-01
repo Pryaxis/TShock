@@ -428,7 +428,7 @@ namespace TShockAPI
 
         private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)
         {
-            if (!player.Group.HasPermission(overridePermission))
+            if (!player.Group.HasPermission(overridePermission) || !(player.Group.Name == "superadmin"))
             {
                 if (ban)
                 {
