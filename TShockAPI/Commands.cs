@@ -1991,6 +1991,62 @@ namespace TShockAPI
 
                         break;
                     }
+                case "resize":
+                case "expand":
+                    {
+                        if (args.Parameters.Count == 4)
+                        {
+                            int direction;
+                            switch (args.Parameters[3])
+                            {
+                                case "u":
+                                case "up":
+                                    {
+                                        direction = 0;
+                                        break;
+                                    }
+                                case "r":
+                                case "right":
+                                    {
+                                        direction = 1;
+                                        break;
+                                    }
+                                case "d":
+                                case "down":
+                                    {
+                                        direction = 2;
+                                        break;
+                                    }
+                                case "l":
+                                case "left":
+                                    {
+                                        direction = 3;
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        direction = -1;
+                                        break;
+                                    }
+                            }
+                            int addAmount;
+                            int.TryParse(args.Parameters[2], out addAmount);
+                            if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
+                            {
+                                args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
+                                TShock.Regions.ReloadAllRegions();
+                            }
+                            else
+                            {
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]", Color.Red);
+                            }
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]1", Color.Red);
+                        }
+                        break;
+                    }
                 case "help":
                 default:
                     {
@@ -1999,6 +2055,7 @@ namespace TShockAPI
                         args.Player.SendMessage("/region name (provides region name)", Color.Yellow);
                         args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
                         args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
+                        args.Player.SendMessage("/region resize [regionname] [u/d/l/r] [amount]", Color.Yellow);
                         break;
                     }
             }
