@@ -152,6 +152,7 @@ namespace TShockAPI
             add(Permissions.cfg, ShowConfiguration, "showconfig");
             add(Permissions.cfg, ServerPassword, "serverpassword");
             add(Permissions.cfg, Save, "save");
+            add(Permissions.cfg, Settle, "settle");
             add(Permissions.cfg, MaxSpawns, "maxspawns");
             add(Permissions.cfg, SpawnRate, "spawnrate");
             add(Permissions.time, Time, "time");
@@ -1578,6 +1579,19 @@ namespace TShockAPI
             Tools.Broadcast("Server map saving, potential lag spike");
             Thread SaveWorld = new Thread(Tools.SaveWorld);
             SaveWorld.Start();
+        }
+
+        private static void Settle(CommandArgs args)
+        {
+
+            if (Liquid.panicMode)
+            {
+                args.Player.SendMessage("Liquid is already settling!", Color.Red);
+                return;
+            }
+            Liquid.StartPanic();
+            Tools.Broadcast("Settling all liquids...");
+
         }
 
         private static void MaxSpawns(CommandArgs args)
