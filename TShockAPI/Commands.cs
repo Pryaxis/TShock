@@ -184,6 +184,7 @@ namespace TShockAPI
             add(Permissions.butcher, Butcher, "butcher");
             add(Permissions.item, Item, "item", "i");
             add(Permissions.item, Give, "give");
+            add(Permissions.clearitems, ClearItems, "clearitems");
             add(Permissions.heal, Heal, "heal");
             add(Permissions.buff, Buff, "buff");
             add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
@@ -2415,6 +2416,50 @@ namespace TShockAPI
                     args.Player.SendMessage("Invalid item type!", Color.Red);
                 }
             }
+        }
+
+        public static void ClearItems(CommandArgs args)
+        {
+
+            int radius = 50;
+            if (args.Parameters.Count > 0)
+            {
+
+                if (args.Parameters[0].ToLower() == "all")
+                {
+
+                    radius = Int32.MaxValue / 16;
+
+                }
+                else
+                {
+
+                    try
+                    {
+
+                        radius = Convert.ToInt32(args.Parameters[0]);
+
+                    }
+                    catch (Exception) { args.Player.SendMessage("Please either enter the keyword \"all\", or the block radius you wish to delete all items from.", Color.Red); return; }
+
+                }
+
+            }
+            int count = 0;
+            for (int i = 0; i < 200; i++)
+            {
+
+                if ((Math.Sqrt(Math.Pow(Main.item[i].position.X - args.Player.X, 2) + Math.Pow(Main.item[i].position.Y - args.Player.Y, 2)) < radius * 16) && (Main.item[i].active))
+                {
+
+                    Main.item[i].active = false;
+                    NetMessage.SendData(0x15, -1, -1, "", i, 0f, 0f, 0f, 0);
+                    count++;
+                }
+
+            }
+            args.Player.SendMessage("All " + count.ToString() + " items within a radius of " + radius.ToString() + " have been deleted.");
+
         }
 
         private static void Heal(CommandArgs args)

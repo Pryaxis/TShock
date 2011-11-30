@@ -123,6 +123,9 @@ namespace TShockAPI
         [Description("User can spawn items")]
         public static readonly string item;
 
+        [Description("User can clear item drops.")]
+        public static readonly string clearitems;
+
         [Description("")]
         public static readonly string heal;
 
