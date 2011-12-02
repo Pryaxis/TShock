@@ -24,6 +24,8 @@ using Terraria;
 
 using TShockAPI.Net;
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace TShockAPI
 {
     public class TSPlayer
@@ -283,6 +285,11 @@ namespace TShockAPI
         }
 
         public virtual void SendMessage(string msg, Color color)
+        {
+            SendMessage(msg, color.R, color.G, color.B);
+        }
+
+        public virtual void SendMessage(string msg, Microsoft.Xna.Framework.Color color)
         {
             SendMessage(msg, color.R, color.G, color.B);
         }
