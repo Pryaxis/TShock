@@ -385,8 +385,8 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
-            //if (Config.RestApiEnabled)
-                //RestApi.Start();
+            if (Config.RestApiEnabled)
+                RestApi.Start();
         }
 
 
