@@ -47,7 +47,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "1.1";
+        public static readonly string VersionCodename = "1.1 broke our API";
 
         public static string SavePath = "tshock";
 
@@ -86,7 +86,7 @@ namespace TShockAPI
 
         public override string Author
         {
-            get { return "The TShock Team"; }
+            get { return "The Nyx Team"; }
         }
 
         public override string Description
@@ -104,6 +104,7 @@ namespace TShockAPI
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
+        	Console.Title = "TerrariaShock" + VersionNum.ToString();
             if (!Directory.Exists(SavePath))
                 Directory.CreateDirectory(SavePath);
 
@@ -120,7 +121,7 @@ namespace TShockAPI
 
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
-                    Log.ConsoleInfo("TShock was improperly shut down. Deleting invalid pid file...");
+                    Log.ConsoleInfo("TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
                     File.Delete(Path.Combine(SavePath, "tshock.pid"));
                 }
                 File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
@@ -182,7 +183,7 @@ namespace TShockAPI
                 if (Config.EnableGeoIP && File.Exists(geoippath))
                     Geo = new MaxMind.GeoIPCountry(geoippath);
 
-                Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
+                Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
 
                 GameHooks.PostInitialize += OnPostInit;
                 GameHooks.Update += OnUpdate;
@@ -253,7 +254,6 @@ namespace TShockAPI
                 NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
-                    Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
                     File.Delete(Path.Combine(SavePath, "tshock.pid"));
                 }
                 RestApi.Dispose();
@@ -386,8 +386,8 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
-            if (Config.RestApiEnabled)
-                RestApi.Start();
+            //if (Config.RestApiEnabled)
+                //RestApi.Start();
         }
 
 
