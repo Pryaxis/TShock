@@ -43,11 +43,11 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 8)]
+    [APIVersion(1, 9)]
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "Try the new slim model.";
+        public static readonly string VersionCodename = "1.1";
 
         public static string SavePath = "tshock";
 
