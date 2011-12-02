@@ -232,7 +232,7 @@ namespace TShockAPI
         public Item GetItemById(int id)
         {
             Item item = new Item();
-            item.SetDefaults(id);
+            item.netDefaults(id);
             return item;
         }
 
@@ -253,7 +253,7 @@ namespace TShockAPI
                 try
                 {
                     Item item = new Item();
-                    item.SetDefaults(i);
+                    item.netDefaults(i);
                     if (item.name.ToLower() == name.ToLower())
                         return new List<Item> { item };
                     if (item.name.ToLower().StartsWith(name.ToLower()))
@@ -277,7 +277,7 @@ namespace TShockAPI
         public NPC GetNPCById(int id)
         {
             NPC npc = new NPC();
-            npc.SetDefaults(id);
+            npc.netDefaults(id);
             return npc;
         }
 
@@ -296,7 +296,7 @@ namespace TShockAPI
             for (int i = 1; i < Main.maxNPCTypes; i++)
             {
                 NPC npc = new NPC();
-                npc.SetDefaults(i);
+                npc.netDefaults(i);
                 if (npc.name.ToLower() == name.ToLower())
                     return new List<NPC> { npc };
                 if (npc.name.ToLower().StartsWith(name.ToLower()))

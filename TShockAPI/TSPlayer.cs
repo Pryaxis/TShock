@@ -131,9 +131,9 @@ namespace TShockAPI
                 bool flag = false;
                 if (RealPlayer)
                 {
-                    for (int i = 0; i < 40; i++)
+                    for (int i = 0; i < 45; i++)
                     {
-                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active)
+                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
                         {
                             flag = true;
                             break;

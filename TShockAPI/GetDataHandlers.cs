@@ -145,21 +145,8 @@ namespace TShockAPI
             int plr = args.Data.ReadInt8();
             int slot = args.Data.ReadInt8();
             int stack = args.Data.ReadInt8();
-            int namelength = (int)(args.Data.Length - args.Data.Position - 1);
-
-            if (namelength > 0)
-            {
-                string itemname = Encoding.ASCII.GetString(args.Data.ReadBytes(namelength));
-
-                if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
-                    args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
-                if (itemname == "KANNIBALE BLADE"
-                    || itemname == "Super Gel")
-                    return TShock.Utils.HandleCheater(args.Player, string.Format(TShock.Config.GriefClientReason, "KANNIBALE"));
-                if (TShock.Utils.GetItemByName(itemname).Count == 0 && !args.Player.Group.HasPermission(Permissions.ignorecheatdetection)
-                    && TShock.Config.KickCustomItems)
-                    args.Player.Disconnect("Using custom item: " + itemname + ", remove it and region");
-            }
+            short prefix = (short) args.Data.ReadInt8();
+            int type = (int) args.Data.ReadInt16();
 
             return false;
         }
@@ -499,7 +486,7 @@ namespace TShockAPI
             }
 
 
-            if (type == 29 || type == 28 || type == 37)
+            if (type == 29 || type == 28 || type == 37) //need more explosives from 1.1
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
                 if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
