@@ -76,7 +76,7 @@ namespace TShockAPI
         {
             get
             {
-                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+                return RealPlayer ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
             }
         }
         /// <summary>
@@ -402,7 +402,7 @@ namespace TShockAPI
             {
                 int spawnTileX;
                 int spawnTileY;
-                Tools.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
+                TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
                 int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
                 // This is for special slimes
                 Main.npc[npcid].SetDefaults(name);

@@ -209,13 +209,13 @@ namespace TShockAPI
 
             if (!cmd.CanRun(player))
             {
-                Tools.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
+                TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
                 player.SendMessage("You do not have access to that command.", Color.Red);
             }
             else
             {
                 if (cmd.DoLog)
-                    Tools.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
+                    TShock.Utils.SendLogs(string.Format("{0} executed: /{1}", player.Name, cmdText), Color.Red);
                 cmd.Run(cmdText, player, args);
             }
             return true;
@@ -311,7 +311,7 @@ namespace TShockAPI
             if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
             {
                 Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had " + TShock.Config.MaximumLoginAttempts + " or more invalid login attempts and was kicked automatically.");
-                Tools.Kick(args.Player, "Too many invalid login attempts.");
+                TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
             }
 
             if (args.Parameters.Count != 2)
@@ -322,7 +322,7 @@ namespace TShockAPI
             }
             try
             {
-                string encrPass = Tools.HashPassword(args.Parameters[1]);
+                string encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
                 var user = TShock.Users.GetUserByName(args.Parameters[0]);
                 if (user == null)
                 {
@@ -330,7 +330,7 @@ namespace TShockAPI
                 }
                 else if (user.Password.ToUpper() == encrPass.ToUpper())
                 {
-                    args.Player.Group = Tools.GetGroup(user.Group);
+                    args.Player.Group = TShock.Utils.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
                     args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
@@ -359,7 +359,7 @@ namespace TShockAPI
                 if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
                 {
                     var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
-                    string encrPass = Tools.HashPassword(args.Parameters[0]);
+                    string encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
                     if (user.Password.ToUpper() == encrPass.ToUpper())
                     {
                         args.Player.SendMessage("You changed your password!", Color.Green);
@@ -600,7 +600,7 @@ namespace TShockAPI
                 return;
             }
 
-            var players = Tools.FindPlayer(args.Parameters[0]);
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
             if (players.Count > 1)
             {
                 args.Player.SendMessage("More than one player matched your query.", Color.Red);
@@ -630,7 +630,7 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -642,7 +642,7 @@ namespace TShockAPI
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Kick(players[0], reason))
+                if (!TShock.Utils.Kick(players[0], reason))
                 {
                     args.Player.SendMessage("You can't kick another admin!", Color.Red);
                 }
@@ -663,7 +663,7 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -675,7 +675,7 @@ namespace TShockAPI
             else
             {
                 string reason = args.Parameters.Count > 1 ? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1)) : "Misbehaviour.";
-                if (!Tools.Ban(players[0], reason))
+                if (!TShock.Utils.Ban(players[0], reason))
                 {
                     args.Player.SendMessage("You can't ban another admin!", Color.Red);
                 }
@@ -856,20 +856,20 @@ namespace TShockAPI
                 message += " " + args.Parameters[i];
             }
 
-            Tools.Broadcast("(Server Broadcast)" + message, Color.Red);
+            TShock.Utils.Broadcast("(Server Broadcast)" + message, Color.Red);
             return;
         }
 
         private static void Off(CommandArgs args)
         {
-            Tools.ForceKickAll("Server shutting down!");
+            TShock.Utils.ForceKickAll("Server shutting down!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }
 
         private static void OffNoSave(CommandArgs args)
         {
-            Tools.ForceKickAll("Server shutting down!");
+            TShock.Utils.ForceKickAll("Server shutting down!");
             Netplay.disconnect = true;
         }
 
@@ -906,7 +906,7 @@ namespace TShockAPI
 
             Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
 
-            Tools.ForceKickAll("Server shutting down for update!");
+            TShock.Utils.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
         }
@@ -940,19 +940,19 @@ namespace TShockAPI
         private static void Bloodmoon(CommandArgs args)
         {
             TSPlayer.Server.SetBloodMoon(true);
-            Tools.Broadcast(string.Format("{0} turned on blood moon.", args.Player.Name));
+            TShock.Utils.Broadcast(string.Format("{0} turned on blood moon.", args.Player.Name));
         }
 
         private static void Invade(CommandArgs args)
         {
             if (Main.invasionSize <= 0)
             {
-                Tools.Broadcast(string.Format("{0} has started an invasion.", args.Player.Name));
+                TShock.Utils.Broadcast(string.Format("{0} has started an invasion.", args.Player.Name));
                 TShock.StartInvasion();
             }
             else
             {
-                Tools.Broadcast(string.Format("{0} has ended an invasion.", args.Player.Name));
+                TShock.Utils.Broadcast(string.Format("{0} has ended an invasion.", args.Player.Name));
                 Main.invasionSize = 0;
             }
         }
@@ -971,9 +971,9 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs);
-            NPC eater = Tools.GetNPCById(13);
+            NPC eater = TShock.Utils.GetNPCById(13);
             TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
-            Tools.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
         }
 
         private static void Eye(CommandArgs args)
@@ -990,10 +990,10 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs);
-            NPC eye = Tools.GetNPCById(4);
+            NPC eye = TShock.Utils.GetNPCById(4);
             TSPlayer.Server.SetTime(false, 0.0);
             TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
-            Tools.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
         }
 
         private static void King(CommandArgs args)
@@ -1010,9 +1010,9 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs);
-            NPC king = Tools.GetNPCById(50);
+            NPC king = TShock.Utils.GetNPCById(50);
             TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
-            Tools.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
         }
 
         private static void Skeletron(CommandArgs args)
@@ -1029,10 +1029,10 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs);
-            NPC skeletron = Tools.GetNPCById(35);
+            NPC skeletron = TShock.Utils.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
             TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
-            Tools.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
         }
 
         private static void Hardcore(CommandArgs args)
@@ -1049,16 +1049,16 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs / 4);
-            NPC eater = Tools.GetNPCById(13);
-            NPC eye = Tools.GetNPCById(4);
-            NPC king = Tools.GetNPCById(50);
-            NPC skeletron = Tools.GetNPCById(35);
+            NPC eater = TShock.Utils.GetNPCById(13);
+            NPC eye = TShock.Utils.GetNPCById(4);
+            NPC king = TShock.Utils.GetNPCById(50);
+            NPC skeletron = TShock.Utils.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
             TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
-            Tools.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
         }
 
         private static void SpawnMob(CommandArgs args)
@@ -1082,7 +1082,7 @@ namespace TShockAPI
 
             amount = Math.Min(amount, Main.maxNPCs);
 
-            var npcs = Tools.GetNPCByIdOrName(args.Parameters[0]);
+            var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
             if (npcs.Count == 0)
             {
                 args.Player.SendMessage("Invalid mob type!", Color.Red);
@@ -1097,7 +1097,7 @@ namespace TShockAPI
                 if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
                 {
                     TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
-                    Tools.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
+                    TShock.Utils.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
                 }
                 else
                     args.Player.SendMessage("Invalid mob type!", Color.Red);
@@ -1147,7 +1147,7 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
                 args.Player.SendMessage("Invalid player!", Color.Red);
             else if (players.Count > 1)
@@ -1190,7 +1190,7 @@ namespace TShockAPI
                 return;
             }
 
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -1219,7 +1219,7 @@ namespace TShockAPI
                 return;
             }
 
-            var foundplr = Tools.FindPlayer(args.Parameters[0]);
+            var foundplr = TShock.Utils.FindPlayer(args.Parameters[0]);
             if (foundplr.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -1458,7 +1458,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count > 0)
             {
-                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+                var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
                 if (items.Count == 0)
                 {
                     args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -1491,7 +1491,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count > 0)
             {
-                var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+                var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
                 if (items.Count == 0)
                 {
                     args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -1529,8 +1529,8 @@ namespace TShockAPI
             Main.spawnTileX = args.Player.TileX + 1;
             Main.spawnTileY = args.Player.TileY + 3;
 
-            Tools.Broadcast("Server map saving, potential lag spike");
-            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            TShock.Utils.Broadcast("Server map saving, potential lag spike");
+            Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
         }
 
@@ -1577,8 +1577,8 @@ namespace TShockAPI
 
         private static void Save(CommandArgs args)
         {
-            Tools.Broadcast("Server map saving, potential lag spike");
-            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            TShock.Utils.Broadcast("Server map saving, potential lag spike");
+            Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
         }
 
@@ -1591,7 +1591,7 @@ namespace TShockAPI
                 return;
             }
             Liquid.StartPanic();
-            Tools.Broadcast("Settling all liquids...");
+            TShock.Utils.Broadcast("Settling all liquids...");
 
         }
 
@@ -1607,7 +1607,7 @@ namespace TShockAPI
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultMaxSpawns = amount;
             TShock.Config.DefaultMaximumSpawns = amount;
-            Tools.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} changed the maximum spawns to: {1}", args.Player.Name, amount));
         }
 
         private static void SpawnRate(CommandArgs args)
@@ -1622,7 +1622,7 @@ namespace TShockAPI
             int.TryParse(args.Parameters[0], out amount);
             NPC.defaultSpawnRate = amount;
             TShock.Config.DefaultSpawnRate = amount;
-            Tools.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
+            TShock.Utils.Broadcast(string.Format("{0} changed the spawn rate to: {1}", args.Player.Name, amount));
         }
 
         #endregion Server Config Commands
@@ -1641,23 +1641,23 @@ namespace TShockAPI
             {
                 case "day":
                     TSPlayer.Server.SetTime(true, 150.0);
-                    Tools.Broadcast(string.Format("{0} set time to day.", args.Player.Name));
+                    TShock.Utils.Broadcast(string.Format("{0} set time to day.", args.Player.Name));
                     break;
                 case "night":
                     TSPlayer.Server.SetTime(false, 0.0);
-                    Tools.Broadcast(string.Format("{0} set time to night.", args.Player.Name));
+                    TShock.Utils.Broadcast(string.Format("{0} set time to night.", args.Player.Name));
                     break;
                 case "dusk":
                     TSPlayer.Server.SetTime(false, 0.0);
-                    Tools.Broadcast(string.Format("{0} set time to dusk.", args.Player.Name));
+                    TShock.Utils.Broadcast(string.Format("{0} set time to dusk.", args.Player.Name));
                     break;
                 case "noon":
                     TSPlayer.Server.SetTime(true, 27000.0);
-                    Tools.Broadcast(string.Format("{0} set time to noon.", args.Player.Name));
+                    TShock.Utils.Broadcast(string.Format("{0} set time to noon.", args.Player.Name));
                     break;
                 case "midnight":
                     TSPlayer.Server.SetTime(false, 16200.0);
-                    Tools.Broadcast(string.Format("{0} set time to midnight.", args.Player.Name));
+                    TShock.Utils.Broadcast(string.Format("{0} set time to midnight.", args.Player.Name));
                     break;
                 default:
                     args.Player.SendMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>", Color.Red);
@@ -1679,7 +1679,7 @@ namespace TShockAPI
             }
 
             string plStr = args.Parameters[0];
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -1698,10 +1698,10 @@ namespace TShockAPI
                 }
                 if (!args.Player.Group.HasPermission(Permissions.kill))
                 {
-                    damage = Tools.Clamp(damage, 15, 0);
+                    damage = TShock.Utils.Clamp(damage, 15, 0);
                 }
                 plr.DamagePlayer(damage);
-                Tools.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
+                TShock.Utils.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
                                 args.Player.Name, plr.Name, damage));
                 Log.Info(args.Player.Name + " slapped " + plr.Name + " with " + damage + " damage.");
             }
@@ -1714,13 +1714,13 @@ namespace TShockAPI
         private static void ToggleAntiBuild(CommandArgs args)
         {
             TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
-            Tools.Broadcast(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
+            TShock.Utils.Broadcast(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
         }
 
         private static void ProtectSpawn(CommandArgs args)
         {
             TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
-            Tools.Broadcast(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
+            TShock.Utils.Broadcast(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
         }
 
         private static void DebugRegions(CommandArgs args)
@@ -2122,7 +2122,7 @@ namespace TShockAPI
 
         private static void Playing(CommandArgs args)
         {
-            args.Player.SendMessage(string.Format("Current players: {0}.", Tools.GetPlayers()), 255, 240, 20);
+            args.Player.SendMessage(string.Format("Current players: {0}.", TShock.Utils.GetPlayers()), 255, 240, 20);
         }
 
         private static void AuthToken(CommandArgs args)
@@ -2139,7 +2139,7 @@ namespace TShockAPI
                 try
                 {
                     TShock.Users.AddUser(new User(args.Player.IP, "", "", "superadmin"));
-                    args.Player.Group = Tools.GetGroup("superadmin");
+                    args.Player.Group = TShock.Utils.GetGroup("superadmin");
                     args.Player.SendMessage("This IP address is now superadmin. Please perform the following command:");
                     args.Player.SendMessage("/user add <username>:<password> superadmin");
                     args.Player.SendMessage("Creates: <username> with the password <password> as part of the superadmin group.");
@@ -2202,7 +2202,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /me <text>", Color.Red);
                 return;
             }
-            Tools.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
+            TShock.Utils.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
         }
 
         private static void PartyChat(CommandArgs args)
@@ -2230,12 +2230,12 @@ namespace TShockAPI
         
         private static void Motd(CommandArgs args)
         {
-            Tools.ShowFileToUser(args.Player, "motd.txt");
+            TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
         }
 
         private static void Rules(CommandArgs args)
         {
-            Tools.ShowFileToUser(args.Player, "rules.txt");
+            TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
         }
 
         private static void Whisper(CommandArgs args)
@@ -2246,7 +2246,7 @@ namespace TShockAPI
                 return;
             }
 
-            var players = Tools.FindPlayer(args.Parameters[0]);
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -2288,7 +2288,7 @@ namespace TShockAPI
             int annoy = 5;
             int.TryParse(args.Parameters[1], out annoy);
 
-            var players = Tools.FindPlayer(args.Parameters[0]);
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
             if (players.Count == 0)
                 args.Player.SendMessage("Invalid player!", Color.Red);
             else if (players.Count > 1)
@@ -2314,7 +2314,7 @@ namespace TShockAPI
             }
 
             string plStr = String.Join(" ", args.Parameters);
-            var players = Tools.FindPlayer(plStr);
+            var players = TShock.Utils.FindPlayer(plStr);
             if (players.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -2353,7 +2353,7 @@ namespace TShockAPI
                     killcount++;
                 }
             }
-            Tools.Broadcast(string.Format("Killed {0} NPCs.", killcount));
+            TShock.Utils.Broadcast(string.Format("Killed {0} NPCs.", killcount));
         }
 
         private static void Item(CommandArgs args)
@@ -2370,7 +2370,7 @@ namespace TShockAPI
             }
             int itemAmount = 0;
             int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
             {
                 args.Player.SendMessage("Invalid item type!", Color.Red);
@@ -2421,7 +2421,7 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            var items = Tools.GetItemByIdOrName(args.Parameters[0]);
+            var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             args.Parameters.RemoveAt(0);
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
@@ -2442,7 +2442,7 @@ namespace TShockAPI
                 var item = items[0];
                 if (item.type >= 1 && item.type < Main.maxItemTypes)
                 {
-                    var players = Tools.FindPlayer(plStr);
+                    var players = TShock.Utils.FindPlayer(plStr);
                     if (players.Count == 0)
                     {
                         args.Player.SendMessage("Invalid player!", Color.Red);
@@ -2525,7 +2525,7 @@ namespace TShockAPI
             if (args.Parameters.Count > 0)
             {
                 string plStr = String.Join(" ", args.Parameters);
-                var players = Tools.FindPlayer(plStr);
+                var players = TShock.Utils.FindPlayer(plStr);
                 if (players.Count == 0)
                 {
                     args.Player.SendMessage("Invalid player!", Color.Red);
@@ -2551,8 +2551,8 @@ namespace TShockAPI
                 playerToHeal = args.Player;
             }
 
-            Item heart = Tools.GetItemById(58);
-            Item star = Tools.GetItemById(184);
+            Item heart = TShock.Utils.GetItemById(58);
+            Item star = TShock.Utils.GetItemById(184);
             for (int i = 0; i < 20; i++)
                 playerToHeal.GiveItem(heart.type, heart.name, heart.width, heart.height, heart.maxStack);
             for (int i = 0; i < 10; i++)
@@ -2579,7 +2579,7 @@ namespace TShockAPI
             int time = 60;
             if (!int.TryParse(args.Parameters[0], out id))
             {
-                var found = Tools.GetBuffByName(args.Parameters[0]);
+                var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
                 if (found.Count == 0)
                 {
                     args.Player.SendMessage("Invalid buff name!", Color.Red);
@@ -2600,7 +2600,7 @@ namespace TShockAPI
                     time = 60;
                 args.Player.SetBuff(id, time * 60);
                 args.Player.SendMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
-                    Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
+                    TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)), Color.Green);
             }
             else
                 args.Player.SendMessage("Invalid buff ID!", Color.Red);
@@ -2615,7 +2615,7 @@ namespace TShockAPI
             }
             int id = 0;
             int time = 60;
-            var foundplr = Tools.FindPlayer(args.Parameters[0]);
+            var foundplr = TShock.Utils.FindPlayer(args.Parameters[0]);
             if (foundplr.Count == 0)
             {
                 args.Player.SendMessage("Invalid player!", Color.Red);
@@ -2630,7 +2630,7 @@ namespace TShockAPI
             {
                 if (!int.TryParse(args.Parameters[1], out id))
                 {
-                    var found = Tools.GetBuffByName(args.Parameters[1]);
+                    var found = TShock.Utils.GetBuffByName(args.Parameters[1]);
                     if (found.Count == 0)
                     {
                         args.Player.SendMessage("Invalid buff name!", Color.Red);
@@ -2651,9 +2651,9 @@ namespace TShockAPI
                         time = 60;
                     foundplr[0].SetBuff(id, time * 60);
                     args.Player.SendMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
-                        foundplr[0].Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
+                        foundplr[0].Name, TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)), Color.Green);
                     foundplr[0].SendMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
-                        args.Player.Name, Tools.GetBuffName(id), Tools.GetBuffDescription(id), (time)), Color.Green);
+                        args.Player.Name, TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)), Color.Green);
                 }
                 else
                     args.Player.SendMessage("Invalid buff ID!", Color.Red);

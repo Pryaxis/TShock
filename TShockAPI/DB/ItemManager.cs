@@ -39,7 +39,7 @@ namespace TShockAPI.DB
                             int id = 0;
                             int.TryParse(line, out id);
 
-                            database.Query(query, Tools.GetItemById(id).name);
+                            database.Query(query, TShock.Utils.GetItemById(id).name);
                         }
                     }
                 }
@@ -70,7 +70,7 @@ namespace TShockAPI.DB
         {
             try
             {
-                database.Query("INSERT INTO ItemBans (ItemName) VALUES (@0);", Tools.GetItemByName(itemname)[0].name);
+                database.Query("INSERT INTO ItemBans (ItemName) VALUES (@0);", TShock.Utils.GetItemByName(itemname)[0].name);
                 if (!ItemIsBanned(itemname))
                     ItemBans.Add(itemname);
             }
@@ -86,7 +86,7 @@ namespace TShockAPI.DB
                 return;
             try
             {
-                database.Query("Delete FROM 'ItemBans' WHERE ItemName=@0;", Tools.GetItemByName(itemname)[0].name);
+                database.Query("Delete FROM 'ItemBans' WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
                 ItemBans.Remove(itemname);
             }
             catch (Exception ex)

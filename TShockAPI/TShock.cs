@@ -67,6 +67,7 @@ namespace TShockAPI
         public static MaxMind.GeoIPCountry Geo;
         public static SecureRest RestApi;
         public static RestManager RestManager;
+		public static Utils Utils = new Utils();
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -224,12 +225,12 @@ namespace TShockAPI
                 return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
             }
 
-            if (Tools.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
+            if (TShock.Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
             {
                 return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
             }
 
-            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+            if (!TShock.Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
             {
                 return new RestObject("403") { Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" };
             }
@@ -411,7 +412,7 @@ namespace TShockAPI
                         {
                             if (player.TileThreshold >= Config.TileThreshold)
                             {
-                                if (Tools.HandleTntUser(player, "Kill tile abuse detected."))
+                                if (TShock.Utils.HandleTntUser(player, "Kill tile abuse detected."))
                                 {
                                     TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                                 }
@@ -446,9 +447,9 @@ namespace TShockAPI
                 player.Group = Users.GetGroupForIP(player.IP);
             }
 
-            if (Tools.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission(Permissions.reservedslot))
+            if (TShock.Utils.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission(Permissions.reservedslot))
             {
-                Tools.ForceKick(player, Config.ServerFullReason);
+                TShock.Utils.ForceKick(player, Config.ServerFullReason);
                 handler.Handled = true;
                 return;
             }
@@ -456,14 +457,14 @@ namespace TShockAPI
             var ban = Bans.GetBanByIp(player.IP);
             if (ban != null)
             {
-                Tools.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+                TShock.Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
                 handler.Handled = true;
                 return;
             }
 
             if (!FileTools.OnWhitelist(player.IP))
             {
-                Tools.ForceKick(player, "Not on whitelist.");
+                TShock.Utils.ForceKick(player, "Not on whitelist.");
                 handler.Handled = true;
                 return;
             }
@@ -499,22 +500,22 @@ namespace TShockAPI
                 return;
             }
 
-            if (!Tools.ValidString(text))
+            if (!TShock.Utils.ValidString(text))
             {
-                Tools.Kick(tsplr, "Unprintable character in chat");
+                TShock.Utils.Kick(tsplr, "Unprintable character in chat");
                 e.Handled = true;
                 return;
             }
 
             if (msg.whoAmI != ply)
             {
-                e.Handled = Tools.HandleGriefer(tsplr, "Faking Chat");
+                e.Handled = TShock.Utils.HandleGriefer(tsplr, "Faking Chat");
                 return;
             }
 
             if (tsplr.Group.HasPermission(Permissions.adminchat) && !text.StartsWith("/") && Config.AdminChatEnabled)
             {
-                Tools.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
+                TShock.Utils.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
                                 tsplr.Group.R, tsplr.Group.G,
                                 tsplr.Group.B);
                 e.Handled = true;
@@ -535,7 +536,7 @@ namespace TShockAPI
             }
             else
             {
-                Tools.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
+                TShock.Utils.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
                                 tsplr.Group.R, tsplr.Group.G,
                                 tsplr.Group.B);
                 //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
@@ -565,7 +566,7 @@ namespace TShockAPI
 
             if (text.StartsWith("exit"))
             {
-                Tools.ForceKickAll("Server shutting down!");
+                TShock.Utils.ForceKickAll("Server shutting down!");
             }
             else if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
@@ -664,15 +665,15 @@ namespace TShockAPI
                 var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
                 player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
                 Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", player.Name, player.IP, player.Group.Name, player.Country));
-                Tools.Broadcast(player.Name + " is from the " + player.Country, Color.Yellow);
+                TShock.Utils.Broadcast(player.Name + " is from the " + player.Country, Color.Yellow);
             }
             else
                 Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
 
-            Tools.ShowFileToUser(player, "motd.txt");
+            TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
-                Tools.HandleCheater(player, "Hacked health.");
+                TShock.Utils.HandleCheater(player, "Hacked health.");
             }
             if (Config.AlwaysPvP)
             {
@@ -780,8 +781,8 @@ namespace TShockAPI
 
         private void OnSaveWorld(bool resettime, HandledEventArgs e)
         {
-            Tools.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-            Thread SaveWorld = new Thread(Tools.SaveWorld);
+            TShock.Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+            Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
             e.Handled = true;
         }
@@ -799,7 +800,7 @@ namespace TShockAPI
             }
             else
             {
-                Main.invasionSize = 100 + (Config.InvasionMultiplier * Tools.ActivePlayers());
+                Main.invasionSize = 100 + (Config.InvasionMultiplier * TShock.Utils.ActivePlayers());
             }
 
             Main.invasionWarn = 0;
@@ -825,22 +826,22 @@ namespace TShockAPI
                 switch (random)
                 {
                     case 0:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+                        TShock.Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
                         break;
                     case 1:
-                        Tools.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
+                        TShock.Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
                         break;
                     case 2:
-                        Tools.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
+                        TShock.Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
                         break;
                     case 3:
-                        Tools.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
+                        TShock.Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
                         break;
                     case 4:
-                        Tools.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+                        TShock.Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
                         break;
                     case 5:
-                        Tools.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
+                        TShock.Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
                         break;
                 }
             }
@@ -908,7 +909,7 @@ namespace TShockAPI
             RconHandler.Password = file.RconPassword;
             RconHandler.ListenPort = file.RconPort;
 
-            Tools.HashAlgo = file.HashAlgorithm;
+            TShock.Utils.HashAlgo = file.HashAlgorithm;
         }
     }
 }
