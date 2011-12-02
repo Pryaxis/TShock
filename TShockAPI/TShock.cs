@@ -104,7 +104,6 @@ namespace TShockAPI
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
-        	Console.Title = "TerrariaShock" + VersionNum.ToString();
             if (!Directory.Exists(SavePath))
                 Directory.CreateDirectory(SavePath);
 
