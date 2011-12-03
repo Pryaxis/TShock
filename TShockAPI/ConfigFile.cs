@@ -30,9 +30,9 @@ namespace TShockAPI
         [Description("The equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health))")]
         public int InvasionMultiplier = 1;
         [Description("The default maximum mobs that will spawn per wave. Higher means more mobs in that wave.")]
-        public int DefaultMaximumSpawns = 4;
+        public int DefaultMaximumSpawns = 5;
         [Description("The delay between waves. Shorter values lead to less mobs.")]
-        public int DefaultSpawnRate = 700;
+        public int DefaultSpawnRate = 600;
         [Description("The port the server runs on.")]
         public int ServerPort = 7777;
         [Description("Enable or disable the whitelist based on IP addresses in whitelist.txt")]
