@@ -170,7 +170,7 @@ namespace TShockAPI
         public string HashAlgorithm = "sha512";
 
         [Description("Buffers up the packets and sends them out at the end of each frame")]
-        public bool BufferPackets = false;
+        public bool BufferPackets = true;
 
         [Description("Display the users group when they chat.")]
         public bool ChatDisplayGroup = false;
