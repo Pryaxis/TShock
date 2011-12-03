@@ -506,6 +506,20 @@ namespace TShockAPI
         private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
         {
             byte id = args.Data.ReadInt8();
+            byte direction = args.Data.ReadInt8();
+            short dmg = args.Data.ReadInt16();
+            bool pvp = args.Data.ReadInt8() == 0;
+            int textlength = (int)(args.Data.Length - args.Data.Position - 1);
+            string deathtext = "";
+            if (textlength > 0)
+            {
+                deathtext = Encoding.ASCII.GetString(args.Data.ReadBytes(textlength));
+                if (!TShock.Utils.ValidString(deathtext))
+                {
+                    TShock.Utils.HandleGriefer(args.Player, "Death text exploit.");
+                    return true;
+                }
+            }
             if (id != args.Player.Index)
             {
                 return TShock.Utils.HandleGriefer(args.Player, TShock.Config.KillMeAbuseReason);
