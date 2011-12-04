@@ -38,6 +38,8 @@ namespace TShockAPI.Net
         public bool HasLiquid { get { return Liquid > 0; } }
         public bool FrameImportant { get { return Main.tileFrameImportant[Type]; } }
 
+        public int SameTiles { get; set; }
+
         public NetTile()
         {
             Active = false;
@@ -125,7 +127,7 @@ namespace TShockAPI.Net
             if (flags.HasFlag(TileFlags.Wire))
                 Wire = true;
 
-            var samenum = stream.ReadInt16();
+            SameTiles = stream.ReadInt16();
         }
     }
 
