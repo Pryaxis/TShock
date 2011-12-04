@@ -32,6 +32,7 @@ namespace TShockAPI.Net
         public byte Wall { get; set; }
         public byte Liquid { get; set; }
         public bool Lava { get; set; }
+        public bool Wire { get; set; }
 
         public bool HasWall { get { return Wall > 0; } }
         public bool HasLiquid { get { return Liquid > 0; } }
@@ -46,6 +47,7 @@ namespace TShockAPI.Net
             Wall = 0;
             Liquid = 0;
             Lava = false;
+            Wire = false;
         }
 
         public NetTile(Stream stream)
@@ -67,6 +69,8 @@ namespace TShockAPI.Net
             if (HasLiquid)
                 flags |= TileFlags.Liquid;
 
+            if (Wire)
+                flags |= TileFlags.Wire;
 
             stream.WriteInt8((byte)flags);
 
@@ -88,6 +92,8 @@ namespace TShockAPI.Net
                 stream.WriteInt8(Liquid);
                 stream.WriteBoolean(Lava);
             }
+
+            stream.WriteInt16(1); // Screw trying to figure out how many tiles are the same
         }
 
         public void Unpack(Stream stream)
@@ -115,6 +121,11 @@ namespace TShockAPI.Net
                 Liquid = stream.ReadInt8();
                 Lava = stream.ReadBoolean();
             }
+
+            if (flags.HasFlag(TileFlags.Wire))
+                Wire = true;
+
+            var samenum = stream.ReadInt16();
         }
     }
 
@@ -126,5 +137,6 @@ namespace TShockAPI.Net
         Lighted = 2,
         Wall = 4,
         Liquid = 8,
+        Wire = 16
     }
 }
