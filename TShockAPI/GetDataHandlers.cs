@@ -52,6 +52,7 @@ namespace TShockAPI
 
         public static void InitGetDataHandler()
         {
+            // Need to update to 1.1 tiles
             #region Blacklisted tiles
 
             BlacklistTiles = new bool[Main.maxTileSets];
@@ -227,7 +228,8 @@ namespace TShockAPI
             {
                 for (int y = 0; y < size; y++)
                 {
-                    tiles[x, y] = new NetTile(args.Data);
+                    tiles[x, y] = new NetTile(args.Data); // Need to fix this. Tiles in SendTileSquare have a short at the end
+                                                          // that says how many tiles right are the same.
                 }
             }
 
@@ -499,6 +501,7 @@ namespace TShockAPI
                 if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
                 {
                     Main.projectile[ident].type = 0;
+                    Main.projectile[ident].owner = 255;
                     args.Player.SendData(PacketTypes.ProjectileNew, "", ident);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
                     args.Player.LastExplosive = DateTime.UtcNow;
