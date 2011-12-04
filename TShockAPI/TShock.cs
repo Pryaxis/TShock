@@ -253,6 +253,7 @@ namespace TShockAPI
                 NetHooks.SendData -= NetHooks_SendData;
                 NetHooks.GreetPlayer -= OnGreetPlayer;
                 NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+                ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
                     File.Delete(Path.Combine(SavePath, "tshock.pid"));
