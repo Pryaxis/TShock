@@ -221,13 +221,6 @@ namespace TShockAPI
                 for (int y = 0; y < size; y++)
                 {
                     tiles[x, y] = new NetTile(args.Data);
-                    if (tiles[x, y].SameTiles > 0)
-                    {
-                        var num = tiles[x, y].SameTiles;
-                        var tile = tiles[x, y];
-                        for (y++; y < y + num + 1; y++)
-                            tiles[x, y] = tile;
-                    }
                 }
             }
 

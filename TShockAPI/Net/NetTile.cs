@@ -38,8 +38,6 @@ namespace TShockAPI.Net
         public bool HasLiquid { get { return Liquid > 0; } }
         public bool FrameImportant { get { return Main.tileFrameImportant[Type]; } }
 
-        public int SameTiles { get; set; }
-
         public NetTile()
         {
             Active = false;
@@ -94,8 +92,6 @@ namespace TShockAPI.Net
                 stream.WriteInt8(Liquid);
                 stream.WriteBoolean(Lava);
             }
-
-            stream.WriteInt16(1); // Screw trying to figure out how many tiles are the same
         }
 
         public void Unpack(Stream stream)
@@ -126,8 +122,6 @@ namespace TShockAPI.Net
 
             if (flags.HasFlag(TileFlags.Wire))
                 Wire = true;
-
-            SameTiles = stream.ReadInt16();
         }
     }
 
