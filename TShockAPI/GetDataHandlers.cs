@@ -148,6 +148,13 @@ namespace TShockAPI
             short prefix = (short) args.Data.ReadInt8();
             int type = (int) args.Data.ReadInt16();
 
+            var it = new Item();
+            it.netDefaults(type);
+            var itemname = it.name;
+
+            if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
+                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");;
+
             return false;
         }
 
