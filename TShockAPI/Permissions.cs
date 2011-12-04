@@ -138,6 +138,9 @@ namespace TShockAPI
         [Description("")]
         public static readonly string grow;
 
+        [Description("User can change hardmode state.")]
+        public static readonly string hardmode;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())

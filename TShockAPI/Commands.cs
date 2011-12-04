@@ -189,6 +189,8 @@ namespace TShockAPI
             add(Permissions.buff, Buff, "buff");
             add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
             add(Permissions.grow, Grow, "grow");
+            add(Permissions.hardmode, StartHardMode, "hardmode");
+            add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1102,6 +1104,16 @@ namespace TShockAPI
                 else
                     args.Player.SendMessage("Invalid mob type!", Color.Red);
             }
+        }
+
+        private static void StartHardMode(CommandArgs args)
+        {
+            WorldGen.StartHardmode();
+        }
+
+        private static void DisableHardMode(CommandArgs args)
+        {
+            Main.hardMode = false;
         }
 
         #endregion Cause Events and Spawn Monsters Commands
