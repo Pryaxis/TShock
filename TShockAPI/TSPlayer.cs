@@ -196,7 +196,9 @@ namespace TShockAPI
                     WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
                     (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
                     (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
+                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+                    (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+                    (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None), 
                     WorldName = Main.worldName
                 };
                 msg.PackFull(ms);
@@ -214,6 +216,7 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
+            //Should we properly send sections so that clients don't get tiles twice?
             if (!SendTileSquare(tilex, tiley))
             {
                 InitSpawn = true;

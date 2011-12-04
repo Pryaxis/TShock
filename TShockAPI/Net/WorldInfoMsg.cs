@@ -32,6 +32,8 @@ namespace TShockAPI.Net
         DownedBoss1 = 2,
         DownedBoss2 = 4,
         DownedBoss3 = 8,
+        HardMode = 16,
+        DownedClown = 32
     }
     public class WorldInfoMsg : BaseMsg
     {
