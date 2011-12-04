@@ -693,6 +693,8 @@ namespace TShockAPI
                 player.Teleport((int)pos.X, (int)pos.Y);
                 player.SendTileSquare((int)pos.X, (int)pos.Y);
             }
+            if (Config.DisplayIPToAdmins)
+                Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
             e.Handled = true;
         }
 

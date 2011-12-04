@@ -202,6 +202,9 @@ namespace TShockAPI
         [Description("Disable tombstones for all players.")]
         public bool DisableTombstones = true;
 
+        [Description("Displays a player's IP on join to everyone who has the log permission")]
+        public bool DisplayIPToAdmins = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
