@@ -131,6 +131,7 @@ namespace TShockAPI
             add(Permissions.spawnboss, Eye, "eye");
             add(Permissions.spawnboss, King, "king");
             add(Permissions.spawnboss, Skeletron, "skeletron");
+            add(Permissions.spawnboss, WoF, "wof", "wallofflesh");
             add(Permissions.spawnboss, Hardcore, "hardcore");
             add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
             add(Permissions.tp, Home, "home");
@@ -1037,7 +1038,18 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
         }
 
-        private static void Hardcore(CommandArgs args)
+        private static void WoF(CommandArgs args)
+        {
+            if (Main.wof >= 0 || (args.Player.Y / 16f < (float)(Main.maxTilesY - 205)))
+            {
+                args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
+                return;
+            }
+            NPC.SpawnWOF(new Microsoft.Xna.Framework.Vector2(args.Player.X, args.Player.Y));
+            TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
+        }
+
+        private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
         {
             if (args.Parameters.Count > 1)
             {
@@ -1102,7 +1114,7 @@ namespace TShockAPI
                     TShock.Utils.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
                 }
                 else if (npc.type == 113)
-                    args.Player.SendMessage("Sorry, you can't spawn Wall of Flesh!"); // Maybe perhaps do something with WorldGen.SpawnWoF?
+                    args.Player.SendMessage("Sorry, you can't spawn Wall of Flesh! Try /wof instead."); // Maybe perhaps do something with WorldGen.SpawnWoF?
                 else
                     args.Player.SendMessage("Invalid mob type!", Color.Red);
             }
