@@ -199,6 +199,9 @@ namespace TShockAPI
         [Description("This is the port which the rest api will listen on.")]
         public int RestApiPort = 7878;
 
+        [Description("Disable tombstones for all players.")]
+        public bool DisableTombstones = true;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

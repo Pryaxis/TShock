@@ -195,6 +195,7 @@ namespace TShockAPI
                 NetHooks.SendData += NetHooks_SendData;
                 NetHooks.GreetPlayer += OnGreetPlayer;
                 NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+                ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 
                 GetDataHandlers.InitGetDataHandler();
                 Commands.InitCommands();
@@ -705,6 +706,13 @@ namespace TShockAPI
                     Main.invasionSize = 20000000;
                 }
             }
+        }
+
+        void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
+        {
+            if (e.Info == 43)
+                if (Config.DisableTombstones)
+                    e.Object.SetDefaults(0);
         }
 
         /// <summary>
