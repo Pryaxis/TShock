@@ -1096,11 +1096,13 @@ namespace TShockAPI
             else
             {
                 var npc = npcs[0];
-                if (npc.type >= 1 && npc.type < Main.maxNPCTypes)
+                if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113) //Do not allow WoF to spawn, in certain conditions may cause loops in client
                 {
                     TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
                     TShock.Utils.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
                 }
+                else if (npc.type == 113)
+                    args.Player.SendMessage("Sorry, you can't spawn Wall of Flesh!"); // Maybe perhaps do something with WorldGen.SpawnWoF?
                 else
                     args.Player.SendMessage("Invalid mob type!", Color.Red);
             }
