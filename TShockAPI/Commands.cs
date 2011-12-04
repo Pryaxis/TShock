@@ -2347,7 +2347,7 @@ namespace TShockAPI
             int killcount = 0;
             for (int i = 0; i < Main.npc.Length; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
+                if (Main.npc[i].active && Main.npc[i].type != 0 && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
                 {
                     TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
                     killcount++;
