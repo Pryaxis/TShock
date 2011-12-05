@@ -245,7 +245,7 @@ namespace TShockAPI
 								   "TShock (" + VersionNum + ")");
 				try
 				{
-					string response = client.DownloadString("http://tshock.co/tickto.php?fp=" + fp + "&ver=" + VersionNum + "&port=" + Netplay.serverPort);
+					string response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + VersionNum + "&port=" + Netplay.serverPort);
 					Console.WriteLine("Registered with stat tracker: " + response);
 				}
 				catch (Exception e)
