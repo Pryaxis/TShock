@@ -36,6 +36,7 @@ using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
 using Hooks;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Rests;
 using Terraria;
 using TShockAPI.DB;
@@ -114,7 +115,6 @@ namespace TShockAPI
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
 
             try
             {
@@ -218,7 +218,44 @@ namespace TShockAPI
             }
         }
 
-        RestObject RestApi_Verify(string username, string password)
+    	private void callHome()
+    	{
+    		string fp;
+    		if (!File.Exists(Path.Combine(SavePath, "fingerprint")))
+    		{
+    			fp = "";
+    			int random = Utils.Random.Next(500000, 1000000);
+    			fp += random;
+
+    			fp = Utils.HashPassword(Netplay.serverIP + fp + Netplay.serverPort + Netplay.serverListenIP);
+    			TextWriter tw = new StreamWriter(Path.Combine(SavePath, "fingerprint"));
+    			tw.Write(fp);
+    			tw.Close();
+    		} else
+    		{
+    			fp = "";
+    			TextReader tr = new StreamReader(Path.Combine(SavePath, "fingerprint"));
+    			fp = tr.ReadToEnd();
+    			tr.Close();
+    		}
+
+			using (var client = new WebClient())
+			{
+				client.Headers.Add("user-agent",
+								   "TShock (" + VersionNum + ")");
+				try
+				{
+					string response = client.DownloadString("http://tshock.co/tickto.php?fp=" + fp + "&ver=" + VersionNum + "&port=" + Netplay.serverPort);
+					Console.WriteLine("Registered with stat tracker: " + response);
+				}
+				catch (Exception e)
+				{
+					Log.Error(e.ToString());
+				}
+			}
+    	}
+
+    	RestObject RestApi_Verify(string username, string password)
         {
             var userAccount = TShock.Users.GetUserByName(username);
             if (userAccount == null)
@@ -390,6 +427,9 @@ namespace TShockAPI
             Regions.ReloadAllRegions();
             if (Config.RestApiEnabled)
                 RestApi.Start();
+        	Console.ForegroundColor = ConsoleColor.Cyan;
+			callHome();
+        	Console.ForegroundColor = ConsoleColor.Gray;
         }
 
 
