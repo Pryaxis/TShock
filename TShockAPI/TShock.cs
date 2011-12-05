@@ -29,17 +29,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Linq;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
+using Hooks;
 using MySql.Data.MySqlClient;
+using Rests;
 using Terraria;
-using TerrariaAPI;
-using TerrariaAPI.Hooks;
 using TShockAPI.DB;
 using TShockAPI.Net;
 
@@ -49,7 +47,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
         public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "And believe me, we are still alive.";
+        public static readonly string VersionCodename = "Try the new slim model.";
 
         public static string SavePath = "tshock";
 
@@ -67,6 +65,8 @@ namespace TShockAPI
         public static bool OverridePort;
         public static PacketBufferer PacketBuffer;
         public static MaxMind.GeoIPCountry Geo;
+        public static SecureRest RestApi;
+        public static RestManager RestManager;
 
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -142,7 +142,7 @@ namespace TShockAPI
                         var hostport = Config.MySqlHost.Split(':');
                         DB = new MySqlConnection();
                         DB.ConnectionString =
-                            String.Format("Server='{0}'; Port='{1}'; Database='{2}'; Uid='{3}'; Pwd='{4}';",
+                            String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
                                           hostport[0],
                                           hostport.Length > 1 ? hostport[1] : "3306",
                                           Config.MySqlDbName,
@@ -172,8 +172,15 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                if (Config.EnableGeoIP)
-                    Geo = new MaxMind.GeoIPCountry(Path.Combine(SavePath, "GeoIP.dat"));
+                RestApi = new SecureRest(Netplay.serverListenIP, 8080);
+                RestApi.Verify += RestApi_Verify;
+                RestApi.Port = Config.RestApiPort;
+                RestManager = new RestManager(RestApi);
+                RestManager.RegisterRestfulCommands();
+
+                var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+                if (Config.EnableGeoIP && File.Exists(geoippath))
+                    Geo = new MaxMind.GeoIPCountry(geoippath);
 
                 Log.ConsoleInfo(string.Format("TShock Version {0} ({1}) now running.", Version, VersionCodename));
 
@@ -209,23 +216,50 @@ namespace TShockAPI
             }
         }
 
-        public override void DeInitialize()
+        RestObject RestApi_Verify(string username, string password)
         {
-            GameHooks.PostInitialize -= OnPostInit;
-            GameHooks.Update -= OnUpdate;
-            ServerHooks.Join -= OnJoin;
-            ServerHooks.Leave -= OnLeave;
-            ServerHooks.Chat -= OnChat;
-            ServerHooks.Command -= ServerHooks_OnCommand;
-            NetHooks.GetData -= OnGetData;
-            NetHooks.SendData -= NetHooks_SendData;
-            NetHooks.GreetPlayer -= OnGreetPlayer;
-            NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-            if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+            var userAccount = TShock.Users.GetUserByName(username);
+            if (userAccount == null)
             {
-                Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
-                File.Delete(Path.Combine(SavePath, "tshock.pid"));
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
             }
+
+            if (Tools.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
+            {
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+            }
+
+            if (!Tools.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+            {
+                return new RestObject("403") { Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" };
+            }
+
+            return new RestObject("200") { Response = "Successful login" }; //Maybe return some user info too?
+        }
+
+        protected override void  Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                GameHooks.PostInitialize -= OnPostInit;
+                GameHooks.Update -= OnUpdate;
+                ServerHooks.Join -= OnJoin;
+                ServerHooks.Leave -= OnLeave;
+                ServerHooks.Chat -= OnChat;
+                ServerHooks.Command -= ServerHooks_OnCommand;
+                NetHooks.GetData -= OnGetData;
+                NetHooks.SendData -= NetHooks_SendData;
+                NetHooks.GreetPlayer -= OnGreetPlayer;
+                NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+                if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+                {
+                    Console.WriteLine("Thanks for using TShock! Process ID file is now being destroyed.");
+                    File.Delete(Path.Combine(SavePath, "tshock.pid"));
+                }
+                RestApi.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -352,6 +386,8 @@ namespace TShockAPI
                 AuthToken = 0;
             }
             Regions.ReloadAllRegions();
+            if (Config.RestApiEnabled)
+                RestApi.Start();
         }
 
 
@@ -624,7 +660,7 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
             NetMessage.syncPlayers();
 
-            if (Config.EnableGeoIP)
+            if (Config.EnableGeoIP && Geo != null)
             {
                 var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
                 player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
@@ -813,11 +849,11 @@ namespace TShockAPI
 
         public static bool CheckSpawn(int x, int y)
         {
-            PointF tile = new PointF(x, y);
-            PointF spawn = new PointF(Main.spawnTileX, Main.spawnTileY);
+            Vector2 tile = new Vector2(x, y);
+            Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
             return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
         }
-        public static float Distance(PointF value1, PointF value2)
+        public static float Distance(Vector2 value1, Vector2 value2)
         {
             float num2 = value1.X - value2.X;
             float num = value1.Y - value2.Y;

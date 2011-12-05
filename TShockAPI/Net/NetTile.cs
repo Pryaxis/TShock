@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
 using Terraria;
-using XNAHelpers;
+using System.IO.Streams;
 
 namespace TShockAPI.Net
 {

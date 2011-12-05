@@ -73,6 +73,14 @@ namespace TShockAPI
         {
             permissions.Add(permission);
         }
+        public void SetPermission( List<string> permission)
+        {
+            permissions.Clear();
+            foreach( string s in permission )
+            {
+                permissions.Add( s );
+            }
+        }
     }
 
     public class SuperAdminGroup : Group

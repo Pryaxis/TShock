@@ -36,6 +36,7 @@ namespace TShockDBEditor
             CommandList.Add("kill");
             CommandList.Add("butcher");
             CommandList.Add("item");
+            CommandList.Add("clearitems");
             CommandList.Add("heal");
             CommandList.Add("whisper");
             CommandList.Add("annoy");

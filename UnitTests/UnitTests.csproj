@@ -67,10 +67,10 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="TerrariaServerAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TerrariaServer, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\TerrariaServerBins\TerrariaServer.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

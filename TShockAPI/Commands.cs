@@ -1,4 +1,4 @@
-/*   
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
+
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -36,7 +36,7 @@ namespace TShockAPI
         public string Message { get; private set; }
         public TSPlayer Player { get; private set; }
         /// <summary>
-        /// Parameters passed to the arguement. Does not include the command name. 
+        /// Parameters passed to the arguement. Does not include the command name.
         /// IE '/kick "jerk face"' will only have 1 argument
         /// </summary>
         public List<string> Parameters { get; private set; }
@@ -137,6 +137,7 @@ namespace TShockAPI
             add(Permissions.tp, Spawn, "spawn");
             add(Permissions.tp, TP, "tp");
             add(Permissions.tphere, TPHere, "tphere");
+            add(Permissions.tphere, SendWarp, "sendwarp", "sw");
             add(Permissions.warp, UseWarp, "warp");
             add(Permissions.managewarp, SetWarp, "setwarp");
             add(Permissions.managewarp, DeleteWarp, "delwarp");
@@ -151,6 +152,7 @@ namespace TShockAPI
             add(Permissions.cfg, ShowConfiguration, "showconfig");
             add(Permissions.cfg, ServerPassword, "serverpassword");
             add(Permissions.cfg, Save, "save");
+            add(Permissions.cfg, Settle, "settle");
             add(Permissions.cfg, MaxSpawns, "maxspawns");
             add(Permissions.cfg, SpawnRate, "spawnrate");
             add(Permissions.time, Time, "time");
@@ -164,6 +166,7 @@ namespace TShockAPI
             add(null, AuthToken, "auth");
             add(null, ThirdPerson, "me");
             add(null, PartyChat, "p");
+            add(null, Motd, "motd");
             add(null, Rules, "rules");
             add(Permissions.logs, DisplayLogs, "displaylogs");
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
@@ -181,6 +184,7 @@ namespace TShockAPI
             add(Permissions.butcher, Butcher, "butcher");
             add(Permissions.item, Item, "item", "i");
             add(Permissions.item, Give, "give");
+            add(Permissions.clearitems, ClearItems, "clearitems");
             add(Permissions.heal, Heal, "heal");
             add(Permissions.buff, Buff, "buff");
             add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
@@ -350,7 +354,6 @@ namespace TShockAPI
 
         private static void PasswordUser(CommandArgs args)
         {
-
             try
             {
                 if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
@@ -429,6 +432,13 @@ namespace TShockAPI
             //    args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
             //    return;
             //}
+
+            // This guy needs to be here so that people don't get exceptions when they type /user
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid user syntax. Try /user help.", Color.Red);
+                return;
+            }
 
             string subcmd = args.Parameters[0];
 
@@ -899,7 +909,6 @@ namespace TShockAPI
             Tools.ForceKickAll("Server shutting down for update!");
             WorldGen.saveWorld();
             Netplay.disconnect = true;
-
         }
 
         #endregion Server Maintenence Commands
@@ -918,7 +927,7 @@ namespace TShockAPI
             int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
             penis57 *= 0x10;
             int penis58 = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-            PointF vector = new PointF(penis57, penis58);
+            Vector2 vector = new Vector2(penis57, penis58);
             float speedX = Main.rand.Next(-100, 0x65);
             float speedY = Main.rand.Next(200) + 100;
             float penis61 = (float)Math.Sqrt(((speedX * speedX) + (speedY * speedY)));
@@ -1202,6 +1211,42 @@ namespace TShockAPI
             }
         }
 
+        private static void SendWarp(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /sendwarp [player] [warpname]", Color.Red);
+                return;
+            }
+
+            var foundplr = Tools.FindPlayer(args.Parameters[0]);
+            if (foundplr.Count == 0)
+            {
+                args.Player.SendMessage("Invalid player!", Color.Red);
+                return;
+            }
+            else if (foundplr.Count > 1)
+            {
+                args.Player.SendMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count), Color.Red);
+                return;
+            }
+            string warpName = String.Join(" ", args.Parameters[1]);
+            var warp = TShock.Warps.FindWarp(warpName);
+            var plr = foundplr[0];
+            if (warp.WarpPos != Vector2.Zero)
+            {
+                if (plr.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                {
+                    plr.SendMessage(string.Format("{0} Warped you to {1}", args.Player.Name, warpName), Color.Yellow);
+                    args.Player.SendMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName), Color.Yellow);
+                }
+            }
+            else
+            {
+                args.Player.SendMessage("Specified warp not found", Color.Red);
+            }
+        }
+
         private static void SetWarp(CommandArgs args)
         {
             if (args.Parameters.Count > 0)
@@ -1327,7 +1372,7 @@ namespace TShockAPI
             {
                 string warpName = String.Join(" ", args.Parameters);
                 var warp = TShock.Warps.FindWarp(warpName);
-                if (warp.WarpPos != PointF.Empty)
+                if (warp.WarpPos != Vector2.Zero)
                 {
                     if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
                         args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
@@ -1337,7 +1382,6 @@ namespace TShockAPI
                     args.Player.SendMessage("Specified warp not found", Color.Red);
                 }
             }
-
         }
 
         #endregion Teleport Commands
@@ -1538,9 +1582,21 @@ namespace TShockAPI
             SaveWorld.Start();
         }
 
-        private static void MaxSpawns(CommandArgs args)
+        private static void Settle(CommandArgs args)
         {
 
+            if (Liquid.panicMode)
+            {
+                args.Player.SendMessage("Liquid is already settling!", Color.Red);
+                return;
+            }
+            Liquid.StartPanic();
+            Tools.Broadcast("Settling all liquids...");
+
+        }
+
+        private static void MaxSpawns(CommandArgs args)
+        {
             if (args.Parameters.Count != 1)
             {
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>", Color.Red);
@@ -1688,7 +1744,6 @@ namespace TShockAPI
             }
             switch (cmd)
             {
-
                 case "name":
                     {
                         {
@@ -1697,7 +1752,6 @@ namespace TShockAPI
                         }
                         break;
                     }
-
                 case "set":
                     {
                         int choice = 0;
@@ -1718,7 +1772,7 @@ namespace TShockAPI
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            if (!args.Player.TempPoints.Any(p => p == PointF.Empty))
+                            if (!args.Player.TempPoints.Any(p => p == Point.Zero))
                             {
                                 string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
                                 var x = Math.Min(args.Player.TempPoints[0].X, args.Player.TempPoints[1].X);
@@ -1728,8 +1782,8 @@ namespace TShockAPI
 
                                 if (TShock.Regions.AddRegion(x, y, width, height, regionName, Main.worldID.ToString()))
                                 {
-                                    args.Player.TempPoints[0] = Point.Empty;
-                                    args.Player.TempPoints[1] = Point.Empty;
+                                    args.Player.TempPoints[0] = Point.Zero;
+                                    args.Player.TempPoints[1] = Point.Zero;
                                     args.Player.SendMessage("Set region " + regionName, Color.Yellow);
                                 }
                                 else
@@ -1788,8 +1842,8 @@ namespace TShockAPI
                     }
                 case "clear":
                     {
-                        args.Player.TempPoints[0] = Point.Empty;
-                        args.Player.TempPoints[1] = Point.Empty;
+                        args.Player.TempPoints[0] = Point.Zero;
+                        args.Player.TempPoints[1] = Point.Zero;
                         args.Player.SendMessage("Cleared temp area", Color.Yellow);
                         args.Player.AwaitingTempPoint = 0;
                         break;
@@ -1952,6 +2006,62 @@ namespace TShockAPI
 
                         break;
                     }
+                case "resize":
+                case "expand":
+                    {
+                        if (args.Parameters.Count == 4)
+                        {
+                            int direction;
+                            switch (args.Parameters[3])
+                            {
+                                case "u":
+                                case "up":
+                                    {
+                                        direction = 0;
+                                        break;
+                                    }
+                                case "r":
+                                case "right":
+                                    {
+                                        direction = 1;
+                                        break;
+                                    }
+                                case "d":
+                                case "down":
+                                    {
+                                        direction = 2;
+                                        break;
+                                    }
+                                case "l":
+                                case "left":
+                                    {
+                                        direction = 3;
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        direction = -1;
+                                        break;
+                                    }
+                            }
+                            int addAmount;
+                            int.TryParse(args.Parameters[2], out addAmount);
+                            if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
+                            {
+                                args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
+                                TShock.Regions.ReloadAllRegions();
+                            }
+                            else
+                            {
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]", Color.Red);
+                            }
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]1", Color.Red);
+                        }
+                        break;
+                    }
                 case "help":
                 default:
                     {
@@ -1960,10 +2070,10 @@ namespace TShockAPI
                         args.Player.SendMessage("/region name (provides region name)", Color.Yellow);
                         args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
                         args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
+                        args.Player.SendMessage("/region resize [regionname] [u/d/l/r] [amount]", Color.Yellow);
                         break;
                     }
             }
-
         }
 
         #endregion World Protection Commands
@@ -2117,6 +2227,11 @@ namespace TShockAPI
                 args.Player.SendMessage("You are not in a party!", 255, 240, 20);
             }
         }
+        
+        private static void Motd(CommandArgs args)
+        {
+            Tools.ShowFileToUser(args.Player, "motd.txt");
+        }
 
         private static void Rules(CommandArgs args)
         {
@@ -2185,6 +2300,7 @@ namespace TShockAPI
                 (new Thread(ply.Whoopie)).Start(annoy);
             }
         }
+
         #endregion General Commands
 
         #region Cheat Commands
@@ -2357,6 +2473,50 @@ namespace TShockAPI
                     args.Player.SendMessage("Invalid item type!", Color.Red);
                 }
             }
+        }
+
+        public static void ClearItems(CommandArgs args)
+        {
+
+            int radius = 50;
+            if (args.Parameters.Count > 0)
+            {
+
+                if (args.Parameters[0].ToLower() == "all")
+                {
+
+                    radius = Int32.MaxValue / 16;
+
+                }
+                else
+                {
+
+                    try
+                    {
+
+                        radius = Convert.ToInt32(args.Parameters[0]);
+
+                    }
+                    catch (Exception) { args.Player.SendMessage("Please either enter the keyword \"all\", or the block radius you wish to delete all items from.", Color.Red); return; }
+
+                }
+
+            }
+            int count = 0;
+            for (int i = 0; i < 200; i++)
+            {
+
+                if ((Math.Sqrt(Math.Pow(Main.item[i].position.X - args.Player.X, 2) + Math.Pow(Main.item[i].position.Y - args.Player.Y, 2)) < radius * 16) && (Main.item[i].active))
+                {
+
+                    Main.item[i].active = false;
+                    NetMessage.SendData(0x15, -1, -1, "", i, 0f, 0f, 0f, 0);
+                    count++;
+                }
+
+            }
+            args.Player.SendMessage("All " + count.ToString() + " items within a radius of " + radius.ToString() + " have been deleted.");
+
         }
 
         private static void Heal(CommandArgs args)
@@ -2563,8 +2723,10 @@ namespace TShockAPI
                     args.Player.SendMessage("Unknown plant!", Color.Red);
                     return;
             }
-            args.Player.SendMessage("You have grown a " + name, Color.Green);
+            args.Player.SendTileSquare(x, y);
+            args.Player.SendMessage("Tried to grow a " + name, Color.Green);
         }
+
         #endregion Cheat Comamnds
     }
 }

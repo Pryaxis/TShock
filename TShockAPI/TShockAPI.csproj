@@ -32,7 +32,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\serverplugins\</OutputPath>
+    <OutputPath>..\..\..\Downloads\TShock 3.3.4.924\ServerPlugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,6 +52,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SqlBins\Community.CsharpSqlite.SQLiteClient.dll</HintPath>
     </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>..\HttpBins\HttpServer.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SqlBins\MySql.Data.dll</HintPath>
@@ -67,7 +70,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,10 +80,6 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\TerrariaServerBins\TerrariaServer.exe</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="TerrariaServerAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TerrariaServerBins\TerrariaServerAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +119,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Rest\Rest.cs" />
+    <Compile Include="Rest\RestCommand.cs" />
+    <Compile Include="Rest\RestManager.cs" />
+    <Compile Include="Rest\RestObject.cs" />
+    <Compile Include="Rest\RestVerbs.cs" />
+    <Compile Include="Rest\SecureRest.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="TShock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -177,7 +181,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

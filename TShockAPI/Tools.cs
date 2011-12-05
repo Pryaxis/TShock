@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,7 +25,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
-using TerrariaAPI;
+
 
 namespace TShockAPI
 {
@@ -127,7 +127,6 @@ namespace TShockAPI
             TSPlayer.All.SendMessage(msg, red, green, blue);
             TSPlayer.Server.SendMessage(msg, red, green, blue);
             Log.Info(string.Format("Broadcast: {0}", msg));
-
         }
 
         public static void Broadcast(string msg, Color color)
@@ -429,7 +428,7 @@ namespace TShockAPI
 
         private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)
         {
-            if (!player.Group.HasPermission(overridePermission))
+            if (!player.Group.HasPermission(overridePermission) || !(player.Group.Name == "superadmin"))
             {
                 if (ban)
                 {
@@ -535,22 +534,32 @@ namespace TShockAPI
         /// <summary>
         /// Returns a Sha256 string for a given string
         /// </summary>
-        /// <param name="password">string password</param>
+        /// <param name="bytes">bytes to hash</param>
         /// <returns>string sha256</returns>
-        public static string HashPassword(string password)
+        public static string HashPassword(byte[] bytes)
         {
-            if (string.IsNullOrEmpty(password) || password == "non-existant password")
-                return "non-existant password";
-
+            if (bytes == null)
+                throw new NullReferenceException("bytes");
             Func<HashAlgorithm> func;
             if (!HashTypes.TryGetValue(HashAlgo.ToLower(), out func))
                 throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(HashAlgo.ToLower()));
 
             using (var hash = func())
             {
-                var bytes = hash.ComputeHash(Encoding.ASCII.GetBytes(password));
-                return bytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+                var ret = hash.ComputeHash(bytes);
+                return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
             }
+        }
+        /// <summary>
+        /// Returns a Sha256 string for a given string
+        /// </summary>
+        /// <param name="bytes">bytes to hash</param>
+        /// <returns>string sha256</returns>
+        public static string HashPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password) || password == "non-existant password")
+                return "non-existant password";
+            return HashPassword(Encoding.UTF8.GetBytes(password));
         }
 
         /// <summary>
