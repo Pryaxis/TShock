@@ -251,8 +251,9 @@ namespace TShockAPI
                 	var newtile = tiles[x, y];
                 	if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 || newtile.Type == 105))
                 	{
-						Console.WriteLine("Ponies? \n");
+						Console.WriteLine("SendTileSquareCalled on a 128 or 105.");
                 		changed = true;
+						
                 	}
 
             		if (tile.type == 0x17 && newtile.Type == 0x2)
