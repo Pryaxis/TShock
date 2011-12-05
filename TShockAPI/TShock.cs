@@ -221,20 +221,25 @@ namespace TShockAPI
     	private void callHome()
     	{
     		string fp;
-    		if (!File.Exists(Path.Combine(SavePath, "fingerprint")))
+    		string lolpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.tshock/";
+			if (!Directory.Exists(lolpath))
+			{
+				Directory.CreateDirectory(lolpath);
+			}
+    		if (!File.Exists(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint")))
     		{
     			fp = "";
     			int random = Utils.Random.Next(500000, 1000000);
     			fp += random;
 
     			fp = Utils.HashPassword(Netplay.serverIP + fp + Netplay.serverPort + Netplay.serverListenIP);
-    			TextWriter tw = new StreamWriter(Path.Combine(SavePath, "fingerprint"));
+    			TextWriter tw = new StreamWriter(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint"));
     			tw.Write(fp);
     			tw.Close();
     		} else
     		{
     			fp = "";
-    			TextReader tr = new StreamReader(Path.Combine(SavePath, "fingerprint"));
+				TextReader tr = new StreamReader(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint"));
     			fp = tr.ReadToEnd();
     			tr.Close();
     		}
