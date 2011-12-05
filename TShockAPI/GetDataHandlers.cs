@@ -215,6 +215,7 @@ namespace TShockAPI
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
         {
+        	
             short size = args.Data.ReadInt16();
             int tilex = args.Data.ReadInt32();
             int tiley = args.Data.ReadInt32();
@@ -242,14 +243,19 @@ namespace TShockAPI
 
                 for (int y = 0; y < size; y++)
                 {
-                    int realy = tiley + y;
-                    if (realy < 0 || realy >= Main.maxTilesY)
-                        continue;
+                	int realy = tiley + y;
+                	if (realy < 0 || realy >= Main.maxTilesY)
+                		continue;
 
-                    var tile = Main.tile[realx, realy];
-                    var newtile = tiles[x, y];
+                	var tile = Main.tile[realx, realy];
+                	var newtile = tiles[x, y];
+                	if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 || newtile.Type == 105))
+                	{
+						Console.WriteLine("Ponies? \n");
+                		changed = true;
+                	}
 
-                    if (tile.type == 0x17 && newtile.Type == 0x2)
+            		if (tile.type == 0x17 && newtile.Type == 0x2)
                     {
                         tile.type = 0x2;
                         changed = true;
@@ -269,10 +275,12 @@ namespace TShockAPI
                 }
             }
 
-            if (changed)
-                TSPlayer.All.SendTileSquare(tilex, tiley, 3);
-
-            return true;
+			if (changed)
+			{
+				TSPlayer.All.SendTileSquare(tilex, tiley, 3);
+				WorldGen.RangeFrame(tilex, tiley, tilex + size, tiley + size);
+			}
+        	return true;
         }
 
         private static bool HandleTile(GetDataHandlerArgs args)
@@ -281,7 +289,6 @@ namespace TShockAPI
             int x = args.Data.ReadInt32();
             int y = args.Data.ReadInt32();
             byte tiletype = args.Data.ReadInt8();
-
             if (args.Player.AwaitingName)
             {
                 if (TShock.Regions.InAreaRegionName(x, y) == null)
@@ -317,6 +324,7 @@ namespace TShockAPI
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
+			
             if (type == 1 || type == 3)
             {
                 int plyX = Math.Abs(args.Player.TileX);
