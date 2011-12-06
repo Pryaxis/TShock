@@ -384,6 +384,12 @@ namespace TShockAPI
             Console.WriteLine(msg);
             RconHandler.Response += msg + "\n";
         }
+        
+        public void SetFullMoon(bool fullmoon)
+        {
+            Main.moonPhase = 0;
+            SetTime(false, 0);
+        }
 
         public void SetBloodMoon(bool bloodMoon)
         {
