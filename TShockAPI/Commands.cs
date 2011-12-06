@@ -602,8 +602,10 @@ namespace TShockAPI
 		{
 			args.Player.SendMessage("Memory usage: " + System.Diagnostics.Process.GetCurrentProcess().WorkingSet64);
 			args.Player.SendMessage("Allocated memory: " + System.Diagnostics.Process.GetCurrentProcess().VirtualMemorySize64);
-			args.Player.SendMessage("Threads: " + System.Diagnostics.Process.GetCurrentProcess().Threads.ToString());
 			args.Player.SendMessage("Total processor time: " + System.Diagnostics.Process.GetCurrentProcess().TotalProcessorTime);
+			args.Player.SendMessage("Ver: " + System.Environment.OSVersion);
+			args.Player.SendMessage("Proc count: " + System.Environment.ProcessorCount);
+			args.Player.SendMessage("Machine name: " + System.Environment.MachineName);
 		}
 		#endregion
 
