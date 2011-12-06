@@ -192,6 +192,7 @@ namespace TShockAPI
             add(Permissions.grow, Grow, "grow");
             add(Permissions.hardmode, StartHardMode, "hardmode");
             add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
+        	add(Permissions.cfg, ServerInfo, "stats");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -592,10 +593,19 @@ namespace TShockAPI
         }
         #endregion
 
+		#region Stupid commands
+		public static void ServerInfo(CommandArgs args)
+		{
+			args.Player.SendMessage("Memory usage: " + System.Diagnostics.Process.GetCurrentProcess().WorkingSet64);
+			args.Player.SendMessage("Allocated memory: " + System.Diagnostics.Process.GetCurrentProcess().VirtualMemorySize64);
+			args.Player.SendMessage("Threads: " + System.Diagnostics.Process.GetCurrentProcess().Threads.ToString());
+			args.Player.SendMessage("Total processor time: " + System.Diagnostics.Process.GetCurrentProcess().TotalProcessorTime);
+		}
+		#endregion
 
-        #region Player Management Commands
+		#region Player Management Commands
 
-        private static void GrabUserUserInfo(CommandArgs args)
+		private static void GrabUserUserInfo(CommandArgs args)
         {
             if (args.Parameters.Count < 1)
             {

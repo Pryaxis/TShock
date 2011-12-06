@@ -251,7 +251,9 @@ namespace TShockAPI
 				try
 				{
 					string response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + VersionNum + "&port=" + Netplay.serverPort);
-					Console.WriteLine("Registered with stat tracker: " + response);
+					Console.ForegroundColor = ConsoleColor.Cyan;
+					Console.WriteLine("\nRegistered with stat tracker: " + response + "\n");
+					Console.ForegroundColor = ConsoleColor.Gray;
 				}
 				catch (Exception e)
 				{
@@ -432,9 +434,10 @@ namespace TShockAPI
             Regions.ReloadAllRegions();
             if (Config.RestApiEnabled)
                 RestApi.Start();
-        	Console.ForegroundColor = ConsoleColor.Cyan;
-			callHome();
-        	Console.ForegroundColor = ConsoleColor.Gray;
+        	
+			Thread t = new Thread(callHome);
+			t.Start();
+
         }
 
 
