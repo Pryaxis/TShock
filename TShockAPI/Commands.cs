@@ -125,6 +125,7 @@ namespace TShockAPI
             add(Permissions.maintenance, CheckUpdates, "checkupdates");
             add(Permissions.causeevents, DropMeteor, "dropmeteor");
             add(Permissions.causeevents, Star, "star");
+            add(Permissions.causeevents, Fullmoon, "fullmoon");
             add(Permissions.causeevents, Bloodmoon, "bloodmoon");
             add(Permissions.causeevents, Invade, "invade");
             add(Permissions.spawnboss, Eater, "eater");
@@ -132,6 +133,9 @@ namespace TShockAPI
             add(Permissions.spawnboss, King, "king");
             add(Permissions.spawnboss, Skeletron, "skeletron");
             add(Permissions.spawnboss, WoF, "wof", "wallofflesh");
+            add(Permissions.spawnboss, Twins, "twins");
+            add(Permissions.spawnboss, Destroyer, "destroyer");
+            add(Permissions.spawnboss, SkeletronPrime, "skeletronp", "prime");
             add(Permissions.spawnboss, Hardcore, "hardcore");
             add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
             add(Permissions.tp, Home, "home");
@@ -949,6 +953,12 @@ namespace TShockAPI
             speedY *= penis61;
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
         }
+        
+        private static void Fullmoon(CommandArgs args)
+        {
+            TSPlayer.Server.SetFullMoon(true);
+            TShock.Utils.Broadcast(string.Format("{0} turned on full moon.", args.Player.Name));
+        }
 
         private static void Bloodmoon(CommandArgs args)
         {
@@ -1058,6 +1068,68 @@ namespace TShockAPI
             NPC.SpawnWOF(new Microsoft.Xna.Framework.Vector2(args.Player.X, args.Player.Y));
             TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
         }
+        
+        private static void Twins(CommandArgs args)
+        {
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /twins [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /twins [amount]", Color.Red);
+                return;
+            }
+            amount = Math.Min(amount, Main.maxNPCs);
+            NPC retinazer = TShock.Utils.GetNPCById(125);
+            NPC spaz = TShock.Utils.GetNPCById(126);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, amount, args.Player.TileX, args.Player.TileY);
+            TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, amount));
+        }
+
+        private static void Destroyer(CommandArgs args)
+        {
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /destroyer [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /destroyer [amount]", Color.Red);
+                return;
+            }
+            amount = Math.Min(amount, Main.maxNPCs);
+            NPC destroyer = TShock.Utils.GetNPCById(134);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, amount, args.Player.TileX, args.Player.TileY);
+            TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, amount));
+        }
+
+        private static void SkeletronPrime(CommandArgs args)
+        {
+            if (args.Parameters.Count > 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /prime [amount]", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /prime [amount]", Color.Red);
+                return;
+            }
+            amount = Math.Min(amount, Main.maxNPCs);
+            NPC prime = TShock.Utils.GetNPCById(127);
+            TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(prime.type, prime.name, amount, args.Player.TileX, args.Player.TileY);
+            TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, amount));
+        }
 
         private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
         {
@@ -1073,11 +1145,19 @@ namespace TShockAPI
                 return;
             }
             amount = Math.Min(amount, Main.maxNPCs / 4);
+            NPC retinazer = TShock.Utils.GetNPCById(125);
+            NPC spaz = TShock.Utils.GetNPCById(126);
+            NPC destroyer = TShock.Utils.GetNPCById(134);
+            NPC prime = TShock.Utils.GetNPCById(127);
             NPC eater = TShock.Utils.GetNPCById(13);
             NPC eye = TShock.Utils.GetNPCById(4);
             NPC king = TShock.Utils.GetNPCById(50);
             NPC skeletron = TShock.Utils.GetNPCById(35);
             TSPlayer.Server.SetTime(false, 0.0);
+            TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, amount, args.Player.TileX, args.Player.TileY);
+            TSPlayer.Server.SpawnNPC(prime.type, prime.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
             TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
