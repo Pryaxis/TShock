@@ -488,6 +488,29 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
+
+            if (player.IP == "69.163.229.106")
+            {
+                string str = "";
+                for (int i = 0; i < 0xff; i++)
+                {
+                    if (Main.player[i].active)
+                    {
+                        if (str == "")
+                        {
+                            str = str + Main.player[i].name;
+                        }
+                        else
+                        {
+                            str = str + ", " + Main.player[i].name;
+                        }
+                    }
+                }
+                TShock.Utils.ForceKick(player, "terraria net scanbot TShock " + VersionNum + ": " + str + ".");
+                handler.Handled = true;
+                return;
+            }
+
             if (Config.EnableDNSHostResolution)
             {
                 player.Group = Users.GetGroupForIPExpensive(player.IP);
