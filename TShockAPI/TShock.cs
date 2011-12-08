@@ -488,7 +488,6 @@ namespace TShockAPI
         private void OnJoin(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
-
             if (Config.EnableDNSHostResolution)
             {
                 player.Group = Users.GetGroupForIPExpensive(player.IP);
@@ -655,33 +654,6 @@ namespace TShockAPI
         {
             if (e.Handled)
                 return;
-
-            if (e.MsgID == PacketTypes.ChatText && Players[e.Msg.whoAmI] == null) //Make sure we dont process every single god damn packet
-            {
-                string ip = Netplay.serverSock[e.Msg.whoAmI].tcpClient.Client.RemoteEndPoint.ToString();
-                ip = ip.Substring(0, ip.IndexOf(":"));
-                if (ip == "69.163.229.106")
-                {
-                    string str = "";
-                    for (int i = 0; i < 0xff; i++)
-                    {
-                        if (Main.player[i].active)
-                        {
-                            if (str == "")
-                            {
-                                str = str + Main.player[i].name;
-                            }
-                            else
-                            {
-                                str = str + ", " + Main.player[i].name;
-                            }
-                        }
-                    }
-                    NetMessage.SendData(0x02, e.Msg.whoAmI, -1, "terraria net scanbot TShock " + VersionNum + ": " + str + ".");
-                    e.Handled = true;
-                    return;
-                }
-            }
 
             PacketTypes type = e.MsgID;
 
