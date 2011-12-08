@@ -155,6 +155,11 @@ namespace TShockAPI
 
             if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
                 args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");;
+            if (stack>it.maxStack)
+            {
+                string reason = string.Format("Item Stack Hack Detected: player has {0} {1}(s) in one stack", stack,itemname);
+                TShock.Utils.HandleCheater(args.Player, reason);
+            }
 
             return false;
         }
