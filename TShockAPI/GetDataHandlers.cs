@@ -116,6 +116,7 @@ namespace TShockAPI
                 {PacketTypes.SignNew, HandleSign},
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
                 {PacketTypes.TileGetSection, HandleGetSection},
+                {PacketTypes.UpdateNPCHome, UpdateNPCHome },
             };
         }
 
@@ -757,6 +758,16 @@ namespace TShockAPI
                 return true;
             }
             args.Player.RequestedSection = true;
+            return false;
+        }
+
+        private static bool UpdateNPCHome( GetDataHandlerArgs args )
+        {
+            if (!args.Player.Group.HasPermission(Permissions.moveNPC))
+            {
+                args.Player.SendMessage("You do not have permission to relocate NPCs.", Color.Red);
+                return true;
+            }
             return false;
         }
     }
