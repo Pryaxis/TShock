@@ -525,6 +525,18 @@ namespace TShockAPI
                 else
                     return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
             }
+            if (args.Player.Index != owner)//ignores projectiles whose senders aren't the same as their owners
+            {
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);//update projectile on senders end so he knows it didnt get created
+                return true;
+            }
+            Projectile proj = new Projectile();
+            proj.SetDefaults(type);
+            if (proj.hostile)//ignores all hostile projectiles from the client they shouldn't be sending them anyways
+            {
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);
+                return true;
+            }
             return false;
         }
 
