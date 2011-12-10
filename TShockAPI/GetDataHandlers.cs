@@ -367,6 +367,13 @@ namespace TShockAPI
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
+                if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.canexplosive))
+                {
+                    args.Player.SendMessage("You do not have permission to place explosives.", Color.Red);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to place explosives", args.Player.Name), Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             }
             if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
