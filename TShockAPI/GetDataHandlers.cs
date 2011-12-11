@@ -117,6 +117,7 @@ namespace TShockAPI
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
                 {PacketTypes.TileGetSection, HandleGetSection},
                 {PacketTypes.UpdateNPCHome, UpdateNPCHome },
+                {PacketTypes.PlayerAddBuff, HandlePlayerBuff},
             };
         }
 
@@ -788,6 +789,11 @@ namespace TShockAPI
                 return true;
             }
             return false;
+        }
+
+        private static bool HandlePlayerBuff(GetDataHandlerArgs args)
+        {
+            return !args.Player.Group.HasPermission(Permissions.ignoregriefdetection);
         }
     }
 }
