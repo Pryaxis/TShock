@@ -211,6 +211,9 @@ namespace TShockAPI
     	[Description("Some weapons override the range checks, however malicious users can take advantage of this and send lots of packets of certain types. Disabling this will turn off weapons that affect this.")] 
 		public bool EnableRangeCheckOverrides = true;
 
+		[Description("Disabling this prevents players from being banned or kicked based on item stacks.")]
+    	public bool EnableItemStackChecks = true;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
