@@ -367,6 +367,13 @@ namespace TShockAPI
                     args.Player.SendTileSquare(x, y);
                     return true;
                 }
+                if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.canexplosive))
+                {
+                    args.Player.SendMessage("You do not have permission to place explosives.", Color.Red);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to place explosives", args.Player.Name), Color.Red);
+                    args.Player.SendTileSquare(x, y);
+                    return true;
+                }
             }
             if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
             {
@@ -524,6 +531,18 @@ namespace TShockAPI
                 }
                 else
                     return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
+            }
+            if (args.Player.Index != owner)//ignores projectiles whose senders aren't the same as their owners
+            {
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);//update projectile on senders end so he knows it didnt get created
+                return true;
+            }
+            Projectile proj = new Projectile();
+            proj.SetDefaults(type);
+            if (proj.hostile)//ignores all hostile projectiles from the client they shouldn't be sending them anyways
+            {
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);
+                return true;
             }
             return false;
         }

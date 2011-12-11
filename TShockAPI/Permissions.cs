@@ -144,6 +144,9 @@ namespace TShockAPI
         [Description("User can change the homes of NPCs.")]
         public static readonly string movenpc;
 
+        [Description("Required to be able to place Explosives")]
+        public static readonly string canexplosive;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
