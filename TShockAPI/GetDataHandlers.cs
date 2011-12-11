@@ -763,7 +763,7 @@ namespace TShockAPI
 
         private static bool UpdateNPCHome( GetDataHandlerArgs args )
         {
-            if (!args.Player.Group.HasPermission(Permissions.moveNPC))
+            if (!args.Player.Group.HasPermission(Permissions.movenpc))
             {
                 args.Player.SendMessage("You do not have permission to relocate NPCs.", Color.Red);
                 return true;

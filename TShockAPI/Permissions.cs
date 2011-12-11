@@ -142,7 +142,7 @@ namespace TShockAPI
         public static readonly string hardmode;
 
         [Description("User can change the homes of NPCs.")]
-        public static readonly string moveNPC;
+        public static readonly string movenpc;
 
         static Permissions()
         {
