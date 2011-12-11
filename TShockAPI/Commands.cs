@@ -1678,7 +1678,8 @@ namespace TShockAPI
         {
             FileTools.SetupConfig();
             TShock.Groups.LoadPermisions();
-            args.Player.SendMessage("Configuration & Permissions reload complete. Some changes may require server restart.");
+            TShock.Regions.ReloadAllRegions();
+            args.Player.SendMessage("Configuration, Permissions, and Regions reload complete. Some changes may require server restart.");
         }
 
         private static void ServerPassword(CommandArgs args)
