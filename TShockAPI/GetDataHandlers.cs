@@ -257,9 +257,11 @@ namespace TShockAPI
                 	var newtile = tiles[x, y];
                 	if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105))
                 	{
-						Console.WriteLine("SendTileSquareCalled on a 128 or 105.");
-                		changed = true;
-                		return false;
+						//Console.WriteLine("SendTileSquareCalled on a 128 or 105.");
+						if (TShock.Config.EnableInsecureTileFixes)
+						{
+							return false;
+						}
                 	}
 
             		if (tile.type == 0x17 && newtile.Type == 0x2)
@@ -346,7 +348,14 @@ namespace TShockAPI
                 }
                 if (TShock.Config.RangeChecks && ((Math.Abs(plyX - tileX) > 32) || (Math.Abs(plyY - tileY) > 32)))
                 {
-                    if (!(type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 127 && args.Player.TPlayer.selectedItem == 496)|| (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
+					if ((type == 1 && ((tiletype == 0 && args.Player.TPlayer.selectedItem == 114) || (tiletype == 127 && args.Player.TPlayer.selectedItem == 496)|| (tiletype == 53 && args.Player.TPlayer.selectedItem == 266))))
+					{
+						if (!TShock.Config.EnableRangeCheckOverrides)
+						{
+							args.Player.SendMessage("This item has been disabled by the server owner.");
+							return true;
+						}
+					} else
                     {
                         Log.Debug(string.Format("TilePlaced(PlyXY:{0}_{1}, TileXY:{2}_{3}, Result:{4}_{5}, Type:{6})",
                                                 plyX, plyY, tileX, tileY, Math.Abs(plyX - tileX), Math.Abs(plyY - tileY), tiletype));

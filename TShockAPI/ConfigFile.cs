@@ -204,6 +204,12 @@ namespace TShockAPI
 
         [Description("Displays a player's IP on join to everyone who has the log permission")]
         public bool DisplayIPToAdmins = false;
+		
+		[Description("Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain asthetic tiles.")]
+    	public bool EnableInsecureTileFixes = true;
+
+    	[Description("Some weapons override the range checks, however malicious users can take advantage of this and send lots of packets of certain types. Disabling this will turn off weapons that affect this.")] 
+		public bool EnableRangeCheckOverrides = true;
 
         public static ConfigFile Read(string path)
         {
