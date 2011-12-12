@@ -141,6 +141,18 @@ namespace TShockAPI
         [Description("User can change hardmode state.")]
         public static readonly string hardmode;
 
+        [Description("User can change the homes of NPCs.")]
+        public static readonly string movenpc;
+
+        [Description("Required to be able to place Explosives")]
+        public static readonly string canexplosive;
+
+        [Description("Users can stop people from TPing to them")]
+        public static readonly string tpallow;
+
+        [Description("Users can tp to anyone")]
+        public static readonly string tpall;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())

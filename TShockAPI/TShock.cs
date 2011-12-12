@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Community.CsharpSqlite.SQLiteClient;
 using Hooks;
@@ -47,7 +48,7 @@ namespace TShockAPI
     [APIVersion(1, 9)]
     public class TShock : TerrariaPlugin
     {
-        public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
+		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
         public static readonly string VersionCodename = "1.1 broke our API";
 
         public static string SavePath = "tshock";
@@ -102,6 +103,8 @@ namespace TShockAPI
             Config = new ConfigFile();
             Order = 0;
         }
+
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
@@ -216,6 +219,7 @@ namespace TShockAPI
                 Log.Error(ex.ToString());
                 Environment.Exit(1);
             }
+
         }
 
     	private void callHome()

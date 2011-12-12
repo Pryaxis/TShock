@@ -143,6 +143,7 @@ namespace TShockAPI
             add(Permissions.tp, TP, "tp");
             add(Permissions.tphere, TPHere, "tphere");
             add(Permissions.tphere, SendWarp, "sendwarp", "sw");
+            add(Permissions.tpallow, TPAllow, "tpallow");
             add(Permissions.warp, UseWarp, "warp");
             add(Permissions.managewarp, SetWarp, "setwarp");
             add(Permissions.managewarp, DeleteWarp, "delwarp");
@@ -1270,11 +1271,20 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid player!", Color.Red);
             else if (players.Count > 1)
                 args.Player.SendMessage("More than one player matched!", Color.Red);
+            else if (!args.Player.TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+            {
+                var plr = players[0];
+                args.Player.SendMessage(plr.Name + " Has Selected For Users Not To Teleport To Them");
+                plr.SendMessage(args.Player.Name + " Attempted To Teleport To You");
+            }
             else
             {
                 var plr = players[0];
                 if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
+                {
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
+                    plr.SendMessage(args.Player.Name + " Teleported To You");
+                }
             }
         }
 
@@ -1325,8 +1335,16 @@ namespace TShockAPI
                     plr.SendMessage(string.Format("You were teleported to {0}.", args.Player.Name));
                     args.Player.SendMessage(string.Format("You brought {0} here.", plr.Name));
                 }
-
             }
+        }
+
+        private static void TPAllow(CommandArgs args)
+        {
+            if (!args.Player.TPAllow)
+                args.Player.SendMessage("Other Players Can Now Teleport To You");
+            if (args.Player.TPAllow)
+                args.Player.SendMessage("Other Players Can No Longer Teleport To You");
+            args.Player.TPAllow = !args.Player.TPAllow;
         }
 
         private static void SendWarp(CommandArgs args)
@@ -1678,7 +1696,8 @@ namespace TShockAPI
         {
             FileTools.SetupConfig();
             TShock.Groups.LoadPermisions();
-            args.Player.SendMessage("Configuration & Permissions reload complete. Some changes may require server restart.");
+            TShock.Regions.ReloadAllRegions();
+            args.Player.SendMessage("Configuration, Permissions, and Regions reload complete. Some changes may require server restart.");
         }
 
         private static void ServerPassword(CommandArgs args)
