@@ -147,6 +147,12 @@ namespace TShockAPI
         [Description("Required to be able to place Explosives")]
         public static readonly string canexplosive;
 
+        [Description("Users can stop people from TPing to them")]
+        public static readonly string tpallow;
+
+        [Description("Users can tp to anyone")]
+        public static readonly string tpall;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
