@@ -138,7 +138,7 @@ namespace TShockAPI.DB
 
             if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
                 message = "Group " + name + " has been deleted successfully.";
-            groups.Remove(Tools.GetGroup(name));
+            groups.Remove(TShock.Utils.GetGroup(name));
 
             return message;
         }
@@ -149,13 +149,15 @@ namespace TShockAPI.DB
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
 
-            var group = Tools.GetGroup(name);
+            var group = TShock.Utils.GetGroup(name);
             //Add existing permissions (without duplicating)
             permissions.AddRange(group.permissions.Where(s => !permissions.Contains(s)));
 
             if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", String.Join(",", permissions), name) != 0)
+            {
                 message = "Group " + name + " has been modified successfully.";
-
+                group.SetPermission( permissions );
+            }
             return message;
         }
 
@@ -165,14 +167,16 @@ namespace TShockAPI.DB
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
 
-            var group = Tools.GetGroup(name);
+            var group = TShock.Utils.GetGroup(name);
 
             //Only get permissions that exist in the group.
-            var newperms = permissions.Where(s => group.permissions.Contains(s));
+            var newperms = group.permissions.Except( permissions );
 
             if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", String.Join(",", newperms), name) != 0)
+            {
                 message = "Group " + name + " has been modified successfully.";
-
+                group.SetPermission( newperms.ToList() );
+            }
             return message;
         }
 

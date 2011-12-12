@@ -24,7 +24,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Terraria;
-using XNAHelpers;
+using System.IO.Streams;
 
 namespace TShockAPI
 {
@@ -38,13 +38,30 @@ namespace TShockAPI
         public static string Response = "";
         private static bool Started;
         private static UdpClient listener;
+        private static Thread startThread;
+        private static Thread heartbeat;
+        private static Thread listen;
+
+        public static void ShutdownAllThreads()
+        {
+            if (Started)
+            {
+                startThread.Abort();
+                heartbeat.Abort();
+                listen.Abort();
+                Started = false;
+            }
+        }
 
         public static void StartThread()
         {
             if (!Started)
             {
-                (new Thread(Start)).Start();
-                (new Thread(SendHeartbeat)).Start();
+                startThread = new Thread(Start);
+                startThread.Start();
+
+                heartbeat = new Thread(SendHeartbeat);
+                heartbeat.Start();
             }
             Started = true;
         }
@@ -57,7 +74,7 @@ namespace TShockAPI
                 Console.WriteLine(string.Format("RconHandler is running at UDP port {0} and password is {1}",
                     ListenPort,
                     Password));
-                Thread listen = new Thread(Listener);
+                listen = new Thread(Listener);
                 listen.Start();
                 while (true)
                 {
@@ -161,8 +178,8 @@ namespace TShockAPI
                             }
                             else
                             {
-                                response = "Bad rconpassword.\n";
-                                Log.ConsoleInfo("Bad rconpassword from " + EP);
+                                response = "Bad rcon password.\n";
+                                Log.ConsoleInfo("Bad rcon password from " + EP);
                             }
                         }
                         else
@@ -170,7 +187,7 @@ namespace TShockAPI
                     }
                     else
                     {
-                        response = "No rconpassword set on the server.\n";
+                        response = "No rcon password set on the server.\n";
                         Log.Info("No password for rcon set");
                     }
                 }
@@ -187,7 +204,7 @@ namespace TShockAPI
                 response = "infoResponse\n";
                 var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Utils.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                     TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0);
                 if (challenge != "")
@@ -206,7 +223,7 @@ namespace TShockAPI
                 response = "statusResponse\n";
                 var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Utils.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                     TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0) + "\n";
                 if (challenge != "")
@@ -234,7 +251,7 @@ namespace TShockAPI
                 WorldGen.genRand = new Random();
             if (text.StartsWith("exit"))
             {
-                Tools.ForceKickAll("Server shutting down!");
+                TShock.Utils.ForceKickAll("Server shutting down!");
                 WorldGen.saveWorld(false);
                 Netplay.disconnect = true;
                 return "Server shutting down.";
@@ -328,7 +345,7 @@ namespace TShockAPI
             {
                 if ((DateTime.UtcNow - LastHeartbeat).Seconds >= 30)
                 {
-                    var packet = ConstructPacket("heartbeat TERRARIA", false);
+                    var packet = ConstructPacket("heartbeat TerrariaShock", false);
                     if (listener == null)
                         try
                         {

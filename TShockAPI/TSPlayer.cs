@@ -17,13 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.IO;
 using System.Threading;
 using Terraria;
-using TerrariaAPI;
+
 using TShockAPI.Net;
-using XNAHelpers;
+
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TShockAPI
 {
@@ -32,7 +33,7 @@ namespace TShockAPI
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileThreshold { get; set; }
-        public Dictionary<PointF, Tile> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -46,10 +47,10 @@ namespace TShockAPI
         public DateTime LastTileChangeNotify { get; set; }
         public bool InitSpawn;
         public bool DisplayLogs = true;
-        public PointF oldSpawn = PointF.Empty;
+        public Vector2 oldSpawn = Vector2.Zero;
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
-        public PointF TeleportCoords = new PointF(-1, -1);
+        public Vector2 TeleportCoords = new Vector2(-1, -1);
         public string UserAccountName { get; set; }
         public bool HasBeenSpammedWithBuildMessage;
         public bool IsLoggedIn;
@@ -69,13 +70,13 @@ namespace TShockAPI
         }
         public bool ConnectionAlive
         {
-            get { return RealPlayer ? Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill : false; }
+            get { return RealPlayer && (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill); }
         }
         public string IP
         {
             get
             {
-                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+                return RealPlayer ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
             }
         }
         /// <summary>
@@ -130,9 +131,9 @@ namespace TShockAPI
                 bool flag = false;
                 if (RealPlayer)
                 {
-                    for (int i = 0; i < 40; i++)
+                    for (int i = 0; i < 40; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
                     {
-                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active)
+                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
                         {
                             flag = true;
                             break;
@@ -145,14 +146,14 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<PointF, Tile>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<PointF, Tile>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -195,7 +196,9 @@ namespace TShockAPI
                     WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
                     (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
                     (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
+                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+                    (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+                    (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None), 
                     WorldName = Main.worldName
                 };
                 msg.PackFull(ms);
@@ -213,7 +216,8 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-            if (!SendTileSquare(tilex, tiley, 150))
+            //Should we properly send sections so that clients don't get tiles twice?
+            if (!SendTileSquare(tilex, tiley))
             {
                 InitSpawn = true;
                 SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
@@ -224,6 +228,9 @@ namespace TShockAPI
             Spawn(-1, -1);
 
             SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
+
+            TPlayer.position.X = tilex;
+            TPlayer.position.Y = tiley;
 
             return true;
         }
@@ -281,6 +288,11 @@ namespace TShockAPI
         }
 
         public virtual void SendMessage(string msg, Color color)
+        {
+            SendMessage(msg, color.R, color.G, color.B);
+        }
+
+        public virtual void SendMessage(string msg, Microsoft.Xna.Framework.Color color)
         {
             SendMessage(msg, color.R, color.G, color.B);
         }
@@ -372,6 +384,12 @@ namespace TShockAPI
             Console.WriteLine(msg);
             RconHandler.Response += msg + "\n";
         }
+        
+        public void SetFullMoon(bool fullmoon)
+        {
+            Main.moonPhase = 0;
+            SetTime(false, 0);
+        }
 
         public void SetBloodMoon(bool bloodMoon)
         {
@@ -393,7 +411,7 @@ namespace TShockAPI
             {
                 int spawnTileX;
                 int spawnTileY;
-                Tools.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
+                TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
                 int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
                 // This is for special slimes
                 Main.npc[npcid].SetDefaults(name);
@@ -406,17 +424,17 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<PointF, Tile> destroyedTiles)
+        public void RevertKillTile(Dictionary<Vector2, TileData> destroyedTiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<PointF, Tile> entry in destroyedTiles)
+            foreach (KeyValuePair<Vector2, TileData> entry in destroyedTiles)
             {
-                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
                 Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }
             // Send all players updated tile sqaures
-            foreach (PointF coords in destroyedTiles.Keys)
+            foreach (Vector2 coords in destroyedTiles.Keys)
             {
                 All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }

@@ -123,6 +123,9 @@ namespace TShockAPI
         [Description("User can spawn items")]
         public static readonly string item;
 
+        [Description("User can clear item drops.")]
+        public static readonly string clearitems;
+
         [Description("")]
         public static readonly string heal;
 
@@ -134,6 +137,15 @@ namespace TShockAPI
 
         [Description("")]
         public static readonly string grow;
+
+        [Description("User can change hardmode state.")]
+        public static readonly string hardmode;
+
+        [Description("User can change the homes of NPCs.")]
+        public static readonly string movenpc;
+
+        [Description("Required to be able to place Explosives")]
+        public static readonly string canexplosive;
 
         static Permissions()
         {

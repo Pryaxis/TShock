@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
 using System.Text;
-using TerrariaAPI;
-using XNAHelpers;
+
+using System.IO.Streams;
 
 namespace TShockAPI.Net
 {
@@ -32,6 +32,8 @@ namespace TShockAPI.Net
         DownedBoss1 = 2,
         DownedBoss2 = 4,
         DownedBoss3 = 8,
+        HardMode = 16,
+        DownedClown = 32
     }
     public class WorldInfoMsg : BaseMsg
     {

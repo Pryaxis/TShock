@@ -52,6 +52,20 @@ namespace TShockAPI.DB
             }
         }
 
+        public static QueryResult QueryReaderDict(this IDbConnection olddb, string query, Dictionary<string, object> values)
+        {
+            var db = olddb.CloneEx();
+            db.Open();
+            using (var com = db.CreateCommand())
+            {
+                com.CommandText = query;
+                foreach(var kv in values)
+                    com.AddParameter("@" + kv.Key, kv.Value);
+
+                return new QueryResult(db, com.ExecuteReader());
+            }
+        }
+
         public static IDbDataParameter AddParameter(this IDbCommand command, string name, object data)
         {
             var parm = command.CreateParameter();
@@ -157,10 +171,14 @@ namespace TShockAPI.DB
 
         public bool Read()
         {
+            if (Reader == null)
+                return false;
             return Reader.Read();
         }
         public T Get<T>(string column)
         {
+            if (Reader == null)
+                return default(T);
             return Reader.Get<T>(Reader.GetOrdinal(column));
         }
     }

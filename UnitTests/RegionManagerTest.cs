@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,8 +92,6 @@ namespace UnitTests
             /**
              * For now, this test is useless.  Need to implement user groups so we can alter Canbuild permission.
              */
-            TSPlayer t = new TSPlayer(0);
-            Assert.IsFalse( manager.CanBuild( 100,100,t) );
         }
 
         [TestMethod]

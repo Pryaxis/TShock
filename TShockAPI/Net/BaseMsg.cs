@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Streams;
 using System.Linq;
 using System.Text;
-using TerrariaAPI;
-using XNAHelpers;
 
 namespace TShockAPI.Net
 {

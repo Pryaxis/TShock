@@ -40,7 +40,7 @@ namespace UnitTests
         {
             Assert.IsTrue(Groups.AddGroup("test1", "heal") != "");
             Assert.IsTrue(Groups.GroupExists("test1"));
-            Assert.IsTrue(Tools.GetGroup("test1").HasPermission("heal"));
+            Assert.IsTrue(TShock.Utils.GetGroup("test1").HasPermission("heal"));
         }
 
         [TestMethod]
