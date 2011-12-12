@@ -234,8 +234,7 @@ namespace TShockAPI
             {
                 for (int y = 0; y < size; y++)
                 {
-                    tiles[x, y] = new NetTile(args.Data); // Need to fix this. Tiles in SendTileSquare have a short at the end
-                                                          // that says how many tiles right are the same.
+                    tiles[x, y] = new NetTile(args.Data);
                 }
             }
 
@@ -254,11 +253,11 @@ namespace TShockAPI
 
                 	var tile = Main.tile[realx, realy];
                 	var newtile = tiles[x, y];
+                    Debug.WriteLine(string.Format("SendTileSquare : {0}, {1}", tile.type, newtile.Type));
                 	if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 || newtile.Type == 105))
                 	{
 						Console.WriteLine("SendTileSquareCalled on a 128 or 105.");
                 		changed = true;
-						
                 	}
 
             		if (tile.type == 0x17 && newtile.Type == 0x2)
@@ -276,6 +275,71 @@ namespace TShockAPI
                     {
                         tile.frameX = newtile.FrameX;
                         tile.frameY = newtile.FrameY;
+                        changed = true;
+                    }
+                    else if (tile.type == 1 && newtile.Type == 117)
+                    {
+                        tile.type = 117;
+                        changed = true;
+                    }
+                    else if (tile.type == 1 && newtile.Type == 25)
+                    {
+                        tile.type = 25;
+                        changed = true;
+                    }
+                    else if (tile.type == 117 && newtile.Type == 25)
+                    {
+                        tile.type = 25;
+                        changed = true;
+                    }
+                    else if (tile.type == 25 && newtile.Type == 117)
+                    {
+                        tile.type = 117;
+                        changed = true;
+                    }
+                    else if (tile.type == 2 && newtile.Type == 23)
+                    {
+                        tile.type = 23;
+                        changed = true;
+                    }
+                    else if (tile.type == 2 && newtile.Type == 109)
+                    {
+                        tile.type = 109;
+                        changed = true;
+                    }
+                    else if (tile.type == 23 && newtile.Type == 109)
+                    {
+                        tile.type = 109;
+                        changed = true;
+                    }
+                    else if (tile.type == 109 && newtile.Type == 23)
+                    {
+                        tile.type = 23;
+                        changed = true;
+                    }
+                    else if (tile.type == 23 && newtile.Type == 109)
+                    {
+                        tile.type = 109;
+                        changed = true;
+                    }
+                    else if (tile.type == 53 && newtile.Type == 116)
+                    {
+                        tile.type = 116;
+                        changed = true;
+                    }
+                    else if (tile.type == 53 && newtile.Type == 112)
+                    {
+                        tile.type = 112;
+                        changed = true;
+                    }
+                    else if (tile.type == 112 && newtile.Type == 116)
+                    {
+                        tile.type = 116;
+                        changed = true;
+                    }
+                    else if (tile.type == 116 && newtile.Type == 112)
+                    {
+                        tile.type = 112;
                         changed = true;
                     }
                 }
