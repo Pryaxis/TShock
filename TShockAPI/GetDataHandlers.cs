@@ -258,6 +258,46 @@ namespace TShockAPI
 
                 	var tile = Main.tile[realx, realy];
                 	var newtile = tiles[x, y];
+                    if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
+                    {
+                        if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                        {
+                            args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y) + " protected from changes.", Color.Red);
+                            args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                        }
+                        args.Player.SendTileSquare(x, y);
+                        return true;
+                    }
+                    if (TShock.Config.DisableBuild)
+                    {
+                        if (!args.Player.Group.HasPermission(Permissions.editspawn))
+                        {
+                            if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                            {
+                                args.Player.SendMessage("World protected from changes.", Color.Red);
+                                args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                            }
+                            args.Player.SendTileSquare(x, y);
+                            return true;
+                        }
+                    }
+                    if (TShock.Config.SpawnProtection)
+                    {
+                        if (!args.Player.Group.HasPermission(Permissions.editspawn))
+                        {
+                            var flag = TShock.CheckSpawn(x, y);
+                            if (flag)
+                            {
+                                if ((DateTime.UtcNow - args.Player.LastTileChangeNotify).TotalMilliseconds > 1000)
+                                {
+                                    args.Player.SendMessage("Spawn protected from changes.", Color.Red);
+                                    args.Player.LastTileChangeNotify = DateTime.UtcNow;
+                                }
+                                args.Player.SendTileSquare(x, y);
+                                return true;
+                            }
+                        }
+                    }
                 	if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105))
                 	{
 						//Console.WriteLine("SendTileSquareCalled on a 128 or 105.");
