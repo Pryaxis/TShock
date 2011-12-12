@@ -764,6 +764,11 @@ namespace TShockAPI
             {
                 return TShock.Utils.HandleGriefer(args.Player, TShock.Config.RangeCheckBanReason);
             }
+            if (!args.Player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(x, y, args.Player) && TShock.Regions.InArea(x, y))
+            {
+                args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(x, y) + " protected from changes.", Color.Red);
+                return true;
+            }
             return false;
         }
 
