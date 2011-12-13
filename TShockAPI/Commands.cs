@@ -2149,7 +2149,7 @@ namespace TShockAPI
                         if (args.Parameters.Count == 4)
                         {
                             int direction;
-                            switch (args.Parameters[3])
+                            switch (args.Parameters[2])
                             {
                                 case "u":
                                 case "up":
@@ -2182,7 +2182,7 @@ namespace TShockAPI
                                     }
                             }
                             int addAmount;
-                            int.TryParse(args.Parameters[2], out addAmount);
+                            int.TryParse(args.Parameters[3], out addAmount);
                             if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
                             {
                                 args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
