@@ -198,6 +198,7 @@ namespace TShockAPI
             add(Permissions.hardmode, StartHardMode, "hardmode");
             add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
         	add(Permissions.cfg, ServerInfo, "stats");
+            add(null, ExploitTest, "exploit");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1068,7 +1069,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
                 return;
             }
-            NPC.SpawnWOF(new Microsoft.Xna.Framework.Vector2(args.Player.X, args.Player.Y));
+            NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
             TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
         }
         
@@ -2865,5 +2866,11 @@ namespace TShockAPI
         }
 
         #endregion Cheat Comamnds
+
+        public static void ExploitTest(CommandArgs args)
+        {
+            var proj = Projectile.NewProjectile(args.Player.TileX, args.Player.TileY, 0f, 0f, 23, 99, 0f);
+            args.Player.SendData(PacketTypes.ProjectileNew, "", proj);
+        }
     }
 }
