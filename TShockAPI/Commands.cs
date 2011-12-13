@@ -198,7 +198,6 @@ namespace TShockAPI
             add(Permissions.hardmode, StartHardMode, "hardmode");
             add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
         	add(Permissions.cfg, ServerInfo, "stats");
-            add(null, ExploitTest, "exploit");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -2866,11 +2865,5 @@ namespace TShockAPI
         }
 
         #endregion Cheat Comamnds
-
-        public static void ExploitTest(CommandArgs args)
-        {
-            var proj = Projectile.NewProjectile(args.Player.TileX, args.Player.TileY, 0f, 0f, 23, 99, 0f);
-            args.Player.SendData(PacketTypes.ProjectileNew, "", proj);
-        }
     }
 }
