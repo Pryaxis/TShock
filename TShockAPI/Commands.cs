@@ -964,7 +964,7 @@ namespace TShockAPI
              * /idrop <itemname, id, group> [amt=10]
              */
 
-            if (args.Parameters.Count < 2)
+            if (args.Parameters.Count < 1)
             {
                 //error
                 args.Player.SendMessage("Invalid input: /idrop <itemname, id, group> [amt=10]", Color.Red);
@@ -972,8 +972,12 @@ namespace TShockAPI
             }
 
             int amt = 10;
-            int.TryParse( args.Parameters[1], out amt );
-            amt = Math.Min(100, amt);
+
+            if (args.Parameters.Count > 1)
+            {
+                int.TryParse(args.Parameters[1], out amt);
+                amt = Math.Min(100, amt);
+            }
 
             string name = args.Parameters[0];
             List<string> items = new List<string>();
@@ -1055,7 +1059,7 @@ namespace TShockAPI
             TSPlayer.All.SendMessage("Raining " + name + " from the skies!", Color.Green);
             for( int i = 0; i < amt; i++ )
             {
-                int id = Main.rand.Next(0, items.Count - 1);
+                int id = Main.rand.Next(0, items.Count );
 
                 var itemlist = TShock.Utils.GetItemByIdOrName(items[id]);
                 if (itemlist.Count > 0) 
@@ -1064,7 +1068,6 @@ namespace TShockAPI
                     var item = itemlist[0];
                     int x = ( Main.rand.Next(Main.maxTilesX - 50) + 100 ) * 0x10;
                     int y = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-
                     int itemid = Terraria.Item.NewItem(x, y, item.width, item.height, item.type, 1, true);
                     // This is for special pickaxe/hammers/swords etc
                     Main.item[itemid].SetDefaults(item.name);
