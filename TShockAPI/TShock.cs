@@ -34,7 +34,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using Hooks;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
