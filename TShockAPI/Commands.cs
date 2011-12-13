@@ -125,7 +125,6 @@ namespace TShockAPI
             add(Permissions.maintenance, CheckUpdates, "checkupdates");
             add(Permissions.causeevents, DropMeteor, "dropmeteor");
             add(Permissions.causeevents, Star, "star");
-            add(Permissions.causeevents, ItemDrop, "itemdrop", "idrop");
             add(Permissions.causeevents, Fullmoon, "fullmoon");
             add(Permissions.causeevents, Bloodmoon, "bloodmoon");
             add(Permissions.causeevents, Invade, "invade");
@@ -957,130 +956,7 @@ namespace TShockAPI
             speedY *= penis61;
             Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
         }
-
-        private static void ItemDrop(CommandArgs args)
-        {
-            /* 
-             * /idrop <itemname, id, group> [amt=10]
-             */
-
-            if (args.Parameters.Count < 1)
-            {
-                //error
-                args.Player.SendMessage("Invalid input: /idrop <itemname, id, group> [amt=10]", Color.Red);
-                return;
-            }
-
-            int amt = 10;
-
-            if (args.Parameters.Count > 1)
-            {
-                int.TryParse(args.Parameters[1], out amt);
-                amt = Math.Min(100, amt);
-            }
-
-            string name = args.Parameters[0];
-            List<string> items = new List<string>();
-            switch (name)
-            {
-                case "copper":
-                    items.Add("Copper Greaves");
-                    items.Add("Copper Helmet");
-                    items.Add("Copper Chainmail");
-                    items.Add("Copper Bar");
-                    items.Add("Copper Watch");
-                    break;
-                case "iron":
-                    items.Add("Iron Greaves");
-                    items.Add("Iron Helmet");
-                    items.Add("Iron Chainmail");
-                    items.Add("Iron Bar");
-                    break;
-                case "silver":
-                    items.Add("Silver Greaves");
-                    items.Add("Silver Helmet");
-                    items.Add("Silver Chainmail");
-                    items.Add("Silver Bar");
-                    items.Add("Silver Watch");
-                    break;
-                case "gold":
-                    items.Add("Gold Greaves");
-                    items.Add("Gold Helmet");
-                    items.Add("Gold Chainmail");
-                    items.Add("Gold Bar");
-                    items.Add("Gold Watch");
-                    break;
-                case "shadow":
-                    items.Add("Shadow Greaves");
-                    items.Add("Shadow Scalemail");
-                    items.Add("Shadow Helmet");
-                    items.Add("Demonite Bar");
-                    break;
-                case "meteor":
-                    items.Add("Meteor Leggings");
-                    items.Add("Meteor Suit");
-                    items.Add("Meteor Helmet");
-                    items.Add("Meteorite Bar");
-                    break;
-                case "jungle":
-                    items.Add("Jungle Hat");
-                    items.Add("Jungle Shirt");
-                    items.Add("Jungle Pants");
-                    break;
-                case "cobalt":
-                    items.Add("Cobalt Hat");
-                    items.Add("Cobalt Helmet");
-                    items.Add("Cobalt Mask");
-                    items.Add("Cobalt Breastplate");
-                    items.Add("Cobalt Leggings");
-                    items.Add("Cobalt Bar");
-                    break;
-                case "mythril":
-                    items.Add("Mythril Hood");
-                    items.Add("Mythril Helmet");
-                    items.Add("Mythril Hat");
-                    items.Add("Mythril Chainmail");
-                    items.Add("Mythril Greaves");
-                    items.Add("Mythril Bar");
-                    break;
-                case "adamantite":
-                    items.Add("Adamantite Headgear");
-                    items.Add("Adamantite Helmet");
-                    items.Add("Adamantite Mask");
-                    items.Add("Adamantite Breastplate");
-                    items.Add("Adamantite Leggings");
-                    items.Add("Adamantite Bar");
-                    break;
-                default:
-                    items.Add( args.Parameters[0] );
-                    break;
-            }
-
-            TSPlayer.All.SendMessage("Raining " + name + " from the skies!", Color.Green);
-            for( int i = 0; i < amt; i++ )
-            {
-                int id = Main.rand.Next(0, items.Count );
-
-                var itemlist = TShock.Utils.GetItemByIdOrName(items[id]);
-                if (itemlist.Count > 0) 
-                {
-                    
-                    var item = itemlist[0];
-                    int x = ( Main.rand.Next(Main.maxTilesX - 50) + 100 ) * 0x10;
-                    int y = Main.rand.Next((int)(Main.maxTilesY * 0.05)) * 0x10;
-                    int itemid = Terraria.Item.NewItem(x, y, item.width, item.height, item.type, 1, true);
-                    // This is for special pickaxe/hammers/swords etc
-                    Main.item[itemid].SetDefaults(item.name);
-                    // The set default overrides the wet and stack set by NewItem
-                    Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width, Main.item[itemid].height);
-                    Main.item[itemid].stack = 1;
-                    NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
-                }
-            }
-
-
-        }
-
+        
         private static void Fullmoon(CommandArgs args)
         {
             TSPlayer.Server.SetFullMoon(true);
