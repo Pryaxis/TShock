@@ -109,18 +109,19 @@ namespace TShockAPI
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
-            if (!Directory.Exists(SavePath))
-                Directory.CreateDirectory(SavePath);
+            try
+            {
+                HandleCommandLine(Environment.GetCommandLineArgs());
+
+                if (!Directory.Exists(SavePath))
+                    Directory.CreateDirectory(SavePath);
 
 #if DEBUG
-            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+                Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
-            try
-            {
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
@@ -132,7 +133,7 @@ namespace TShockAPI
                 ConfigFile.ConfigRead += OnConfigRead;
                 FileTools.SetupConfig();
 
-                HandleCommandLine(Environment.GetCommandLineArgs());
+                HandleCommandLine_Port(Environment.GetCommandLineArgs());
 
                 if (Config.StorageType.ToLower() == "sqlite")
                 {
@@ -384,6 +385,13 @@ namespace TShockAPI
                         Log.ConsoleInfo("World path has been set to " + path);
                     }
                 }
+            }
+        }
+
+        private void HandleCommandLine_Port(string[] parms)
+        {
+            for (int i = 0; i < parms.Length; i++)
+            {
                 if (parms[i].ToLower() == "-port")
                 {
                     int port = Convert.ToInt32(parms[++i]);
