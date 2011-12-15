@@ -109,20 +109,20 @@ namespace TShockAPI
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
-            try
-            {
-                HandleCommandLine(Environment.GetCommandLineArgs());
+            HandleCommandLine(Environment.GetCommandLineArgs());
 
-                if (!Directory.Exists(SavePath))
-                    Directory.CreateDirectory(SavePath);
+            if (!Directory.Exists(SavePath))
+                Directory.CreateDirectory(SavePath);
 
 #if DEBUG
-                Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            try
+            {
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
                     Log.ConsoleInfo("TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
