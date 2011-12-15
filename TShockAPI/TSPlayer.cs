@@ -268,9 +268,9 @@ namespace TShockAPI
             return false;
         }
 
-        public virtual void GiveItem(int type, string name, int width, int height, int stack)
+        public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
         {
-            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
+            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true, prefix);
             // This is for special pickaxe/hammers/swords etc
             Main.item[itemid].SetDefaults(name);
             // The set default overrides the wet and stack set by NewItem

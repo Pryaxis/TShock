@@ -2497,7 +2497,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount] [prefix name/id]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2506,7 +2506,16 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
+            int prefix = 0;
+            if (args.Parameters.Count == 2)
+                int.TryParse(args.Parameters[1], out itemAmount);
+            else if (args.Parameters.Count == 3)
+            {
+                int.TryParse(args.Parameters[1], out itemAmount);
+                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[2]);
+                if (found.Count == 1)
+                    prefix = found[0];
+            }
             var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
             {
@@ -2525,7 +2534,7 @@ namespace TShockAPI
                     {
                         if (itemAmount == 0 || itemAmount > item.maxStack)
                             itemAmount = item.maxStack;
-                        args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                        args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
                         args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
                     }
                     else
@@ -2544,7 +2553,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount] [prefix id/name]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2558,13 +2567,20 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
+            int prefix = 0;
             var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             args.Parameters.RemoveAt(0);
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
-            if (args.Parameters.Count > 0)
-                int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-
+            if (args.Parameters.Count == 1)
+                int.TryParse(args.Parameters[0], out itemAmount);
+            else if (args.Parameters.Count == 2)
+            {
+                int.TryParse(args.Parameters[0], out itemAmount);
+                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+                if (found.Count == 1)
+                    prefix = found[0];
+            }
 
             if (items.Count == 0)
             {
@@ -2595,7 +2611,7 @@ namespace TShockAPI
                         {
                             if (itemAmount == 0 || itemAmount > item.maxStack)
                                 itemAmount = item.maxStack;
-                            plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                            plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
                             args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
                             plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
                         }
@@ -2618,39 +2634,29 @@ namespace TShockAPI
             int radius = 50;
             if (args.Parameters.Count > 0)
             {
-
                 if (args.Parameters[0].ToLower() == "all")
                 {
-
                     radius = Int32.MaxValue / 16;
-
                 }
                 else
                 {
-
                     try
                     {
-
                         radius = Convert.ToInt32(args.Parameters[0]);
-
                     }
                     catch (Exception) { args.Player.SendMessage("Please either enter the keyword \"all\", or the block radius you wish to delete all items from.", Color.Red); return; }
-
                 }
 
             }
             int count = 0;
             for (int i = 0; i < 200; i++)
             {
-
                 if ((Math.Sqrt(Math.Pow(Main.item[i].position.X - args.Player.X, 2) + Math.Pow(Main.item[i].position.Y - args.Player.Y, 2)) < radius * 16) && (Main.item[i].active))
                 {
-
                     Main.item[i].active = false;
                     NetMessage.SendData(0x15, -1, -1, "", i, 0f, 0f, 0f, 0);
                     count++;
                 }
-
             }
             args.Player.SendMessage("All " + count.ToString() + " items within a radius of " + radius.ToString() + " have been deleted.");
 

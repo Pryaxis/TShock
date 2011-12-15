@@ -309,10 +309,12 @@ namespace TShockAPI
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
         }
+
         public string GetBuffDescription(int id)
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
         }
+
         public List<int> GetBuffByName(string name)
         {
             for (int i = 1; i < Main.maxBuffs; i++)
@@ -327,6 +329,51 @@ namespace TShockAPI
                     found.Add(i);
             }
             return found;
+        }
+
+        public string GetPrefixById(int id)
+        {
+            var item = new Item();
+            item.SetDefaults(0);
+            item.prefix = (byte)id;
+            item.AffixName();
+            return item.name.Trim();
+        }
+
+        public List<int> GetPrefixByName(string name)
+        {
+            Item item = new Item();
+            for (int i = 1; i < 83; i++)
+            {
+                item.prefix = (byte) i;
+                item.AffixName();
+                if (item.name.Trim() == name)
+                    return new List<int> { i };
+            }
+            var found = new List<int>();
+            for (int i = 1; i < 83; i++)
+            {
+                try
+                {
+                    item.prefix = (byte) i;
+                    if (item.name.Trim().ToLower() == name.ToLower())
+                        return new List<int> { i };
+                    if (item.name.Trim().ToLower().StartsWith(name.ToLower()))
+                        found.Add(i);
+                }
+                catch { }
+            }
+            return found;
+        }
+
+        public List<int> GetPrefixByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type) && type > 0 && type < 84)
+            {
+                return new List<int> {type};
+            }
+            return GetPrefixByName(idOrName);
         }
 
         /// <summary>
