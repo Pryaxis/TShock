@@ -356,6 +356,7 @@ namespace TShockAPI
                 try
                 {
                     item.prefix = (byte) i;
+                    item.AffixName();
                     if (item.name.Trim().ToLower() == name.ToLower())
                         return new List<int> { i };
                     if (item.name.Trim().ToLower().StartsWith(name.ToLower()))

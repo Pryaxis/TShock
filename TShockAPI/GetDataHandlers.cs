@@ -537,7 +537,7 @@ namespace TShockAPI
                 args.Player.TileThreshold++;
                 var coords = new Vector2(x, y);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
-                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y].Data);
+                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
 
             if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)

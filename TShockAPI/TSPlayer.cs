@@ -31,7 +31,7 @@ namespace TShockAPI
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileThreshold { get; set; }
-        public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -145,14 +145,14 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -418,12 +418,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<Vector2, TileData> destroyedTiles)
+        public void RevertKillTile(Dictionary<Vector2, Tile> destroyedTiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<Vector2, TileData> entry in destroyedTiles)
+            foreach (KeyValuePair<Vector2, Tile> entry in destroyedTiles)
             {
-                Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
                 Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }

@@ -45,7 +45,7 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 9)]
+    [APIVersion(1, 10)]
     public class TShock : TerrariaPlugin
     {
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
