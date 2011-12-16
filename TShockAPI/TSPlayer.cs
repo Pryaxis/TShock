@@ -277,6 +277,7 @@ namespace TShockAPI
             Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width, Main.item[itemid].height);
             Main.item[itemid].stack = stack;
             Main.item[itemid].owner = Index;
+            Main.item[itemid].prefix = (byte) prefix;
             NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
             NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
         }

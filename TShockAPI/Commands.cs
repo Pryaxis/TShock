@@ -2497,7 +2497,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount] [prefix name/id]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount] [prefix id]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2512,9 +2512,9 @@ namespace TShockAPI
             else if (args.Parameters.Count == 3)
             {
                 int.TryParse(args.Parameters[1], out itemAmount);
-                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[2]);
-                if (found.Count == 1)
-                    prefix = found[0];
+                int.TryParse(args.Parameters[2], out prefix);
+                if (prefix < 0 || prefix > 83)
+                    prefix = 0;
             }
             var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
@@ -2553,7 +2553,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount] [prefix id/name]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount] [prefix id]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2577,9 +2577,9 @@ namespace TShockAPI
             else if (args.Parameters.Count == 2)
             {
                 int.TryParse(args.Parameters[0], out itemAmount);
-                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-                if (found.Count == 1)
-                    prefix = found[0];
+                int.TryParse(args.Parameters[1], out prefix);
+                if (prefix < 0 || prefix > 83)
+                    prefix = 0;
             }
 
             if (items.Count == 0)
