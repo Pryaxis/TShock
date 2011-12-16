@@ -343,11 +343,11 @@ namespace TShockAPI
         public List<int> GetPrefixByName(string name)
         {
             Item item = new Item();
+            item.SetDefaults(0);
             for (int i = 1; i < 83; i++)
             {
                 item.prefix = (byte) i;
-                item.AffixName();
-                if (item.name.Trim() == name)
+                if (item.AffixName().Trim() == name)
                     return new List<int> { i };
             }
             var found = new List<int>();
@@ -356,10 +356,9 @@ namespace TShockAPI
                 try
                 {
                     item.prefix = (byte) i;
-                    item.AffixName();
-                    if (item.name.Trim().ToLower() == name.ToLower())
+                    if (item.AffixName().Trim().ToLower() == name.ToLower())
                         return new List<int> { i };
-                    if (item.name.Trim().ToLower().StartsWith(name.ToLower()))
+                    if (item.AffixName().Trim().ToLower().StartsWith(name.ToLower()))
                         found.Add(i);
                 }
                 catch { }
