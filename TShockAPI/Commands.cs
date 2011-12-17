@@ -1271,7 +1271,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid player!", Color.Red);
             else if (players.Count > 1)
                 args.Player.SendMessage("More than one player matched!", Color.Red);
-            else if (!args.Player.TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+            else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
             {
                 var plr = players[0];
                 args.Player.SendMessage(plr.Name + " Has Selected For Users Not To Teleport To Them");
