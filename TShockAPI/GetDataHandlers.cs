@@ -389,6 +389,11 @@ namespace TShockAPI
                         tile.type = 112;
                         changed = true;
                     }
+                    else if (tile.type == 112 && newtile.Type == 53)
+                    {
+                        tile.type = 53;
+                        changed = true;
+                    }
                 }
             }
 
