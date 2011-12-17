@@ -637,5 +637,15 @@ namespace TShockAPI
             }
             return true;
         }
+
+        public int SearchProjectile(short identity)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].identity == identity)
+                    return i;
+            }
+            return 1000;
+        }
     }
 }

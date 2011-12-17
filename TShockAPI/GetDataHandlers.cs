@@ -266,7 +266,7 @@ namespace TShockAPI
                             args.Player.LastTileChangeNotify = DateTime.UtcNow;
                         }
                         args.Player.SendTileSquare(x, y);
-                        return true;
+                        continue;
                     }
                     if (TShock.Config.DisableBuild)
                     {
@@ -278,7 +278,7 @@ namespace TShockAPI
                                 args.Player.LastTileChangeNotify = DateTime.UtcNow;
                             }
                             args.Player.SendTileSquare(x, y);
-                            return true;
+                            continue;
                         }
                     }
                     if (TShock.Config.SpawnProtection)
@@ -294,7 +294,7 @@ namespace TShockAPI
                                     args.Player.LastTileChangeNotify = DateTime.UtcNow;
                                 }
                                 args.Player.SendTileSquare(x, y);
-                                return true;
+                                continue;
                             }
                         }
                     }
@@ -621,7 +621,9 @@ namespace TShockAPI
             byte owner = args.Data.ReadInt8();
             byte type = args.Data.ReadInt8();
 
-            if (ident > Main.maxProjectiles || ident < 0)
+            var index = TShock.Utils.SearchProjectile(ident);
+
+            if (index > Main.maxProjectiles || index < 0)
             {
                 TShock.Utils.HandleGriefer(args.Player, TShock.Config.ExplosiveAbuseReason);
                 return true;
@@ -638,32 +640,34 @@ namespace TShockAPI
                     return true;
             }
 
-
             if (type == 29 || type == 28 || type == 37) //need more explosives from 1.1
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
                 if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
                 {
-                    Main.projectile[ident].type = 0;
-                    Main.projectile[ident].owner = 255;
-                    args.Player.SendData(PacketTypes.ProjectileNew, "", ident);
+                    //Main.projectile[index].SetDefaults(0);
+                    Main.projectile[index].type = 0;
+                    //Main.projectile[index].owner = 255;
+                    //Main.projectile[index].position = new Vector2(0f, 0f);
+                    Main.projectile[index].identity = ident;
+                    args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
                     args.Player.LastExplosive = DateTime.UtcNow;
-                    //return true;
+                    return true;
                 }
                 else
                     return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
             }
             if (args.Player.Index != owner)//ignores projectiles whose senders aren't the same as their owners
             {
-                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);//update projectile on senders end so he knows it didnt get created
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", index);//update projectile on senders end so he knows it didnt get created
                 return true;
             }
             Projectile proj = new Projectile();
             proj.SetDefaults(type);
             if (proj.hostile)//ignores all hostile projectiles from the client they shouldn't be sending them anyways
             {
-                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
             return false;
