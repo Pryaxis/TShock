@@ -726,7 +726,7 @@ namespace TShockAPI
             int tileY = Math.Abs(y);
 
             bool bucket = false;
-            for (int i = 0; i < 44; i++)
+            for (int i = 0; i < 49; i++)
             {
                 if (args.TPlayer.inventory[i].type >= 205 && args.TPlayer.inventory[i].type <= 207)
                 {
