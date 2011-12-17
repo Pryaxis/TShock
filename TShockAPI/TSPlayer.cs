@@ -62,6 +62,7 @@ namespace TShockAPI
         public bool ForceSpawn = false;
         public string Country = "??";
         public int Difficulty;
+        private string CacheIP;
 
         public bool RealPlayer
         {
@@ -75,7 +76,10 @@ namespace TShockAPI
         {
             get
             {
-                return RealPlayer ? (Netplay.serverSock[Index].tcpClient.Connected ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "") : "";
+                if (string.IsNullOrEmpty(CacheIP))
+                    return CacheIP = RealPlayer ? (Netplay.serverSock[Index].tcpClient.Connected ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "") : "";
+                else
+                    return CacheIP;
             }
         }
         /// <summary>
