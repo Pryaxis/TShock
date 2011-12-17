@@ -75,7 +75,7 @@ namespace TShockAPI
         {
             get
             {
-                return RealPlayer ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+                return RealPlayer ? (Netplay.serverSock[Index].tcpClient.Connected ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "") : "";
             }
         }
         /// <summary>
