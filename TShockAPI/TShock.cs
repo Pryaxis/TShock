@@ -516,7 +516,14 @@ namespace TShockAPI
                 return;
             }
 
-            var ban = Bans.GetBanByIp(player.IP);
+            var ipban = Bans.GetBanByIp(player.IP);
+            var nameban = Bans.GetBanByName(player.Name);
+            Ban ban = null;
+            if (ipban != null && Config.EnableIPBans)
+                ban = ipban;
+            else if (nameban != null && Config.EnableIPBans)
+                ban = nameban;
+
             if (ban != null)
             {
                 TShock.Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
