@@ -552,21 +552,6 @@ namespace TShockAPI
                 args.Player.SendTileSquare(x, y);
                 return true;
             }
-
-            if (type == 141)
-            {
-                Log.Debug(string.Format("ExplosiveTile(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
-                {
-                    args.Player.SendTileSquare(x, y);
-                    args.Player.SendMessage("Explosives are disabled!", Color.Red);
-                    args.Player.LastExplosive = DateTime.UtcNow;
-                    return true;
-                }
-                else
-                    return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
-            }
-
             return false;
         }
 
