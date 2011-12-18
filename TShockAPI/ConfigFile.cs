@@ -223,6 +223,9 @@ namespace TShockAPI
         [Description("Kicks banned users by their IP")] 
         public bool EnableIPBans = true;
 
+        [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
+        public bool DisableHardmode = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

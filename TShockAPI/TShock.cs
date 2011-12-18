@@ -200,6 +200,7 @@ namespace TShockAPI
                 NetHooks.GreetPlayer += OnGreetPlayer;
                 NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
                 ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
+                WorldHooks.StartHardMode += OnStartHardMode;
 
                 GetDataHandlers.InitGetDataHandler();
                 Commands.InitCommands();
@@ -866,6 +867,12 @@ namespace TShockAPI
             Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
             e.Handled = true;
+        }
+
+        void OnStartHardMode(HandledEventArgs e)
+        {
+            if (Config.DisableHardmode)
+                e.Handled = true;
         }
 
         /*
