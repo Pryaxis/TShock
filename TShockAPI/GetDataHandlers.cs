@@ -630,6 +630,12 @@ namespace TShockAPI
                 return true;
             }
 
+            if (dmg > 400) // random number, if false positives, increase
+            {
+                TShock.Utils.HandleCheater(args.Player, TShock.Config.ProjectileAbuseReason);
+                return true;
+            }
+
             if (type == 23)
             {
                 if (velx == 0f && vely == 0f && dmg == 99)
