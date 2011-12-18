@@ -118,6 +118,7 @@ namespace TShockAPI
                 {PacketTypes.TileGetSection, HandleGetSection},
                 {PacketTypes.UpdateNPCHome, UpdateNPCHome },
                 {PacketTypes.PlayerAddBuff, HandlePlayerBuff},
+                {PacketTypes.ItemDrop, HandleItemDrop}
             };
         }
 
@@ -919,6 +920,26 @@ namespace TShockAPI
         private static bool HandlePlayerBuff(GetDataHandlerArgs args)
         {
             return !args.Player.Group.HasPermission(Permissions.ignoregriefdetection);
+        }
+
+        private static bool HandleItemDrop(GetDataHandlerArgs args)
+        {
+            var id = args.Data.ReadInt16();
+            var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+            var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+            var stacks = args.Data.ReadInt8();
+            var prefix = args.Data.ReadInt8();
+            var type = args.Data.ReadInt16();
+
+            if (TShock.Config.EnableItemStackChecks)
+            {
+                var item = new Item();
+                item.SetDefaults(type);
+                if (stacks > item.maxStack)
+                    TShock.Utils.HandleCheater(args.Player, "Dropped illegal stack of item");
+                return true;
+            }
+            return false;
         }
     }
 }
