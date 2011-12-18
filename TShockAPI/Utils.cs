@@ -248,7 +248,7 @@ namespace TShockAPI
             }
             //Method #2 - allows impartial matching
             var found = new List<Item>();
-            for (int i = 1; i < Main.maxItemTypes; i++)
+            for (int i = -24; i < Main.maxItemTypes; i++)
             {
                 try
                 {
@@ -284,7 +284,7 @@ namespace TShockAPI
         public List<NPC> GetNPCByName(string name)
         {
             //Method #1 - must be exact match, allows support for different coloured slimes
-            for (int i = 1; i < Main.maxNPCTypes; i++)
+            for (int i = -17; i < Main.maxNPCTypes; i++)
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(name);
