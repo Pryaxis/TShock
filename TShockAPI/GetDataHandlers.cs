@@ -157,7 +157,7 @@ namespace TShockAPI
             var itemname = it.name;
 
             if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
-                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");;
+                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
             if (stack>it.maxStack)
             {
                 string reason = string.Format("Item Stack Hack Detected: player has {0} {1}(s) in one stack", stack,itemname);
@@ -945,14 +945,18 @@ namespace TShockAPI
             var prefix = args.Data.ReadInt8();
             var type = args.Data.ReadInt16();
 
+            var item = new Item();
+            item.netDefaults(type);
             if (TShock.Config.EnableItemStackChecks)
             {
-                var item = new Item();
-                item.netDefaults(type);
                 if (stacks > item.maxStack)
+                {
                     TShock.Utils.HandleCheater(args.Player, "Dropped illegal stack of item");
-                return true;
+                    return true;
+                }
             }
+            if (TShock.Itembans.ItemIsBanned(item.name))
+                TShock.Utils.HandleCheater(args.Player, "Dropped banned item");
             return false;
         }
     }
