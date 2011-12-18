@@ -214,6 +214,9 @@ namespace TShockAPI
 		[Description("Disabling this prevents players from being banned or kicked based on item stacks.")]
     	public bool EnableItemStackChecks = true;
 
+        [Description("Kicks users using a proxy as identified with the GeoIP database")] 
+        public bool KickProxyUsers = true;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
