@@ -630,10 +630,10 @@ namespace TShockAPI
                 return true;
             }
 
-            if (dmg > 80) // random number, if false positives, increase
+            if (dmg > 100) // random number, if false positives, increase
             {
                 TShock.Utils.SendLogs(string.Format("{0} sent a projectile with more than 80 damage.", args.Player.Name), Color.Red);
-                if (dmg > 150)
+                if (dmg > 175)
                 {
                     TShock.Utils.HandleCheater(args.Player, TShock.Config.ProjectileAbuseReason);
                     return true;
