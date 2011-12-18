@@ -654,7 +654,7 @@ namespace TShockAPI
             if (type == 29 || type == 28 || type == 37) //need more explosives from 1.1
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
+                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) && !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
                 {
                     //Main.projectile[index].SetDefaults(0);
                     Main.projectile[index].type = 0;
