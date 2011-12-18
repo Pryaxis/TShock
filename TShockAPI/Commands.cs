@@ -198,6 +198,8 @@ namespace TShockAPI
             add(Permissions.hardmode, StartHardMode, "hardmode");
             add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
         	add(Permissions.cfg, ServerInfo, "stats");
+            add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
+            add(Permissions.converthardmode, ConvertHallow, "converthallow");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1221,6 +1223,58 @@ namespace TShockAPI
         private static void DisableHardMode(CommandArgs args)
         {
             Main.hardMode = false;
+        }
+
+        private static void ConvertCorruption(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 25:
+                            Main.tile[x, y].type = 117;
+                            break;
+                        case 23:
+                            Main.tile[x, y].type = 109;
+                            break;
+                        case 112:
+                            Main.tile[x, y].type = 116;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            TShock.Utils.Broadcast("Corruption conversion done.");
+        }
+
+        private static void ConvertHallow(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 117:
+                            Main.tile[x, y].type = 25;
+                            break;
+                        case 109:
+                            Main.tile[x, y].type = 23;
+                            break;
+                        case 116:
+                            Main.tile[x, y].type = 112;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            TShock.Utils.Broadcast("Hallow conversion done.");
         }
 
         #endregion Cause Events and Spawn Monsters Commands
