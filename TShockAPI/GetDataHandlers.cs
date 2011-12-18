@@ -561,6 +561,7 @@ namespace TShockAPI
                     args.Player.SendTileSquare(x, y);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
                     args.Player.LastExplosive = DateTime.UtcNow;
+                    return true;
                 }
                 else
                     return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
