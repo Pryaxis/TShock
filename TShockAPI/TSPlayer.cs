@@ -31,7 +31,7 @@ namespace TShockAPI
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileThreshold { get; set; }
-        public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -62,6 +62,7 @@ namespace TShockAPI
         public bool ForceSpawn = false;
         public string Country = "??";
         public int Difficulty;
+        private string CacheIP;
 
         public bool RealPlayer
         {
@@ -75,7 +76,10 @@ namespace TShockAPI
         {
             get
             {
-                return RealPlayer ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+                if (string.IsNullOrEmpty(CacheIP))
+                    return CacheIP = RealPlayer ? (Netplay.serverSock[Index].tcpClient.Connected ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "") : "";
+                else
+                    return CacheIP;
             }
         }
         /// <summary>
@@ -145,14 +149,14 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesDestroyed = new Dictionary<Vector2, Tile>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -268,15 +272,16 @@ namespace TShockAPI
             return false;
         }
 
-        public virtual void GiveItem(int type, string name, int width, int height, int stack)
+        public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
         {
-            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true);
+            int itemid = Item.NewItem((int)X, (int)Y, width, height, type, stack, true, prefix);
             // This is for special pickaxe/hammers/swords etc
             Main.item[itemid].SetDefaults(name);
             // The set default overrides the wet and stack set by NewItem
             Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width, Main.item[itemid].height);
             Main.item[itemid].stack = stack;
             Main.item[itemid].owner = Index;
+            Main.item[itemid].prefix = (byte) prefix;
             NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
             NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
         }
@@ -418,12 +423,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<Vector2, TileData> destroyedTiles)
+        public void RevertKillTile(Dictionary<Vector2, Tile> destroyedTiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<Vector2, TileData> entry in destroyedTiles)
+            foreach (KeyValuePair<Vector2, Tile> entry in destroyedTiles)
             {
-                Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
                 Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }

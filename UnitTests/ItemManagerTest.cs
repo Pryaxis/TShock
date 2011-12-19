@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using TShockAPI.DB;
 using TShockAPI;
 
