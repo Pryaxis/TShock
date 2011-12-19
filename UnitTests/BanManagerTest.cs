@@ -3,7 +3,7 @@ using System.Data;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TShockAPI;
 using TShockAPI.DB;
@@ -43,7 +43,7 @@ namespace UnitTests
         [TestMethod]
         public void FindBanTest()
         {
-            Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
+  D:\SVNs\TShock_GitHub\UnitTests\BanManagerTest.orderedtest          Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
             TShock.Config.EnableBanOnUsernames = true;
             Assert.IsNotNull(Bans.GetBanByName("BanTest"));
             TShock.Config.EnableBanOnUsernames = false;

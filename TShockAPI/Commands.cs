@@ -198,6 +198,8 @@ namespace TShockAPI
             add(Permissions.hardmode, StartHardMode, "hardmode");
             add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
         	add(Permissions.cfg, ServerInfo, "stats");
+            add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
+            add(Permissions.converthardmode, ConvertHallow, "converthallow");
         }
 
         public static bool HandleCommand(TSPlayer player, string text)
@@ -1068,7 +1070,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
                 return;
             }
-            NPC.SpawnWOF(new Microsoft.Xna.Framework.Vector2(args.Player.X, args.Player.Y));
+            NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
             TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
         }
         
@@ -1223,6 +1225,58 @@ namespace TShockAPI
             Main.hardMode = false;
         }
 
+        private static void ConvertCorruption(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 25:
+                            Main.tile[x, y].type = 117;
+                            break;
+                        case 23:
+                            Main.tile[x, y].type = 109;
+                            break;
+                        case 112:
+                            Main.tile[x, y].type = 116;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            TShock.Utils.Broadcast("Corruption conversion done.");
+        }
+
+        private static void ConvertHallow(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 117:
+                            Main.tile[x, y].type = 25;
+                            break;
+                        case 109:
+                            Main.tile[x, y].type = 23;
+                            break;
+                        case 116:
+                            Main.tile[x, y].type = 112;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            TShock.Utils.Broadcast("Hallow conversion done.");
+        }
+
         #endregion Cause Events and Spawn Monsters Commands
 
         #region Teleport Commands
@@ -1271,7 +1325,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid player!", Color.Red);
             else if (players.Count > 1)
                 args.Player.SendMessage("More than one player matched!", Color.Red);
-            else if (!args.Player.TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+            else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
             {
                 var plr = players[0];
                 args.Player.SendMessage(plr.Name + " Has Selected For Users Not To Teleport To Them");
@@ -2497,7 +2551,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 1)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount] [prefix id/name]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2506,7 +2560,16 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
-            int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
+            int prefix = 0;
+            if (args.Parameters.Count == 2)
+                int.TryParse(args.Parameters[1], out itemAmount);
+            else if (args.Parameters.Count == 3)
+            {
+                int.TryParse(args.Parameters[1], out itemAmount);
+                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[2]);
+                if (found.Count == 1)
+                    prefix = found[0];
+            }
             var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             if (items.Count == 0)
             {
@@ -2525,7 +2588,7 @@ namespace TShockAPI
                     {
                         if (itemAmount == 0 || itemAmount > item.maxStack)
                             itemAmount = item.maxStack;
-                        args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                        args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
                         args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
                     }
                     else
@@ -2544,7 +2607,7 @@ namespace TShockAPI
         {
             if (args.Parameters.Count < 2)
             {
-                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount]", Color.Red);
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /give <item type/id> <player> [item amount] [prefix id/name]", Color.Red);
                 return;
             }
             if (args.Parameters[0].Length == 0)
@@ -2558,13 +2621,20 @@ namespace TShockAPI
                 return;
             }
             int itemAmount = 0;
+            int prefix = 0;
             var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
             args.Parameters.RemoveAt(0);
             string plStr = args.Parameters[0];
             args.Parameters.RemoveAt(0);
-            if (args.Parameters.Count > 0)
-                int.TryParse(args.Parameters[args.Parameters.Count - 1], out itemAmount);
-
+            if (args.Parameters.Count == 1)
+                int.TryParse(args.Parameters[0], out itemAmount);
+            else if (args.Parameters.Count == 2)
+            {
+                int.TryParse(args.Parameters[0], out itemAmount);
+                var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+                if (found.Count == 1)
+                    prefix = found[0];
+            }
 
             if (items.Count == 0)
             {
@@ -2595,7 +2665,7 @@ namespace TShockAPI
                         {
                             if (itemAmount == 0 || itemAmount > item.maxStack)
                                 itemAmount = item.maxStack;
-                            plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount);
+                            plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
                             args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
                             plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
                         }
@@ -2618,39 +2688,29 @@ namespace TShockAPI
             int radius = 50;
             if (args.Parameters.Count > 0)
             {
-
                 if (args.Parameters[0].ToLower() == "all")
                 {
-
                     radius = Int32.MaxValue / 16;
-
                 }
                 else
                 {
-
                     try
                     {
-
                         radius = Convert.ToInt32(args.Parameters[0]);
-
                     }
                     catch (Exception) { args.Player.SendMessage("Please either enter the keyword \"all\", or the block radius you wish to delete all items from.", Color.Red); return; }
-
                 }
 
             }
             int count = 0;
             for (int i = 0; i < 200; i++)
             {
-
                 if ((Math.Sqrt(Math.Pow(Main.item[i].position.X - args.Player.X, 2) + Math.Pow(Main.item[i].position.Y - args.Player.Y, 2)) < radius * 16) && (Main.item[i].active))
                 {
-
                     Main.item[i].active = false;
                     NetMessage.SendData(0x15, -1, -1, "", i, 0f, 0f, 0f, 0);
                     count++;
                 }
-
             }
             args.Player.SendMessage("All " + count.ToString() + " items within a radius of " + radius.ToString() + " have been deleted.");
 

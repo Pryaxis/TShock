@@ -34,7 +34,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using Hooks;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -45,7 +45,7 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 9)]
+    [APIVersion(1, 10)]
     public class TShock : TerrariaPlugin
     {
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
@@ -109,6 +109,8 @@ namespace TShockAPI
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public override void Initialize()
         {
+            HandleCommandLine(Environment.GetCommandLineArgs());
+
             if (!Directory.Exists(SavePath))
                 Directory.CreateDirectory(SavePath);
 
@@ -121,7 +123,6 @@ namespace TShockAPI
 
             try
             {
-
                 if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
                 {
                     Log.ConsoleInfo("TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
@@ -132,7 +133,7 @@ namespace TShockAPI
                 ConfigFile.ConfigRead += OnConfigRead;
                 FileTools.SetupConfig();
 
-                HandleCommandLine(Environment.GetCommandLineArgs());
+                HandleCommandLine_Port(Environment.GetCommandLineArgs());
 
                 if (Config.StorageType.ToLower() == "sqlite")
                 {
@@ -199,6 +200,7 @@ namespace TShockAPI
                 NetHooks.GreetPlayer += OnGreetPlayer;
                 NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
                 ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
+                WorldHooks.StartHardMode += OnStartHardMode;
 
                 GetDataHandlers.InitGetDataHandler();
                 Commands.InitCommands();
@@ -384,6 +386,13 @@ namespace TShockAPI
                         Log.ConsoleInfo("World path has been set to " + path);
                     }
                 }
+            }
+        }
+
+        private void HandleCommandLine_Port(string[] parms)
+        {
+            for (int i = 0; i < parms.Length; i++)
+            {
                 if (parms[i].ToLower() == "-port")
                 {
                     int port = Convert.ToInt32(parms[++i]);
@@ -508,7 +517,14 @@ namespace TShockAPI
                 return;
             }
 
-            var ban = Bans.GetBanByIp(player.IP);
+            var ipban = Bans.GetBanByIp(player.IP);
+            var nameban = Bans.GetBanByName(player.Name);
+            Ban ban = null;
+            if (ipban != null && Config.EnableIPBans)
+                ban = ipban;
+            else if (nameban != null && Config.EnableIPBans)
+                ban = nameban;
+
             if (ban != null)
             {
                 TShock.Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
@@ -718,6 +734,9 @@ namespace TShockAPI
             {
                 var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
                 player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
+                if (code == "A1")
+                    if (TShock.Config.KickProxyUsers)
+                        TShock.Utils.Kick(player, "Proxies are not allowed");
                 Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", player.Name, player.IP, player.Group.Name, player.Country));
                 TShock.Utils.Broadcast(player.Name + " is from the " + player.Country, Color.Yellow);
             }
@@ -848,6 +867,12 @@ namespace TShockAPI
             Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
             e.Handled = true;
+        }
+
+        void OnStartHardMode(HandledEventArgs e)
+        {
+            if (Config.DisableHardmode)
+                e.Handled = true;
         }
 
         /*

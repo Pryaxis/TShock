@@ -1,4 +1,3 @@
-@echo off
 set pluginspath=C:\Program Files (x86)\Steam\steamapps\common\terraria\serverplugins\
 IF NOT EXIST "%pluginspath%" GOTO SkipCopy
 attrib -r "%pluginspath%TShockAPI.dll"
