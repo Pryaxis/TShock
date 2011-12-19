@@ -226,6 +226,9 @@ namespace TShockAPI
         [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
         public bool DisableHardmode = false;
 
+        [Description("Toggles sending teleported to message")]
+        public bool DisplayTeleportMessage = true;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

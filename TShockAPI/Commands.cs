@@ -1337,7 +1337,11 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
                 {
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
-                    plr.SendMessage(args.Player.Name + " Teleported To You");
+
+                    if (TShock.Config.DisplayTeleportMessage)
+                    {
+                        plr.SendMessage(args.Player.Name + " Teleported To You");
+                    }
                 }
             }
         }
@@ -2203,7 +2207,7 @@ namespace TShockAPI
                         if (args.Parameters.Count == 4)
                         {
                             int direction;
-                            switch (args.Parameters[3])
+                            switch (args.Parameters[2])
                             {
                                 case "u":
                                 case "up":
@@ -2236,7 +2240,7 @@ namespace TShockAPI
                                     }
                             }
                             int addAmount;
-                            int.TryParse(args.Parameters[2], out addAmount);
+                            int.TryParse(args.Parameters[3], out addAmount);
                             if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
                             {
                                 args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
