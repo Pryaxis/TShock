@@ -1068,7 +1068,7 @@ namespace TShockAPI
                 args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
                 return;
             }
-            NPC.SpawnWOF(new Microsoft.Xna.Framework.Vector2(args.Player.X, args.Player.Y));
+            NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
             TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
         }
         
