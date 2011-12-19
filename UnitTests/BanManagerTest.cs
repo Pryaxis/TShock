@@ -43,7 +43,7 @@ namespace UnitTests
         [TestMethod]
         public void FindBanTest()
         {
-  D:\SVNs\TShock_GitHub\UnitTests\BanManagerTest.orderedtest          Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
+            Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
             TShock.Config.EnableBanOnUsernames = true;
             Assert.IsNotNull(Bans.GetBanByName("BanTest"));
             TShock.Config.EnableBanOnUsernames = false;
