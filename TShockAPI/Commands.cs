@@ -1248,6 +1248,7 @@ namespace TShockAPI
                     }
                 }
             }
+            WorldGen.CountTiles(0);
             Netplay.ResetSections();
             TShock.Utils.Broadcast("Corruption conversion done.");
         }
@@ -1275,6 +1276,7 @@ namespace TShockAPI
                     }
                 }
             }
+            WorldGen.CountTiles(0);
             Netplay.ResetSections();
             TShock.Utils.Broadcast("Hallow conversion done.");
         }
