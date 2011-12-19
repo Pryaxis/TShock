@@ -1337,7 +1337,11 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
                 {
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
-                    plr.SendMessage(args.Player.Name + " Teleported To You");
+
+                    if (TShock.Config.DisplayTeleportMessage)
+                    {
+                        plr.SendMessage(args.Player.Name + " Teleported To You");
+                    }
                 }
             }
         }
