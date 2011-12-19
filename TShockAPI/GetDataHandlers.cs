@@ -325,6 +325,7 @@ namespace TShockAPI
                         tile.frameY = newtile.FrameY;
                         changed = true;
                     }
+                    // Holy water/Unholy water
                     else if (tile.type == 1 && newtile.Type == 117)
                     {
                         tile.type = 117;
@@ -393,6 +394,21 @@ namespace TShockAPI
                     else if (tile.type == 112 && newtile.Type == 53)
                     {
                         tile.type = 53;
+                        changed = true;
+                    }
+                    else if (tile.type == 109 && newtile.Type == 2)
+                    {
+                        tile.type = 2;
+                        changed = true;
+                    }
+                    else if (tile.type == 116 && newtile.Type == 53)
+                    {
+                        tile.type = 53;
+                        changed = true;
+                    }
+                    else if (tile.type == 117 && newtile.Type == 1)
+                    {
+                        tile.type = 1;
                         changed = true;
                     }
                 }
