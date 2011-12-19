@@ -309,6 +309,7 @@ namespace TShockAPI
                     File.Delete(Path.Combine(SavePath, "tshock.pid"));
                 }
                 RestApi.Dispose();
+                Log.Dispose();
             }
 
             base.Dispose(disposing);
