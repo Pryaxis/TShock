@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
 using TShockAPI;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using TShockAPI.DB;
 using Region = TShockAPI.DB.Region;
 

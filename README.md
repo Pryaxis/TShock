@@ -54,3 +54,4 @@ These guidelines are to be followed by all developers with commit level access t
 - __Document code prior to marking it done in JIRA__
 - Move any un-tested code to the "Needs Validation" section on JIRA prior to marking it as done.
 - Do not push changes to any branch without a proper issue being assigned in JIRA. If a feature isn't planned for this release, __it shouldn't be in the repo about to be released__.
+- Submit all pull requests to the general-devel branch prior to the master branch, or you will be ignored.

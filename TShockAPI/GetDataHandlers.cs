@@ -118,6 +118,7 @@ namespace TShockAPI
                 {PacketTypes.TileGetSection, HandleGetSection},
                 {PacketTypes.UpdateNPCHome, UpdateNPCHome },
                 {PacketTypes.PlayerAddBuff, HandlePlayerBuff},
+                {PacketTypes.ItemDrop, HandleItemDrop}
             };
         }
 
@@ -156,7 +157,7 @@ namespace TShockAPI
             var itemname = it.name;
 
             if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(itemname))
-                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");;
+                args.Player.Disconnect("Using banned item: " + itemname + ", remove it and rejoin");
             if (stack>it.maxStack)
             {
                 string reason = string.Format("Item Stack Hack Detected: player has {0} {1}(s) in one stack", stack,itemname);
@@ -266,7 +267,7 @@ namespace TShockAPI
                             args.Player.LastTileChangeNotify = DateTime.UtcNow;
                         }
                         args.Player.SendTileSquare(x, y);
-                        return true;
+                        continue;
                     }
                     if (TShock.Config.DisableBuild)
                     {
@@ -278,7 +279,7 @@ namespace TShockAPI
                                 args.Player.LastTileChangeNotify = DateTime.UtcNow;
                             }
                             args.Player.SendTileSquare(x, y);
-                            return true;
+                            continue;
                         }
                     }
                     if (TShock.Config.SpawnProtection)
@@ -294,7 +295,7 @@ namespace TShockAPI
                                     args.Player.LastTileChangeNotify = DateTime.UtcNow;
                                 }
                                 args.Player.SendTileSquare(x, y);
-                                return true;
+                                continue;
                             }
                         }
                     }
@@ -387,6 +388,11 @@ namespace TShockAPI
                     else if (tile.type == 116 && newtile.Type == 112)
                     {
                         tile.type = 112;
+                        changed = true;
+                    }
+                    else if (tile.type == 112 && newtile.Type == 53)
+                    {
+                        tile.type = 53;
                         changed = true;
                     }
                 }
@@ -537,7 +543,7 @@ namespace TShockAPI
                 args.Player.TileThreshold++;
                 var coords = new Vector2(x, y);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
-                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y].Data);
+                    args.Player.TilesDestroyed.Add(coords, Main.tile[x, y]);
             }
 
             if ((DateTime.UtcNow - args.Player.LastExplosive).TotalMilliseconds < 1000)
@@ -616,10 +622,22 @@ namespace TShockAPI
             byte owner = args.Data.ReadInt8();
             byte type = args.Data.ReadInt8();
 
-            if (ident > Main.maxProjectiles || ident < 0)
+            var index = TShock.Utils.SearchProjectile(ident);
+
+            if (index > Main.maxProjectiles || index < 0)
             {
                 TShock.Utils.HandleGriefer(args.Player, TShock.Config.ExplosiveAbuseReason);
                 return true;
+            }
+
+            if (dmg > 125) // random number, if false positives, increase
+            {
+                TShock.Utils.SendLogs(string.Format("{0} sent a projectile with more than 125 damage.", args.Player.Name), Color.Red);
+                if (dmg > 175)
+                {
+                    TShock.Utils.HandleCheater(args.Player, TShock.Config.ProjectileAbuseReason);
+                    return true;
+                }
             }
 
             if (type == 23)
@@ -633,32 +651,34 @@ namespace TShockAPI
                     return true;
             }
 
-
             if (type == 29 || type == 28 || type == 37) //need more explosives from 1.1
             {
                 Log.Debug(string.Format("Explosive(PlyXY:{0}_{1}, Type:{2})", args.Player.TileX, args.Player.TileY, type));
-                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) || !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
+                if (TShock.Config.DisableExplosives && (!args.Player.Group.HasPermission(Permissions.useexplosives) && !args.Player.Group.HasPermission(Permissions.ignoregriefdetection)))
                 {
-                    Main.projectile[ident].type = 0;
-                    Main.projectile[ident].owner = 255;
-                    args.Player.SendData(PacketTypes.ProjectileNew, "", ident);
+                    //Main.projectile[index].SetDefaults(0);
+                    Main.projectile[index].type = 0;
+                    //Main.projectile[index].owner = 255;
+                    //Main.projectile[index].position = new Vector2(0f, 0f);
+                    Main.projectile[index].identity = ident;
+                    args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                     args.Player.SendMessage("Explosives are disabled!", Color.Red);
                     args.Player.LastExplosive = DateTime.UtcNow;
-                    //return true;
+                    return true;
                 }
                 else
                     return TShock.Utils.HandleExplosivesUser(args.Player, TShock.Config.ExplosiveAbuseReason);
             }
             if (args.Player.Index != owner)//ignores projectiles whose senders aren't the same as their owners
             {
-                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);//update projectile on senders end so he knows it didnt get created
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", index);//update projectile on senders end so he knows it didnt get created
                 return true;
             }
             Projectile proj = new Projectile();
             proj.SetDefaults(type);
             if (proj.hostile)//ignores all hostile projectiles from the client they shouldn't be sending them anyways
             {
-                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", ident);
+                TShock.Players[args.Player.Index].SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
             return false;
@@ -717,7 +737,7 @@ namespace TShockAPI
             int tileY = Math.Abs(y);
 
             bool bucket = false;
-            for (int i = 0; i < 44; i++)
+            for (int i = 0; i < 49; i++)
             {
                 if (args.TPlayer.inventory[i].type >= 205 && args.TPlayer.inventory[i].type <= 207)
                 {
@@ -910,6 +930,30 @@ namespace TShockAPI
         private static bool HandlePlayerBuff(GetDataHandlerArgs args)
         {
             return !args.Player.Group.HasPermission(Permissions.ignoregriefdetection);
+        }
+
+        private static bool HandleItemDrop(GetDataHandlerArgs args)
+        {
+            var id = args.Data.ReadInt16();
+            var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+            var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+            var stacks = args.Data.ReadInt8();
+            var prefix = args.Data.ReadInt8();
+            var type = args.Data.ReadInt16();
+
+            var item = new Item();
+            item.netDefaults(type);
+            if (TShock.Config.EnableItemStackChecks)
+            {
+                if (stacks > item.maxStack)
+                {
+                    TShock.Utils.HandleCheater(args.Player, "Dropped illegal stack of item");
+                    return true;
+                }
+            }
+            if (TShock.Itembans.ItemIsBanned(item.name))
+                TShock.Utils.HandleCheater(args.Player, "Dropped banned item");
+            return false;
         }
     }
 }

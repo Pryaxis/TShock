@@ -214,6 +214,21 @@ namespace TShockAPI
 		[Description("Disabling this prevents players from being banned or kicked based on item stacks.")]
     	public bool EnableItemStackChecks = true;
 
+        [Description("Kicks users using a proxy as identified with the GeoIP database")] 
+        public bool KickProxyUsers = true;
+
+        [Description("Kicks banned users by their name")]
+        public bool EnableNameBans = false;
+
+        [Description("Kicks banned users by their IP")] 
+        public bool EnableIPBans = true;
+
+        [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
+        public bool DisableHardmode = false;
+
+        [Description("Toggles sending teleported to message")]
+        public bool DisplayTeleportMessage = true;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

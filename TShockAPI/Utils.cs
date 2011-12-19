@@ -248,7 +248,7 @@ namespace TShockAPI
             }
             //Method #2 - allows impartial matching
             var found = new List<Item>();
-            for (int i = 1; i < Main.maxItemTypes; i++)
+            for (int i = -24; i < Main.maxItemTypes; i++)
             {
                 try
                 {
@@ -284,7 +284,7 @@ namespace TShockAPI
         public List<NPC> GetNPCByName(string name)
         {
             //Method #1 - must be exact match, allows support for different coloured slimes
-            for (int i = 1; i < Main.maxNPCTypes; i++)
+            for (int i = -17; i < Main.maxNPCTypes; i++)
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(name);
@@ -309,10 +309,12 @@ namespace TShockAPI
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
         }
+
         public string GetBuffDescription(int id)
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
         }
+
         public List<int> GetBuffByName(string name)
         {
             for (int i = 1; i < Main.maxBuffs; i++)
@@ -327,6 +329,51 @@ namespace TShockAPI
                     found.Add(i);
             }
             return found;
+        }
+
+        public string GetPrefixById(int id)
+        {
+            var item = new Item();
+            item.SetDefaults(0);
+            item.prefix = (byte)id;
+            item.AffixName();
+            return item.name.Trim();
+        }
+
+        public List<int> GetPrefixByName(string name)
+        {
+            Item item = new Item();
+            item.SetDefaults(0);
+            for (int i = 1; i < 83; i++)
+            {
+                item.prefix = (byte) i;
+                if (item.AffixName().Trim() == name)
+                    return new List<int> { i };
+            }
+            var found = new List<int>();
+            for (int i = 1; i < 83; i++)
+            {
+                try
+                {
+                    item.prefix = (byte) i;
+                    if (item.AffixName().Trim().ToLower() == name.ToLower())
+                        return new List<int> { i };
+                    if (item.AffixName().Trim().ToLower().StartsWith(name.ToLower()))
+                        found.Add(i);
+                }
+                catch { }
+            }
+            return found;
+        }
+
+        public List<int> GetPrefixByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type) && type > 0 && type < 84)
+            {
+                return new List<int> {type};
+            }
+            return GetPrefixByName(idOrName);
         }
 
         /// <summary>
@@ -589,6 +636,16 @@ namespace TShockAPI
                     return false;
             }
             return true;
+        }
+
+        public int SearchProjectile(short identity)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].identity == identity)
+                    return i;
+            }
+            return 1000;
         }
     }
 }

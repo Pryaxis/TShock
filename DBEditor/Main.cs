@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 
 using System.Windows.Forms;

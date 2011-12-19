@@ -153,6 +153,9 @@ namespace TShockAPI
         [Description("Users can tp to anyone")]
         public static readonly string tpall;
 
+        [Description("User can convert hallow into corruption and vice-versa")]
+        public static readonly string converthardmode;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())
