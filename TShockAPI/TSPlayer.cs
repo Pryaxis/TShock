@@ -24,6 +24,8 @@ using Terraria;
 
 using TShockAPI.Net;
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace TShockAPI
 {
     public class TSPlayer
@@ -54,6 +56,7 @@ namespace TShockAPI
         public bool IsLoggedIn;
         public int UserID = -1;
         public bool HasBeenNaggedAboutLoggingIn;
+        public bool TPAllow = true;
         public bool TpLock = false;
         Player FakePlayer;
         public bool RequestedSection = false;
@@ -74,7 +77,7 @@ namespace TShockAPI
         {
             get
             {
-                return RealPlayer ? Tools.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
+                return RealPlayer ? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString()) : "";
             }
         }
         /// <summary>
@@ -129,9 +132,9 @@ namespace TShockAPI
                 bool flag = false;
                 if (RealPlayer)
                 {
-                    for (int i = 0; i < 40; i++)
+                    for (int i = 0; i < 40; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
                     {
-                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active)
+                        if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
                         {
                             flag = true;
                             break;
@@ -194,7 +197,9 @@ namespace TShockAPI
                     WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
                     (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
                     (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None),
+                    (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+                    (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+                    (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None), 
                     WorldName = Main.worldName
                 };
                 msg.PackFull(ms);
@@ -212,6 +217,7 @@ namespace TShockAPI
             //150 Should avoid all client crash errors
             //The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
             //Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
+            //Should we properly send sections so that clients don't get tiles twice?
             if (!SendTileSquare(tilex, tiley))
             {
                 InitSpawn = true;
@@ -283,6 +289,11 @@ namespace TShockAPI
         }
 
         public virtual void SendMessage(string msg, Color color)
+        {
+            SendMessage(msg, color.R, color.G, color.B);
+        }
+
+        public virtual void SendMessage(string msg, Microsoft.Xna.Framework.Color color)
         {
             SendMessage(msg, color.R, color.G, color.B);
         }
@@ -374,6 +385,12 @@ namespace TShockAPI
             Console.WriteLine(msg);
             RconHandler.Response += msg + "\n";
         }
+        
+        public void SetFullMoon(bool fullmoon)
+        {
+            Main.moonPhase = 0;
+            SetTime(false, 0);
+        }
 
         public void SetBloodMoon(bool bloodMoon)
         {
@@ -395,7 +412,7 @@ namespace TShockAPI
             {
                 int spawnTileX;
                 int spawnTileY;
-                Tools.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
+                TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX, out spawnTileY);
                 int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
                 // This is for special slimes
                 Main.npc[npcid].SetDefaults(name);

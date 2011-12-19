@@ -30,9 +30,9 @@ namespace TShockAPI
         [Description("The equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health))")]
         public int InvasionMultiplier = 1;
         [Description("The default maximum mobs that will spawn per wave. Higher means more mobs in that wave.")]
-        public int DefaultMaximumSpawns = 4;
+        public int DefaultMaximumSpawns = 5;
         [Description("The delay between waves. Shorter values lead to less mobs.")]
-        public int DefaultSpawnRate = 700;
+        public int DefaultSpawnRate = 600;
         [Description("The port the server runs on.")]
         public int ServerPort = 7777;
         [Description("Enable or disable the whitelist based on IP addresses in whitelist.txt")]
@@ -198,6 +198,21 @@ namespace TShockAPI
 
         [Description("This is the port which the rest api will listen on.")]
         public int RestApiPort = 7878;
+
+        [Description("Disable tombstones for all players.")]
+        public bool DisableTombstones = true;
+
+        [Description("Displays a player's IP on join to everyone who has the log permission")]
+        public bool DisplayIPToAdmins = false;
+		
+		[Description("Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain asthetic tiles.")]
+    	public bool EnableInsecureTileFixes = true;
+
+    	[Description("Some weapons override the range checks, however malicious users can take advantage of this and send lots of packets of certain types. Disabling this will turn off weapons that affect this.")] 
+		public bool EnableRangeCheckOverrides = true;
+
+		[Description("Disabling this prevents players from being banned or kicked based on item stacks.")]
+    	public bool EnableItemStackChecks = true;
 
         public static ConfigFile Read(string path)
         {
