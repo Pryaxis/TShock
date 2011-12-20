@@ -937,7 +937,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (WhitelistBuffMaxTime[type] > 0 && time < WhitelistBuffMaxTime[type])
+            if (WhitelistBuffMaxTime[type] > 0 && time <= WhitelistBuffMaxTime[type])
             {
                 return false;
             }
