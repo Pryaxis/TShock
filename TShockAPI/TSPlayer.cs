@@ -519,12 +519,37 @@ namespace TShockAPI
         public static string ToString(NetItem[] inventory)
         {
             string inventoryString = "";
+            for (int i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                inventoryString += inventory[i].netID;
+                if (inventory[i].netID != 0)
+                {
+                    inventoryString += "," + inventory[i].stack;
+                    inventoryString += "," + inventory[i].prefix;
+                }
+                else
+                {
+                    inventoryString += ",0,0";
+                }
+                if(i != NetItem.maxNetInventory)
+                    inventoryString += "~";
+            }
             return inventoryString;
         }
 
         public static NetItem[] Parse(string data)
         {
             NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+            string[] items = data.Split('~');
+            int i = 0;
+            foreach (string item in items)
+            {
+                string[] idata = item.Split(',');
+                inventory[i].netID = int.Parse(idata[0]);
+                inventory[i].stack = int.Parse(idata[1]);
+                inventory[i].prefix = int.Parse(idata[2]);
+                i++;
+            }
             return inventory;
         }
     }
