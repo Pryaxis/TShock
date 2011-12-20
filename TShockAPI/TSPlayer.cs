@@ -262,7 +262,8 @@ namespace TShockAPI
         {
             try
             {
-                SendData(PacketTypes.TileSendSquare, "", size, (x - (size / 2)), (y - (size / 2)));
+                int num = (size - 1) / 2;
+                SendData(PacketTypes.TileSendSquare, "", size, (float)(x - num), (float)(y - num));
                 return true;
             }
             catch (Exception ex)

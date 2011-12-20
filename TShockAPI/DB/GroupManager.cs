@@ -27,11 +27,11 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
 
             //Add default groups
-            AddGroup("default", "canwater,canlava,warp,canbuild");
+            AddGroup("default", "warp,canbuild");
             AddGroup("newadmin", "default", "kick,editspawn,reservedslot");
             AddGroup("admin", "newadmin", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
-            AddGroup("vip", "default", "canwater,canlava,warp,canbuild,reservedslot");
+            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,usebanneditem,manageusers");
+            AddGroup("vip", "default", "reservedslot");
 
             String file = Path.Combine(TShock.SavePath, "groups.txt");
             if (File.Exists(file))

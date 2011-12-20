@@ -25,6 +25,7 @@ using Terraria;
 
 using TShockAPI.Net;
 using System.IO.Streams;
+using System.Net;
 
 namespace TShockAPI
 {
@@ -211,6 +212,28 @@ namespace TShockAPI
             }
             args.Player.Difficulty = difficulty;
             args.Player.ReceivedInfo = true;
+
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+
+            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+            {
+                var code = TShock.Geo.TryGetCountryCode(IPAddress.Parse(args.Player.IP));
+                args.Player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
+                if (code == "A1")
+                    if (TShock.Config.KickProxyUsers)
+                        TShock.Utils.Kick(args.Player, "Proxies are not allowed");
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined from the " + args.Player.Country, Color.Yellow);
+            }
+            else
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined", Color.Yellow);
+            }
+
+            if (TShock.Config.DisplayIPToAdmins)
+                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
+
             return false;
         }
 
