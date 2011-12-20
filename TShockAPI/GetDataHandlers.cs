@@ -122,13 +122,16 @@ namespace TShockAPI
             short prefix = (short) args.Data.ReadInt8();
             int type = (int) args.Data.ReadInt16();
 
+            if (type == 0)
+                return true;
+
             var item = new Item();
             item.netDefaults(type);
             item.Prefix(prefix);
 
             if (stack > item.maxStack)
             {
-                return TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) and then rejoin", item.name, stack));
+                return TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) > {2} and then rejoin", item.name, stack, item.maxStack));
             }
 
             return false;
