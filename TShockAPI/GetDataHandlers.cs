@@ -123,16 +123,28 @@ namespace TShockAPI
             short prefix = (short) args.Data.ReadInt8();
             int type = (int) args.Data.ReadInt16();
 
-            if (type == 0)
+            if (plr != args.Player.Index)
+            {
                 return true;
+            }
+
+            if (slot < 0 || slot > NetItem.maxNetInventory)
+            {
+                return true;
+            }
 
             var item = new Item();
             item.netDefaults(type);
             item.Prefix(prefix);
 
-            if (stack > item.maxStack)
+            if (stack > item.maxStack && type != 0)
             {
-                return TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) > {2} and then rejoin", item.name, stack, item.maxStack));
+                TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) > {2} and then rejoin", item.name, stack, item.maxStack));
+            }
+
+            if (args.Player.IsLoggedIn)
+            {
+                args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
             }
 
             return false;
@@ -146,7 +158,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                return TShock.Utils.HandleCheater(args.Player, "Health cheat detected. Please use a different character.");
+                TShock.Utils.HandleCheater(args.Player, "Health cheat detected. Please use a different character.");
             }
 
             return false;
@@ -160,7 +172,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                return TShock.Utils.HandleCheater(args.Player, "Mana cheat detected. Please use a different character.");
+                TShock.Utils.HandleCheater(args.Player, "Mana cheat detected. Please use a different character.");
             }
 
             return false;

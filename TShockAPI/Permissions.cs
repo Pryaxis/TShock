@@ -138,6 +138,9 @@ namespace TShockAPI
         [Description("Users can tp to anyone")]
         public static readonly string tpall;
 
+        [Description("Users can tp to people without showing a notice")]
+        public static readonly string tphide;
+
         [Description("User can convert hallow into corruption and vice-versa")]
         public static readonly string converthardmode;
 

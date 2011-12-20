@@ -62,7 +62,7 @@ namespace TShockAPI
         public static UserManager Users;
         public static ItemManager Itembans;
         public static RemeberedPosManager RememberedPos;
-        public static InventoryManager Inventory;
+        public static InventoryManager InventoryDB;
         public static ConfigFile Config { get; set; }
         public static IDbConnection DB;
         public static bool OverridePort;
@@ -178,7 +178,7 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
-                Inventory = new InventoryManager(DB);
+                InventoryDB = new InventoryManager(DB);
                 RestApi = new SecureRest(Netplay.serverListenIP, 8080);
                 RestApi.Verify += RestApi_Verify;
                 RestApi.Port = Config.RestApiPort;
@@ -552,6 +552,12 @@ namespace TShockAPI
                 TShock.Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
+                if (tsplr.IsLoggedIn)
+                {
+                    tsplr.PlayerData.CopyInventory(tsplr);
+                    InventoryDB.InsertPlayerData(tsplr, tsplr.UserID);
+                }
+
                 if (Config.RememberLeavePos)
                 {
                     RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int)(tsplr.X / 16), (int)(tsplr.Y / 16));
@@ -723,6 +729,11 @@ namespace TShockAPI
                 TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
             }
 
+            if (TShock.Config.ServerSideInventory)
+            {
+                player.IgnoreActionsForInventory = true;
+                player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
+            }
 
             NetMessage.syncPlayers();
 
@@ -1005,8 +1016,94 @@ namespace TShockAPI
 
         public static bool CheckInventory(TSPlayer player)
         {
+            PlayerData playerData = player.PlayerData;
+            bool check = true;
 
-            return false;
+            if (player.TPlayer.statLifeMax > playerData.maxHealth)
+            {
+                player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server", Color.Cyan);
+                check = false;
+            }
+
+            if (player.TPlayer.statManaMax > playerData.maxMana)
+            {
+                player.SendMessage("Error: Your max mana exceeded (" + playerData.maxMana + ") which is stored on server", Color.Cyan);
+                check = false;
+            }
+
+            Item[] inventory = player.TPlayer.inventory;
+            Item[] armor = player.TPlayer.armor;
+            for (int i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                if (i < 49)
+                {
+                    Item item = new Item();
+                    Item serverItem = new Item();
+                    if (inventory[i].netID != 0)
+                    {
+                        if (playerData.inventory[i].netID != inventory[i].netID)
+                        {
+                            item.netDefaults(inventory[i].netID);
+                            item.Prefix(inventory[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your item (" + item.name + ") needs to be deleted.", Color.Cyan);
+                            check = false;
+                        }
+                        else if (playerData.inventory[i].prefix != inventory[i].prefix)
+                        {
+                            item.netDefaults(inventory[i].netID);
+                            item.Prefix(inventory[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your item (" + item.name + ") needs to be deleted.", Color.Cyan);
+                            check = false;
+                        }
+
+                        if (inventory[i].stack > playerData.inventory[i].stack)
+                        {
+                            item.netDefaults(inventory[i].netID);
+                            item.Prefix(inventory[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" + playerData.inventory[i].stack + ").", Color.Cyan);
+                            check = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Item item = new Item();
+                    Item serverItem = new Item();
+                    if (armor[i].netID != 0)
+                    {
+                        if (playerData.inventory[i].netID != armor[i].netID)
+                        {
+                            item.netDefaults(armor[i].netID);
+                            item.Prefix(armor[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
+                            check = false;
+                        }
+                        else if (playerData.inventory[i].prefix != armor[i].prefix)
+                        {
+                            item.netDefaults(armor[i].netID);
+                            item.Prefix(armor[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
+                            check = false;
+                        }
+
+                        if (armor[i].stack > playerData.inventory[i].stack)
+                        {
+                            item.netDefaults(armor[i].netID);
+                            item.Prefix(armor[i].prefix);
+                            item.AffixName();
+                            player.SendMessage("Error: Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" + playerData.inventory[i].stack + ").", Color.Cyan);
+                            check = false;
+                        }
+                    }
+                }
+            }
+
+            return check;
         }
 
         public static bool CheckIgnores(TSPlayer player)

@@ -341,10 +341,26 @@ namespace TShockAPI
                 }
                 else if (user.Password.ToUpper() == encrPass.ToUpper())
                 {
+                    args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Parameters[0]));
+
+                    if (TShock.Config.ServerSideInventory)
+                    {
+                        if (!TShock.CheckInventory(args.Player))
+                        {
+                            args.Player.SendMessage("Login Failed, Please fix the above errors then log back in.", Color.Cyan);
+                            return;
+                        }
+                    }
+                    
                     args.Player.Group = TShock.Utils.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
                     args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
+                    args.Player.IgnoreActionsForInventory = false;
+
+                    args.Player.PlayerData.CopyInventory(args.Player);
+                    TShock.InventoryDB.InsertPlayerData(args.Player, args.Player.UserID);
+
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
                 }
@@ -1343,7 +1359,8 @@ namespace TShockAPI
                 if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
                 {
                     args.Player.SendMessage(string.Format("Teleported to {0}", plr.Name));
-                    plr.SendMessage(args.Player.Name + " Teleported To You");
+                    if(args.Player.Group.HasPermission(Permissions.tphide))
+                        plr.SendMessage(args.Player.Name + " Teleported To You");
                 }
             }
         }

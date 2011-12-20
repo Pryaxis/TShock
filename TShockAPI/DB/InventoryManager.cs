@@ -33,7 +33,7 @@ namespace TShockAPI.DB
             database = db;
 
             var table = new SqlTable("Inventory",
-                new SqlColumn("AccountName", MySqlDbType.VarChar, 32) { Primary = true },
+                new SqlColumn("Account", MySqlDbType.Int32) { Primary = true },
                 new SqlColumn("CharacterName", MySqlDbType.VarChar, 50),
                 new SqlColumn("MaxHealth", MySqlDbType.Int32),
                 new SqlColumn("MaxMana", MySqlDbType.Int32),
@@ -43,13 +43,13 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
         }
 
-        public PlayerData GetPlayerData(TSPlayer player)
+        public PlayerData GetPlayerData(TSPlayer player, int acctid)
         {
             PlayerData playerData = new PlayerData(player);
 
             try
             {
-                using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE AccountName=@0 AND CharacterName=@1", player.UserAccountName, player.Name))
+                using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0 AND CharacterName=@1", acctid, player.Name))
                 {
                     if (reader.Read())
                     {
@@ -69,15 +69,16 @@ namespace TShockAPI.DB
             return playerData;
         }
 
-        public void InsertPlayerData(TSPlayer player)
+        public bool InsertPlayerData(TSPlayer player, int acctid)
         {
             PlayerData playerData = player.PlayerData;
 
-            if (!GetPlayerData(player).exists)
+            if (!GetPlayerData(player, acctid).exists)
             {
                 try
                 {
-                    database.Query("INSERT INTO Inventory (AccountName, CharacterName, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4);", playerData.accountName, playerData.characterName, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
+                    database.Query("INSERT INTO Inventory (Account, CharacterName, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4);", acctid, player.Name, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -88,13 +89,15 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @3 WHERE AccountName = @4 AND CharacterName = @5;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), playerData.accountName, playerData.characterName);
+                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @3 WHERE Account = @4 AND CharacterName = @5;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), player.Name, acctid);
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex.ToString());
                 }
             }
+            return false;
         }
     }
 }

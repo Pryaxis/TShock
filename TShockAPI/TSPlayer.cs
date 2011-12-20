@@ -438,14 +438,10 @@ namespace TShockAPI
         public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
         public int maxHealth = 100;
         public int maxMana = 100;
-        public string accountName;
-        public string characterName;
         public bool exists = false;
 
         public PlayerData(TSPlayer player)
         {
-            this.accountName = player.UserAccountName;
-            this.characterName = player.Name;
             this.inventory[0].netID = -15;
             this.inventory[0].stack = 1;
             if(player.TPlayer.inventory[0].netID == -15)
@@ -458,6 +454,58 @@ namespace TShockAPI
             this.inventory[2].stack = 1;
             if (player.TPlayer.inventory[2].netID == -16)
                 this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
+        }
+
+        public void StoreSlot(int slot, int netID, int prefix, int stack)
+        {
+            this.inventory[slot].netID = netID;
+            if (this.inventory[slot].netID != 0)
+            {
+                this.inventory[slot].stack = stack;
+                this.inventory[slot].prefix = prefix;
+            }
+            else
+            {
+                this.inventory[slot].stack = 0;
+                this.inventory[slot].prefix = 0;
+            }
+        }
+
+        public void CopyInventory(TSPlayer player)
+        {
+            Item[] inventory = player.TPlayer.inventory;
+            Item[] armor = player.TPlayer.armor;
+            for (int i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                if (i < 49)
+                {
+                    this.inventory[i].netID = inventory[i].netID;
+                    if (this.inventory[i].netID != 0)
+                    {
+                        this.inventory[i].stack = inventory[i].stack;
+                        this.inventory[i].prefix = inventory[i].prefix;
+                    }
+                    else
+                    {
+                        this.inventory[i].stack = 0;
+                        this.inventory[i].prefix = 0;
+                    }
+                }
+                else
+                {
+                    this.inventory[i].netID = armor[i].netID;
+                    if (this.inventory[i].netID != 0)
+                    {
+                        this.inventory[i].stack = armor[i].stack;
+                        this.inventory[i].prefix = armor[i].prefix;
+                    }
+                    else
+                    {
+                        this.inventory[i].stack = 0;
+                        this.inventory[i].prefix = 0;
+                    }
+                }
+            }
         }
     }
 
