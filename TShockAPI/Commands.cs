@@ -1249,6 +1249,7 @@ namespace TShockAPI
                 }
             }
             WorldGen.CountTiles(0);
+            TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
             Netplay.ResetSections();
             TShock.Utils.Broadcast("Corruption conversion done.");
         }
@@ -1277,6 +1278,7 @@ namespace TShockAPI
                 }
             }
             WorldGen.CountTiles(0);
+            TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
             Netplay.ResetSections();
             TShock.Utils.Broadcast("Hallow conversion done.");
         }
