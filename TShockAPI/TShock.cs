@@ -547,6 +547,7 @@ namespace TShockAPI
 
             if (tsplr != null && tsplr.ReceivedInfo)
             {
+                TShock.Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
                 Log.Info(string.Format("{0} left.", tsplr.Name));
 
                 if (Config.RememberLeavePos)
@@ -725,10 +726,13 @@ namespace TShockAPI
                     if (TShock.Config.KickProxyUsers)
                         TShock.Utils.Kick(player, "Proxies are not allowed");
                 Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", player.Name, player.IP, player.Group.Name, player.Country));
-                TShock.Utils.Broadcast(player.Name + " is from the " + player.Country, Color.Yellow);
+                TShock.Utils.Broadcast(player.Name + " has joined from the " + player.Country, Color.Yellow);
             }
             else
+            {
                 Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
+                TShock.Utils.Broadcast(player.Name + " has joined", Color.Yellow);
+            }
 
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
