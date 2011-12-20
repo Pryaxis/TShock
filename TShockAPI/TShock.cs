@@ -725,10 +725,7 @@ namespace TShockAPI
 
             if (Config.AlwaysPvP)
             {
-                player.SetPvP(true);
-                player.SendMessage(
-                    "PvP is forced! Enable PvP else you can't deal damage to other people. (People can kill you)",
-                    Color.Red);
+                player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
             if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
             {

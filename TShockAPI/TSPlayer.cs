@@ -37,7 +37,7 @@ namespace TShockAPI
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
-        public DateTime LastPvpChange { get; protected set; }
+        public DateTime LastPvpChange;
         public Point[] TempPoints = new Point[2];
         public int AwaitingTempPoint { get; set; }
         public bool AwaitingName { get; set; }
@@ -49,6 +49,7 @@ namespace TShockAPI
         public TSPlayer LastWhisper;
         public int LoginAttempts { get; set; }
         public Vector2 TeleportCoords = new Vector2(-1, -1);
+        public Vector2 LastNetPosition = Vector2.Zero; 
         public string UserAccountName { get; set; }
         public bool HasBeenSpammedWithBuildMessage;
         public bool IsLoggedIn;
@@ -305,18 +306,6 @@ namespace TShockAPI
         public virtual void DamagePlayer(int damage)
         {
             NetMessage.SendData((int)PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage, (float)0);
-        }
-
-        public virtual void SetPvP(bool pvp)
-        {
-            if (TPlayer.hostile != pvp)
-            {
-                LastPvpChange = DateTime.UtcNow;
-                TPlayer.hostile = pvp;
-                All.SendMessage(string.Format("{0} has {1} PvP!", Name, pvp ? "enabled" : "disabled"), Main.teamColor[Team]);
-            }
-            //Broadcast anyways to keep players synced
-            NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", Index);
         }
 
         public virtual void SetTeam(int team)
