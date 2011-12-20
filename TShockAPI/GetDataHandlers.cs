@@ -211,6 +211,7 @@ namespace TShockAPI
                 return true;
             }
             args.Player.Difficulty = difficulty;
+            args.TPlayer.name = name;
             args.Player.ReceivedInfo = true;
 
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
