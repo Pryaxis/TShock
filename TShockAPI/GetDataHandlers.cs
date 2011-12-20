@@ -49,18 +49,17 @@ namespace TShockAPI
     public static class GetDataHandlers
     {
         private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
-        public static bool[] WhitelistBuffs;
+        public static int[] WhitelistBuffMaxTime;
 
         public static void InitGetDataHandler()
         {
             #region Blacklists
 
-            //Check StatusPvp for whats usable
-            WhitelistBuffs = new bool[Main.maxBuffs];
-            WhitelistBuffs[20] = true; //Poisoned
-            WhitelistBuffs[0x18] = true; //On Fire
-            WhitelistBuffs[0x1f] = true; //Confused
-            WhitelistBuffs[0x27] = true; //Cursed Inferno
+            WhitelistBuffMaxTime = new int[Main.maxBuffs];
+            WhitelistBuffMaxTime[20] = 600;
+            WhitelistBuffMaxTime[0x18] = 1200;
+            WhitelistBuffMaxTime[0x1f] = 120;
+            WhitelistBuffMaxTime[0x27] = 420;
 
             #endregion Blacklists
 
@@ -82,7 +81,7 @@ namespace TShockAPI
                 {PacketTypes.SignNew, HandleSign},
                 {PacketTypes.PlayerSlot, HandlePlayerSlot},
                 {PacketTypes.TileGetSection, HandleGetSection},
-                {PacketTypes.UpdateNPCHome, UpdateNPCHome },
+                {PacketTypes.UpdateNPCHome, UpdateNPCHome},
                 {PacketTypes.PlayerAddBuff, HandlePlayerBuff},
                 {PacketTypes.ItemDrop, HandleItemDrop},
                 {PacketTypes.PlayerHp, HandlePlayerHp},
@@ -937,7 +936,8 @@ namespace TShockAPI
                 args.Player.SendData(PacketTypes.PlayerBuff, "", id);
                 return true;
             }
-            if (WhitelistBuffs[type])
+
+            if (WhitelistBuffMaxTime[type] > 0 && time < WhitelistBuffMaxTime[type])
             {
                 return false;
             }
