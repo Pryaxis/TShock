@@ -64,6 +64,9 @@ namespace TShockAPI
         public string Country = "??";
         public int Difficulty;
         private string CacheIP;
+        public bool IgnoreActionsForPvP = false;
+        public bool IgnoreActionsForInventory = false;
+        public PlayerData PlayerData;
 
         public bool RealPlayer
         {
@@ -427,6 +430,54 @@ namespace TShockAPI
             {
                 All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }
+        }
+    }
+
+    public class PlayerData
+    {
+        public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+        public int maxHealth = 100;
+        public int maxMana = 100;
+        public string accountName;
+        public string characterName;
+        public bool exists = false;
+
+        public PlayerData(TSPlayer player)
+        {
+            this.accountName = player.UserAccountName;
+            this.characterName = player.Name;
+            this.inventory[0].netID = -15;
+            this.inventory[0].stack = 1;
+            if(player.TPlayer.inventory[0].netID == -15)
+                this.inventory[0].prefix = player.TPlayer.inventory[0].prefix;
+            this.inventory[1].netID = -13;
+            this.inventory[1].stack = 1;
+            if (player.TPlayer.inventory[1].netID == -13)
+                this.inventory[1].prefix = player.TPlayer.inventory[1].prefix;
+            this.inventory[2].netID = -16;
+            this.inventory[2].stack = 1;
+            if (player.TPlayer.inventory[2].netID == -16)
+                this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
+        }
+    }
+
+    public class NetItem
+    {
+        public static int maxNetInventory = 59;
+        public int netID = 0;
+        public int stack = 0;
+        public int prefix = 0;
+
+        public static string ToString(NetItem[] inventory)
+        {
+            string inventoryString = "";
+            return inventoryString;
+        }
+
+        public static NetItem[] Parse(string data)
+        {
+            NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+            return inventory;
         }
     }
 }

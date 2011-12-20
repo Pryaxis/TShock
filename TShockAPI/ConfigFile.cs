@@ -177,6 +177,12 @@ namespace TShockAPI
         [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
         public bool DisableHardmode = false;
 
+        [Description("Disables Dungeon Guardian from being spawned by player packets, this will instead force a respawn")]
+        public bool DisableDungeonGuardian = false;
+
+        [Description("Enable Server Side Inventory checks, EXPERIMENTAL")]
+        public bool ServerSideInventory = false;
+
         public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))

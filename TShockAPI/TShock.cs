@@ -62,6 +62,7 @@ namespace TShockAPI
         public static UserManager Users;
         public static ItemManager Itembans;
         public static RemeberedPosManager RememberedPos;
+        public static InventoryManager Inventory;
         public static ConfigFile Config { get; set; }
         public static IDbConnection DB;
         public static bool OverridePort;
@@ -177,6 +178,7 @@ namespace TShockAPI
                 Regions = new RegionManager(DB);
                 Itembans = new ItemManager(DB);
                 RememberedPos = new RemeberedPosManager(DB);
+                Inventory = new InventoryManager(DB);
                 RestApi = new SecureRest(Netplay.serverListenIP, 8080);
                 RestApi.Verify += RestApi_Verify;
                 RestApi.Port = Config.RestApiPort;
@@ -721,10 +723,12 @@ namespace TShockAPI
                 TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
             }
 
+
             NetMessage.syncPlayers();
 
-            if (Config.AlwaysPvP)
+            if (Config.AlwaysPvP && !player.TPlayer.hostile)
             {
+                player.IgnoreActionsForPvP = true;
                 player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
             if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
@@ -997,6 +1001,22 @@ namespace TShockAPI
                    (player.TPlayer.statMana > 400) ||
                    (player.TPlayer.statLifeMax > 400) ||
                    (player.TPlayer.statLife > 400);
+        }
+
+        public static bool CheckInventory(TSPlayer player)
+        {
+
+            return false;
+        }
+
+        public static bool CheckIgnores(TSPlayer player)
+        {
+            bool check = false;
+            if (player.IgnoreActionsForPvP)
+                check = true;
+            if (player.IgnoreActionsForInventory)
+                check = true;
+            return check;
         }
 
         public static bool CheckPlayerCollision(int x, int y)

@@ -90,6 +90,7 @@ namespace TShockAPI
                 {PacketTypes.PlayerDamage, HandlePlayerDamage},
                 {PacketTypes.NpcStrike, HandleNpcStrike},
                 {PacketTypes.NpcSpecial, HandleSpecial},
+                {PacketTypes.PlayerAnimation, HandlePlayerAnimation},
             };
         }
 
@@ -254,7 +255,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
@@ -470,7 +471,7 @@ namespace TShockAPI
                 }
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
@@ -520,6 +521,12 @@ namespace TShockAPI
             }
 
             args.TPlayer.hostile = pvp;
+
+            if (pvp == true && TShock.Config.AlwaysPvP)
+                args.Player.IgnoreActionsForPvP = false;
+            else
+                args.Player.IgnoreActionsForPvP = true;
+
             NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
 
             return true;
@@ -551,9 +558,12 @@ namespace TShockAPI
             if (!pos.Equals(args.Player.LastNetPosition))
             {
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
-                if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile && distance > 6f)
+                if (TShock.CheckIgnores(args.Player) && distance > 6f)
                 {
-                    args.Player.SendMessage("PvP is forced! Enable PvP else you can't do anything!", Color.Red);
+                    if (TShock.Config.AlwaysPvP)
+                    {
+                        args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+                    }
                     args.Player.Spawn();
                     return true;
                 }
@@ -599,7 +609,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
@@ -640,7 +650,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
@@ -696,7 +706,7 @@ namespace TShockAPI
             if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
                 return false;
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
@@ -751,7 +761,7 @@ namespace TShockAPI
             if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
                 return false;
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
@@ -808,7 +818,7 @@ namespace TShockAPI
             var x = args.Data.ReadInt32();
             var y = args.Data.ReadInt32();
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 return true;
             }
@@ -833,7 +843,7 @@ namespace TShockAPI
                 return false;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
                 return true;
@@ -907,7 +917,7 @@ namespace TShockAPI
             var type = args.Data.ReadInt8();
             var time = args.Data.ReadInt16();
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.PlayerBuff, "", id);
                 return true;
@@ -964,7 +974,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.ItemDrop, "", id);
                 return true;
@@ -1009,7 +1019,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.PlayerHp, "", id);
                 args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -1050,7 +1060,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            if (TShock.CheckIgnores(args.Player))
             {
                 args.Player.SendData(PacketTypes.NpcUpdate, "", id);
                 return true;
@@ -1081,6 +1091,30 @@ namespace TShockAPI
         {
             var id = args.Data.ReadInt8();
             var type = args.Data.ReadInt8();
+
+            if (type == 1 && TShock.Config.DisableDungeonGuardian)
+            {
+                args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
+                args.Player.Spawn();
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
+        {
+            if (TShock.CheckIgnores(args.Player))
+            {
+                args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+                return true;
+            }
+
+            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+            {
+                args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+                return true;
+            }
 
             return false;
         }
