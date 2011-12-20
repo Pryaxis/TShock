@@ -128,8 +128,7 @@ namespace TShockAPI
 
             if (stack > item.maxStack)
             {
-                TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) and then rejoin", item.name, stack));
-                return true;
+                return TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) and then rejoin", item.name, stack));
             }
 
             return false;
@@ -143,8 +142,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                TShock.Utils.HandleCheater(args.Player, "Health cheat detected. Please use a different character.");
-                return true;
+                return TShock.Utils.HandleCheater(args.Player, "Health cheat detected. Please use a different character.");
             }
 
             return false;
@@ -158,8 +156,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                TShock.Utils.HandleCheater(args.Player, "Mana cheat detected. Please use a different character.");
-                return true;
+                return TShock.Utils.HandleCheater(args.Player, "Mana cheat detected. Please use a different character.");
             }
 
             return false;
@@ -509,13 +506,6 @@ namespace TShockAPI
             {
                 args.Player.SendMessage("You got stuck in a solid object! Sent you to the spawn point.", Color.Red);
                 args.Player.SendTileSquare((int)(pos.X / 16f), (int)(pos.X / 16f));
-                args.Player.Spawn();
-                return true;
-            }
-
-            if (Vector2.Distance(args.TPlayer.position, pos) > 2048) //Speedhack/Teleporting, Needs to be very very liberal...
-            {
-                args.Player.SendMessage("You seemed to of teleported! Sent you to the spawn point.", Color.Red);
                 args.Player.Spawn();
                 return true;
             }

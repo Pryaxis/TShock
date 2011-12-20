@@ -733,7 +733,7 @@ namespace TShockAPI
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
-                TShock.Utils.ForceKick(player, "Health/Mana cheat detected. Please use a different character.");
+                TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
             }
             if (Config.AlwaysPvP)
             {
