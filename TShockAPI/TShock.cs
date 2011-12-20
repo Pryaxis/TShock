@@ -476,10 +476,7 @@ namespace TShockAPI
                         {
                             if (player.TileThreshold >= Config.TileThreshold)
                             {
-                                if (TShock.Utils.HandleTntUser(player, "Kill tile abuse detected."))
-                                {
-                                    TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
-                                }
+                                TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                             }
                             if (player.TileThreshold > 0)
                             {
@@ -573,14 +570,7 @@ namespace TShockAPI
 
             if (!TShock.Utils.ValidString(text))
             {
-                TShock.Utils.Kick(tsplr, "Unprintable character in chat");
                 e.Handled = true;
-                return;
-            }
-
-            if (msg.whoAmI != ply)
-            {
-                e.Handled = TShock.Utils.HandleGriefer(tsplr, "Faking Chat");
                 return;
             }
 
@@ -693,13 +683,9 @@ namespace TShockAPI
                 return;
             }
 
-            
-
             // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if ((Config.BanKillTileAbusers || Config.KickKillTileAbusers) &&
-                player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission(Permissions.ignoregriefdetection))
+            if (player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission(Permissions.ignorekilltiledetection))
             {
-                Log.Debug("Rejecting " + type + " from " + player.Name + " as this player is about to be kicked");
                 e.Handled = true;
             }
             else
@@ -747,7 +733,7 @@ namespace TShockAPI
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
-                TShock.Utils.HandleCheater(player, "Hacked health.");
+                TShock.Utils.ForceKick(player, "Health/Mana cheat detected. Please use a different character.");
             }
             if (Config.AlwaysPvP)
             {
@@ -936,6 +922,78 @@ namespace TShockAPI
             }
         }
 
+        public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
+        {
+            if (type == 43)
+            {
+                return true;
+            }
+
+            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Dirt Wand")) //Dirt Wand Projectile
+            {
+                return true;
+            }
+
+            if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Sandgun")) //Sandgun Projectiles
+            {
+                return true;
+            }
+
+            Projectile proj = new Projectile();
+            proj.SetDefaults(type);
+
+            if (!player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(proj.name))
+            {
+                return true;
+            }
+
+            if (proj.hostile)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
+        {
+            if (TShock.Config.RangeChecks && ((Math.Abs(player.TileX - tileX) > 32) || (Math.Abs(player.TileY - tileY) > 32)))
+            {
+                return true;
+            }
+            if (!player.Group.HasPermission(Permissions.canbuild))
+            {
+                player.SendMessage("You do not have permission to build!", Color.Red);
+                return true;
+            }
+            if (!player.Group.HasPermission(Permissions.editspawn) && !TShock.Regions.CanBuild(tileX, tileY, player) && TShock.Regions.InArea(tileX, tileY))
+            {
+                player.SendMessage("Region protected from changes.", Color.Red);
+                return true;
+            }
+            if (TShock.Config.DisableBuild)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+                    player.SendMessage("World protected from changes.", Color.Red);
+                    return true;
+                }
+            }
+            if (TShock.Config.SpawnProtection)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+                    var flag = TShock.CheckSpawn(tileX, tileY);
+                    if (flag)
+                    {
+                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public static bool CheckSpawn(int x, int y)
         {
             Vector2 tile = new Vector2(x, y);
@@ -967,7 +1025,7 @@ namespace TShockAPI
                 {
                     for (int h = y; h < y + 4; h++)
                     {
-                        if (!Main.tile[i, h].active || !GetDataHandlers.BlacklistTiles[Main.tile[i, h].type])
+                        if (!Main.tile[i, h].active || !Main.tileSolid[Main.tile[i, h].type])
                             return false;
                     }
                 }

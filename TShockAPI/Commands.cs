@@ -1731,14 +1731,6 @@ namespace TShockAPI
         private static void ShowConfiguration(CommandArgs args)
         {
             args.Player.SendMessage("TShock Config:");
-            string lineOne = string.Format("BanCheater : {0}, KickCheater : {1}, BanGriefer : {2}, KickGriefer : {3}",
-                              TShock.Config.BanCheaters, TShock.Config.KickCheaters,
-                              TShock.Config.BanGriefers, TShock.Config.KickGriefers);
-            args.Player.SendMessage(lineOne, Color.Yellow);
-            string lineTwo = string.Format("BanTnt : {0}, KickTnt : {1}, BanBoom : {2}, KickBoom : {3}",
-                                           TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers,
-                                           TShock.Config.BanExplosives, TShock.Config.KickExplosives);
-            args.Player.SendMessage(lineTwo, Color.Yellow);
             string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
                                              TShock.Config.RangeChecks, TShock.Config.DisableBuild,
                                              TShock.Config.SpawnProtection, TShock.Config.SpawnProtectionRadius);

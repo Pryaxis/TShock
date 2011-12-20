@@ -41,7 +41,7 @@ namespace TShockAPI
         public Point[] TempPoints = new Point[2];
         public int AwaitingTempPoint { get; set; }
         public bool AwaitingName { get; set; }
-        public DateTime LastExplosive { get; set; }
+        public DateTime LastThreat { get; set; }
         public DateTime LastTileChangeNotify { get; set; }
         public bool InitSpawn;
         public bool DisplayLogs = true;

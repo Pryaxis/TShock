@@ -23,15 +23,6 @@ namespace TShockAPI
         [Description("Allows you to use banned items")]
         public static readonly string usebanneditem;
 
-        [Description("Required to be able to place spikes")]
-        public static readonly string canspike;
-
-        [Description("Required to be able to place/pickup water")]
-        public static readonly string canwater;
-
-        [Description("Required to be able to place/pickup lava")]
-        public static readonly string canlava;
-
         [Description("Allows you to edit the spawn")]
         public static readonly string editspawn;
 
@@ -41,14 +32,11 @@ namespace TShockAPI
         [Description("Prevents you from being banned")]
         public static readonly string immunetoban;
 
-        [Description("Prevents you from being kicked/banned by TShocks grief detections")]
-        public static readonly string ignoregriefdetection;
-
-        [Description("Prevents you from being kicked/banned by TShocks cheat detections")]
+        [Description("Prevents you from being kicked by TShocks cheat detections")]
         public static readonly string ignorecheatdetection;
 
-        [Description("Allows you to use explosives even when they are disabled")]
-        public static readonly string useexplosives;
+        [Description("Prevents you from being reverted by kill tile abuse detection")]
+        public static readonly string ignorekilltiledetection;
 
         [Description("Specific log messages are sent to users with this permission")]
         public static readonly string logs;
@@ -143,9 +131,6 @@ namespace TShockAPI
 
         [Description("User can change the homes of NPCs.")]
         public static readonly string movenpc;
-
-        [Description("Required to be able to place Explosives")]
-        public static readonly string canexplosive;
 
         [Description("Users can stop people from TPing to them")]
         public static readonly string tpallow;

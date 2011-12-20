@@ -455,32 +455,13 @@ namespace TShockAPI
 
         public bool HandleCheater(TSPlayer player, string reason)
         {
-            return HandleBadPlayer(player, "ignorecheatdetection", TShock.Config.BanCheaters, TShock.Config.KickCheaters, reason);
+            return HandleBadPlayer(player, "ignorecheatdetection", TShock.Config.KickCheaters, reason);
         }
 
-        public bool HandleGriefer(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanGriefers, TShock.Config.KickGriefers, reason);
-        }
-
-        public bool HandleTntUser(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers, reason);
-        }
-
-        public bool HandleExplosivesUser(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanExplosives, TShock.Config.KickExplosives, reason);
-        }
-
-        private bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)
+        private bool HandleBadPlayer(TSPlayer player, string overridePermission, bool kick, string reason)
         {
             if (!player.Group.HasPermission(overridePermission) || !(player.Group.Name == "superadmin"))
             {
-                if (ban)
-                {
-                    return Ban(player, reason);
-                }
                 if (kick)
                 {
                     return Kick(player, reason);

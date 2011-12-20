@@ -43,22 +43,6 @@ namespace TShockAPI
         public bool AlwaysPvP;
         [Description("Kicks players who edit save files for cheating.")]
         public bool KickCheaters = true;
-        [Description("")]
-        public bool BanCheaters = true;
-        [Description("")]
-        public bool KickGriefers = true;
-        [Description("")]
-        public bool BanGriefers = true;
-        [Description("Bans players who attempt to kill tiles using TNT or exploits. Requires kick to be enabled.")]
-        public bool BanKillTileAbusers = true;
-        [Description("Kicks players who attempt to kill tiles using TNT or exploits.")]
-        public bool KickKillTileAbusers = true;
-        [Description("Bans players who attempt to throw a bomb or dynamite.")]
-        public bool BanExplosives = true;
-        [Description("Kicks players who attempt to throw a bomb or dynamite.")]
-        public bool KickExplosives = true;
-        [Description("Explosives won't break blocks")]
-        public bool DisableExplosives = true;
         [Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
         public bool SpawnProtection = true;
         [Description("Radius from spawn tile for SpawnProtection.")]
@@ -72,7 +56,7 @@ namespace TShockAPI
         [Description("Disables any building; placing of blocks")]
         public bool DisableBuild;
         [Description("Kick a player if they exceed this number of tile kills within 1 second.")]
-        public int TileThreshold = 60;
+        public int TileThreshold = 120;
         [Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")]
         public float[] SuperAdminChatRGB = { 255, 0, 0 };
         [Description("The Chat Prefix before an admin speaks. eg. *The prefix was set to \"(Admin) \", so.. (Admin) : Hi! Note: If you put a space after the prefix, it will look like this: (Admin) <TerrariaDude): Hi!")]
@@ -127,33 +111,11 @@ namespace TShockAPI
         [Description("")]
         public string MySqlPassword = "";
         [Description("")]
-        public string RangeCheckBanReason = "Placing impossible to place blocks.";
-        [Description("")]
-        public string SendSectionAbuseReason = "SendSection abuse.";
-        [Description("")]
-        public string NPCSpawnAbuseReason = "Spawn NPC abuse";
-        [Description("")]
-        public string UpdatePlayerAbuseReason = "Update Player abuse";
-        [Description("")]
         public string ExplosiveAbuseReason = "Throwing an explosive device.";
-        [Description("")]
-        public string KillMeAbuseReason = "Trying to execute KillMe on someone else.";
-        [Description("")]
-        public string IllogicalLiquidUseReason = "Manipulating liquid without bucket.";
-        [Description("")]
-        public string LiquidAbuseReason = "Placing impossible to place liquid.";
-        [Description("")]
-        public string TileKillAbuseReason = "Tile Kill abuse ({0})";
         [Description("")]
         public string MediumcoreBanReason = "Death results in a ban";
         [Description("")]
         public string MediumcoreKickReason = "Death results in a kick";
-        [Description("")]
-        public string ProjectileAbuseReason = "Projectile abuse";
-        [Description("")]
-        public string TileAbuseReason = "Tile abuse ({0})";
-        [Description("")]
-        public string GriefClientReason = "Grief client detected ({0})";
         [Description("")]
         public bool EnableDNSHostResolution;
         [Description("")]
@@ -210,9 +172,6 @@ namespace TShockAPI
 
     	[Description("Some weapons override the range checks, however malicious users can take advantage of this and send lots of packets of certain types. Disabling this will turn off weapons that affect this.")] 
 		public bool EnableRangeCheckOverrides = true;
-
-		[Description("Disabling this prevents players from being banned or kicked based on item stacks.")]
-    	public bool EnableItemStackChecks = true;
 
         [Description("Kicks users using a proxy as identified with the GeoIP database")] 
         public bool KickProxyUsers = true;
