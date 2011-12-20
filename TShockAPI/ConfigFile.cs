@@ -40,7 +40,7 @@ namespace TShockAPI
         [Description("Enable the ability for invaison size to never decrease. Make sure to run /invade, and note that this adds 2 million+ goblins to the spawn que for the map.")]
         public bool InfiniteInvasion;
         [Description("Enable or disable perma pvp.")]
-        public bool AlwaysPvP;
+        public bool AlwaysPvP = false;
         [Description("Kicks players who edit save files for cheating.")]
         public bool KickCheaters = true;
         [Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]

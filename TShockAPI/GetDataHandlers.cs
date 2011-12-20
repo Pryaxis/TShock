@@ -571,9 +571,13 @@ namespace TShockAPI
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
                 if (TShock.CheckIgnores(args.Player) && distance > 6f)
                 {
-                    if (TShock.Config.AlwaysPvP)
+                    if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
                     {
                         args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+                    }
+                    else if (TShock.Config.ServerSideInventory && !args.Player.IsLoggedIn)
+                    {
+                        args.Player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
                     }
                     args.Player.Spawn();
                     return true;

@@ -729,13 +729,13 @@ namespace TShockAPI
                 TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
             }
 
-            if (TShock.Config.ServerSideInventory)
+            NetMessage.syncPlayers();
+
+            if (Config.ServerSideInventory && !player.IsLoggedIn)
             {
                 player.IgnoreActionsForInventory = true;
                 player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
             }
-
-            NetMessage.syncPlayers();
 
             if (Config.AlwaysPvP && !player.TPlayer.hostile)
             {
