@@ -25,6 +25,7 @@ using Terraria;
 
 using TShockAPI.Net;
 using System.IO.Streams;
+using System.Net;
 
 namespace TShockAPI
 {
@@ -210,7 +211,30 @@ namespace TShockAPI
                 return true;
             }
             args.Player.Difficulty = difficulty;
+            args.TPlayer.name = name;
             args.Player.ReceivedInfo = true;
+
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+
+            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+            {
+                var code = TShock.Geo.TryGetCountryCode(IPAddress.Parse(args.Player.IP));
+                args.Player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
+                if (code == "A1")
+                    if (TShock.Config.KickProxyUsers)
+                        TShock.Utils.Kick(args.Player, "Proxies are not allowed");
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined from the " + args.Player.Country, Color.Yellow);
+            }
+            else
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined", Color.Yellow);
+            }
+
+            if (TShock.Config.DisplayIPToAdmins)
+                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
+
             return false;
         }
 
@@ -227,6 +251,12 @@ namespace TShockAPI
             if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
             {
                 args.Player.SendTileSquare(tileX, tileY, size);
+                return true;
+            }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
@@ -440,6 +470,12 @@ namespace TShockAPI
                 }
             }
 
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
             if (TShock.CheckTilePermission(args.Player, tileX, tileY))
             {
                 args.Player.SendTileSquare(tileX, tileY);
@@ -468,16 +504,23 @@ namespace TShockAPI
             int id = args.Data.ReadByte();
             bool pvp = args.Data.ReadBoolean();
 
-            long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
-            if (TShock.Config.PvpThrottle > 0 && seconds < TShock.Config.PvpThrottle)
+            if (id != args.Player.Index)
             {
-                args.Player.SendMessage(string.Format("You cannot change pvp status for {0} seconds", TShock.Config.PvpThrottle - seconds), 255, 0, 0);
-                args.Player.SetPvP(id != args.Player.Index || TShock.Config.AlwaysPvP ? true : args.TPlayer.hostile);
+                return true;
             }
-            else
+
+            if (args.TPlayer.hostile != pvp)
             {
-                args.Player.SetPvP(id != args.Player.Index || TShock.Config.AlwaysPvP ? true : pvp);
+                long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
+                if (TShock.Config.PvpThrottle > 0 && seconds < TShock.Config.PvpThrottle)
+                {
+                    TSPlayer.All.SendMessage(string.Format("{0} has {1} PvP!", args.Player.Name, pvp ? "enabled" : "disabled"), Main.teamColor[args.Player.Team]);
+                }
+                args.Player.LastPvpChange = DateTime.UtcNow;
             }
+
+            args.TPlayer.hostile = pvp;
+            NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
 
             return true;
         }
@@ -505,14 +548,25 @@ namespace TShockAPI
                 }
             }
 
-            if (TShock.CheckPlayerCollision((int)(pos.X / 16f), (int)(pos.Y / 16f))) //NoClipping or possible errors
+            if (!pos.Equals(args.Player.LastNetPosition))
             {
-                args.Player.SendMessage("You got stuck in a solid object! Sent you to the spawn point.", Color.Red);
-                args.Player.SendTileSquare((int)(pos.X / 16f), (int)(pos.X / 16f));
-                args.Player.Spawn();
-                return true;
+                float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
+                if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile && distance > 6f)
+                {
+                    args.Player.SendMessage("PvP is forced! Enable PvP else you can't do anything!", Color.Red);
+                    args.Player.Spawn();
+                    return true;
+                }
+                if (TShock.CheckPlayerCollision((int)(pos.X / 16f), (int)(pos.Y / 16f))) //NoClipping or possible errors
+                {
+                    args.Player.SendMessage("You got stuck in a solid object! Sent you to the spawn point.", Color.Red);
+                    args.Player.SendTileSquare((int)(pos.X / 16f), (int)(pos.X / 16f));
+                    args.Player.Spawn();
+                    return true;
+                }
             }
 
+            args.Player.LastNetPosition = pos;
             return false;
         }
 
@@ -540,6 +594,12 @@ namespace TShockAPI
             }
 
             if (dmg > 175)
+            {
+                args.Player.SendData(PacketTypes.ProjectileNew, "", index);
+                return true;
+            }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
             {
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
@@ -575,6 +635,12 @@ namespace TShockAPI
             int type = Main.projectile[index].type;
 
             if (args.Player.Index != Main.projectile[index].owner)
+            {
+                args.Player.SendData(PacketTypes.ProjectileNew, "", index);
+                return true;
+            }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
             {
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
@@ -630,6 +696,12 @@ namespace TShockAPI
             if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
                 return false;
 
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
             if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
             {
                 args.Player.SendTileSquare(tileX, tileY);
@@ -678,6 +750,12 @@ namespace TShockAPI
 
             if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
                 return false;
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
 
             if (Main.tile[tileX, tileY].type != 0x15 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
             {
@@ -730,6 +808,11 @@ namespace TShockAPI
             var x = args.Data.ReadInt32();
             var y = args.Data.ReadInt32();
 
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                return true;
+            }
+
             if (TShock.Config.RangeChecks && ((Math.Abs(args.Player.TileX - x) > 32) || (Math.Abs(args.Player.TileY - y) > 32)))
             {
                 return true;
@@ -748,6 +831,12 @@ namespace TShockAPI
             if (args.TPlayer.chest != id)
             {
                 return false;
+            }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
+                return true;
             }
 
             Item item = new Item();
@@ -818,6 +907,11 @@ namespace TShockAPI
             var type = args.Data.ReadInt8();
             var time = args.Data.ReadInt16();
 
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+                return true;
+            }
             if (!TShock.Players[id].TPlayer.hostile)
             {
                 args.Player.SendData(PacketTypes.PlayerBuff, "", id);
@@ -869,6 +963,13 @@ namespace TShockAPI
                 args.Player.SendData(PacketTypes.ItemDrop, "", id);
                 return true;
             }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendData(PacketTypes.ItemDrop, "", id);
+                return true;
+            }
+
             return false;
         }
 
@@ -908,6 +1009,13 @@ namespace TShockAPI
                 return true;
             }
 
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+            {
+                args.Player.SendData(PacketTypes.PlayerHp, "", id);
+                args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+                return true;
+            }
+
             if (TShock.Config.RangeChecks && ((Math.Abs(args.Player.TileX - TShock.Players[id].TileX) > 128) || (Math.Abs(args.Player.TileY - TShock.Players[id].TileY) > 128)))
             {
                 args.Player.SendData(PacketTypes.PlayerHp, "", id);
@@ -937,6 +1045,12 @@ namespace TShockAPI
                 return true;
 
             if (dmg > 175)
+            {
+                args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+                return true;
+            }
+
+            if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
             {
                 args.Player.SendData(PacketTypes.NpcUpdate, "", id);
                 return true;

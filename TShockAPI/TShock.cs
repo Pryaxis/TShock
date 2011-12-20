@@ -715,36 +715,17 @@ namespace TShockAPI
                 return;
             }
 
-            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-            NetMessage.syncPlayers();
-
-            if (Config.EnableGeoIP && Geo != null)
-            {
-                var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
-                player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
-                if (code == "A1")
-                    if (TShock.Config.KickProxyUsers)
-                        TShock.Utils.Kick(player, "Proxies are not allowed");
-                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", player.Name, player.IP, player.Group.Name, player.Country));
-                TShock.Utils.Broadcast(player.Name + " has joined from the " + player.Country, Color.Yellow);
-            }
-            else
-            {
-                Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", player.Name, player.IP, player.Group.Name));
-                TShock.Utils.Broadcast(player.Name + " has joined", Color.Yellow);
-            }
-
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
                 TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
             }
+
+            NetMessage.syncPlayers();
+
             if (Config.AlwaysPvP)
             {
-                player.SetPvP(true);
-                player.SendMessage(
-                    "PvP is forced! Enable PvP else you can't deal damage to other people. (People can kill you)",
-                    Color.Red);
+                player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
             if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
             {
@@ -756,8 +737,6 @@ namespace TShockAPI
                 player.Teleport((int)pos.X, (int)pos.Y);
                 player.SendTileSquare((int)pos.X, (int)pos.Y);
             }
-            if (Config.DisplayIPToAdmins)
-                Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
             e.Handled = true;
         }
 
