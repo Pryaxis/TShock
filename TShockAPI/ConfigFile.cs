@@ -111,8 +111,6 @@ namespace TShockAPI
         [Description("")]
         public string MySqlPassword = "";
         [Description("")]
-        public string ExplosiveAbuseReason = "Throwing an explosive device.";
-        [Description("")]
         public string MediumcoreBanReason = "Death results in a ban";
         [Description("")]
         public string MediumcoreKickReason = "Death results in a kick";
@@ -169,9 +167,6 @@ namespace TShockAPI
 		
 		[Description("Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain asthetic tiles.")]
     	public bool EnableInsecureTileFixes = true;
-
-    	[Description("Some weapons override the range checks, however malicious users can take advantage of this and send lots of packets of certain types. Disabling this will turn off weapons that affect this.")] 
-		public bool EnableRangeCheckOverrides = true;
 
         [Description("Kicks users using a proxy as identified with the GeoIP database")] 
         public bool KickProxyUsers = true;
