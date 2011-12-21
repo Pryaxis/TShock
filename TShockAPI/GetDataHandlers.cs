@@ -582,13 +582,6 @@ namespace TShockAPI
                     args.Player.Spawn();
                     return true;
                 }
-                if (TShock.CheckPlayerCollision((int)(pos.X / 16f), (int)(pos.Y / 16f))) //NoClipping or possible errors
-                {
-                    args.Player.SendMessage("You got stuck in a solid object! Sent you to the spawn point.", Color.Red);
-                    args.Player.SendTileSquare((int)(pos.X / 16f), (int)(pos.X / 16f));
-                    args.Player.Spawn();
-                    return true;
-                }
             }
 
             args.Player.LastNetPosition = pos;

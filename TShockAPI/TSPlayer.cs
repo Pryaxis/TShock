@@ -444,15 +444,15 @@ namespace TShockAPI
         {
             this.inventory[0].netID = -15;
             this.inventory[0].stack = 1;
-            if(player.TPlayer.inventory[0].netID == -15)
+            if(player.TPlayer.inventory[0] != null && player.TPlayer.inventory[0].netID == -15)
                 this.inventory[0].prefix = player.TPlayer.inventory[0].prefix;
             this.inventory[1].netID = -13;
             this.inventory[1].stack = 1;
-            if (player.TPlayer.inventory[1].netID == -13)
+            if (player.TPlayer.inventory[1] != null && player.TPlayer.inventory[1].netID == -13)
                 this.inventory[1].prefix = player.TPlayer.inventory[1].prefix;
             this.inventory[2].netID = -16;
             this.inventory[2].stack = 1;
-            if (player.TPlayer.inventory[2].netID == -16)
+            if (player.TPlayer.inventory[2] != null && player.TPlayer.inventory[2].netID == -16)
                 this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
         }
 
@@ -479,7 +479,15 @@ namespace TShockAPI
             {
                 if (i < 49)
                 {
-                    this.inventory[i].netID = inventory[i].netID;
+                    if (player.TPlayer.inventory[i] != null)
+                    {
+                        this.inventory[i].netID = inventory[i].netID;
+                    }
+                    else
+                    {
+                        this.inventory[i].netID = 0;
+                    }
+
                     if (this.inventory[i].netID != 0)
                     {
                         this.inventory[i].stack = inventory[i].stack;
@@ -493,7 +501,15 @@ namespace TShockAPI
                 }
                 else
                 {
-                    this.inventory[i].netID = armor[i].netID;
+                    if (player.TPlayer.armor[i] != null)
+                    {
+                        this.inventory[i].netID = armor[i].netID;
+                    }
+                    else
+                    {
+                        this.inventory[i].netID = 0;
+                    }
+
                     if (this.inventory[i].netID != 0)
                     {
                         this.inventory[i].stack = armor[i].stack;
