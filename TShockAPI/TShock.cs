@@ -726,7 +726,13 @@ namespace TShockAPI
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
-                TShock.Utils.HandleCheater(player, "Health/Mana cheat detected. Please use a different character.");
+                player.IgnoreActionsForCheating = true;
+                player.SendMessage("You are using a health/mana cheat. Please choose a different character.");
+            }
+
+            if (HackedInventory(player))
+            {
+                player.IgnoreActionsForCheating = true;
             }
 
             NetMessage.syncPlayers();
@@ -1014,6 +1020,49 @@ namespace TShockAPI
                    (player.TPlayer.statLife > 400);
         }
 
+        public static bool HackedInventory(TSPlayer player)
+        {
+            bool check = false;
+
+            Item[] inventory = player.TPlayer.inventory;
+            Item[] armor = player.TPlayer.armor;
+            for (int i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                if (i < 49)
+                {
+                    Item item = new Item();
+                    if (inventory[i] != null && inventory[i].netID != 0)
+                    {
+                        item.netDefaults(inventory[i].netID);
+                        item.Prefix(inventory[i].prefix);
+                        item.AffixName();
+                        if (inventory[i].stack > item.maxStack)
+                        {
+                            check = true;
+                            player.SendMessage(String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, inventory[i].stack), Color.Cyan);
+                        }
+                    }
+                }
+                else
+                {
+                    Item item = new Item();
+                    if (armor[i - 48] != null && armor[i - 48].netID != 0)
+                    {
+                        item.netDefaults(armor[i - 48].netID);
+                        item.Prefix(armor[i - 48].prefix);
+                        item.AffixName();
+                        if (armor[i - 48].stack > item.maxStack)
+                        {
+                            check = true;
+                            player.SendMessage(String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[i - 48].stack), Color.Cyan);
+                        }
+                    }
+                }
+            }
+
+            return check;
+        }
+
         public static bool CheckInventory(TSPlayer player)
         {
             PlayerData playerData = player.PlayerData;
@@ -1111,6 +1160,8 @@ namespace TShockAPI
                 check = true;
             if (player.IgnoreActionsForInventory)
                 check = true;
+            if (player.IgnoreActionsForCheating)
+                check = true;
             return check;
         }
 
@@ -1149,7 +1200,7 @@ namespace TShockAPI
                 Netplay.serverPort = file.ServerPort;
             }
 
-            Netplay.spamCheck = file.SpamChecks;
+            Netplay.spamCheck = false;
 
             RconHandler.Password = file.RconPassword;
             RconHandler.ListenPort = file.RconPort;

@@ -30,7 +30,7 @@ namespace TShockAPI.DB
             AddGroup("default", "warp,canbuild");
             AddGroup("newadmin", "default", "kick,editspawn,reservedslot");
             AddGroup("admin", "newadmin", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,usebanneditem,manageusers");
+            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
             AddGroup("vip", "default", "reservedslot");
 
             String file = Path.Combine(TShock.SavePath, "groups.txt");

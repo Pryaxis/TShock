@@ -32,9 +32,6 @@ namespace TShockAPI
         [Description("Prevents you from being banned")]
         public static readonly string immunetoban;
 
-        [Description("Prevents you from being kicked by TShocks cheat detections")]
-        public static readonly string ignorecheatdetection;
-
         [Description("Prevents you from being reverted by kill tile abuse detection")]
         public static readonly string ignorekilltiledetection;
 

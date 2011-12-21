@@ -155,7 +155,6 @@ namespace TShockAPI
             add(Permissions.manageitem, DeleteItem, "delitem");
             add(Permissions.cfg, SetSpawn, "setspawn");
             add(Permissions.cfg, Reload, "reload");
-            add(Permissions.cfg, ShowConfiguration, "showconfig");
             add(Permissions.cfg, ServerPassword, "serverpassword");
             add(Permissions.cfg, Save, "save");
             add(Permissions.cfg, Settle, "settle");
@@ -1745,20 +1744,6 @@ namespace TShockAPI
             TShock.Utils.Broadcast("Server map saving, potential lag spike");
             Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
             SaveWorld.Start();
-        }
-
-        private static void ShowConfiguration(CommandArgs args)
-        {
-            args.Player.SendMessage("TShock Config:");
-            string lineThree = string.Format("RangeChecks : {0}, DisableBuild : {1}, ProtectSpawn : {2}, ProtectRadius : {3}",
-                                             TShock.Config.RangeChecks, TShock.Config.DisableBuild,
-                                             TShock.Config.SpawnProtection, TShock.Config.SpawnProtectionRadius);
-            args.Player.SendMessage(lineThree, Color.Yellow);
-            string lineFour = string.Format("MaxSlots : {0}, SpamChecks : {1}, InvMultiplier : {2}, DMS : {3}, SpawnRate {4}",
-                                           TShock.Config.MaxSlots, TShock.Config.SpamChecks,
-                                           TShock.Config.InvasionMultiplier, TShock.Config.DefaultMaximumSpawns,
-                                           TShock.Config.DefaultSpawnRate);
-            args.Player.SendMessage(lineFour, Color.Yellow);
         }
 
         private static void Reload(CommandArgs args)

@@ -139,7 +139,7 @@ namespace TShockAPI
 
             if (stack > item.maxStack && type != 0)
             {
-                TShock.Utils.HandleCheater(args.Player, String.Format("Stack cheat detected. Remove {0} ({1}) > {2} and then rejoin", item.name, stack, item.maxStack));
+                args.Player.IgnoreActionsForCheating = true;
             }
 
             if (args.Player.IsLoggedIn)
@@ -158,7 +158,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                TShock.Utils.HandleCheater(args.Player, "Health cheat detected. Please use a different character.");
+                args.Player.IgnoreActionsForCheating = true;
             }
 
             return false;
@@ -172,7 +172,7 @@ namespace TShockAPI
 
             if (cur > 600 || max > 600)
             {
-                TShock.Utils.HandleCheater(args.Player, "Mana cheat detected. Please use a different character.");
+                args.Player.IgnoreActionsForCheating = true;
             }
 
             return false;
@@ -574,13 +574,17 @@ namespace TShockAPI
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
                 if (TShock.CheckIgnores(args.Player) && distance > 6f)
                 {
-                    if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+                    if (args.Player.IgnoreActionsForCheating)
                     {
-                        args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+                        args.Player.SendMessage("You have been disabled for cheating! Please login with a new character!", Color.Red);
                     }
-                    if (TShock.Config.ServerSideInventory && !args.Player.IsLoggedIn)
+                    else if (TShock.Config.ServerSideInventory && !args.Player.IsLoggedIn)
                     {
                         args.Player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
+                    }
+                    else if (TShock.Config.AlwaysPvP && !args.TPlayer.hostile)
+                    {
+                        args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
                     }
                     args.Player.Spawn();
                     return true;

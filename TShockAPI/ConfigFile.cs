@@ -41,18 +41,14 @@ namespace TShockAPI
         public bool InfiniteInvasion;
         [Description("Enable or disable perma pvp.")]
         public bool AlwaysPvP = false;
-        [Description("Kicks players who edit save files for cheating.")]
-        public bool KickCheaters = true;
         [Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
         public bool SpawnProtection = true;
         [Description("Radius from spawn tile for SpawnProtection.")]
-        public int SpawnProtectionRadius = 5;
+        public int SpawnProtectionRadius = 10;
         [Description("Max slots for the server. If you want people to be kicked with \"Server is full\" set this to how many players you want max and then set Terraria max players to 2 higher.")]
         public int MaxSlots = 8;
         [Description("Global protection agent for any block distance based anti-grief check.")]
         public bool RangeChecks = true;
-        [Description("Enable/Disable Terrarias built in spam checks.")]
-        public bool SpamChecks;
         [Description("Disables any building; placing of blocks")]
         public bool DisableBuild;
         [Description("Kick a player if they exceed this number of tile kills within 1 second.")]
@@ -63,10 +59,6 @@ namespace TShockAPI
         public string AdminChatPrefix = "(Admin) ";
         [Description("")]
         public bool AdminChatEnabled = true;
-
-        [Description("Seconds a player has to wait between pvp toggles.")]
-        public int PvpThrottle;
-
         [Description("Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")]
         public int BackupInterval;
         [Description("How long backups are kept in minutes. 2880 = 2 days.")]

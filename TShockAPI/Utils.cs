@@ -453,23 +453,6 @@ namespace TShockAPI
             return false;
         }
 
-        public bool HandleCheater(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, "ignorecheatdetection", TShock.Config.KickCheaters, reason);
-        }
-
-        private bool HandleBadPlayer(TSPlayer player, string overridePermission, bool kick, string reason)
-        {
-            if (!player.Group.HasPermission(overridePermission) || !(player.Group.Name == "superadmin"))
-            {
-                if (kick)
-                {
-                    return Kick(player, reason);
-                }
-            }
-            return false;
-        }
-
         /// <summary>
         /// Shows a file to the user.
         /// </summary>
