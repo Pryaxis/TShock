@@ -48,13 +48,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Community.CsharpSqlite">
-      <HintPath>..\SqlBins\Community.CsharpSqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Community.CsharpSqlite.SQLiteClient">
-      <HintPath>..\SqlBins\Community.CsharpSqlite.SQLiteClient.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\SqlBins\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\SqlBins\MySql.Data.dll</HintPath>
     </Reference>
@@ -128,6 +125,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy .\..\..\..\SqlBins\sqlite3.dll . /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

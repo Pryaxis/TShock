@@ -329,7 +329,7 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = Tools.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam.ToString());
             if (found.Count == 0)
             {
                 returnBlock.Add("status", "400");
@@ -359,7 +359,7 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = Tools.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam.ToString());
             var reason = verbs["reason"];
             if (found.Count == 0)
             {
@@ -374,7 +374,7 @@ namespace TShockAPI
             else if (found.Count == 1)
             {
                 var player = found[0];
-                Tools.ForceKick(player, reason == null ? "Kicked via web" : reason.ToString());
+                TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason.ToString());
                 returnBlock.Add("status", "200");
                 returnBlock.Add("response", "Player " + player.Name + " was kicked");
             }
@@ -384,7 +384,7 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = Tools.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam.ToString());
             var reason = verbs["reason"];
             if (found.Count == 0)
             {
@@ -400,7 +400,7 @@ namespace TShockAPI
             {
                 var player = found[0];
                 TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason.ToString());
-                Tools.ForceKick(player, reason == null ? "Banned via web" : reason.ToString());
+                TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason.ToString());
                 returnBlock.Add("status", "200");
                 returnBlock.Add("response", "Player " + player.Name + " was banned");
             }

@@ -132,6 +132,14 @@ namespace TShockAPI
         }
 
         /// <summary>
+        /// Disposes objects that are being used.
+        /// </summary>
+        public static void Dispose()
+        {
+            _logWriter.Dispose();
+        }
+
+        /// <summary>
         /// Internal method which writes a message directly to the log file.
         /// </summary>
         private static void Write(String message, LogLevel level)

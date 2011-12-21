@@ -29,9 +29,9 @@ using Terraria;
 
 namespace TShockAPI
 {
-    public class Tools
+    public class Utils
     {
-        public static Random Random = new Random();
+        public Random Random = new Random();
         //private static List<Group> groups = new List<Group>();
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="mess">A string IPv4 address in IP:PORT form.</param>
         /// <returns>A string IPv4 address.</returns>
-        public static string GetRealIP(string mess)
+        public string GetRealIP(string mess)
         {
             return mess.Split(':')[0];
         }
@@ -48,7 +48,7 @@ namespace TShockAPI
         /// Used for some places where a list of players might be used.
         /// </summary>
         /// <returns>String of players seperated by commas.</returns>
-        public static string GetPlayers()
+        public string GetPlayers()
         {
             var sb = new StringBuilder();
             foreach (TSPlayer player in TShock.Players)
@@ -69,7 +69,7 @@ namespace TShockAPI
         /// Finds a player and gets IP as string
         /// </summary>
         /// <param name="msg">Player name</param>
-        public static string GetPlayerIP(string playername)
+        public string GetPlayerIP(string playername)
         {
             foreach (TSPlayer player in TShock.Players)
             {
@@ -92,7 +92,7 @@ namespace TShockAPI
         /// <param name="max">Maximum bounds of the clamp</param>
         /// <param name="min">Minimum bounds of the clamp</param>
         /// <returns></returns>
-        public static T Clamp<T>(T value, T max, T min)
+        public T Clamp<T>(T value, T max, T min)
             where T : IComparable<T>
         {
             T result = value;
@@ -106,7 +106,7 @@ namespace TShockAPI
         /// <summary>
         /// Saves the map data
         /// </summary>
-        public static void SaveWorld()
+        public void SaveWorld()
         {
             WorldGen.saveWorld();
             Broadcast("World saved.", Color.Yellow);
@@ -117,19 +117,19 @@ namespace TShockAPI
         /// Broadcasts a message to all players
         /// </summary>
         /// <param name="msg">string message</param>
-        public static void Broadcast(string msg)
+        public void Broadcast(string msg)
         {
             Broadcast(msg, Color.Green);
         }
 
-        public static void Broadcast(string msg, byte red, byte green, byte blue)
+        public void Broadcast(string msg, byte red, byte green, byte blue)
         {
             TSPlayer.All.SendMessage(msg, red, green, blue);
             TSPlayer.Server.SendMessage(msg, red, green, blue);
             Log.Info(string.Format("Broadcast: {0}", msg));
         }
 
-        public static void Broadcast(string msg, Color color)
+        public void Broadcast(string msg, Color color)
         {
             Broadcast(msg, color.R, color.G, color.B);
         }
@@ -139,7 +139,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="log"></param>
         /// <param name="color"></param>
-        public static void SendLogs(string log, Color color)
+        public void SendLogs(string log, Color color)
         {
             Log.Info(log);
             TSPlayer.Server.SendMessage(log, color);
@@ -154,7 +154,7 @@ namespace TShockAPI
         /// The number of active players on the server.
         /// </summary>
         /// <returns>int playerCount</returns>
-        public static int ActivePlayers()
+        public int ActivePlayers()
         {
             int num = 0;
             foreach (TSPlayer player in TShock.Players)
@@ -172,7 +172,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply"></param>
         /// <returns></returns>
-        public static List<TSPlayer> FindPlayer(string ply)
+        public List<TSPlayer> FindPlayer(string ply)
         {
             var found = new List<TSPlayer>();
             ply = ply.ToLower();
@@ -190,7 +190,7 @@ namespace TShockAPI
             return found;
         }
 
-        public static void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange, out int tileX, out int tileY)
+        public void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange, out int tileX, out int tileY)
         {
             int j = 0;
             do
@@ -209,17 +209,17 @@ namespace TShockAPI
             while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
         }
 
-        private static bool TileValid(int tileX, int tileY)
+        private bool TileValid(int tileX, int tileY)
         {
             return tileX >= 0 && tileX <= Main.maxTilesX && tileY >= 0 && tileY <= Main.maxTilesY;
         }
 
-        private static bool TileClear(int tileX, int tileY)
+        private bool TileClear(int tileX, int tileY)
         {
             return !Main.tile[tileX, tileY].active;
         }
 
-        public static List<Item> GetItemByIdOrName(string idOrName)
+        public List<Item> GetItemByIdOrName(string idOrName)
         {
             int type = -1;
             if (int.TryParse(idOrName, out type))
@@ -229,14 +229,14 @@ namespace TShockAPI
             return GetItemByName(idOrName);
         }
 
-        public static Item GetItemById(int id)
+        public Item GetItemById(int id)
         {
             Item item = new Item();
-            item.SetDefaults(id);
+            item.netDefaults(id);
             return item;
         }
 
-        public static List<Item> GetItemByName(string name)
+        public List<Item> GetItemByName(string name)
         {
             //Method #1 - must be exact match, allows support for different pickaxes/hammers/swords etc
             for (int i = 1; i < Main.maxItemTypes; i++)
@@ -248,12 +248,12 @@ namespace TShockAPI
             }
             //Method #2 - allows impartial matching
             var found = new List<Item>();
-            for (int i = 1; i < Main.maxItemTypes; i++)
+            for (int i = -24; i < Main.maxItemTypes; i++)
             {
                 try
                 {
                     Item item = new Item();
-                    item.SetDefaults(i);
+                    item.netDefaults(i);
                     if (item.name.ToLower() == name.ToLower())
                         return new List<Item> { item };
                     if (item.name.ToLower().StartsWith(name.ToLower()))
@@ -264,7 +264,7 @@ namespace TShockAPI
             return found;
         }
 
-        public static List<NPC> GetNPCByIdOrName(string idOrName)
+        public List<NPC> GetNPCByIdOrName(string idOrName)
         {
             int type = -1;
             if (int.TryParse(idOrName, out type))
@@ -274,17 +274,17 @@ namespace TShockAPI
             return GetNPCByName(idOrName);
         }
 
-        public static NPC GetNPCById(int id)
+        public NPC GetNPCById(int id)
         {
             NPC npc = new NPC();
-            npc.SetDefaults(id);
+            npc.netDefaults(id);
             return npc;
         }
 
-        public static List<NPC> GetNPCByName(string name)
+        public List<NPC> GetNPCByName(string name)
         {
             //Method #1 - must be exact match, allows support for different coloured slimes
-            for (int i = 1; i < Main.maxNPCTypes; i++)
+            for (int i = -17; i < Main.maxNPCTypes; i++)
             {
                 NPC npc = new NPC();
                 npc.SetDefaults(name);
@@ -296,7 +296,7 @@ namespace TShockAPI
             for (int i = 1; i < Main.maxNPCTypes; i++)
             {
                 NPC npc = new NPC();
-                npc.SetDefaults(i);
+                npc.netDefaults(i);
                 if (npc.name.ToLower() == name.ToLower())
                     return new List<NPC> { npc };
                 if (npc.name.ToLower().StartsWith(name.ToLower()))
@@ -305,15 +305,17 @@ namespace TShockAPI
             return found;
         }
 
-        public static string GetBuffName(int id)
+        public string GetBuffName(int id)
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
         }
-        public static string GetBuffDescription(int id)
+
+        public string GetBuffDescription(int id)
         {
             return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
         }
-        public static List<int> GetBuffByName(string name)
+
+        public List<int> GetBuffByName(string name)
         {
             for (int i = 1; i < Main.maxBuffs; i++)
             {
@@ -329,12 +331,57 @@ namespace TShockAPI
             return found;
         }
 
+        public string GetPrefixById(int id)
+        {
+            var item = new Item();
+            item.SetDefaults(0);
+            item.prefix = (byte)id;
+            item.AffixName();
+            return item.name.Trim();
+        }
+
+        public List<int> GetPrefixByName(string name)
+        {
+            Item item = new Item();
+            item.SetDefaults(0);
+            for (int i = 1; i < 83; i++)
+            {
+                item.prefix = (byte) i;
+                if (item.AffixName().Trim() == name)
+                    return new List<int> { i };
+            }
+            var found = new List<int>();
+            for (int i = 1; i < 83; i++)
+            {
+                try
+                {
+                    item.prefix = (byte) i;
+                    if (item.AffixName().Trim().ToLower() == name.ToLower())
+                        return new List<int> { i };
+                    if (item.AffixName().Trim().ToLower().StartsWith(name.ToLower()))
+                        found.Add(i);
+                }
+                catch { }
+            }
+            return found;
+        }
+
+        public List<int> GetPrefixByIdOrName(string idOrName)
+        {
+            int type = -1;
+            if (int.TryParse(idOrName, out type) && type > 0 && type < 84)
+            {
+                return new List<int> {type};
+            }
+            return GetPrefixByName(idOrName);
+        }
+
         /// <summary>
         /// Kicks all player from the server without checking for immunetokick permission.
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static void ForceKickAll(string reason)
+        public void ForceKickAll(string reason)
         {
             foreach (TSPlayer player in TShock.Players)
             {
@@ -350,7 +397,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static void ForceKick(TSPlayer player, string reason)
+        public void ForceKick(TSPlayer player, string reason)
         {
             if (!player.ConnectionAlive)
                 return;
@@ -363,7 +410,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static bool Kick(TSPlayer player, string reason, string adminUserName = "")
+        public bool Kick(TSPlayer player, string reason, string adminUserName = "")
         {
             if (!player.ConnectionAlive)
                 return true;
@@ -386,7 +433,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="reason">string reason</param>
-        public static bool Ban(TSPlayer player, string reason, string adminUserName = "")
+        public bool Ban(TSPlayer player, string reason, string adminUserName = "")
         {
             if (!player.ConnectionAlive)
                 return true;
@@ -406,49 +453,13 @@ namespace TShockAPI
             return false;
         }
 
-        public static bool HandleCheater(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, "ignorecheatdetection", TShock.Config.BanCheaters, TShock.Config.KickCheaters, reason);
-        }
-
-        public static bool HandleGriefer(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanGriefers, TShock.Config.KickGriefers, reason);
-        }
-
-        public static bool HandleTntUser(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanKillTileAbusers, TShock.Config.KickKillTileAbusers, reason);
-        }
-
-        public static bool HandleExplosivesUser(TSPlayer player, string reason)
-        {
-            return HandleBadPlayer(player, Permissions.ignoregriefdetection, TShock.Config.BanExplosives, TShock.Config.KickExplosives, reason);
-        }
-
-        private static bool HandleBadPlayer(TSPlayer player, string overridePermission, bool ban, bool kick, string reason)
-        {
-            if (!player.Group.HasPermission(overridePermission) || !(player.Group.Name == "superadmin"))
-            {
-                if (ban)
-                {
-                    return Ban(player, reason);
-                }
-                if (kick)
-                {
-                    return Kick(player, reason);
-                }
-            }
-            return false;
-        }
-
         /// <summary>
         /// Shows a file to the user.
         /// </summary>
         /// <param name="ply">int player</param>
         /// <param name="file">string filename reletave to savedir</param>
         //Todo: Fix this
-        public static void ShowFileToUser(TSPlayer player, string file)
+        public void ShowFileToUser(TSPlayer player, string file)
         {
             string foo = "";
             using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
@@ -487,7 +498,7 @@ namespace TShockAPI
         /// Returns a Group from the name of the group
         /// </summary>
         /// <param name="ply">string groupName</param>
-        public static Group GetGroup(string groupName)
+        public Group GetGroup(string groupName)
         {
             //first attempt on cached groups
             for (int i = 0; i < TShock.Groups.groups.Count; i++)
@@ -504,7 +515,7 @@ namespace TShockAPI
         /// Returns an IPv4 address from a DNS query
         /// </summary>
         /// <param name="hostname">string ip</param>
-        public static string GetIPv4Address(string hostname)
+        public string GetIPv4Address(string hostname)
         {
             try
             {
@@ -519,9 +530,9 @@ namespace TShockAPI
             return "";
         }
 
-        public static string HashAlgo = "md5";
+        public string HashAlgo = "md5";
 
-        public static readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
+        public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
         {
             {"sha512", () => new SHA512Managed()},
             {"sha256", () => new SHA256Managed()},
@@ -536,7 +547,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="bytes">bytes to hash</param>
         /// <returns>string sha256</returns>
-        public static string HashPassword(byte[] bytes)
+        public string HashPassword(byte[] bytes)
         {
             if (bytes == null)
                 throw new NullReferenceException("bytes");
@@ -555,7 +566,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="bytes">bytes to hash</param>
         /// <returns>string sha256</returns>
-        public static string HashPassword(string password)
+        public string HashPassword(string password)
         {
             if (string.IsNullOrEmpty(password) || password == "non-existant password")
                 return "non-existant password";
@@ -567,7 +578,7 @@ namespace TShockAPI
         /// </summary>
         /// <param name="str">String to check</param>
         /// <returns>True if the string only contains printable characters</returns>
-        public static bool ValidString(string str)
+        public bool ValidString(string str)
         {
             foreach (var c in str)
             {
@@ -581,7 +592,7 @@ namespace TShockAPI
         /// Checks if world has hit the max number of chests
         /// </summary>
         /// <returns>True if the entire chest array is used</returns>
-        public static bool MaxChests()
+        public bool MaxChests()
         {
             for (int i = 0; i < Main.chest.Length; i++)
             {
@@ -589,6 +600,16 @@ namespace TShockAPI
                     return false;
             }
             return true;
+        }
+
+        public int SearchProjectile(short identity)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].identity == identity)
+                    return i;
+            }
+            return 1000;
         }
     }
 }

@@ -27,11 +27,11 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
 
             //Add default groups
-            AddGroup("default", "canwater,canlava,warp,canbuild");
+            AddGroup("default", "warp,canbuild");
             AddGroup("newadmin", "default", "kick,editspawn,reservedslot");
             AddGroup("admin", "newadmin", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,ignorecheatdetection,ignoregriefdetection,usebanneditem,manageusers");
-            AddGroup("vip", "default", "canwater,canlava,warp,canbuild,reservedslot");
+            AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
+            AddGroup("vip", "default", "reservedslot");
 
             String file = Path.Combine(TShock.SavePath, "groups.txt");
             if (File.Exists(file))
@@ -138,7 +138,7 @@ namespace TShockAPI.DB
 
             if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
                 message = "Group " + name + " has been deleted successfully.";
-            groups.Remove(Tools.GetGroup(name));
+            groups.Remove(TShock.Utils.GetGroup(name));
 
             return message;
         }
@@ -149,7 +149,7 @@ namespace TShockAPI.DB
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
 
-            var group = Tools.GetGroup(name);
+            var group = TShock.Utils.GetGroup(name);
             //Add existing permissions (without duplicating)
             permissions.AddRange(group.permissions.Where(s => !permissions.Contains(s)));
 
@@ -167,7 +167,7 @@ namespace TShockAPI.DB
             if (!GroupExists(name))
                 return "Error: Group doesn't exists.";
 
-            var group = Tools.GetGroup(name);
+            var group = TShock.Utils.GetGroup(name);
 
             //Only get permissions that exist in the group.
             var newperms = group.permissions.Except( permissions );

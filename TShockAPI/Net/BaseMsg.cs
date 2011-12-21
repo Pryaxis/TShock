@@ -4,8 +4,6 @@ using System.IO.Streams;
 using System.Linq;
 using System.Text;
 
-using System.IO.Streams;
-
 namespace TShockAPI.Net
 {
     public class BaseMsg : IPackable

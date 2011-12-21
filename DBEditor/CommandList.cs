@@ -42,8 +42,6 @@ namespace TShockDBEditor
             CommandList.Add("annoy");
             CommandList.Add("immunetokick");
             CommandList.Add("immunetoban");
-            CommandList.Add("ignorecheatdetection");
-            CommandList.Add("ignoregriefdetection");
             CommandList.Add("usebanneditem");
 
             foreach (string command in CommandList)

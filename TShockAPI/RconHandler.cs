@@ -204,7 +204,7 @@ namespace TShockAPI
                 response = "infoResponse\n";
                 var infostring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Utils.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                     TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0);
                 if (challenge != "")
@@ -223,7 +223,7 @@ namespace TShockAPI
                 response = "statusResponse\n";
                 var statusstring = string.Format(@"\_TShock_ver\{6}\mapname\{1}\sv_maxclients\{2}\clients\{3}\sv_privateClients\{4}\hconly\{5}\gamename\TERRARIA\protocol\100\sv_hostname\{0}\g_needPass\{7}",
                     TShock.Config.ServerName, Main.worldName, Main.maxNetPlayers,
-                    Tools.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
+                    TShock.Utils.ActivePlayers(), Main.maxNetPlayers - TShock.Config.MaxSlots,
                     TShock.Config.HardcoreOnly ? 1 : 0, TShock.VersionNum,
                     Netplay.password != "" ? 1 : 0) + "\n";
                 if (challenge != "")
@@ -251,7 +251,7 @@ namespace TShockAPI
                 WorldGen.genRand = new Random();
             if (text.StartsWith("exit"))
             {
-                Tools.ForceKickAll("Server shutting down!");
+                TShock.Utils.ForceKickAll("Server shutting down!");
                 WorldGen.saveWorld(false);
                 Netplay.disconnect = true;
                 return "Server shutting down.";

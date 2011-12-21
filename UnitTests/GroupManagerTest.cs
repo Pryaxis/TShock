@@ -3,7 +3,7 @@ using System.Data;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Community.CsharpSqlite.SQLiteClient;
+using Mono.Data.Sqlite;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TShockAPI;
 using TShockAPI.DB;
@@ -40,7 +40,7 @@ namespace UnitTests
         {
             Assert.IsTrue(Groups.AddGroup("test1", "heal") != "");
             Assert.IsTrue(Groups.GroupExists("test1"));
-            Assert.IsTrue(Tools.GetGroup("test1").HasPermission("heal"));
+            Assert.IsTrue(TShock.Utils.GetGroup("test1").HasPermission("heal"));
         }
 
         [TestMethod]
