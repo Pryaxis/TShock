@@ -295,7 +295,10 @@ namespace TShockAPI
         {
             if (disposing)
             {
-                Geo.Dispose();
+				if (Geo != null)
+				{
+					Geo.Dispose();					
+				}
                 GameHooks.PostInitialize -= OnPostInit;
                 GameHooks.Update -= OnUpdate;
                 ServerHooks.Join -= OnJoin;
