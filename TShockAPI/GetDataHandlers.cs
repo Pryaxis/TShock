@@ -161,6 +161,11 @@ namespace TShockAPI
                 args.Player.IgnoreActionsForCheating = true;
             }
 
+            if (args.Player.IsLoggedIn)
+            {
+                args.Player.PlayerData.maxHealth = max;
+            }
+
             return false;
         }
 
@@ -173,6 +178,11 @@ namespace TShockAPI
             if (cur > 600 || max > 600)
             {
                 args.Player.IgnoreActionsForCheating = true;
+            }
+
+            if (args.Player.IsLoggedIn)
+            {
+                args.Player.PlayerData.maxMana = max;
             }
 
             return false;
