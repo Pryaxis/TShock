@@ -49,7 +49,7 @@ namespace TShockAPI
     public class TShock : TerrariaPlugin
     {
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "1.1 broke our API";
+        public static readonly string VersionCodename = "Zidonuke fixin' what Redigit doesn't";
 
         public static string SavePath = "tshock";
 
@@ -295,6 +295,7 @@ namespace TShockAPI
         {
             if (disposing)
             {
+                Geo.Dispose();
                 GameHooks.PostInitialize -= OnPostInit;
                 GameHooks.Update -= OnUpdate;
                 ServerHooks.Join -= OnJoin;
