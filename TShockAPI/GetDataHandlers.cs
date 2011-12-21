@@ -533,12 +533,15 @@ namespace TShockAPI
 
             args.TPlayer.hostile = pvp;
 
-            if (pvp == true && TShock.Config.AlwaysPvP)
-                args.Player.IgnoreActionsForPvP = false;
-            else
+            if (TShock.Config.AlwaysPvP)
             {
-                args.Player.Spawn();
-                args.Player.IgnoreActionsForPvP = true;
+                if (pvp == true)
+                    args.Player.IgnoreActionsForPvP = false;
+                else
+                {
+                    args.Player.Spawn();
+                    args.Player.IgnoreActionsForPvP = true;
+                }
             }
 
             NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
