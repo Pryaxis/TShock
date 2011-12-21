@@ -524,7 +524,7 @@ namespace TShockAPI
             if (args.TPlayer.hostile != pvp)
             {
                 long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
-                if (TShock.Config.PvpThrottle > 0 && seconds < TShock.Config.PvpThrottle)
+                if (seconds > 5)
                 {
                     TSPlayer.All.SendMessage(string.Format("{0} has {1} PvP!", args.Player.Name, pvp ? "enabled" : "disabled"), Main.teamColor[args.Player.Team]);
                 }
@@ -536,7 +536,10 @@ namespace TShockAPI
             if (pvp == true && TShock.Config.AlwaysPvP)
                 args.Player.IgnoreActionsForPvP = false;
             else
+            {
+                args.Player.Spawn();
                 args.Player.IgnoreActionsForPvP = true;
+            }
 
             NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
 
@@ -575,7 +578,7 @@ namespace TShockAPI
                     {
                         args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
                     }
-                    else if (TShock.Config.ServerSideInventory && !args.Player.IsLoggedIn)
+                    if (TShock.Config.ServerSideInventory && !args.Player.IsLoggedIn)
                     {
                         args.Player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
                     }

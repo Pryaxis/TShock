@@ -1039,7 +1039,7 @@ namespace TShockAPI
                 {
                     Item item = new Item();
                     Item serverItem = new Item();
-                    if (inventory[i].netID != 0)
+                    if (inventory[i] != null && inventory[i].netID != 0)
                     {
                         if (playerData.inventory[i].netID != inventory[i].netID)
                         {
@@ -1057,8 +1057,7 @@ namespace TShockAPI
                             player.SendMessage("Error: Your item (" + item.name + ") needs to be deleted.", Color.Cyan);
                             check = false;
                         }
-
-                        if (inventory[i].stack > playerData.inventory[i].stack)
+                        else if (inventory[i].stack > playerData.inventory[i].stack)
                         {
                             item.netDefaults(inventory[i].netID);
                             item.Prefix(inventory[i].prefix);
@@ -1072,29 +1071,28 @@ namespace TShockAPI
                 {
                     Item item = new Item();
                     Item serverItem = new Item();
-                    if (armor[i].netID != 0)
+                    if (armor[i - 48] != null && armor[i - 48].netID != 0)
                     {
-                        if (playerData.inventory[i].netID != armor[i].netID)
+                        if (playerData.inventory[i].netID != armor[i - 48].netID)
                         {
-                            item.netDefaults(armor[i].netID);
-                            item.Prefix(armor[i].prefix);
+                            item.netDefaults(armor[i - 48].netID);
+                            item.Prefix(armor[i - 48].prefix);
                             item.AffixName();
                             player.SendMessage("Error: Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
                             check = false;
                         }
-                        else if (playerData.inventory[i].prefix != armor[i].prefix)
+                        else if (playerData.inventory[i].prefix != armor[i - 48].prefix)
                         {
-                            item.netDefaults(armor[i].netID);
-                            item.Prefix(armor[i].prefix);
+                            item.netDefaults(armor[i - 48].netID);
+                            item.Prefix(armor[i - 48].prefix);
                             item.AffixName();
                             player.SendMessage("Error: Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
                             check = false;
                         }
-
-                        if (armor[i].stack > playerData.inventory[i].stack)
+                        else if (armor[i - 48].stack > playerData.inventory[i].stack)
                         {
-                            item.netDefaults(armor[i].netID);
-                            item.Prefix(armor[i].prefix);
+                            item.netDefaults(armor[i - 48].netID);
+                            item.Prefix(armor[i - 48].prefix);
                             item.AffixName();
                             player.SendMessage("Error: Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" + playerData.inventory[i].stack + ").", Color.Cyan);
                             check = false;

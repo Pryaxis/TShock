@@ -34,7 +34,6 @@ namespace TShockAPI.DB
 
             var table = new SqlTable("Inventory",
                 new SqlColumn("Account", MySqlDbType.Int32) { Primary = true },
-                new SqlColumn("CharacterName", MySqlDbType.VarChar, 50),
                 new SqlColumn("MaxHealth", MySqlDbType.Int32),
                 new SqlColumn("MaxMana", MySqlDbType.Int32),
                 new SqlColumn("Inventory", MySqlDbType.Text)
@@ -49,7 +48,7 @@ namespace TShockAPI.DB
 
             try
             {
-                using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0 AND CharacterName=@1", acctid, player.Name))
+                using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0", acctid))
                 {
                     if (reader.Read())
                     {
@@ -77,7 +76,7 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("INSERT INTO Inventory (Account, CharacterName, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4);", acctid, player.Name, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
+                    database.Query("INSERT INTO Inventory (Account, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3);", acctid, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
                     return true;
                 }
                 catch (Exception ex)
@@ -89,7 +88,7 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @3 WHERE Account = @4 AND CharacterName = @5;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), player.Name, acctid);
+                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @2 WHERE Account = @3;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), acctid);
                     return true;
                 }
                 catch (Exception ex)

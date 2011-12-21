@@ -442,6 +442,10 @@ namespace TShockAPI
 
         public PlayerData(TSPlayer player)
         {
+            for (int i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                this.inventory[i] = new NetItem();
+            }
             this.inventory[0].netID = -15;
             this.inventory[0].stack = 1;
             if(player.TPlayer.inventory[0] != null && player.TPlayer.inventory[0].netID == -15)
@@ -501,9 +505,9 @@ namespace TShockAPI
                 }
                 else
                 {
-                    if (player.TPlayer.armor[i] != null)
+                    if (player.TPlayer.armor[i - 48] != null)
                     {
-                        this.inventory[i].netID = armor[i].netID;
+                        this.inventory[i].netID = armor[i - 48].netID;
                     }
                     else
                     {
@@ -512,8 +516,8 @@ namespace TShockAPI
 
                     if (this.inventory[i].netID != 0)
                     {
-                        this.inventory[i].stack = armor[i].stack;
-                        this.inventory[i].prefix = armor[i].prefix;
+                        this.inventory[i].stack = armor[i - 48].stack;
+                        this.inventory[i].prefix = armor[i - 48].prefix;
                     }
                     else
                     {
@@ -537,6 +541,8 @@ namespace TShockAPI
             string inventoryString = "";
             for (int i = 0; i < NetItem.maxNetInventory; i++)
             {
+                if (i != 0)
+                    inventoryString += "~";
                 inventoryString += inventory[i].netID;
                 if (inventory[i].netID != 0)
                 {
@@ -547,8 +553,6 @@ namespace TShockAPI
                 {
                     inventoryString += ",0,0";
                 }
-                if(i != NetItem.maxNetInventory)
-                    inventoryString += "~";
             }
             return inventoryString;
         }
@@ -556,8 +560,13 @@ namespace TShockAPI
         public static NetItem[] Parse(string data)
         {
             NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+            int i;
+            for (i = 0; i < NetItem.maxNetInventory; i++)
+            {
+                inventory[i] = new NetItem();
+            }
             string[] items = data.Split('~');
-            int i = 0;
+            i = 0;
             foreach (string item in items)
             {
                 string[] idata = item.Split(',');
