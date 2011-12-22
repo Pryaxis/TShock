@@ -177,7 +177,10 @@ namespace TShockAPI
         [Description("Enable Server Side Inventory checks, EXPERIMENTAL")]
         public bool ServerSideInventory = false;
 
-        public static ConfigFile Read(string path)
+    	[Description("Disables reporting of playercount to the stat system.")]
+		public bool DisablePlayerCountReporting = false;
+        
+		public static ConfigFile Read(string path)
         {
             if (!File.Exists(path))
                 return new ConfigFile();

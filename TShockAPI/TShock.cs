@@ -71,7 +71,7 @@ namespace TShockAPI
         public static SecureRest RestApi;
         public static RestManager RestManager;
 		public static Utils Utils = new Utils();
-
+		public static StatTracker StatTracker = new StatTracker();
         /// <summary>
         /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
         /// </summary>
@@ -226,49 +226,7 @@ namespace TShockAPI
 
         }
 
-    	private void callHome()
-    	{
-    		string fp;
-    		string lolpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.tshock/";
-			if (!Directory.Exists(lolpath))
-			{
-				Directory.CreateDirectory(lolpath);
-			}
-    		if (!File.Exists(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint")))
-    		{
-    			fp = "";
-    			int random = Utils.Random.Next(500000, 1000000);
-    			fp += random;
-
-    			fp = Utils.HashPassword(Netplay.serverIP + fp + Netplay.serverPort + Netplay.serverListenIP);
-    			TextWriter tw = new StreamWriter(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint"));
-    			tw.Write(fp);
-    			tw.Close();
-    		} else
-    		{
-    			fp = "";
-				TextReader tr = new StreamReader(Path.Combine(lolpath, Netplay.serverPort + ".fingerprint"));
-    			fp = tr.ReadToEnd();
-    			tr.Close();
-    		}
-
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("user-agent",
-								   "TShock (" + VersionNum + ")");
-				try
-				{
-					string response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + VersionNum + "&port=" + Netplay.serverPort);
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine("\nRegistered with stat tracker: " + response + "\n");
-					Console.ForegroundColor = ConsoleColor.Gray;
-				}
-				catch (Exception e)
-				{
-					Log.Error(e.ToString());
-				}
-			}
-    	}
+    	
 
     	RestObject RestApi_Verify(string username, string password)
         {
@@ -455,8 +413,7 @@ namespace TShockAPI
             if (Config.RestApiEnabled)
                 RestApi.Start();
         	
-			Thread t = new Thread(callHome);
-			t.Start();
+			StatTracker.checkin();
 
         }
 
@@ -466,7 +423,7 @@ namespace TShockAPI
         private void OnUpdate()
         {
             UpdateManager.UpdateProcedureCheck();
-
+			StatTracker.checkin();
             if (Backups.IsBackupTime)
                 Backups.Backup();
 
