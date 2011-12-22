@@ -182,6 +182,9 @@ namespace TShockAPI
 
         [Description("Disables snow ball projectiles from spawning")] //Change this to stop the tile from spawning
         public bool DisableSnowBalls = false;
+
+        [Description("Change ingame chat format, {0} = Group Prefix, {1} = Player Name, {2} = Group Suffix, {3} = Chat Message")]
+        public string ChatFormat = "{0}{1}{2} {3}";
         
 		public static ConfigFile Read(string path)
         {
