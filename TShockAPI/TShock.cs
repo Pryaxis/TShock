@@ -526,7 +526,7 @@ namespace TShockAPI
             Ban ban = null;
             if (ipban != null && Config.EnableIPBans)
                 ban = ipban;
-            else if (nameban != null && Config.EnableIPBans)
+            else if (nameban != null && Config.EnableBanOnUsernames)
                 ban = nameban;
 
             if (ban != null)

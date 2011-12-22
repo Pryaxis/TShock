@@ -94,28 +94,36 @@ namespace TShockAPI
         [Description("Valid types are \"sqlite\" and \"mysql\"")]
         public string StorageType = "sqlite";
 
-        [Description("")]
+        [Description("The MySQL Hostname and port to direct connections to")]
         public string MySqlHost = "localhost:3306";
-        [Description("")]
+        [Description("Database name to connect to")]
         public string MySqlDbName = "";
-        [Description("")]
+        [Description("Database username to connect with")]
         public string MySqlUsername = "";
-        [Description("")]
+        [Description("Database password to connect with")]
         public string MySqlPassword = "";
-        [Description("")]
-        public string MediumcoreBanReason = "Death results in a ban";
-        [Description("")]
-        public string MediumcoreKickReason = "Death results in a kick";
-        [Description("")]
-        public bool EnableDNSHostResolution;
-        [Description("")]
-        public bool EnableBanOnUsernames;
-        [Description("")]
-        public bool EnableAntiLag = true;
 
+        [Description("Bans a Mediumcore player on death.")]
+        public string MediumcoreBanReason = "Death results in a ban";
+        [Description("Kicks a Mediumcore player on death.")]
+        public string MediumcoreKickReason = "Death results in a kick";
+
+        [Description("Enables DNS resolution of incoming connections with GetGroupForIPExpensive.")]
+        public bool EnableDNSHostResolution;
+
+        [Description("Enables kicking of banned users by matching their IP Address")] 
+        public bool EnableIPBans = true;
+
+        [Description("Enables kicking of banned users by matching their Character Name")]
+        public bool EnableBanOnUsernames;
+
+        [Description("Drops excessive sync packets")]
+        public bool EnableAntiLag = true;
+        
+        [Description("Selects the default group name to place new registrants under")]
         public string DefaultRegistrationGroupName = "default";
 
-        [Description("")]
+        [Description("Force-Disable printing logs to players with the log permission")]
         public bool DisableSpewLogs = true;
 
         [Description("Valid types are \"sha512\", \"sha256\", \"md5\", append with \"-xp\" for the xp supported algorithms")]
@@ -159,12 +167,6 @@ namespace TShockAPI
 
         [Description("Kicks users using a proxy as identified with the GeoIP database")] 
         public bool KickProxyUsers = true;
-
-        [Description("Kicks banned users by their name")]
-        public bool EnableNameBans = false;
-
-        [Description("Kicks banned users by their IP")] 
-        public bool EnableIPBans = true;
 
         [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
         public bool DisableHardmode = false;
