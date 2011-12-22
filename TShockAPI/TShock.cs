@@ -546,15 +546,6 @@ namespace TShockAPI
                 return;
             }
 
-            if (tsplr.Group.HasPermission(Permissions.adminchat) && !text.StartsWith("/") && Config.AdminChatEnabled)
-            {
-                TShock.Utils.Broadcast(Config.AdminChatPrefix + "<" + tsplr.Name + "> " + text,
-                                tsplr.Group.R, tsplr.Group.G,
-                                tsplr.Group.B);
-                e.Handled = true;
-                return;
-            }
-
             if (text.StartsWith("/"))
             {
                 try
@@ -569,10 +560,9 @@ namespace TShockAPI
             }
             else
             {
-                TShock.Utils.Broadcast("{2}<{0}> {1}".SFormat(tsplr.Name, text, Config.ChatDisplayGroup ? "[{0}] ".SFormat(tsplr.Group.Name) : ""),
+                TShock.Utils.Broadcast("{0}{1}{2}: {3}".SFormat(tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
                                 tsplr.Group.R, tsplr.Group.G,
                                 tsplr.Group.B);
-                //Log.Info(string.Format("{0} said: {1}", tsplr.Name, text));
                 e.Handled = true;
             }
         }

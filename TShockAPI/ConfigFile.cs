@@ -55,10 +55,10 @@ namespace TShockAPI
         public int TileThreshold = 120;
         [Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")]
         public float[] SuperAdminChatRGB = { 255, 0, 0 };
-        [Description("The Chat Prefix before an admin speaks. eg. *The prefix was set to \"(Admin) \", so.. (Admin) : Hi! Note: If you put a space after the prefix, it will look like this: (Admin) <TerrariaDude): Hi!")]
-        public string AdminChatPrefix = "(Admin) ";
-        [Description("")]
-        public bool AdminChatEnabled = true;
+        [Description("Super admin group chat prefix")]
+        public string SuperAdminChatPrefix = "(Admin) ";
+        [Description("Super admin group chat suffix")]
+        public string SuperAdminChatSuffix = "";
         [Description("Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")]
         public int BackupInterval;
         [Description("How long backups are kept in minutes. 2880 = 2 days.")]
@@ -131,9 +131,6 @@ namespace TShockAPI
 
         [Description("Buffers up the packets and sends them out at the end of each frame")]
         public bool BufferPackets = true;
-
-        [Description("Display the users group when they chat.")]
-        public bool ChatDisplayGroup = false;
 
         [Description("String that is used when kicking people when the server is full.")]
         public string ServerFullReason = "Server is full";

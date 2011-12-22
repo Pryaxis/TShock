@@ -93,6 +93,9 @@ namespace TShockAPI
             R = (byte)TShock.Config.SuperAdminChatRGB[0];
             G = (byte)TShock.Config.SuperAdminChatRGB[1];
             B = (byte)TShock.Config.SuperAdminChatRGB[2];
+            Prefix = TShock.Config.SuperAdminChatPrefix;
+            Suffix = TShock.Config.SuperAdminChatSuffix;
+
         }
 
         public override bool HasPermission(string permission)
