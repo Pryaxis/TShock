@@ -21,7 +21,9 @@ namespace TShockAPI.DB
                 new SqlColumn("GroupName", MySqlDbType.VarChar, 32) { Primary = true },
                 new SqlColumn("Parent", MySqlDbType.VarChar, 32),
                 new SqlColumn("Commands", MySqlDbType.Text),
-                new SqlColumn("ChatColor", MySqlDbType.Text)
+                new SqlColumn("ChatColor", MySqlDbType.Text),
+                new SqlColumn("Prefix", MySqlDbType.Text),
+                new SqlColumn("Suffix", MySqlDbType.Text)
             );
             var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
             creator.EnsureExists(table);
@@ -198,6 +200,9 @@ namespace TShockAPI.DB
                     {
                         string groupname = reader.Get<String>("GroupName");
                         var group = new Group(groupname);
+
+                        group.Prefix = reader.Get<String>("Prefix");
+                        group.Suffix= reader.Get<String>("Suffix");
 
                         //Inherit Given commands
                         String[] commands = reader.Get<String>("Commands").Split(',');

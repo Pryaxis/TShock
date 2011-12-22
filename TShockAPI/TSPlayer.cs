@@ -67,6 +67,7 @@ namespace TShockAPI
         public bool IgnoreActionsForPvP = false;
         public bool IgnoreActionsForInventory = false;
         public bool IgnoreActionsForCheating = false;
+        public bool IgnoreActionsForClearingTrashCan = false;
         public PlayerData PlayerData;
 
         public bool RealPlayer

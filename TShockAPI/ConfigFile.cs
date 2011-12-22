@@ -39,8 +39,8 @@ namespace TShockAPI
         public bool EnableWhitelist;
         [Description("Enable the ability for invaison size to never decrease. Make sure to run /invade, and note that this adds 2 million+ goblins to the spawn que for the map.")]
         public bool InfiniteInvasion;
-        [Description("Enable or disable perma pvp.")]
-        public bool AlwaysPvP = false;
+        [Description("Set the server pvp mode. Vaild types are, \"normal\", \"always\", \"disabled\"")]
+        public string PvPMode = "normal";
         [Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
         public bool SpawnProtection = true;
         [Description("Radius from spawn tile for SpawnProtection.")]
@@ -179,6 +179,12 @@ namespace TShockAPI
 
     	[Description("Disables reporting of playercount to the stat system.")]
 		public bool DisablePlayerCountReporting = false;
+
+        [Description("Disables clown bomb projectiles from spawning")] //Change this to stop the tile from spawning
+        public bool DisableClownBombs = false;
+
+        [Description("Disables snow ball projectiles from spawning")] //Change this to stop the tile from spawning
+        public bool DisableSnowBalls = false;
         
 		public static ConfigFile Read(string path)
         {

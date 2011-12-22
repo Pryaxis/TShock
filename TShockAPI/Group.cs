@@ -28,6 +28,8 @@ namespace TShockAPI
         public string Name { get; set; }
         public Group Parent { get; set; }
         public int Order { get; set; }
+        public string Prefix { get; set; }
+        public string Suffix { get; set; }
 
         public byte R = 255;
         public byte G = 255;

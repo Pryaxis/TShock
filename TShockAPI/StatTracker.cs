@@ -13,19 +13,11 @@ namespace TShockAPI
 	{
 		Utils Utils = TShock.Utils;
 		public DateTime lastcheck = DateTime.MinValue;
-		private bool oneCheckin = false;
-		readonly int checkinFrequency = 1;
+		readonly int checkinFrequency = 5;
 
 		public void checkin()
 		{
-			if (TShock.Config.DisablePlayerCountReporting)
-			{
-				if (!oneCheckin)
-				{
-					checkin();
-					oneCheckin = !oneCheckin;
-				}
-			} else if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
+            if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
 			{
 				ThreadPool.QueueUserWorkItem(callHome);
 				lastcheck = DateTime.Now;

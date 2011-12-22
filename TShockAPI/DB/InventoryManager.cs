@@ -68,15 +68,18 @@ namespace TShockAPI.DB
             return playerData;
         }
 
-        public bool InsertPlayerData(TSPlayer player, int acctid)
+        public bool InsertPlayerData(TSPlayer player)
         {
             PlayerData playerData = player.PlayerData;
 
-            if (!GetPlayerData(player, acctid).exists)
+            if (!player.IsLoggedIn)
+                return false;
+
+            if (!GetPlayerData(player, player.UserID).exists)
             {
                 try
                 {
-                    database.Query("INSERT INTO Inventory (Account, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3);", acctid, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
+                    database.Query("INSERT INTO Inventory (Account, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3);", player.UserID, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
                     return true;
                 }
                 catch (Exception ex)
@@ -88,7 +91,7 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @2 WHERE Account = @3;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), acctid);
+                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @2 WHERE Account = @3;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID);
                     return true;
                 }
                 catch (Exception ex)

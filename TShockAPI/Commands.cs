@@ -349,7 +349,8 @@ namespace TShockAPI
                     {
                         if (!TShock.CheckInventory(args.Player))
                         {
-                            args.Player.SendMessage("Login Failed, Please fix the above errors then log back in.", Color.Cyan);
+                            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
+                            args.Player.IgnoreActionsForClearingTrashCan = true;
                             return;
                         }
                     }
@@ -361,7 +362,7 @@ namespace TShockAPI
                     args.Player.IgnoreActionsForInventory = false;
 
                     args.Player.PlayerData.CopyInventory(args.Player);
-                    TShock.InventoryDB.InsertPlayerData(args.Player, args.Player.UserID);
+                    TShock.InventoryDB.InsertPlayerData(args.Player);
 
                     args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
                     Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
@@ -1252,11 +1253,19 @@ namespace TShockAPI
                 {
                     switch (Main.tile[x, y].type)
                     {
+                        case 22:
                         case 25:
                             Main.tile[x, y].type = 117;
                             break;
                         case 23:
                             Main.tile[x, y].type = 109;
+                            break;
+                        case 32:
+                            Main.tile[x, y].type = 0;
+                            Main.tile[x, y].active = false;
+                            break;
+                        case 24:
+                            Main.tile[x, y].type = 110;
                             break;
                         case 112:
                             Main.tile[x, y].type = 116;

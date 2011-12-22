@@ -518,7 +518,7 @@ namespace TShockAPI
                 if (tsplr.IsLoggedIn)
                 {
                     tsplr.PlayerData.CopyInventory(tsplr);
-                    InventoryDB.InsertPlayerData(tsplr, tsplr.UserID);
+                    InventoryDB.InsertPlayerData(tsplr);
                 }
 
                 if (Config.RememberLeavePos)
@@ -706,7 +706,7 @@ namespace TShockAPI
                 player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
             }
 
-            if (Config.AlwaysPvP && !player.TPlayer.hostile)
+            if (TShock.Config.PvPMode == "always" && !player.TPlayer.hostile)
             {
                 player.IgnoreActionsForPvP = true;
                 player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
@@ -741,6 +741,21 @@ namespace TShockAPI
             if (e.Info == 43)
                 if (Config.DisableTombstones)
                     e.Object.SetDefaults(0);
+            if (e.Info == 75)
+                if (Config.DisableClownBombs)
+                    e.Object.SetDefaults(0);
+            if (e.Info == 109)
+                if (Config.DisableSnowBalls)
+                    e.Object.SetDefaults(0);
+
+        }
+
+        void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
+        {
+            if (TShock.Itembans.ItemIsBanned(e.Object.name))
+            {
+                e.Object.SetDefaults(0);
+            }
         }
 
         /// <summary>
@@ -922,12 +937,17 @@ namespace TShockAPI
             return false;
         }
 
-        public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
+        public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
         {
-            if (TShock.Config.RangeChecks && ((Math.Abs(player.TileX - tileX) > 32) || (Math.Abs(player.TileY - tileY) > 32)))
+            if (TShock.Config.RangeChecks && ((Math.Abs(player.TileX - x) > 32) || (Math.Abs(player.TileY - y) > 32)))
             {
                 return true;
             }
+            return false;
+        }
+
+        public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
+        {
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
                 player.SendMessage("You do not have permission to build!", Color.Red);
