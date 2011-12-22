@@ -215,7 +215,10 @@ namespace TShockAPI
             Command cmd = ChatCommands.FirstOrDefault(c => c.HasAlias(cmdName));
 
             if (cmd == null)
-                return false;
+            {
+                player.SendMessage("Invalid Command Entered. Type /help for a list of valid Commands.", Color.Red);
+                return true;
+            }
 
             if (!cmd.CanRun(player))
             {
