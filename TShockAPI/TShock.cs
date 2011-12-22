@@ -189,6 +189,7 @@ namespace TShockAPI
                 if (Config.EnableGeoIP && File.Exists(geoippath))
                     Geo = new MaxMind.GeoIPCountry(geoippath);
 
+                Console.Title = string.Format("TerrariaShock Version {0} ({1})", Version, VersionCodename);
                 Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
 
                 GameHooks.PostInitialize += OnPostInit;
@@ -431,10 +432,12 @@ namespace TShockAPI
             if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
             {
                 LastCheck = DateTime.UtcNow;
+                int count = 0;
                 foreach (TSPlayer player in Players)
                 {
                     if (player != null && player.Active)
                     {
+                        count++;
                         if (player.TilesDestroyed != null)
                         {
                             if (player.TileThreshold >= Config.TileThreshold)
@@ -447,8 +450,6 @@ namespace TShockAPI
                                 player.TilesDestroyed.Clear();
                             }
                         }
-                        /*if (CheckPlayerCollision(player.TileX, player.TileY))
-                            player.SendMessage("You are currently nocliping!", Color.Red);*/
                         if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
                         {
                             player.Spawn();
@@ -456,6 +457,7 @@ namespace TShockAPI
                         }
                     }
                 }
+                Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
             }
         }
 

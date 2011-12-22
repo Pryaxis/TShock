@@ -72,7 +72,7 @@ namespace TShockAPI
 					}
 					else
 					{
-						response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&port=" + Netplay.serverPort + "&plcount=0");
+                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
 					}
 					Log.ConsoleInfo("Stat Tracker: " + response + "\n");
 				}

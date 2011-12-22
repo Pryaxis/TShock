@@ -245,12 +245,12 @@ namespace TShockAPI
                 if (code == "A1")
                     if (TShock.Config.KickProxyUsers)
                         TShock.Utils.Kick(args.Player, "Proxies are not allowed");
-                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country));
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({3}/{4})", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
                 TShock.Utils.Broadcast(args.Player.Name + " has joined from the " + args.Player.Country, Color.Yellow);
             }
             else
             {
-                Log.Info(string.Format("{0} ({1}) from '{2}' group joined.", args.Player.Name, args.Player.IP, args.Player.Group.Name));
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", args.Player.Name, args.Player.IP, args.Player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
                 TShock.Utils.Broadcast(args.Player.Name + " has joined", Color.Yellow);
             }
 
