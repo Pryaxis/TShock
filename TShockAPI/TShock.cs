@@ -560,7 +560,7 @@ namespace TShockAPI
             }
             else
             {
-                TShock.Utils.Broadcast(String.Format(TShock.Config.ChatFormat, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+                TShock.Utils.Broadcast(String.Format(TShock.Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
                 e.Handled = true;
             }
         }
