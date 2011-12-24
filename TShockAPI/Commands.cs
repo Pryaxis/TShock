@@ -1984,7 +1984,7 @@ namespace TShockAPI
                                 var width = Math.Abs(args.Player.TempPoints[0].X - args.Player.TempPoints[1].X);
                                 var height = Math.Abs(args.Player.TempPoints[0].Y - args.Player.TempPoints[1].Y);
 
-                                if (TShock.Regions.AddRegion(x, y, width, height, regionName, Main.worldID.ToString()))
+                                if (TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName, Main.worldID.ToString()))
                                 {
                                     args.Player.TempPoints[0] = Point.Zero;
                                     args.Player.TempPoints[1] = Point.Zero;
@@ -2120,8 +2120,78 @@ namespace TShockAPI
                         }
                     }
                     else
-                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region remove [name] [region]", Color.Red);
                     break;
+				case "allowg":
+					{
+						if (args.Parameters.Count > 2)
+						{
+							string group = args.Parameters[1];
+							string regionName = "";
+
+							for (int i = 2; i < args.Parameters.Count; i++)
+							{
+								if (regionName == "")
+								{
+									regionName = args.Parameters[2];
+								}
+								else
+								{
+									regionName = regionName + " " + args.Parameters[i];
+								}
+							}
+							if (TShock.Groups.GroupExists(group))
+							{
+								if (TShock.Regions.AllowGroup(regionName, group))
+								{
+									args.Player.SendMessage("Added group " + group + " to " + regionName, Color.Yellow);
+								}
+								else
+									args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+							}
+							else
+							{
+								args.Player.SendMessage("Group " + group + " not found", Color.Red);
+							}
+						}
+						else
+							args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [group] [region]", Color.Red);
+						break;
+					}
+				case "removeg":
+					if (args.Parameters.Count > 2)
+					{
+						string group = args.Parameters[1];
+						string regionName = "";
+
+						for (int i = 2; i < args.Parameters.Count; i++)
+						{
+							if (regionName == "")
+							{
+								regionName = args.Parameters[2];
+							}
+							else
+							{
+								regionName = regionName + " " + args.Parameters[i];
+							}
+						}
+						if (TShock.Groups.GroupExists(group))
+						{
+							if (TShock.Regions.RemoveGroup(regionName, group))
+							{
+								args.Player.SendMessage("Removed group " + group + " from " + regionName, Color.Yellow);
+							}
+							else
+								args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+						}
+						else
+						{
+							args.Player.SendMessage("Group " + group + " not found", Color.Red);
+						}
+					}
+					else
+						args.Player.SendMessage("Invalid syntax! Proper syntax: /region removeg [group] [region]", Color.Red);
+					break;
                 case "list":
                     {
                         //How many regions per page

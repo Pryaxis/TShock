@@ -38,7 +38,6 @@ namespace TShockAPI.DB
         public RegionManager(IDbConnection db)
         {
             database = db;
-
             var table = new SqlTable("Regions",
                 new SqlColumn("X1", MySqlDbType.Int32),
                 new SqlColumn("Y1", MySqlDbType.Int32),
@@ -47,7 +46,10 @@ namespace TShockAPI.DB
                 new SqlColumn("RegionName", MySqlDbType.VarChar, 50) { Primary = true },
                 new SqlColumn("WorldID", MySqlDbType.Text),
                 new SqlColumn("UserIds", MySqlDbType.Text),
-                new SqlColumn("Protected", MySqlDbType.Int32)
+                new SqlColumn("Protected", MySqlDbType.Int32),
+				new SqlColumn("Groups", MySqlDbType.Text),
+				new SqlColumn("Owner", MySqlDbType.VarChar, 50)
+
             );
             var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
             creator.EnsureExists(table);
@@ -180,11 +182,13 @@ namespace TShockAPI.DB
                         int Protected = reader.Get<int>("Protected");
                         string mergedids = reader.Get<string>("UserIds");
                         string name = reader.Get<string>("RegionName");
+						string owner = reader.Get<string>("Owner");
+						string groups = reader.Get<string>("Groups");
 
                         string[] splitids = mergedids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
-
+                        Region r = new Region(new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString());
+						r.SetAllowedGroups( groups );
                         try
                         {
                             for (int i = 0; i < splitids.Length; i++)
@@ -231,8 +235,11 @@ namespace TShockAPI.DB
                     string MergedIDs = reader.Get<string>("UserIds");
                     string name = reader.Get<string>("RegionName");
                     string[] SplitIDs = MergedIDs.Split(',');
+					string owner = reader.Get<string>("Owner");
+					string groups = reader.Get<string>("Groups");
 
-                    Region r = new Region(new Rectangle(X1, Y1, width, height), name, Protected != 0, Main.worldID.ToString());
+                    Region r = new Region(new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString());
+					r.SetAllowedGroups( groups );
                     try
                     {
                         for (int i = 0; i < SplitIDs.Length; i++)
@@ -260,7 +267,7 @@ namespace TShockAPI.DB
 
         }
 
-        public bool AddRegion(int tx, int ty, int width, int height, string regionname, string worldid)
+        public bool AddRegion(int tx, int ty, int width, int height, string regionname, string owner, string worldid)
         {
             if (GetRegionByName(regionname) != null)
             {
@@ -268,9 +275,9 @@ namespace TShockAPI.DB
             }
             try
             {
-                database.Query("INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);",
-                    tx, ty, width, height, regionname, worldid, "", 1);
-                Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, true, worldid));
+                database.Query("INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, Groups, Owner) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9);",
+                    tx, ty, width, height, regionname, worldid, "", 1, "", owner);
+                Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, owner, true, worldid));
                 return true;
             }
             catch (Exception ex)
@@ -524,23 +531,84 @@ namespace TShockAPI.DB
             }
             return null;
         }
+
+		public bool ChangeOwner( string regionName, string newOwner )
+		{
+			var region = GetRegionByName(regionName);
+			if( region != null )
+			{
+				region.Owner = newOwner;
+				int q = database.Query("UPDATE Regions SET Owner=@0 WHERE RegionName=@1 AND WorldID=@2", newOwner,
+									   regionName, Main.worldID.ToString());
+				if (q > 0)
+					return true;
+			}
+			return false;
+		}
+
+		public bool AllowGroup( string regionName, string groups)
+		{
+			string groupsNew = "";
+			using (var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName, Main.worldID.ToString()))
+			{
+				if (reader.Read())
+					groupsNew = reader.Get<string>("Groups");
+			}
+			if (groupsNew != "")
+				groupsNew += ",";
+			groupsNew += groups;
+
+			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groupsNew,
+									   regionName, Main.worldID.ToString());
+
+			Region r = GetRegionByName(regionName);
+			if( r != null )
+			{
+				r.SetAllowedGroups( groupsNew );
+			}
+			else
+			{
+				return false;
+			}
+
+			return q > 0;
+		}
+
+		public bool RemoveGroup( string regionName, string group )
+		{
+			Region r = GetRegionByName(regionName);
+			if (r != null)
+			{
+				r.RemoveGroup(group);
+				string groups = string.Join(",", r.AllowedGroups);
+				int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groups,
+									   regionName, Main.worldID.ToString());
+				if (q > 0)
+					return true;
+			}
+			return false;
+		}
     }
 
     public class Region
     {
         public Rectangle Area { get; set; }
         public string Name { get; set; }
+		public string Owner { get; set; }
         public bool DisableBuild { get; set; }
         public string WorldID { get; set; }
         public List<int> AllowedIDs { get; set; }
+		public List<string> AllowedGroups { get; set; }
 
-        public Region(Rectangle region, string name, bool disablebuild, string RegionWorldIDz)
+        public Region(Rectangle region, string name, string owner, bool disablebuild, string RegionWorldIDz)
             : this()
         {
             Area = region;
             Name = name;
-            DisableBuild = disablebuild;
+        	Owner = owner;
+			DisableBuild = disablebuild;
             WorldID = RegionWorldIDz;
+        	
         }
 
         public Region()
@@ -577,14 +645,7 @@ namespace TShockAPI.DB
                 return true;
             }
 
-            for (int i = 0; i < AllowedIDs.Count; i++)
-            {
-                if (AllowedIDs[i] == ply.UserID)
-                {
-                    return true;
-                }
-            }
-            return false;
+			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName;
         }
 
         public void setAllowedIDs(String ids)
@@ -601,6 +662,16 @@ namespace TShockAPI.DB
             AllowedIDs = id_list;
         }
 
+		public void SetAllowedGroups( String groups )
+		{
+			List<String> groupArr = groups.Split(',').ToList();
+			
+			for (int i = 0; i < groupArr.Count; i++)
+				groupArr[i] = groupArr[i].Trim();
+
+			AllowedGroups = groupArr;
+		}
+
         public void RemoveID(int id)
         {
             var index = -1;
@@ -614,5 +685,10 @@ namespace TShockAPI.DB
             }
             AllowedIDs.RemoveAt(index);
         }
+
+		public bool  RemoveGroup(string groupName)
+		{
+			return AllowedGroups.Remove(groupName);
+		}
     }
 }
