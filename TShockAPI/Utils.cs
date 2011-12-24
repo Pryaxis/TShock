@@ -621,7 +621,7 @@ namespace TShockAPI
                 if (!ValidString(str[i].ToString()))
                     returnstr[i] = ' ';
             }
-            return returnstr.ToString();
+            return new string(returnstr);
         }
     }
 }
