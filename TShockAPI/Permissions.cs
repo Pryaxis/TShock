@@ -138,6 +138,9 @@ namespace TShockAPI
         [Description("User can convert hallow into corruption and vice-versa")]
         public static readonly string converthardmode;
 
+        [Description("User can mute and unmute users")]
+        public static readonly string mute;
+
         static Permissions()
         {
             foreach (var field in typeof(Permissions).GetFields())

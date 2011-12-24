@@ -173,6 +173,7 @@ namespace TShockAPI
             add(null, PartyChat, "p");
             add(null, Motd, "motd");
             add(null, Rules, "rules");
+            add(Permissions.mute, Mute, "mute", "unmute");
             add(Permissions.logs, DisplayLogs, "displaylogs");
             ChatCommands.Add(new Command(PasswordUser, "password") { DoLog = false });
             ChatCommands.Add(new Command(RegisterUser, "register") { DoLog = false });
@@ -2405,7 +2406,10 @@ namespace TShockAPI
                 args.Player.SendMessage("Invalid syntax! Proper syntax: /me <text>", Color.Red);
                 return;
             }
-            TShock.Utils.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
+            if (args.Player.mute)
+                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+            else
+                TShock.Utils.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
         }
 
         private static void PartyChat(CommandArgs args)
@@ -2416,7 +2420,10 @@ namespace TShockAPI
                 return;
             }
             int playerTeam = args.Player.Team;
-            if (playerTeam != 0)
+
+            if (args.Player.mute)
+                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+            else if (playerTeam != 0)
             {
                 string msg = string.Format("<{0}> {1}", args.Player.Name, String.Join(" ", args.Parameters));
                 foreach (TSPlayer player in TShock.Players)
@@ -2426,11 +2433,42 @@ namespace TShockAPI
                 }
             }
             else
-            {
                 args.Player.SendMessage("You are not in a party!", 255, 240, 20);
-            }
         }
-        
+
+        private static void Mute(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /mute <player> ", Color.Red);
+                return;
+            }
+
+            string plStr = String.Join(" ", args.Parameters);
+            var players = TShock.Utils.FindPlayer(plStr);
+            if (players.Count == 0)
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            else if (players.Count > 1)
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            else if (players[0].mute && !players[0].Group.HasPermission(Permissions.mute))
+            {
+                var plr = players[0];
+                plr.mute = false;
+                plr.SendMessage("You Have Been UnMuted! Thank " + args.Player.Name);
+                TShock.Utils.Broadcast(plr.Name + " Has Been Unmuted By " + args.Player.Name, Color.Yellow);
+            }
+            else if (!players[0].Group.HasPermission(Permissions.mute))
+            {
+                var plr = players[0];
+                plr.mute = true;
+                plr.SendMessage("You Have Been Muted! You Should Have Behaved...");
+                TShock.Utils.Broadcast(plr.Name + " Has Been Muted By " + args.Player.Name, Color.Yellow);
+            }
+            else
+                args.Player.SendMessage("You Cannot Mute Player");
+            
+        }
+
         private static void Motd(CommandArgs args)
         {
             TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
@@ -2458,6 +2496,8 @@ namespace TShockAPI
             {
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
+            else if (args.Player.mute)
+                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
             else
             {
                 var plr = players[0];
@@ -2471,7 +2511,9 @@ namespace TShockAPI
 
         private static void Reply(CommandArgs args)
         {
-            if (args.Player.LastWhisper != null)
+            if (args.Player.mute)
+                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+            else if (args.Player.LastWhisper != null)
             {
                 var msg = string.Join(" ", args.Parameters);
                 args.Player.LastWhisper.SendMessage("(Whisper From)" + "<" + args.Player.Name + ">" + msg, Color.MediumPurple);

@@ -56,6 +56,7 @@ namespace TShockAPI
         public int UserID = -1;
         public bool HasBeenNaggedAboutLoggingIn;
         public bool TPAllow = true;
+        public bool mute = false;
         public bool TpLock = false;
         Player FakePlayer;
         public bool RequestedSection = false;

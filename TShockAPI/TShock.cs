@@ -558,9 +558,14 @@ namespace TShockAPI
                     Log.Error(ex.ToString());
                 }
             }
-            else
+            else if (!tsplr.mute)
             {
                 TShock.Utils.Broadcast(String.Format(TShock.Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+                e.Handled = true;
+            }
+            else if (tsplr.mute)
+            {
+                tsplr.SendMessage("You Are Muted! You Need To Be Unmuted!!");
                 e.Handled = true;
             }
         }
