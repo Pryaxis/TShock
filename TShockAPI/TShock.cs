@@ -1050,12 +1050,6 @@ namespace TShockAPI
                 check = false;
             }
 
-            if (player.TPlayer.statManaMax > playerData.maxMana)
-            {
-                player.SendMessage("Error: Your max mana exceeded (" + playerData.maxMana + ") which is stored on server", Color.Cyan);
-                check = false;
-            }
-
             Item[] inventory = player.TPlayer.inventory;
             Item[] armor = player.TPlayer.armor;
             for (int i = 0; i < NetItem.maxNetInventory; i++)

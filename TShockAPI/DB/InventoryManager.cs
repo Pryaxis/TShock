@@ -54,7 +54,6 @@ namespace TShockAPI.DB
                     {
                         playerData.exists = true;
                         playerData.maxHealth = reader.Get<int>("MaxHealth");
-                        playerData.maxMana = reader.Get<int>("MaxMana");
                         playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
                         return playerData;
                     }
@@ -79,7 +78,7 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("INSERT INTO Inventory (Account, MaxHealth, MaxMana, Inventory) VALUES (@0, @1, @2, @3);", player.UserID, playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory));
+                    database.Query("INSERT INTO Inventory (Account, MaxHealth, Inventory) VALUES (@0, @1, @2);", player.UserID, playerData.maxHealth, NetItem.ToString(playerData.inventory));
                     return true;
                 }
                 catch (Exception ex)
@@ -91,7 +90,7 @@ namespace TShockAPI.DB
             {
                 try
                 {
-                    database.Query("UPDATE Inventory SET MaxHealth = @0, MaxMana = @1, Inventory = @2 WHERE Account = @3;", playerData.maxHealth, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID);
+                    database.Query("UPDATE Inventory SET MaxHealth = @0, Inventory = @1 WHERE Account = @2;", playerData.maxHealth, NetItem.ToString(playerData.inventory), player.UserID);
                     return true;
                 }
                 catch (Exception ex)

@@ -440,7 +440,7 @@ namespace TShockAPI
     {
         public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
         public int maxHealth = 100;
-        public int maxMana = 100;
+        //public int maxMana = 100;
         public bool exists = false;
 
         public PlayerData(TSPlayer player)
@@ -481,7 +481,6 @@ namespace TShockAPI
         public void CopyInventory(TSPlayer player)
         {
             this.maxHealth = player.TPlayer.statLifeMax;
-            this.maxMana = player.TPlayer.statManaMax;
             Item[] inventory = player.TPlayer.inventory;
             Item[] armor = player.TPlayer.armor;
             for (int i = 0; i < NetItem.maxNetInventory; i++)
