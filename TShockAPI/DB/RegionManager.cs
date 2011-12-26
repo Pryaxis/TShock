@@ -664,12 +664,20 @@ namespace TShockAPI.DB
 
 		public void SetAllowedGroups( String groups )
 		{
-			List<String> groupArr = groups.Split(',').ToList();
-			
-			for (int i = 0; i < groupArr.Count; i++)
-				groupArr[i] = groupArr[i].Trim();
+            // prevent null pointer exceptions
+            if (!string.IsNullOrEmpty(groups))
+            {
+                List<String> groupArr = groups.Split(',').ToList();
 
-			AllowedGroups = groupArr;
+                for (int i = 0; i < groupArr.Count; i++)
+                    groupArr[i] = groupArr[i].Trim();
+
+                AllowedGroups = groupArr;
+            }
+            else
+            {
+                AllowedGroups = new List<string>();
+            }
 		}
 
         public void RemoveID(int id)

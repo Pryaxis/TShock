@@ -69,7 +69,8 @@ namespace TShockAPI
 
                 foreach (TSPlayer player in TShock.Players)
                 {
-                    if (player.IsLoggedIn)
+                    // prevent null point exceptions
+                    if (player != null && player.IsLoggedIn)
                     {
                         TShock.InventoryDB.InsertPlayerData(player);
                     }
