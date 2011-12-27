@@ -431,8 +431,6 @@ namespace TShockAPI
             foreach (KeyValuePair<Vector2, Tile> entry in tiles)
             {
                 Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
-                Log.Debug(string.Format("Reverted Tiles(TileXY:{0}_{1}, Type:{2})",
-                                        entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }
             // Send all players updated tile sqaures
             foreach (Vector2 coords in tiles.Keys)
