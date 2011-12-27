@@ -416,6 +416,20 @@ namespace TShockAPI
         	
 			StatTracker.checkin();
 
+            FixChestStacks();
+
+        }
+
+        private void FixChestStacks()
+        {
+            foreach(Chest chest in Main.chest)
+            {
+                foreach(Item item in chest.item)
+                {
+                    if (item.stack > item.maxStack)
+                        item.stack = item.maxStack;
+                }
+            }
         }
 
 
@@ -1186,6 +1200,10 @@ namespace TShockAPI
             {
                 Netplay.serverPort = file.ServerPort;
             }
+
+            if (file.MaxSlots > 250)
+                file.MaxSlots = 250;
+            Main.maxNetPlayers = file.MaxSlots + 5;
 
             Netplay.spamCheck = false;
 
