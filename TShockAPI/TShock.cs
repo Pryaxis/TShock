@@ -755,8 +755,7 @@ namespace TShockAPI
             if (Config.RememberLeavePos)
             {
                 var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
-                player.Teleport((int)pos.X, (int)pos.Y);
-                player.SendTileSquare((int)pos.X, (int)pos.Y);
+                player.Teleport((int) pos.X, (int) pos.Y);
             }
             e.Handled = true;
         }

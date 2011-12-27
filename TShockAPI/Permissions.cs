@@ -38,6 +38,9 @@ namespace TShockAPI
         [Description("Prevents you from being reverted by place tile abuse detection")]
         public static readonly string ignoreplacetiledetection;
 
+        [Description("Prevents you from being reverted by no clip detection")]
+        public static readonly string ignorenoclipdetection;
+
         [Description("Specific log messages are sent to users with this permission")]
         public static readonly string logs;
 

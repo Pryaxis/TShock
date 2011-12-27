@@ -90,6 +90,7 @@ namespace TShockAPI
                 {PacketTypes.NpcStrike, HandleNpcStrike},
                 {PacketTypes.NpcSpecial, HandleSpecial},
                 {PacketTypes.PlayerAnimation, HandlePlayerAnimation},
+                {PacketTypes.PlayerBuff, HandlePlayerBuffUpdate}
             };
         }
 
@@ -624,6 +625,22 @@ namespace TShockAPI
                     args.Player.Spawn();
                     return true;
                 }
+
+                if(!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) && TShock.CheckPlayerCollision((int)(pos.X / 16f), (int)(pos.Y / 16f)))
+                {
+                    int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
+                    int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
+                    if(args.Player.Teleport(lastTileX, lastTileY))
+                    {
+                        args.Player.SendMessage("You got stuck in a solid object, Sent to last good position.");
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("You got stuck in a solid object, Sent to spawn point.");
+                        args.Player.Spawn();
+                    }
+                    return true;
+                }
             }
             args.Player.LastNetPosition = pos;
 
@@ -1063,7 +1080,7 @@ namespace TShockAPI
                 args.Player.SendData(PacketTypes.PlayerBuff, "", id);
                 return true;
             }
-            if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 64))
+            if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
             {
                 args.Player.SendData(PacketTypes.PlayerBuff, "", id);
                 return true;
@@ -1097,7 +1114,7 @@ namespace TShockAPI
                 return false;
             }
 
-            if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f), 64))
+            if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
             {
                 args.Player.SendData(PacketTypes.ItemDrop, "", id);
                 return true;
@@ -1163,7 +1180,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 128))
+            if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
             {
                 args.Player.SendData(PacketTypes.PlayerHp, "", id);
                 args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -1209,7 +1226,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.Config.RangeChecks && ((Math.Abs(args.Player.TileX - (Main.npc[id].position.X / 16f)) > 128) || (Math.Abs(args.Player.TileY - (Main.npc[id].position.Y / 16f)) > 128)))
+            if (TShock.Config.RangeChecks && TShock.CheckRangePermission(args.Player, (int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 100))
             {
                 args.Player.SendData(PacketTypes.NpcUpdate, "", id);
                 return true;
@@ -1254,6 +1271,34 @@ namespace TShockAPI
             }
 
             return false;
+        }
+
+        private static bool HandlePlayerBuffUpdate(GetDataHandlerArgs args)
+        {
+            var id = args.Data.ReadInt8();
+            for (int i = 0; i < 10; i++)
+            {
+                var buff = args.Data.ReadInt8();
+
+                if (buff == 10)
+                {
+                    if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Invisibility Potion"))
+                        buff = 0;
+                    else if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
+                        buff = 0;
+                }
+
+                args.TPlayer.buffType[i] = buff;
+                if (args.TPlayer.buffType[i] > 0)
+                {
+                    args.TPlayer.buffTime[i] = 60;
+                }
+                else
+                {
+                    args.TPlayer.buffTime[i] = 0;
+                }
+            }
+            return true;
         }
     }
 }

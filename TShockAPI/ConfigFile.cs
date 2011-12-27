@@ -195,6 +195,9 @@ namespace TShockAPI
 
         [Description("Require all players to register or login before being allowed to play.")]
         public bool RequireLogin = false;
+
+        [Description("Disables Invisibility potions from being used in PvP (Note, they can use them on the client, but the effect isn't sent to the rest of the server)")]
+        public bool DisableInvisPvP = false;
         
 		public static ConfigFile Read(string path)
         {
