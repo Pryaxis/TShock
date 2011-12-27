@@ -434,6 +434,7 @@ namespace TShockAPI
 
 
         private DateTime LastCheck = DateTime.UtcNow;
+        private DateTime LastSave = DateTime.UtcNow;
 
         private void OnUpdate()
         {
@@ -447,6 +448,19 @@ namespace TShockAPI
             {
                 OnSecondUpdate();
                 LastCheck = DateTime.UtcNow;
+            }
+
+            if ((DateTime.UtcNow - LastSave).TotalMinutes >= 15)
+            {
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    // prevent null point exceptions
+                    if (player != null && player.IsLoggedIn)
+                    {
+                        TShock.InventoryDB.InsertPlayerData(player);
+                    }
+                }
+                LastSave = DateTime.UtcNow;
             }
         }
 
