@@ -185,6 +185,9 @@ namespace TShockAPI
 
         [Description("Change ingame chat format, {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message")]
         public string ChatFormat = "{1}{2}{3}: {4}";
+
+        [Description("Force the world time to be normal, day, or night")]
+        public string ForceTime = "normal";
         
 		public static ConfigFile Read(string path)
         {

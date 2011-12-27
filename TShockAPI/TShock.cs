@@ -431,34 +431,51 @@ namespace TShockAPI
             //call these every second, not every update
             if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
             {
+                OnSecondUpdate();
                 LastCheck = DateTime.UtcNow;
-                int count = 0;
-                foreach (TSPlayer player in Players)
+            }
+        }
+
+        private void OnSecondUpdate()
+        {
+            if (Config.ForceTime != "normal")
+            {
+                switch(Config.ForceTime)
                 {
-                    if (player != null && player.Active)
+                    case "day":
+                        TSPlayer.Server.SetTime(true, 27000.0);
+                        break;
+                    case "night":
+                        TSPlayer.Server.SetTime(false, 16200.0);
+                        break;
+                }
+            }
+            int count = 0;
+            foreach (TSPlayer player in Players)
+            {
+                if (player != null && player.Active)
+                {
+                    count++;
+                    if (player.TilesDestroyed != null)
                     {
-                        count++;
-                        if (player.TilesDestroyed != null)
+                        if (player.TileThreshold >= Config.TileThreshold)
                         {
-                            if (player.TileThreshold >= Config.TileThreshold)
-                            {
-                                TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
-                            }
-                            if (player.TileThreshold > 0)
-                            {
-                                player.TileThreshold = 0;
-                                player.TilesDestroyed.Clear();
-                            }
+                            TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
                         }
-                        if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
+                        if (player.TileThreshold > 0)
                         {
-                            player.Spawn();
-                            player.ForceSpawn = false;
+                            player.TileThreshold = 0;
+                            player.TilesDestroyed.Clear();
                         }
                     }
+                    if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
+                    {
+                        player.Spawn();
+                        player.ForceSpawn = false;
+                    }
                 }
-                Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
             }
+            Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
         }
 
         private void OnJoin(int ply, HandledEventArgs handler)
