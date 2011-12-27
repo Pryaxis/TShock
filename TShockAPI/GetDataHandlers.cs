@@ -520,9 +520,17 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 0 && Main.tileSolid[Main.tile[tileX, tileY].type] && args.Player.Active)
+            if(type == 1)
             {
-                args.Player.TileThreshold++;
+                args.Player.TilePlaceThreshold++;
+                var coords = new Vector2(tileX, tileY);
+                if (!args.Player.TilesCreated.ContainsKey(coords))
+                    args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
+            }
+
+            if ((type == 0 || type == 4) && Main.tileSolid[Main.tile[tileX, tileY].type])
+            {
+                args.Player.TileKillThreshold++;
                 var coords = new Vector2(tileX, tileY);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
@@ -588,16 +596,6 @@ namespace TShockAPI
                 return true;
             }
 
-            if ((control & 32) == 32)
-            {
-                if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name))
-                {
-                    args.Player.LastThreat = DateTime.UtcNow;
-                    args.Player.SendMessage(string.Format("You cannot use {0} on this server. Your actions are being ignored.", args.TPlayer.inventory[item].name), Color.Red);
-                    return true;
-                }
-            }
-
             if (!pos.Equals(args.Player.LastNetPosition))
             {
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
@@ -623,9 +621,61 @@ namespace TShockAPI
                     return true;
                 }
             }
-
             args.Player.LastNetPosition = pos;
-            return false;
+
+            if ((control & 32) == 32)
+            {
+                if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name))
+                {
+                    control -= 32;
+                    args.Player.LastThreat = DateTime.UtcNow;
+                    args.Player.SendMessage(string.Format("You cannot use {0} on this server. Your actions are being ignored.", args.TPlayer.inventory[item].name), Color.Red);
+                }
+            }
+            
+            args.TPlayer.selectedItem = item;
+            args.TPlayer.position = pos;
+            args.TPlayer.velocity = vel;
+            args.TPlayer.oldVelocity = args.TPlayer.velocity;
+            args.TPlayer.fallStart = (int)(pos.Y / 16f);
+            args.TPlayer.controlUp = false;
+            args.TPlayer.controlDown = false;
+            args.TPlayer.controlLeft = false;
+            args.TPlayer.controlRight = false;
+            args.TPlayer.controlJump = false;
+            args.TPlayer.controlUseItem = false;
+            args.TPlayer.direction = -1;
+            if ((control & 1) == 1)
+            {
+                args.TPlayer.controlUp = true;
+            }
+            if ((control & 2) == 2)
+            {
+                args.TPlayer.controlDown = true;
+            }
+            if ((control & 4) == 4)
+            {
+                args.TPlayer.controlLeft = true;
+            }
+            if ((control & 8) == 8)
+            {
+                args.TPlayer.controlRight = true;
+            }
+            if ((control & 16) == 16)
+            {
+                args.TPlayer.controlJump = true;
+            }
+            if ((control & 32) == 32)
+            {
+                args.TPlayer.controlUseItem = true;
+            }
+            if ((control & 64) == 64)
+            {
+                args.TPlayer.direction = 1;
+            }
+            NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, "", args.Player.Index);
+
+            return true;
         }
 
         private static bool HandleProjectileNew(GetDataHandlerArgs args)

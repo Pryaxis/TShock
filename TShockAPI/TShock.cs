@@ -472,14 +472,26 @@ namespace TShockAPI
                     count++;
                     if (player.TilesDestroyed != null)
                     {
-                        if (player.TileThreshold >= Config.TileThreshold)
+                        if (player.TileKillThreshold >= Config.TileKillThreshold)
                         {
-                            TSPlayer.Server.RevertKillTile(player.TilesDestroyed);
+                            TSPlayer.Server.RevertTiles(player.TilesDestroyed);
                         }
-                        if (player.TileThreshold > 0)
+                        if (player.TileKillThreshold > 0)
                         {
-                            player.TileThreshold = 0;
+                            player.TileKillThreshold = 0;
                             player.TilesDestroyed.Clear();
+                        }
+                    }
+                    if (player.TilesCreated != null)
+                    {
+                        if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
+                        {
+                            TSPlayer.Server.RevertTiles(player.TilesCreated);
+                        }
+                        if (player.TilePlaceThreshold > 0)
+                        {
+                            player.TilePlaceThreshold = 0;
+                            player.TilesCreated.Clear();
                         }
                     }
                     if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
@@ -679,24 +691,16 @@ namespace TShockAPI
                 return;
             }
 
-            // Stop accepting updates from player as this player is going to be kicked/banned during OnUpdate (different thread so can produce race conditions)
-            if (player.TileThreshold >= Config.TileThreshold && !player.Group.HasPermission(Permissions.ignorekilltiledetection))
+            using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
             {
-                e.Handled = true;
-            }
-            else
-            {
-                using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+                try
                 {
-                    try
-                    {
-                        if (GetDataHandlers.HandlerGetData(type, player, data))
-                            e.Handled = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex.ToString());
-                    }
+                    if (GetDataHandlers.HandlerGetData(type, player, data))
+                        e.Handled = true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex.ToString());
                 }
             }
         }
@@ -972,6 +976,16 @@ namespace TShockAPI
 
         public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
         {
+            if (player.TileKillThreshold >= Config.TileKillThreshold && !player.Group.HasPermission(Permissions.ignorekilltiledetection))
+            {
+                player.LastThreat = DateTime.UtcNow;
+                return true;
+            }
+            if (player.TilePlaceThreshold >= Config.TilePlaceThreshold && !player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+            {
+                player.LastThreat = DateTime.UtcNow;
+                return true;
+            }
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
                 player.SendMessage("You do not have permission to build!", Color.Red);

@@ -35,11 +35,13 @@ namespace TShockAPI
         [Description("Prevents you from being reverted by kill tile abuse detection")]
         public static readonly string ignorekilltiledetection;
 
+        [Description("Prevents you from being reverted by place tile abuse detection")]
+        public static readonly string ignoreplacetiledetection;
+
         [Description("Specific log messages are sent to users with this permission")]
         public static readonly string logs;
 
-        [Todo]
-        [Description("Not currently working")]
+        [Description("Allows you to bypass the max slots for up to 5 slots above your max")]
         public static readonly string reservedslot;
 
         [Description("User is notified when an update is available")]

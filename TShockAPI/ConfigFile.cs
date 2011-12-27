@@ -51,8 +51,6 @@ namespace TShockAPI
         public bool RangeChecks = true;
         [Description("Disables any building; placing of blocks")]
         public bool DisableBuild;
-        [Description("Kick a player if they exceed this number of tile kills within 1 second.")]
-        public int TileThreshold = 120;
         [Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")]
         public float[] SuperAdminChatRGB = { 255, 0, 0 };
         [Description("Super admin group chat prefix")]
@@ -177,10 +175,10 @@ namespace TShockAPI
     	[Description("Disables reporting of playercount to the stat system.")]
 		public bool DisablePlayerCountReporting = false;
 
-        [Description("Disables clown bomb projectiles from spawning")] //Change this to stop the tile from spawning
+        [Description("Disables clown bomb projectiles from spawning")]
         public bool DisableClownBombs = false;
 
-        [Description("Disables snow ball projectiles from spawning")] //Change this to stop the tile from spawning
+        [Description("Disables snow ball projectiles from spawning")]
         public bool DisableSnowBalls = false;
 
         [Description("Change ingame chat format, {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message")]
@@ -188,6 +186,12 @@ namespace TShockAPI
 
         [Description("Force the world time to be normal, day, or night")]
         public string ForceTime = "normal";
+
+        [Description("Disable/Revert a player if they exceed this number of tile kills within 1 second.")]
+        public int TileKillThreshold = 80;
+
+        [Description("Disable/Revert a player if they exceed this number of tile places within 1 second.")]
+        public int TilePlaceThreshold = 20;
         
 		public static ConfigFile Read(string path)
         {

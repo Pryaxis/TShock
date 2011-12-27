@@ -30,8 +30,10 @@ namespace TShockAPI
     {
         public static readonly TSServerPlayer Server = new TSServerPlayer();
         public static readonly TSPlayer All = new TSPlayer("All");
-        public int TileThreshold { get; set; }
+        public int TileKillThreshold { get; set; }
+        public int TilePlaceThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
         public bool SyncHP { get; set; }
         public bool SyncMP { get; set; }
         public Group Group { get; set; }
@@ -157,6 +159,7 @@ namespace TShockAPI
         public TSPlayer(int index)
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
+            TilesCreated = new Dictionary<Vector2, Tile>();
             Index = index;
             Group = new Group("null");
         }
@@ -164,6 +167,7 @@ namespace TShockAPI
         protected TSPlayer(String playerName)
         {
             TilesDestroyed = new Dictionary<Vector2, Tile>();
+            TilesCreated = new Dictionary<Vector2, Tile>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -419,17 +423,17 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertKillTile(Dictionary<Vector2, Tile> destroyedTiles)
+        public void RevertTiles(Dictionary<Vector2, Tile> tiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<Vector2, Tile> entry in destroyedTiles)
+            foreach (KeyValuePair<Vector2, Tile> entry in tiles)
             {
                 Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
-                Log.Debug(string.Format("Reverted DestroyedTile(TileXY:{0}_{1}, Type:{2})",
+                Log.Debug(string.Format("Reverted Tiles(TileXY:{0}_{1}, Type:{2})",
                                         entry.Key.X, entry.Key.Y, Main.tile[(int)entry.Key.X, (int)entry.Key.Y].type));
             }
             // Send all players updated tile sqaures
-            foreach (Vector2 coords in destroyedTiles.Keys)
+            foreach (Vector2 coords in tiles.Keys)
             {
                 All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
             }
