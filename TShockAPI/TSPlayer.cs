@@ -71,7 +71,7 @@ namespace TShockAPI
         private string CacheIP;
         public bool IgnoreActionsForPvP = false;
         public bool IgnoreActionsForInventory = false;
-        public bool IgnoreActionsForCheating = false;
+        public string IgnoreActionsForCheating = "none";
         public bool IgnoreActionsForClearingTrashCan = false;
         public PlayerData PlayerData;
 

@@ -752,10 +752,7 @@ namespace TShockAPI
                 TShock.Utils.ForceKick(player, "You have Hacked Health/Mana, Please use a different character.");
             }
 
-            if (HackedInventory(player))
-            {
-                player.IgnoreActionsForCheating = true;
-            }
+            HackedInventory(player);
 
             NetMessage.syncPlayers();
 
@@ -1204,7 +1201,7 @@ namespace TShockAPI
                 check = true;
             if (player.IgnoreActionsForInventory)
                 check = true;
-            if (player.IgnoreActionsForCheating)
+            if (player.IgnoreActionsForCheating != "none")
                 check = true;
             if (!player.IsLoggedIn && Config.RequireLogin)
                 check = true;

@@ -138,9 +138,9 @@ namespace TShockAPI
             item.netDefaults(type);
             item.Prefix(prefix);
 
-            if (stack > item.maxStack && type != 0)
+            if (stack > item.maxStack && type != 0 && args.Player.IgnoreActionsForCheating != "none")
             {
-                args.Player.IgnoreActionsForCheating = true;
+                args.Player.IgnoreActionsForCheating = "Item Hack: " + item.name + " (" + stack + ") exceeds max stack of " + item.maxStack;
             }
 
             if (args.Player.IsLoggedIn)
@@ -617,7 +617,11 @@ namespace TShockAPI
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
                 if (TShock.CheckIgnores(args.Player) && distance > 6f)
                 {
-                    if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+                    if(args.Player.IgnoreActionsForCheating != "none")
+                    {
+                        args.Player.SendMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating, Color.Red);
+                    }
+                    else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
                     {
                         args.Player.SendMessage("Please /register or /login to play!", Color.Red);
                     }
