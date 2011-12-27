@@ -51,6 +51,10 @@ namespace TShockAPI
 				tr.Close();
 			}
 
+		    string mono = "false";
+            if (Type.GetType("Mono.Runtime") != null)
+                mono = "true";
+
 			using (var client = new WebClient())
 			{
 				client.Headers.Add("user-agent",
@@ -60,11 +64,11 @@ namespace TShockAPI
 					string response;
 					if (TShock.Config.DisablePlayerCountReporting)
 					{
-						response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&port=" + Netplay.serverPort + "&plcount=0");
+                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + System.Environment.OSVersion.ToString() + "&mono=" + mono + "&port=" + Netplay.serverPort + "&plcount=0");
 					}
 					else
 					{
-                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
+                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + System.Environment.OSVersion.ToString() + "&mono=" + mono + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
 					}
 					Log.ConsoleInfo("Stat Tracker: " + response + "\n");
 				}
