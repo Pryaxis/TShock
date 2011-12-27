@@ -749,8 +749,7 @@ namespace TShockAPI
             TShock.Utils.ShowFileToUser(player, "motd.txt");
             if (HackedHealth(player))
             {
-                player.IgnoreActionsForCheating = true;
-                player.SendMessage("You are using a health/mana cheat. Please choose a different character.");
+                TShock.Utils.ForceKick(player, "You have Hacked Health/Mana, Please use a different character.");
             }
 
             if (HackedInventory(player))

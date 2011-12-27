@@ -157,9 +157,10 @@ namespace TShockAPI
             int cur = args.Data.ReadInt16();
             int max = args.Data.ReadInt16();
 
-            if (cur > 600 || max > 600)
+            if (cur > 500 || max > 500)
             {
-                args.Player.IgnoreActionsForCheating = true;
+                TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+                return false;
             }
 
             if (args.Player.IsLoggedIn)
@@ -176,9 +177,9 @@ namespace TShockAPI
             int cur = args.Data.ReadInt16();
             int max = args.Data.ReadInt16();
 
-            if (cur > 600 || max > 600)
+            if (cur > 500 || max > 500)
             {
-                args.Player.IgnoreActionsForCheating = true;
+                TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
             }
 
             return false;
@@ -616,11 +617,7 @@ namespace TShockAPI
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
                 if (TShock.CheckIgnores(args.Player) && distance > 6f)
                 {
-                    if (args.Player.IgnoreActionsForCheating)
-                    {
-                        args.Player.SendMessage("You have been disabled for cheating! Please login with a new character!", Color.Red);
-                    }
-                    else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+                    if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
                     {
                         args.Player.SendMessage("Please /register or /login to play!", Color.Red);
                     }
