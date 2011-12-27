@@ -474,25 +474,43 @@ namespace TShockAPI
                     {
                         if (player.TileKillThreshold >= Config.TileKillThreshold)
                         {
+                            player.LastThreat = DateTime.UtcNow;
                             TSPlayer.Server.RevertTiles(player.TilesDestroyed);
-                        }
-                        if (player.TileKillThreshold > 0)
-                        {
-                            player.TileKillThreshold = 0;
                             player.TilesDestroyed.Clear();
                         }
+                    }
+                    if (player.TileKillThreshold > 0)
+                    {
+                        player.TileKillThreshold = 0;
                     }
                     if (player.TilesCreated != null)
                     {
                         if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
                         {
+                            player.LastThreat = DateTime.UtcNow;
                             TSPlayer.Server.RevertTiles(player.TilesCreated);
-                        }
-                        if (player.TilePlaceThreshold > 0)
-                        {
-                            player.TilePlaceThreshold = 0;
                             player.TilesCreated.Clear();
                         }
+                    }
+                    if (player.TilePlaceThreshold > 0)
+                    {
+                        player.TilePlaceThreshold = 0;
+                    }
+                    if(player.TileLiquidThreshold >= Config.TileLiquidThreshold)
+                    {
+                        player.LastThreat = DateTime.UtcNow;
+                    }
+                    if (player.TileLiquidThreshold > 0)
+                    {
+                        player.TileLiquidThreshold = 0;
+                    }
+                    if (player.ProjectileThreshold >= Config.ProjectileThreshold)
+                    {
+                        player.LastThreat = DateTime.UtcNow;
+                    }
+                    if (player.ProjectileThreshold > 0)
+                    {
+                        player.ProjectileThreshold = 0;
                     }
                     if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
                     {
@@ -984,16 +1002,6 @@ namespace TShockAPI
 
         public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
         {
-            if (player.TileKillThreshold >= Config.TileKillThreshold && !player.Group.HasPermission(Permissions.ignorekilltiledetection))
-            {
-                player.LastThreat = DateTime.UtcNow;
-                return true;
-            }
-            if (player.TilePlaceThreshold >= Config.TilePlaceThreshold && !player.Group.HasPermission(Permissions.ignoreplacetiledetection))
-            {
-                player.LastThreat = DateTime.UtcNow;
-                return true;
-            }
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
                 player.SendMessage("You do not have permission to build!", Color.Red);

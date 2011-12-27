@@ -32,6 +32,8 @@ namespace TShockAPI
         public static readonly TSPlayer All = new TSPlayer("All");
         public int TileKillThreshold { get; set; }
         public int TilePlaceThreshold { get; set; }
+        public int TileLiquidThreshold { get; set; }
+        public int ProjectileThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
         public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
         public bool SyncHP { get; set; }

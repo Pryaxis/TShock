@@ -38,6 +38,12 @@ namespace TShockAPI
         [Description("Prevents you from being reverted by place tile abuse detection")]
         public static readonly string ignoreplacetiledetection;
 
+        [Description("Prevents you from being disabled by liquid set abuse detection")]
+        public static readonly string ignoreliquidsetdetection;
+
+        [Description("Prevents you from being disabled by liquid set abuse detection")]
+        public static readonly string ignoreprojectiledetection;
+
         [Description("Prevents you from being reverted by no clip detection")]
         public static readonly string ignorenoclipdetection;
 

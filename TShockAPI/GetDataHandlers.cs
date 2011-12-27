@@ -521,7 +521,27 @@ namespace TShockAPI
                 return true;
             }
 
-            if(type == 1)
+            if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
+            {
+                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
+            if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
+            {
+                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
+            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+            {
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
+            if (type == 1 && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
             {
                 args.Player.TilePlaceThreshold++;
                 var coords = new Vector2(tileX, tileY);
@@ -529,18 +549,12 @@ namespace TShockAPI
                     args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
             }
 
-            if ((type == 0 || type == 4) && Main.tileSolid[Main.tile[tileX, tileY].type])
+            if ((type == 0 || type == 4) && Main.tileSolid[Main.tile[tileX, tileY].type] && !args.Player.Group.HasPermission(Permissions.ignorekilltiledetection))
             {
                 args.Player.TileKillThreshold++;
                 var coords = new Vector2(tileX, tileY);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
                     args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
-            }
-
-            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-            {
-                args.Player.SendTileSquare(tileX, tileY);
-                return true;
             }
 
             return false;
@@ -718,12 +732,14 @@ namespace TShockAPI
 
             if (args.Player.Index != owner)
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
 
             if (dmg > 175)
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
@@ -741,6 +757,24 @@ namespace TShockAPI
                 return true;
             }
 
+            if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
+            {
+                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.SendData(PacketTypes.ProjectileNew, "", index);
+                return true;
+            }
+
+            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+            {
+                args.Player.SendData(PacketTypes.ProjectileNew, "", index);
+                return true;
+            }
+
+            if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
+            {
+                args.Player.ProjectileThreshold++;
+            }
+
             return false;
         }
 
@@ -751,6 +785,7 @@ namespace TShockAPI
 
             if (args.Player.Index != owner)
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 return true;
             }
 
@@ -765,6 +800,7 @@ namespace TShockAPI
 
             if (args.Player.Index != Main.projectile[index].owner)
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
@@ -778,6 +814,12 @@ namespace TShockAPI
             if (TShock.CheckProjectilePermission(args.Player, index, type))
             {
                 args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.SendData(PacketTypes.ProjectileNew, "", index);
+                return true;
+            }
+
+            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+            {
                 args.Player.SendData(PacketTypes.ProjectileNew, "", index);
                 return true;
             }
@@ -831,35 +873,38 @@ namespace TShockAPI
                 return true;
             }
 
-            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+            if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
-            bool bucket = false;
-            for (int i = 0; i < 49; i++)
+            if (!args.Player.Group.HasPermission(Permissions.ignoreliquidsetdetection))
             {
-                if (args.TPlayer.inventory[i].type >= 205 && args.TPlayer.inventory[i].type <= 207)
-                {
-                    bucket = true;
-                    break;
-                }
+                args.Player.TileLiquidThreshold++;
             }
-            if (!bucket)
+
+            int bucket = 0;
+            if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
             {
+                bucket = 1;
+            }
+            else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
+            {
+                bucket = 2;
+            }
+
+            if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Lava Bucket"))
+            {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
-            if (lava && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Lava Bucket"))
+            if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Water Bucket"))
             {
-                args.Player.SendTileSquare(tileX, tileY);
-                return true;
-            }
-
-            if (!lava && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Water Bucket"))
-            {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -870,7 +915,13 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.CheckRangePermission(args.Player, tileX, tileY))
+            if (TShock.CheckRangePermission(args.Player, tileX, tileY, 16))
+            {
+                args.Player.SendTileSquare(tileX, tileY);
+                return true;
+            }
+
+            if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
             {
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
@@ -895,6 +946,7 @@ namespace TShockAPI
 
             if (Main.tile[tileX, tileY].type != 0x15 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
             {
+                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -1298,6 +1350,7 @@ namespace TShockAPI
                     args.TPlayer.buffTime[i] = 0;
                 }
             }
+            NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
             return true;
         }
     }

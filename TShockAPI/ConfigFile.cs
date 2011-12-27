@@ -193,6 +193,12 @@ namespace TShockAPI
         [Description("Disable/Revert a player if they exceed this number of tile places within 1 second.")]
         public int TilePlaceThreshold = 20;
 
+        [Description("Disable a player if they exceed this number of liquid sets within 1 second.")]
+        public int TileLiquidThreshold = 15;
+
+        [Description("Disable a player if they exceed this number of projectile new within 1 second.")]
+        public int ProjectileThreshold = 100;
+
         [Description("Require all players to register or login before being allowed to play.")]
         public bool RequireLogin = false;
 
