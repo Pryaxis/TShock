@@ -192,6 +192,9 @@ namespace TShockAPI
 
         [Description("Disable/Revert a player if they exceed this number of tile places within 1 second.")]
         public int TilePlaceThreshold = 20;
+
+        [Description("Require all players to register or login before being allowed to play.")]
+        public bool RequireLogin = false;
         
 		public static ConfigFile Read(string path)
         {

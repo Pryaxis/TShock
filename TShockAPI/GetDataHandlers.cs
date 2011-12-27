@@ -605,6 +605,10 @@ namespace TShockAPI
                     {
                         args.Player.SendMessage("You have been disabled for cheating! Please login with a new character!", Color.Red);
                     }
+                    else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+                    {
+                        args.Player.SendMessage("Please /register or /login to play!", Color.Red);
+                    }
                     else if (args.Player.IgnoreActionsForInventory)
                     {
                         args.Player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);

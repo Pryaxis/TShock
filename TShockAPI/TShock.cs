@@ -728,17 +728,26 @@ namespace TShockAPI
 
             NetMessage.syncPlayers();
 
-            if (Config.ServerSideInventory && !player.IsLoggedIn)
+            if (Config.RequireLogin)
             {
-                player.IgnoreActionsForInventory = true;
+                player.SendMessage("Please /register or /login to play!", Color.Red);
+            }
+            else if (Config.ServerSideInventory)
+            {
                 player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
             }
 
-            if (TShock.Config.PvPMode == "always" && !player.TPlayer.hostile)
+            if (Config.ServerSideInventory)
+            {
+                player.IgnoreActionsForInventory = true;
+            }
+
+            if (Config.PvPMode == "always" && !player.TPlayer.hostile)
             {
                 player.IgnoreActionsForPvP = true;
                 player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
+
             if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
             {
                 StartInvasion();
@@ -1176,6 +1185,8 @@ namespace TShockAPI
             if (player.IgnoreActionsForInventory)
                 check = true;
             if (player.IgnoreActionsForCheating)
+                check = true;
+            if (!player.IsLoggedIn && Config.RequireLogin)
                 check = true;
             return check;
         }
