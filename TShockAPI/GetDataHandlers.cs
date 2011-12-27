@@ -615,7 +615,7 @@ namespace TShockAPI
             if (!pos.Equals(args.Player.LastNetPosition))
             {
                 float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
-                if (TShock.CheckIgnores(args.Player) && distance > 6f)
+                if (TShock.CheckIgnores(args.Player) && distance > TShock.Config.MaxRangeForDisabled)
                 {
                     if(args.Player.IgnoreActionsForCheating != "none")
                     {

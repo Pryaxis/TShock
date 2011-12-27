@@ -204,6 +204,9 @@ namespace TShockAPI
 
         [Description("Disables Invisibility potions from being used in PvP (Note, they can use them on the client, but the effect isn't sent to the rest of the server)")]
         public bool DisableInvisPvP = false;
+
+        [Description("The maximum distance players disabled for various reasons can move from")]
+        public int MaxRangeForDisabled = 10;
         
 		public static ConfigFile Read(string path)
         {

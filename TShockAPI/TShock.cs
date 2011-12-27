@@ -1243,9 +1243,9 @@ namespace TShockAPI
                 Netplay.serverPort = file.ServerPort;
             }
 
-            if (file.MaxSlots > 250)
-                file.MaxSlots = 250;
-            Main.maxNetPlayers = file.MaxSlots + 5;
+            if (file.MaxSlots > 235)
+                file.MaxSlots = 235;
+            Main.maxNetPlayers = file.MaxSlots + 20;
 
             Netplay.spamCheck = false;
 
