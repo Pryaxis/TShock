@@ -888,6 +888,12 @@ namespace TShockAPI
             {
                 return true;
             }
+
+            if (TShock.CheckTilePermission(args.Player, x, y))
+            {
+                return false;
+            }
+
             return false;
         }
 
@@ -914,20 +920,17 @@ namespace TShockAPI
             item.netDefaults(type);
             if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name))
             {
-                args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
                 return false;
             }
 
             if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
             {
-                args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
                 return false;
             }
 
             if (TShock.CheckRangePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
             {
-                args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
-                return true;
+                return false;
             }
 
             return false;
