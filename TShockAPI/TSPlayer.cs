@@ -377,7 +377,7 @@ namespace TShockAPI
         public override void SendMessage(string msg, byte red, byte green, byte blue)
         {
             Console.WriteLine(msg);
-            RconHandler.Response += msg + "\n";
+            //RconHandler.Response += msg + "\n";
         }
         
         public void SetFullMoon(bool fullmoon)
