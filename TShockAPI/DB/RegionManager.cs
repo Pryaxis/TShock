@@ -618,6 +618,7 @@ namespace TShockAPI.DB
             DisableBuild = true;
             WorldID = string.Empty;
             AllowedIDs = new List<int>();
+            AllowedGroups = new List<string>();
         }
 
         public bool InArea(Rectangle point)
@@ -662,15 +663,19 @@ namespace TShockAPI.DB
             AllowedIDs = id_list;
         }
 
-		public void SetAllowedGroups( String groups )
-		{
-			List<String> groupArr = groups.Split(',').ToList();
-			
-			for (int i = 0; i < groupArr.Count; i++)
-				groupArr[i] = groupArr[i].Trim();
+	public void SetAllowedGroups( String groups )
+	{
+            // prevent null pointer exceptions
+            if (!string.IsNullOrEmpty(groups))
+            {
+                List<String> groupArr = groups.Split(',').ToList();
 
-			AllowedGroups = groupArr;
-		}
+                for (int i = 0; i < groupArr.Count; i++)
+                    groupArr[i] = groupArr[i].Trim();
+
+                AllowedGroups = groupArr;
+            }
+	}
 
         public void RemoveID(int id)
         {
