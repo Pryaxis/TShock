@@ -424,11 +424,14 @@ namespace TShockAPI
         {
             foreach(Chest chest in Main.chest)
             {
-                foreach(Item item in chest.item)
-                {
-                    if (item.stack > item.maxStack)
-                        item.stack = item.maxStack;
-                }
+				if (chest != null)
+				{
+					foreach (Item item in chest.item)
+					{
+						if (item != null && item.stack > item.maxStack)
+							item.stack = item.maxStack;
+					}
+				}
             }
         }
 
@@ -816,7 +819,7 @@ namespace TShockAPI
 
         void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
         {
-            if (TShock.Itembans.ItemIsBanned(e.Object.name))
+            if (TShock.Itembans.ItemIsBanned(e.Object.name, null) )
             {
                 e.Object.SetDefaults(0);
             }
@@ -975,12 +978,12 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Dirt Wand")) //Dirt Wand Projectile
+            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Dirt Wand", player)) //Dirt Wand Projectile
             {
                 return true;
             }
 
-            if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Sandgun")) //Sandgun Projectiles
+            if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
             {
                 return true;
             }
@@ -988,7 +991,7 @@ namespace TShockAPI
             Projectile proj = new Projectile();
             proj.SetDefaults(type);
 
-            if (!player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(proj.name))
+            if (!player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(proj.name, player))
             {
                 return true;
             }

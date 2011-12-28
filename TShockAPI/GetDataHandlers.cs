@@ -481,7 +481,7 @@ namespace TShockAPI
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
                 }
-                if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Spikes"))
+                if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Spikes", args.Player))
                 {
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
@@ -492,7 +492,7 @@ namespace TShockAPI
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
                 }
-                if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Explosives"))
+				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Explosives", args.Player))
                 {
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
@@ -661,7 +661,7 @@ namespace TShockAPI
 
             if ((control & 32) == 32)
             {
-                if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name))
+				if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name, args.Player))
                 {
                     control -= 32;
                     args.Player.LastThreat = DateTime.UtcNow;
@@ -896,14 +896,14 @@ namespace TShockAPI
                 bucket = 2;
             }
 
-            if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Lava Bucket"))
+			if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
             {
                 args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
-            if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Water Bucket"))
+			if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
             {
                 args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
@@ -1042,7 +1042,7 @@ namespace TShockAPI
 
             Item item = new Item();
             item.netDefaults(type);
-            if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name))
+            if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name, args.Player))
             {
                 return false;
             }
@@ -1175,7 +1175,7 @@ namespace TShockAPI
 
             Item item = new Item();
             item.netDefaults(type);
-            if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name))
+            if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name, args.Player))
             {
                 args.Player.SendData(PacketTypes.ItemDrop, "", id);
                 return true;
@@ -1335,7 +1335,7 @@ namespace TShockAPI
 
                 if (buff == 10)
                 {
-                    if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Invisibility Potion"))
+                    if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Invisibility Potion", args.Player) )
                         buff = 0;
                     else if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
                         buff = 0;
