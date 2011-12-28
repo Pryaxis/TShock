@@ -50,7 +50,7 @@ Thumbs.db
 
 #Template Bat file#
 ###################
-myass.bat
+postbuild.bat
 /TestResults
 
 # JetBrains Crap #
