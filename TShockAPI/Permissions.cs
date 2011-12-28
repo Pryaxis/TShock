@@ -151,6 +151,25 @@ namespace TShockAPI
 
         [Description("User can mute and unmute users")]
         public static readonly string mute;
+		
+        [Description("User can register account in game")]
+        public static readonly string canregister;
+		
+        [Description("User can login in game")]
+        public static readonly string canlogin;
+		
+        [Description("User can change password in game")]
+        public static readonly string canchangepassword;
+		
+        [Description("User can use party chat in game")]
+        public static readonly string canpartychat;
+		
+        [Description("User can talk in third person")]
+        public static readonly string cantalkinthird;
+		
+        [Description("User can see who plays on server")]
+        public static readonly string candisplayplaying;
+		
 
         static Permissions()
         {
