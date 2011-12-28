@@ -194,6 +194,7 @@ namespace TShockAPI
 
                 GameHooks.PostInitialize += OnPostInit;
                 GameHooks.Update += OnUpdate;
+                ServerHooks.Connect += OnConnect;
                 ServerHooks.Join += OnJoin;
                 ServerHooks.Leave += OnLeave;
                 ServerHooks.Chat += OnChat;
@@ -539,7 +540,7 @@ namespace TShockAPI
             Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
         }
 
-        private void OnJoin(int ply, HandledEventArgs handler)
+        private void OnConnect(int ply, HandledEventArgs handler)
         {
             var player = new TSPlayer(ply);
             if (Config.EnableDNSHostResolution)
@@ -551,7 +552,7 @@ namespace TShockAPI
                 player.Group = Users.GetGroupForIP(player.IP);
             }
 
-            if (TShock.Utils.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission(Permissions.reservedslot))
+            if (TShock.Utils.ActivePlayers() + 20 > Config.MaxSlots)
             {
                 TShock.Utils.ForceKick(player, Config.ServerFullReason);
                 handler.Handled = true;
@@ -559,12 +560,9 @@ namespace TShockAPI
             }
 
             var ipban = Bans.GetBanByIp(player.IP);
-            var nameban = Bans.GetBanByName(player.Name);
             Ban ban = null;
             if (ipban != null && Config.EnableIPBans)
                 ban = ipban;
-            else if (nameban != null && Config.EnableBanOnUsernames)
-                ban = nameban;
 
             if (ban != null)
             {
@@ -581,6 +579,40 @@ namespace TShockAPI
             }
 
             Players[ply] = player;
+        }
+
+        private void OnJoin(int ply, HandledEventArgs handler)
+        {
+            var player = Players[ply];
+            if (player == null)
+            {
+                handler.Handled = true;
+                return;
+            }
+
+            if (HackedHealth(player))
+            {
+                TShock.Utils.ForceKick(player, "You have Hacked Health/Mana, Please use a different character.");
+            }
+
+            if (TShock.Utils.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission(Permissions.reservedslot))
+            {
+                TShock.Utils.ForceKick(player, Config.ServerFullReason);
+                handler.Handled = true;
+                return;
+            }
+
+            var nameban = Bans.GetBanByName(player.Name);
+            Ban ban = null;
+            if (nameban != null && Config.EnableBanOnUsernames)
+                ban = nameban;
+
+            if (ban != null)
+            {
+                TShock.Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+                handler.Handled = true;
+                return;
+            }
         }
 
         private void OnLeave(int ply)
@@ -750,28 +782,6 @@ namespace TShockAPI
             }
 
             TShock.Utils.ShowFileToUser(player, "motd.txt");
-            if (HackedHealth(player))
-            {
-                TShock.Utils.ForceKick(player, "You have Hacked Health/Mana, Please use a different character.");
-            }
-
-            HackedInventory(player);
-
-            NetMessage.syncPlayers();
-
-            if (Config.RequireLogin)
-            {
-                player.SendMessage("Please /register or /login to play!", Color.Red);
-            }
-            else if (Config.ServerSideInventory)
-            {
-                player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
-            }
-
-            if (Config.ServerSideInventory)
-            {
-                player.IgnoreActionsForInventory = true;
-            }
 
             if (Config.PvPMode == "always" && !player.TPlayer.hostile)
             {
@@ -783,11 +793,13 @@ namespace TShockAPI
             {
                 StartInvasion();
             }
+
             if (Config.RememberLeavePos)
             {
                 var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
                 player.Teleport((int) pos.X, (int) pos.Y);
             }
+
             e.Handled = true;
         }
 

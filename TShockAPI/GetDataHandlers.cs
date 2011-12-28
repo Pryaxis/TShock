@@ -90,7 +90,8 @@ namespace TShockAPI
                 {PacketTypes.NpcStrike, HandleNpcStrike},
                 {PacketTypes.NpcSpecial, HandleSpecial},
                 {PacketTypes.PlayerAnimation, HandlePlayerAnimation},
-                {PacketTypes.PlayerBuff, HandlePlayerBuffUpdate}
+                {PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
+                {PacketTypes.PasswordSend, HandlePassword}
             };
         }
 
@@ -254,6 +255,11 @@ namespace TShockAPI
             if (TShock.Config.DisplayIPToAdmins)
                 TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
 
+            return false;
+        }
+
+        private static bool HandlePassword(GetDataHandlerArgs args)
+        {
             return false;
         }
 
