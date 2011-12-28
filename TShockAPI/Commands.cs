@@ -2477,7 +2477,7 @@ namespace TShockAPI
                 return;
             }
             if (args.Player.mute)
-                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+                args.Player.SendMessage("You are muted.");
             else
                 TShock.Utils.Broadcast(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
         }
@@ -2492,7 +2492,7 @@ namespace TShockAPI
             int playerTeam = args.Player.Team;
 
             if (args.Player.mute)
-                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+                args.Player.SendMessage("You are muted.");
             else if (playerTeam != 0)
             {
                 string msg = string.Format("<{0}> {1}", args.Player.Name, String.Join(" ", args.Parameters));
@@ -2524,18 +2524,18 @@ namespace TShockAPI
             {
                 var plr = players[0];
                 plr.mute = false;
-                plr.SendMessage("You Have Been UnMuted! Thank " + args.Player.Name);
-                TShock.Utils.Broadcast(plr.Name + " Has Been Unmuted By " + args.Player.Name, Color.Yellow);
+                plr.SendMessage("You have been unmuted.");
+                TShock.Utils.Broadcast(plr.Name + " has been unmuted by " + args.Player.Name, Color.Yellow);
             }
             else if (!players[0].Group.HasPermission(Permissions.mute))
             {
                 var plr = players[0];
                 plr.mute = true;
-                plr.SendMessage("You Have Been Muted! You Should Have Behaved...");
-                TShock.Utils.Broadcast(plr.Name + " Has Been Muted By " + args.Player.Name, Color.Yellow);
+                plr.SendMessage("You have been muted.");
+                TShock.Utils.Broadcast(plr.Name + " has been muted by " + args.Player.Name, Color.Yellow);
             }
             else
-                args.Player.SendMessage("You Cannot Mute Player");
+                args.Player.SendMessage("You cannot mute this player.");
             
         }
 
@@ -2567,7 +2567,7 @@ namespace TShockAPI
                 args.Player.SendMessage("More than one player matched!", Color.Red);
             }
             else if (args.Player.mute)
-                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+                args.Player.SendMessage("You are muted.");
             else
             {
                 var plr = players[0];
@@ -2582,7 +2582,7 @@ namespace TShockAPI
         private static void Reply(CommandArgs args)
         {
             if (args.Player.mute)
-                args.Player.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+                args.Player.SendMessage("You are muted.");
             else if (args.Player.LastWhisper != null)
             {
                 var msg = string.Join(" ", args.Parameters);

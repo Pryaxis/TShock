@@ -643,7 +643,7 @@ namespace TShockAPI
             }
             else if (tsplr.mute)
             {
-                tsplr.SendMessage("You Are Muted! You Need To Be Unmuted!!");
+                tsplr.SendMessage("You are muted!");
                 e.Handled = true;
             }
         }
@@ -1220,7 +1220,7 @@ namespace TShockAPI
                 {
                     for (int h = y; h < y + 4; h++)
                     {
-                        if (!Main.tile[i, h].active || !Main.tileSolid[Main.tile[i, h].type])
+                        if (!Main.tile[i, h].active || !Main.tileSolid[Main.tile[i, h].type] || Main.tileSolidTop[Main.tile[i, h].type])
                             return false;
                     }
                 }
@@ -1249,7 +1249,7 @@ namespace TShockAPI
             if (file.MaxSlots > 235)
                 file.MaxSlots = 235;
             Main.maxNetPlayers = file.MaxSlots + 20;
-
+            Netplay.password = "";
             Netplay.spamCheck = false;
 
             RconHandler.Password = file.RconPassword;
