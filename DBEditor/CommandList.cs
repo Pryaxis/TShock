@@ -43,6 +43,13 @@ namespace TShockDBEditor
             CommandList.Add("immunetokick");
             CommandList.Add("immunetoban");
             CommandList.Add("usebanneditem");
+			
+            CommandList.Add("canregister");
+            CommandList.Add("canlogin");
+            CommandList.Add("canchangepassword");
+            CommandList.Add("canpartychat");
+            CommandList.Add("cantalkinthird");
+            CommandList.Add("candisplayplaying");
 
             foreach (string command in CommandList)
             {
