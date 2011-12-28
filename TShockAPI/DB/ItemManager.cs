@@ -106,13 +106,20 @@ namespace TShockAPI.DB
             }
         }
 
+        public bool ItemIsBanned(string name)
+        {
+            if (ItemBans.Contains(new ItemBan(name)))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public bool ItemIsBanned(string name, TSPlayer ply)
         {
 			if (ItemBans.Contains( new ItemBan(name) ) )
 			{
 				ItemBan b = GetItemBanByName(name);
-				Console.WriteLine("Item ban exists");
-				Console.WriteLine( "Can use: {0}",b.HasPermissionToUseItem(ply));
 				return !b.HasPermissionToUseItem(ply);
 			}
 			return false;
