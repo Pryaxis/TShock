@@ -549,9 +549,9 @@ namespace TShockAPI
                 player.Group = Users.GetGroupForIP(player.IP);
             }
 
-            if (TShock.Utils.ActivePlayers() + 20 > Config.MaxSlots)
+            if (TShock.Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
             {
-                TShock.Utils.ForceKick(player, Config.ServerFullReason);
+                TShock.Utils.ForceKick(player, Config.ServerFullNoReservedReason);
                 handler.Handled = true;
                 return;
             }

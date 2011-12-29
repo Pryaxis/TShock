@@ -132,6 +132,9 @@ namespace TShockAPI
         [Description("String that is used when kicking people when the server is full.")]
         public string ServerFullReason = "Server is full";
 
+        [Description("String that is used when kicking people when the server is full with no reserved slots.")]
+        public string ServerFullNoReservedReason = "Server is full. No reserved slots open.";
+
         [Description("This will save the world if Terraria crashes from an unhandled exception.")]
         public bool SaveWorldOnCrash = true;
 
