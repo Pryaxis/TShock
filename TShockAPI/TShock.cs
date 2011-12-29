@@ -531,7 +531,6 @@ namespace TShockAPI
                     if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
                     {
                         player.Spawn();
-                        player.ForceSpawn = false;
                     }
                 }
             }
@@ -764,7 +763,7 @@ namespace TShockAPI
                 return;
             }
 
-            if (player.State < 10 && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
+            if ((player.State < 10 || player.ForceSpawn) && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
             {
                 e.Handled = true;
                 return;

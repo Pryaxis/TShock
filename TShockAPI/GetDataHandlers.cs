@@ -1118,6 +1118,7 @@ namespace TShockAPI
             else
                 args.Player.InitSpawn = true;
 
+            args.Player.ForceSpawn = false;
             return false;
         }
 
