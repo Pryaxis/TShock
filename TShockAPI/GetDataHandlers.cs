@@ -540,6 +540,10 @@ namespace TShockAPI
 				TSPlayer.All.SendTileSquare(tileX, tileY, size);
 				WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
 			}
+			else
+			{
+			    args.Player.SendTileSquare(tileX, tileY, size);
+			}
         	return true;
         }
 
