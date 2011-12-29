@@ -138,7 +138,7 @@ namespace TShockAPI
             item.netDefaults(type);
             item.Prefix(prefix);
 
-            if (stack > item.maxStack && type != 0 && args.Player.IgnoreActionsForCheating != "none")
+            if (stack > item.maxStack && type != 0 && args.Player.IgnoreActionsForCheating != "none" && !args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
             {
                 args.Player.IgnoreActionsForCheating = "Item Hack: " + item.name + " (" + stack + ") exceeds max stack of " + item.maxStack;
             }
@@ -331,9 +331,14 @@ namespace TShockAPI
                 return true;
 
             args.Player.RequestedSection = true;
-            if (TShock.HackedHealth(args.Player))
+            if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
             {
                 TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+            }
+
+            if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
+            {
+                TShock.HackedInventory(args.Player);
             }
 
             if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots && !args.Player.Group.HasPermission(Permissions.reservedslot))

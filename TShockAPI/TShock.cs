@@ -801,6 +801,23 @@ namespace TShockAPI
                 player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
 
+            if (!player.IsLoggedIn)
+            {
+                if (Config.RequireLogin)
+                {
+                    player.SendMessage("Please /register or /login to play!", Color.Red);
+                }
+                else if (Config.ServerSideInventory)
+                {
+                    player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
+                }
+
+                if (Config.ServerSideInventory)
+                {
+                    player.IgnoreActionsForInventory = true;
+                }
+            }
+
             if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
             {
                 StartInvasion();

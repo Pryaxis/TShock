@@ -47,6 +47,12 @@ namespace TShockAPI
         [Description("Prevents you from being reverted by no clip detection")]
         public static readonly string ignorenoclipdetection;
 
+        [Description("Prevents you from being disabled by stack hack detection")]
+        public static readonly string ignorestackhackdetection;
+
+        [Description("Prevents you from being kicked by hacked health detection")]
+        public static readonly string ignorestathackdetection;
+
         [Description("Specific log messages are sent to users with this permission")]
         public static readonly string logs;
 
