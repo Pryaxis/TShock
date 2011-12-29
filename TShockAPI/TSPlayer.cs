@@ -281,6 +281,20 @@ namespace TShockAPI
             }
         }
 
+        public void RemoveProjectile(int index, int owner)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var msg = new ProjectileRemoveMsg()
+                {
+                    Index = (short)index,
+                    Owner = (byte)owner
+                };
+                msg.PackFull(ms);
+                SendRawData(ms.ToArray());
+            }
+        }
+
         public virtual bool SendTileSquare(int x, int y, int size = 10)
         {
             try
