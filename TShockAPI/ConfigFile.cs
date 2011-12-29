@@ -120,6 +120,9 @@ namespace TShockAPI
         [Description("Selects the default group name to place new registrants under")]
         public string DefaultRegistrationGroupName = "default";
 
+        [Description("Selects the default group name to place non registered users under")]
+        public string DefaultGuestGroupName = "guest";
+
         [Description("Force-Disable printing logs to players with the log permission")]
         public bool DisableSpewLogs = true;
 

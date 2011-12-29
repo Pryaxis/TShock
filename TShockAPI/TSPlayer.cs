@@ -171,7 +171,7 @@ namespace TShockAPI
             TilesDestroyed = new Dictionary<Vector2, TileData>();
             TilesCreated = new Dictionary<Vector2, TileData>();
             Index = index;
-            Group = new Group("null");
+            Group = new Group(TShock.Config.DefaultGuestGroupName);
         }
 
         protected TSPlayer(String playerName)
@@ -180,7 +180,7 @@ namespace TShockAPI
             TilesCreated = new Dictionary<Vector2, TileData>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
-            Group = new Group("null");
+            Group = new Group(TShock.Config.DefaultGuestGroupName);
         }
 
         public virtual void Disconnect(string reason)

@@ -29,7 +29,8 @@ namespace TShockAPI.DB
             creator.EnsureExists(table);
 
             //Add default groups
-            AddGroup("default", "warp,canbuild,canregister,canlogin,canchangepassword,canpartychat,cantalkinthird,candisplayplaying");
+            AddGroup("guest", "canbuild,canregister,canlogin,canpartychat,cantalkinthird,candisplayplaying");
+            AddGroup("default", "guest", "warp,canchangepassword");
             AddGroup("newadmin", "default", "kick,editspawn,reservedslot");
             AddGroup("admin", "newadmin", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
             AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
