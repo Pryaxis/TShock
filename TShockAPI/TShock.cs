@@ -604,18 +604,6 @@ namespace TShockAPI
                 return;
             }
 
-            if (HackedHealth(player))
-            {
-                TShock.Utils.ForceKick(player, "You have Hacked Health/Mana, Please use a different character.");
-            }
-
-            if (TShock.Utils.ActivePlayers() + 1 > Config.MaxSlots && !player.Group.HasPermission(Permissions.reservedslot))
-            {
-                TShock.Utils.ForceKick(player, Config.ServerFullReason);
-                handler.Handled = true;
-                return;
-            }
-
             var nameban = Bans.GetBanByName(player.Name);
             Ban ban = null;
             if (nameban != null && Config.EnableBanOnUsernames)
@@ -627,22 +615,6 @@ namespace TShockAPI
                 handler.Handled = true;
                 return;
             }
-
-            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-
-            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
-            {
-                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({3}/{4})", player.Name, player.IP, player.Group.Name, player.Country, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-                TShock.Utils.Broadcast(player.Name + " has joined from the " + player.Country, Color.Yellow);
-            }
-            else
-            {
-                Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP, player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-                TShock.Utils.Broadcast(player.Name + " has joined", Color.Yellow);
-            }
-
-            if (TShock.Config.DisplayIPToAdmins)
-                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
         }
 
         private void OnLeave(int ply)

@@ -320,6 +320,40 @@ namespace TShockAPI
             return true;
         }
 
+        private static bool HandleGetSection(GetDataHandlerArgs args)
+        {
+            if (args.Player.RequestedSection)
+                return true;
+
+            args.Player.RequestedSection = true;
+            if (TShock.HackedHealth(args.Player))
+            {
+                TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+            }
+
+            if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots && !args.Player.Group.HasPermission(Permissions.reservedslot))
+            {
+                TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason);
+                return false;
+            }
+
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+
+            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined from the " + args.Player.Country, Color.Yellow);
+            }
+            else
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", args.Player.Name, args.Player.IP, args.Player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+                TShock.Utils.Broadcast(args.Player.Name + " has joined", Color.Yellow);
+            }
+
+            if (TShock.Config.DisplayIPToAdmins)
+                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
+        }
+
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
         {
         	
@@ -1140,15 +1174,6 @@ namespace TShockAPI
                 args.Player.SendData(PacketTypes.SignNew, "", id);
                 return true;
             }
-            return false;
-        }
-
-        private static bool HandleGetSection(GetDataHandlerArgs args)
-        {
-            if (args.Player.RequestedSection)
-                return true;
-
-            args.Player.RequestedSection = true;
             return false;
         }
 
