@@ -34,8 +34,8 @@ namespace TShockAPI
         public int TilePlaceThreshold { get; set; }
         public int TileLiquidThreshold { get; set; }
         public int ProjectileThreshold { get; set; }
-        public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
-        public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
+        public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+        public Dictionary<Vector2, TileData> TilesCreated { get; protected set; }
         public int FirstMaxHP { get; set; }
         public int FirstMaxMP { get; set; }
         public Group Group { get; set; }
@@ -168,16 +168,16 @@ namespace TShockAPI
 
         public TSPlayer(int index)
         {
-            TilesDestroyed = new Dictionary<Vector2, Tile>();
-            TilesCreated = new Dictionary<Vector2, Tile>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesCreated = new Dictionary<Vector2, TileData>();
             Index = index;
             Group = new Group("null");
         }
 
         protected TSPlayer(String playerName)
         {
-            TilesDestroyed = new Dictionary<Vector2, Tile>();
-            TilesCreated = new Dictionary<Vector2, Tile>();
+            TilesDestroyed = new Dictionary<Vector2, TileData>();
+            TilesCreated = new Dictionary<Vector2, TileData>();
             Index = -1;
             FakePlayer = new Player { name = playerName, whoAmi = -1 };
             Group = new Group("null");
@@ -433,12 +433,12 @@ namespace TShockAPI
             NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
         }
 
-        public void RevertTiles(Dictionary<Vector2, Tile> tiles)
+        public void RevertTiles(Dictionary<Vector2, TileData> tiles)
         {
             // Update Main.Tile first so that when tile sqaure is sent it is correct
-            foreach (KeyValuePair<Vector2, Tile> entry in tiles)
+            foreach (KeyValuePair<Vector2, TileData> entry in tiles)
             {
-                Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
+                Main.tile[(int)entry.Key.X, (int)entry.Key.Y].Data = entry.Value;
             }
             // Send all players updated tile sqaures
             foreach (Vector2 coords in tiles.Keys)

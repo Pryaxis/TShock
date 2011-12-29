@@ -670,7 +670,7 @@ namespace TShockAPI
                 args.Player.TilePlaceThreshold++;
                 var coords = new Vector2(tileX, tileY);
                 if (!args.Player.TilesCreated.ContainsKey(coords))
-                    args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
+                    args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY].Data);
             }
 
             if ((type == 0 || type == 4) && Main.tileSolid[Main.tile[tileX, tileY].type] && !args.Player.Group.HasPermission(Permissions.ignorekilltiledetection))
@@ -678,7 +678,7 @@ namespace TShockAPI
                 args.Player.TileKillThreshold++;
                 var coords = new Vector2(tileX, tileY);
                 if (!args.Player.TilesDestroyed.ContainsKey(coords))
-                    args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
+                    args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY].Data);
             }
 
             return false;
