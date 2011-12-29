@@ -716,7 +716,6 @@ namespace TShockAPI
                     }
                 }
                 TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
-                e.Handled = true;
             }
             else if (text.StartsWith("say "))
             {
@@ -726,13 +725,12 @@ namespace TShockAPI
             {
                 Main.autoSave = Config.AutoSave = !Config.AutoSave;
                 Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
-                e.Handled = true;
             }
-            else if (text.StartsWith("/"))
+            else
             {
-                if (Commands.HandleCommand(TSPlayer.Server, text))
-                    e.Handled = true;
+                Commands.HandleCommand(TSPlayer.Server, text);
             }
+            e.Handled = true;
         }
 
         private void OnGetData(GetDataEventArgs e)

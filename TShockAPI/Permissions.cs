@@ -172,9 +172,6 @@ namespace TShockAPI
 		
         [Description("User can talk in third person")]
         public static readonly string cantalkinthird;
-		
-        [Description("User can see who plays on server")]
-        public static readonly string candisplayplaying;
 
         [Description("Bypass Server Side Inventory checks")]
         public static readonly string bypassinventorychecks;

@@ -167,7 +167,7 @@ namespace TShockAPI
             add(Permissions.manageregion, Region, "region");
             add(Permissions.manageregion, DebugRegions, "debugreg");
             add(null, Help, "help");
-            add(Permissions.candisplayplaying, Playing, "playing", "online", "who");
+            add(null, Playing, "playing", "online", "who", "version");
             add(null, AuthToken, "auth");
             add(Permissions.cantalkinthird, ThirdPerson, "me");
             add(Permissions.canpartychat, PartyChat, "p");
@@ -1791,7 +1791,7 @@ namespace TShockAPI
                 return;
             }
             string passwd = args.Parameters[0];
-            Netplay.password = passwd;
+            TShock.Config.ServerPassword = passwd;
             args.Player.SendMessage(string.Format("Server password changed to: {0}", passwd));
         }
 
@@ -2413,6 +2413,7 @@ namespace TShockAPI
         private static void Playing(CommandArgs args)
         {
             args.Player.SendMessage(string.Format("Current players: {0}.", TShock.Utils.GetPlayers()), 255, 240, 20);
+            args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
         }
 
         private static void AuthToken(CommandArgs args)
