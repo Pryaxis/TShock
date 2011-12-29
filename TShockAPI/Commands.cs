@@ -120,8 +120,8 @@ namespace TShockAPI
             add(Permissions.ban, UnBanIP, "unbanip");
             add(Permissions.maintenance, ClearBans, "clearbans");
             add(Permissions.whitelist, Whitelist, "whitelist");
-            add(Permissions.maintenance, Off, "off");
-            add(Permissions.maintenance, OffNoSave, "off-nosave");
+            add(Permissions.maintenance, Off, "off", "exit");
+            add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
             add(Permissions.maintenance, CheckUpdates, "checkupdates");
             add(Permissions.causeevents, DropMeteor, "dropmeteor");
             add(Permissions.causeevents, Star, "star");
