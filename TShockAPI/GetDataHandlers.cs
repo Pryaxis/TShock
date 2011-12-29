@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using System.IO;
 using System.Text;
@@ -25,7 +24,6 @@ using Terraria;
 
 using TShockAPI.Net;
 using System.IO.Streams;
-using System.Net;
 
 namespace TShockAPI
 {
@@ -159,9 +157,12 @@ namespace TShockAPI
             int cur = args.Data.ReadInt16();
             int max = args.Data.ReadInt16();
 
-            if (cur > 500 || max > 500)
+            if (args.Player.FirstMaxHP == 0)
+                args.Player.FirstMaxHP = max;
+
+            if (max > 400 && max > args.Player.FirstMaxHP)
             {
-                TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+                TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
                 return false;
             }
 
@@ -179,9 +180,13 @@ namespace TShockAPI
             int cur = args.Data.ReadInt16();
             int max = args.Data.ReadInt16();
 
-            if (cur > 500 || max > 500)
+            if (args.Player.FirstMaxMP == 0)
+                args.Player.FirstMaxMP = max;
+
+            if (max > 400 && max > args.Player.FirstMaxMP)
             {
-                TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+                TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
+                return false;
             }
 
             return false;
@@ -334,7 +339,7 @@ namespace TShockAPI
             if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots && !args.Player.Group.HasPermission(Permissions.reservedslot))
             {
                 TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason);
-                return false;
+                return true;
             }
 
             NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
@@ -352,6 +357,8 @@ namespace TShockAPI
 
             if (TShock.Config.DisplayIPToAdmins)
                 TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
+
+            return false;
         }
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)

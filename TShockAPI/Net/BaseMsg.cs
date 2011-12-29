@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Streams;
-using System.Linq;
-using System.Text;
 
 namespace TShockAPI.Net
 {

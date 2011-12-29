@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 
 namespace TShockAPI.DB

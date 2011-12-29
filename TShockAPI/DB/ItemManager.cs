@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
-
 using System.IO;
 using System.Linq;
-using System.Xml;
 using MySql.Data.MySqlClient;
-using Terraria;
 
 namespace TShockAPI.DB
 {

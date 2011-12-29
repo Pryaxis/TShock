@@ -36,8 +36,8 @@ namespace TShockAPI
         public int ProjectileThreshold { get; set; }
         public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
         public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
-        public bool SyncHP { get; set; }
-        public bool SyncMP { get; set; }
+        public int FirstMaxHP { get; set; }
+        public int FirstMaxMP { get; set; }
         public Group Group { get; set; }
         public bool ReceivedInfo { get; set; }
         public int Index { get; protected set; }
