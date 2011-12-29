@@ -1131,7 +1131,7 @@ namespace TShockAPI
 
             if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
             {
-                return false;
+                return true;
             }
 
             return false;
