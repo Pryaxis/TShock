@@ -308,6 +308,11 @@ namespace TShockAPI
 
                     return true;
                 }
+                else
+                {
+                    TShock.Utils.ForceKick(args.Player, "Incorrect Account Password, use the password you created with /register");
+                    return true;
+                }
             }
             else if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
             {
@@ -319,9 +324,14 @@ namespace TShockAPI
                     NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
                     return true;
                 }
+                else
+                {
+                    TShock.Utils.ForceKick(args.Player, "Incorrect Server Password");
+                    return true;
+                }
             }
 
-            TShock.Utils.ForceKick(args.Player, "Incorrect Password");
+            TShock.Utils.ForceKick(args.Player, "Bad Password Attempt");
             return true;
         }
 
@@ -624,7 +634,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (tiletype == 127 && type == 0) //Ice Block Kill, Bypass range checks and such
+            if ((tiletype == 127 || Main.tileCut[tiletype]) && type == 0) //Ice Block Kill, Bypass range checks and such
             {
                 return false;
             }
