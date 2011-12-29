@@ -699,11 +699,7 @@ namespace TShockAPI
                 WorldGen.genRand = new Random();
             }
 
-            if (text.StartsWith("exit"))
-            {
-                TShock.Utils.ForceKickAll("Server shutting down!");
-            }
-            else if (text.StartsWith("playing") || text.StartsWith("/playing"))
+            if (text.StartsWith("playing") || text.StartsWith("/playing"))
             {
                 int count = 0;
                 foreach (TSPlayer player in Players)
@@ -717,18 +713,18 @@ namespace TShockAPI
                 }
                 TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
             }
-            else if (text.StartsWith("say "))
-            {
-                Log.Info(string.Format("Server said: {0}", text.Remove(0, 4)));
-            }
             else if (text == "autosave")
             {
                 Main.autoSave = Config.AutoSave = !Config.AutoSave;
                 Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
             }
-            else
+            else if (text.StartsWith("/"))
             {
                 Commands.HandleCommand(TSPlayer.Server, text);
+            }
+            else
+            {
+                Commands.HandleCommand(TSPlayer.Server, "/" + text);
             }
             e.Handled = true;
         }
