@@ -65,7 +65,7 @@ namespace TShockAPI
         Player FakePlayer;
         public bool RequestedSection = false;
         public DateTime LastDeath { get; set; }
-        public bool ForceSpawn = false;
+        public bool Dead = false;
         public string Country = "??";
         public int Difficulty;
         private string CacheIP;

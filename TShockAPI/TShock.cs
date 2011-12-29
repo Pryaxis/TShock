@@ -528,7 +528,7 @@ namespace TShockAPI
                     {
                         player.ProjectileThreshold = 0;
                     }
-                    if (player.ForceSpawn && (DateTime.Now - player.LastDeath).Seconds >= 3)
+                    if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= 3 && player.Difficulty != 2)
                     {
                         player.Spawn();
                     }
@@ -761,7 +761,7 @@ namespace TShockAPI
                 return;
             }
 
-            if ((player.State < 10 || player.ForceSpawn) && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
+            if ((player.State < 10 || player.Dead) && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
             {
                 e.Handled = true;
                 return;
@@ -1016,7 +1016,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Dirt Wand", player)) //Dirt Wand Projectile
+            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Dirt Rod", player)) //Dirt Rod Projectile
             {
                 return true;
             }

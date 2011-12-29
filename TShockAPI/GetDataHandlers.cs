@@ -597,7 +597,7 @@ namespace TShockAPI
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
                 }
-                if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Spikes", args.Player))
+                if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Spike", args.Player))
                 {
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
@@ -754,6 +754,11 @@ namespace TShockAPI
                         args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
                     }
                     args.Player.Spawn();
+                    return true;
+                }
+
+                if (args.Player.Dead)
+                {
                     return true;
                 }
 
@@ -959,9 +964,7 @@ namespace TShockAPI
             }
 
             args.Player.LastDeath = DateTime.Now;
-
-            if (args.Player.Difficulty != 2)
-                args.Player.ForceSpawn = true;
+            args.Player.Dead = true;
 
             return false;
         }
@@ -1107,7 +1110,7 @@ namespace TShockAPI
             else
                 args.Player.InitSpawn = true;
 
-            args.Player.ForceSpawn = false;
+            args.Player.Dead = false;
             return false;
         }
 

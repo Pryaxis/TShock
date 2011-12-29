@@ -193,7 +193,7 @@ namespace TShockAPI
         public string ForceTime = "normal";
 
         [Description("Disable/Revert a player if they exceed this number of tile kills within 1 second.")]
-        public int TileKillThreshold = 80;
+        public int TileKillThreshold = 60;
 
         [Description("Disable/Revert a player if they exceed this number of tile places within 1 second.")]
         public int TilePlaceThreshold = 20;
@@ -202,7 +202,7 @@ namespace TShockAPI
         public int TileLiquidThreshold = 15;
 
         [Description("Disable a player if they exceed this number of projectile new within 1 second.")]
-        public int ProjectileThreshold = 100;
+        public int ProjectileThreshold = 50;
 
         [Description("Require all players to register or login before being allowed to play.")]
         public bool RequireLogin = false;
