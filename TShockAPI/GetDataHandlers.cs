@@ -764,15 +764,11 @@ namespace TShockAPI
                     return true;
                 }
 
-                if(!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) && TShock.CheckPlayerCollision((int)(pos.X / 16f), (int)(pos.Y / 16f)))
+                if (!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) && Collision.SolidCollision(pos, args.TPlayer.width, args.TPlayer.height))
                 {
                     int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
                     int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
-                    if(args.Player.Teleport(lastTileX, lastTileY))
-                    {
-                        args.Player.SendMessage("You got stuck in a solid object, Sent to last good position.");
-                    }
-                    else
+                    if (!args.Player.Teleport(lastTileX, lastTileY + 3))
                     {
                         args.Player.SendMessage("You got stuck in a solid object, Sent to spawn point.");
                         args.Player.Spawn();

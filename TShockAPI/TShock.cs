@@ -1251,25 +1251,6 @@ namespace TShockAPI
             return check;
         }
 
-        public static bool CheckPlayerCollision(int x, int y)
-        {
-            if (x + 2 <= Main.maxTilesX && y <= Main.maxTilesY
-                && x >= 1 && y >= 3)
-            {
-                for (int i = x - 1; i < x + 2; i++)
-                {
-                    for (int h = y - 3; h < y; h++)
-                    {
-                        if (!Main.tile[i, h].active || !Main.tileSolid[Main.tile[i, h].type] || Main.tileSolidTop[Main.tile[i, h].type])
-                            return false;
-                    }
-                }
-            }
-            else
-                return false;
-            return true;
-        }
-
         public void OnConfigRead(ConfigFile file)
         {
             NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
