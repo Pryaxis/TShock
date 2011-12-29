@@ -175,6 +175,9 @@ namespace TShockAPI
 		
         [Description("User can see who plays on server")]
         public static readonly string candisplayplaying;
+
+        [Description("Bypass Server Side Inventory checks")]
+        public static readonly string bypassinventorychecks;
 		
 
         static Permissions()

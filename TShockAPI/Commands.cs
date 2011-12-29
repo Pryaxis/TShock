@@ -348,13 +348,21 @@ namespace TShockAPI
 
                     if (TShock.Config.ServerSideInventory)
                     {
-                        if (!TShock.CheckInventory(args.Player))
+                        if (args.Player.Group.HasPermission(Permissions.bypassinventorychecks))
+                        {
+                            args.Player.IgnoreActionsForInventory = false;
+                            args.Player.IgnoreActionsForClearingTrashCan = false;
+                        }
+                        else if (!TShock.CheckInventory(args.Player))
                         {
                             args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
                             args.Player.IgnoreActionsForClearingTrashCan = true;
                             return;
                         }
                     }
+
+                    if (args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
+                        args.Player.IgnoreActionsForCheating = "none";
                     
                     args.Player.Group = TShock.Utils.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Parameters[0];
