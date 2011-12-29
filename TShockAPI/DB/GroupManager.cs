@@ -21,13 +21,16 @@ namespace TShockAPI.DB
                 new SqlColumn("GroupName", MySqlDbType.VarChar, 32) { Primary = true },
                 new SqlColumn("Parent", MySqlDbType.VarChar, 32),
                 new SqlColumn("Commands", MySqlDbType.Text),
-                new SqlColumn("ChatColor", MySqlDbType.Text)
+                new SqlColumn("ChatColor", MySqlDbType.Text),
+                new SqlColumn("Prefix", MySqlDbType.Text),
+                new SqlColumn("Suffix", MySqlDbType.Text)
             );
             var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
             creator.EnsureExists(table);
 
             //Add default groups
-            AddGroup("default", "warp,canbuild");
+            AddGroup("guest", "canbuild,canregister,canlogin,canpartychat,cantalkinthird");
+            AddGroup("default", "guest", "warp,canchangepassword");
             AddGroup("newadmin", "default", "kick,editspawn,reservedslot");
             AddGroup("admin", "newadmin", "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
             AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
@@ -198,6 +201,9 @@ namespace TShockAPI.DB
                     {
                         string groupname = reader.Get<String>("GroupName");
                         var group = new Group(groupname);
+
+                        group.Prefix = reader.Get<String>("Prefix");
+                        group.Suffix= reader.Get<String>("Suffix");
 
                         //Inherit Given commands
                         String[] commands = reader.Get<String>("Commands").Split(',');

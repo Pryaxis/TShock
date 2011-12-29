@@ -37,13 +37,13 @@ namespace UnitTests
         [TestMethod]
         public void AddRegion()
         {
-            Region r = new Region( new Rectangle(100,100,100,100), "test", true, "test");
-            Assert.IsTrue(manager.AddRegion(r.Area.X, r.Area.Y, r.Area.Width, r.Area.Height, r.Name, r.WorldID));
+            Region r = new Region( new Rectangle(100,100,100,100), "test", "test", true, "test");
+            Assert.IsTrue(manager.AddRegion(r.Area.X, r.Area.Y, r.Area.Width, r.Area.Height, r.Name, r.Owner, r.WorldID));
             Assert.AreEqual(1, manager.Regions.Count);
             Assert.IsNotNull(manager.ZacksGetRegionByName("test"));
 
-            Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", true, "test");
-            manager.AddRegion(r2.Area.X, r2.Area.Y, r2.Area.Width, r2.Area.Height, r2.Name, r2.WorldID);
+            Region r2 = new Region(new Rectangle(201, 201, 100, 100), "test2", "test2", true, "test");
+            manager.AddRegion(r2.Area.X, r2.Area.Y, r2.Area.Width, r2.Area.Height, r2.Name, r2.Owner, r2.WorldID);
             Assert.AreEqual(2, manager.Regions.Count);
             Assert.IsNotNull(manager.ZacksGetRegionByName("test2"));
         }

@@ -37,7 +37,6 @@ ehthumbs.db
 Icon?
 Thumbs.db
 
-
 # Visual Studio shit Motherfucka #
 ##################################
 *.suo
@@ -51,5 +50,10 @@ Thumbs.db
 
 #Template Bat file#
 ###################
-myass.bat
+postbuild.bat
 /TestResults
+
+# JetBrains Crap #
+##################
+*.dotCover
+_ReSharper.*

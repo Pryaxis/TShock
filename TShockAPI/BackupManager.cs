@@ -66,6 +66,7 @@ namespace TShockAPI
 
                 TShock.Utils.Broadcast("Server map saving, potential lag spike");
                 Console.WriteLine("Backing up world...");
+
                 Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
                 SaveWorld.Start();
 

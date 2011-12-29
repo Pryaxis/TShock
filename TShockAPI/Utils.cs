@@ -468,6 +468,7 @@ namespace TShockAPI
                 {
                     foo = foo.Replace("%map%", Main.worldName);
                     foo = foo.Replace("%players%", GetPlayers());
+                    foo = SanitizeString(foo);
                     if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
                     {
                         string possibleColor = foo.Substring(0, 13);
@@ -508,7 +509,7 @@ namespace TShockAPI
                     return TShock.Groups.groups[i];
                 }
             }
-            return new Group("default");
+            return new Group(TShock.Config.DefaultGuestGroupName);
         }
 
         /// <summary>
@@ -610,6 +611,17 @@ namespace TShockAPI
                     return i;
             }
             return 1000;
+        }
+
+        public string SanitizeString(string str)
+        {
+            var returnstr = str.ToCharArray();
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!ValidString(str[i].ToString()))
+                    returnstr[i] = ' ';
+            }
+            return new string(returnstr);
         }
     }
 }
