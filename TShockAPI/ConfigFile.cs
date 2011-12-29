@@ -221,6 +221,9 @@ namespace TShockAPI
 
         [Description("Disable users from being able to login with account password when joining")]
         public bool DisableLoginBeforeJoin = false;
+
+        [Description("Allows users to register any username with /register")]
+        public bool AllowRegisterAnyUsername = false;
         
 		public static ConfigFile Read(string path)
         {
