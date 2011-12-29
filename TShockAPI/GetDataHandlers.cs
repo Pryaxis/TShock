@@ -286,7 +286,11 @@ namespace TShockAPI
 
                     if (TShock.Config.ServerSideInventory)
                     {
-                        if (!TShock.CheckInventory(args.Player))
+                        if (args.Player.Group.HasPermission(Permissions.bypassinventorychecks))
+                        {
+                            args.Player.IgnoreActionsForClearingTrashCan = false;
+                        }
+                        else if (!TShock.CheckInventory(args.Player))
                         {
                             args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
                             args.Player.IgnoreActionsForClearingTrashCan = true;
@@ -294,11 +298,17 @@ namespace TShockAPI
                         }
                     }
 
+                    if (args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
+                        args.Player.IgnoreActionsForCheating = "none";
+
+                    if (args.Player.Group.HasPermission(Permissions.usebanneditem))
+                        args.Player.IgnoreActionsForDisabledArmor = "none";
+
                     args.Player.Group = TShock.Utils.GetGroup(user.Group);
                     args.Player.UserAccountName = args.Player.Name;
                     args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
                     args.Player.IsLoggedIn = true;
-                    args.Player.IgnoreActionsForInventory = false;
+                    args.Player.IgnoreActionsForInventory = "none";
 
                     args.Player.PlayerData.CopyInventory(args.Player);
                     TShock.InventoryDB.InsertPlayerData(args.Player);
@@ -730,20 +740,24 @@ namespace TShockAPI
 
             if (!pos.Equals(args.Player.LastNetPosition))
             {
-                float distance = Vector2.Distance(new Vector2((pos.X / 16f), (pos.Y / 16f)), new Vector2(Main.spawnTileX, Main.spawnTileY));
+                float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f), new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
                 if (TShock.CheckIgnores(args.Player) && distance > TShock.Config.MaxRangeForDisabled)
                 {
                     if(args.Player.IgnoreActionsForCheating != "none")
                     {
                         args.Player.SendMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating, Color.Red);
                     }
+                    else if (args.Player.IgnoreActionsForDisabledArmor != "none")
+                    {
+                        args.Player.SendMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor, Color.Red);
+                    }
+                    else if (args.Player.IgnoreActionsForInventory != "none")
+                    {
+                        args.Player.SendMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory, Color.Red);
+                    }
                     else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
                     {
                         args.Player.SendMessage("Please /register or /login to play!", Color.Red);
-                    }
-                    else if (args.Player.IgnoreActionsForInventory)
-                    {
-                        args.Player.SendMessage("Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
                     }
                     else if (args.Player.IgnoreActionsForClearingTrashCan)
                     {
@@ -753,7 +767,12 @@ namespace TShockAPI
                     {
                         args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
                     }
-                    args.Player.Spawn();
+                    int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
+                    int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
+                    if (!args.Player.Teleport(lastTileX, lastTileY + 3))
+                    {
+                        args.Player.Spawn();
+                    }
                     return true;
                 }
 

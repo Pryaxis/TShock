@@ -70,8 +70,9 @@ namespace TShockAPI
         public int Difficulty;
         private string CacheIP;
         public bool IgnoreActionsForPvP = false;
-        public bool IgnoreActionsForInventory = false;
+        public string IgnoreActionsForInventory = "none";
         public string IgnoreActionsForCheating = "none";
+        public string IgnoreActionsForDisabledArmor = "none";
         public bool IgnoreActionsForClearingTrashCan = false;
         public PlayerData PlayerData;
         public bool RequiresPassword = false;
@@ -234,7 +235,7 @@ namespace TShockAPI
         {
             InitSpawn = false;
 
-
+            LastNetPosition = new Vector2(tilex * 16f, tiley * 16f);
             SendWorldInfo(tilex, tiley, true);
 
             //150 Should avoid all client crash errors
@@ -261,6 +262,7 @@ namespace TShockAPI
 
         public void Spawn()
         {
+            LastNetPosition = new Vector2(TPlayer.SpawnX*16f, TPlayer.SpawnX*16f);
             Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
         }
 
