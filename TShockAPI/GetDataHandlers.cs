@@ -246,7 +246,7 @@ namespace TShockAPI
         private static bool HandleConnecting(GetDataHandlerArgs args)
         {
             var user = TShock.Users.GetUserByName(args.Player.Name);
-            if (user != null)
+            if (user != null && !TShock.Config.DisableLoginBeforeJoin)
             {
                 args.Player.RequiresPassword = true;
                 NetMessage.SendData((int)PacketTypes.PasswordRequired, args.Player.Index);

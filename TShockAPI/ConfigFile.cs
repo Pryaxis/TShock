@@ -215,6 +215,9 @@ namespace TShockAPI
 
         [Description("Protect chests with region and build permissions")]
         public bool RegionProtectChests = false;
+
+        [Description("Disable users from being able to login with account password when joining")]
+        public bool DisableLoginBeforeJoin = false;
         
 		public static ConfigFile Read(string path)
         {
