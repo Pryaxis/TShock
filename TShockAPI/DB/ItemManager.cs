@@ -197,7 +197,6 @@ namespace TShockAPI.DB
         {
 			if (ply == null)
 				return false;
-			Console.WriteLine(ply.Group.Name);
 			return AllowedGroups.Contains(ply.Group.Name); // could add in the other permissions in this class instead of a giant if switch.
         }
 		

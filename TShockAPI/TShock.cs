@@ -399,8 +399,7 @@ namespace TShockAPI
                     AuthToken = Convert.ToInt32(tr.ReadLine());
                 }
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(
-                    "TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+                Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
                 Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
                 Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
                 Console.ForegroundColor = ConsoleColor.Gray;
