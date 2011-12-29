@@ -207,6 +207,9 @@ namespace TShockAPI
 
         [Description("The maximum distance players disabled for various reasons can move from")]
         public int MaxRangeForDisabled = 10;
+
+        [Description("Server password required to join server")]
+        public string ServerPassword = "";
         
 		public static ConfigFile Read(string path)
         {

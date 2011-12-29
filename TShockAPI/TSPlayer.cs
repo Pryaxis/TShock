@@ -74,6 +74,7 @@ namespace TShockAPI
         public string IgnoreActionsForCheating = "none";
         public bool IgnoreActionsForClearingTrashCan = false;
         public PlayerData PlayerData;
+        public bool RequiresPassword = false;
 
         public bool RealPlayer
         {
@@ -83,6 +84,13 @@ namespace TShockAPI
         {
             get { return RealPlayer && (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill); }
         }
+
+        public int State
+        {
+            get { return Netplay.serverSock[Index].state; }
+            set { Netplay.serverSock[Index].state = value; }
+        }
+
         public string IP
         {
             get

@@ -578,6 +578,20 @@ namespace TShockAPI
                 return;
             }
 
+            if (TShock.Geo != null)
+            {
+                var code = TShock.Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
+                player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
+                if (code == "A1")
+                {
+                    if (TShock.Config.KickProxyUsers)
+                    {
+                        TShock.Utils.ForceKick(player, "Proxies are not allowed");
+                        handler.Handled = true;
+                        return;
+                    }
+                }
+            }
             Players[ply] = player;
         }
 
@@ -613,6 +627,22 @@ namespace TShockAPI
                 handler.Handled = true;
                 return;
             }
+
+            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+
+            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({3}/{4})", player.Name, player.IP, player.Group.Name, player.Country, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+                TShock.Utils.Broadcast(player.Name + " has joined from the " + player.Country, Color.Yellow);
+            }
+            else
+            {
+                Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP, player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+                TShock.Utils.Broadcast(player.Name + " has joined", Color.Yellow);
+            }
+
+            if (TShock.Config.DisplayIPToAdmins)
+                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
         }
 
         private void OnLeave(int ply)
@@ -753,6 +783,18 @@ namespace TShockAPI
             }
 
             if (!player.ConnectionAlive)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (player.RequiresPassword && type != PacketTypes.PasswordSend)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (player.State < 10 && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
             {
                 e.Handled = true;
                 return;

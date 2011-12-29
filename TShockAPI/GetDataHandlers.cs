@@ -91,7 +91,8 @@ namespace TShockAPI
                 {PacketTypes.NpcSpecial, HandleSpecial},
                 {PacketTypes.PlayerAnimation, HandlePlayerAnimation},
                 {PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
-                {PacketTypes.PasswordSend, HandlePassword}
+                {PacketTypes.PasswordSend, HandlePassword},
+                {PacketTypes.ContinueConnecting2, HandleConnecting}
             };
         }
 
@@ -234,33 +235,89 @@ namespace TShockAPI
             args.TPlayer.name = name;
             args.Player.ReceivedInfo = true;
 
-            NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-
-            if (TShock.Config.EnableGeoIP && TShock.Geo != null)
-            {
-                var code = TShock.Geo.TryGetCountryCode(IPAddress.Parse(args.Player.IP));
-                args.Player.Country = code == null ? "N/A" : MaxMind.GeoIPCountry.GetCountryNameByCode(code);
-                if (code == "A1")
-                    if (TShock.Config.KickProxyUsers)
-                        TShock.Utils.Kick(args.Player, "Proxies are not allowed");
-                Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({3}/{4})", args.Player.Name, args.Player.IP, args.Player.Group.Name, args.Player.Country, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-                TShock.Utils.Broadcast(args.Player.Name + " has joined from the " + args.Player.Country, Color.Yellow);
-            }
-            else
-            {
-                Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", args.Player.Name, args.Player.IP, args.Player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-                TShock.Utils.Broadcast(args.Player.Name + " has joined", Color.Yellow);
-            }
-
-            if (TShock.Config.DisplayIPToAdmins)
-                TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
-
             return false;
+        }
+
+        private static bool HandleConnecting(GetDataHandlerArgs args)
+        {
+            var user = TShock.Users.GetUserByName(args.Player.Name);
+            if (user != null)
+            {
+                args.Player.RequiresPassword = true;
+                NetMessage.SendData((int)PacketTypes.PasswordRequired, args.Player.Index);
+                return true;
+            }
+            else if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
+            {
+                args.Player.RequiresPassword = true;
+                NetMessage.SendData((int)PacketTypes.PasswordRequired, args.Player.Index);
+                return true;
+            }
+
+            if (args.Player.State == 1)
+                args.Player.State = 2;
+            NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+            return true;
         }
 
         private static bool HandlePassword(GetDataHandlerArgs args)
         {
-            return false;
+            if (!args.Player.RequiresPassword)
+                return true;
+
+            string password = Encoding.ASCII.GetString(args.Data.ReadBytes((int)(args.Data.Length - args.Data.Position - 1)));
+            var user = TShock.Users.GetUserByName(args.Player.Name);
+            if (user != null)
+            {
+                string encrPass = TShock.Utils.HashPassword(password);
+                if (user.Password.ToUpper() == encrPass.ToUpper())
+                {
+                    args.Player.RequiresPassword = false;
+                    args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+
+                    if (args.Player.State == 1)
+                        args.Player.State = 2;
+                    NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+
+                    if (TShock.Config.ServerSideInventory)
+                    {
+                        if (!TShock.CheckInventory(args.Player))
+                        {
+                            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
+                            args.Player.IgnoreActionsForClearingTrashCan = true;
+                            return true;
+                        }
+                    }
+
+                    args.Player.Group = TShock.Utils.GetGroup(user.Group);
+                    args.Player.UserAccountName = args.Player.Name;
+                    args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+                    args.Player.IsLoggedIn = true;
+                    args.Player.IgnoreActionsForInventory = false;
+
+                    args.Player.PlayerData.CopyInventory(args.Player);
+                    TShock.InventoryDB.InsertPlayerData(args.Player);
+
+                    args.Player.SendMessage("Authenticated as " + args.Player + " successfully.", Color.LimeGreen);
+                    Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player);
+
+                    return true;
+                }
+            }
+            else if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
+            {
+                if(TShock.Config.ServerPassword == password)
+                {
+                    args.Player.RequiresPassword = false;
+                    if (args.Player.State == 1)
+                        args.Player.State = 2;
+                    NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+                    return true;
+                }
+            }
+
+            TShock.Utils.ForceKick(args.Player, "Incorrect Password");
+            return true;
         }
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
