@@ -427,16 +427,17 @@ namespace TShockAPI
         {
             try
             {
-                if (args.Parameters.Count == 2)
+                if (args.Parameters.Count == 1)
                 {
                     var user = new User();
-                    user.Name = args.Parameters[0];
-                    user.Password = args.Parameters[1];
+                    user.Name = args.Player.Name;
+                    user.Password = args.Parameters[0];
                     user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB.
 
                     if (TShock.Users.GetUserByName(user.Name) == null) // Cheap way of checking for existance of a user
                     {
                         args.Player.SendMessage("Account " + user.Name + " has been registered.", Color.Green);
+                        args.Player.SendMessage("Your password is " + user.Password);
                         TShock.Users.AddUser(user);
                         Log.ConsoleInfo(args.Player.Name + " registered an Account: " + user.Name);
                     }
@@ -449,7 +450,7 @@ namespace TShockAPI
                 }
                 else
                 {
-                    args.Player.SendMessage("Invalid syntax! Proper syntax: /register <username> <password>", Color.Red);
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /register <password>", Color.Red);
                 }
             }
             catch (UserManagerException ex)

@@ -303,18 +303,14 @@ namespace TShockAPI
                     args.Player.PlayerData.CopyInventory(args.Player);
                     TShock.InventoryDB.InsertPlayerData(args.Player);
 
-                    args.Player.SendMessage("Authenticated as " + args.Player + " successfully.", Color.LimeGreen);
-                    Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player);
-
+                    args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+                    Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player.Name);
                     return true;
                 }
-                else
-                {
-                    TShock.Utils.ForceKick(args.Player, "Incorrect Account Password, use the password you created with /register");
-                    return true;
-                }
+                TShock.Utils.ForceKick(args.Player, "Incorrect User Account Password");
+                return true;
             }
-            else if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
+            if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
             {
                 if(TShock.Config.ServerPassword == password)
                 {
@@ -324,11 +320,8 @@ namespace TShockAPI
                     NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
                     return true;
                 }
-                else
-                {
-                    TShock.Utils.ForceKick(args.Player, "Incorrect Server Password");
-                    return true;
-                }
+                TShock.Utils.ForceKick(args.Player, "Incorrect Server Password");
+                return true;
             }
 
             TShock.Utils.ForceKick(args.Player, "Bad Password Attempt");
