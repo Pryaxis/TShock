@@ -1136,7 +1136,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if (TShock.CheckTilePermission(args.Player, x, y))
+            if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
             {
                 return false;
             }
@@ -1170,7 +1170,7 @@ namespace TShockAPI
                 return false;
             }
 
-            if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
+            if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
             {
                 return false;
             }

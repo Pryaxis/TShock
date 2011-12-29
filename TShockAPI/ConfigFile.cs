@@ -209,6 +209,9 @@ namespace TShockAPI
 
         [Description("Server password required to join server")]
         public string ServerPassword = "";
+
+        [Description("Protect chests with region and build permissions")]
+        public bool RegionProtectChests = false;
         
 		public static ConfigFile Read(string path)
         {
