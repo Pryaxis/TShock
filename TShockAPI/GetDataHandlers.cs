@@ -738,39 +738,51 @@ namespace TShockAPI
             if (!pos.Equals(args.Player.LastNetPosition))
             {
                 float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f), new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
-                if (TShock.CheckIgnores(args.Player) && distance > TShock.Config.MaxRangeForDisabled)
+                if (TShock.CheckIgnores(args.Player))
                 {
-                    if(args.Player.IgnoreActionsForCheating != "none")
+                    if (distance > TShock.Config.MaxRangeForDisabled)
                     {
-                        args.Player.SendMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating, Color.Red);
+                        if (args.Player.IgnoreActionsForCheating != "none")
+                        {
+                            args.Player.SendMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating,
+                                                    Color.Red);
+                        }
+                        else if (args.Player.IgnoreActionsForDisabledArmor != "none")
+                        {
+                            args.Player.SendMessage(
+                                "Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor, Color.Red);
+                        }
+                        else if (args.Player.IgnoreActionsForInventory != "none")
+                        {
+                            args.Player.SendMessage(
+                                "Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory,
+                                Color.Red);
+                        }
+                        else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+                        {
+                            args.Player.SendMessage("Please /register or /login to play!", Color.Red);
+                        }
+                        else if (args.Player.IgnoreActionsForClearingTrashCan)
+                        {
+                            args.Player.SendMessage("You need to rejoin to ensure your trash can is cleared!", Color.Red);
+                        }
+                        else if (TShock.Config.PvPMode == "always" && !args.TPlayer.hostile)
+                        {
+                            args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!",
+                                                    Color.Red);
+                        }
+                        int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
+                        int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
+                        if (!args.Player.Teleport(lastTileX, lastTileY + 3))
+                        {
+                            args.Player.Spawn();
+                        }
+                        return true;
                     }
-                    else if (args.Player.IgnoreActionsForDisabledArmor != "none")
+                    else
                     {
-                        args.Player.SendMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor, Color.Red);
+                        return true;
                     }
-                    else if (args.Player.IgnoreActionsForInventory != "none")
-                    {
-                        args.Player.SendMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory, Color.Red);
-                    }
-                    else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
-                    {
-                        args.Player.SendMessage("Please /register or /login to play!", Color.Red);
-                    }
-                    else if (args.Player.IgnoreActionsForClearingTrashCan)
-                    {
-                        args.Player.SendMessage("You need to rejoin to ensure your trash can is cleared!", Color.Red);
-                    }
-                    else if (TShock.Config.PvPMode == "always" && !args.TPlayer.hostile)
-                    {
-                        args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
-                    }
-                    int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
-                    int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
-                    if (!args.Player.Teleport(lastTileX, lastTileY + 3))
-                    {
-                        args.Player.Spawn();
-                    }
-                    return true;
                 }
 
                 if (args.Player.Dead)
@@ -789,8 +801,8 @@ namespace TShockAPI
                     }
                     return true;
                 }
+                args.Player.LastNetPosition = pos;
             }
-            args.Player.LastNetPosition = pos;
 
             if ((control & 32) == 32)
             {

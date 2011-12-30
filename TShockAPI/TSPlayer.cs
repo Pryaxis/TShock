@@ -234,7 +234,6 @@ namespace TShockAPI
         {
             InitSpawn = false;
 
-            LastNetPosition = new Vector2(tilex * 16f, tiley * 16f);
             SendWorldInfo(tilex, tiley, true);
 
             //150 Should avoid all client crash errors
@@ -245,7 +244,6 @@ namespace TShockAPI
             {
                 InitSpawn = true;
                 SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
-                SendMessage("Warning, teleport failed due to being too close to the edge of the map.", Color.Red);
                 return false;
             }
 
@@ -261,7 +259,6 @@ namespace TShockAPI
 
         public void Spawn()
         {
-            LastNetPosition = new Vector2(TPlayer.SpawnX*16f, TPlayer.SpawnX*16f);
             Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
         }
 
