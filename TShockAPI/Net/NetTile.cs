@@ -23,116 +23,127 @@ using Terraria;
 
 namespace TShockAPI.Net
 {
-    public class NetTile : IPackable
-    {
-        public bool Active { get; set; }
-        public byte Type { get; set; }
-        public short FrameX { get; set; }
-        public short FrameY { get; set; }
-        public byte Wall { get; set; }
-        public byte Liquid { get; set; }
-        public bool Lava { get; set; }
-        public bool Wire { get; set; }
+	public class NetTile : IPackable
+	{
+		public bool Active { get; set; }
+		public byte Type { get; set; }
+		public short FrameX { get; set; }
+		public short FrameY { get; set; }
+		public byte Wall { get; set; }
+		public byte Liquid { get; set; }
+		public bool Lava { get; set; }
+		public bool Wire { get; set; }
 
-        public bool HasWall { get { return Wall > 0; } }
-        public bool HasLiquid { get { return Liquid > 0; } }
-        public bool FrameImportant { get { return Main.tileFrameImportant[Type]; } }
+		public bool HasWall
+		{
+			get { return Wall > 0; }
+		}
 
-        public NetTile()
-        {
-            Active = false;
-            Type = 0;
-            FrameX = -1;
-            FrameY = -1;
-            Wall = 0;
-            Liquid = 0;
-            Lava = false;
-            Wire = false;
-        }
+		public bool HasLiquid
+		{
+			get { return Liquid > 0; }
+		}
 
-        public NetTile(Stream stream)
-            : this()
-        {
-            Unpack(stream);
-        }
+		public bool FrameImportant
+		{
+			get { return Main.tileFrameImportant[Type]; }
+		}
 
-        public void Pack(Stream stream)
-        {
-            var flags = TileFlags.None;
+		public NetTile()
+		{
+			Active = false;
+			Type = 0;
+			FrameX = -1;
+			FrameY = -1;
+			Wall = 0;
+			Liquid = 0;
+			Lava = false;
+			Wire = false;
+		}
 
-            if (Active)
-                flags |= TileFlags.Active;
+		public NetTile(Stream stream)
+			: this()
+		{
+			Unpack(stream);
+		}
 
-            if (HasWall)
-                flags |= TileFlags.Wall;
+		public void Pack(Stream stream)
+		{
+			var flags = TileFlags.None;
 
-            if (HasLiquid)
-                flags |= TileFlags.Liquid;
+			if (Active)
+				flags |= TileFlags.Active;
 
-            if (Wire)
-                flags |= TileFlags.Wire;
+			if (HasWall)
+				flags |= TileFlags.Wall;
 
-            stream.WriteInt8((byte)flags);
+			if (HasLiquid)
+				flags |= TileFlags.Liquid;
 
-            if (Active)
-            {
-                stream.WriteInt8(Type);
-                if (FrameImportant)
-                {
-                    stream.WriteInt16(FrameX);
-                    stream.WriteInt16(FrameY);
-                }
-            }
+			if (Wire)
+				flags |= TileFlags.Wire;
 
-            if (HasWall)
-                stream.WriteInt8(Wall);
+			stream.WriteInt8((byte) flags);
 
-            if (HasLiquid)
-            {
-                stream.WriteInt8(Liquid);
-                stream.WriteBoolean(Lava);
-            }
-        }
+			if (Active)
+			{
+				stream.WriteInt8(Type);
+				if (FrameImportant)
+				{
+					stream.WriteInt16(FrameX);
+					stream.WriteInt16(FrameY);
+				}
+			}
 
-        public void Unpack(Stream stream)
-        {
-            var flags = (TileFlags)stream.ReadInt8();
+			if (HasWall)
+				stream.WriteInt8(Wall);
 
-            Active = flags.HasFlag(TileFlags.Active);
-            if (Active)
-            {
-                Type = stream.ReadInt8();
-                if (FrameImportant)
-                {
-                    FrameX = stream.ReadInt16();
-                    FrameY = stream.ReadInt16();
-                }
-            }
+			if (HasLiquid)
+			{
+				stream.WriteInt8(Liquid);
+				stream.WriteBoolean(Lava);
+			}
+		}
 
-            if (flags.HasFlag(TileFlags.Wall))
-            {
-                Wall = stream.ReadInt8();
-            }
+		public void Unpack(Stream stream)
+		{
+			var flags = (TileFlags) stream.ReadInt8();
 
-            if (flags.HasFlag(TileFlags.Liquid))
-            {
-                Liquid = stream.ReadInt8();
-                Lava = stream.ReadBoolean();
-            }
+			Active = flags.HasFlag(TileFlags.Active);
+			if (Active)
+			{
+				Type = stream.ReadInt8();
+				if (FrameImportant)
+				{
+					FrameX = stream.ReadInt16();
+					FrameY = stream.ReadInt16();
+				}
+			}
 
-            if (flags.HasFlag(TileFlags.Wire))
-                Wire = true;
-        }
-    }
+			if (flags.HasFlag(TileFlags.Wall))
+			{
+				Wall = stream.ReadInt8();
+			}
 
-    [Flags]
-    public enum TileFlags : byte
-    {
-        None = 0,
-        Active = 1,
-        Lighted = 2,
-        Wall = 4,
-        Liquid = 8,
-        Wire = 16
-    }
+			if (flags.HasFlag(TileFlags.Liquid))
+			{
+				Liquid = stream.ReadInt8();
+				Lava = stream.ReadBoolean();
+			}
+
+			if (flags.HasFlag(TileFlags.Wire))
+				Wire = true;
+		}
+	}
+
+	[Flags]
+	public enum TileFlags : byte
+	{
+		None = 0,
+		Active = 1,
+		Lighted = 2,
+		Wall = 4,
+		Liquid = 8,
+		Wire = 16
+	}
 }

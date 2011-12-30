@@ -24,81 +24,79 @@ using Terraria;
 
 namespace TShockAPI
 {
-    public class BackupManager
-    {
-        public string BackupPath { get; set; }
-        public int Interval { get; set; }
-        public int KeepFor { get; set; }
+	public class BackupManager
+	{
+		public string BackupPath { get; set; }
+		public int Interval { get; set; }
+		public int KeepFor { get; set; }
 
-        DateTime lastbackup = DateTime.UtcNow;
-        public BackupManager(string path)
-        {
-            BackupPath = path;
-        }
+		private DateTime lastbackup = DateTime.UtcNow;
 
-        public bool IsBackupTime
-        {
-            get
-            {
-                return (Interval > 0) && ((DateTime.UtcNow - lastbackup).TotalMinutes >= Interval);
-            }
-        }
+		public BackupManager(string path)
+		{
+			BackupPath = path;
+		}
 
-        public void Backup()
-        {
-            lastbackup = DateTime.UtcNow;
-            ThreadPool.QueueUserWorkItem(DoBackup);
-            ThreadPool.QueueUserWorkItem(DeleteOld);
-        }
+		public bool IsBackupTime
+		{
+			get { return (Interval > 0) && ((DateTime.UtcNow - lastbackup).TotalMinutes >= Interval); }
+		}
 
-        void DoBackup(object o)
-        {
-            try
-            {
-                string worldname = Main.worldPathName;
-                string name = Path.GetFileName(worldname);
+		public void Backup()
+		{
+			lastbackup = DateTime.UtcNow;
+			ThreadPool.QueueUserWorkItem(DoBackup);
+			ThreadPool.QueueUserWorkItem(DeleteOld);
+		}
 
-                Main.worldPathName = Path.Combine(BackupPath, string.Format("{0}.{1:dd.MM.yy-HH.mm.ss}.bak", name, DateTime.UtcNow));
+		private void DoBackup(object o)
+		{
+			try
+			{
+				string worldname = Main.worldPathName;
+				string name = Path.GetFileName(worldname);
 
-                string worldpath = Path.GetDirectoryName(Main.worldPathName);
-                if (worldpath != null && !Directory.Exists(worldpath))
-                    Directory.CreateDirectory(worldpath);
+				Main.worldPathName = Path.Combine(BackupPath, string.Format("{0}.{1:dd.MM.yy-HH.mm.ss}.bak", name, DateTime.UtcNow));
 
-                TShock.Utils.Broadcast("Server map saving, potential lag spike");
-                Console.WriteLine("Backing up world...");
+				string worldpath = Path.GetDirectoryName(Main.worldPathName);
+				if (worldpath != null && !Directory.Exists(worldpath))
+					Directory.CreateDirectory(worldpath);
 
-                Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-                SaveWorld.Start();
+				TShock.Utils.Broadcast("Server map saving, potential lag spike");
+				Console.WriteLine("Backing up world...");
 
-                while (SaveWorld.ThreadState == ThreadState.Running)
-                    Thread.Sleep(50);
-                Console.WriteLine("World backed up");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
+				Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
+				SaveWorld.Start();
 
-                Main.worldPathName = worldname;
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Backup failed");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Log.Error("Backup failed");
-                Log.Error(ex.ToString());
-            }
-        }
+				while (SaveWorld.ThreadState == ThreadState.Running)
+					Thread.Sleep(50);
+				Console.WriteLine("World backed up");
+				Console.ForegroundColor = ConsoleColor.Gray;
+				Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
 
-        void DeleteOld(object o)
-        {
-             if (KeepFor <= 0)
-                return;
-            foreach (var fi in new DirectoryInfo(BackupPath).GetFiles("*.bak"))
-            {
-                if ((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalMinutes > KeepFor)
-                {
-                    fi.Delete();
-                }
-            }
-        }
-    }
+				Main.worldPathName = worldname;
+			}
+			catch (Exception ex)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Backup failed");
+				Console.ForegroundColor = ConsoleColor.Gray;
+				Log.Error("Backup failed");
+				Log.Error(ex.ToString());
+			}
+		}
+
+		private void DeleteOld(object o)
+		{
+			if (KeepFor <= 0)
+				return;
+			foreach (var fi in new DirectoryInfo(BackupPath).GetFiles("*.bak"))
+			{
+				if ((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalMinutes > KeepFor)
+				{
+					fi.Delete();
+				}
+			}
+		}
+	}
 }

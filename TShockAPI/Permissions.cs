@@ -7,238 +7,193 @@ using System.Text;
 
 namespace TShockAPI
 {
-    public static class Permissions
-    {
-        //Permissions with blank descriptions basically means its described by the commands it gives access to.
+	public static class Permissions
+	{
+		//Permissions with blank descriptions basically means its described by the commands it gives access to.
 
-        [Description("")]
-        public static readonly string causeevents;
+		[Description("")] public static readonly string causeevents;
 
-        [Description("Required to be able to build (modify tiles and liquid)")]
-        public static readonly string canbuild;
+		[Description("Required to be able to build (modify tiles and liquid)")] public static readonly string canbuild;
 
-        [Description("")]
-        public static readonly string kill;
+		[Description("")] public static readonly string kill;
 
-        [Description("Allows you to use banned items")]
-        public static readonly string usebanneditem;
+		[Description("Allows you to use banned items")] public static readonly string usebanneditem;
 
-        [Description("Allows you to edit the spawn")]
-        public static readonly string editspawn;
+		[Description("Allows you to edit the spawn")] public static readonly string editspawn;
 
-        [Description("Prevents you from being kicked")]
-        public static readonly string immunetokick;
+		[Description("Prevents you from being kicked")] public static readonly string immunetokick;
 
-        [Description("Prevents you from being banned")]
-        public static readonly string immunetoban;
+		[Description("Prevents you from being banned")] public static readonly string immunetoban;
 
-        [Description("Prevents you from being reverted by kill tile abuse detection")]
-        public static readonly string ignorekilltiledetection;
+		[Description("Prevents you from being reverted by kill tile abuse detection")] public static readonly string
+			ignorekilltiledetection;
 
-        [Description("Prevents you from being reverted by place tile abuse detection")]
-        public static readonly string ignoreplacetiledetection;
+		[Description("Prevents you from being reverted by place tile abuse detection")] public static readonly string
+			ignoreplacetiledetection;
 
-        [Description("Prevents you from being disabled by liquid set abuse detection")]
-        public static readonly string ignoreliquidsetdetection;
+		[Description("Prevents you from being disabled by liquid set abuse detection")] public static readonly string
+			ignoreliquidsetdetection;
 
-        [Description("Prevents you from being disabled by liquid set abuse detection")]
-        public static readonly string ignoreprojectiledetection;
+		[Description("Prevents you from being disabled by liquid set abuse detection")] public static readonly string
+			ignoreprojectiledetection;
 
-        [Description("Prevents you from being reverted by no clip detection")]
-        public static readonly string ignorenoclipdetection;
+		[Description("Prevents you from being reverted by no clip detection")] public static readonly string
+			ignorenoclipdetection;
 
-        [Description("Prevents you from being disabled by stack hack detection")]
-        public static readonly string ignorestackhackdetection;
+		[Description("Prevents you from being disabled by stack hack detection")] public static readonly string
+			ignorestackhackdetection;
 
-        [Description("Prevents you from being kicked by hacked health detection")]
-        public static readonly string ignorestathackdetection;
+		[Description("Prevents you from being kicked by hacked health detection")] public static readonly string
+			ignorestathackdetection;
 
-        [Description("Specific log messages are sent to users with this permission")]
-        public static readonly string logs;
+		[Description("Specific log messages are sent to users with this permission")] public static readonly string logs;
 
-        [Description("Allows you to bypass the max slots for up to 5 slots above your max")]
-        public static readonly string reservedslot;
+		[Description("Allows you to bypass the max slots for up to 5 slots above your max")] public static readonly string
+			reservedslot;
 
-        [Description("User is notified when an update is available")]
-        public static readonly string maintenance;
+		[Description("User is notified when an update is available")] public static readonly string maintenance;
 
-        [Description("User can kick others")]
-        public static readonly string kick;
+		[Description("User can kick others")] public static readonly string kick;
 
-        [Description("User can ban others")]
-        public static readonly string ban;
+		[Description("User can ban others")] public static readonly string ban;
 
-        [Description("User can modify the whitelist")]
-        public static readonly string whitelist;
+		[Description("User can modify the whitelist")] public static readonly string whitelist;
 
-        [Description("User can spawn bosses")]
-        public static readonly string spawnboss;
+		[Description("User can spawn bosses")] public static readonly string spawnboss;
 
-        [Description("User can spawn npcs")]
-        public static readonly string spawnmob;
+		[Description("User can spawn npcs")] public static readonly string spawnmob;
 
-        [Description("User can teleport")]
-        public static readonly string tp;
+		[Description("User can teleport")] public static readonly string tp;
 
-        [Description("User can teleport people to them")]
-        public static readonly string tphere;
+		[Description("User can teleport people to them")] public static readonly string tphere;
 
-        [Description("User can use warps")]
-        public static readonly string warp;
+		[Description("User can use warps")] public static readonly string warp;
 
-        [Description("User can manage warps")]
-        public static readonly string managewarp;
+		[Description("User can manage warps")] public static readonly string managewarp;
 
-        [Description("User can manage item bans")]
-        public static readonly string manageitem;
+		[Description("User can manage item bans")] public static readonly string manageitem;
 
-        [Description("User can manage groups")]
-        public static readonly string managegroup;
+		[Description("User can manage groups")] public static readonly string managegroup;
 
-        [Description("User can edit sevrer configurations")]
-        public static readonly string cfg;
+		[Description("User can edit sevrer configurations")] public static readonly string cfg;
 
-        [Description("")]
-        public static readonly string time;
+		[Description("")] public static readonly string time;
 
-        [Description("")]
-        public static readonly string pvpfun;
+		[Description("")] public static readonly string pvpfun;
 
-        [Description("User can edit regions")]
-        public static readonly string manageregion;
+		[Description("User can edit regions")] public static readonly string manageregion;
 
-        [Description("Meant for super admins only")]
-        public static readonly string rootonly;
+		[Description("Meant for super admins only")] public static readonly string rootonly;
 
-        [Description("User can whisper to others")]
-        public static readonly string whisper;
+		[Description("User can whisper to others")] public static readonly string whisper;
 
-        [Description("")]
-        public static readonly string annoy;
+		[Description("")] public static readonly string annoy;
 
-        [Description("User can kill all enemy npcs")]
-        public static readonly string butcher;
+		[Description("User can kill all enemy npcs")] public static readonly string butcher;
 
-        [Description("User can spawn items")]
-        public static readonly string item;
+		[Description("User can spawn items")] public static readonly string item;
 
-        [Description("User can clear item drops.")]
-        public static readonly string clearitems;
+		[Description("User can clear item drops.")] public static readonly string clearitems;
 
-        [Description("")]
-        public static readonly string heal;
+		[Description("")] public static readonly string heal;
 
-        [Description("User can buff self")]
-        public static readonly string buff;
+		[Description("User can buff self")] public static readonly string buff;
 
-        [Description("User can buff other players")]
-        public static readonly string buffplayer;
+		[Description("User can buff other players")] public static readonly string buffplayer;
 
-        [Description("")]
-        public static readonly string grow;
+		[Description("")] public static readonly string grow;
 
-        [Description("User can change hardmode state.")]
-        public static readonly string hardmode;
+		[Description("User can change hardmode state.")] public static readonly string hardmode;
 
-        [Description("User can change the homes of NPCs.")]
-        public static readonly string movenpc;
+		[Description("User can change the homes of NPCs.")] public static readonly string movenpc;
 
-        [Description("Users can stop people from TPing to them")]
-        public static readonly string tpallow;
+		[Description("Users can stop people from TPing to them")] public static readonly string tpallow;
 
-        [Description("Users can tp to anyone")]
-        public static readonly string tpall;
+		[Description("Users can tp to anyone")] public static readonly string tpall;
 
-        [Description("Users can tp to people without showing a notice")]
-        public static readonly string tphide;
+		[Description("Users can tp to people without showing a notice")] public static readonly string tphide;
 
-        [Description("User can convert hallow into corruption and vice-versa")]
-        public static readonly string converthardmode;
+		[Description("User can convert hallow into corruption and vice-versa")] public static readonly string converthardmode;
 
-        [Description("User can mute and unmute users")]
-        public static readonly string mute;
-		
-        [Description("User can register account in game")]
-        public static readonly string canregister;
-		
-        [Description("User can login in game")]
-        public static readonly string canlogin;
-		
-        [Description("User can change password in game")]
-        public static readonly string canchangepassword;
-		
-        [Description("User can use party chat in game")]
-        public static readonly string canpartychat;
-		
-        [Description("User can talk in third person")]
-        public static readonly string cantalkinthird;
+		[Description("User can mute and unmute users")] public static readonly string mute;
 
-        [Description("Bypass Server Side Inventory checks")]
-        public static readonly string bypassinventorychecks;
+		[Description("User can register account in game")] public static readonly string canregister;
 
-        [Description("Allow unrestricted Send Tile Square usage, for client side world editing")] 
-        public static readonly string allowclientsideworldedit;
-		
+		[Description("User can login in game")] public static readonly string canlogin;
 
-        static Permissions()
-        {
-            foreach (var field in typeof(Permissions).GetFields())
-            {
-                field.SetValue(null, field.Name);
-            }
-        }
+		[Description("User can change password in game")] public static readonly string canchangepassword;
 
-        static List<Command> GetCommands(string perm)
-        {
-            if (Commands.ChatCommands.Count < 1)
-                Commands.InitCommands();
-            return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
-        }
+		[Description("User can use party chat in game")] public static readonly string canpartychat;
 
-        static void DumpDescriptions()
-        {
-            var sb = new StringBuilder();
-            foreach (var field in typeof(Permissions).GetFields())
-            {
-                var name = field.Name;
+		[Description("User can talk in third person")] public static readonly string cantalkinthird;
 
-                var descattr = field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
-                var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : "None";
+		[Description("Bypass Server Side Inventory checks")] public static readonly string bypassinventorychecks;
 
-                var commands = GetCommands(name);
-                foreach (var c in commands)
-                {
-                    for (var i = 0; i < c.Names.Count; i++)
-                    {
-                        c.Names[i] = "/" + c.Names[i];
-                    }
-                }
-                var strs = commands.Select(c => c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+		[Description("Allow unrestricted Send Tile Square usage, for client side world editing")] public static readonly
+			string allowclientsideworldedit;
 
-                sb.AppendLine("## <a name=\"{0}\">{0}  ".SFormat(name));
-                sb.AppendLine("**Description:** {0}  ".SFormat(desc));
-                sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
-                sb.AppendLine();
-            }
 
-            File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
-        }
-    }
+		static Permissions()
+		{
+			foreach (var field in typeof (Permissions).GetFields())
+			{
+				field.SetValue(null, field.Name);
+			}
+		}
 
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    public sealed class TodoAttribute : Attribute
-    {
-        public string Info { get; private set; }
+		private static List<Command> GetCommands(string perm)
+		{
+			if (Commands.ChatCommands.Count < 1)
+				Commands.InitCommands();
+			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
+		}
 
-        public TodoAttribute(string info)
-        {
-            Info = info;
+		private static void DumpDescriptions()
+		{
+			var sb = new StringBuilder();
+			foreach (var field in typeof (Permissions).GetFields())
+			{
+				var name = field.Name;
 
-        }
-        public TodoAttribute()
-        {
-        }
+				var descattr =
+					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
+				var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : "None";
 
-    }
+				var commands = GetCommands(name);
+				foreach (var c in commands)
+				{
+					for (var i = 0; i < c.Names.Count; i++)
+					{
+						c.Names[i] = "/" + c.Names[i];
+					}
+				}
+				var strs =
+					commands.Select(
+						c =>
+						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
+				sb.AppendLine("## <a name=\"{0}\">{0}  ".SFormat(name));
+				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
+				sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
+				sb.AppendLine();
+			}
+
+			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	public sealed class TodoAttribute : Attribute
+	{
+		public string Info { get; private set; }
+
+		public TodoAttribute(string info)
+		{
+			Info = info;
+		}
+
+		public TodoAttribute()
+		{
+		}
+	}
 }

@@ -8,13 +8,13 @@ namespace TShockAPI
 {
 	public class StatTracker
 	{
-		Utils Utils = TShock.Utils;
+		private Utils Utils = TShock.Utils;
 		public DateTime lastcheck = DateTime.MinValue;
-		readonly int checkinFrequency = 5;
+		private readonly int checkinFrequency = 5;
 
 		public void checkin()
 		{
-            if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
+			if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
 			{
 				ThreadPool.QueueUserWorkItem(callHome);
 				lastcheck = DateTime.Now;
@@ -51,17 +51,23 @@ namespace TShockAPI
 			using (var client = new WebClient())
 			{
 				client.Headers.Add("user-agent",
-								   "TShock (" + TShock.VersionNum + ")");
+				                   "TShock (" + TShock.VersionNum + ")");
 				try
 				{
 					string response;
 					if (TShock.Config.DisablePlayerCountReporting)
 					{
-                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=0");
+						response =
+							client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" +
+							                      Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort +
+							                      "&plcount=0");
 					}
 					else
 					{
-                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
+						response =
+							client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" +
+							                      Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort +
+							                      "&plcount=" + TShock.Utils.ActivePlayers());
 					}
 					Log.ConsoleInfo("Stat Tracker: " + response + "\n");
 				}

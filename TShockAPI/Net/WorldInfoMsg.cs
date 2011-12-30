@@ -23,54 +23,54 @@ using System.Text;
 
 namespace TShockAPI.Net
 {
-    [Flags]
-    public enum WorldInfoFlag : byte
-    {
-        None = 0,
-        OrbSmashed = 1,
-        DownedBoss1 = 2,
-        DownedBoss2 = 4,
-        DownedBoss3 = 8,
-        HardMode = 16,
-        DownedClown = 32
-    }
-    public class WorldInfoMsg : BaseMsg
-    {
-        public int Time { get; set; }
-        public bool DayTime { get; set; }
-        public byte MoonPhase { get; set; }
-        public bool BloodMoon { get; set; }
-        public int MaxTilesX { get; set; }
-        public int MaxTilesY { get; set; }
-        public int SpawnX { get; set; }
-        public int SpawnY { get; set; }
-        public int WorldSurface { get; set; }
-        public int RockLayer { get; set; }
-        public int WorldID { get; set; }
-        public WorldInfoFlag WorldFlags { get; set; }
-        public string WorldName { get; set; }
-        public override PacketTypes ID
-        {
-            get
-            {
-                return PacketTypes.WorldInfo;
-            }
-        }
-        public override void Pack(Stream stream)
-        {
-            stream.WriteInt32(Time);
-            stream.WriteBoolean(DayTime);
-            stream.WriteInt8(MoonPhase);
-            stream.WriteBoolean(BloodMoon);
-            stream.WriteInt32(MaxTilesX);
-            stream.WriteInt32(MaxTilesY);
-            stream.WriteInt32(SpawnX);
-            stream.WriteInt32(SpawnY);
-            stream.WriteInt32(WorldSurface);
-            stream.WriteInt32(RockLayer);
-            stream.WriteInt32(WorldID);
-            stream.WriteInt8((byte)WorldFlags);
-            stream.WriteBytes(Encoding.ASCII.GetBytes(WorldName));
-        }
-    }
+	[Flags]
+	public enum WorldInfoFlag : byte
+	{
+		None = 0,
+		OrbSmashed = 1,
+		DownedBoss1 = 2,
+		DownedBoss2 = 4,
+		DownedBoss3 = 8,
+		HardMode = 16,
+		DownedClown = 32
+	}
+
+	public class WorldInfoMsg : BaseMsg
+	{
+		public int Time { get; set; }
+		public bool DayTime { get; set; }
+		public byte MoonPhase { get; set; }
+		public bool BloodMoon { get; set; }
+		public int MaxTilesX { get; set; }
+		public int MaxTilesY { get; set; }
+		public int SpawnX { get; set; }
+		public int SpawnY { get; set; }
+		public int WorldSurface { get; set; }
+		public int RockLayer { get; set; }
+		public int WorldID { get; set; }
+		public WorldInfoFlag WorldFlags { get; set; }
+		public string WorldName { get; set; }
+
+		public override PacketTypes ID
+		{
+			get { return PacketTypes.WorldInfo; }
+		}
+
+		public override void Pack(Stream stream)
+		{
+			stream.WriteInt32(Time);
+			stream.WriteBoolean(DayTime);
+			stream.WriteInt8(MoonPhase);
+			stream.WriteBoolean(BloodMoon);
+			stream.WriteInt32(MaxTilesX);
+			stream.WriteInt32(MaxTilesY);
+			stream.WriteInt32(SpawnX);
+			stream.WriteInt32(SpawnY);
+			stream.WriteInt32(WorldSurface);
+			stream.WriteInt32(RockLayer);
+			stream.WriteInt32(WorldID);
+			stream.WriteInt8((byte) WorldFlags);
+			stream.WriteBytes(Encoding.ASCII.GetBytes(WorldName));
+		}
+	}
 }

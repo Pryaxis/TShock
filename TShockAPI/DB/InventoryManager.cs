@@ -22,81 +22,86 @@ using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
-    public class InventoryManager
-    {
-        public IDbConnection database;
+	public class InventoryManager
+	{
+		public IDbConnection database;
 
-        public InventoryManager(IDbConnection db)
-        {
-            database = db;
+		public InventoryManager(IDbConnection db)
+		{
+			database = db;
 
-            var table = new SqlTable("Inventory",
-                new SqlColumn("Account", MySqlDbType.Int32) { Primary = true },
-                new SqlColumn("MaxHealth", MySqlDbType.Int32),
-                new SqlColumn("MaxMana", MySqlDbType.Int32),
-                new SqlColumn("Inventory", MySqlDbType.Text)
-            );
-            var creator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
-            creator.EnsureExists(table);
-        }
+			var table = new SqlTable("Inventory",
+			                         new SqlColumn("Account", MySqlDbType.Int32) {Primary = true},
+			                         new SqlColumn("MaxHealth", MySqlDbType.Int32),
+			                         new SqlColumn("MaxMana", MySqlDbType.Int32),
+			                         new SqlColumn("Inventory", MySqlDbType.Text)
+				);
+			var creator = new SqlTableCreator(db,
+			                                  db.GetSqlType() == SqlType.Sqlite
+			                                  	? (IQueryBuilder) new SqliteQueryCreator()
+			                                  	: new MysqlQueryCreator());
+			creator.EnsureExists(table);
+		}
 
-        public PlayerData GetPlayerData(TSPlayer player, int acctid)
-        {
-            PlayerData playerData = new PlayerData(player);
+		public PlayerData GetPlayerData(TSPlayer player, int acctid)
+		{
+			PlayerData playerData = new PlayerData(player);
 
-            try
-            {
-                using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0", acctid))
-                {
-                    if (reader.Read())
-                    {
-                        playerData.exists = true;
-                        playerData.maxHealth = reader.Get<int>("MaxHealth");
-                        playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
-                        return playerData;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-            }
+			try
+			{
+				using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0", acctid))
+				{
+					if (reader.Read())
+					{
+						playerData.exists = true;
+						playerData.maxHealth = reader.Get<int>("MaxHealth");
+						playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
+						return playerData;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
 
-            return playerData;
-        }
+			return playerData;
+		}
 
-        public bool InsertPlayerData(TSPlayer player)
-        {
-            PlayerData playerData = player.PlayerData;
+		public bool InsertPlayerData(TSPlayer player)
+		{
+			PlayerData playerData = player.PlayerData;
 
-            if (!player.IsLoggedIn)
-                return false;
+			if (!player.IsLoggedIn)
+				return false;
 
-            if (!GetPlayerData(player, player.UserID).exists)
-            {
-                try
-                {
-                    database.Query("INSERT INTO Inventory (Account, MaxHealth, Inventory) VALUES (@0, @1, @2);", player.UserID, playerData.maxHealth, NetItem.ToString(playerData.inventory));
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
-                }
-            }
-            else
-            {
-                try
-                {
-                    database.Query("UPDATE Inventory SET MaxHealth = @0, Inventory = @1 WHERE Account = @2;", playerData.maxHealth, NetItem.ToString(playerData.inventory), player.UserID);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
-                }
-            }
-            return false;
-        }
-    }
+			if (!GetPlayerData(player, player.UserID).exists)
+			{
+				try
+				{
+					database.Query("INSERT INTO Inventory (Account, MaxHealth, Inventory) VALUES (@0, @1, @2);", player.UserID,
+					               playerData.maxHealth, NetItem.ToString(playerData.inventory));
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
+			}
+			else
+			{
+				try
+				{
+					database.Query("UPDATE Inventory SET MaxHealth = @0, Inventory = @1 WHERE Account = @2;", playerData.maxHealth,
+					               NetItem.ToString(playerData.inventory), player.UserID);
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
+			}
+			return false;
+		}
+	}
 }

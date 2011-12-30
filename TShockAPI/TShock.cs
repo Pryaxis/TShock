@@ -44,385 +44,390 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-    [APIVersion(1, 10)]
-    public class TShock : TerrariaPlugin
-    {
+	[APIVersion(1, 10)]
+	public class TShock : TerrariaPlugin
+	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-        public static readonly string VersionCodename = "Zidonuke fixin' what Redigit doesn't";
+		public static readonly string VersionCodename = "This code is a mess";
 
-        public static string SavePath = "tshock";
+		public static string SavePath = "tshock";
 
-        public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
-        public static BanManager Bans;
-        public static WarpManager Warps;
-        public static RegionManager Regions;
-        public static BackupManager Backups;
-        public static GroupManager Groups;
-        public static UserManager Users;
-        public static ItemManager Itembans;
-        public static RemeberedPosManager RememberedPos;
-        public static InventoryManager InventoryDB;
-        public static ConfigFile Config { get; set; }
-        public static IDbConnection DB;
-        public static bool OverridePort;
-        public static PacketBufferer PacketBuffer;
-        public static GeoIPCountry Geo;
-        public static SecureRest RestApi;
-        public static RestManager RestManager;
+		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
+		public static BanManager Bans;
+		public static WarpManager Warps;
+		public static RegionManager Regions;
+		public static BackupManager Backups;
+		public static GroupManager Groups;
+		public static UserManager Users;
+		public static ItemManager Itembans;
+		public static RemeberedPosManager RememberedPos;
+		public static InventoryManager InventoryDB;
+		public static ConfigFile Config { get; set; }
+		public static IDbConnection DB;
+		public static bool OverridePort;
+		public static PacketBufferer PacketBuffer;
+		public static GeoIPCountry Geo;
+		public static SecureRest RestApi;
+		public static RestManager RestManager;
 		public static Utils Utils = new Utils();
 		public static StatTracker StatTracker = new StatTracker();
-        /// <summary>
-        /// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
-        /// </summary>
-        public static event Action Initialized;
+
+		/// <summary>
+		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
+		/// </summary>
+		public static event Action Initialized;
 
 
-        public override Version Version
-        {
-            get { return VersionNum; }
-        }
+		public override Version Version
+		{
+			get { return VersionNum; }
+		}
 
-        public override string Name
-        {
-            get { return "TShock"; }
-        }
+		public override string Name
+		{
+			get { return "TShock"; }
+		}
 
-        public override string Author
-        {
-            get { return "The Nyx Team"; }
-        }
+		public override string Author
+		{
+			get { return "The Nyx Team"; }
+		}
 
-        public override string Description
-        {
-            get { return "The administration modification of the future."; }
-        }
+		public override string Description
+		{
+			get { return "The administration modification of the future."; }
+		}
 
-        public TShock(Main game)
-            : base(game)
-        {
-            Config = new ConfigFile();
-            Order = 0;
-        }
+		public TShock(Main game)
+			: base(game)
+		{
+			Config = new ConfigFile();
+			Order = 0;
+		}
 
 
+		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
+		public override void Initialize()
+		{
+			HandleCommandLine(Environment.GetCommandLineArgs());
 
-        [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
-        public override void Initialize()
-        {
-            HandleCommandLine(Environment.GetCommandLineArgs());
-
-            if (!Directory.Exists(SavePath))
-                Directory.CreateDirectory(SavePath);
+			if (!Directory.Exists(SavePath))
+				Directory.CreateDirectory(SavePath);
 
 #if DEBUG
             Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
-            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
+			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            try
-            {
-                if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-                {
-                    Log.ConsoleInfo("TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
-                    File.Delete(Path.Combine(SavePath, "tshock.pid"));
-                }
-                File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
+			try
+			{
+				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+				{
+					Log.ConsoleInfo(
+						"TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
+					File.Delete(Path.Combine(SavePath, "tshock.pid"));
+				}
+				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
 
-                ConfigFile.ConfigRead += OnConfigRead;
-                FileTools.SetupConfig();
+				ConfigFile.ConfigRead += OnConfigRead;
+				FileTools.SetupConfig();
 
-                HandleCommandLine_Port(Environment.GetCommandLineArgs());
+				HandleCommandLine_Port(Environment.GetCommandLineArgs());
 
-                if (Config.StorageType.ToLower() == "sqlite")
-                {
-                    string sql = Path.Combine(SavePath, "tshock.sqlite");
-                    DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
-                }
-                else if (Config.StorageType.ToLower() == "mysql")
-                {
-                    try
-                    {
-                        var hostport = Config.MySqlHost.Split(':');
-                        DB = new MySqlConnection();
-                        DB.ConnectionString =
-                            String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
-                                          hostport[0],
-                                          hostport.Length > 1 ? hostport[1] : "3306",
-                                          Config.MySqlDbName,
-                                          Config.MySqlUsername,
-                                          Config.MySqlPassword
-                                );
-                    }
-                    catch (MySqlException ex)
-                    {
-                        Log.Error(ex.ToString());
-                        throw new Exception("MySql not setup correctly");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Invalid storage type");
-                }
+				if (Config.StorageType.ToLower() == "sqlite")
+				{
+					string sql = Path.Combine(SavePath, "tshock.sqlite");
+					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+				}
+				else if (Config.StorageType.ToLower() == "mysql")
+				{
+					try
+					{
+						var hostport = Config.MySqlHost.Split(':');
+						DB = new MySqlConnection();
+						DB.ConnectionString =
+							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
+							              hostport[0],
+							              hostport.Length > 1 ? hostport[1] : "3306",
+							              Config.MySqlDbName,
+							              Config.MySqlUsername,
+							              Config.MySqlPassword
+								);
+					}
+					catch (MySqlException ex)
+					{
+						Log.Error(ex.ToString());
+						throw new Exception("MySql not setup correctly");
+					}
+				}
+				else
+				{
+					throw new Exception("Invalid storage type");
+				}
 
-                Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-                Backups.KeepFor = Config.BackupKeepFor;
-                Backups.Interval = Config.BackupInterval;
-                Bans = new BanManager(DB);
-                Warps = new WarpManager(DB);
-                Users = new UserManager(DB);
-                Groups = new GroupManager(DB);
-                Groups.LoadPermisions();
-                Regions = new RegionManager(DB);
-                Itembans = new ItemManager(DB);
-                RememberedPos = new RemeberedPosManager(DB);
-                InventoryDB = new InventoryManager(DB);
-                RestApi = new SecureRest(Netplay.serverListenIP, 8080);
-                RestApi.Verify += RestApi_Verify;
-                RestApi.Port = Config.RestApiPort;
-                RestManager = new RestManager(RestApi);
-                RestManager.RegisterRestfulCommands();
+				Backups = new BackupManager(Path.Combine(SavePath, "backups"));
+				Backups.KeepFor = Config.BackupKeepFor;
+				Backups.Interval = Config.BackupInterval;
+				Bans = new BanManager(DB);
+				Warps = new WarpManager(DB);
+				Users = new UserManager(DB);
+				Groups = new GroupManager(DB);
+				Groups.LoadPermisions();
+				Regions = new RegionManager(DB);
+				Itembans = new ItemManager(DB);
+				RememberedPos = new RemeberedPosManager(DB);
+				InventoryDB = new InventoryManager(DB);
+				RestApi = new SecureRest(Netplay.serverListenIP, 8080);
+				RestApi.Verify += RestApi_Verify;
+				RestApi.Port = Config.RestApiPort;
+				RestManager = new RestManager(RestApi);
+				RestManager.RegisterRestfulCommands();
 
-                var geoippath = Path.Combine(SavePath, "GeoIP.dat");
-                if (Config.EnableGeoIP && File.Exists(geoippath))
-                    Geo = new GeoIPCountry(geoippath);
+				var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+				if (Config.EnableGeoIP && File.Exists(geoippath))
+					Geo = new GeoIPCountry(geoippath);
 
-                Console.Title = string.Format("TerrariaShock Version {0} ({1})", Version, VersionCodename);
-                Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
+				Console.Title = string.Format("TerrariaShock Version {0} ({1})", Version, VersionCodename);
+				Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
 
-                GameHooks.PostInitialize += OnPostInit;
-                GameHooks.Update += OnUpdate;
-                ServerHooks.Connect += OnConnect;
-                ServerHooks.Join += OnJoin;
-                ServerHooks.Leave += OnLeave;
-                ServerHooks.Chat += OnChat;
-                ServerHooks.Command += ServerHooks_OnCommand;
-                NetHooks.GetData += OnGetData;
-                NetHooks.SendData += NetHooks_SendData;
-                NetHooks.GreetPlayer += OnGreetPlayer;
-                NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-                ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
-                WorldHooks.StartHardMode += OnStartHardMode;
+				GameHooks.PostInitialize += OnPostInit;
+				GameHooks.Update += OnUpdate;
+				ServerHooks.Connect += OnConnect;
+				ServerHooks.Join += OnJoin;
+				ServerHooks.Leave += OnLeave;
+				ServerHooks.Chat += OnChat;
+				ServerHooks.Command += ServerHooks_OnCommand;
+				NetHooks.GetData += OnGetData;
+				NetHooks.SendData += NetHooks_SendData;
+				NetHooks.GreetPlayer += OnGreetPlayer;
+				NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
+				WorldHooks.StartHardMode += OnStartHardMode;
 
-                GetDataHandlers.InitGetDataHandler();
-                Commands.InitCommands();
-                //RconHandler.StartThread();
+				GetDataHandlers.InitGetDataHandler();
+				Commands.InitCommands();
+				//RconHandler.StartThread();
 
-                if (Config.BufferPackets)
-                    PacketBuffer = new PacketBufferer();
+				if (Config.BufferPackets)
+					PacketBuffer = new PacketBufferer();
 
-                Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
-                Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
+				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
+				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
-                if (Initialized != null)
-                    Initialized();
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Fatal Startup Exception");
-                Log.Error(ex.ToString());
-                Environment.Exit(1);
-            }
+				if (Initialized != null)
+					Initialized();
+			}
+			catch (Exception ex)
+			{
+				Log.Error("Fatal Startup Exception");
+				Log.Error(ex.ToString());
+				Environment.Exit(1);
+			}
+		}
 
-        }
 
-    	
+		private RestObject RestApi_Verify(string username, string password)
+		{
+			var userAccount = Users.GetUserByName(username);
+			if (userAccount == null)
+			{
+				return new RestObject("401")
+				       	{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
+			}
 
-    	RestObject RestApi_Verify(string username, string password)
-        {
-            var userAccount = Users.GetUserByName(username);
-            if (userAccount == null)
-            {
-                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
-            }
+			if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
+			{
+				return new RestObject("401")
+				       	{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
+			}
 
-            if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
-            {
-                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
-            }
+			if (!Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+			{
+				return new RestObject("403")
+				       	{
+				       		Error =
+				       			"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
+				       	};
+			}
 
-            if (!Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
-            {
-                return new RestObject("403") { Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)" };
-            }
+			return new RestObject("200") {Response = "Successful login"}; //Maybe return some user info too?
+		}
 
-            return new RestObject("200") { Response = "Successful login" }; //Maybe return some user info too?
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
 				if (Geo != null)
 				{
-					Geo.Dispose();					
+					Geo.Dispose();
 				}
-                GameHooks.PostInitialize -= OnPostInit;
-                GameHooks.Update -= OnUpdate;
-                ServerHooks.Join -= OnJoin;
-                ServerHooks.Leave -= OnLeave;
-                ServerHooks.Chat -= OnChat;
-                ServerHooks.Command -= ServerHooks_OnCommand;
-                NetHooks.GetData -= OnGetData;
-                NetHooks.SendData -= NetHooks_SendData;
-                NetHooks.GreetPlayer -= OnGreetPlayer;
-                NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-                ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
-                if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-                {
-                    File.Delete(Path.Combine(SavePath, "tshock.pid"));
-                }
-                RestApi.Dispose();
-                Log.Dispose();
-            }
+				GameHooks.PostInitialize -= OnPostInit;
+				GameHooks.Update -= OnUpdate;
+				ServerHooks.Join -= OnJoin;
+				ServerHooks.Leave -= OnLeave;
+				ServerHooks.Chat -= OnChat;
+				ServerHooks.Command -= ServerHooks_OnCommand;
+				NetHooks.GetData -= OnGetData;
+				NetHooks.SendData -= NetHooks_SendData;
+				NetHooks.GreetPlayer -= OnGreetPlayer;
+				NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
+				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+				{
+					File.Delete(Path.Combine(SavePath, "tshock.pid"));
+				}
+				RestApi.Dispose();
+				Log.Dispose();
+			}
 
-            base.Dispose(disposing);
-        }
+			base.Dispose(disposing);
+		}
 
-        /// <summary>
-        /// Handles exceptions that we didn't catch or that Red fucked up
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Log.Error(e.ExceptionObject.ToString());
+		/// <summary>
+		/// Handles exceptions that we didn't catch or that Red fucked up
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			Log.Error(e.ExceptionObject.ToString());
 
-            if (e.ExceptionObject.ToString().Contains("Terraria.Netplay.ListenForClients") ||
-                e.ExceptionObject.ToString().Contains("Terraria.Netplay.ServerLoop"))
-            {
-                var sb = new List<string>();
-                for (int i = 0; i < Netplay.serverSock.Length; i++)
-                {
-                    if (Netplay.serverSock[i] == null)
-                    {
-                        sb.Add("Sock[" + i + "]");
-                    }
-                    else if (Netplay.serverSock[i].tcpClient == null)
-                    {
-                        sb.Add("Tcp[" + i + "]");
-                    }
-                }
-                Log.Error(string.Join(", ", sb));
-            }
+			if (e.ExceptionObject.ToString().Contains("Terraria.Netplay.ListenForClients") ||
+			    e.ExceptionObject.ToString().Contains("Terraria.Netplay.ServerLoop"))
+			{
+				var sb = new List<string>();
+				for (int i = 0; i < Netplay.serverSock.Length; i++)
+				{
+					if (Netplay.serverSock[i] == null)
+					{
+						sb.Add("Sock[" + i + "]");
+					}
+					else if (Netplay.serverSock[i].tcpClient == null)
+					{
+						sb.Add("Tcp[" + i + "]");
+					}
+				}
+				Log.Error(string.Join(", ", sb));
+			}
 
-            if (e.IsTerminating)
-            {
-                if (Main.worldPathName != null && Config.SaveWorldOnCrash)
-                {
-                    Main.worldPathName += ".crash";
-                    WorldGen.saveWorld();
-                }
-            }
-        }
+			if (e.IsTerminating)
+			{
+				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
+				{
+					Main.worldPathName += ".crash";
+					WorldGen.saveWorld();
+				}
+			}
+		}
 
-        private void HandleCommandLine(string[] parms)
-        {
-            for (int i = 0; i < parms.Length; i++)
-            {
-                if (parms[i].ToLower() == "-ip")
-                {
-                    IPAddress ip;
-                    if (IPAddress.TryParse(parms[++i], out ip))
-                    {
-                        Netplay.serverListenIP = ip;
-                        Console.Write("Using IP: {0}", ip);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Bad IP: {0}", parms[i]);
-                    }
-                }
-                if (parms[i].ToLower() == "-configpath")
-                {
-                    var path = parms[++i];
-                    if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                    {
-                        SavePath = path;
-                        Log.ConsoleInfo("Config path has been set to " + path);
-                    }
-                }
-                if (parms[i].ToLower() == "-worldpath")
-                {
-                    var path = parms[++i];
-                    if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                    {
-                        Main.WorldPath = path;
-                        Log.ConsoleInfo("World path has been set to " + path);
-                    }
-                }
-            }
-        }
+		private void HandleCommandLine(string[] parms)
+		{
+			for (int i = 0; i < parms.Length; i++)
+			{
+				if (parms[i].ToLower() == "-ip")
+				{
+					IPAddress ip;
+					if (IPAddress.TryParse(parms[++i], out ip))
+					{
+						Netplay.serverListenIP = ip;
+						Console.Write("Using IP: {0}", ip);
+					}
+					else
+					{
+						Console.WriteLine("Bad IP: {0}", parms[i]);
+					}
+				}
+				if (parms[i].ToLower() == "-configpath")
+				{
+					var path = parms[++i];
+					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+					{
+						SavePath = path;
+						Log.ConsoleInfo("Config path has been set to " + path);
+					}
+				}
+				if (parms[i].ToLower() == "-worldpath")
+				{
+					var path = parms[++i];
+					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+					{
+						Main.WorldPath = path;
+						Log.ConsoleInfo("World path has been set to " + path);
+					}
+				}
+			}
+		}
 
-        private void HandleCommandLine_Port(string[] parms)
-        {
-            for (int i = 0; i < parms.Length; i++)
-            {
-                if (parms[i].ToLower() == "-port")
-                {
-                    int port = Convert.ToInt32(parms[++i]);
-                    Netplay.serverPort = port;
-                    Config.ServerPort = port;
-                    OverridePort = true;
-                    Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
-                }
-            }
-        }
+		private void HandleCommandLine_Port(string[] parms)
+		{
+			for (int i = 0; i < parms.Length; i++)
+			{
+				if (parms[i].ToLower() == "-port")
+				{
+					int port = Convert.ToInt32(parms[++i]);
+					Netplay.serverPort = port;
+					Config.ServerPort = port;
+					OverridePort = true;
+					Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
+				}
+			}
+		}
 
-        /*
+		/*
          * Hooks:
          * 
          */
 
-        public static int AuthToken = -1;
+		public static int AuthToken = -1;
 
-        private void OnPostInit()
-        {
-            if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
-            {
-                var r = new Random((int)DateTime.Now.ToBinary());
-                AuthToken = r.Next(100000, 10000000);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
-                Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
-                using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
-                {
-                    tw.WriteLine(AuthToken);
-                }
-            }
-            else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
-            {
-                using (var tr = new StreamReader(Path.Combine(SavePath, "authcode.txt")))
-                {
-                    AuthToken = Convert.ToInt32(tr.ReadLine());
-                }
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-                Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
-                Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
-            else
-            {
-                AuthToken = 0;
-            }
-            Regions.ReloadAllRegions();
-            if (Config.RestApiEnabled)
-                RestApi.Start();
-        	
+		private void OnPostInit()
+		{
+			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
+			{
+				var r = new Random((int) DateTime.Now.ToBinary());
+				AuthToken = r.Next(100000, 10000000);
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.ForegroundColor = ConsoleColor.Gray;
+				FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
+				using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
+				{
+					tw.WriteLine(AuthToken);
+				}
+			}
+			else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+			{
+				using (var tr = new StreamReader(Path.Combine(SavePath, "authcode.txt")))
+				{
+					AuthToken = Convert.ToInt32(tr.ReadLine());
+				}
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine(
+					"TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+				Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.ForegroundColor = ConsoleColor.Gray;
+			}
+			else
+			{
+				AuthToken = 0;
+			}
+			Regions.ReloadAllRegions();
+			if (Config.RestApiEnabled)
+				RestApi.Start();
+
 			StatTracker.checkin();
 
-            FixChestStacks();
+			FixChestStacks();
+		}
 
-        }
-
-        private void FixChestStacks()
-        {
-            foreach(Chest chest in Main.chest)
-            {
+		private void FixChestStacks()
+		{
+			foreach (Chest chest in Main.chest)
+			{
 				if (chest != null)
 				{
 					foreach (Item item in chest.item)
@@ -431,877 +436,904 @@ namespace TShockAPI
 							item.stack = item.maxStack;
 					}
 				}
-            }
-        }
+			}
+		}
 
 
-        private DateTime LastCheck = DateTime.UtcNow;
-        private DateTime LastSave = DateTime.UtcNow;
+		private DateTime LastCheck = DateTime.UtcNow;
+		private DateTime LastSave = DateTime.UtcNow;
 
-        private void OnUpdate()
-        {
-            UpdateManager.UpdateProcedureCheck();
+		private void OnUpdate()
+		{
+			UpdateManager.UpdateProcedureCheck();
 			StatTracker.checkin();
-            if (Backups.IsBackupTime)
-                Backups.Backup();
+			if (Backups.IsBackupTime)
+				Backups.Backup();
 
-            //call these every second, not every update
-            if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
-            {
-                OnSecondUpdate();
-                LastCheck = DateTime.UtcNow;
-            }
+			//call these every second, not every update
+			if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
+			{
+				OnSecondUpdate();
+				LastCheck = DateTime.UtcNow;
+			}
 
-            if ((DateTime.UtcNow - LastSave).TotalMinutes >= 15)
-            {
-                foreach (TSPlayer player in Players)
-                {
-                    // prevent null point exceptions
-                    if (player != null && player.IsLoggedIn)
-                    {
-                        InventoryDB.InsertPlayerData(player);
-                    }
-                }
-                LastSave = DateTime.UtcNow;
-            }
-        }
+			if ((DateTime.UtcNow - LastSave).TotalMinutes >= 15)
+			{
+				foreach (TSPlayer player in Players)
+				{
+					// prevent null point exceptions
+					if (player != null && player.IsLoggedIn)
+					{
+						InventoryDB.InsertPlayerData(player);
+					}
+				}
+				LastSave = DateTime.UtcNow;
+			}
+		}
 
-        private void OnSecondUpdate()
-        {
-            if (Config.ForceTime != "normal")
-            {
-                switch(Config.ForceTime)
-                {
-                    case "day":
-                        TSPlayer.Server.SetTime(true, 27000.0);
-                        break;
-                    case "night":
-                        TSPlayer.Server.SetTime(false, 16200.0);
-                        break;
-                }
-            }
-            int count = 0;
-            foreach (TSPlayer player in Players)
-            {
-                if (player != null && player.Active)
-                {
-                    count++;
-                    if (player.TilesDestroyed != null)
-                    {
-                        if (player.TileKillThreshold >= Config.TileKillThreshold)
-                        {
-                            player.Disable();
-                            TSPlayer.Server.RevertTiles(player.TilesDestroyed);
-                            player.TilesDestroyed.Clear();
-                        }
-                    }
-                    if (player.TileKillThreshold > 0)
-                    {
-                        player.TileKillThreshold = 0;
-                    }
-                    if (player.TilesCreated != null)
-                    {
-                        if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
-                        {
-                            player.Disable();
-                            TSPlayer.Server.RevertTiles(player.TilesCreated);
-                            player.TilesCreated.Clear();
-                        }
-                    }
-                    if (player.TilePlaceThreshold > 0)
-                    {
-                        player.TilePlaceThreshold = 0;
-                    }
-                    if(player.TileLiquidThreshold >= Config.TileLiquidThreshold)
-                    {
-                        player.Disable();
-                    }
-                    if (player.TileLiquidThreshold > 0)
-                    {
-                        player.TileLiquidThreshold = 0;
-                    }
-                    if (player.ProjectileThreshold >= Config.ProjectileThreshold)
-                    {
-                        player.Disable();
-                    }
-                    if (player.ProjectileThreshold > 0)
-                    {
-                        player.ProjectileThreshold = 0;
-                    }
-                    if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= 3 && player.Difficulty != 2)
-                    {
-                        player.Spawn();
-                    }
-                    string check = "none";
-                    foreach (Item item in player.TPlayer.inventory)
-                    {
-                        if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack && item.type != 0)
-                        {
-                            check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-                        }
-                    }
-                    player.IgnoreActionsForCheating = check;
-                    check = "none";
-                    foreach (Item item in player.TPlayer.armor)
-                    {
-                        if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(item.name, player))
-                        {
-                            player.SetBuff(30, 120); //Bleeding
-                            player.SetBuff(36, 120); //Broken Armor
-                            check = "Remove Armor/Accessory " + item.name;
-                        }
-                    }
-                    player.IgnoreActionsForDisabledArmor = check;
-                    if (CheckIgnores(player))
-                    {
-                        player.SetBuff(33, 120); //Weak
-                        player.SetBuff(32, 120); //Slow
-                        player.SetBuff(23, 120); //Cursed
-                    }
-                    else if(!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
-                    {
-                        player.SetBuff(23, 120); //Cursed
-                    }
-                }
-            }
-            Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
-        }
+		private void OnSecondUpdate()
+		{
+			if (Config.ForceTime != "normal")
+			{
+				switch (Config.ForceTime)
+				{
+					case "day":
+						TSPlayer.Server.SetTime(true, 27000.0);
+						break;
+					case "night":
+						TSPlayer.Server.SetTime(false, 16200.0);
+						break;
+				}
+			}
+			int count = 0;
+			foreach (TSPlayer player in Players)
+			{
+				if (player != null && player.Active)
+				{
+					count++;
+					if (player.TilesDestroyed != null)
+					{
+						if (player.TileKillThreshold >= Config.TileKillThreshold)
+						{
+							player.Disable();
+							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
+							player.TilesDestroyed.Clear();
+						}
+					}
+					if (player.TileKillThreshold > 0)
+					{
+						player.TileKillThreshold = 0;
+					}
+					if (player.TilesCreated != null)
+					{
+						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
+						{
+							player.Disable();
+							TSPlayer.Server.RevertTiles(player.TilesCreated);
+							player.TilesCreated.Clear();
+						}
+					}
+					if (player.TilePlaceThreshold > 0)
+					{
+						player.TilePlaceThreshold = 0;
+					}
+					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
+					{
+						player.Disable();
+					}
+					if (player.TileLiquidThreshold > 0)
+					{
+						player.TileLiquidThreshold = 0;
+					}
+					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
+					{
+						player.Disable();
+					}
+					if (player.ProjectileThreshold > 0)
+					{
+						player.ProjectileThreshold = 0;
+					}
+					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= 3 && player.Difficulty != 2)
+					{
+						player.Spawn();
+					}
+					string check = "none";
+					foreach (Item item in player.TPlayer.inventory)
+					{
+						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack &&
+						    item.type != 0)
+						{
+							check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+						}
+					}
+					player.IgnoreActionsForCheating = check;
+					check = "none";
+					foreach (Item item in player.TPlayer.armor)
+					{
+						if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(item.name, player))
+						{
+							player.SetBuff(30, 120); //Bleeding
+							player.SetBuff(36, 120); //Broken Armor
+							check = "Remove Armor/Accessory " + item.name;
+						}
+					}
+					player.IgnoreActionsForDisabledArmor = check;
+					if (CheckIgnores(player))
+					{
+						player.SetBuff(33, 120); //Weak
+						player.SetBuff(32, 120); //Slow
+						player.SetBuff(23, 120); //Cursed
+					}
+					else if (!player.Group.HasPermission(Permissions.usebanneditem) &&
+					         Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+					{
+						player.SetBuff(23, 120); //Cursed
+					}
+				}
+			}
+			Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count,
+			                              Config.MaxSlots);
+		}
 
-        private void OnConnect(int ply, HandledEventArgs handler)
-        {
-            var player = new TSPlayer(ply);
-            if (Config.EnableDNSHostResolution)
-            {
-                player.Group = Users.GetGroupForIPExpensive(player.IP);
-            }
-            else
-            {
-                player.Group = Users.GetGroupForIP(player.IP);
-            }
+		private void OnConnect(int ply, HandledEventArgs handler)
+		{
+			var player = new TSPlayer(ply);
+			if (Config.EnableDNSHostResolution)
+			{
+				player.Group = Users.GetGroupForIPExpensive(player.IP);
+			}
+			else
+			{
+				player.Group = Users.GetGroupForIP(player.IP);
+			}
 
-            if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
-            {
-                Utils.ForceKick(player, Config.ServerFullNoReservedReason);
-                handler.Handled = true;
-                return;
-            }
+			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
+			{
+				Utils.ForceKick(player, Config.ServerFullNoReservedReason);
+				handler.Handled = true;
+				return;
+			}
 
-            var ipban = Bans.GetBanByIp(player.IP);
-            Ban ban = null;
-            if (ipban != null && Config.EnableIPBans)
-                ban = ipban;
+			var ipban = Bans.GetBanByIp(player.IP);
+			Ban ban = null;
+			if (ipban != null && Config.EnableIPBans)
+				ban = ipban;
 
-            if (ban != null)
-            {
-                Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
-                handler.Handled = true;
-                return;
-            }
+			if (ban != null)
+			{
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				handler.Handled = true;
+				return;
+			}
 
-            if (!FileTools.OnWhitelist(player.IP))
-            {
-                Utils.ForceKick(player, "Not on whitelist.");
-                handler.Handled = true;
-                return;
-            }
+			if (!FileTools.OnWhitelist(player.IP))
+			{
+				Utils.ForceKick(player, "Not on whitelist.");
+				handler.Handled = true;
+				return;
+			}
 
-            if (Geo != null)
-            {
-                var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
-                player.Country = code == null ? "N/A" : GeoIPCountry.GetCountryNameByCode(code);
-                if (code == "A1")
-                {
-                    if (Config.KickProxyUsers)
-                    {
-                        Utils.ForceKick(player, "Proxies are not allowed");
-                        handler.Handled = true;
-                        return;
-                    }
-                }
-            }
-            Players[ply] = player;
-        }
+			if (Geo != null)
+			{
+				var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
+				player.Country = code == null ? "N/A" : GeoIPCountry.GetCountryNameByCode(code);
+				if (code == "A1")
+				{
+					if (Config.KickProxyUsers)
+					{
+						Utils.ForceKick(player, "Proxies are not allowed");
+						handler.Handled = true;
+						return;
+					}
+				}
+			}
+			Players[ply] = player;
+		}
 
-        private void OnJoin(int ply, HandledEventArgs handler)
-        {
-            var player = Players[ply];
-            if (player == null)
-            {
-                handler.Handled = true;
-                return;
-            }
+		private void OnJoin(int ply, HandledEventArgs handler)
+		{
+			var player = Players[ply];
+			if (player == null)
+			{
+				handler.Handled = true;
+				return;
+			}
 
-            var nameban = Bans.GetBanByName(player.Name);
-            Ban ban = null;
-            if (nameban != null && Config.EnableBanOnUsernames)
-                ban = nameban;
+			var nameban = Bans.GetBanByName(player.Name);
+			Ban ban = null;
+			if (nameban != null && Config.EnableBanOnUsernames)
+				ban = nameban;
 
-            if (ban != null)
-            {
-                Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
-                handler.Handled = true;
-                return;
-            }
-        }
+			if (ban != null)
+			{
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				handler.Handled = true;
+				return;
+			}
+		}
 
-        private void OnLeave(int ply)
-        {
-            var tsplr = Players[ply];
-            Players[ply] = null;
+		private void OnLeave(int ply)
+		{
+			var tsplr = Players[ply];
+			Players[ply] = null;
 
-            if (tsplr != null && tsplr.ReceivedInfo)
-            {
-                Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
-                Log.Info(string.Format("{0} left.", tsplr.Name));
+			if (tsplr != null && tsplr.ReceivedInfo)
+			{
+				Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
+				Log.Info(string.Format("{0} left.", tsplr.Name));
 
-                if (tsplr.IsLoggedIn)
-                {
-                    tsplr.PlayerData.CopyInventory(tsplr);
-                    InventoryDB.InsertPlayerData(tsplr);
-                }
+				if (tsplr.IsLoggedIn)
+				{
+					tsplr.PlayerData.CopyInventory(tsplr);
+					InventoryDB.InsertPlayerData(tsplr);
+				}
 
-                if (Config.RememberLeavePos)
-                {
-                    RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int)(tsplr.X / 16), (int)(tsplr.Y / 16));
-                }
-            }
-        }
+				if (Config.RememberLeavePos)
+				{
+					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
+				}
+			}
+		}
 
-        private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
-        {
-            if (e.Handled)
-                return;
+		private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
+		{
+			if (e.Handled)
+				return;
 
-            var tsplr = Players[msg.whoAmI];
-            if (tsplr == null)
-            {
-                e.Handled = true;
-                return;
-            }
+			var tsplr = Players[msg.whoAmI];
+			if (tsplr == null)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if (!Utils.ValidString(text))
-            {
-                e.Handled = true;
-                return;
-            }
+			if (!Utils.ValidString(text))
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if (text.StartsWith("/"))
-            {
-                try
-                {
-                    e.Handled = Commands.HandleCommand(tsplr, text);
-                }
-                catch (Exception ex)
-                {
-                    Log.ConsoleError("Command exception");
-                    Log.Error(ex.ToString());
-                }
-            }
-            else if (!tsplr.mute)
-            {
-                Utils.Broadcast(String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-                e.Handled = true;
-            }
-            else if (tsplr.mute)
-            {
-                tsplr.SendMessage("You are muted!");
-                e.Handled = true;
-            }
-        }
+			if (text.StartsWith("/"))
+			{
+				try
+				{
+					e.Handled = Commands.HandleCommand(tsplr, text);
+				}
+				catch (Exception ex)
+				{
+					Log.ConsoleError("Command exception");
+					Log.Error(ex.ToString());
+				}
+			}
+			else if (!tsplr.mute)
+			{
+				Utils.Broadcast(
+					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
+					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+				e.Handled = true;
+			}
+			else if (tsplr.mute)
+			{
+				tsplr.SendMessage("You are muted!");
+				e.Handled = true;
+			}
+		}
 
-        /// <summary>
-        /// When a server command is run.
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="e"></param>
-        private void ServerHooks_OnCommand(string text, HandledEventArgs e)
-        {
-            if (e.Handled)
-                return;
+		/// <summary>
+		/// When a server command is run.
+		/// </summary>
+		/// <param name="cmd"></param>
+		/// <param name="e"></param>
+		private void ServerHooks_OnCommand(string text, HandledEventArgs e)
+		{
+			if (e.Handled)
+				return;
 
-            // Damn you ThreadStatic and Redigit
-            if (Main.rand == null)
-            {
-                Main.rand = new Random();
-            }
-            if (WorldGen.genRand == null)
-            {
-                WorldGen.genRand = new Random();
-            }
+			// Damn you ThreadStatic and Redigit
+			if (Main.rand == null)
+			{
+				Main.rand = new Random();
+			}
+			if (WorldGen.genRand == null)
+			{
+				WorldGen.genRand = new Random();
+			}
 
-            if (text.StartsWith("playing") || text.StartsWith("/playing"))
-            {
-                int count = 0;
-                foreach (TSPlayer player in Players)
-                {
-                    if (player != null && player.Active)
-                    {
-                        count++;
-                        TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
-                                                                  player.Group.Name, player.UserAccountName));
-                    }
-                }
-                TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
-            }
-            else if (text == "autosave")
-            {
-                Main.autoSave = Config.AutoSave = !Config.AutoSave;
-                Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
-            }
-            else if (text.StartsWith("/"))
-            {
-                Commands.HandleCommand(TSPlayer.Server, text);
-            }
-            else
-            {
-                Commands.HandleCommand(TSPlayer.Server, "/" + text);
-            }
-            e.Handled = true;
-        }
+			if (text.StartsWith("playing") || text.StartsWith("/playing"))
+			{
+				int count = 0;
+				foreach (TSPlayer player in Players)
+				{
+					if (player != null && player.Active)
+					{
+						count++;
+						TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+						                                          player.Group.Name, player.UserAccountName));
+					}
+				}
+				TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
+			}
+			else if (text == "autosave")
+			{
+				Main.autoSave = Config.AutoSave = !Config.AutoSave;
+				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
+			}
+			else if (text.StartsWith("/"))
+			{
+				Commands.HandleCommand(TSPlayer.Server, text);
+			}
+			else
+			{
+				Commands.HandleCommand(TSPlayer.Server, "/" + text);
+			}
+			e.Handled = true;
+		}
 
-        private void OnGetData(GetDataEventArgs e)
-        {
-            if (e.Handled)
-                return;
+		private void OnGetData(GetDataEventArgs e)
+		{
+			if (e.Handled)
+				return;
 
-            PacketTypes type = e.MsgID;
+			PacketTypes type = e.MsgID;
 
-            Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte)type, type);
+			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte) type, type);
 
-            var player = Players[e.Msg.whoAmI];
-            if (player == null)
-            {
-                e.Handled = true;
-                return;
-            }
+			var player = Players[e.Msg.whoAmI];
+			if (player == null)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if (!player.ConnectionAlive)
-            {
-                e.Handled = true;
-                return;
-            }
+			if (!player.ConnectionAlive)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if (player.RequiresPassword && type != PacketTypes.PasswordSend)
-            {
-                e.Handled = true;
-                return;
-            }
+			if (player.RequiresPassword && type != PacketTypes.PasswordSend)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if ((player.State < 10 || player.Dead) && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 && (int)type != 38)
-            {
-                e.Handled = true;
-                return;
-            }
+			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
+			    (int) type != 38)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
-            {
-                try
-                {
-                    if (GetDataHandlers.HandlerGetData(type, player, data))
-                        e.Handled = true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
-                }
-            }
-        }
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+			{
+				try
+				{
+					if (GetDataHandlers.HandlerGetData(type, player, data))
+						e.Handled = true;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
+			}
+		}
 
-        private void OnGreetPlayer(int who, HandledEventArgs e)
-        {
-            var player = Players[who];
-            if (player == null)
-            {
-                e.Handled = true;
-                return;
-            }
+		private void OnGreetPlayer(int who, HandledEventArgs e)
+		{
+			var player = Players[who];
+			if (player == null)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            Utils.ShowFileToUser(player, "motd.txt");
+			Utils.ShowFileToUser(player, "motd.txt");
 
-            if (Config.PvPMode == "always" && !player.TPlayer.hostile)
-            {
-                player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
-            }
+			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
+			{
+				player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+			}
 
-            if (!player.IsLoggedIn)
-            {
-                if (Config.ServerSideInventory)
-                {
-                    player.SendMessage(player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!", Color.Red);
-                }
-                else if (Config.RequireLogin)
-                {
-                    player.SendMessage("Please /register or /login to play!", Color.Red);
-                }
-            }
+			if (!player.IsLoggedIn)
+			{
+				if (Config.ServerSideInventory)
+				{
+					player.SendMessage(
+						player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!",
+						Color.Red);
+				}
+				else if (Config.RequireLogin)
+				{
+					player.SendMessage("Please /register or /login to play!", Color.Red);
+				}
+			}
 
-            if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
-            {
-                StartInvasion();
-            }
+			if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
+			{
+				StartInvasion();
+			}
 
-            player.LastNetPosition = new Vector2(Main.spawnTileX * 16f, Main.spawnTileY * 16f);
+			player.LastNetPosition = new Vector2(Main.spawnTileX*16f, Main.spawnTileY*16f);
 
-            if (Config.RememberLeavePos)
-            {
-                var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
-                player.LastNetPosition = pos;
-                player.Teleport((int) pos.X, (int) pos.Y + 3);
-            }
+			if (Config.RememberLeavePos)
+			{
+				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
+				player.LastNetPosition = pos;
+				player.Teleport((int) pos.X, (int) pos.Y + 3);
+			}
 
-            e.Handled = true;
-        }
+			e.Handled = true;
+		}
 
-        private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
-        {
-            if (Config.InfiniteInvasion)
-            {
-                IncrementKills();
-                if (Main.invasionSize < 10)
-                {
-                    Main.invasionSize = 20000000;
-                }
-            }
-        }
+		private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
+		{
+			if (Config.InfiniteInvasion)
+			{
+				IncrementKills();
+				if (Main.invasionSize < 10)
+				{
+					Main.invasionSize = 20000000;
+				}
+			}
+		}
 
-        void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
-        {
-            if (e.Info == 43)
-                if (Config.DisableTombstones)
-                    e.Object.SetDefaults(0);
-            if (e.Info == 75)
-                if (Config.DisableClownBombs)
-                    e.Object.SetDefaults(0);
-            if (e.Info == 109)
-                if (Config.DisableSnowBalls)
-                    e.Object.SetDefaults(0);
+		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
+		{
+			if (e.Info == 43)
+				if (Config.DisableTombstones)
+					e.Object.SetDefaults(0);
+			if (e.Info == 75)
+				if (Config.DisableClownBombs)
+					e.Object.SetDefaults(0);
+			if (e.Info == 109)
+				if (Config.DisableSnowBalls)
+					e.Object.SetDefaults(0);
+		}
 
-        }
+		private void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
+		{
+			if (Itembans.ItemIsBanned(e.Object.name, null))
+			{
+				e.Object.SetDefaults(0);
+			}
+		}
 
-        void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
-        {
-            if (Itembans.ItemIsBanned(e.Object.name, null) )
-            {
-                e.Object.SetDefaults(0);
-            }
-        }
+		/// <summary>
+		/// Send bytes to client using packetbuffering if available
+		/// </summary>
+		/// <param name="client">socket to send to</param>
+		/// <param name="bytes">bytes to send</param>
+		/// <returns>False on exception</returns>
+		public static bool SendBytes(ServerSock client, byte[] bytes)
+		{
+			if (PacketBuffer != null)
+			{
+				PacketBuffer.BufferBytes(client, bytes);
+				return true;
+			}
 
-        /// <summary>
-        /// Send bytes to client using packetbuffering if available
-        /// </summary>
-        /// <param name="client">socket to send to</param>
-        /// <param name="bytes">bytes to send</param>
-        /// <returns>False on exception</returns>
-        public static bool SendBytes(ServerSock client, byte[] bytes)
-        {
-            if (PacketBuffer != null)
-            {
-                PacketBuffer.BufferBytes(client, bytes);
-                return true;
-            }
+			return SendBytesBufferless(client, bytes);
+		}
 
-            return SendBytesBufferless(client,bytes);
-        }
-        /// <summary>
-        /// Send bytes to a client ignoring the packet buffer
-        /// </summary>
-        /// <param name="client">socket to send to</param>
-        /// <param name="bytes">bytes to send</param>
-        /// <returns>False on exception</returns>
-        public static bool SendBytesBufferless(ServerSock client, byte[] bytes)
-        {
-            try
-            {
-                if (client.tcpClient.Connected)
-                    client.networkStream.Write(bytes, 0, bytes.Length);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("This is a normal exception");
-                Log.Warn(ex.ToString());
-            }
-            return false;
-        }
+		/// <summary>
+		/// Send bytes to a client ignoring the packet buffer
+		/// </summary>
+		/// <param name="client">socket to send to</param>
+		/// <param name="bytes">bytes to send</param>
+		/// <returns>False on exception</returns>
+		public static bool SendBytesBufferless(ServerSock client, byte[] bytes)
+		{
+			try
+			{
+				if (client.tcpClient.Connected)
+					client.networkStream.Write(bytes, 0, bytes.Length);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Warn("This is a normal exception");
+				Log.Warn(ex.ToString());
+			}
+			return false;
+		}
 
-        void NetHooks_SendData(SendDataEventArgs e)
-        {
-            if (e.MsgID == PacketTypes.Disconnect)
-            {
-                Action<ServerSock,string> senddisconnect = (sock, str) =>
-                {
-                    if (sock == null || !sock.active)
-                        return;
-                    sock.kill = true;
-                    using (var ms = new MemoryStream())
-                    {
-                        new DisconnectMsg {Reason = str}.PackFull(ms);
-                        SendBytesBufferless(sock, ms.ToArray());
-                    }
-                };
+		private void NetHooks_SendData(SendDataEventArgs e)
+		{
+			if (e.MsgID == PacketTypes.Disconnect)
+			{
+				Action<ServerSock, string> senddisconnect = (sock, str) =>
+				                                            	{
+				                                            		if (sock == null || !sock.active)
+				                                            			return;
+				                                            		sock.kill = true;
+				                                            		using (var ms = new MemoryStream())
+				                                            		{
+				                                            			new DisconnectMsg {Reason = str}.PackFull(ms);
+				                                            			SendBytesBufferless(sock, ms.ToArray());
+				                                            		}
+				                                            	};
 
-                if (e.remoteClient != -1)
-                {
-                    senddisconnect(Netplay.serverSock[e.remoteClient], e.text);
-                }
-                else
-                {
-                    for (int i = 0; i < Netplay.serverSock.Length; i++)
-                    {
-                        if (e.ignoreClient != -1 && e.ignoreClient == i)
-                            continue;
+				if (e.remoteClient != -1)
+				{
+					senddisconnect(Netplay.serverSock[e.remoteClient], e.text);
+				}
+				else
+				{
+					for (int i = 0; i < Netplay.serverSock.Length; i++)
+					{
+						if (e.ignoreClient != -1 && e.ignoreClient == i)
+							continue;
 
-                        senddisconnect(Netplay.serverSock[i], e.text);
-                    }
-                }
-                e.Handled = true;
-            }
-        }
+						senddisconnect(Netplay.serverSock[i], e.text);
+					}
+				}
+				e.Handled = true;
+			}
+		}
 
-        private void OnSaveWorld(bool resettime, HandledEventArgs e)
-        {
-            Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-            Thread SaveWorld = new Thread(Utils.SaveWorld);
-            SaveWorld.Start();
-            e.Handled = true;
-        }
+		private void OnSaveWorld(bool resettime, HandledEventArgs e)
+		{
+			Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+			Thread SaveWorld = new Thread(Utils.SaveWorld);
+			SaveWorld.Start();
+			e.Handled = true;
+		}
 
-        void OnStartHardMode(HandledEventArgs e)
-        {
-            if (Config.DisableHardmode)
-                e.Handled = true;
-        }
+		private void OnStartHardMode(HandledEventArgs e)
+		{
+			if (Config.DisableHardmode)
+				e.Handled = true;
+		}
 
-        /*
+		/*
          * Useful stuff:
          * */
 
-        public static void StartInvasion()
-        {
-            Main.invasionType = 1;
-            if (Config.InfiniteInvasion)
-            {
-                Main.invasionSize = 20000000;
-            }
-            else
-            {
-                Main.invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
-            }
+		public static void StartInvasion()
+		{
+			Main.invasionType = 1;
+			if (Config.InfiniteInvasion)
+			{
+				Main.invasionSize = 20000000;
+			}
+			else
+			{
+				Main.invasionSize = 100 + (Config.InvasionMultiplier*Utils.ActivePlayers());
+			}
 
-            Main.invasionWarn = 0;
-            if (new Random().Next(2) == 0)
-            {
-                Main.invasionX = 0.0;
-            }
-            else
-            {
-                Main.invasionX = Main.maxTilesX;
-            }
-        }
+			Main.invasionWarn = 0;
+			if (new Random().Next(2) == 0)
+			{
+				Main.invasionX = 0.0;
+			}
+			else
+			{
+				Main.invasionX = Main.maxTilesX;
+			}
+		}
 
-        private static int KillCount;
+		private static int KillCount;
 
-        public static void IncrementKills()
-        {
-            KillCount++;
-            Random r = new Random();
-            int random = r.Next(5);
-            if (KillCount % 100 == 0)
-            {
-                switch (random)
-                {
-                    case 0:
-                        Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
-                        break;
-                    case 1:
-                        Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
-                        break;
-                    case 2:
-                        Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
-                        break;
-                    case 3:
-                        Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
-                        break;
-                    case 4:
-                        Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
-                        break;
-                    case 5:
-                        Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
-                        break;
-                }
-            }
-        }
+		public static void IncrementKills()
+		{
+			KillCount++;
+			Random r = new Random();
+			int random = r.Next(5);
+			if (KillCount%100 == 0)
+			{
+				switch (random)
+				{
+					case 0:
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						break;
+					case 1:
+						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
+						break;
+					case 2:
+						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
+						break;
+					case 3:
+						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
+						break;
+					case 4:
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						break;
+					case 5:
+						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
+						break;
+				}
+			}
+		}
 
-        public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
-        {
-            if (type == 43)
-            {
-                return true;
-            }
+		public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
+		{
+			if (type == 43)
+			{
+				return true;
+			}
 
-            if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned("Dirt Rod", player)) //Dirt Rod Projectile
-            {
-                return true;
-            }
+			if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned("Dirt Rod", player))
+				//Dirt Rod Projectile
+			{
+				return true;
+			}
 
-            if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
-            {
-                return true;
-            }
+			if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) &&
+			    Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
+			{
+				return true;
+			}
 
-            Projectile proj = new Projectile();
-            proj.SetDefaults(type);
+			Projectile proj = new Projectile();
+			proj.SetDefaults(type);
 
-            if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(proj.name, player))
-            {
-                return true;
-            }
+			if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(proj.name, player))
+			{
+				return true;
+			}
 
-            if (proj.hostile)
-            {
-                return true;
-            }
+			if (proj.hostile)
+			{
+				return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
-        {
-            if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > 32) || (Math.Abs(player.TileY - y) > 32)))
-            {
-                return true;
-            }
-            return false;
-        }
+		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
+		{
+			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > 32) || (Math.Abs(player.TileY - y) > 32)))
+			{
+				return true;
+			}
+			return false;
+		}
 
-        public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
-        {
-            if (!player.Group.HasPermission(Permissions.canbuild))
-            {
-                player.SendMessage("You do not have permission to build!", Color.Red);
-                return true;
-            }
-            if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) && Regions.InArea(tileX, tileY))
-            {
-                player.SendMessage("Region protected from changes.", Color.Red);
-                return true;
-            }
-            if (Config.DisableBuild)
-            {
-                if (!player.Group.HasPermission(Permissions.editspawn))
-                {
-                    player.SendMessage("World protected from changes.", Color.Red);
-                    return true;
-                }
-            }
-            if (Config.SpawnProtection)
-            {
-                if (!player.Group.HasPermission(Permissions.editspawn))
-                {
-                    var flag = CheckSpawn(tileX, tileY);
-                    if (flag)
-                    {
-                        player.SendMessage("Spawn protected from changes.", Color.Red);
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
+		{
+			if (!player.Group.HasPermission(Permissions.canbuild))
+			{
+				player.SendMessage("You do not have permission to build!", Color.Red);
+				return true;
+			}
+			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+			    Regions.InArea(tileX, tileY))
+			{
+				player.SendMessage("Region protected from changes.", Color.Red);
+				return true;
+			}
+			if (Config.DisableBuild)
+			{
+				if (!player.Group.HasPermission(Permissions.editspawn))
+				{
+					player.SendMessage("World protected from changes.", Color.Red);
+					return true;
+				}
+			}
+			if (Config.SpawnProtection)
+			{
+				if (!player.Group.HasPermission(Permissions.editspawn))
+				{
+					var flag = CheckSpawn(tileX, tileY);
+					if (flag)
+					{
+						player.SendMessage("Spawn protected from changes.", Color.Red);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
-        public static bool CheckSpawn(int x, int y)
-        {
-            Vector2 tile = new Vector2(x, y);
-            Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-            return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
-        }
-        public static float Distance(Vector2 value1, Vector2 value2)
-        {
-            float num2 = value1.X - value2.X;
-            float num = value1.Y - value2.Y;
-            float num3 = (num2 * num2) + (num * num);
-            return (float)Math.Sqrt(num3);
-        }
+		public static bool CheckSpawn(int x, int y)
+		{
+			Vector2 tile = new Vector2(x, y);
+			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
+			return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
+		}
 
-        public static bool HackedHealth(TSPlayer player)
-        {
-            return (player.TPlayer.statManaMax > 400) ||
-                   (player.TPlayer.statMana > 400) ||
-                   (player.TPlayer.statLifeMax > 400) ||
-                   (player.TPlayer.statLife > 400);
-        }
+		public static float Distance(Vector2 value1, Vector2 value2)
+		{
+			float num2 = value1.X - value2.X;
+			float num = value1.Y - value2.Y;
+			float num3 = (num2*num2) + (num*num);
+			return (float) Math.Sqrt(num3);
+		}
 
-        public static bool HackedInventory(TSPlayer player)
-        {
-            bool check = false;
+		public static bool HackedHealth(TSPlayer player)
+		{
+			return (player.TPlayer.statManaMax > 400) ||
+			       (player.TPlayer.statMana > 400) ||
+			       (player.TPlayer.statLifeMax > 400) ||
+			       (player.TPlayer.statLife > 400);
+		}
 
-            Item[] inventory = player.TPlayer.inventory;
-            Item[] armor = player.TPlayer.armor;
-            for (int i = 0; i < NetItem.maxNetInventory; i++)
-            {
-                if (i < 49)
-                {
-                    Item item = new Item();
-                    if (inventory[i] != null && inventory[i].netID != 0)
-                    {
-                        item.netDefaults(inventory[i].netID);
-                        item.Prefix(inventory[i].prefix);
-                        item.AffixName();
-                        if (inventory[i].stack > item.maxStack)
-                        {
-                            check = true;
-                            player.SendMessage(String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, inventory[i].stack), Color.Cyan);
-                        }
-                    }
-                }
-                else
-                {
-                    Item item = new Item();
-                    if (armor[i - 48] != null && armor[i - 48].netID != 0)
-                    {
-                        item.netDefaults(armor[i - 48].netID);
-                        item.Prefix(armor[i - 48].prefix);
-                        item.AffixName();
-                        if (armor[i - 48].stack > item.maxStack)
-                        {
-                            check = true;
-                            player.SendMessage(String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[i - 48].stack), Color.Cyan);
-                        }
-                    }
-                }
-            }
+		public static bool HackedInventory(TSPlayer player)
+		{
+			bool check = false;
 
-            return check;
-        }
+			Item[] inventory = player.TPlayer.inventory;
+			Item[] armor = player.TPlayer.armor;
+			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			{
+				if (i < 49)
+				{
+					Item item = new Item();
+					if (inventory[i] != null && inventory[i].netID != 0)
+					{
+						item.netDefaults(inventory[i].netID);
+						item.Prefix(inventory[i].prefix);
+						item.AffixName();
+						if (inventory[i].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, inventory[i].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else
+				{
+					Item item = new Item();
+					if (armor[i - 48] != null && armor[i - 48].netID != 0)
+					{
+						item.netDefaults(armor[i - 48].netID);
+						item.Prefix(armor[i - 48].prefix);
+						item.AffixName();
+						if (armor[i - 48].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[i - 48].stack),
+								Color.Cyan);
+						}
+					}
+				}
+			}
 
-        public static bool CheckInventory(TSPlayer player)
-        {
-            PlayerData playerData = player.PlayerData;
-            bool check = true;
+			return check;
+		}
 
-            if (player.TPlayer.statLifeMax > playerData.maxHealth)
-            {
-                player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server", Color.Cyan);
-                check = false;
-            }
+		public static bool CheckInventory(TSPlayer player)
+		{
+			PlayerData playerData = player.PlayerData;
+			bool check = true;
 
-            Item[] inventory = player.TPlayer.inventory;
-            Item[] armor = player.TPlayer.armor;
-            for (int i = 0; i < NetItem.maxNetInventory; i++)
-            {
-                if (i < 49)
-                {
-                    Item item = new Item();
-                    Item serverItem = new Item();
-                    if (inventory[i] != null && inventory[i].netID != 0)
-                    {
-                        if (playerData.inventory[i].netID != inventory[i].netID)
-                        {
-                            item.netDefaults(inventory[i].netID);
-                            item.Prefix(inventory[i].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.", Color.Cyan);
-                            check = false;
-                        }
-                        else if (playerData.inventory[i].prefix != inventory[i].prefix)
-                        {
-                            item.netDefaults(inventory[i].netID);
-                            item.Prefix(inventory[i].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.", Color.Cyan);
-                            check = false;
-                        }
-                        else if (inventory[i].stack > playerData.inventory[i].stack)
-                        {
-                            item.netDefaults(inventory[i].netID);
-                            item.Prefix(inventory[i].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" + playerData.inventory[i].stack + ").", Color.Cyan);
-                            check = false;
-                        }
-                    }
-                }
-                else
-                {
-                    Item item = new Item();
-                    Item serverItem = new Item();
-                    if (armor[i - 48] != null && armor[i - 48].netID != 0)
-                    {
-                        if (playerData.inventory[i].netID != armor[i - 48].netID)
-                        {
-                            item.netDefaults(armor[i - 48].netID);
-                            item.Prefix(armor[i - 48].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
-                            check = false;
-                        }
-                        else if (playerData.inventory[i].prefix != armor[i - 48].prefix)
-                        {
-                            item.netDefaults(armor[i - 48].netID);
-                            item.Prefix(armor[i - 48].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.", Color.Cyan);
-                            check = false;
-                        }
-                        else if (armor[i - 48].stack > playerData.inventory[i].stack)
-                        {
-                            item.netDefaults(armor[i - 48].netID);
-                            item.Prefix(armor[i - 48].prefix);
-                            item.AffixName();
-                            player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" + playerData.inventory[i].stack + ").", Color.Cyan);
-                            check = false;
-                        }
-                    }
-                }
-            }
+			if (player.TPlayer.statLifeMax > playerData.maxHealth)
+			{
+				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server",
+				                   Color.Cyan);
+				check = false;
+			}
 
-            return check;
-        }
+			Item[] inventory = player.TPlayer.inventory;
+			Item[] armor = player.TPlayer.armor;
+			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			{
+				if (i < 49)
+				{
+					Item item = new Item();
+					Item serverItem = new Item();
+					if (inventory[i] != null && inventory[i].netID != 0)
+					{
+						if (playerData.inventory[i].netID != inventory[i].netID)
+						{
+							item.netDefaults(inventory[i].netID);
+							item.Prefix(inventory[i].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
+							                   Color.Cyan);
+							check = false;
+						}
+						else if (playerData.inventory[i].prefix != inventory[i].prefix)
+						{
+							item.netDefaults(inventory[i].netID);
+							item.Prefix(inventory[i].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
+							                   Color.Cyan);
+							check = false;
+						}
+						else if (inventory[i].stack > playerData.inventory[i].stack)
+						{
+							item.netDefaults(inventory[i].netID);
+							item.Prefix(inventory[i].prefix);
+							item.AffixName();
+							player.SendMessage(
+								player.IgnoreActionsForInventory =
+								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								playerData.inventory[i].stack + ").", Color.Cyan);
+							check = false;
+						}
+					}
+				}
+				else
+				{
+					Item item = new Item();
+					Item serverItem = new Item();
+					if (armor[i - 48] != null && armor[i - 48].netID != 0)
+					{
+						if (playerData.inventory[i].netID != armor[i - 48].netID)
+						{
+							item.netDefaults(armor[i - 48].netID);
+							item.Prefix(armor[i - 48].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
+							                   Color.Cyan);
+							check = false;
+						}
+						else if (playerData.inventory[i].prefix != armor[i - 48].prefix)
+						{
+							item.netDefaults(armor[i - 48].netID);
+							item.Prefix(armor[i - 48].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
+							                   Color.Cyan);
+							check = false;
+						}
+						else if (armor[i - 48].stack > playerData.inventory[i].stack)
+						{
+							item.netDefaults(armor[i - 48].netID);
+							item.Prefix(armor[i - 48].prefix);
+							item.AffixName();
+							player.SendMessage(
+								player.IgnoreActionsForInventory =
+								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								playerData.inventory[i].stack + ").", Color.Cyan);
+							check = false;
+						}
+					}
+				}
+			}
 
-        public static bool CheckIgnores(TSPlayer player)
-        {
-            bool check = false;
-            if (Config.PvPMode == "always" && !player.TPlayer.hostile)
-                check = true;
-            if (player.IgnoreActionsForInventory != "none")
-                check = true;
-            if (player.IgnoreActionsForCheating != "none")
-                check = true;
-            if (player.IgnoreActionsForDisabledArmor != "none")
-                check = true;
-            if (player.IgnoreActionsForClearingTrashCan)
-                check = true;
-            if (!player.IsLoggedIn && Config.RequireLogin)
-                check = true;
-            return check;
-        }
+			return check;
+		}
 
-        public void OnConfigRead(ConfigFile file)
-        {
-            NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
-            NPC.defaultSpawnRate = file.DefaultSpawnRate;
+		public static bool CheckIgnores(TSPlayer player)
+		{
+			bool check = false;
+			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
+				check = true;
+			if (player.IgnoreActionsForInventory != "none")
+				check = true;
+			if (player.IgnoreActionsForCheating != "none")
+				check = true;
+			if (player.IgnoreActionsForDisabledArmor != "none")
+				check = true;
+			if (player.IgnoreActionsForClearingTrashCan)
+				check = true;
+			if (!player.IsLoggedIn && Config.RequireLogin)
+				check = true;
+			return check;
+		}
 
-            Main.autoSave = file.AutoSave;
-            if (Backups != null)
-            {
-                Backups.KeepFor = file.BackupKeepFor;
-                Backups.Interval = file.BackupInterval;
-            }
-            if (!OverridePort)
-            {
-                Netplay.serverPort = file.ServerPort;
-            }
+		public void OnConfigRead(ConfigFile file)
+		{
+			NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
+			NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
-            if (file.MaxSlots > 235)
-                file.MaxSlots = 235;
-            Main.maxNetPlayers = file.MaxSlots + 20;
-            Netplay.password = "";
-            Netplay.spamCheck = false;
+			Main.autoSave = file.AutoSave;
+			if (Backups != null)
+			{
+				Backups.KeepFor = file.BackupKeepFor;
+				Backups.Interval = file.BackupInterval;
+			}
+			if (!OverridePort)
+			{
+				Netplay.serverPort = file.ServerPort;
+			}
 
-            RconHandler.Password = file.RconPassword;
-            RconHandler.ListenPort = file.RconPort;
+			if (file.MaxSlots > 235)
+				file.MaxSlots = 235;
+			Main.maxNetPlayers = file.MaxSlots + 20;
+			Netplay.password = "";
+			Netplay.spamCheck = false;
 
-            Utils.HashAlgo = file.HashAlgorithm;
-        }
-    }
+			RconHandler.Password = file.RconPassword;
+			RconHandler.ListenPort = file.RconPort;
+
+			Utils.HashAlgo = file.HashAlgorithm;
+		}
+	}
 }

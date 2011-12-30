@@ -20,93 +20,111 @@ using System.IO;
 
 namespace TShockAPI
 {
-    public class FileTools
-    {
-        internal static string RulesPath { get { return Path.Combine(TShock.SavePath, "rules.txt"); } }
-        internal static string MotdPath { get { return Path.Combine(TShock.SavePath, "motd.txt"); } }
-        internal static string WhitelistPath { get { return Path.Combine(TShock.SavePath, "whitelist.txt"); } }
-        internal static string RememberedPosPath { get { return Path.Combine(TShock.SavePath, "oldpos.xml"); } }
-        internal static string ConfigPath { get { return Path.Combine(TShock.SavePath, "config.json"); } }
+	public class FileTools
+	{
+		internal static string RulesPath
+		{
+			get { return Path.Combine(TShock.SavePath, "rules.txt"); }
+		}
 
-        public static void CreateFile(string file)
-        {
-            File.Create(file).Close();
-        }
+		internal static string MotdPath
+		{
+			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
+		}
 
-        public static void CreateIfNot(string file, string data = "")
-        {
-            if (!File.Exists(file))
-            {
-                File.WriteAllText(file, data);
-            }
-        }
+		internal static string WhitelistPath
+		{
+			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
+		}
 
-        /// <summary>
-        /// Sets up the configuration file for all variables, and creates any missing files.
-        /// </summary>
-        public static void SetupConfig()
-        {
-            if (!Directory.Exists(TShock.SavePath))
-            {
-                Directory.CreateDirectory(TShock.SavePath);
-            }
+		internal static string RememberedPosPath
+		{
+			get { return Path.Combine(TShock.SavePath, "oldpos.xml"); }
+		}
 
-            CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
-            CreateIfNot(MotdPath, "This server is running TShock. Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
-            CreateIfNot(WhitelistPath);
+		internal static string ConfigPath
+		{
+			get { return Path.Combine(TShock.SavePath, "config.json"); }
+		}
 
-            try
-            {
-                if (File.Exists(ConfigPath))
-                {
-                    TShock.Config = ConfigFile.Read(ConfigPath);
-                    // Add all the missing config properties in the json file
-                }
-                TShock.Config.Write(ConfigPath);
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error in config file");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Log.Error("Config Exception");
-                Log.Error(ex.ToString());
-            }
+		public static void CreateFile(string file)
+		{
+			File.Create(file).Close();
+		}
 
+		public static void CreateIfNot(string file, string data = "")
+		{
+			if (!File.Exists(file))
+			{
+				File.WriteAllText(file, data);
+			}
+		}
 
-        }
+		/// <summary>
+		/// Sets up the configuration file for all variables, and creates any missing files.
+		/// </summary>
+		public static void SetupConfig()
+		{
+			if (!Directory.Exists(TShock.SavePath))
+			{
+				Directory.CreateDirectory(TShock.SavePath);
+			}
 
-        /// <summary>
-        /// Tells if a user is on the whitelist
-        /// </summary>
-        /// <param name="ip">string ip of the user</param>
-        /// <returns>true/false</returns>
-        public static bool OnWhitelist(string ip)
-        {
-            if (!TShock.Config.EnableWhitelist)
-            {
-                return true;
-            }
-            CreateIfNot(WhitelistPath, "127.0.0.1");
-            using (var tr = new StreamReader(WhitelistPath))
-            {
-                string whitelist = tr.ReadToEnd();
-                ip = TShock.Utils.GetRealIP(ip);
-                bool contains = whitelist.Contains(ip);
-                if (!contains)
-                {
-                    foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
-                    {
-                        if (string.IsNullOrWhiteSpace(line))
-                            continue;
-                        contains = TShock.Utils.GetIPv4Address(line).Equals(ip);
-                        if (contains)
-                            return true;
-                    }
-                    return false;
-                }
-                return true;
-            }
-        }
-    }
+			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
+			CreateIfNot(MotdPath,
+			            "This server is running TShock. Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
+			CreateIfNot(WhitelistPath);
+
+			try
+			{
+				if (File.Exists(ConfigPath))
+				{
+					TShock.Config = ConfigFile.Read(ConfigPath);
+					// Add all the missing config properties in the json file
+				}
+				TShock.Config.Write(ConfigPath);
+			}
+			catch (Exception ex)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Error in config file");
+				Console.ForegroundColor = ConsoleColor.Gray;
+				Log.Error("Config Exception");
+				Log.Error(ex.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Tells if a user is on the whitelist
+		/// </summary>
+		/// <param name="ip">string ip of the user</param>
+		/// <returns>true/false</returns>
+		public static bool OnWhitelist(string ip)
+		{
+			if (!TShock.Config.EnableWhitelist)
+			{
+				return true;
+			}
+			CreateIfNot(WhitelistPath, "127.0.0.1");
+			using (var tr = new StreamReader(WhitelistPath))
+			{
+				string whitelist = tr.ReadToEnd();
+				ip = TShock.Utils.GetRealIP(ip);
+				bool contains = whitelist.Contains(ip);
+				if (!contains)
+				{
+					foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+					{
+						if (string.IsNullOrWhiteSpace(line))
+							continue;
+						contains = TShock.Utils.GetIPv4Address(line).Equals(ip);
+						if (contains)
+							return true;
+					}
+					return false;
+				}
+				return true;
+			}
+		}
+	}
 }

@@ -20,87 +20,87 @@ using System.Collections.Generic;
 
 namespace TShockAPI
 {
-    public class Group
-    {
-        public readonly List<string> permissions = new List<string>();
-        public readonly List<string> negatedpermissions = new List<string>();
+	public class Group
+	{
+		public readonly List<string> permissions = new List<string>();
+		public readonly List<string> negatedpermissions = new List<string>();
 
-        public string Name { get; set; }
-        public Group Parent { get; set; }
-        public int Order { get; set; }
-        public string Prefix { get; set; }
-        public string Suffix { get; set; }
+		public string Name { get; set; }
+		public Group Parent { get; set; }
+		public int Order { get; set; }
+		public string Prefix { get; set; }
+		public string Suffix { get; set; }
 
-        public byte R = 255;
-        public byte G = 255;
-        public byte B = 255;
+		public byte R = 255;
+		public byte G = 255;
+		public byte B = 255;
 
-        public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255")
-        {
-            Name = groupname;
-            Parent = parentgroup;
-            byte.TryParse(chatcolor.Split(',')[0], out R);
-            byte.TryParse(chatcolor.Split(',')[1], out G);
-            byte.TryParse(chatcolor.Split(',')[2], out B);
-        }
+		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255")
+		{
+			Name = groupname;
+			Parent = parentgroup;
+			byte.TryParse(chatcolor.Split(',')[0], out R);
+			byte.TryParse(chatcolor.Split(',')[1], out G);
+			byte.TryParse(chatcolor.Split(',')[2], out B);
+		}
 
-        public virtual bool HasPermission(string permission)
-        {
-            var cur = this;
-            var traversed = new List<Group>();
-            while (cur != null)
-            {
-                if (string.IsNullOrEmpty(permission))
-                    return true;
-                if (cur.negatedpermissions.Contains(permission))
-                    return false;
-                if (cur.permissions.Contains(permission))
-                    return true;
-                if (traversed.Contains(cur))
-                {
-                    throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
-                }
-                traversed.Add(cur);
-                cur = cur.Parent;
-            }
-            return false;
-        }
+		public virtual bool HasPermission(string permission)
+		{
+			var cur = this;
+			var traversed = new List<Group>();
+			while (cur != null)
+			{
+				if (string.IsNullOrEmpty(permission))
+					return true;
+				if (cur.negatedpermissions.Contains(permission))
+					return false;
+				if (cur.permissions.Contains(permission))
+					return true;
+				if (traversed.Contains(cur))
+				{
+					throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+				}
+				traversed.Add(cur);
+				cur = cur.Parent;
+			}
+			return false;
+		}
 
-        public void NegatePermission(string permission)
-        {
-            negatedpermissions.Add(permission);
-        }
+		public void NegatePermission(string permission)
+		{
+			negatedpermissions.Add(permission);
+		}
 
-        public void AddPermission(string permission)
-        {
-            permissions.Add(permission);
-        }
-        public void SetPermission( List<string> permission)
-        {
-            permissions.Clear();
-            foreach( string s in permission )
-            {
-                permissions.Add( s );
-            }
-        }
-    }
+		public void AddPermission(string permission)
+		{
+			permissions.Add(permission);
+		}
 
-    public class SuperAdminGroup : Group
-    {
-        public SuperAdminGroup()
-            : base("superadmin")
-        {
-            R = (byte)TShock.Config.SuperAdminChatRGB[0];
-            G = (byte)TShock.Config.SuperAdminChatRGB[1];
-            B = (byte)TShock.Config.SuperAdminChatRGB[2];
-            Prefix = TShock.Config.SuperAdminChatPrefix;
-            Suffix = TShock.Config.SuperAdminChatSuffix;
+		public void SetPermission(List<string> permission)
+		{
+			permissions.Clear();
+			foreach (string s in permission)
+			{
+				permissions.Add(s);
+			}
+		}
+	}
 
-        }
+	public class SuperAdminGroup : Group
+	{
+		public SuperAdminGroup()
+			: base("superadmin")
+		{
+			R = (byte) TShock.Config.SuperAdminChatRGB[0];
+			G = (byte) TShock.Config.SuperAdminChatRGB[1];
+			B = (byte) TShock.Config.SuperAdminChatRGB[2];
+			Prefix = TShock.Config.SuperAdminChatPrefix;
+			Suffix = TShock.Config.SuperAdminChatSuffix;
+		}
 
-        public override bool HasPermission(string permission)
-        {
-            return true;
-        }
-    }
+		public override bool HasPermission(string permission)
+		{
+			return true;
+		}
+	}
 }

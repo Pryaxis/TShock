@@ -24,79 +24,80 @@ using Newtonsoft.Json;
 
 namespace TShockAPI
 {
-    class UpdateManager
-    {
-        static string updateUrl = "http://shankshock.com/tshock-update.json";
-        public static DateTime lastcheck = DateTime.MinValue;
-        /// <summary>
-        /// Check once every X minutes.
-        /// </summary>
-        static readonly int CheckXMinutes = 30;
+	internal class UpdateManager
+	{
+		private static string updateUrl = "http://shankshock.com/tshock-update.json";
+		public static DateTime lastcheck = DateTime.MinValue;
 
-        public static void UpdateProcedureCheck()
-        {
-            if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
-            {
-                ThreadPool.QueueUserWorkItem(CheckUpdate);
-                lastcheck = DateTime.Now;
-            }
-        }
+		/// <summary>
+		/// Check once every X minutes.
+		/// </summary>
+		private static readonly int CheckXMinutes = 30;
 
-        public static void CheckUpdate(object o)
-        {
-            var updates = ServerIsOutOfDate();
-            if (updates != null)
-            {
-                NotifyAdministrators(updates);
-            }
-        }
+		public static void UpdateProcedureCheck()
+		{
+			if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
+			{
+				ThreadPool.QueueUserWorkItem(CheckUpdate);
+				lastcheck = DateTime.Now;
+			}
+		}
 
-        /// <summary>
-        /// Checks to see if the server is out of date.
-        /// </summary>
-        /// <returns></returns>
-        private static Dictionary<string, string> ServerIsOutOfDate()
-        {
-            using (var client = new WebClient())
-            {
-                client.Headers.Add("user-agent",
-                                   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
-                try
-                {
-                    string updatejson = client.DownloadString(updateUrl);
-                    var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
-                    var version = new Version(update["version"]);
-                    if (TShock.VersionNum.CompareTo(version) < 0)
-                        return update;
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e.ToString());
-                }
-                return null;
-            }
-        }
+		public static void CheckUpdate(object o)
+		{
+			var updates = ServerIsOutOfDate();
+			if (updates != null)
+			{
+				NotifyAdministrators(updates);
+			}
+		}
 
-        private static void NotifyAdministrators(Dictionary<string, string> update)
-        {
-            var changes = update["changes"].Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            NotifyAdministrator(TSPlayer.Server, changes);
-            foreach (TSPlayer player in TShock.Players)
-            {
-                if (player != null && player.Active && player.Group.HasPermission(Permissions.maintenance))
-                {
-                    NotifyAdministrator(player, changes);
-                }
-            }
-        }
+		/// <summary>
+		/// Checks to see if the server is out of date.
+		/// </summary>
+		/// <returns></returns>
+		private static Dictionary<string, string> ServerIsOutOfDate()
+		{
+			using (var client = new WebClient())
+			{
+				client.Headers.Add("user-agent",
+				                   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
+				try
+				{
+					string updatejson = client.DownloadString(updateUrl);
+					var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
+					var version = new Version(update["version"]);
+					if (TShock.VersionNum.CompareTo(version) < 0)
+						return update;
+				}
+				catch (Exception e)
+				{
+					Log.Error(e.ToString());
+				}
+				return null;
+			}
+		}
 
-        private static void NotifyAdministrator(TSPlayer player, string[] changes)
-        {
-            player.SendMessage("The server is out of date.", Color.Red);
-            for (int j = 0; j < changes.Length; j++)
-            {
-                player.SendMessage(changes[j], Color.Red);
-            }
-        }
-    }
+		private static void NotifyAdministrators(Dictionary<string, string> update)
+		{
+			var changes = update["changes"].Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
+			NotifyAdministrator(TSPlayer.Server, changes);
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null && player.Active && player.Group.HasPermission(Permissions.maintenance))
+				{
+					NotifyAdministrator(player, changes);
+				}
+			}
+		}
+
+		private static void NotifyAdministrator(TSPlayer player, string[] changes)
+		{
+			player.SendMessage("The server is out of date.", Color.Red);
+			for (int j = 0; j < changes.Length; j++)
+			{
+				player.SendMessage(changes[j], Color.Red);
+			}
+		}
+	}
 }

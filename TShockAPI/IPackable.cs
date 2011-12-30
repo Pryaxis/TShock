@@ -20,20 +20,21 @@ using System.IO;
 
 namespace TShockAPI
 {
-    /// <summary>
-    /// Derived objects can be written to and read from streams.
-    /// </summary>
-    public interface IPackable
-    {
-        /// <summary>
-        /// Writes object information to the stream
-        /// </summary>
-        /// <param name="stream">Stream to write to</param>
-        void Pack(Stream stream);
-        /// <summary>
-        /// Reads object information from the stream
-        /// </summary>
-        /// <param name="stream">Stream to read from</param>
-        void Unpack(Stream stream);
-    }
+	/// <summary>
+	/// Derived objects can be written to and read from streams.
+	/// </summary>
+	public interface IPackable
+	{
+		/// <summary>
+		/// Writes object information to the stream
+		/// </summary>
+		/// <param name="stream">Stream to write to</param>
+		void Pack(Stream stream);
+
+		/// <summary>
+		/// Reads object information from the stream
+		/// </summary>
+		/// <param name="stream">Stream to read from</param>
+		void Unpack(Stream stream);
+	}
 }

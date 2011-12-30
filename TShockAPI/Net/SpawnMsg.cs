@@ -3,25 +3,22 @@ using System.IO.Streams;
 
 namespace TShockAPI.Net
 {
-    public class SpawnMsg : BaseMsg
-    {
-        public override PacketTypes ID
-        {
-            get
-            {
-                return PacketTypes.PlayerSpawn;
-            }
-        }
+	public class SpawnMsg : BaseMsg
+	{
+		public override PacketTypes ID
+		{
+			get { return PacketTypes.PlayerSpawn; }
+		}
 
-        public int TileX { get; set; }
-        public int TileY {get;set;}
-        public byte PlayerIndex { get; set; }
+		public int TileX { get; set; }
+		public int TileY { get; set; }
+		public byte PlayerIndex { get; set; }
 
-        public override void Pack(Stream stream)
-        {
-            stream.WriteInt8(PlayerIndex);
-            stream.WriteInt32(TileX);
-            stream.WriteInt32(TileY);
-        }
-    }
+		public override void Pack(Stream stream)
+		{
+			stream.WriteInt8(PlayerIndex);
+			stream.WriteInt32(TileX);
+			stream.WriteInt32(TileY);
+		}
+	}
 }
