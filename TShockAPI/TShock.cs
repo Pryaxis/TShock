@@ -532,12 +532,35 @@ namespace TShockAPI
                         player.Spawn();
                     }
                     string check = "none";
+                    foreach (Item item in player.TPlayer.inventory)
+                    {
+                        if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack && item.type != 0)
+                        {
+                            check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+                        }
+                    }
+                    player.IgnoreActionsForCheating = check;
+                    check = "none";
                     foreach (Item item in player.TPlayer.armor)
                     {
                         if (!player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(item.name, player))
-                            check = "Remove Armor/Accessory (" + item.name + ")";
+                        {
+                            player.SetBuff(30, 120); //Bleeding
+                            player.SetBuff(36, 120); //Broken Armor
+                            check = "Remove Armor/Accessory " + item.name;
+                        }
                     }
                     player.IgnoreActionsForDisabledArmor = check;
+                    if (CheckIgnores(player))
+                    {
+                        player.SetBuff(33, 120); //Weak
+                        player.SetBuff(32, 120); //Slow
+                        player.SetBuff(23, 120); //Cursed
+                    }
+                    else if(!player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+                    {
+                        player.SetBuff(23, 120); //Cursed
+                    }
                 }
             }
             Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count, Config.MaxSlots);
@@ -796,7 +819,6 @@ namespace TShockAPI
 
             if (Config.PvPMode == "always" && !player.TPlayer.hostile)
             {
-                player.IgnoreActionsForPvP = true;
                 player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
             }
 
@@ -1235,13 +1257,15 @@ namespace TShockAPI
         public static bool CheckIgnores(TSPlayer player)
         {
             bool check = false;
-            if (player.IgnoreActionsForPvP)
+            if (Config.PvPMode == "always" && !player.TPlayer.hostile)
                 check = true;
             if (player.IgnoreActionsForInventory != "none")
                 check = true;
             if (player.IgnoreActionsForCheating != "none")
                 check = true;
             if (player.IgnoreActionsForDisabledArmor != "none")
+                check = true;
+            if (player.IgnoreActionsForClearingTrashCan)
                 check = true;
             if (!player.IsLoggedIn && Config.RequireLogin)
                 check = true;

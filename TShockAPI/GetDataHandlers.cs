@@ -138,11 +138,6 @@ namespace TShockAPI
             item.netDefaults(type);
             item.Prefix(prefix);
 
-            if (stack > item.maxStack && type != 0 && args.Player.IgnoreActionsForCheating != "none" && !args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
-            {
-                args.Player.IgnoreActionsForCheating = "Item Hack: " + item.name + " (" + stack + ") exceeds max stack of " + item.maxStack;
-            }
-
             if (args.Player.IsLoggedIn)
             {
                 args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
@@ -699,6 +694,11 @@ namespace TShockAPI
                 return true;
             }
 
+            if (TShock.Config.PvPMode == "disabled")
+            {
+                return true;
+            }
+
             if (args.TPlayer.hostile != pvp)
             {
                 long seconds = (long)(DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
@@ -713,13 +713,8 @@ namespace TShockAPI
 
             if (TShock.Config.PvPMode == "always")
             {
-                if (pvp == true)
-                    args.Player.IgnoreActionsForPvP = false;
-                else
-                {
+                if (!pvp)
                     args.Player.Spawn();
-                    args.Player.IgnoreActionsForPvP = true;
-                }
             }
 
             NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
@@ -765,7 +760,7 @@ namespace TShockAPI
                     {
                         args.Player.SendMessage("You need to rejoin to ensure your trash can is cleared!", Color.Red);
                     }
-                    else if (args.Player.IgnoreActionsForPvP)
+                    else if (TShock.Config.PvPMode == "always" && !args.TPlayer.hostile)
                     {
                         args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
                     }

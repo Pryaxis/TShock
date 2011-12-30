@@ -69,7 +69,6 @@ namespace TShockAPI
         public string Country = "??";
         public int Difficulty;
         private string CacheIP;
-        public bool IgnoreActionsForPvP = false;
         public string IgnoreActionsForInventory = "none";
         public string IgnoreActionsForCheating = "none";
         public string IgnoreActionsForDisabledArmor = "none";
@@ -353,10 +352,9 @@ namespace TShockAPI
         public virtual void Disable()
         {
             LastThreat = DateTime.UtcNow;
-            SetBuff(35, 330); //Silenced
-            SetBuff(33, 330); //Weak
-            SetBuff(32, 330); //Slow
-            SetBuff(23, 330); //Cursed
+            SetBuff(33, 330, true); //Weak
+            SetBuff(32, 330, true); //Slow
+            SetBuff(23, 330, true); //Cursed
         }
 
         public virtual void Whoopie(object time)
@@ -372,8 +370,11 @@ namespace TShockAPI
             }
         }
 
-        public virtual void SetBuff(int type, int time = 3600)
+        public virtual void SetBuff(int type, int time = 3600, bool bypass = false)
         {
+            if ((DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000 && !bypass)
+                return;
+
             SendData(PacketTypes.PlayerAddBuff, number: Index, number2: (float)type, number3: (float)time);
         }
 
