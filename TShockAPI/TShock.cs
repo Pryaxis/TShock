@@ -839,9 +839,12 @@ namespace TShockAPI
                 StartInvasion();
             }
 
+            player.LastNetPosition = new Vector2(Main.spawnTileX * 16f, Main.spawnTileY * 16f);
+
             if (Config.RememberLeavePos)
             {
                 var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
+                player.LastNetPosition = pos;
                 player.Teleport((int) pos.X, (int) pos.Y + 3);
             }
 

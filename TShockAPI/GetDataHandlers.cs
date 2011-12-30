@@ -735,6 +735,11 @@ namespace TShockAPI
                 return true;
             }
 
+            if(args.Player.LastNetPosition == Vector2.Zero)
+            {
+                return true;
+            }
+
             if (!pos.Equals(args.Player.LastNetPosition))
             {
                 float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f), new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
