@@ -778,16 +778,13 @@ namespace TShockAPI
                         }
                         int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
                         int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
-                        if (!args.Player.Teleport(lastTileX, lastTileY + 3))
+                        if (!args.Player.Teleport(lastTileX, lastTileY))
                         {
                             args.Player.Spawn();
                         }
                         return true;
                     }
-                    else
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 if (args.Player.Dead)
