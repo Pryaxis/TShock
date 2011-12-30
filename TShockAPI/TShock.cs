@@ -489,7 +489,7 @@ namespace TShockAPI
                     {
                         if (player.TileKillThreshold >= Config.TileKillThreshold)
                         {
-                            player.LastThreat = DateTime.UtcNow;
+                            player.Disable();
                             TSPlayer.Server.RevertTiles(player.TilesDestroyed);
                             player.TilesDestroyed.Clear();
                         }
@@ -502,7 +502,7 @@ namespace TShockAPI
                     {
                         if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
                         {
-                            player.LastThreat = DateTime.UtcNow;
+                            player.Disable();
                             TSPlayer.Server.RevertTiles(player.TilesCreated);
                             player.TilesCreated.Clear();
                         }
@@ -513,7 +513,7 @@ namespace TShockAPI
                     }
                     if(player.TileLiquidThreshold >= Config.TileLiquidThreshold)
                     {
-                        player.LastThreat = DateTime.UtcNow;
+                        player.Disable();
                     }
                     if (player.TileLiquidThreshold > 0)
                     {
@@ -521,7 +521,7 @@ namespace TShockAPI
                     }
                     if (player.ProjectileThreshold >= Config.ProjectileThreshold)
                     {
-                        player.LastThreat = DateTime.UtcNow;
+                        player.Disable();
                     }
                     if (player.ProjectileThreshold > 0)
                     {

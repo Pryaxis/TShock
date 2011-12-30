@@ -350,6 +350,15 @@ namespace TShockAPI
             SendData(PacketTypes.PlayerTeam, "", Index);
         }
 
+        public virtual void Disable()
+        {
+            LastThreat = DateTime.UtcNow;
+            SetBuff(35, 330); //Silenced
+            SetBuff(33, 330); //Weak
+            SetBuff(32, 330); //Slow
+            SetBuff(23, 330); //Cursed
+        }
+
         public virtual void Whoopie(object time)
         {
             var time2 = (int)time;

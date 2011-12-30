@@ -609,6 +609,7 @@ namespace TShockAPI
                 }
                 if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Spike", args.Player))
                 {
+                    args.Player.Disable();
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
                 }
@@ -620,6 +621,7 @@ namespace TShockAPI
                 }
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Explosives", args.Player))
                 {
+                    args.Player.Disable();
                     args.Player.SendTileSquare(tileX, tileY);
                     return true;
                 }
@@ -650,14 +652,14 @@ namespace TShockAPI
 
             if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
             if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -800,7 +802,7 @@ namespace TShockAPI
 				if (!args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name, args.Player))
                 {
                     control -= 32;
-                    args.Player.LastThreat = DateTime.UtcNow;
+                    args.Player.Disable();
                     args.Player.SendMessage(string.Format("You cannot use {0} on this server. Your actions are being ignored.", args.TPlayer.inventory[item].name), Color.Red);
                 }
             }
@@ -869,14 +871,14 @@ namespace TShockAPI
 
             if (args.Player.Index != owner)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
 
             if (dmg > 175)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
@@ -889,14 +891,14 @@ namespace TShockAPI
 
             if (TShock.CheckProjectilePermission(args.Player, index, type))
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
 
             if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
@@ -922,7 +924,7 @@ namespace TShockAPI
 
             if (args.Player.Index != owner)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 return true;
             }
 
@@ -937,7 +939,7 @@ namespace TShockAPI
 
             if (args.Player.Index != Main.projectile[index].owner)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
@@ -950,7 +952,7 @@ namespace TShockAPI
 
             if (TShock.CheckProjectilePermission(args.Player, index, type))
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.RemoveProjectile(ident, owner);
                 return true;
             }
@@ -1010,7 +1012,7 @@ namespace TShockAPI
 
             if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -1032,14 +1034,14 @@ namespace TShockAPI
 
 			if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
 
 			if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
             {
-                args.Player.LastThreat = DateTime.UtcNow;
+                args.Player.Disable();
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -1081,7 +1083,6 @@ namespace TShockAPI
 
             if (Main.tile[tileX, tileY].type != 0x15 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
             {
-                args.Player.LastThreat = DateTime.UtcNow;
                 args.Player.SendTileSquare(tileX, tileY);
                 return true;
             }
@@ -1340,6 +1341,7 @@ namespace TShockAPI
 
             if (dmg > 175)
             {
+                args.Player.Disable();
                 args.Player.SendData(PacketTypes.PlayerHp, "", id);
                 args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
                 return true;
@@ -1389,6 +1391,7 @@ namespace TShockAPI
 
             if (dmg > 175)
             {
+                args.Player.Disable();
                 args.Player.SendData(PacketTypes.NpcUpdate, "", id);
                 return true;
             }
