@@ -634,7 +634,7 @@ namespace TShockAPI
                 return true;
             }
 
-            if ((tiletype == 127 || Main.tileCut[tiletype]) && type == 0) //Ice Block Kill, Bypass range checks and such
+            if ((tiletype == 127 || Main.tileCut[tiletype]) && (type == 0 || type == 4))
             {
                 return false;
             }
