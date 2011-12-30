@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Terraria;
-
 using Hooks;
+using Terraria;
 
 namespace TShockAPI
 {

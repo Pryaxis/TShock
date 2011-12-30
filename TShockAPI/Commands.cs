@@ -15,10 +15,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,7 +27,6 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using TShockAPI.DB;
-using Region = TShockAPI.DB.Region;
 
 namespace TShockAPI
 {
@@ -641,12 +641,12 @@ namespace TShockAPI
 		#region Stupid commands
 		public static void ServerInfo(CommandArgs args)
 		{
-			args.Player.SendMessage("Memory usage: " + System.Diagnostics.Process.GetCurrentProcess().WorkingSet64);
-			args.Player.SendMessage("Allocated memory: " + System.Diagnostics.Process.GetCurrentProcess().VirtualMemorySize64);
-			args.Player.SendMessage("Total processor time: " + System.Diagnostics.Process.GetCurrentProcess().TotalProcessorTime);
-			args.Player.SendMessage("Ver: " + System.Environment.OSVersion);
-			args.Player.SendMessage("Proc count: " + System.Environment.ProcessorCount);
-			args.Player.SendMessage("Machine name: " + System.Environment.MachineName);
+			args.Player.SendMessage("Memory usage: " + Process.GetCurrentProcess().WorkingSet64);
+			args.Player.SendMessage("Allocated memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
+			args.Player.SendMessage("Total processor time: " + Process.GetCurrentProcess().TotalProcessorTime);
+			args.Player.SendMessage("Ver: " + Environment.OSVersion);
+			args.Player.SendMessage("Proc count: " + Environment.ProcessorCount);
+			args.Player.SendMessage("Machine name: " + Environment.MachineName);
 		}
 		#endregion
 
@@ -938,7 +938,7 @@ namespace TShockAPI
             ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private static void UpdateNow(CommandArgs args)
         {
             Process TServer = Process.GetCurrentProcess();
@@ -1103,7 +1103,7 @@ namespace TShockAPI
 
         private static void WoF(CommandArgs args)
         {
-            if (Main.wof >= 0 || (args.Player.Y / 16f < (float)(Main.maxTilesY - 205)))
+            if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
             {
                 args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
                 return;
@@ -2855,7 +2855,7 @@ namespace TShockAPI
                     count++;
                 }
             }
-            args.Player.SendMessage("All " + count.ToString() + " items within a radius of " + radius.ToString() + " have been deleted.");
+            args.Player.SendMessage("All " + count + " items within a radius of " + radius + " have been deleted.");
 
         }
 

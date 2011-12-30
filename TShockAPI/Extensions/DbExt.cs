@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TShockAPI.DB
 {
@@ -14,7 +15,7 @@ namespace TShockAPI.DB
         /// <param name="query">Query string with parameters as @0, @1, etc.</param>
         /// <param name="args">Parameters to be put in the query</param>
         /// <returns>Rows affected by query</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int Query(this IDbConnection olddb, string query, params object[] args)
         {
             using (var db = olddb.CloneEx())
@@ -37,7 +38,7 @@ namespace TShockAPI.DB
         /// <param name="query">Query string with parameters as @0, @1, etc.</param>
         /// <param name="args">Parameters to be put in the query</param>
         /// <returns>Query result as IDataReader</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static QueryResult QueryReader(this IDbConnection olddb, string query, params object[] args)
         {
             var db = olddb.CloneEx();
@@ -92,8 +93,8 @@ namespace TShockAPI.DB
             return SqlType.Unknown;
         }
 
-        static readonly Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>()
-        {
+        static readonly Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary<Type, Func<IDataReader, int, object>>
+                                                                                     	{
             {typeof(bool), (s, i) => s.GetBoolean(i)},
             {typeof(byte), (s, i) => s.GetByte(i)},
             {typeof(Int16), (s, i) => s.GetInt16(i)},

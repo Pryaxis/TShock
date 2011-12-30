@@ -57,11 +57,11 @@ namespace TShockAPI
 					string response;
 					if (TShock.Config.DisablePlayerCountReporting)
 					{
-                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + System.Environment.OSVersion.ToString() + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=0");
+                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=0");
 					}
 					else
 					{
-                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + System.Environment.OSVersion.ToString() + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
+                        response = client.DownloadString("http://tshock.co/tickto.php?do=log&fp=" + fp + "&ver=" + TShock.VersionNum + "&os=" + Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort + "&plcount=" + TShock.Utils.ActivePlayers());
 					}
 					Log.ConsoleInfo("Stat Tracker: " + response + "\n");
 				}

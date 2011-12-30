@@ -142,16 +142,16 @@ namespace TShockAPI
         public bool SaveWorldOnCrash = true;
 
         [Description("This will announce a player's location on join")]
-        public bool EnableGeoIP = false;
+        public bool EnableGeoIP;
 
         [Description("This will turn on a token requirement for the /status API endpoint.")]
-        public bool EnableTokenEndpointAuthentication = false;
+        public bool EnableTokenEndpointAuthentication;
 
         [Description("This is used when the API endpoint /status is queried.")]
         public string ServerNickname = "TShock Server";
 
         [Description("Enable/Disable the rest api.")]
-        public bool RestApiEnabled = false;
+        public bool RestApiEnabled;
 
         [Description("This is the port which the rest api will listen on.")]
         public int RestApiPort = 7878;
@@ -160,7 +160,7 @@ namespace TShockAPI
         public bool DisableTombstones = true;
 
         [Description("Displays a player's IP on join to everyone who has the log permission")]
-        public bool DisplayIPToAdmins = false;
+        public bool DisplayIPToAdmins;
 		
 		[Description("Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain asthetic tiles.")]
     	public bool EnableInsecureTileFixes = true;
@@ -169,22 +169,22 @@ namespace TShockAPI
         public bool KickProxyUsers = true;
 
         [Description("Disables hardmode, can't never be activated. Overrides /starthardmode")]
-        public bool DisableHardmode = false;
+        public bool DisableHardmode;
 
         [Description("Disables Dungeon Guardian from being spawned by player packets, this will instead force a respawn")]
-        public bool DisableDungeonGuardian = false;
+        public bool DisableDungeonGuardian;
 
         [Description("Enable Server Side Inventory checks, EXPERIMENTAL")]
-        public bool ServerSideInventory = false;
+        public bool ServerSideInventory;
 
     	[Description("Disables reporting of playercount to the stat system.")]
-		public bool DisablePlayerCountReporting = false;
+		public bool DisablePlayerCountReporting;
 
         [Description("Disables clown bomb projectiles from spawning")]
-        public bool DisableClownBombs = false;
+        public bool DisableClownBombs;
 
         [Description("Disables snow ball projectiles from spawning")]
-        public bool DisableSnowBalls = false;
+        public bool DisableSnowBalls;
 
         [Description("Change ingame chat format, {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message")]
         public string ChatFormat = "{1}{2}{3}: {4}";
@@ -205,10 +205,10 @@ namespace TShockAPI
         public int ProjectileThreshold = 50;
 
         [Description("Require all players to register or login before being allowed to play.")]
-        public bool RequireLogin = false;
+        public bool RequireLogin;
 
         [Description("Disables Invisibility potions from being used in PvP (Note, they can use them on the client, but the effect isn't sent to the rest of the server)")]
-        public bool DisableInvisPvP = false;
+        public bool DisableInvisPvP;
 
         [Description("The maximum distance players disabled for various reasons can move from")]
         public int MaxRangeForDisabled = 10;
@@ -217,13 +217,13 @@ namespace TShockAPI
         public string ServerPassword = "";
 
         [Description("Protect chests with region and build permissions")]
-        public bool RegionProtectChests = false;
+        public bool RegionProtectChests;
 
         [Description("Disable users from being able to login with account password when joining")]
-        public bool DisableLoginBeforeJoin = false;
+        public bool DisableLoginBeforeJoin;
 
         [Description("Allows users to register any username with /register")]
-        public bool AllowRegisterAnyUsername = false;
+        public bool AllowRegisterAnyUsername;
         
 		public static ConfigFile Read(string path)
         {

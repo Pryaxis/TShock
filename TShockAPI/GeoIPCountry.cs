@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 
 // This code is based on MaxMind's original C# code, which was ported from Java.
 // This version is very simplified and does not support a majority of features for speed.
@@ -141,7 +142,7 @@ namespace MaxMind
         public GeoIPCountry(string filename)
         {
             FileStream fs = new FileStream(filename, FileMode.Open);
-            _geodata = (Stream)fs;
+            _geodata = fs;
             _close = true;
         }
 
@@ -192,7 +193,7 @@ namespace MaxMind
         // Converts an IPv4 address into a long, for reading from geo database
         long AddressToLong(IPAddress ip)
         {
-            if (ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            if (ip.AddressFamily != AddressFamily.InterNetwork)
                 throw new InvalidOperationException("IP address is not IPv4");
 
             long num = 0;

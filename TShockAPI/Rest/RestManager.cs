@@ -4,6 +4,7 @@ using System.Linq;
 using HttpServer;
 using Rests;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -213,7 +214,7 @@ namespace TShockAPI
                 return returnBlock;
             }
 
-            var ban = new DB.Ban();
+            var ban = new Ban();
             if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
             else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
             else
@@ -253,7 +254,7 @@ namespace TShockAPI
                 return returnBlock;
             }
 
-            var ban = new DB.Ban();
+            var ban = new Ban();
             if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
             else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
             else
@@ -318,7 +319,7 @@ namespace TShockAPI
             }
             Main.bloodMoon = bloodmoon;
             returnBlock.Add("status", "200");
-            returnBlock.Add("response", "Blood Moon has been set to " + bloodmoon.ToString());
+            returnBlock.Add("response", "Blood Moon has been set to " + bloodmoon);
             return returnBlock;
         }
         #endregion
@@ -328,16 +329,16 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = TShock.Utils.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam);
             if (found.Count == 0)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
+                returnBlock.Add("error", "Name " + playerParam + " was not found");
             }
             else if (found.Count > 1)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+                returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
             }
             else if (found.Count == 1)
             {
@@ -347,7 +348,7 @@ namespace TShockAPI
                 returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
                 returnBlock.Add("ip", player.IP);
                 returnBlock.Add("group", player.Group.Name);
-                returnBlock.Add("position", player.TileX.ToString() + "," + player.TileY.ToString());
+                returnBlock.Add("position", player.TileX + "," + player.TileY);
                 var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
                 returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
                 returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
@@ -358,22 +359,22 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = TShock.Utils.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam);
             var reason = verbs["reason"];
             if (found.Count == 0)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
+                returnBlock.Add("error", "Name " + playerParam + " was not found");
             }
             else if (found.Count > 1)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+                returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
             }
             else if (found.Count == 1)
             {
                 var player = found[0];
-                TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason.ToString());
+                TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason);
                 returnBlock.Add("status", "200");
                 returnBlock.Add("response", "Player " + player.Name + " was kicked");
             }
@@ -383,23 +384,23 @@ namespace TShockAPI
         {
             var returnBlock = new Dictionary<string, object>();
             var playerParam = parameters["player"];
-            var found = TShock.Utils.FindPlayer(playerParam.ToString());
+            var found = TShock.Utils.FindPlayer(playerParam);
             var reason = verbs["reason"];
             if (found.Count == 0)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " was not found");
+                returnBlock.Add("error", "Name " + playerParam + " was not found");
             }
             else if (found.Count > 1)
             {
                 returnBlock.Add("status", "400");
-                returnBlock.Add("error", "Name " + playerParam.ToString() + " matches " + playerParam.Count().ToString() + " players");
+                returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
             }
             else if (found.Count == 1)
             {
                 var player = found[0];
-                TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason.ToString());
-                TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason.ToString());
+                TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason);
+                TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason);
                 returnBlock.Add("status", "200");
                 returnBlock.Add("response", "Player " + player.Name + " was banned");
             }

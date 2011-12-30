@@ -15,15 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
-
 using System.IO;
+using System.IO.Streams;
 using System.Text;
 using Terraria;
-
 using TShockAPI.Net;
-using System.IO.Streams;
 
 namespace TShockAPI
 {
@@ -121,8 +120,8 @@ namespace TShockAPI
             int plr = args.Data.ReadInt8();
             int slot = args.Data.ReadInt8();
             int stack = args.Data.ReadInt8();
-            short prefix = (short) args.Data.ReadInt8();
-            int type = (int) args.Data.ReadInt16();
+            short prefix = args.Data.ReadInt8();
+            int type = args.Data.ReadInt16();
 
             if (plr != args.Player.Index)
             {

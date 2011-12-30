@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using MySql.Data.MySqlClient;
@@ -31,7 +31,7 @@ namespace TShockAPI.DB
     {
         private IDbConnection database;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public WarpManager(IDbConnection db)
         {
             database = db;

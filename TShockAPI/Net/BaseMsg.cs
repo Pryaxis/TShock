@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Streams;
 
 namespace TShockAPI.Net
@@ -9,7 +10,7 @@ namespace TShockAPI.Net
         {
             get { throw new NotImplementedException("Msg ID not implemented"); }
         }
-        public void PackFull(System.IO.Stream stream)
+        public void PackFull(Stream stream)
         {
             long start = stream.Position;
             stream.WriteInt32(1);
@@ -21,12 +22,12 @@ namespace TShockAPI.Net
             stream.Position = end;
         }
 
-        public virtual void Unpack(System.IO.Stream stream)
+        public virtual void Unpack(Stream stream)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Pack(System.IO.Stream stream)
+        public virtual void Pack(Stream stream)
         {
             throw new NotImplementedException();
         }

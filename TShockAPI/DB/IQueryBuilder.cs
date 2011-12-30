@@ -57,7 +57,7 @@ namespace TShockAPI.DB
             int count = 0;
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
@@ -74,7 +74,7 @@ namespace TShockAPI.DB
             int count = 0;
             foreach (SqlValue value in values)
             {
-                sbvalues.Append(value.Name + "=" + value.Value.ToString());
+                sbvalues.Append(value.Name + "=" + value.Value);
                 if (count != values.Count - 1)
                     sbvalues.Append(",");
                 count++;
@@ -82,7 +82,7 @@ namespace TShockAPI.DB
             count = 0;
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
@@ -124,7 +124,7 @@ namespace TShockAPI.DB
 
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
@@ -186,7 +186,7 @@ namespace TShockAPI.DB
             int count = 0;
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
@@ -203,7 +203,7 @@ namespace TShockAPI.DB
             int count = 0;
             foreach (SqlValue value in values)
             {
-                sbvalues.Append(value.Name + "=" + value.Value.ToString());
+                sbvalues.Append(value.Name + "=" + value.Value);
                 if (count != values.Count - 1)
                     sbvalues.Append("AND");
                 count++;
@@ -211,7 +211,7 @@ namespace TShockAPI.DB
             count = 0;
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
@@ -254,7 +254,7 @@ namespace TShockAPI.DB
 
             foreach (SqlValue where in wheres)
             {
-                sbwheres.Append(where.Name + "=" + where.Value.ToString());
+                sbwheres.Append(where.Name + "=" + where.Value);
                 if (count != wheres.Count - 1)
                     sbwheres.Append(" AND ");
                 count++;
