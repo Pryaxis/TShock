@@ -175,6 +175,9 @@ namespace TShockAPI
 
         [Description("Bypass Server Side Inventory checks")]
         public static readonly string bypassinventorychecks;
+
+        [Description("Allow unrestricted Send Tile Square usage, for client side world editing")] 
+        public static readonly string allowclientsideworldedit;
 		
 
         static Permissions()

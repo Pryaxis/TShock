@@ -376,7 +376,9 @@ namespace TShockAPI
 
         private static bool HandleSendTileSquare(GetDataHandlerArgs args)
         {
-        	
+            if (args.Player.Group.HasPermission(Permissions.allowclientsideworldedit))
+                return false;
+
             var size = args.Data.ReadInt16();
             var tileX = args.Data.ReadInt32();
             var tileY = args.Data.ReadInt32();
