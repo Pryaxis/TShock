@@ -58,9 +58,12 @@ namespace TShockAPI
 			public int Type { get; set; }
 			public byte EditType { get; set; }
 		}
-		public static HandlerList<TileEditEventArgs> TileEdit = new HandlerList<TileEditEventArgs>();
+		public static HandlerList<TileEditEventArgs> TileEdit;
 		public static bool OnTileEdit(int x, int y, int type, byte editType)
 		{
+			if (TileEdit == null)
+				return false;
+
 			var args = new TileEditEventArgs
 			{
 				X = x,
