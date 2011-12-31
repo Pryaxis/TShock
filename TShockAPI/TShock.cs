@@ -439,7 +439,6 @@ namespace TShockAPI
 			}
 		}
 
-
 		private DateTime LastCheck = DateTime.UtcNow;
 		private DateTime LastSave = DateTime.UtcNow;
 

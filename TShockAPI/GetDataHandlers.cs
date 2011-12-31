@@ -49,7 +49,17 @@ namespace TShockAPI
 	{
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
 		public static int[] WhitelistBuffMaxTime;
-
+		#region Events
+		public static event TileEditHandler TileEdit;
+		public delegate void TileEditHandler(float x, float y, float type, float delete);
+		public static void OnTileEdit(float x, float y, float type, float editType)
+		{
+			if (TileEdit != null)
+			{
+				TileEdit(x, y, type, editType);
+			}
+		}
+		#endregion
 		public static void InitGetDataHandler()
 		{
 			#region Blacklists
@@ -147,7 +157,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerHp(GetDataHandlerArgs args)
+		public static bool HandlePlayerHp(GetDataHandlerArgs args)
 		{
 			int plr = args.Data.ReadInt8();
 			int cur = args.Data.ReadInt16();
@@ -568,7 +578,7 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
 			var tiletype = args.Data.ReadInt8();
-
+			OnTileEdit(tileX, tileY, tiletype, type);
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
