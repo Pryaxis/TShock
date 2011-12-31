@@ -51,6 +51,10 @@ namespace TShockAPI
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
 		public static int[] WhitelistBuffMaxTime;
 		#region Events
+
+		/// <summary>
+		/// TileEdit - called when a tile is placed or destroyed
+		/// </summary>
 		public class TileEditEventArgs : HandledEventArgs
 		{
 			public int X { get; set; }
@@ -72,6 +76,27 @@ namespace TShockAPI
 				EditType = editType
 			};
 			TileEdit.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class TogglePvpEventArgs : HandledEventArgs
+		{
+			public int id { get; set; }
+			public bool pvp { get; set; }
+		}
+
+		public static HandlerList<TogglePvpEventArgs> TogglePvp;
+		public static bool OnPvpToggled(int _id, bool _pvp)
+		{
+			if (TogglePvp == null)
+				return false;
+
+			var args = new TogglePvpEventArgs
+			{
+				id = _id,
+				pvp = _pvp,
+			};
+			TogglePvp.Invoke(null, args);
 			return args.Handled;
 		}
 		#endregion
@@ -724,6 +749,8 @@ namespace TShockAPI
 		{
 			int id = args.Data.ReadByte();
 			bool pvp = args.Data.ReadBoolean();
+			if (OnPvpToggled(id, pvp))
+				return true;
 
 			if (id != args.Player.Index)
 			{
