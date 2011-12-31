@@ -53,13 +53,13 @@ namespace TShockAPI
 		#region Events
 		public class TileEditEventArgs : HandledEventArgs
 		{
-			public float X { get; set; }
-			public float Y { get; set; }
-			public float Type { get; set; }
-			public float EditType { get; set; }
+			public int X { get; set; }
+			public int Y { get; set; }
+			public int Type { get; set; }
+			public byte EditType { get; set; }
 		}
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		public static bool OnTileEdit(float x, float y, float type, float editType)
+		public static bool OnTileEdit(int x, int y, int type, byte editType)
 		{
 			if (TileEdit == null)
 				return false;

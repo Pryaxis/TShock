@@ -25,13 +25,13 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) {RequiresToken = true});
 			Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiresToken = true});
 			Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiresToken = true});
-
+			Rest.Register(new RestCommand("/users/activelist", UserList) {RequiresToken = true});
 			Rest.Register(new RestCommand("/bans/create", BanCreate) {RequiresToken = true});
 			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) {RequiresToken = true});
 			Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) {RequiresToken = true});
 
 
-			Rest.Register(new RestCommand("/lists/players", UserList) {RequiresToken = true});
+			Rest.Register(new RestCommand("/lists/players", PlayerList) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/world/read", WorldRead) {RequiresToken = true});
 			Rest.Register(new RestCommand("/world/meteor", WorldMeteor) {RequiresToken = true});
@@ -74,10 +74,19 @@ namespace TShockAPI
 
 		private object UserList(RestVerbs verbs, IParameterCollection parameters)
 		{
-			var activeplayers = Main.player.Where(p => p != null && p.active).ToList();
-			string currentPlayers = string.Join(", ", activeplayers.Select(p => p.name));
 			var ret = new RestObject("200");
-			ret["players"] = currentPlayers;
+			string playerlist = "";
+			foreach (var TSPlayer in TShock.Players)
+			{
+				if (playerlist == "")
+				{
+					playerlist += TSPlayer.UserAccountName;
+				} else
+				{
+					playerlist += ", " + TSPlayer.UserAccountName;
+				}
+			}
+			ret["activeuesrs"] = playerlist;
 			return ret;
 		}
 
@@ -328,6 +337,15 @@ namespace TShockAPI
 		#endregion
 
 		#region RestPlayerMethods
+
+		private object PlayerList(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var activeplayers = Main.player.Where(p => p != null && p.active).ToList();
+			string currentPlayers = string.Join(", ", activeplayers.Select(p => p.name));
+			var ret = new RestObject("200");
+			ret["players"] = currentPlayers;
+			return ret;
+		}
 
 		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
 		{

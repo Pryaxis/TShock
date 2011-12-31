@@ -338,23 +338,34 @@ namespace TShockAPI
 				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
 			}
 
-			if (args.Parameters.Count != 2)
-			{
-				args.Player.SendMessage("Syntax: /login [username] [password]");
-				args.Player.SendMessage("If you forgot your password, there is no way to recover it.");
-				return;
-			}
+            var user = TShock.Users.GetUserByName(args.Player.Name);
+            string encrPass = "";
+
+            if (args.Parameters.Count == 1)
+            {
+                user = TShock.Users.GetUserByName(args.Player.Name);
+                encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
+            }
+            else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
+            {
+                user = TShock.Users.GetUserByName(args.Parameters[0]);
+                encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
+            }
+            else
+            {
+                args.Player.SendMessage("Syntax: /login [password]");
+                args.Player.SendMessage("If you forgot your password, there is no way to recover it.");
+                return;
+            }
 			try
 			{
-				string encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
-				var user = TShock.Users.GetUserByName(args.Parameters[0]);
 				if (user == null)
 				{
 					args.Player.SendMessage("User by that name does not exist");
 				}
 				else if (user.Password.ToUpper() == encrPass.ToUpper())
 				{
-					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Parameters[0]));
+					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
 					if (TShock.Config.ServerSideInventory)
 					{
@@ -377,7 +388,7 @@ namespace TShockAPI
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
 					args.Player.Group = TShock.Utils.GetGroup(user.Group);
-					args.Player.UserAccountName = args.Parameters[0];
+					args.Player.UserAccountName = user.Name;
 					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
@@ -385,13 +396,13 @@ namespace TShockAPI
 					args.Player.PlayerData.CopyInventory(args.Player);
 					TShock.InventoryDB.InsertPlayerData(args.Player);
 
-					args.Player.SendMessage("Authenticated as " + args.Parameters[0] + " successfully.", Color.LimeGreen);
-					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Parameters[0]);
+                    args.Player.SendMessage("Authenticated as " + user.Name + " successfully.", Color.LimeGreen);
+                    Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name);
 				}
 				else
 				{
 					args.Player.SendMessage("Incorrect password", Color.LimeGreen);
-					Log.Warn(args.Player.IP + " failed to authenticate as user: " + args.Parameters[0]);
+                    Log.Warn(args.Player.IP + " failed to authenticate as user: " + user.Name);
 					args.Player.LoginAttempts++;
 				}
 			}
