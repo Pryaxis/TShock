@@ -58,12 +58,9 @@ namespace TShockAPI
 			public float Type { get; set; }
 			public float EditType { get; set; }
 		}
-		public static event EventHandler<TileEditEventArgs> TileEdit;
+		public static HandlerList<TileEditEventArgs> TileEdit = new HandlerList<TileEditEventArgs>();
 		public static bool OnTileEdit(float x, float y, float type, float editType)
 		{
-			if (TileEdit == null)
-				return false;
-
 			var args = new TileEditEventArgs
 			{
 				X = x,
@@ -71,7 +68,7 @@ namespace TShockAPI
 				Type = type,
 				EditType = editType
 			};
-			TileEdit(null, args);
+			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
 		#endregion
