@@ -103,8 +103,6 @@ namespace TShockAPI
 
 		[Description("Enables kicking of banned users by matching their Character Name")] public bool EnableBanOnUsernames;
 
-		[Description("Drops excessive sync packets")] public bool EnableAntiLag = true;
-
 		[Description("Selects the default group name to place new registrants under")] public string
 			DefaultRegistrationGroupName = "default";
 
@@ -195,8 +193,7 @@ namespace TShockAPI
 
 		[Description("Allows users to register any username with /register")] public bool AllowRegisterAnyUsername;
 
-        [Description("Allows users to login with any username with /login")]
-        public bool AllowLoginAnyUsername;
+		[Description("Allows users to login with any username with /login")] public bool AllowLoginAnyUsername = true;
 
 		public static ConfigFile Read(string path)
 		{
