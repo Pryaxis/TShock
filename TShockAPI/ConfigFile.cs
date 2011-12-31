@@ -103,8 +103,6 @@ namespace TShockAPI
 
 		[Description("Enables kicking of banned users by matching their Character Name")] public bool EnableBanOnUsernames;
 
-		[Description("Drops excessive sync packets")] public bool EnableAntiLag = true;
-
 		[Description("Selects the default group name to place new registrants under")] public string
 			DefaultRegistrationGroupName = "default";
 
