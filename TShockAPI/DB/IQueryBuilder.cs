@@ -154,15 +154,16 @@ namespace TShockAPI.DB
 		}
 
 		private static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
-		                                                                         	{
-		                                                                         		{MySqlDbType.VarChar, "TEXT"},
-		                                                                         		{MySqlDbType.String, "TEXT"},
-		                                                                         		{MySqlDbType.Text, "TEXT"},
-		                                                                         		{MySqlDbType.TinyText, "TEXT"},
-		                                                                         		{MySqlDbType.MediumText, "TEXT"},
-		                                                                         		{MySqlDbType.LongText, "TEXT"},
-		                                                                         		{MySqlDbType.Int32, "INTEGER"},
-		                                                                         	};
+		{
+		    {MySqlDbType.VarChar, "TEXT"},
+		    {MySqlDbType.String, "TEXT"},
+		    {MySqlDbType.Text, "TEXT"},
+		    {MySqlDbType.TinyText, "TEXT"},
+		    {MySqlDbType.MediumText, "TEXT"},
+		    {MySqlDbType.LongText, "TEXT"},
+		    {MySqlDbType.Int32, "INTEGER"},
+			{MySqlDbType.Blob, "BLOB"},
+		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)
 		{
@@ -305,15 +306,15 @@ namespace TShockAPI.DB
 		}
 
 		private static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
-		                                                                         	{
-		                                                                         		{MySqlDbType.VarChar, "VARCHAR"},
-		                                                                         		{MySqlDbType.String, "CHAR"},
-		                                                                         		{MySqlDbType.Text, "TEXT"},
-		                                                                         		{MySqlDbType.TinyText, "TINYTEXT"},
-		                                                                         		{MySqlDbType.MediumText, "MEDIUMTEXT"},
-		                                                                         		{MySqlDbType.LongText, "LONGTEXT"},
-		                                                                         		{MySqlDbType.Int32, "INT"},
-		                                                                         	};
+		{
+		    {MySqlDbType.VarChar, "VARCHAR"},
+		    {MySqlDbType.String, "CHAR"},
+		    {MySqlDbType.Text, "TEXT"},
+		    {MySqlDbType.TinyText, "TINYTEXT"},
+		    {MySqlDbType.MediumText, "MEDIUMTEXT"},
+		    {MySqlDbType.LongText, "LONGTEXT"},
+		    {MySqlDbType.Int32, "INT"},
+		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)
 		{
