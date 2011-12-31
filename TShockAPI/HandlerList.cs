@@ -92,6 +92,18 @@ namespace TShockAPI
 			hand.Register(Create(handler));
 			return hand;
 		}
+		public static HandlerList<T> operator -(HandlerList<T> hand, HandlerItem obj)
+		{
+			return hand - obj.Handler;
+		}
+		public static HandlerList<T> operator -(HandlerList<T> hand, EventHandler<T> handler)
+		{
+			if (hand == null)
+				return null;
+
+			hand.UnRegister(handler);
+			return hand;
+		}
 	}
 
 	public enum HandlerPriority
