@@ -159,6 +159,33 @@ namespace TShockAPI
 			PlayerHP.Invoke(null, args);
 			return args.Handled;
 		}
+
+		/// <summary>
+		/// PlayerMana - called at a PlayerMana event
+		/// </summary>
+		public class PlayerManaEventArgs : HandledEventArgs
+		{
+			public int plr { get; set; }
+			public int cur { get; set; }
+			public int max { get; set; }
+		}
+
+		public static HandlerList<PlayerManaEventArgs> PlayerMana;
+
+		public static bool OnPlayerMana(int _plr, int _cur, int _max)
+		{
+			if (PlayerMana == null)
+				return false;
+
+			var args = new PlayerManaEventArgs
+			{
+				plr = _plr,
+				cur = _cur,
+				max = _max,
+			};
+			PlayerMana.Invoke(null, args);
+			return args.Handled;
+		}
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -184,7 +211,6 @@ namespace TShockAPI
 			                          		{PacketTypes.PlayerKillMe, HandlePlayerKillMe},
 			                          		{PacketTypes.LiquidSet, HandleLiquidSet},
 			                          		{PacketTypes.PlayerSpawn, HandleSpawn},
-			                          		{PacketTypes.SyncPlayers, HandleSync},
 			                          		{PacketTypes.ChestGetContents, HandleChestOpen},
 			                          		{PacketTypes.ChestItem, HandleChestItem},
 			                          		{PacketTypes.SignNew, HandleSign},
@@ -220,11 +246,6 @@ namespace TShockAPI
 				}
 			}
 			return false;
-		}
-
-		private static bool HandleSync(GetDataHandlerArgs args)
-		{
-			return TShock.Config.EnableAntiLag;
 		}
 
 		private static bool HandlePlayerSlot(GetDataHandlerArgs args)
@@ -291,6 +312,9 @@ namespace TShockAPI
 			int plr = args.Data.ReadInt8();
 			int cur = args.Data.ReadInt16();
 			int max = args.Data.ReadInt16();
+
+			if (OnPlayerMana(plr, cur, max))
+				return true;
 
 			if (args.Player.FirstMaxMP == 0)
 				args.Player.FirstMaxMP = max;
