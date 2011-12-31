@@ -78,7 +78,9 @@ namespace TShockAPI
 			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
-
+		/// <summary>
+		/// TogglePvp - called when a player toggles pvp
+		/// </summary>
 		public class TogglePvpEventArgs : HandledEventArgs
 		{
 			public int id { get; set; }
@@ -97,6 +99,64 @@ namespace TShockAPI
 				pvp = _pvp,
 			};
 			TogglePvp.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// PlayerSlot - called at a PlayerSlot event
+		/// </summary>
+		public class PlayerSlotEventArgs : HandledEventArgs
+		{
+			public int plr { get; set; }
+			public int slot { get; set; }
+			public int stack { get; set; }
+			public short prefix { get; set; }
+			public int type { get; set; }
+		}
+
+		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
+
+		public static bool OnPlayerSlot(int _plr, int _slot, int _stack, short _prefix, int _type)
+		{
+			if (PlayerSlot == null)
+				return false;
+
+			var args = new PlayerSlotEventArgs
+			{
+				plr = _plr,
+				slot = _slot,
+				stack = _stack,
+				prefix = _prefix,
+				type = _type
+			};
+			PlayerSlot.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// PlayerHP - called at a PlayerHP event
+		/// </summary>
+		public class PlayerHPEventArgs : HandledEventArgs
+		{
+			public int plr { get; set; }
+			public int cur { get; set; }
+			public int max { get; set; }
+		}
+
+		public static HandlerList<PlayerHPEventArgs> PlayerHP;
+
+		public static bool OnPlayerHP(int _plr, int _cur, int _max)
+		{
+			if (PlayerHP == null)
+				return false;
+
+			var args = new PlayerHPEventArgs
+			{
+				plr = _plr,
+				cur = _cur,
+				max = _max,
+			};
+			PlayerHP.Invoke(null, args);
 			return args.Handled;
 		}
 		#endregion
@@ -175,6 +235,9 @@ namespace TShockAPI
 			short prefix = args.Data.ReadInt8();
 			int type = args.Data.ReadInt16();
 
+			if (OnPlayerSlot(plr, slot, stack, prefix, type))
+				return true;
+
 			if (plr != args.Player.Index)
 			{
 				return true;
@@ -202,6 +265,9 @@ namespace TShockAPI
 			int plr = args.Data.ReadInt8();
 			int cur = args.Data.ReadInt16();
 			int max = args.Data.ReadInt16();
+
+			if (OnPlayerHP(plr, cur, max))
+				return true;
 
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
