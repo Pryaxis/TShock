@@ -195,6 +195,9 @@ namespace TShockAPI
 
 		[Description("Allows users to register any username with /register")] public bool AllowRegisterAnyUsername;
 
+        [Description("Allows users to register any username with /register")]
+        public bool AllowLoginAnyUsername;
+
 		public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
