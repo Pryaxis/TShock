@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Streams;
 using System.Text;
@@ -50,14 +51,28 @@ namespace TShockAPI
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
 		public static int[] WhitelistBuffMaxTime;
 		#region Events
-		public static event TileEditHandler TileEdit;
-		public delegate void TileEditHandler(float x, float y, float type, float delete);
-		public static void OnTileEdit(float x, float y, float type, float editType)
+		public class TileEditEventArgs : HandledEventArgs
 		{
-			if (TileEdit != null)
+			public float X { get; set; }
+			public float Y { get; set; }
+			public float Type { get; set; }
+			public float EditType { get; set; }
+		}
+		public static event EventHandler<TileEditEventArgs> TileEdit;
+		public static bool OnTileEdit(float x, float y, float type, float editType)
+		{
+			if (TileEdit == null)
+				return false;
+
+			var args = new TileEditEventArgs
 			{
-				TileEdit(x, y, type, editType);
-			}
+				X = x,
+				Y = y,
+				Type = type,
+				EditType = editType
+			};
+			TileEdit(null, args);
+			return args.Handled;
 		}
 		#endregion
 		public static void InitGetDataHandler()
@@ -578,7 +593,8 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
 			var tiletype = args.Data.ReadInt8();
-			OnTileEdit(tileX, tileY, tiletype, type);
+			if (OnTileEdit(tileX, tileY, tiletype, type))
+				return true;
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
