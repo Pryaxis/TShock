@@ -191,7 +191,7 @@ namespace TShockAPI
 			add(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
 			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
-			add(Permissions.cfg, Broadcast, "broadcast", "bc");
+			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say", "yell", "scream", "yellinanguish", "speak");
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");
 			add(Permissions.annoy, Annoy, "annoy");
