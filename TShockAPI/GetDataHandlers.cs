@@ -369,7 +369,7 @@ namespace TShockAPI
 			var difficulty = args.Data.ReadInt8();
 			string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
 
-			if (OnPlayerInfo((int)playerid, (int) hair, (int) male, (int) difficulty, name))
+			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
 			{
 				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.");
 				return true;
