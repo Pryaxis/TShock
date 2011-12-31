@@ -186,6 +186,38 @@ namespace TShockAPI
 			PlayerMana.Invoke(null, args);
 			return args.Handled;
 		}
+
+		/// <summary>
+		/// PlayerInfo - called at a PlayerInfo event
+		/// If this is cancelled, the server will ForceKick the player. If this should be changed in the future, let someone know.
+		/// </summary>
+		public class PlayerInfoEventArgs : HandledEventArgs
+		{
+			public int playerid { get; set; }
+			public int hair { get; set; }
+			public int male { get; set; }
+			public int difficulty { get; set; }
+			public string name { get; set; }
+		}
+
+		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
+
+		public static bool OnPlayerInfo(int _plrid, int _hair, int _male, int _difficulty, string _name)
+		{
+			if (PlayerInfo == null)
+				return false;
+
+			var args = new PlayerInfoEventArgs
+			{
+				playerid = _plrid,
+				hair = _hair,
+				male = _male,
+				difficulty = _difficulty,
+				name = _name,
+			};
+			PlayerInfo.Invoke(null, args);
+			return args.Handled;
+		}
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -336,6 +368,12 @@ namespace TShockAPI
 			args.Data.Position += 21;
 			var difficulty = args.Data.ReadInt8();
 			string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+
+			if (OnPlayerInfo((int)playerid, (int) hair, (int) male, (int) difficulty, name))
+			{
+				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.");
+				return true;
+			}
 
 			if (!TShock.Utils.ValidString(name))
 			{
