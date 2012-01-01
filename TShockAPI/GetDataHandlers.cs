@@ -378,6 +378,31 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class SpawnEventArgs : HandledEventArgs
+		{
+			public int TileX { get; set; }
+			public int TileY { get; set; }
+			public byte Liquid { get; set; }
+			public bool Lava { get; set; }
+		}
+		public static HandlerList<SpawnEventArgs> PlayerSpawn;
+
+		private static bool OnPlayerSpawn(int tilex, int tiley, byte liquid, bool lava)
+		{
+			if (LiquidSet == null)
+				return false;
+
+			var args = new LiquidSetEventArgs
+			{
+				TileX = tilex,//
+				TileY = tiley,
+				Liquid = liquid,
+				Lava = lava,
+			};
+			LiquidSet.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
