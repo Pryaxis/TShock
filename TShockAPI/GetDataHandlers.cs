@@ -624,6 +624,21 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class PlayerAnimationEventArgs : HandledEventArgs
+		{
+		}
+		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
+
+		private static bool OnPlayerAnimation()
+		{
+			if (PlayerAnimation == null)
+				return false;
+
+			var args = new PlayerAnimationEventArgs {};
+			PlayerAnimation.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -2103,6 +2118,10 @@ namespace TShockAPI
 
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
+
+			if (OnPlayerAnimation())
+				return true;
+
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
