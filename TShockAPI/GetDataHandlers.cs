@@ -603,6 +603,27 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class NPCSpecialEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Type { get; set; }
+		}
+		public static HandlerList<NPCSpecialEventArgs> NPCSpecial;
+
+		private static bool OnNPCSpecial(byte id, byte type)
+		{
+			if (NPCSpecial == null)
+				return false;
+
+			var args = new NPCSpecialEventArgs
+			{
+				ID = id,
+				Type = type,
+			};
+			NPCSpecial.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -2066,6 +2087,9 @@ namespace TShockAPI
 		{
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
+
+			if (OnNPCSpecial(id, type))
+				return true;
 
 			if (type == 1 && TShock.Config.DisableDungeonGuardian)
 			{
