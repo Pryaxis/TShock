@@ -549,6 +549,33 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class PlayerDamageEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Direction { get; set; }
+			public short Damage { get; set; }
+			public byte PVP { get; set; }
+			public byte Critical { get; set; }
+		}
+		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
+
+		private static bool OnPlayerDamage(byte id, byte dir, short dmg, byte pvp, byte crit)
+		{
+			if (PlayerDamage == null)
+				return false;
+
+			var args = new PlayerDamageEventArgs
+			{
+				ID = id,
+				Direction = dir,
+				Damage = dmg,
+				PVP = pvp,
+				Critical = crit,
+			};
+			PlayerDamage.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1901,6 +1928,9 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8();
 			var crit = args.Data.ReadInt8();
+
+			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
+				return true;
 
 			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
