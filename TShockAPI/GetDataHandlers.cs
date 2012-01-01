@@ -449,6 +449,29 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class SignEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public int X { get; set; }
+			public int Y { get; set; }
+		}
+		public static HandlerList<ChestOpenEventArgs> Sign;
+
+		private static bool OnSignEvent(short id, int x, int y)
+		{
+			if (Sign == null)
+				return false;
+
+			var args = new SignEventArgs
+			{
+				ID = id,
+				X = x,
+				Y = y,
+			};
+			Sign.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1663,6 +1686,9 @@ namespace TShockAPI
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
+
+			if (OnSignEvent(id, x, y))
+				return true;
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
