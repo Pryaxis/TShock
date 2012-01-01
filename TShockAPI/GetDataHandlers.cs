@@ -639,6 +639,25 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class PlayerBuffUpdateEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+		}
+		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate;
+
+		private static bool OnPlayerBuffUpdate(byte id)
+		{
+			if (PlayerBuffUpdate == null)
+				return false;
+
+			var args = new PlayerBuffUpdateEventArgs
+			{
+				ID = id,
+			};
+			PlayerBuffUpdate.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -2140,6 +2159,10 @@ namespace TShockAPI
 		private static bool HandlePlayerBuffUpdate(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
+
+			if (OnPlayerBuffUpdate(id))
+				return true;
+
 			for (int i = 0; i < 10; i++)
 			{
 				var buff = args.Data.ReadInt8();
