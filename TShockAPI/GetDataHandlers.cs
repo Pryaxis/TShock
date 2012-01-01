@@ -85,7 +85,7 @@ namespace TShockAPI
 			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		public class TogglePvpEventArgs : HandledEventArgs
 		{
 			public byte PlayerId { get; set; }
@@ -256,7 +256,7 @@ namespace TShockAPI
 
 		private static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
 		{
-			if (TileKill == null)
+			if (KillMe == null)
 				return false;
 
 			var args = new KillMeEventArgs
