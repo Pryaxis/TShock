@@ -148,10 +148,10 @@ namespace TShockAPI
 			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
 		}
 
-		private static void DumpDescriptions()
+		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();
-			foreach (var field in typeof (Permissions).GetFields())
+			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
 			{
 				var name = field.Name;
 
@@ -172,7 +172,7 @@ namespace TShockAPI
 						c =>
 						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
-				sb.AppendLine("## <a name=\"{0}\">{0}  ".SFormat(name));
+				sb.AppendLine("## <a name=\"{0}\">{0}</a>  ".SFormat(name));
 				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
 				sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
 				sb.AppendLine();

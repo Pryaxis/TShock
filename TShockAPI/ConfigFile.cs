@@ -236,12 +236,12 @@ namespace TShockAPI
 		public static Action<ConfigFile> ConfigRead;
 
 
-		private static void DumpDescriptions()
+		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();
 			var defaults = new ConfigFile();
 
-			foreach (var field in defaults.GetType().GetFields())
+			foreach (var field in defaults.GetType().GetFields().OrderBy(f => f.Name))
 			{
 				if (field.IsStatic)
 					continue;

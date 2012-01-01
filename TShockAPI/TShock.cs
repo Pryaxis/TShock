@@ -357,6 +357,11 @@ namespace TShockAPI
 						Log.ConsoleInfo("World path has been set to " + path);
 					}
 				}
+				if (parms[i].ToLower() == "-dump")
+				{
+					ConfigFile.DumpDescriptions();
+					Permissions.DumpDescriptions();
+				}
 			}
 		}
 
