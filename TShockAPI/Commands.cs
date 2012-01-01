@@ -1057,6 +1057,7 @@ namespace TShockAPI
 			}
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Eater(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1076,6 +1077,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Eye(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1096,6 +1098,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void King(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1115,6 +1118,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Skeletron(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1135,6 +1139,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void WoF(CommandArgs args)
 		{
 			if (Main.wof >= 0 || (args.Player.Y/16f < (Main.maxTilesY - 205)))
@@ -1146,6 +1151,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Twins(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1168,6 +1174,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Destroyer(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1188,6 +1195,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void SkeletronPrime(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1208,6 +1216,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
 		{
 			if (args.Parameters.Count > 1)
