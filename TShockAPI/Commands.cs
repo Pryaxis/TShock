@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -191,16 +190,15 @@ namespace TShockAPI
 			add(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
 			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
-			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say", "yell", "scream", "yellinanguish", "speak");
+			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");
 			add(Permissions.annoy, Annoy, "annoy");
-			add(Permissions.cfg, ConvertWaR, "convert");
 			add(Permissions.kill, Kill, "kill");
 			add(Permissions.butcher, Butcher, "butcher");
 			add(Permissions.item, Item, "item", "i");
-			add(Permissions.item, Give, "give");
-			add(Permissions.clearitems, ClearItems, "clearitems");
+			add(Permissions.item, Give, "give", "g");
+			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
 			add(Permissions.heal, Heal, "heal");
 			add(Permissions.buff, Buff, "buff");
 			add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
@@ -924,23 +922,6 @@ namespace TShockAPI
 
 		#region Server Maintenence Commands
 
-		public static void ConvertWaR(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("This command will dump all users from both Regions and Warps.");
-				args.Player.SendMessage("This command will also change all Worlds to reference this WorldID.");
-				args.Player.SendMessage("You must manually fix multi-world configurations.");
-				args.Player.SendMessage("To confirm this: /convert yes");
-			}
-			else if (args.Parameters[0] == "yes")
-			{
-				TShock.Warps.ConvertDB();
-				TShock.Regions.ConvertDB();
-				args.Player.SendMessage("Convert complete. You need to re-allow users after they register.");
-			}
-		}
-
 		private static void Broadcast(CommandArgs args)
 		{
 			string message = "";
@@ -1057,6 +1038,7 @@ namespace TShockAPI
 			}
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Eater(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1076,6 +1058,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Eye(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1096,6 +1079,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void King(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1115,6 +1099,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Skeletron(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1135,6 +1120,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void WoF(CommandArgs args)
 		{
 			if (Main.wof >= 0 || (args.Player.Y/16f < (Main.maxTilesY - 205)))
@@ -1146,6 +1132,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Twins(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1168,6 +1155,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Destroyer(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1188,6 +1176,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void SkeletronPrime(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
@@ -1208,6 +1197,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, amount));
 		}
 
+		[Obsolete("This specific command for spawning mobs will replaced soon.")]
 		private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
 		{
 			if (args.Parameters.Count > 1)

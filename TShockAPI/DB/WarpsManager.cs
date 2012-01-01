@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -15,13 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Xml;
 using MySql.Data.MySqlClient;
 using Terraria;
 
@@ -48,93 +45,6 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			String file = Path.Combine(TShock.SavePath, "warps.xml");
-			String name = "";
-			String world = "";
-			int x1 = 0;
-			int y1 = 0;
-			if (!File.Exists(file))
-				return;
-
-			using (var reader = XmlReader.Create(new StreamReader(file), new XmlReaderSettings {CloseInput = true}))
-			{
-				// Parse the file and display each of the nodes.
-				while (reader.Read())
-				{
-					switch (reader.NodeType)
-					{
-						case XmlNodeType.Element:
-							switch (reader.Name)
-							{
-								case "Warp":
-									name = "";
-									world = "";
-									x1 = 0;
-									y1 = 0;
-									break;
-								case "WarpName":
-									while (reader.NodeType != XmlNodeType.Text)
-										reader.Read();
-									name = reader.Value;
-									break;
-								case "X":
-									while (reader.NodeType != XmlNodeType.Text)
-										reader.Read();
-									int.TryParse(reader.Value, out x1);
-									break;
-								case "Y":
-									while (reader.NodeType != XmlNodeType.Text)
-										reader.Read();
-									int.TryParse(reader.Value, out y1);
-									break;
-								case "WorldName":
-									while (reader.NodeType != XmlNodeType.Text)
-										reader.Read();
-									world = reader.Value;
-									break;
-							}
-							break;
-						case XmlNodeType.Text:
-
-							break;
-						case XmlNodeType.XmlDeclaration:
-						case XmlNodeType.ProcessingInstruction:
-							break;
-						case XmlNodeType.Comment:
-							break;
-						case XmlNodeType.EndElement:
-							if (reader.Name.Equals("Warp"))
-							{
-								string query = (TShock.Config.StorageType.ToLower() == "sqlite")
-								               	? "INSERT OR IGNORE INTO Warps VALUES (@0, @1,@2, @3);"
-								               	: "INSERT IGNORE INTO Warps SET X=@0, Y=@1, WarpName=@2, WorldID=@3;";
-								database.Query(query, x1, y1, name, world);
-							}
-							break;
-					}
-				}
-			}
-
-			String path = Path.Combine(TShock.SavePath, "old_configs");
-			String file2 = Path.Combine(path, "warps.xml");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			if (File.Exists(file2))
-				File.Delete(file2);
-			File.Move(file, file2);
-		}
-
-		public void ConvertDB()
-		{
-			try
-			{
-				database.Query("UPDATE Warps SET WorldID=@0", Main.worldID.ToString());
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex.ToString());
-			}
 		}
 
 		public bool AddWarp(int x, int y, string name, string worldid)

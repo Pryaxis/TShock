@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+TShock, a server mod for Terraria
+Copyright (C) 2011 The TShock Team
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -39,45 +56,6 @@ namespace TShockAPI.DB
 			         "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
 			AddGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
 			AddGroup("vip", "default", "reservedslot");
-
-			String file = Path.Combine(TShock.SavePath, "groups.txt");
-			if (File.Exists(file))
-			{
-				using (StreamReader sr = new StreamReader(file))
-				{
-					String line;
-					while ((line = sr.ReadLine()) != null)
-					{
-						if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
-						{
-							String[] info = line.Split(' ');
-							String comms = "";
-							int size = info.Length;
-							for (int i = 1; i < size; i++)
-							{
-								if (!comms.Equals(""))
-									comms = comms + ",";
-								comms = comms + info[i].Trim();
-							}
-
-							string query = "";
-							if (TShock.Config.StorageType.ToLower() == "sqlite")
-								query = "INSERT OR IGNORE INTO GroupList (GroupName, Commands) VALUES (@0, @1);";
-							else if (TShock.Config.StorageType.ToLower() == "mysql")
-								query = "INSERT IGNORE INTO GroupList SET GroupName=@0, Commands=@1;";
-
-							db.Query(query, info[0].Trim(), comms);
-						}
-					}
-				}
-				String path = Path.Combine(TShock.SavePath, "old_configs");
-				String file2 = Path.Combine(path, "groups.txt");
-				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);
-				if (File.Exists(file2))
-					File.Delete(file2);
-				File.Move(file, file2);
-			}
 		}
 
 

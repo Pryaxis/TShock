@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -15,14 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* TShock wouldn't be possible without:
- * Github
- * Microsoft Visual Studio 2011
- * And you, for your continued support and devotion to the evolution of TShock
- * Kerplunc Gaming
- * TerrariaGSP
- * XNS Technology Group (Xenon Servers)
- */
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -115,7 +107,7 @@ namespace TShockAPI
 				Directory.CreateDirectory(SavePath);
 
 #if DEBUG
-            Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
 #else
 			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
@@ -149,11 +141,11 @@ namespace TShockAPI
 						DB = new MySqlConnection();
 						DB.ConnectionString =
 							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
-							              hostport[0],
-							              hostport.Length > 1 ? hostport[1] : "3306",
-							              Config.MySqlDbName,
-							              Config.MySqlUsername,
-							              Config.MySqlPassword
+										  hostport[0],
+										  hostport.Length > 1 ? hostport[1] : "3306",
+										  Config.MySqlDbName,
+										  Config.MySqlUsername,
+										  Config.MySqlPassword
 								);
 					}
 					catch (MySqlException ex)
@@ -234,22 +226,22 @@ namespace TShockAPI
 			if (userAccount == null)
 			{
 				return new RestObject("401")
-				       	{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
+						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
 			}
 
 			if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
 			{
 				return new RestObject("401")
-				       	{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
+						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
 			}
 
 			if (!Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
 			{
 				return new RestObject("403")
-				       	{
-				       		Error =
-				       			"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
-				       	};
+						{
+							Error =
+								"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
+						};
 			}
 
 			return new RestObject("200") {Response = "Successful login"}; //Maybe return some user info too?
@@ -295,7 +287,7 @@ namespace TShockAPI
 			Log.Error(e.ExceptionObject.ToString());
 
 			if (e.ExceptionObject.ToString().Contains("Terraria.Netplay.ListenForClients") ||
-			    e.ExceptionObject.ToString().Contains("Terraria.Netplay.ServerLoop"))
+				e.ExceptionObject.ToString().Contains("Terraria.Netplay.ServerLoop"))
 			{
 				var sb = new List<string>();
 				for (int i = 0; i < Netplay.serverSock.Length; i++)
@@ -381,9 +373,9 @@ namespace TShockAPI
 		}
 
 		/*
-         * Hooks:
-         * 
-         */
+		 * Hooks:
+		 * 
+		 */
 
 		public static int AuthToken = -1;
 
@@ -424,7 +416,7 @@ namespace TShockAPI
 			if (Config.RestApiEnabled)
 				RestApi.Start();
 
-			StatTracker.checkin();
+			StatTracker.CheckIn();
 
 			FixChestStacks();
 		}
@@ -450,7 +442,7 @@ namespace TShockAPI
 		private void OnUpdate()
 		{
 			UpdateManager.UpdateProcedureCheck();
-			StatTracker.checkin();
+			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 
@@ -545,7 +537,7 @@ namespace TShockAPI
 					foreach (Item item in player.TPlayer.inventory)
 					{
 						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack &&
-						    item.type != 0)
+							item.type != 0)
 						{
 							check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 						}
@@ -569,14 +561,14 @@ namespace TShockAPI
 						player.SetBuff(23, 120); //Cursed
 					}
 					else if (!player.Group.HasPermission(Permissions.usebanneditem) &&
-					         Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+							 Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 					{
 						player.SetBuff(23, 120); //Cursed
 					}
 				}
 			}
 			Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count,
-			                              Config.MaxSlots);
+										  Config.MaxSlots);
 		}
 
 		private void OnConnect(int ply, HandledEventArgs handler)
@@ -752,7 +744,7 @@ namespace TShockAPI
 					{
 						count++;
 						TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
-						                                          player.Group.Name, player.UserAccountName));
+																  player.Group.Name, player.UserAccountName));
 					}
 				}
 				TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
@@ -802,7 +794,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-			    (int) type != 38)
+				(int) type != 38)
 			{
 				e.Handled = true;
 				return;
@@ -946,16 +938,16 @@ namespace TShockAPI
 			if (e.MsgID == PacketTypes.Disconnect)
 			{
 				Action<ServerSock, string> senddisconnect = (sock, str) =>
-				                                            	{
-				                                            		if (sock == null || !sock.active)
-				                                            			return;
-				                                            		sock.kill = true;
-				                                            		using (var ms = new MemoryStream())
-				                                            		{
-				                                            			new DisconnectMsg {Reason = str}.PackFull(ms);
-				                                            			SendBytesBufferless(sock, ms.ToArray());
-				                                            		}
-				                                            	};
+																{
+																	if (sock == null || !sock.active)
+																		return;
+																	sock.kill = true;
+																	using (var ms = new MemoryStream())
+																	{
+																		new DisconnectMsg {Reason = str}.PackFull(ms);
+																		SendBytesBufferless(sock, ms.ToArray());
+																	}
+																};
 
 				if (e.remoteClient != -1)
 				{
@@ -990,8 +982,8 @@ namespace TShockAPI
 		}
 
 		/*
-         * Useful stuff:
-         * */
+		 * Useful stuff:
+		 * */
 
 		public static void StartInvasion()
 		{
@@ -1063,7 +1055,7 @@ namespace TShockAPI
 			}
 
 			if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) &&
-			    Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
+				Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
 			{
 				return true;
 			}
@@ -1101,7 +1093,7 @@ namespace TShockAPI
 				return true;
 			}
 			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
-			    Regions.InArea(tileX, tileY))
+				Regions.InArea(tileX, tileY))
 			{
 				player.SendMessage("Region protected from changes.", Color.Red);
 				return true;
@@ -1147,9 +1139,9 @@ namespace TShockAPI
 		public static bool HackedHealth(TSPlayer player)
 		{
 			return (player.TPlayer.statManaMax > 400) ||
-			       (player.TPlayer.statMana > 400) ||
-			       (player.TPlayer.statLifeMax > 400) ||
-			       (player.TPlayer.statLife > 400);
+				   (player.TPlayer.statMana > 400) ||
+				   (player.TPlayer.statLifeMax > 400) ||
+				   (player.TPlayer.statLife > 400);
 		}
 
 		public static bool HackedInventory(TSPlayer player)
@@ -1207,7 +1199,7 @@ namespace TShockAPI
 			if (player.TPlayer.statLifeMax > playerData.maxHealth)
 			{
 				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server",
-				                   Color.Cyan);
+								   Color.Cyan);
 				check = false;
 			}
 
@@ -1227,7 +1219,7 @@ namespace TShockAPI
 							item.Prefix(inventory[i].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
-							                   Color.Cyan);
+											   Color.Cyan);
 							check = false;
 						}
 						else if (playerData.inventory[i].prefix != inventory[i].prefix)
@@ -1236,7 +1228,7 @@ namespace TShockAPI
 							item.Prefix(inventory[i].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
-							                   Color.Cyan);
+											   Color.Cyan);
 							check = false;
 						}
 						else if (inventory[i].stack > playerData.inventory[i].stack)
@@ -1264,7 +1256,7 @@ namespace TShockAPI
 							item.Prefix(armor[i - 48].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
-							                   Color.Cyan);
+											   Color.Cyan);
 							check = false;
 						}
 						else if (playerData.inventory[i].prefix != armor[i - 48].prefix)
@@ -1273,7 +1265,7 @@ namespace TShockAPI
 							item.Prefix(armor[i - 48].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
-							                   Color.Cyan);
+											   Color.Cyan);
 							check = false;
 						}
 						else if (armor[i - 48].stack > playerData.inventory[i].stack)

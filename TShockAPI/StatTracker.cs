@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+TShock, a server mod for Terraria
+Copyright (C) 2011 The TShock Team
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -12,16 +29,16 @@ namespace TShockAPI
 		public DateTime lastcheck = DateTime.MinValue;
 		private readonly int checkinFrequency = 5;
 
-		public void checkin()
+		public void CheckIn()
 		{
 			if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
 			{
-				ThreadPool.QueueUserWorkItem(callHome);
+				ThreadPool.QueueUserWorkItem(CallHome);
 				lastcheck = DateTime.Now;
 			}
 		}
 
-		private void callHome(object state)
+		private void CallHome(object state)
 		{
 			string fp;
 			string lolpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.tshock/";

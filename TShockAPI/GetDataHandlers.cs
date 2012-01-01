@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -398,6 +397,263 @@ namespace TShockAPI
 				SpawnY = spawnY,
 			};
 			PlayerSpawn.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class ChestOpenEventArgs : HandledEventArgs
+		{
+			public int X { get; set; }
+			public int Y { get; set; }
+		}
+		public static HandlerList<ChestOpenEventArgs> ChestOpen;
+
+		private static bool OnChestOpen(int x, int y)
+		{
+			if (ChestOpen == null)
+				return false;
+
+			var args = new ChestOpenEventArgs
+			{
+				X = x,
+				Y = y,
+			};
+			ChestOpen.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class ChestItemEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public byte Slot { get; set; }
+			public byte Stacks { get; set; }
+			public byte Prefix { get; set; }
+			public short Type { get; set; }
+		}
+		public static HandlerList<ChestItemEventArgs> ChestItemChange;
+
+		private static bool OnChestItemChange(short id, byte slot, byte stacks, byte prefix, short type)
+		{
+			if (PlayerSpawn == null)
+				return false;
+
+			var args = new ChestItemEventArgs
+			{
+				ID = id,
+				Slot = slot,
+				Stacks = stacks,
+				Prefix = prefix,
+				Type = type,
+			};
+			ChestItemChange.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class SignEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public int X { get; set; }
+			public int Y { get; set; }
+		}
+		public static HandlerList<SignEventArgs> Sign;
+
+		private static bool OnSignEvent(short id, int x, int y)
+		{
+			if (Sign == null)
+				return false;
+
+			var args = new SignEventArgs
+			{
+				ID = id,
+				X = x,
+				Y = y,
+			};
+			Sign.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class NPCHomeChangeEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public short X { get; set; }
+			public short Y { get; set; }
+			public byte Homeless { get; set; }
+		}
+		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
+
+		private static bool OnUpdateNPCHome(short id, short x, short y, byte homeless)
+		{
+			if (NPCHome == null)
+				return false;
+
+			var args = new NPCHomeChangeEventArgs
+			{
+				ID = id,
+				X = x,
+				Y = y,
+				Homeless = homeless,
+			};
+			NPCHome.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class PlayerBuffEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Type { get; set; }
+			public short Time { get; set; }
+		}
+		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
+
+		private static bool OnPlayerBuff(byte id, byte type, short time)
+		{
+			if (PlayerBuff == null)
+				return false;
+
+			var args = new PlayerBuffEventArgs
+			{
+				ID = id,
+				Type = type,
+				Time = time,
+			};
+			PlayerBuff.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class ItemDropEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public Vector2 Position { get; set; }
+			public Vector2 Velocity { get; set; }
+			public byte Stacks { get; set; }
+			public byte Prefix { get; set; }
+			public short Type { get; set; }
+		}
+		public static HandlerList<ItemDropEventArgs> ItemDrop;
+
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, short type)
+		{
+			if (ItemDrop == null)
+				return false;
+
+			var args = new ItemDropEventArgs
+			{
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				Type = type,
+			};
+			ItemDrop.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class PlayerDamageEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Direction { get; set; }
+			public short Damage { get; set; }
+			public byte PVP { get; set; }
+			public byte Critical { get; set; }
+		}
+		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
+
+		private static bool OnPlayerDamage(byte id, byte dir, short dmg, byte pvp, byte crit)
+		{
+			if (PlayerDamage == null)
+				return false;
+
+			var args = new PlayerDamageEventArgs
+			{
+				ID = id,
+				Direction = dir,
+				Damage = dmg,
+				PVP = pvp,
+				Critical = crit,
+			};
+			PlayerDamage.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class NPCStrikeEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Direction { get; set; }
+			public short Damage { get; set; }
+			public byte PVP { get; set; }
+			public byte Critical { get; set; }
+		}
+		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
+
+		private static bool OnNPCStrike(byte id, byte dir, short dmg, byte pvp, byte crit)
+		{
+			if (NPCStrike == null)
+				return false;
+
+			var args = new NPCStrikeEventArgs
+			{
+				ID = id,
+				Direction = dir,
+				Damage = dmg,
+				PVP = pvp,
+				Critical = crit,
+			};
+			NPCStrike.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class NPCSpecialEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Type { get; set; }
+		}
+		public static HandlerList<NPCSpecialEventArgs> NPCSpecial;
+
+		private static bool OnNPCSpecial(byte id, byte type)
+		{
+			if (NPCSpecial == null)
+				return false;
+
+			var args = new NPCSpecialEventArgs
+			{
+				ID = id,
+				Type = type,
+			};
+			NPCSpecial.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class PlayerAnimationEventArgs : HandledEventArgs
+		{
+		}
+		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
+
+		private static bool OnPlayerAnimation()
+		{
+			if (PlayerAnimation == null)
+				return false;
+
+			var args = new PlayerAnimationEventArgs {};
+			PlayerAnimation.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class PlayerBuffUpdateEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+		}
+		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate;
+
+		private static bool OnPlayerBuffUpdate(byte id)
+		{
+			if (PlayerBuffUpdate == null)
+				return false;
+
+			var args = new PlayerBuffUpdateEventArgs
+			{
+				ID = id,
+			};
+			PlayerBuffUpdate.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -1547,6 +1803,9 @@ namespace TShockAPI
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
 
+			if (OnChestOpen(x, y))
+				return true;
+
 			if (TShock.CheckIgnores(args.Player))
 			{
 				return true;
@@ -1572,6 +1831,9 @@ namespace TShockAPI
 			var stacks = args.Data.ReadInt8();
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
+
+			if (OnChestItemChange(id, slot, stacks, prefix, type))
+				return true;
 
 			if (args.TPlayer.chest != id)
 			{
@@ -1610,6 +1872,9 @@ namespace TShockAPI
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
 
+			if (OnSignEvent(id, x, y))
+				return true;
+
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
 				args.Player.SendData(PacketTypes.SignNew, "", id);
@@ -1630,6 +1895,9 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var homeless = args.Data.ReadInt8();
+
+			if (OnUpdateNPCHome(id, x, y, homeless))
+				return true;
 
 			if (!args.Player.Group.HasPermission(Permissions.movenpc))
 			{
@@ -1660,6 +1928,9 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
 			var time = args.Data.ReadInt16();
+
+			if (OnPlayerBuff(id, type, time))
+				return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{
@@ -1700,6 +1971,9 @@ namespace TShockAPI
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
 
+			if (OnItemDrop(id, pos, vel, stacks, prefix, type))
+				return true;
+
 			if (type == 0) //Item removed, let client do this to prevent item duplication client side
 			{
 				return false;
@@ -1735,6 +2009,9 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8();
 			var crit = args.Data.ReadInt8();
+
+			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
+				return true;
 
 			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
@@ -1797,6 +2074,9 @@ namespace TShockAPI
 			var pvp = args.Data.ReadInt8();
 			var crit = args.Data.ReadInt8();
 
+			if (OnNPCStrike(id, direction, dmg, pvp, crit))
+				return true;
+
 			if (Main.npc[id] == null)
 				return true;
 
@@ -1841,6 +2121,9 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
 
+			if (OnNPCSpecial(id, type))
+				return true;
+
 			if (type == 1 && TShock.Config.DisableDungeonGuardian)
 			{
 				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
@@ -1853,6 +2136,10 @@ namespace TShockAPI
 
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
+
+			if (OnPlayerAnimation())
+				return true;
+
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
@@ -1871,6 +2158,10 @@ namespace TShockAPI
 		private static bool HandlePlayerBuffUpdate(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
+
+			if (OnPlayerBuffUpdate(id))
+				return true;
+
 			for (int i = 0; i < 10; i++)
 			{
 				var buff = args.Data.ReadInt8();

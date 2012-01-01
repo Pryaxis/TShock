@@ -1,4 +1,4 @@
-﻿/*   
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
 using System.Data;
 using System.IO;
@@ -43,53 +42,6 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			String file = Path.Combine(TShock.SavePath, "users.txt");
-			if (File.Exists(file))
-			{
-				using (StreamReader sr = new StreamReader(file))
-				{
-					String line;
-					while ((line = sr.ReadLine()) != null)
-					{
-						if (line.Equals("") || line.Substring(0, 1).Equals("#"))
-							continue;
-						String[] info = line.Split(' ');
-						String username = "";
-						String sha = "";
-						String group = "";
-						String ip = "";
-
-						String[] nameSha = info[0].Split(':');
-
-						if (nameSha.Length < 2)
-						{
-							username = nameSha[0];
-							ip = nameSha[0];
-							group = info[1];
-						}
-						else
-						{
-							username = nameSha[0];
-							sha = nameSha[1];
-							group = info[1];
-						}
-
-						string query = (TShock.Config.StorageType.ToLower() == "sqlite")
-						               	? "INSERT OR IGNORE INTO Users (Username, Password, Usergroup, IP) VALUES (@0, @1, @2, @3)"
-						               	: "INSERT IGNORE INTO Users SET Username=@0, Password=@1, Usergroup=@2, IP=@3";
-
-						database.Query(query, username.Trim(), sha.Trim(), group.Trim(), ip.Trim());
-					}
-				}
-				String path = Path.Combine(TShock.SavePath, "old_configs");
-				String file2 = Path.Combine(path, "users.txt");
-				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);
-				if (File.Exists(file2))
-					File.Delete(file2);
-				File.Move(file, file2);
-			}
 		}
 
 		/// <summary>

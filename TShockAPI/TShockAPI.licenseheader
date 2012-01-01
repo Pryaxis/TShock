@@ -1,4 +1,5 @@
-﻿/*
+extensions: .cs
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -15,20 +16,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-
-namespace TShockAPI
-{
-	public static class LinqExt
-	{
-		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-		{
-			if (source == null) throw new ArgumentNullException("source");
-			if (action == null) throw new ArgumentNullException("action");
-
-			foreach (T item in source)
-				action(item);
-		}
-	}
-}

@@ -1,11 +1,30 @@
-﻿using System;
+﻿/*
+TShock, a server mod for Terraria
+Copyright (C) 2011 The TShock Team
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using HttpServer;
 using HttpServer.Headers;
 using Newtonsoft.Json;
+using TShockAPI;
 using HttpListener = HttpServer.HttpListener;
 
 namespace Rests
@@ -68,11 +87,37 @@ namespace Rests
 			commands.Add(com);
 		}
 
+		#region Event
+		public class RestRequestEventArgs : HandledEventArgs
+		{
+			public RequestEventArgs Request { get; set; }
+		}
+
+		public static HandlerList<RestRequestEventArgs> RestRequestEvent;
+
+		private static bool OnRestRequestCall(RequestEventArgs request)
+		{
+			if (RestRequestEvent == null)
+				return false;
+
+			var args = new RestRequestEventArgs
+			{
+				Request = request,
+			};
+			RestRequestEvent.Invoke(null, args);
+			return args.Handled;
+		}
+		#endregion
+
+
 		protected virtual void OnRequest(object sender, RequestEventArgs e)
 		{
 			var obj = ProcessRequest(sender, e);
 			if (obj == null)
 				throw new NullReferenceException("obj");
+
+			//if (OnRestRequestCall(e))
+			//	return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
 			e.Response.Connection.Type = ConnectionType.Close;
