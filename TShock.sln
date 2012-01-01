@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Terraria.vsmdi = Terraria.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrariaServer", "TerrariaServer\TerrariaServer.csproj", "{149DA67E-C2A5-4076-AC37-8066877FE955}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Terraria.vsmdi
@@ -52,6 +54,16 @@ Global
 		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F3742F51-D7BF-4754-A68A-CD944D2A21FF}.Release|x86.ActiveCfg = Release|Any CPU
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Debug|x86.ActiveCfg = Debug|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Debug|x86.Build.0 = Debug|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Release|Any CPU.ActiveCfg = Release|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Release|Mixed Platforms.Build.0 = Release|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Release|x86.ActiveCfg = Release|x86
+		{149DA67E-C2A5-4076-AC37-8066877FE955}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
