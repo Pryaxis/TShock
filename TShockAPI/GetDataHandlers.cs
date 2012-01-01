@@ -88,7 +88,7 @@ namespace TShockAPI
 		
 		public class TogglePvpEventArgs : HandledEventArgs
 		{
-			public byte Id { get; set; }
+			public byte PlayerId { get; set; }
 			public bool Pvp { get; set; }
 		}
 		/// <summary>
@@ -102,7 +102,7 @@ namespace TShockAPI
 
 			var args = new TogglePvpEventArgs
 			{
-				Id = _id,
+				PlayerId = _id,
 				Pvp = _pvp,
 			};
 			TogglePvp.Invoke(null, args);
@@ -112,7 +112,7 @@ namespace TShockAPI
 		
 		public class PlayerSlotEventArgs : HandledEventArgs
 		{
-			public byte Player { get; set; }
+			public byte PlayerId { get; set; }
 			public byte Slot { get; set; }
 			public byte Stack { get; set; }
 			public byte Prefix { get; set; }
@@ -129,7 +129,7 @@ namespace TShockAPI
 
 			var args = new PlayerSlotEventArgs
 			{
-				Player = _plr,
+				PlayerId = _plr,
 				Slot = _slot,
 				Stack = _stack,
 				Prefix = _prefix,
@@ -142,7 +142,7 @@ namespace TShockAPI
 		
 		public class PlayerHPEventArgs : HandledEventArgs
 		{
-			public int Player { get; set; }
+			public byte PlayerId { get; set; }
 			public short Current { get; set; }
 			public short Max { get; set; }
 		}
@@ -151,14 +151,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerHPEventArgs> PlayerHP;
 
-		private static bool OnPlayerHP(int _plr, short _cur, short _max)
+		private static bool OnPlayerHP(byte _plr, short _cur, short _max)
 		{
 			if (PlayerHP == null)
 				return false;
 
 			var args = new PlayerHPEventArgs
 			{
-				Player = _plr,
+				PlayerId = _plr,
 				Current = _cur,
 				Max = _max,
 			};
@@ -169,7 +169,7 @@ namespace TShockAPI
 		
 		public class PlayerManaEventArgs : HandledEventArgs
 		{
-			public int Player { get; set; }
+			public byte PlayerId { get; set; }
 			public short Current { get; set; }
 			public short Max { get; set; }
 		}
@@ -178,14 +178,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerManaEventArgs> PlayerMana;
 
-		private static bool OnPlayerMana(int _plr, short _cur, short _max)
+		private static bool OnPlayerMana(byte _plr, short _cur, short _max)
 		{
 			if (PlayerMana == null)
 				return false;
 
 			var args = new PlayerManaEventArgs
 			{
-				Player = _plr,
+				PlayerId = _plr,
 				Current = _cur,
 				Max = _max,
 			};
@@ -247,24 +247,24 @@ namespace TShockAPI
 
 		public class KillMeEventArgs : HandledEventArgs
 		{
-			public int ID { get; set; }
-			public int Direction { get; set; }
-			public int Damage { get; set; }
-			public bool PVP { get; set; }
+			public byte PlayerId { get; set; }
+			public byte Direction { get; set; }
+			public short Damage { get; set; }
+			public bool Pvp { get; set; }
 		}
 		public static HandlerList<KillMeEventArgs> KillMe;
 
-		private static bool OnKillMe(int id, int direction, int damage, bool pvp)
+		private static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
 		{
 			if (TileKill == null)
 				return false;
 
 			var args = new KillMeEventArgs
 			{
-				ID = id,
+				PlayerId = plr,
 				Direction = direction,
 				Damage = damage,
-				PVP = pvp,
+				Pvp = pvp,
 			};
 			KillMe.Invoke(null, args);
 			return args.Handled;
@@ -272,22 +272,22 @@ namespace TShockAPI
 
 		public class PlayerUpdateEventArgs : HandledEventArgs
 		{
-			public int Player { get; set; }
-			public int Control { get; set; }
-			public int Item { get; set; }
+			public byte PlayerId { get; set; }
+			public byte Control { get; set; }
+			public byte Item { get; set; }
 			public Vector2 Position { get; set; }
 			public Vector2 Velocity { get; set; }
 		}
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
 
-		private static bool OnPlayerUpdate(int player, int control, int item, Vector2 position, Vector2 velocity)
+		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity)
 		{
 			if (PlayerUpdate == null)
 				return false;
 
 			var args = new PlayerUpdateEventArgs
 			{
-				Player = player,
+				PlayerId = player,
 				Control = control,
 				Item = item,
 				Position = position,
@@ -299,13 +299,13 @@ namespace TShockAPI
 
 		public class SendTileSquareEventArgs : HandledEventArgs
 		{
-			public int Size { get; set; }
+			public short Size { get; set; }
 			public int TileX { get; set; }
 			public int TileY { get; set; }
 		}
 		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
 
-		private static bool OnSendTileSquare(int size, int tilex, int tiley)
+		private static bool OnSendTileSquare(short size, int tilex, int tiley)
 		{
 			if (SendTileSquare == null)
 				return false;
@@ -322,25 +322,25 @@ namespace TShockAPI
 
 		public class NewProjectileEventArgs : HandledEventArgs
 		{
-			public int Ident { get; set; }
+			public short Identity { get; set; }
 			public Vector2 Position { get; set; }
 			public Vector2 Velocity { get; set; }
 			public float Knockback { get; set; }
-			public int Damage { get; set; }
-			public int Owner { get; set; }
-			public int Type { get; set; }
+			public short Damage { get; set; }
+			public byte Owner { get; set; }
+			public byte Type { get; set; }
 			public int Index { get; set; }
 		}
 		public static HandlerList<NewProjectileEventArgs> NewProjectile;
 
-		private static bool OnNewProjectile(int ident, Vector2 pos, Vector2 vel, float knockback, int dmg, int owner, int type, int index)
+		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, byte type, int index)
 		{
 			if (NewProjectile == null)
 				return false;
 
 			var args = new NewProjectileEventArgs
 			{
-				Ident = ident,
+				Identity = ident,
 				Position = pos,
 				Velocity = vel,
 				Knockback = knockback,
