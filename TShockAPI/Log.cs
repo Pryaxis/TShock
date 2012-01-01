@@ -22,6 +22,7 @@ using System.IO;
 
 namespace TShockAPI
 {
+	[Flags]
 	public enum LogLevel
 	{
 		None = 0,

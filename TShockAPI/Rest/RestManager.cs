@@ -398,7 +398,7 @@ namespace TShockAPI
 		private object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = parameters["player"];
+			var playerParam = verbs["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			var reason = verbs["reason"];
 			if (found.Count == 0)
