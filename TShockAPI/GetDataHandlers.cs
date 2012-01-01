@@ -472,6 +472,31 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class NPCHomeChangeEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public short X { get; set; }
+			public short Y { get; set; }
+			public byte Homeless { get; set; }
+		}
+		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
+
+		private static bool OnUpdateNPCHome(short id, short x, short y, byte homeless)
+		{
+			if (NPCHome == null)
+				return false;
+
+			var args = new NPCHomeChangeEventArgs
+			{
+				ID = id,
+				X = x,
+				Y = y,
+				Homeless = homeless,
+			};
+			NPCHome.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1710,6 +1735,9 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var homeless = args.Data.ReadInt8();
+
+			if (OnUpdateNPCHome(id, x, y, homeless))
+				return true;
 
 			if (!args.Player.Group.HasPermission(Permissions.movenpc))
 			{
