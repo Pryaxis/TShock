@@ -367,7 +367,7 @@ namespace TShockAPI
 		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = parameters["player"];
+			var playerParam = verbs["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			if (found.Count == 0)
 			{
@@ -424,7 +424,7 @@ namespace TShockAPI
 		private object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = parameters["player"];
+			var playerParam = verbs["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			var reason = verbs["reason"];
 			if (found.Count == 0)
