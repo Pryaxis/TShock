@@ -269,6 +269,115 @@ namespace TShockAPI
 			KillMe.Invoke(null, args);
 			return args.Handled;
 		}
+
+		public class PlayerUpdateEventArgs : HandledEventArgs
+		{
+			public int Player { get; set; }
+			public int Control { get; set; }
+			public int Item { get; set; }
+			public Vector2 Position { get; set; }
+			public Vector2 Velocity { get; set; }
+		}
+		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
+
+		private static bool OnPlayerUpdate(int player, int control, int item, Vector2 position, Vector2 velocity)
+		{
+			if (PlayerUpdate == null)
+				return false;
+
+			var args = new PlayerUpdateEventArgs
+			{
+				Player = player,
+				Control = control,
+				Item = item,
+				Position = position,
+				Velocity = velocity,
+			};
+			PlayerUpdate.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class SendTileSquareEventArgs : HandledEventArgs
+		{
+			public int Size { get; set; }
+			public int TileX { get; set; }
+			public int TileY { get; set; }
+		}
+		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
+
+		private static bool OnSendTileSquare(int size, int tilex, int tiley)
+		{
+			if (SendTileSquare == null)
+				return false;
+
+			var args = new SendTileSquareEventArgs
+			{
+				Size = size,
+				TileX = tilex,
+				TileY = tiley,
+			};
+			SendTileSquare.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class NewProjectileEventArgs : HandledEventArgs
+		{
+			public int Ident { get; set; }
+			public Vector2 Position { get; set; }
+			public Vector2 Velocity { get; set; }
+			public float Knockback { get; set; }
+			public int Damage { get; set; }
+			public int Owner { get; set; }
+			public int Type { get; set; }
+			public int Index { get; set; }
+		}
+		public static HandlerList<NewProjectileEventArgs> NewProjectile;
+
+		private static bool OnNewProjectile(int ident, Vector2 pos, Vector2 vel, float knockback, int dmg, int owner, int type, int index)
+		{
+			if (NewProjectile == null)
+				return false;
+
+			var args = new NewProjectileEventArgs
+			{
+				Ident = ident,
+				Position = pos,
+				Velocity = vel,
+				Knockback = knockback,
+				Damage = dmg,
+				Owner = owner,
+				Type = type,,
+				Index = index,
+			};
+			NewProjectile.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class LiquidSetEventArgs : HandledEventArgs
+		{
+			public int TileX { get; set; }
+			public int TileY { get; set; }
+			public byte Liquid { get; set;}
+			public bool Lava { get; set; }
+		}
+		public static HandlerList<LiquidSetEventArgs> LiquidSet;
+
+		private static bool OnLiquidSet(int tilex, int tiley, byte liquid, bool lava)
+		{
+			if (LiquidSet == null)
+				return false;
+
+			var args = new LiquidSetEventArgs
+			{
+				TileX = tilex,
+				TileY = tiley,
+				Liquid = liquid,
+				Lava = lava,
+			};
+			LiquidSet.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -616,6 +725,9 @@ namespace TShockAPI
 			var size = args.Data.ReadInt16();
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
+
+			if (OnSendTileSquare(size, tileX, tileY))
+				return true;
 
 			if (size > 5)
 				return true;
@@ -972,7 +1084,8 @@ namespace TShockAPI
 			var item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-
+			if (OnPlayerUpdate(plr, control, item, pos, vel))
+				return true;
 			if (item < 0 || item >= args.TPlayer.inventory.Length)
 			{
 				return true;
@@ -1121,6 +1234,9 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident);
 
+			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
+				return true;
+
 			if (index > Main.maxProjectiles || index < 0)
 			{
 				return true;
@@ -1254,6 +1370,9 @@ namespace TShockAPI
 			int tileY = args.Data.ReadInt32();
 			byte liquid = args.Data.ReadInt8();
 			bool lava = args.Data.ReadBoolean();
+
+			if (OnLiquidSet(tileX, tileY, liquid, lava))
+				return true;
 
 			//The liquid was picked up.
 			if (liquid == 0)
