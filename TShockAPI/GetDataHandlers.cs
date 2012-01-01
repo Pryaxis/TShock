@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Streams;
+using System.Linq;
 using System.Text;
 using Terraria;
 using TShockAPI.Net;
@@ -51,19 +52,25 @@ namespace TShockAPI
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
 		public static int[] WhitelistBuffMaxTime;
 		#region Events
-
+		
+		[DisplayName("TileEditEventArgs"), Description("Args")]
+		public class TileEditEventArgs : HandledEventArgs
+		{
+			[Description("Tile X")]
+			public int X { get; set; }
+			[Description("Tile Y")]
+			public int Y { get; set; }
+			[Description("Tile Type")]
+			public byte Type { get; set; }
+			[Description("Edit Type (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)")]
+			public byte EditType { get; set; }
+		} 
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
-		public class TileEditEventArgs : HandledEventArgs
-		{
-			public int X { get; set; }
-			public int Y { get; set; }
-			public int Type { get; set; }
-			public byte EditType { get; set; }
-		}
+		[Description("Called when a tile is placed or destroyed")]
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		public static bool OnTileEdit(int x, int y, int type, byte editType)
+		public static bool OnTileEdit(int x, int y, byte type, byte editType)
 		{
 			if (TileEdit == null)
 				return false;
@@ -78,142 +85,140 @@ namespace TShockAPI
 			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		public class TogglePvpEventArgs : HandledEventArgs
+		{
+			public byte Id { get; set; }
+			public bool Pvp { get; set; }
+		}
 		/// <summary>
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
-		public class TogglePvpEventArgs : HandledEventArgs
-		{
-			public int id { get; set; }
-			public bool pvp { get; set; }
-		}
-
 		public static HandlerList<TogglePvpEventArgs> TogglePvp;
-		public static bool OnPvpToggled(int _id, bool _pvp)
+		public static bool OnPvpToggled(byte _id, bool _pvp)
 		{
 			if (TogglePvp == null)
 				return false;
 
 			var args = new TogglePvpEventArgs
 			{
-				id = _id,
-				pvp = _pvp,
+				Id = _id,
+				Pvp = _pvp,
 			};
 			TogglePvp.Invoke(null, args);
 			return args.Handled;
 		}
 
+		
+		public class PlayerSlotEventArgs : HandledEventArgs
+		{
+			public byte Player { get; set; }
+			public byte Slot { get; set; }
+			public byte Stack { get; set; }
+			public byte Prefix { get; set; }
+			public short Type { get; set; }
+		}
 		/// <summary>
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
-		public class PlayerSlotEventArgs : HandledEventArgs
-		{
-			public int plr { get; set; }
-			public int slot { get; set; }
-			public int stack { get; set; }
-			public short prefix { get; set; }
-			public int type { get; set; }
-		}
-
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
-
-		public static bool OnPlayerSlot(int _plr, int _slot, int _stack, short _prefix, int _type)
+		public static bool OnPlayerSlot(byte _plr, byte _slot, byte _stack, byte _prefix, short _type)
 		{
 			if (PlayerSlot == null)
 				return false;
 
 			var args = new PlayerSlotEventArgs
 			{
-				plr = _plr,
-				slot = _slot,
-				stack = _stack,
-				prefix = _prefix,
-				type = _type
+				Player = _plr,
+				Slot = _slot,
+				Stack = _stack,
+				Prefix = _prefix,
+				Type = _type
 			};
 			PlayerSlot.Invoke(null, args);
 			return args.Handled;
 		}
 
+		
+		public class PlayerHPEventArgs : HandledEventArgs
+		{
+			public int Player { get; set; }
+			public short Current { get; set; }
+			public short Max { get; set; }
+		}
 		/// <summary>
 		/// PlayerHP - called at a PlayerHP event
 		/// </summary>
-		public class PlayerHPEventArgs : HandledEventArgs
-		{
-			public int plr { get; set; }
-			public int cur { get; set; }
-			public int max { get; set; }
-		}
-
 		public static HandlerList<PlayerHPEventArgs> PlayerHP;
 
-		public static bool OnPlayerHP(int _plr, int _cur, int _max)
+		public static bool OnPlayerHP(int _plr, short _cur, short _max)
 		{
 			if (PlayerHP == null)
 				return false;
 
 			var args = new PlayerHPEventArgs
 			{
-				plr = _plr,
-				cur = _cur,
-				max = _max,
+				Player = _plr,
+				Current = _cur,
+				Max = _max,
 			};
 			PlayerHP.Invoke(null, args);
 			return args.Handled;
 		}
 
+		
+		public class PlayerManaEventArgs : HandledEventArgs
+		{
+			public int Player { get; set; }
+			public short Current { get; set; }
+			public short Max { get; set; }
+		}
 		/// <summary>
 		/// PlayerMana - called at a PlayerMana event
 		/// </summary>
-		public class PlayerManaEventArgs : HandledEventArgs
-		{
-			public int plr { get; set; }
-			public int cur { get; set; }
-			public int max { get; set; }
-		}
-
 		public static HandlerList<PlayerManaEventArgs> PlayerMana;
 
-		public static bool OnPlayerMana(int _plr, int _cur, int _max)
+		public static bool OnPlayerMana(int _plr, short _cur, short _max)
 		{
 			if (PlayerMana == null)
 				return false;
 
 			var args = new PlayerManaEventArgs
 			{
-				plr = _plr,
-				cur = _cur,
-				max = _max,
+				Player = _plr,
+				Current = _cur,
+				Max = _max,
 			};
 			PlayerMana.Invoke(null, args);
 			return args.Handled;
 		}
-
+		
+		public class PlayerInfoEventArgs : HandledEventArgs
+		{
+			public byte PlayerId { get; set; }
+			public byte Hair { get; set; }
+			public bool Male { get; set; }
+			public byte Difficulty { get; set; }
+			public string Name { get; set; }
+		}
 		/// <summary>
 		/// PlayerInfo - called at a PlayerInfo event
 		/// If this is cancelled, the server will ForceKick the player. If this should be changed in the future, let someone know.
 		/// </summary>
-		public class PlayerInfoEventArgs : HandledEventArgs
-		{
-			public int playerid { get; set; }
-			public int hair { get; set; }
-			public int male { get; set; }
-			public int difficulty { get; set; }
-			public string name { get; set; }
-		}
-
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
 
-		public static bool OnPlayerInfo(int _plrid, int _hair, int _male, int _difficulty, string _name)
+		public static bool OnPlayerInfo(byte _plrid, byte _hair, bool _male, byte _difficulty, string _name)
 		{
 			if (PlayerInfo == null)
 				return false;
 
 			var args = new PlayerInfoEventArgs
 			{
-				playerid = _plrid,
-				hair = _hair,
-				male = _male,
-				difficulty = _difficulty,
-				name = _name,
+				PlayerId = _plrid,
+				Hair = _hair,
+				Male = _male,
+				Difficulty = _difficulty,
+				Name = _name,
 			};
 			PlayerInfo.Invoke(null, args);
 			return args.Handled;
@@ -282,11 +287,11 @@ namespace TShockAPI
 
 		private static bool HandlePlayerSlot(GetDataHandlerArgs args)
 		{
-			int plr = args.Data.ReadInt8();
-			int slot = args.Data.ReadInt8();
-			int stack = args.Data.ReadInt8();
-			short prefix = args.Data.ReadInt8();
-			int type = args.Data.ReadInt16();
+			byte plr = args.Data.ReadInt8();
+			byte slot = args.Data.ReadInt8();
+			byte stack = args.Data.ReadInt8();
+			byte prefix = args.Data.ReadInt8();
+			short type = args.Data.ReadInt16();
 
 			if (OnPlayerSlot(plr, slot, stack, prefix, type))
 				return true;
@@ -315,9 +320,9 @@ namespace TShockAPI
 
 		public static bool HandlePlayerHp(GetDataHandlerArgs args)
 		{
-			int plr = args.Data.ReadInt8();
-			int cur = args.Data.ReadInt16();
-			int max = args.Data.ReadInt16();
+			var plr = args.Data.ReadInt8();
+			var cur = args.Data.ReadInt16();
+			var max = args.Data.ReadInt16();
 
 			if (OnPlayerHP(plr, cur, max))
 				return true;
@@ -341,9 +346,9 @@ namespace TShockAPI
 
 		private static bool HandlePlayerMana(GetDataHandlerArgs args)
 		{
-			int plr = args.Data.ReadInt8();
-			int cur = args.Data.ReadInt16();
-			int max = args.Data.ReadInt16();
+			var plr = args.Data.ReadInt8();
+			var cur = args.Data.ReadInt16();
+			var max = args.Data.ReadInt16();
 
 			if (OnPlayerMana(plr, cur, max))
 				return true;
@@ -364,7 +369,7 @@ namespace TShockAPI
 		{
 			var playerid = args.Data.ReadInt8();
 			var hair = args.Data.ReadInt8();
-			var male = args.Data.ReadInt8();
+			var male = args.Data.ReadBoolean();
 			args.Data.Position += 21;
 			var difficulty = args.Data.ReadInt8();
 			string name = Encoding.ASCII.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
@@ -875,7 +880,7 @@ namespace TShockAPI
 
 		private static bool HandleTogglePvp(GetDataHandlerArgs args)
 		{
-			int id = args.Data.ReadByte();
+			byte id = args.Data.ReadInt8();
 			bool pvp = args.Data.ReadBoolean();
 			if (OnPvpToggled(id, pvp))
 				return true;
@@ -1697,5 +1702,7 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
 			return true;
 		}
+
+		
 	}
 }
