@@ -70,7 +70,7 @@ namespace TShockAPI
 		/// </summary>
 		[Description("Called when a tile is placed or destroyed")]
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		public static bool OnTileEdit(int x, int y, byte type, byte editType)
+		private static bool OnTileEdit(int x, int y, byte type, byte editType)
 		{
 			if (TileEdit == null)
 				return false;
@@ -95,7 +95,7 @@ namespace TShockAPI
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
 		public static HandlerList<TogglePvpEventArgs> TogglePvp;
-		public static bool OnPvpToggled(byte _id, bool _pvp)
+		private static bool OnPvpToggled(byte _id, bool _pvp)
 		{
 			if (TogglePvp == null)
 				return false;
@@ -122,7 +122,7 @@ namespace TShockAPI
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
-		public static bool OnPlayerSlot(byte _plr, byte _slot, byte _stack, byte _prefix, short _type)
+		private static bool OnPlayerSlot(byte _plr, byte _slot, byte _stack, byte _prefix, short _type)
 		{
 			if (PlayerSlot == null)
 				return false;
@@ -151,7 +151,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerHPEventArgs> PlayerHP;
 
-		public static bool OnPlayerHP(int _plr, short _cur, short _max)
+		private static bool OnPlayerHP(int _plr, short _cur, short _max)
 		{
 			if (PlayerHP == null)
 				return false;
@@ -178,7 +178,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerManaEventArgs> PlayerMana;
 
-		public static bool OnPlayerMana(int _plr, short _cur, short _max)
+		private static bool OnPlayerMana(int _plr, short _cur, short _max)
 		{
 			if (PlayerMana == null)
 				return false;
@@ -207,7 +207,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
 
-		public static bool OnPlayerInfo(byte _plrid, byte _hair, bool _male, byte _difficulty, string _name)
+		private static bool OnPlayerInfo(byte _plrid, byte _hair, bool _male, byte _difficulty, string _name)
 		{
 			if (PlayerInfo == null)
 				return false;
@@ -221,6 +221,27 @@ namespace TShockAPI
 				Name = _name,
 			};
 			PlayerInfo.Invoke(null, args);
+			return args.Handled;
+		}
+
+		public class TileKillEventArgs : HandledEventArgs
+		{
+			public int TileX { get; set; }
+			public int TileY { get; set; }
+		}
+		public static HandlerList<TileKillEventArgs> TileKill;
+
+		private static bool OnTileKill(int tilex, int tiley)
+		{
+			if (TileKill == null)
+				return false;
+
+			var args = new TileKillEventArgs
+			{
+				TileX = tilex,
+				TileY = tiley,
+			};
+			TileKill.Invoke(null, args);
 			return args.Handled;
 		}
 		#endregion
@@ -1284,7 +1305,8 @@ namespace TShockAPI
 		{
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
-
+			if (OnTileKill(tileX, tileY))
+				return true;
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
