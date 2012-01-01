@@ -380,26 +380,24 @@ namespace TShockAPI
 
 		public class SpawnEventArgs : HandledEventArgs
 		{
-			public int TileX { get; set; }
-			public int TileY { get; set; }
-			public byte Liquid { get; set; }
-			public bool Lava { get; set; }
+			public byte Player { get; set; }
+			public int SpawnX { get; set; }
+			public int SpawnY { get; set; }
 		}
 		public static HandlerList<SpawnEventArgs> PlayerSpawn;
 
-		private static bool OnPlayerSpawn(int tilex, int tiley, byte liquid, bool lava)
+		private static bool OnPlayerSpawn(byte player, int spawnX, int spawnY)
 		{
-			if (LiquidSet == null)
+			if (PlayerSpawn == null)
 				return false;
 
-			var args = new LiquidSetEventArgs
+			var args = new SpawnEventArgs
 			{
-				TileX = tilex,
-				TileY = tiley,
-				Liquid = liquid,
-				Lava = lava,
+				Player = player,
+				SpawnX = spawnX,
+				SpawnY = spawnY,
 			};
-			LiquidSet.Invoke(null, args);
+			PlayerSpawn.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -1514,6 +1512,9 @@ namespace TShockAPI
 			var player = args.Data.ReadInt8();
 			var spawnx = args.Data.ReadInt32();
 			var spawny = args.Data.ReadInt32();
+
+			if (OnPlayerSpawn(player, spawnx, spawny))
+				return true;
 
 			if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
 			{
