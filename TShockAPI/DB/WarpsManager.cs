@@ -125,18 +125,6 @@ namespace TShockAPI.DB
 			File.Move(file, file2);
 		}
 
-		public void ConvertDB()
-		{
-			try
-			{
-				database.Query("UPDATE Warps SET WorldID=@0", Main.worldID.ToString());
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex.ToString());
-			}
-		}
-
 		public bool AddWarp(int x, int y, string name, string worldid)
 		{
 			try
