@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -121,7 +122,7 @@ namespace TShockAPI
 						"TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
-				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString());
+				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
 
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
