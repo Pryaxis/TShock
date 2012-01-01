@@ -351,7 +351,7 @@ namespace TShockAPI
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
-		}
+		}//
 
 		public class LiquidSetEventArgs : HandledEventArgs
 		{
