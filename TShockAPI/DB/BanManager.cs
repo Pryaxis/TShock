@@ -41,32 +41,6 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			String file = Path.Combine(TShock.SavePath, "bans.txt");
-			if (File.Exists(file))
-			{
-				using (StreamReader sr = new StreamReader(file))
-				{
-					String line;
-					while ((line = sr.ReadLine()) != null)
-					{
-						String[] info = line.Split('|');
-						string query;
-						if (TShock.Config.StorageType.ToLower() == "sqlite")
-							query = "INSERT OR IGNORE INTO Bans (IP, Name, Reason) VALUES (@0, @1, @2);";
-						else
-							query = "INSERT IGNORE INTO Bans SET IP=@0, Name=@1, Reason=@2;";
-						db.Query(query, info[0].Trim(), info[1].Trim(), info[2].Trim());
-					}
-				}
-				String path = Path.Combine(TShock.SavePath, "old_configs");
-				String file2 = Path.Combine(path, "bans.txt");
-				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);
-				if (File.Exists(file2))
-					File.Delete(file2);
-				File.Move(file, file2);
-			}
 		}
 
 		public Ban GetBanByIp(string ip)
