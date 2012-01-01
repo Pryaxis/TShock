@@ -39,14 +39,14 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/status", Status) {RequiresToken = false});
 			Rest.Register(new RestCommand("/tokentest", TokenTest) {RequiresToken = true});
 
-			Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) {RequiresToken = true});
-			Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) {RequiresToken = true});
-			Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) {RequiresToken = true});
 			Rest.Register(new RestCommand("/users/activelist", UserList) {RequiresToken = true});
-			Rest.Register(new RestCommand("/bans/create", BanCreate) {RequiresToken = true});
-			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) {RequiresToken = true});
-			Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/users/read", UserInfoV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/users/destroy", UserDestroyV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/users/update", UserUpdateV2) { RequiresToken = true });
 
+			Rest.Register(new RestCommand("/bans/create", BanCreate) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/bans/read", BanInfoV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/bans/destroy", BanDestroyV2) { RequiresToken = true });
 
 			Rest.Register(new RestCommand("/lists/players", PlayerList) {RequiresToken = true});
 
@@ -59,6 +59,13 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
 
 			#region Deprecated Endpoints
+			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
+			Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiresToken = true });
+
+			Rest.Register(new RestCommand("/users/read/{user}/info", UserInfo) { RequiresToken = true });
+			Rest.Register(new RestCommand("/users/destroy/{user}", UserDestroy) { RequiresToken = true });
+			Rest.Register(new RestCommand("/users/update/{user}", UserUpdate) { RequiresToken = true });
+
 			Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiresToken = true });
 			Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiresToken = true });
 			Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiresToken = true });
@@ -114,6 +121,85 @@ namespace TShockAPI
 			return ret;
 		}
 
+		private object UserUpdateV2(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
+			var password = parameters["password"];
+			var group = parameters["group"];
+
+			if (group == null && password == null)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "No parameters were passed.");
+				return returnBlock;
+			}
+
+			var user = TShock.Users.GetUserByName(parameters["user"]);
+			if (user == null)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specefied user doesn't exist.");
+				return returnBlock;
+			}
+
+			if (password != null)
+			{
+				TShock.Users.SetUserPassword(user, password);
+				returnBlock.Add("password-response", "Password updated successfully.");
+			}
+
+			if (group != null)
+			{
+				TShock.Users.SetUserGroup(user, group);
+				returnBlock.Add("group-response", "Group updated successfully.");
+			}
+
+			returnBlock.Add("status", "200");
+			return returnBlock;
+		}
+
+		private object UserDestroyV2(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var user = TShock.Users.GetUserByName(parameters["user"]);
+			if (user == null)
+			{
+				return new Dictionary<string, string> {{"status", "400"}, {"error", "The specified user account does not exist."}};
+			}
+			var returnBlock = new Dictionary<string, string>();
+			try
+			{
+				TShock.Users.RemoveUser(user);
+			}
+			catch (Exception)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specified user was unable to be removed.");
+				return returnBlock;
+			}
+			returnBlock.Add("status", "200");
+			returnBlock.Add("response", "User deleted successfully.");
+			return returnBlock;
+		}
+
+		private object UserInfoV2(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var user = TShock.Users.GetUserByName(parameters["user"]);
+			if (user == null)
+			{
+				return new Dictionary<string, string> {{"status", "400"}, {"error", "The specified user account does not exist."}};
+			}
+
+			var returnBlock = new Dictionary<string, string>();
+			returnBlock.Add("status", "200");
+			returnBlock.Add("group", user.Group);
+			returnBlock.Add("id", user.ID.ToString());
+			return returnBlock;
+		}
+
+		#endregion
+
+		#region Deperecated endpoints
+
 		private object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, string>();
@@ -148,6 +234,7 @@ namespace TShockAPI
 			}
 
 			returnBlock.Add("status", "200");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
 			return returnBlock;
 		}
 
@@ -156,7 +243,7 @@ namespace TShockAPI
 			var user = TShock.Users.GetUserByName(verbs["user"]);
 			if (user == null)
 			{
-				return new Dictionary<string, string> {{"status", "400"}, {"error", "The specified user account does not exist."}};
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
 			}
 			var returnBlock = new Dictionary<string, string>();
 			try
@@ -171,6 +258,7 @@ namespace TShockAPI
 			}
 			returnBlock.Add("status", "200");
 			returnBlock.Add("response", "User deleted successfully.");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
 			return returnBlock;
 		}
 
@@ -179,19 +267,58 @@ namespace TShockAPI
 			var user = TShock.Users.GetUserByName(verbs["user"]);
 			if (user == null)
 			{
-				return new Dictionary<string, string> {{"status", "400"}, {"error", "The specified user account does not exist."}};
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
 			}
 
 			var returnBlock = new Dictionary<string, string>();
 			returnBlock.Add("status", "200");
 			returnBlock.Add("group", user.Group);
 			returnBlock.Add("id", user.ID.ToString());
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
 			return returnBlock;
 		}
 
-		#endregion
+		private object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
 
-		#region Deperecated endpoints
+			var type = parameters["type"];
+			if (type == null)
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			var ban = new Ban();
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			else
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			if (ban == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+			}
+
+			try
+			{
+				TShock.Bans.RemoveBan(ban.IP);
+			}
+			catch (Exception)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specified ban was unable to be removed.");
+				return returnBlock;
+			}
+			returnBlock.Add("status", "200");
+			returnBlock.Add("response", "Ban deleted successfully.");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
 		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
@@ -278,6 +405,39 @@ namespace TShockAPI
 			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
 			return returnBlock;
 		}
+
+		private object BanInfo(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
+
+			var type = parameters["type"];
+			if (type == null)
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			var ban = new Ban();
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			else
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			if (ban == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+			}
+
+			returnBlock.Add("status", "200");
+			returnBlock.Add("name", ban.Name);
+			returnBlock.Add("ip", ban.IP);
+			returnBlock.Add("reason", ban.Reason);
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
 		#endregion
 
 		#region RestBanMethods
@@ -326,7 +486,7 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
-		private object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
+		private object BanDestroyV2(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, string>();
 
@@ -338,8 +498,8 @@ namespace TShockAPI
 			}
 
 			var ban = new Ban();
-			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
-			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(parameters["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(parameters["user"]);
 			else
 			{
 				returnBlock.Add("Error", "Invalid Type");
@@ -366,7 +526,7 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
-		private object BanInfo(RestVerbs verbs, IParameterCollection parameters)
+		private object BanInfoV2(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, string>();
 
@@ -378,8 +538,8 @@ namespace TShockAPI
 			}
 
 			var ban = new Ban();
-			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
-			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(parameters["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(parameters["user"]);
 			else
 			{
 				returnBlock.Add("Error", "Invalid Type");
@@ -388,7 +548,7 @@ namespace TShockAPI
 
 			if (ban == null)
 			{
-				return new Dictionary<string, string> {{"status", "400"}, {"error", "The specified ban does not exist."}};
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
 			}
 
 			returnBlock.Add("status", "200");
