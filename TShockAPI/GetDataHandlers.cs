@@ -455,7 +455,7 @@ namespace TShockAPI
 			public int X { get; set; }
 			public int Y { get; set; }
 		}
-		public static HandlerList<ChestOpenEventArgs> Sign;
+		public static HandlerList<SignEventArgs> Sign;
 
 		private static bool OnSignEvent(short id, int x, int y)
 		{
