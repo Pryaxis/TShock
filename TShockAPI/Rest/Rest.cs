@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using HttpServer;
 using HttpServer.Headers;
 using Newtonsoft.Json;
+using TShockAPI;
 using HttpListener = HttpServer.HttpListener;
 
 namespace Rests
@@ -68,11 +70,37 @@ namespace Rests
 			commands.Add(com);
 		}
 
+		#region Event
+		public class RestRequestEventArgs : HandledEventArgs
+		{
+			public RequestEventArgs Request { get; set; }
+		}
+
+		public static HandlerList<RestRequestEventArgs> RestRequestEvent;
+
+		private static bool OnRestRequestCall(RequestEventArgs request)
+		{
+			if (RestRequestEvent == null)
+				return false;
+
+			var args = new RestRequestEventArgs
+			{
+				Request = request,
+			};
+			RestRequestEvent.Invoke(null, args);
+			return args.Handled;
+		}
+		#endregion
+
+
 		protected virtual void OnRequest(object sender, RequestEventArgs e)
 		{
 			var obj = ProcessRequest(sender, e);
 			if (obj == null)
 				throw new NullReferenceException("obj");
+
+			//if (OnRestRequestCall(e))
+			//	return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
 			e.Response.Connection.Type = ConnectionType.Close;
