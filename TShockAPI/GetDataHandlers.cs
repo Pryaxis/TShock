@@ -244,6 +244,31 @@ namespace TShockAPI
 			TileKill.Invoke(null, args);
 			return args.Handled;
 		}
+
+		public class KillMeEventArgs : HandledEventArgs
+		{
+			public int ID { get; set; }
+			public int Direction { get; set; }
+			public int Damage { get; set; }
+			public bool PVP { get; set; }
+		}
+		public static HandlerList<KillMeEventArgs> KillMe;
+
+		private static bool OnKillMe(int id, int direction, int damage, bool pvp)
+		{
+			if (TileKill == null)
+				return false;
+
+			var args = new KillMeEventArgs
+			{
+				ID = id,
+				Direction = direction,
+				Damage = damage,
+				PVP = pvp,
+			};
+			KillMe.Invoke(null, args);
+			return args.Handled;
+		}
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1204,7 +1229,8 @@ namespace TShockAPI
 			var direction = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8() == 0;
-
+			if (OnKillMe(id, direction, dmg, pvp))
+				return true;
 			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
 			if (textlength > 0)
