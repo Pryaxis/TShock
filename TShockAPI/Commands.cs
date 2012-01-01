@@ -367,9 +367,11 @@ namespace TShockAPI
 				{
 					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
+					var group = TShock.Utils.GetGroup(user.Group);
+
 					if (TShock.Config.ServerSideInventory)
 					{
-						if (args.Player.Group.HasPermission(Permissions.bypassinventorychecks))
+						if (group.HasPermission(Permissions.bypassinventorychecks))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
@@ -381,13 +383,13 @@ namespace TShockAPI
 						}
 					}
 
-					if (args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
+					if (group.HasPermission(Permissions.ignorestackhackdetection))
 						args.Player.IgnoreActionsForCheating = "none";
 
-					if (args.Player.Group.HasPermission(Permissions.usebanneditem))
+					if (group.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.Group = TShock.Utils.GetGroup(user.Group);
+					args.Player.Group = group;
 					args.Player.UserAccountName = user.Name;
 					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
 					args.Player.IsLoggedIn = true;
