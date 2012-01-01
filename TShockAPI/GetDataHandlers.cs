@@ -422,6 +422,33 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class ChestItemEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public byte Slot { get; set; }
+			public byte Stacks { get; set; }
+			public byte Prefix { get; set; }
+			public short Type { get; set; }
+		}
+		public static HandlerList<ChestItemEventArgs> ChestItemChange;
+
+		private static bool OnChestItemChange(short id, byte slot, byte stacks, byte prefix, short type)
+		{
+			if (PlayerSpawn == null)
+				return false;
+
+			var args = new ChestItemEventArgs
+			{
+				ID = id,
+				Slot = slot,
+				Stacks = stacks,
+				Prefix = prefix,
+				Type = type,
+			};
+			ChestItemChange.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1596,6 +1623,9 @@ namespace TShockAPI
 			var stacks = args.Data.ReadInt8();
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
+
+			if (OnChestItemChange(id, slot, stacks, prefix, type))
+				return true;
 
 			if (args.TPlayer.chest != id)
 			{
