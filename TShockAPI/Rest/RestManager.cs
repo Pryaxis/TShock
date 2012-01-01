@@ -54,9 +54,16 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/world/meteor", WorldMeteor) {RequiresToken = true});
 			Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) {RequiresToken = true});
 
-			Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) {RequiresToken = true});
-			Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) {RequiresToken = true});
-			Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/players/read", PlayerReadV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/players/kick", PlayerKickV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
+
+			#region Deprecated Endpoints
+			Rest.Register(new RestCommand("/players/read/{player}", PlayerRead) { RequiresToken = true });
+			Rest.Register(new RestCommand("/players/{player}/kick", PlayerKick) { RequiresToken = true });
+			Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiresToken = true });
+			#endregion
+
 			//RegisterExamples();
 		}
 
@@ -182,6 +189,95 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
+		#endregion
+
+		#region Deperecated endpoints
+		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				returnBlock.Add("status", "200");
+				returnBlock.Add("nickname", player.Name);
+				returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
+				returnBlock.Add("ip", player.IP);
+				returnBlock.Add("group", player.Group.Name);
+				returnBlock.Add("position", player.TileX + "," + player.TileY);
+				var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
+				returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
+				returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = verbs["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason);
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was kicked");
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = verbs["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason);
+				TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason);
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was banned");
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
 		#endregion
 
 		#region RestBanMethods
@@ -364,10 +460,10 @@ namespace TShockAPI
 			return ret;
 		}
 
-		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerReadV2(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
+			var playerParam = parameters["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			if (found.Count == 0)
 			{
@@ -395,10 +491,10 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
-		private object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerKickV2(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
+			var playerParam = parameters["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			var reason = verbs["reason"];
 			if (found.Count == 0)
@@ -421,10 +517,10 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
-		private object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerBanV2(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
+			var playerParam = parameters["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
 			var reason = verbs["reason"];
 			if (found.Count == 0)
