@@ -346,7 +346,7 @@ namespace TShockAPI
 				Knockback = knockback,
 				Damage = dmg,
 				Owner = owner,
-				Type = type,,
+				Type = type,
 				Index = index,
 			};
 			NewProjectile.Invoke(null, args);
