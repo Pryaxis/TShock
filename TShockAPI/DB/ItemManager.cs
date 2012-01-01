@@ -25,38 +25,6 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			String file = Path.Combine(TShock.SavePath, "itembans.txt");
-			if (File.Exists(file))
-			{
-				using (StreamReader sr = new StreamReader(file))
-				{
-					String line;
-					while ((line = sr.ReadLine()) != null)
-					{
-						if (!line.Equals("") && !line.Substring(0, 1).Equals("#"))
-						{
-							string query = (TShock.Config.StorageType.ToLower() == "sqlite")
-							               	? "INSERT OR IGNORE INTO 'ItemBans' (ItemName, AllowedGroups) VALUES (@0, @1);"
-							               	: "INSERT IGNORE INTO ItemBans SET ItemName=@0,AllowedGroups=@1 ;";
-
-							int id = 0;
-							int.TryParse(line, out id);
-
-							database.Query(query, TShock.Utils.GetItemById(id).name, "");
-						}
-					}
-				}
-
-				String path = Path.Combine(TShock.SavePath, "old_configs");
-				String file2 = Path.Combine(path, "itembans.txt");
-				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);
-				if (File.Exists(file2))
-					File.Delete(file2);
-				File.Move(file, file2);
-			}
-
 			UpdateItemBans();
 		}
 
