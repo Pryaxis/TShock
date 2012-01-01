@@ -520,6 +520,35 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class ItemDropEventArgs : HandledEventArgs
+		{
+			public short ID { get; set; }
+			public Vector2 Position { get; set; }
+			public Vector2 Velocity { get; set; }
+			public byte Stacks { get; set; }
+			public byte Prefix { get; set; }
+			public short Type { get; set; }
+		}
+		public static HandlerList<ItemDropEventArgs> ItemDrop;
+
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, short type)
+		{
+			if (ItemDrop == null)
+				return false;
+
+			var args = new ItemDropEventArgs
+			{
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				Type = type,
+			};
+			ItemDrop.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1833,6 +1862,9 @@ namespace TShockAPI
 			var stacks = args.Data.ReadInt8();
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
+
+			if (OnItemDrop(id, pos, vel, stacks, prefix, type))
+				return true;
 
 			if (type == 0) //Item removed, let client do this to prevent item duplication client side
 			{
