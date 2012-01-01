@@ -576,6 +576,33 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class NPCStrikeEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Direction { get; set; }
+			public short Damage { get; set; }
+			public byte PVP { get; set; }
+			public byte Critical { get; set; }
+		}
+		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
+
+		private static bool OnNPCStrike(byte id, byte dir, short dmg, byte pvp, byte crit)
+		{
+			if (NPCStrike == null)
+				return false;
+
+			var args = new NPCStrikeEventArgs
+			{
+				ID = id,
+				Direction = dir,
+				Damage = dmg,
+				PVP = pvp,
+				Critical = crit,
+			};
+			NPCStrike.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1992,6 +2019,9 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8();
 			var crit = args.Data.ReadInt8();
+
+			if (OnNPCStrike(id, direction, dmg, pvp, crit))
+				return true;
 
 			if (Main.npc[id] == null)
 				return true;
