@@ -394,7 +394,7 @@ namespace TShockAPI
 
 			var args = new LiquidSetEventArgs
 			{
-				TileX = tilex,//
+				TileX = tilex,
 				TileY = tiley,
 				Liquid = liquid,
 				Lava = lava,
