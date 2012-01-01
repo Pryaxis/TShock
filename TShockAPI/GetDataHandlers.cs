@@ -497,6 +497,29 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class PlayerBuffEventArgs : HandledEventArgs
+		{
+			public byte ID { get; set; }
+			public byte Type { get; set; }
+			public short Time { get; set; }
+		}
+		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
+
+		private static bool OnPlayerBuff(byte id, byte type, short time)
+		{
+			if (PlayerBuff == null)
+				return false;
+
+			var args = new PlayerBuffEventArgs
+			{
+				ID = id,
+				Type = type,
+				Time = time,
+			};
+			PlayerBuff.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1768,6 +1791,9 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
 			var time = args.Data.ReadInt16();
+
+			if (OnPlayerBuff(id, type, time))
+				return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{
