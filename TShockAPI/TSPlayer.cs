@@ -249,7 +249,7 @@ namespace TShockAPI
 			//The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
 			//Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
 			//Should we properly send sections so that clients don't get tiles twice?
-			if (!SendTileSquare(tilex, tiley))
+			if (!SendTileSquare(tilex, tiley, 150))
 			{
 				InitSpawn = true;
 				SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
