@@ -401,6 +401,27 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class ChestOpenEventArgs : HandledEventArgs
+		{
+			public int X { get; set; }
+			public int Y { get; set; }
+		}
+		public static HandlerList<ChestOpenEventArgs> ChestOpen;
+
+		private static bool OnChestOpen(int x, int y)
+		{
+			if (ChestOpen == null)
+				return false;
+
+			var args = new ChestOpenEventArgs
+			{
+				X = x,
+				Y = y,
+			};
+			ChestOpen.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1546,6 +1567,9 @@ namespace TShockAPI
 		{
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
+
+			if (OnChestOpen(x, y))
+				return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{
