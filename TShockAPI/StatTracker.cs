@@ -29,16 +29,16 @@ namespace TShockAPI
 		public DateTime lastcheck = DateTime.MinValue;
 		private readonly int checkinFrequency = 5;
 
-		public void checkin()
+		public void CheckIn()
 		{
 			if ((DateTime.Now - lastcheck).TotalMinutes >= checkinFrequency)
 			{
-				ThreadPool.QueueUserWorkItem(callHome);
+				ThreadPool.QueueUserWorkItem(CallHome);
 				lastcheck = DateTime.Now;
 			}
 		}
 
-		private void callHome(object state)
+		private void CallHome(object state)
 		{
 			string fp;
 			string lolpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.tshock/";

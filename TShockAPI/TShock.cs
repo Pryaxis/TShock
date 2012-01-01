@@ -416,7 +416,7 @@ namespace TShockAPI
 			if (Config.RestApiEnabled)
 				RestApi.Start();
 
-			StatTracker.checkin();
+			StatTracker.CheckIn();
 
 			FixChestStacks();
 		}
@@ -442,7 +442,7 @@ namespace TShockAPI
 		private void OnUpdate()
 		{
 			UpdateManager.UpdateProcedureCheck();
-			StatTracker.checkin();
+			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 

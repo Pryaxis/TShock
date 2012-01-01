@@ -101,6 +101,7 @@
     <None Include="RegionManagerTest.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="UnitTests.licenseheader" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
