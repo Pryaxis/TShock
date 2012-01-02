@@ -73,6 +73,7 @@ namespace TShockAPI
 		public bool IgnoreActionsForClearingTrashCan;
 		public PlayerData PlayerData;
 		public bool RequiresPassword;
+		public bool SilentKickInProgress;
 
 		public bool RealPlayer
 		{

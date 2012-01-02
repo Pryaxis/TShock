@@ -656,7 +656,11 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
+				if (!tsplr.SilentKickInProgress)
+				{
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
+				}
+
 				Log.Info(string.Format("{0} left.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn)

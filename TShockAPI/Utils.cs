@@ -408,6 +408,15 @@ namespace TShockAPI
 			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
 		}
 
+		public void ForceKick(TSPlayer player, string reason, bool silent)
+		{
+			player.SilentKickInProgress = true;
+			if (!player.ConnectionAlive)
+				return;
+			player.Disconnect(reason);
+			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
+		}
+
 		/// <summary>
 		/// Kicks a player from the server.
 		/// </summary>
