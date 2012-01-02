@@ -60,6 +60,8 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill) {RequiresToken = true});
 
+			Rest.Register(new RestCommand("/v2/server/broadcast", Broadcast) { RequiresToken = true});
+
 			#region Deprecated Endpoints
 			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
 			Rest.Register(new RestCommand("/bans/destroy/{user}", BanDestroy) { RequiresToken = true });
@@ -73,8 +75,21 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/players/{player}/ban", PlayerBan) { RequiresToken = true });
 			#endregion
 
-			//RegisterExamples();
 		}
+
+		#region RestServerMethods
+
+		private object Broadcast(RestVerbs verbs, IParameterCollection parameters)
+		{
+			if (parameters["msg"] != null && parameters["msg"].Trim() != "")
+			{
+				TShock.Utils.Broadcast(parameters["msg"]);
+				return new RestObject("200")["response"] = "The message was broadcasted to all connected clients successfully.";
+			}
+			return new RestObject("500")["response"] = "Invalid msg parameter passed to REST. Cowardly not broadcasting a blank message.";
+		}
+
+		#endregion
 
 		#region RestMethods
 
