@@ -953,39 +953,6 @@ namespace TShockAPI
 			ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-		private static void UpdateNow(CommandArgs args)
-		{
-			Process TServer = Process.GetCurrentProcess();
-
-			using (var sw = new StreamWriter("pid"))
-			{
-				sw.Write(TServer.Id);
-			}
-
-			using (var sw = new StreamWriter("pn"))
-			{
-				sw.Write(TServer.ProcessName + " " + Environment.CommandLine);
-			}
-
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("user-agent", "TShock");
-				byte[] updatefile = client.DownloadData("http://tsupdate.shankshock.com/UpdateTShock.exe");
-
-				using (var bw = new BinaryWriter(new FileStream("UpdateTShock.exe", FileMode.Create)))
-				{
-					bw.Write(updatefile);
-				}
-			}
-
-			Process.Start(new ProcessStartInfo("UpdateTShock.exe"));
-
-			TShock.Utils.ForceKickAll("Server shutting down for update!");
-			WorldGen.saveWorld();
-			Netplay.disconnect = true;
-		}
-
 		#endregion Server Maintenence Commands
 
 		#region Cause Events and Spawn Monsters Commands
