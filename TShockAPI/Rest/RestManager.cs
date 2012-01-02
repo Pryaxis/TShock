@@ -497,7 +497,7 @@ namespace TShockAPI
 			var returnBlock = new Dictionary<string, object>();
 			var playerParam = parameters["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
-			var reason = verbs["reason"];
+			var reason = parameters["reason"];
 			if (found.Count == 0)
 			{
 				returnBlock.Add("status", "400");
