@@ -60,7 +60,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill) {RequiresToken = true});
 			Rest.Register(new RestCommand("/v2/players/mute", PlayerMute) {RequiresToken = true});
-			Rest.Register(new RestCommand("/v2/players/unmute", PlayerUnMute) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/players/unmute", PlayerUnMute) {RequiresToken = true}); //
 
 			Rest.Register(new RestCommand("/v2/server/broadcast", Broadcast) { RequiresToken = true});
 			Rest.Register(new RestCommand("/v2/server/off", Off) {RequiresToken = true});
