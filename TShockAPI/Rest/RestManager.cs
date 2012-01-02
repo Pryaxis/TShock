@@ -57,6 +57,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/read", PlayerReadV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/kick", PlayerKickV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill) {RequiresToken = true});
 
 			#region Deprecated Endpoints
 			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
@@ -196,248 +197,6 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
-		#endregion
-
-		#region Deperecated endpoints
-
-		private object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, string>();
-			var password = parameters["password"];
-			var group = parameters["group"];
-
-			if (group == null && password == null)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "No parameters were passed.");
-				return returnBlock;
-			}
-
-			var user = TShock.Users.GetUserByName(verbs["user"]);
-			if (user == null)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "The specefied user doesn't exist.");
-				return returnBlock;
-			}
-
-			if (password != null)
-			{
-				TShock.Users.SetUserPassword(user, password);
-				returnBlock.Add("password-response", "Password updated successfully.");
-			}
-
-			if (group != null)
-			{
-				TShock.Users.SetUserGroup(user, group);
-				returnBlock.Add("group-response", "Group updated successfully.");
-			}
-
-			returnBlock.Add("status", "200");
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object UserDestroy(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var user = TShock.Users.GetUserByName(verbs["user"]);
-			if (user == null)
-			{
-				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
-			}
-			var returnBlock = new Dictionary<string, string>();
-			try
-			{
-				TShock.Users.RemoveUser(user);
-			}
-			catch (Exception)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "The specified user was unable to be removed.");
-				return returnBlock;
-			}
-			returnBlock.Add("status", "200");
-			returnBlock.Add("response", "User deleted successfully.");
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object UserInfo(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var user = TShock.Users.GetUserByName(verbs["user"]);
-			if (user == null)
-			{
-				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
-			}
-
-			var returnBlock = new Dictionary<string, string>();
-			returnBlock.Add("status", "200");
-			returnBlock.Add("group", user.Group);
-			returnBlock.Add("id", user.ID.ToString());
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, string>();
-
-			var type = parameters["type"];
-			if (type == null)
-			{
-				returnBlock.Add("Error", "Invalid Type");
-				return returnBlock;
-			}
-
-			var ban = new Ban();
-			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
-			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
-			else
-			{
-				returnBlock.Add("Error", "Invalid Type");
-				return returnBlock;
-			}
-
-			if (ban == null)
-			{
-				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
-			}
-
-			try
-			{
-				TShock.Bans.RemoveBan(ban.IP);
-			}
-			catch (Exception)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "The specified ban was unable to be removed.");
-				return returnBlock;
-			}
-			returnBlock.Add("status", "200");
-			returnBlock.Add("response", "Ban deleted successfully.");
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
-			var found = TShock.Utils.FindPlayer(playerParam);
-			if (found.Count == 0)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " was not found");
-			}
-			else if (found.Count > 1)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
-			}
-			else if (found.Count == 1)
-			{
-				var player = found[0];
-				returnBlock.Add("status", "200");
-				returnBlock.Add("nickname", player.Name);
-				returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
-				returnBlock.Add("ip", player.IP);
-				returnBlock.Add("group", player.Group.Name);
-				returnBlock.Add("position", player.TileX + "," + player.TileY);
-				var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
-				returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
-				returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
-			}
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
-			var found = TShock.Utils.FindPlayer(playerParam);
-			var reason = verbs["reason"];
-			if (found.Count == 0)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " was not found");
-			}
-			else if (found.Count > 1)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
-			}
-			else if (found.Count == 1)
-			{
-				var player = found[0];
-				TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason);
-				returnBlock.Add("status", "200");
-				returnBlock.Add("response", "Player " + player.Name + " was kicked");
-			}
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, object>();
-			var playerParam = verbs["player"];
-			var found = TShock.Utils.FindPlayer(playerParam);
-			var reason = verbs["reason"];
-			if (found.Count == 0)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " was not found");
-			}
-			else if (found.Count > 1)
-			{
-				returnBlock.Add("status", "400");
-				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
-			}
-			else if (found.Count == 1)
-			{
-				var player = found[0];
-				TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason);
-				TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason);
-				returnBlock.Add("status", "200");
-				returnBlock.Add("response", "Player " + player.Name + " was banned");
-			}
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
-
-		private object BanInfo(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBlock = new Dictionary<string, string>();
-
-			var type = parameters["type"];
-			if (type == null)
-			{
-				returnBlock.Add("Error", "Invalid Type");
-				return returnBlock;
-			}
-
-			var ban = new Ban();
-			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
-			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
-			else
-			{
-				returnBlock.Add("Error", "Invalid Type");
-				return returnBlock;
-			}
-
-			if (ban == null)
-			{
-				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
-			}
-
-			returnBlock.Add("status", "200");
-			returnBlock.Add("name", ban.Name);
-			returnBlock.Add("ip", ban.IP);
-			returnBlock.Add("reason", ban.Reason);
-			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
-			return returnBlock;
-		}
 		#endregion
 
 		#region RestBanMethods
@@ -704,6 +463,33 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
+		private object PlayerKill(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = parameters["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var from = verbs["from"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				player.DamagePlayer(999999);
+				player.SendMessage(string.Format("{0} just killed you!", from));
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was killed.");
+			}
+			return returnBlock;
+		}
+
 		#endregion
 
 		#region RestExampleMethods
@@ -744,6 +530,248 @@ namespace TShockAPI
 			return null;
 		}
 
+		#endregion
+
+		#region Deperecated endpoints
+
+		private object UserUpdate(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
+			var password = parameters["password"];
+			var group = parameters["group"];
+
+			if (group == null && password == null)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "No parameters were passed.");
+				return returnBlock;
+			}
+
+			var user = TShock.Users.GetUserByName(verbs["user"]);
+			if (user == null)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specefied user doesn't exist.");
+				return returnBlock;
+			}
+
+			if (password != null)
+			{
+				TShock.Users.SetUserPassword(user, password);
+				returnBlock.Add("password-response", "Password updated successfully.");
+			}
+
+			if (group != null)
+			{
+				TShock.Users.SetUserGroup(user, group);
+				returnBlock.Add("group-response", "Group updated successfully.");
+			}
+
+			returnBlock.Add("status", "200");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object UserDestroy(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var user = TShock.Users.GetUserByName(verbs["user"]);
+			if (user == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
+			}
+			var returnBlock = new Dictionary<string, string>();
+			try
+			{
+				TShock.Users.RemoveUser(user);
+			}
+			catch (Exception)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specified user was unable to be removed.");
+				return returnBlock;
+			}
+			returnBlock.Add("status", "200");
+			returnBlock.Add("response", "User deleted successfully.");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object UserInfo(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var user = TShock.Users.GetUserByName(verbs["user"]);
+			if (user == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified user account does not exist." } };
+			}
+
+			var returnBlock = new Dictionary<string, string>();
+			returnBlock.Add("status", "200");
+			returnBlock.Add("group", user.Group);
+			returnBlock.Add("id", user.ID.ToString());
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
+
+			var type = parameters["type"];
+			if (type == null)
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			var ban = new Ban();
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			else
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			if (ban == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+			}
+
+			try
+			{
+				TShock.Bans.RemoveBan(ban.IP);
+			}
+			catch (Exception)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "The specified ban was unable to be removed.");
+				return returnBlock;
+			}
+			returnBlock.Add("status", "200");
+			returnBlock.Add("response", "Ban deleted successfully.");
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object PlayerRead(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				returnBlock.Add("status", "200");
+				returnBlock.Add("nickname", player.Name);
+				returnBlock.Add("username", player.UserAccountName == null ? "" : player.UserAccountName);
+				returnBlock.Add("ip", player.IP);
+				returnBlock.Add("group", player.Group.Name);
+				returnBlock.Add("position", player.TileX + "," + player.TileY);
+				var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
+				returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
+				returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object PlayerKick(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = verbs["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				TShock.Utils.ForceKick(player, reason == null ? "Kicked via web" : reason);
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was kicked");
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object PlayerBan(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = verbs["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = verbs["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				TShock.Bans.AddBan(player.IP, player.Name, reason == null ? "Banned via web" : reason);
+				TShock.Utils.ForceKick(player, reason == null ? "Banned via web" : reason);
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was banned");
+			}
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
+
+		private object BanInfo(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, string>();
+
+			var type = parameters["type"];
+			if (type == null)
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			var ban = new Ban();
+			if (type == "ip") ban = TShock.Bans.GetBanByIp(verbs["user"]);
+			else if (type == "name") ban = TShock.Bans.GetBanByName(verbs["user"]);
+			else
+			{
+				returnBlock.Add("Error", "Invalid Type");
+				return returnBlock;
+			}
+
+			if (ban == null)
+			{
+				return new Dictionary<string, string> { { "status", "400" }, { "error", "The specified ban does not exist." } };
+			}
+
+			returnBlock.Add("status", "200");
+			returnBlock.Add("name", ban.Name);
+			returnBlock.Add("ip", ban.IP);
+			returnBlock.Add("reason", ban.Reason);
+			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
+			return returnBlock;
+		}
 		#endregion
 	}
 }
