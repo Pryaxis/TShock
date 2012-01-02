@@ -651,6 +651,7 @@ namespace TShockAPI
 
 		private void OnLeave(int ply)
 		{
+
 			var tsplr = Players[ply];
 			Players[ply] = null;
 
