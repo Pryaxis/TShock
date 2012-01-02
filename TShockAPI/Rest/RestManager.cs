@@ -53,6 +53,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/world/read", WorldRead) {RequiresToken = true});
 			Rest.Register(new RestCommand("/world/meteor", WorldMeteor) {RequiresToken = true});
 			Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/world/butcher", Butcher) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/v2/players/read", PlayerReadV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/kick", PlayerKickV2) { RequiresToken = true });
@@ -321,6 +322,30 @@ namespace TShockAPI
 
 		#region RestWorldMethods
 
+		private object Butcher(RestVerbs verbs, IParameterCollection parameters)
+		{
+			bool killFriendly;
+			if (!bool.TryParse(parameters["killfriendly"], out killFriendly))
+			{
+				return new RestObject("500")["response"] = "The given value for killfriendly wasn't a boolean value.";
+			}
+			if (killFriendly)
+			{
+				killFriendly = !killFriendly;
+			}
+
+			int killcount = 0;
+			for (int i = 0; i < Main.npc.Length; i++)
+			{
+				if (Main.npc[i].active && Main.npc[i].type != 0 && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
+				{
+					TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
+					killcount++;
+				}
+			}
+			return new RestObject("200")["response"] = killcount + " NPCs have been killed.";
+		}
+
 		private object WorldRead(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var returnBlock = new Dictionary<string, object>();
@@ -415,7 +440,7 @@ namespace TShockAPI
 			var returnBlock = new Dictionary<string, object>();
 			var playerParam = parameters["player"];
 			var found = TShock.Utils.FindPlayer(playerParam);
-			var reason = verbs["reason"];
+			var reason = parameters["reason"];
 			if (found.Count == 0)
 			{
 				returnBlock.Add("status", "400");
