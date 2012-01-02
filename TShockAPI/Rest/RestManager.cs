@@ -61,6 +61,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/v2/server/broadcast", Broadcast) { RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/server/off", Off) {RequiresToken = true});
 
 			#region Deprecated Endpoints
 			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
@@ -78,6 +79,21 @@ namespace TShockAPI
 		}
 
 		#region RestServerMethods
+
+		private object Off(RestVerbs verbs, IParameterCollection parameters)
+		{
+			bool confirm;
+				bool.TryParse(parameters["confirm"], out confirm);
+			bool nosave;
+			bool.TryParse(parameters["nosave"], out nosave);
+			if (confirm == true)
+			{
+				if (!nosave)
+					WorldGen.saveWorld();
+				Netplay.disconnect = true;
+			}
+			return new RestObject("200")["response"] = "The server will shut down only if the parameter 'confirm' is set to true in this REST call. You will not recieve a reply.";
+		}
 
 		private object Broadcast(RestVerbs verbs, IParameterCollection parameters)
 		{
