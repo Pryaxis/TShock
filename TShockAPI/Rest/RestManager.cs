@@ -59,6 +59,8 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/players/kick", PlayerKickV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/players/mute", PlayerMute) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/players/unmute", PlayerUnMute) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/v2/server/broadcast", Broadcast) { RequiresToken = true});
 			Rest.Register(new RestCommand("/v2/server/off", Off) {RequiresToken = true});
@@ -425,6 +427,60 @@ namespace TShockAPI
 		#endregion
 
 		#region RestPlayerMethods
+
+		private object PlayerUnMute(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = parameters["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = parameters["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				player.mute = false;
+				player.SendMessage("You have been remotely unmuted.");
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was muted.");
+			}
+			return returnBlock;
+		}
+
+		private object PlayerMute(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var returnBlock = new Dictionary<string, object>();
+			var playerParam = parameters["player"];
+			var found = TShock.Utils.FindPlayer(playerParam);
+			var reason = parameters["reason"];
+			if (found.Count == 0)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " was not found");
+			}
+			else if (found.Count > 1)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Name " + playerParam + " matches " + playerParam.Count() + " players");
+			}
+			else if (found.Count == 1)
+			{
+				var player = found[0];
+				player.mute = true;
+				player.SendMessage("You have been remotely muted.");
+				returnBlock.Add("status", "200");
+				returnBlock.Add("response", "Player " + player.Name + " was muted.");
+			}
+			return returnBlock;
+		}
 
 		private object PlayerList(RestVerbs verbs, IParameterCollection parameters)
 		{
