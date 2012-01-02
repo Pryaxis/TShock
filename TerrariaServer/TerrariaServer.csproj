@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -62,7 +62,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APIVersionAttribute.cs" />
     <Compile Include="Hooks\Classes\GetDataEventArgs.cs" />
     <Compile Include="Hooks\Classes\MethodHookAttribute.cs" />
     <Compile Include="Hooks\Classes\NpcStrikeEventArgs.cs" />
@@ -78,12 +77,15 @@
     <Compile Include="Hooks\ProjectileHooks.cs" />
     <Compile Include="Hooks\ServerHooks.cs" />
     <Compile Include="Hooks\WorldHooks.cs" />
-    <Compile Include="IPackedVector.cs" />
+    <Compile Include="XNA\IPackedVector.cs" />
     <Compile Include="PacketTypes.cs" />
-    <Compile Include="PluginContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terraria.Properties\Settings.cs" />
-    <Compile Include="TerrariaPlugin.cs" />
+    <Compile Include="TShock\Hooks\Player\IPlayerHooks.cs" />
+    <Compile Include="TShock\Hooks\Player\PlayerEventArgs.cs" />
+    <Compile Include="TShock\Hooks\IHooks.cs" />
+    <Compile Include="TShock\Hooks\TShockHooks.cs" />
+    <Compile Include="TShock\TShockPlugin.cs" />
     <Compile Include="Terraria\ChatLine.cs" />
     <Compile Include="Terraria\Chest.cs" />
     <Compile Include="Terraria\ClientSock.cs" />
@@ -103,7 +105,7 @@
     <Compile Include="Terraria\Netplay.cs" />
     <Compile Include="Terraria\NPC.cs" />
     <Compile Include="Terraria\Player.cs" />
-    <Compile Include="Terraria\ProgramServer.cs" />
+    <Compile Include="ProgramServer.cs" />
     <Compile Include="Terraria\Projectile.cs" />
     <Compile Include="Terraria\Recipe.cs" />
     <Compile Include="Terraria\ServerSock.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="Terraria\Tile.cs" />
     <Compile Include="Terraria\WorldGen.cs" />
     <Compile Include="TileCommand.cs" />
+    <Compile Include="TShock\HandlerList.cs" />
     <Compile Include="XNA\Color.cs" />
     <Compile Include="XNA\PackUtils.cs" />
     <Compile Include="XNA\Point.cs" />
@@ -143,6 +146,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -6,8 +6,10 @@
 *.exe
 *.o
 *.so
+*/Build/*
 */bin/*
 */obj/*
+*Build/*
 bin/*
 obj/*
 
