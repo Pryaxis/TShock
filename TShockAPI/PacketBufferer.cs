@@ -40,8 +40,8 @@ namespace TShockAPI
 		private int[] Compressed = new int[52];
 
 #if DEBUG_NET
-        Command dump;
-        Command flush;
+		Command dump;
+		Command flush;
 #endif
 
 		public PacketBufferer()
@@ -51,10 +51,10 @@ namespace TShockAPI
 				buffers[i] = new PacketBuffer();
 
 #if DEBUG_NET
-            dump = new Command("superadmin", Dump, "netdump");
-            flush = new Command("superadmin", Flush, "netflush");
-            Commands.ChatCommands.Add(dump);
-            Commands.ChatCommands.Add(flush);
+			dump = new Command("superadmin", Dump, "netdump");
+			flush = new Command("superadmin", Flush, "netflush");
+			Commands.ChatCommands.Add(dump);
+			Commands.ChatCommands.Add(flush);
 #endif
 
 			NetHooks.SendBytes += ServerHooks_SendBytes;
@@ -78,8 +78,8 @@ namespace TShockAPI
 			if (disposing)
 			{
 #if DEBUG_NET
-                Commands.ChatCommands.Remove(dump);
-                Commands.ChatCommands.Remove(flush);
+				Commands.ChatCommands.Remove(dump);
+				Commands.ChatCommands.Remove(flush);
 #endif
 				NetHooks.SendBytes -= ServerHooks_SendBytes;
 				ServerHooks.SocketReset -= ServerHooks_SocketReset;
@@ -94,7 +94,7 @@ namespace TShockAPI
 			for (int i = 1; i < Bytes.Length; i++)
 			{
 				sb.AppendLine("{0,-25}{1,-25}{2,-25}{3}".SFormat(Enum.GetName(typeof (PacketTypes), i) + ":", Packets[i], Bytes[i],
-				                                                 Compressed[i]));
+																 Compressed[i]));
 			}
 			File.WriteAllText(Path.Combine(TShock.SavePath, "dmp.txt"), sb.ToString());
 		}
@@ -167,12 +167,12 @@ namespace TShockAPI
 			lock (buffers[socket.whoAmI])
 			{
 #if DEBUG_NET
-                int size = (count - offset);
-                var pt = buffer[offset + 4];
+				int size = (count - offset);
+				var pt = buffer[offset + 4];
 
-                Packets[pt]++;
-                Bytes[pt] += size;
-                Compressed[pt] += Compress(buffer, offset, count);
+				Packets[pt]++;
+				Bytes[pt] += size;
+				Compressed[pt] += Compress(buffer, offset, count);
 #endif
 				using (var ms = new MemoryStream(buffer, offset, count))
 				{
@@ -213,17 +213,17 @@ namespace TShockAPI
 		}
 
 #if DEBUG_NET
-        static int Compress(byte[] buffer, int offset, int count)
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (var gzip = new GZipStream(ms, CompressionMode.Compress, true))
-                {
-                    gzip.Write(buffer, offset, count);
-                }
-                return (int)ms.Length;
-            }
-        }
+		static int Compress(byte[] buffer, int offset, int count)
+		{
+			using (var ms = new MemoryStream())
+			{
+				using (var gzip = new GZipStream(ms, CompressionMode.Compress, true))
+				{
+					gzip.Write(buffer, offset, count);
+				}
+				return (int)ms.Length;
+			}
+		}
 #endif
 	}
 

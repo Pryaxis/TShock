@@ -64,6 +64,7 @@ namespace TShockAPI
 
 			Rest.Register(new RestCommand("/v2/server/broadcast", Broadcast) { RequiresToken = true});
 			Rest.Register(new RestCommand("/v2/server/off", Off) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/server/rawcmd", ServerCommand) {RequiresToken = true});
 
 			#region Deprecated Endpoints
 			Rest.Register(new RestCommand("/bans/read/{user}/info", BanInfo) { RequiresToken = true });
@@ -81,6 +82,22 @@ namespace TShockAPI
 		}
 
 		#region RestServerMethods
+
+		private object ServerCommand(RestVerbs verbs, IParameterCollection parameters)
+		{
+			if (parameters["cmd"] != null && parameters["cmd"].Trim() != "")
+			{
+				TSRESTPlayer tr = new TSRESTPlayer();
+				RestObject ro = new RestObject("200");
+				Commands.HandleCommand(tr, parameters["cmd"]);
+				foreach (string s in tr.GetCommandOutput())
+				{
+					ro.Add("response", s);
+				}
+				return ro;
+			}
+			return new RestObject("500")["response"] = "Invalid cmd parameter passed to REST. Cowardly not running a blank command.";
+		}
 
 		private object Off(RestVerbs verbs, IParameterCollection parameters)
 		{
