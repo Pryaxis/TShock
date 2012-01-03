@@ -116,8 +116,8 @@ namespace Rests
 			if (obj == null)
 				throw new NullReferenceException("obj");
 
-			//if (OnRestRequestCall(e))
-			//	return;
+			if (OnRestRequestCall(e))
+			return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
 			e.Response.Connection.Type = ConnectionType.Close;
