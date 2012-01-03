@@ -533,7 +533,7 @@ namespace TShockAPI
 				returnBlock.Add("group", player.Group.Name);
 				returnBlock.Add("position", player.TileX + "," + player.TileY);
 				var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
-				returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => p.name)));
+				returnBlock.Add("inventory", string.Join(", ", activeItems.Select(p => (p.name + ":" + p.stack))));
 				returnBlock.Add("buffs", string.Join(", ", player.TPlayer.buffType));
 			}
 			return returnBlock;
