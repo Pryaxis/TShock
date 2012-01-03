@@ -128,31 +128,44 @@ namespace Rests
 
 		protected virtual object ProcessRequest(object sender, RequestEventArgs e)
 		{
-			var uri = e.Request.Uri.AbsolutePath;
-			uri = uri.TrimEnd('/');
-
-			foreach (var com in commands)
+			try
 			{
-				var verbs = new RestVerbs();
-				if (com.HasVerbs)
-				{
-					var match = Regex.Match(uri, com.UriVerbMatch);
-					if (!match.Success)
-						continue;
-					if ((match.Groups.Count - 1) != com.UriVerbs.Length)
-						continue;
+				var uri = e.Request.Uri.AbsolutePath;
+				uri = uri.TrimEnd('/');
 
-					for (int i = 0; i < com.UriVerbs.Length; i++)
-						verbs.Add(com.UriVerbs[i], match.Groups[i + 1].Value);
-				}
-				else if (com.UriTemplate.ToLower() != uri.ToLower())
+				foreach (var com in commands)
 				{
-					continue;
-				}
+					var verbs = new RestVerbs();
+					if (com.HasVerbs)
+					{
+						var match = Regex.Match(uri, com.UriVerbMatch);
+						if (!match.Success)
+							continue;
+						if ((match.Groups.Count - 1) != com.UriVerbs.Length)
+							continue;
 
-				var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
-				if (obj != null)
-					return obj;
+						for (int i = 0; i < com.UriVerbs.Length; i++)
+							verbs.Add(com.UriVerbs[i], match.Groups[i + 1].Value);
+					}
+					else if (com.UriTemplate.ToLower() != uri.ToLower())
+					{
+						continue;
+					}
+
+					var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
+					if (obj != null)
+						return obj;
+				}
+			}
+			catch (Exception exception)
+			{
+				return new Dictionary<string, string>
+				       	{
+				       		{"status", "500"},
+				       		{"error", "Internal server error."},
+				       		{"errormsg", exception.Message},
+				       		{"stacktrace", exception.StackTrace},
+				       	};
 			}
 			return new Dictionary<string, string>
 			       	{
