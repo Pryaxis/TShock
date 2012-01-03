@@ -87,7 +87,7 @@ namespace TShockAPI
 		{
 			if (parameters["cmd"] != null && parameters["cmd"].Trim() != "")
 			{
-				TSRESTPlayer tr = new TSRESTPlayer();
+				TSRestPlayer tr = new TSRestPlayer();
 				RestObject ro = new RestObject("200");
 				Commands.HandleCommand(tr, parameters["cmd"]);
 				foreach (string s in tr.GetCommandOutput())
@@ -110,6 +110,7 @@ namespace TShockAPI
 				if (!nosave)
 					WorldGen.saveWorld();
 				Netplay.disconnect = true;
+				return new RestObject("200")["response"] = "Server is shutting down.";
 			}
 			return new RestObject("200")["response"] = "The server will shut down only if the parameter 'confirm' is set to true in this REST call. You will not recieve a reply.";
 		}
