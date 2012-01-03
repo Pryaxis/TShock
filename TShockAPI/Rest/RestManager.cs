@@ -96,23 +96,30 @@ namespace TShockAPI
 				}
 				return ro;
 			}
-			return new RestObject("500")["response"] = "Invalid cmd parameter passed to REST. Cowardly not running a blank command.";
+			RestObject fail = new RestObject("400");
+			fail["response"] = "Missing or blank cmd parameter.";
+			return fail;
 		}
 
 		private object Off(RestVerbs verbs, IParameterCollection parameters)
 		{
 			bool confirm;
-				bool.TryParse(parameters["confirm"], out confirm);
+			bool.TryParse(parameters["confirm"], out confirm);
 			bool nosave;
 			bool.TryParse(parameters["nosave"], out nosave);
+
 			if (confirm == true)
 			{
 				if (!nosave)
 					WorldGen.saveWorld();
 				Netplay.disconnect = true;
-				return new RestObject("200")["response"] = "Server is shutting down.";
+				RestObject reply = new RestObject("200");
+				reply["response"] = "The server is shutting down.";
+				return reply;
 			}
-			return new RestObject("200")["response"] = "The server will shut down only if the parameter 'confirm' is set to true in this REST call. You will not recieve a reply.";
+			RestObject fail = new RestObject("400");
+			fail["response"] = "Invalid/missing confirm switch, and/or missing nosave switch.";
+			return fail;
 		}
 
 		private object Broadcast(RestVerbs verbs, IParameterCollection parameters)
@@ -120,9 +127,13 @@ namespace TShockAPI
 			if (parameters["msg"] != null && parameters["msg"].Trim() != "")
 			{
 				TShock.Utils.Broadcast(parameters["msg"]);
-				return new RestObject("200")["response"] = "The message was broadcasted to all connected clients successfully.";
+				RestObject reply = new RestObject("200");
+				reply["response"] = "The message was broadcasted successfully.";
+				return reply;
 			}
-			return new RestObject("500")["response"] = "Invalid msg parameter passed to REST. Cowardly not broadcasting a blank message.";
+			RestObject fail = new RestObject("400");
+			fail["response"] = "Broadcast failed.";
+			return fail;
 		}
 
 		#endregion
@@ -378,7 +389,9 @@ namespace TShockAPI
 			bool killFriendly;
 			if (!bool.TryParse(parameters["killfriendly"], out killFriendly))
 			{
-				return new RestObject("500")["response"] = "The given value for killfriendly wasn't a boolean value.";
+				RestObject fail = new RestObject("400");
+				fail["response"] = "The given value for killfriendly wasn't a boolean value.";
+				return fail;
 			}
 			if (killFriendly)
 			{
@@ -394,7 +407,10 @@ namespace TShockAPI
 					killcount++;
 				}
 			}
-			return new RestObject("200")["response"] = killcount + " NPCs have been killed.";
+
+			RestObject rj = new RestObject("200");
+			rj["response"] = killcount + " NPCs have been killed.";
+			return rj;
 		}
 
 		private object WorldRead(RestVerbs verbs, IParameterCollection parameters)
@@ -618,46 +634,6 @@ namespace TShockAPI
 				returnBlock.Add("response", "Player " + player.Name + " was killed.");
 			}
 			return returnBlock;
-		}
-
-		#endregion
-
-		#region RestExampleMethods
-
-		public void RegisterExamples()
-		{
-			Rest.Register(new RestCommand("/HelloWorld/name/{username}", UserTest) {RequiresToken = false});
-			Rest.Register(new RestCommand("/wizard/{username}", Wizard) {RequiresToken = false});
-		}
-
-		//The Wizard example, for demonstrating the response convention:
-		private object Wizard(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var returnBack = new Dictionary<string, string>();
-			returnBack.Add("status", "200"); //Keep this in everything, 200 = ok, etc. Standard http status codes.
-			returnBack.Add("error", "(If this failed, you would have a different status code and provide the error object.)");
-				//And only include this if the status isn't 200 or a failure
-			returnBack.Add("Verified Wizard", "You're a wizard, " + verbs["username"]);
-				//Outline any api calls and possible responses in some form of documentation somewhere
-			return returnBack;
-		}
-
-		//http://127.0.0.1:8080/HelloWorld/name/{username}?type=status
-		private object UserTest(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var ret = new Dictionary<string, string>();
-			var type = parameters["type"];
-			if (type == null)
-			{
-				ret.Add("Error", "Invalid Type");
-				return ret;
-			}
-			if (type == "status")
-			{
-				ret.Add("Users", "Info here");
-				return ret;
-			}
-			return null;
 		}
 
 		#endregion
