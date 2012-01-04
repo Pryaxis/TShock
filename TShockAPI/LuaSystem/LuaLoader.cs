@@ -23,15 +23,29 @@ namespace TShockAPI.LuaSystem
 			LuaAutorunPath = Path.Combine(LuaPath, "autorun");
 			SendLuaDebugMsg("Lua 5.1 (serverside) initialized.");
 
-			if (!Directory.Exists(LuaPath))
+			if (!string.IsNullOrEmpty(LuaPath) && !Directory.Exists(LuaPath))
 			{
 				Directory.CreateDirectory(LuaPath);
+			}
+			if (!string.IsNullOrEmpty(LuaAutorunPath) && !Directory.Exists(LuaAutorunPath))
+			{
 				Directory.CreateDirectory(LuaAutorunPath);
 			}
 
 			RegisterLuaFunctions();
 			LoadServerAutoruns();
-			HookTest();
+		}
+		static void test()
+		{
+			var loader = new LuaLoader("");
+			loader.RunLuaString(@"
+function hookme()
+    Print('Hook test')
+end
+
+Hook(""doesntmatter"", ""hookmeee"", hookme)");
+
+			loader.HookTest();
 		}
 
 		public void LoadServerAutoruns()
@@ -85,7 +99,7 @@ namespace TShockAPI.LuaSystem
 
 		public void RegisterLuaFunctions()
 		{
-			LuaFunctions LuaFuncs = new LuaFunctions();
+			LuaFunctions LuaFuncs = new LuaFunctions(this);
 			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
 			Lua.RegisterFunction("Hook", LuaFuncs, LuaFuncs.GetType().GetMethod("Hook"));
 
@@ -111,6 +125,11 @@ namespace TShockAPI.LuaSystem
 
 	public class LuaFunctions
 	{
+		LuaLoader Parent;
+		public LuaFunctions(LuaLoader parent)
+		{
+		   Parent = parent;
+		}
 		public void Print(string s)
 		{
 			ConsoleColor previousColor = Console.ForegroundColor;
@@ -122,7 +141,7 @@ namespace TShockAPI.LuaSystem
 		public void Hook(string hook, string key, LuaFunction callback)
 		{
 			KeyValuePair<string, LuaFunction> internalhook = new KeyValuePair<string, LuaFunction>(hook, callback);
-			TShock.LuaLoader.Hooks.Add(key, internalhook);
+			Parent.Hooks.Add(key, internalhook);
 		}
 	}
 }
