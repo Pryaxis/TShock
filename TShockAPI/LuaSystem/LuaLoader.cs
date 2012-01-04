@@ -17,7 +17,7 @@ namespace TShockAPI.LuaSystem
 		public LuaHookBackend HookBackend = new LuaHookBackend();
 		public LuaHooks HookCalls = new LuaHooks();
 		public Dictionary<string, KeyValuePair<string, LuaFunction>> Hooks = new Dictionary
-			<string, KeyValuePair<string, LuaFunction>>(); 
+			<string, KeyValuePair<string, LuaFunction>>();
 		public LuaLoader(string path)
 		{
 			_lua = new Lua();
@@ -89,11 +89,33 @@ namespace TShockAPI.LuaSystem
 
 		public void RegisterLuaFunctions()
 		{
-			LuaFunctions LuaFuncs = new LuaFunctions(this);
-			_lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
-			_lua.RegisterFunction("HookAdd", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
-			_lua.RegisterFunction("HookRemove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
+			//I just added all the managers for Plugin Development. :)
+			//Feel free to remove any if you dont feel they are necessay
+			_lua["Players"] = TShock.Players;
+			_lua["Bans"] = TShock.Bans;
+			_lua["Warps"] = TShock.Warps;
+			_lua["Regions"] = TShock.Regions;
+			_lua["Backups"] = TShock.Backups;
+			_lua["Groups"] = TShock.Groups;
+			_lua["Users"] = TShock.Users;
+			_lua["Itembans"] = TShock.Users;
 
+
+
+			LuaFunctions LuaFuncs = new LuaFunctions(this);
+			var LuaFuncMethods = LuaFuncs.GetType().GetMethods();
+			foreach (System.Reflection.MethodInfo method in LuaFuncMethods)
+			{
+				_lua.RegisterFunction(method.Name, LuaFuncs, method);
+			}
+
+			//Utils
+			Utils LuaUtils = new Utils(this);
+			var LuaUtilMethods = LuaUtils.GetType().GetMethods();
+			foreach (System.Reflection.MethodInfo method in LuaUtilMethods)
+			{
+				_lua.RegisterFunction(method.Name, LuaUtils, method);
+			}
 		}
 	}
 
