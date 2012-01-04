@@ -13,6 +13,9 @@ namespace TShockAPI.LuaSystem
 		private Lua Lua = null;
 		public string LuaPath = "";
 		public string LuaAutorunPath = "";
+
+		public Dictionary<string, KeyValuePair<string, string>> Hooks = new Dictionary
+			<string, KeyValuePair<string, string>>(); 
 		public LuaLoader(string path)
 		{
 			Lua = new Lua();
@@ -28,6 +31,7 @@ namespace TShockAPI.LuaSystem
 
 			RegisterLuaFunctions();
 			LoadServerAutoruns();
+			HookTest();
 		}
 
 		public void LoadServerAutoruns()
@@ -83,11 +87,36 @@ namespace TShockAPI.LuaSystem
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions();
 			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
+			Lua.RegisterFunction("Hook", LuaFuncs, LuaFuncs.GetType().GetMethod("Hook"));
+
 		}
 
-		public void Shutdown()
+		public void HookTest()
 		{
-			SendLuaDebugMsg("Lua 5.1 shutting down. Terminating all Lua threads.");
+
+			Console.WriteLine("Running hook test.");
+
+			foreach (KeyValuePair<string, KeyValuePair<string, string>> kv in Hooks)
+			{
+				KeyValuePair<string, string> hook = kv.Value;
+				LuaFunction lf = FindLuaFunction(hook.Value);
+
+				if (lf != null)
+				{
+					lf.Call();
+				}
+			}
+		}
+
+		public LuaFunction FindLuaFunction(string name)
+		{
+			try
+			{
+				return Lua.GetFunction(name);
+			} catch (Exception)
+			{
+				return null;
+			}
 		}
 	}
 
@@ -99,6 +128,12 @@ namespace TShockAPI.LuaSystem
 			Console.ForegroundColor = ConsoleColor.Cyan;
 			Console.WriteLine(s);
 			Console.ForegroundColor = previousColor;
+		}
+
+		public void Hook(string hook, string key, string callback)
+		{
+			KeyValuePair<string, string> hhook = new KeyValuePair<string, string>(hook, callback);
+			TShock.LuaLoader.Hooks.Add(key, hhook);
 		}
 	}
 }
