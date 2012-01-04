@@ -14,8 +14,8 @@ namespace TShockAPI.LuaSystem
 		public string LuaPath = "";
 		public string LuaAutorunPath = "";
 
-		public Dictionary<string, KeyValuePair<string, string>> Hooks = new Dictionary
-			<string, KeyValuePair<string, string>>(); 
+		public Dictionary<string, KeyValuePair<string, LuaFunction>> Hooks = new Dictionary
+			<string, KeyValuePair<string, LuaFunction>>(); 
 		public LuaLoader(string path)
 		{
 			Lua = new Lua();
@@ -96,26 +96,15 @@ namespace TShockAPI.LuaSystem
 
 			Console.WriteLine("Running hook test.");
 
-			foreach (KeyValuePair<string, KeyValuePair<string, string>> kv in Hooks)
+			foreach (KeyValuePair<string, KeyValuePair<string, LuaFunction>> kv in Hooks)
 			{
-				KeyValuePair<string, string> hook = kv.Value;
-				LuaFunction lf = FindLuaFunction(hook.Value);
+				KeyValuePair<string, LuaFunction> hook = kv.Value;
+				LuaFunction lf = hook.Value;
 
 				if (lf != null)
 				{
 					lf.Call();
 				}
-			}
-		}
-
-		public LuaFunction FindLuaFunction(string name)
-		{
-			try
-			{
-				return Lua.GetFunction(name);
-			} catch (Exception)
-			{
-				return null;
 			}
 		}
 	}
@@ -130,10 +119,10 @@ namespace TShockAPI.LuaSystem
 			Console.ForegroundColor = previousColor;
 		}
 
-		public void Hook(string hook, string key, string callback)
+		public void Hook(string hook, string key, LuaFunction callback)
 		{
-			KeyValuePair<string, string> hhook = new KeyValuePair<string, string>(hook, callback);
-			TShock.LuaLoader.Hooks.Add(key, hhook);
+			KeyValuePair<string, LuaFunction> internalhook = new KeyValuePair<string, LuaFunction>(hook, callback);
+			TShock.LuaLoader.Hooks.Add(key, internalhook);
 		}
 	}
 }
