@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using LuaInterface;
 
 namespace TShockAPI.LuaSystem
@@ -36,20 +37,37 @@ namespace TShockAPI.LuaSystem
 				foreach (string s in Directory.GetFiles(LuaAutorunPath))
 				{
 					SendLuaDebugMsg("Loading: " + s);
-					try
-					{
-						Lua.DoFile(s);
-					}
-					catch (LuaException e)
-					{
-						SendLuaDebugMsg(e.Message);
-					}
+					RunLuaFile(s);
 				}
 			}
 			catch (Exception e)
 			{
 				SendLuaDebugMsg(e.Message);
 				SendLuaDebugMsg(e.StackTrace);
+			}
+		}
+
+		public void RunLuaString(string s)
+		{
+			try
+			{
+				Lua.DoString(s);
+			}
+			catch (LuaException e)
+			{
+				SendLuaDebugMsg(e.Message);
+			}
+		}
+
+		public void RunLuaFile(string s)
+		{
+			try
+			{
+				Lua.DoFile(s);
+			}
+			catch (LuaException e)
+			{
+				SendLuaDebugMsg(e.Message);
 			}
 		}
 
@@ -65,6 +83,11 @@ namespace TShockAPI.LuaSystem
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions();
 			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
+		}
+
+		public void Shutdown()
+		{
+			SendLuaDebugMsg("Lua 5.1 shutting down. Terminating all Lua threads.");
 		}
 	}
 

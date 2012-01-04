@@ -208,6 +208,9 @@ namespace TShockAPI
 			add(Permissions.cfg, ServerInfo, "stats");
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
+			add(Permissions.runlua, RunLuaFile, "luarun");
+			add(Permissions.runlua, RunLuaString, "lua");
+			add(Permissions.runlua, ReloadLua, "luareload");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -324,6 +327,41 @@ namespace TShockAPI
 		{
 			return c == ' ' || c == '\t' || c == '\n';
 		}
+
+		#region Lua Commands
+		
+		public static void ReloadLua(CommandArgs args)
+		{
+			TShock.LuaLoader.LoadServerAutoruns();
+			args.Player.SendMessage("Lua reloaded.");
+		}
+
+		public static void RunLuaString(CommandArgs args)
+		{
+
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendMessage("Syntax: /lua <lua>");
+				return;
+			}
+
+			string lua = "";
+			foreach (string s in args.Parameters)
+			{
+				lua += s;
+			}
+		}
+
+		public static void RunLuaFile(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendMessage("Syntax: /luarun <file>");
+				return;
+			}
+			TShock.LuaLoader.RunLuaFile(args.Parameters[0]);
+		}
+		#endregion
 
 		#region Account commands
 
@@ -1246,19 +1284,19 @@ namespace TShockAPI
 			}
 		}
 
-        	private static void StartHardMode(CommandArgs args)
-        	{
-        		if (!TShock.Config.DisableHardmode)
-            			WorldGen.StartHardmode();
-            		else
-            			args.Player.SendMessage("Hardmode is disabled via config", Color.Red);
-        	}
+			private static void StartHardMode(CommandArgs args)
+			{
+				if (!TShock.Config.DisableHardmode)
+						WorldGen.StartHardmode();
+					else
+						args.Player.SendMessage("Hardmode is disabled via config", Color.Red);
+			}
 
-        	private static void DisableHardMode(CommandArgs args)
-        	{
-            		Main.hardMode = false;
-            		args.Player.SendMessage("Hardmode is now disabled", Color.Green);
-        	}
+			private static void DisableHardMode(CommandArgs args)
+			{
+					Main.hardMode = false;
+					args.Player.SendMessage("Hardmode is now disabled", Color.Green);
+			}
 
 		private static void ConvertCorruption(CommandArgs args)
 		{
