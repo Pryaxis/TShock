@@ -37,17 +37,6 @@ namespace TShockAPI.LuaSystem
 			RegisterLuaFunctions();
 			LoadServerAutoruns();
 		}
-		static void test()
-		{
-			var loader = new LuaLoader("");
-			loader.RunLuaString(@"
-function hookme()
-	Print('Hook test')
-end
-
-Hook(""doesntmatter"", ""hookmeee"", hookme)");
-
-		}
 
 		public void LoadServerAutoruns()
 		{
