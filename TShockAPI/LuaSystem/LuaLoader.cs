@@ -11,7 +11,7 @@ namespace TShockAPI.LuaSystem
 {
 	public class LuaLoader
 	{
-		private Lua Lua = null;
+		private readonly Lua _lua = null;
 		public string LuaPath = "";
 		public string LuaAutorunPath = "";
 		public LuaHookBackend HookBackend = new LuaHookBackend();
@@ -20,7 +20,7 @@ namespace TShockAPI.LuaSystem
 			<string, KeyValuePair<string, LuaFunction>>(); 
 		public LuaLoader(string path)
 		{
-			Lua = new Lua();
+			_lua = new Lua();
 			LuaPath = path;
 			LuaAutorunPath = Path.Combine(LuaPath, "autorun");
 			SendLuaDebugMsg("Lua 5.1 (serverside) initialized.");
@@ -70,7 +70,7 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		{
 			try
 			{
-				Lua.DoString(s);
+				_lua.DoString(s);
 			}
 			catch (LuaException e)
 			{
@@ -82,7 +82,7 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		{
 			try
 			{
-				Lua.DoFile(s);
+				_lua.DoFile(s);
 			}
 			catch (LuaException e)
 			{
@@ -101,9 +101,9 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		public void RegisterLuaFunctions()
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
-			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
-			Lua.RegisterFunction("HookAdd", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
-			Lua.RegisterFunction("HookRemove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
+			_lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
+			_lua.RegisterFunction("HookAdd", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
+			_lua.RegisterFunction("HookRemove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
 
 		}
 	}
