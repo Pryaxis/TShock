@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.ComponentModel;
 using LuaInterface;
 
 namespace TShockAPI.LuaSystem
@@ -13,7 +14,8 @@ namespace TShockAPI.LuaSystem
 		private Lua Lua = null;
 		public string LuaPath = "";
 		public string LuaAutorunPath = "";
-
+		public LuaHookBackend HookBackend = new LuaHookBackend();
+		public LuaHooks HookCalls = new LuaHooks();
 		public Dictionary<string, KeyValuePair<string, LuaFunction>> Hooks = new Dictionary
 			<string, KeyValuePair<string, LuaFunction>>(); 
 		public LuaLoader(string path)
@@ -34,13 +36,14 @@ namespace TShockAPI.LuaSystem
 
 			RegisterLuaFunctions();
 			LoadServerAutoruns();
+			HookTest();
 		}
 		static void test()
 		{
 			var loader = new LuaLoader("");
 			loader.RunLuaString(@"
 function hookme()
-    Print('Hook test')
+	Print('Hook test')
 end
 
 Hook(""doesntmatter"", ""hookmeee"", hookme)");
@@ -101,25 +104,8 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
 			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
-			Lua.RegisterFunction("Hook", LuaFuncs, LuaFuncs.GetType().GetMethod("Hook"));
+			Lua.RegisterFunction("RegisterHook", LuaFuncs, LuaFuncs.GetType().GetMethod("Hook"));
 
-		}
-
-		public void HookTest()
-		{
-
-			Console.WriteLine("Running hook test.");
-
-			foreach (KeyValuePair<string, KeyValuePair<string, LuaFunction>> kv in Hooks)
-			{
-				KeyValuePair<string, LuaFunction> hook = kv.Value;
-				LuaFunction lf = hook.Value;
-
-				if (lf != null)
-				{
-					lf.Call();
-				}
-			}
 		}
 	}
 
@@ -142,6 +128,45 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		{
 			KeyValuePair<string, LuaFunction> internalhook = new KeyValuePair<string, LuaFunction>(hook, callback);
 			Parent.Hooks.Add(key, internalhook);
+		}
+	}
+
+	public class LuaHookBackend
+	{
+		public void HookRun(string call, object parameters)
+		{
+			foreach (KeyValuePair<string, KeyValuePair<string, LuaFunction>> kv in TShock.LuaLoader.Hooks)
+			{
+				KeyValuePair<string, LuaFunction> hook = kv.Value;
+				if (call == hook.Key)
+				{
+					LuaFunction lf = hook.Value;
+
+					if (lf != null)
+					{
+						try
+						{
+							lf.Call(parameters);
+						}
+						catch (LuaException e)
+						{
+							TShock.LuaLoader.SendLuaDebugMsg(e.Message);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public class LuaHooks
+	{
+		[Description("Called on debug hook test.")]
+		public void OnHookTest()
+		{
+			object[] response = new object[2];
+			response[0] = true;
+			response[1] = "Hook win!";
+			TShock.LuaLoader.HookBackend.HookRun("HookTest", response);
 		}
 	}
 }

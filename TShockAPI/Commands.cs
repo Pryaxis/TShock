@@ -211,6 +211,7 @@ namespace TShockAPI
 			add(Permissions.runlua, RunLuaFile, "luarun");
 			add(Permissions.runlua, RunLuaString, "lua");
 			add(Permissions.runlua, ReloadLua, "luareload");
+			add(Permissions.runlua, TestLuaHook, "testhook");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -330,6 +331,11 @@ namespace TShockAPI
 
 		#region Lua Commands
 		
+		public static void TestLuaHook(CommandArgs args)
+		{
+			TShock.LuaLoader.HookCalls.OnHookTest();
+		}
+
 		public static void ReloadLua(CommandArgs args)
 		{
 			TShock.LuaLoader.LoadServerAutoruns();
@@ -345,11 +351,8 @@ namespace TShockAPI
 				return;
 			}
 
-			string lua = "";
-			foreach (string s in args.Parameters)
-			{
-				lua += s;
-			}
+			TShock.LuaLoader.RunLuaString(args.Parameters[0]);
+			args.Player.SendMessage("Lua run: " + args.Parameters[0]);
 		}
 
 		public static void RunLuaFile(CommandArgs args)
