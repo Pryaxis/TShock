@@ -36,7 +36,6 @@ namespace TShockAPI.LuaSystem
 
 			RegisterLuaFunctions();
 			LoadServerAutoruns();
-			HookTest();
 		}
 		static void test()
 		{
@@ -48,7 +47,6 @@ end
 
 Hook(""doesntmatter"", ""hookmeee"", hookme)");
 
-			loader.HookTest();
 		}
 
 		public void LoadServerAutoruns()
@@ -103,8 +101,9 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		public void RegisterLuaFunctions()
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
-			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
-			Lua.RegisterFunction("RegisterHook", LuaFuncs, LuaFuncs.GetType().GetMethod("Hook"));
+			Lua.RegisterFunction("print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
+			Lua.RegisterFunction("hook.Add", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
+			Lua.RegisterFunction("hook.Remove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
 
 		}
 	}
@@ -116,6 +115,8 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		{
 		   Parent = parent;
 		}
+
+		[Description("Prints a message to the console from the Lua debugger.")]
 		public void Print(string s)
 		{
 			ConsoleColor previousColor = Console.ForegroundColor;
@@ -124,10 +125,17 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 			Console.ForegroundColor = previousColor;
 		}
 
-		public void Hook(string hook, string key, LuaFunction callback)
+		[Description("Adds a hook that will trigger a function callback when activated.")]
+		public void HookAdd(string hook, string key, LuaFunction callback)
 		{
 			KeyValuePair<string, LuaFunction> internalhook = new KeyValuePair<string, LuaFunction>(hook, callback);
 			Parent.Hooks.Add(key, internalhook);
+		}
+
+		[Description("Removes a hook from the hook table. Good for reloading stuff.")]
+		public void HookRemove(string key)
+		{
+			Parent.Hooks.Remove(key);
 		}
 	}
 
