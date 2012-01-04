@@ -101,9 +101,9 @@ Hook(""doesntmatter"", ""hookmeee"", hookme)");
 		public void RegisterLuaFunctions()
 		{
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
-			Lua.RegisterFunction("print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
-			Lua.RegisterFunction("hook.Add", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
-			Lua.RegisterFunction("hook.Remove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
+			Lua.RegisterFunction("Print", LuaFuncs, LuaFuncs.GetType().GetMethod("Print"));
+			Lua.RegisterFunction("HookAdd", LuaFuncs, LuaFuncs.GetType().GetMethod("HookAdd"));
+			Lua.RegisterFunction("HookRemove", LuaFuncs, LuaFuncs.GetType().GetMethod("HookRemove"));
 
 		}
 	}
