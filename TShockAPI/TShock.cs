@@ -651,12 +651,17 @@ namespace TShockAPI
 
 		private void OnLeave(int ply)
 		{
+
 			var tsplr = Players[ply];
 			Players[ply] = null;
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				Utils.Broadcast(tsplr.Name + " has left", Color.Yellow);
+				if (!tsplr.SilentKickInProgress)
+				{
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
+				}
+
 				Log.Info(string.Format("{0} left.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn)

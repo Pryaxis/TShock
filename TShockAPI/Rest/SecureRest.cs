@@ -41,6 +41,7 @@ namespace Rests
 		{
 			Tokens = new Dictionary<string, object>();
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) {RequiresToken = false});
+			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { RequiresToken = false });
 			Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiresToken = true});
 		}
 
@@ -58,6 +59,36 @@ namespace Rests
 			}
 			return new Dictionary<string, string>
 			       	{{"status", "200"}, {"response", "Requested token was successfully destroyed."}};
+		}
+
+		private object NewTokenV2(RestVerbs verbs, IParameterCollection parameters)
+		{
+			var user = parameters["username"];
+			var pass = verbs["password"];
+
+			RestObject obj = null;
+			if (Verify != null)
+				obj = Verify(user, pass);
+
+			if (obj == null)
+				obj = new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+
+			if (obj.Error != null)
+				return obj;
+
+			string hash;
+			var rand = new Random();
+			var randbytes = new byte[32];
+			do
+			{
+				rand.NextBytes(randbytes);
+				hash = randbytes.Aggregate("", (s, b) => s + b.ToString("X2"));
+			} while (Tokens.ContainsKey(hash));
+
+			Tokens.Add(hash, user);
+
+			obj["token"] = hash;
+			return obj;
 		}
 
 		private object NewToken(RestVerbs verbs, IParameterCollection parameters)
@@ -88,6 +119,7 @@ namespace Rests
 			Tokens.Add(hash, user);
 
 			obj["token"] = hash;
+			obj["deprecated"] = "This method will be removed from TShock in 3.6.";
 			return obj;
 		}
 

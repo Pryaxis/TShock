@@ -73,6 +73,7 @@ namespace TShockAPI
 		public bool IgnoreActionsForClearingTrashCan;
 		public PlayerData PlayerData;
 		public bool RequiresPassword;
+		public bool SilentKickInProgress;
 
 		public bool RealPlayer
 		{
@@ -401,6 +402,36 @@ namespace TShockAPI
 				return false;
 
 			return TShock.SendBytes(Netplay.serverSock[Index], data);
+		}
+	}
+
+	public class TSRestPlayer : TSServerPlayer
+	{
+		internal List<string> CommandReturn = new List<string>();
+
+		public TSRestPlayer()
+		{
+			Group = new SuperAdminGroup();
+		}
+
+		public override void SendMessage(string msg)
+		{
+			SendMessage(msg, 0, 255, 0);
+		}
+
+		public override void SendMessage(string msg, Color color)
+		{
+			SendMessage(msg, color.R, color.G, color.B);
+		}
+
+		public override void SendMessage(string msg, byte red, byte green, byte blue)
+		{
+			CommandReturn.Add(msg);
+		}
+
+		public List<string> GetCommandOutput()
+		{
+			return CommandReturn;
 		}
 	}
 

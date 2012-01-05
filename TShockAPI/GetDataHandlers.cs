@@ -932,7 +932,7 @@ namespace TShockAPI
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player.Name);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect User Account Password");
+				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
 				return true;
 			}
 			if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
