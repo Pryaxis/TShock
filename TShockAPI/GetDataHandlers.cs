@@ -1197,13 +1197,15 @@ namespace TShockAPI
 
 			if (args.Player.AwaitingName)
 			{
-				if (TShock.Regions.InAreaRegionName(tileX, tileY) == null)
-				{
+                var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
+                if (protectedregions.Count == 0)
+                {
 					args.Player.SendMessage("Region is not protected", Color.Yellow);
 				}
 				else
 				{
-					args.Player.SendMessage("Region Name: " + TShock.Regions.InAreaRegionName(tileX, tileY), Color.Yellow);
+                    string regionlist = string.Join(",", protectedregions.ToArray());
+					args.Player.SendMessage("Region Name(s): " + regionlist, Color.Yellow);
 				}
 				args.Player.SendTileSquare(tileX, tileY);
 				args.Player.AwaitingName = false;

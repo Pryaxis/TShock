@@ -258,19 +258,20 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public string InAreaRegionName(int x, int y)
-		{
-			foreach (Region region in Regions)
-			{
-				if (x >= region.Area.Left && x <= region.Area.Right &&
-				    y >= region.Area.Top && y <= region.Area.Bottom &&
-				    region.DisableBuild)
-				{
-					return region.Name;
-				}
-			}
-			return null;
-		}
+        public List<string> InAreaRegionName(int x, int y)
+        {
+            List<string> regions = new List<string>() { };
+            foreach (Region region in Regions)
+            {
+                if (x >= region.Area.Left && x <= region.Area.Right &&
+                    y >= region.Area.Top && y <= region.Area.Bottom &&
+                    region.DisableBuild)
+                {
+                    regions.Add(region.Name);
+                }
+            }
+            return regions;
+        }
 
 		public static List<string> ListIDs(string MergedIDs)
 		{
