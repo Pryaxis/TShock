@@ -428,11 +428,11 @@ namespace TShockAPI
 
 		private object WorldMeteor(RestVerbs verbs, IParameterCollection parameters)
 		{
+            if (WorldGen.genRand == null)
+                WorldGen.genRand = new Random();
 			WorldGen.dropMeteor();
-			var returnBlock = new Dictionary<string, string>();
-			returnBlock.Add("status", "200");
-			returnBlock.Add("response", "Meteor has been spawned.");
-			return returnBlock;
+			var returnBlock = new Dictionary<string, string> {{"status", "200"}, {"response", "Meteor has been spawned."}};
+		    return returnBlock;
 		}
 
 		private object WorldBloodmoon(RestVerbs verbs, IParameterCollection parameters)
