@@ -664,7 +664,6 @@ namespace TShockAPI
 				{
 					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
 				}
-
 				Log.Info(string.Format("{0} left.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn)
