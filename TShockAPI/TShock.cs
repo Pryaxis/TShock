@@ -31,6 +31,7 @@ using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Rests;
+using TShockAPI.LuaSystem;
 using Terraria;
 using TShockAPI.DB;
 using TShockAPI.Net;
@@ -64,6 +65,7 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = new Utils();
 		public static StatTracker StatTracker = new StatTracker();
+		public static LuaLoader LuaLoader;
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -420,8 +422,8 @@ namespace TShockAPI
 				RestApi.Start();
 
 			StatTracker.CheckIn();
-
 			FixChestStacks();
+			LuaLoader = new LuaLoader(Path.Combine(".", "lua"));
 		}
 
 		private void FixChestStacks()
