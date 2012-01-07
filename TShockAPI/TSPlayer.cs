@@ -260,8 +260,8 @@ namespace TShockAPI
 
 			SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
 
-			TPlayer.position.X = tilex;
-			TPlayer.position.Y = tiley;
+			TPlayer.position.X = tilex * 16;
+			TPlayer.position.Y = tiley * 16;
 
 			return true;
 		}
