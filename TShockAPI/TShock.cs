@@ -196,8 +196,10 @@ namespace TShockAPI
 				NetHooks.SendData += NetHooks_SendData;
 				NetHooks.GreetPlayer += OnGreetPlayer;
 				NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
+			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
+			    WorldHooks.SaveWorld += OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
