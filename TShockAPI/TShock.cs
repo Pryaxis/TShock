@@ -201,7 +201,6 @@ namespace TShockAPI
 			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
-			    WorldHooks.SaveWorld += OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -975,14 +974,6 @@ namespace TShockAPI
 				}
 				e.Handled = true;
 			}
-		}
-
-		private void OnSaveWorld(bool resettime, HandledEventArgs e)
-		{
-			Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-			Thread SaveWorld = new Thread(Utils.SaveWorld);
-			SaveWorld.Start();
-			e.Handled = true;
 		}
 
 		private void OnStartHardMode(HandledEventArgs e)
