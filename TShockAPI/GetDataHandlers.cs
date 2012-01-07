@@ -698,7 +698,8 @@ namespace TShockAPI
 			                          		{PacketTypes.PlayerAnimation, HandlePlayerAnimation},
 			                          		{PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
 			                          		{PacketTypes.PasswordSend, HandlePassword},
-			                          		{PacketTypes.ContinueConnecting2, HandleConnecting}
+			                          		{PacketTypes.ContinueConnecting2, HandleConnecting},
+                                            {PacketTypes.ProjectileDestroy, HandleProjectileKill}
 			                          	};
 		}
 
@@ -1050,11 +1051,11 @@ namespace TShockAPI
 
 					var tile = Main.tile[realx, realy];
 					var newtile = tiles[x, y];
-					if (TShock.CheckTilePermission(args.Player, x, y))
+					if (TShock.CheckTilePermission(args.Player, realx, realy))
 					{
 						continue;
 					}
-					if (TShock.CheckRangePermission(args.Player, x, y))
+					if (TShock.CheckRangePermission(args.Player, realx, realy))
 					{
 						continue;
 					}
