@@ -40,6 +40,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/tokentest", TokenTest) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/users/activelist", UserList) {RequiresToken = true});
+            Rest.Register(new RestCommand("/v2/users/activelist", UserListV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/users/read", UserInfoV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/users/destroy", UserDestroyV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/users/update", UserUpdateV2) { RequiresToken = true });
@@ -167,23 +168,17 @@ namespace TShockAPI
 
 		#region RestUserMethods
 
-		private object UserList(RestVerbs verbs, IParameterCollection parameters)
-		{
-			var ret = new RestObject("200");
-			string playerlist = "";
-			foreach (var TSPlayer in TShock.Players)
-			{
-				if (playerlist == "")
-				{
-					playerlist += TSPlayer.UserAccountName;
-				} else
-				{
-					playerlist += ", " + TSPlayer.UserAccountName;
-				}
-			}
-			ret["activeuesrs"] = playerlist;
-			return ret;
-		}
+        private object UserListV2(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var ret = new RestObject("200");
+            string playerlist = "";
+            foreach (var TSPlayer in TShock.Players)
+            {
+                playerlist += playerlist == "" ? TSPlayer.UserAccountName : "\t" + TSPlayer.UserAccountName;
+            }
+            ret["activeusers"] = playerlist;
+            return ret;
+        }
 
 		private object UserUpdateV2(RestVerbs verbs, IParameterCollection parameters)
 		{
@@ -717,6 +712,25 @@ namespace TShockAPI
 			returnBlock.Add("deprecated", "This endpoint is deprecated. It will be fully removed from code in TShock 3.6.");
 			return returnBlock;
 		}
+
+        private object UserList(RestVerbs verbs, IParameterCollection parameters)
+        {
+            var ret = new RestObject("200");
+            string playerlist = "";
+            foreach (var TSPlayer in TShock.Players)
+            {
+                if (playerlist == "")
+                {
+                    playerlist += TSPlayer.UserAccountName;
+                }
+                else
+                {
+                    playerlist += ", " + TSPlayer.UserAccountName;
+                }
+            }
+            ret["activeuesrs"] = playerlist;
+            return ret;
+        }
 
 		private object BanDestroy(RestVerbs verbs, IParameterCollection parameters)
 		{
