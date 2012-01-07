@@ -546,6 +546,7 @@ namespace TShockAPI
 							check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 						}
 					}
+					player.IgnoreActionsForCheating = check;
 					check = "none";
 					foreach (Item item in player.TPlayer.armor)
 					{
@@ -556,6 +557,7 @@ namespace TShockAPI
 							check = "Remove Armor/Accessory " + item.name;
 						}
 					}
+					player.IgnoreActionsForDisabledArmor = check;
 					if (CheckIgnores(player))
 					{
 						player.SetBuff(33, 120); //Weak
