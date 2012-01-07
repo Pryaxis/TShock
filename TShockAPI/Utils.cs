@@ -554,7 +554,7 @@ namespace TShockAPI
 			return "";
 		}
 
-		public string HashAlgo = "md5";
+        public string HashAlgo = "sha512";
 
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
 		                                                                    	{
