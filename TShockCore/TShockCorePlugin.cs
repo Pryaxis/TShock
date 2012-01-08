@@ -42,6 +42,7 @@ namespace TShockCore
 
 		public override void Initialize()
 		{
+            Hooks.PlayerHooks.Connect.Register(OnConnect);
 			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
 			Hooks.PlayerHooks.Greet.Register(OnGreet); 
             Hooks.PlayerHooks.Leave.Register( OnLeave );
@@ -52,6 +53,7 @@ namespace TShockCore
 		{
 			if (disposing)
 			{
+			    Hooks.PlayerHooks.Connect -= OnConnect;
 				Hooks.PlayerHooks.Join -= OnJoin;
 				Hooks.PlayerHooks.Greet -= OnGreet;
 			    Hooks.PlayerHooks.Leave -= OnLeave;
@@ -60,6 +62,15 @@ namespace TShockCore
 			base.Dispose(disposing);
 		}
 
+        void OnConnect( object sender, PlayerEventArgs e )
+        {
+            if( e.Player == null )
+            {
+                e.Handled = true;
+                return;
+            }
+            Console.WriteLine("{0} is connecting", e.Player.IP);
+        }
 
 		void OnGreet(object sender, PlayerEventArgs e)
 		{

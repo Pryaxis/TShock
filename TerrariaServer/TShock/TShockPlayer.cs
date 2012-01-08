@@ -29,6 +29,12 @@ namespace TShock
 			set { Player.name = value; }
 		}
 
+        public string IP
+        {
+            get { return Socket.tcpClient.Client.RemoteEndPoint.ToString().Split(':')[0]; }
+            set { this.IP = value; }
+        }
+
 		public void Damage (int amount)
 		{
 			NetMessage.SendData((int)PacketTypes.PlayerDamage, -1, -1, "", Id, ((new Random()).Next(-1, 1)), amount, (float)0);

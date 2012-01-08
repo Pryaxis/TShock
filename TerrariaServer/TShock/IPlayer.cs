@@ -17,6 +17,12 @@ namespace TShock
 		/// </summary>
 		string Name { get; set; }
 
+        /// <summary>
+        /// The IP of the player.
+        /// </summary>
+        string IP { get; set; }
+
+
 		/// <summary>
 		/// Attempts to damage the player.
 		/// </summary>
