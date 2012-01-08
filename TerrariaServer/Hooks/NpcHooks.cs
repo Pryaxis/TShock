@@ -6,10 +6,14 @@ namespace TerrariaServer.Hooks
 	public static class NpcHooks
 	{
 		public delegate void StrikeNpcD(NpcStrikeEventArgs e);
+
+	    public delegate void SpawnNpcD(NpcSpawnEventArgs e);
+
 		public static event SetDefaultsD<NPC, int> SetDefaultsInt;
 		public static event SetDefaultsD<NPC, string> SetDefaultsString;
         public static event SetDefaultsD<NPC, int> NetDefaults;
 		public static event NpcHooks.StrikeNpcD StrikeNpc;
+	    public static event SpawnNpcD SpawnNpc;
 		public static void OnSetDefaultsInt(ref int npctype, NPC npc)
 		{
 			if (NpcHooks.SetDefaultsInt == null)
@@ -77,5 +81,15 @@ namespace TerrariaServer.Hooks
 		    retdamage = npcStrikeEventArgs.ReturnDamage;
 			return npcStrikeEventArgs.Handled;
 		}
+
+        public static void OnNpcSpawn( NPC type )
+        {
+            NpcSpawnEventArgs spawn = new NpcSpawnEventArgs
+            {
+                Npc = type
+            };
+
+            SpawnNpc(spawn);
+        }
 	}
 }

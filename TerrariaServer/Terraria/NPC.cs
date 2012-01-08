@@ -1,6 +1,7 @@
 
 using System;
 using TerrariaServer.Hooks;
+using TerrariaServer.Hooks.Classes;
 
 namespace Terraria
 {
@@ -18111,6 +18112,7 @@ namespace Terraria
 						}
 					}
 				}
+                NpcHooks.OnNpcSpawn(Main.npc[num]);
 				return num;
 			}
 			return 200;

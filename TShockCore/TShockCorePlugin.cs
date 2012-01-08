@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TShock;
+using TShock.Hooks.NPC;
 using TShock.Hooks.Player;
 
 namespace TShockCore
@@ -47,6 +48,7 @@ namespace TShockCore
 			Hooks.PlayerHooks.Greet.Register(OnGreet); 
             Hooks.PlayerHooks.Leave.Register( OnLeave );
             Hooks.PlayerHooks.Chat.Register( OnChat );
+		    Hooks.NpcHooks.Spawn.Register( OnNpcSpawn );
 		}
 
 		protected override void Dispose(bool disposing)
@@ -58,6 +60,7 @@ namespace TShockCore
 				Hooks.PlayerHooks.Greet -= OnGreet;
 			    Hooks.PlayerHooks.Leave -= OnLeave;
 			    Hooks.PlayerHooks.Chat -= OnChat;
+			    Hooks.NpcHooks.Spawn -= OnNpcSpawn;
 			}
 			base.Dispose(disposing);
 		}
@@ -108,5 +111,10 @@ namespace TShockCore
                 Console.WriteLine( "{0}:{1}", tsplr.Name, e.Text);
             }
         }
+
+	    private void OnNpcSpawn(object sender, NpcEventArgs e)
+	    {
+	        Console.WriteLine( e.Npc.name );
+	    }
 	}
 }

@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Hooks\Classes\GetDataEventArgs.cs" />
     <Compile Include="Hooks\Classes\MethodHookAttribute.cs" />
+    <Compile Include="Hooks\Classes\NpcSpawnEventArgs.cs" />
     <Compile Include="Hooks\Classes\NpcStrikeEventArgs.cs" />
     <Compile Include="Hooks\Classes\SendDataEventArgs.cs" />
     <Compile Include="Hooks\Classes\SetDefaultsD.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="Hooks\ProjectileHooks.cs" />
     <Compile Include="Hooks\ServerHooks.cs" />
     <Compile Include="Hooks\WorldHooks.cs" />
+    <Compile Include="TShock\Hooks\NPC\NpcEventArgs.cs" />
+    <Compile Include="TShock\Hooks\NPC\NpcHooks.cs" />
     <Compile Include="TShock\Hooks\Player\PlayerChatEventArgs.cs" />
     <Compile Include="TShock\Hooks\Player\PlayerHooks.cs" />
     <Compile Include="TShock\IGame.cs" />
