@@ -59,7 +59,7 @@ namespace TShockCore
 
 		void OnGreet(object sender, PlayerEventArgs e)
 		{
-			Game.SendMessage(e.Player, "Hi", Color.Red);
+			e.Player.SendMessage("Hi", Color.Green);
 		}
 
 		void OnJoin(object sender, PlayerEventArgs e)
