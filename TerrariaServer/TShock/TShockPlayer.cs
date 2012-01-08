@@ -28,5 +28,17 @@ namespace TShock
 			get { return Player.name; }
 			set { Player.name = value; }
 		}
+
+		public void Damage (int amount)
+		{
+			NetMessage.SendData((int)PacketTypes.PlayerDamage, -1, -1, "", Id, ((new Random()).Next(-1, 1)), amount, (float)0);
+		}
+
+		public void SendMessage(string msg, Color color)
+		{
+			if (color == default(Color))
+				color = Color.White;
+			NetMessage.SendData((int)PacketTypes.ChatText, Id, -1, msg, 0xFF, color.R, color.B, color.G);
+		}
 	}
 }

@@ -17,17 +17,5 @@ namespace TShock
 			}
 		}
 
-		public void SendMessage(IPlayer ply, string msg, Color color)
-		{
-			if (color == default(Color))
-				color = Color.White;
-			NetMessage.SendData((int)PacketTypes.ChatText, ply.Id, -1, msg, 0xFF, color.R, color.B, color.G);
-		}
-
-		public void SendMessage(IPlayer ply, string msg)
-		{
-			var color = Color.White;
-			NetMessage.SendData((int)PacketTypes.ChatText, ply.Id, -1, msg, 0xFF, color.R, color.B, color.G);
-		}
 	}
 }
