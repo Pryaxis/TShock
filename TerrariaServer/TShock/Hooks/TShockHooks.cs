@@ -9,9 +9,9 @@ using Terraria;
 
 namespace TShock.Hooks
 {
-	public class TShockHooks : IHooks
+	internal class TShockHooks : IHooks
 	{
-		public TShockHooks()
+		internal TShockHooks()
 		{
 			PlayerHooks = new PlayerHooks();
 			TerrariaServer.Hooks.ServerHooks.Join += ServerHooks_Join;
@@ -19,7 +19,7 @@ namespace TShock.Hooks
 
 		void ServerHooks_Join(int arg1, HandledEventArgs arg2)
 		{
-			var e = new PlayerEventArgs(new TShockPlayer(Main.player[arg1]));
+			var e = new PlayerEventArgs(new TShockPlayer(arg1));
 			PlayerHooks.Join.Invoke(this, e);
 			arg2.Handled = e.Handled;
 		}

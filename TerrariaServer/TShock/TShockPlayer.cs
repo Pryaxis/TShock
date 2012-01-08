@@ -6,18 +6,27 @@ using Terraria;
 
 namespace TShock
 {
-	public class TShockPlayer : IPlayer
+	internal class TShockPlayer : IPlayer
 	{
-		Player player;
-		public TShockPlayer(Player ply)
+		ServerSock Socket;
+		Player Player;
+		internal TShockPlayer(int id)
 		{
-			player = ply;
+			Id = id;
+			Player = Main.player[id];
+			Socket = Netplay.serverSock[id];
+		}
+
+		public int Id
+		{
+			get;
+			protected set;
 		}
 
 		public string Name
 		{
-			get { return player.name; }
-			set { player.name = value; }
+			get { return Player.name; }
+			set { Player.name = value; }
 		}
 	}
 }

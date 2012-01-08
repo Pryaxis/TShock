@@ -6,7 +6,7 @@ using Terraria;
 
 namespace TShock
 {
-	public class TShockPlayerList : IList<IPlayer>
+	internal class TShockPlayerList : IList<IPlayer>
 	{
 		[Obsolete("Not implemented", true)]
 		public int IndexOf(IPlayer item)
@@ -28,7 +28,7 @@ namespace TShock
 		{
 			get
 			{
-				return new TShockPlayer(Main.player[index]);
+				return new TShockPlayer(index);
 			}
 			set
 			{

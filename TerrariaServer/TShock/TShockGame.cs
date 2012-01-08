@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Terraria;
 
 namespace TShock
 {
-	public class TShockGame	: IGame
+	internal class TShockGame : IGame
 	{
 		protected TShockPlayerList playerslist = new TShockPlayerList();
 		public IList<IPlayer> Players
@@ -14,6 +15,11 @@ namespace TShock
 			{
 				return playerslist;
 			}
+		}
+
+		public void SendMessage(IPlayer ply, string msg)
+		{
+			NetMessage.SendData((int)PacketTypes.ChatText, ply.Id, -1, msg);
 		}
 	}
 }

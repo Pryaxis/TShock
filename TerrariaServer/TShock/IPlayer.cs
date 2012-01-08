@@ -7,6 +7,10 @@ namespace TShock
 {
 	public interface IPlayer
 	{
+		/// <summary>
+		/// Meant to only be used by TServer.
+		/// </summary>
+		int Id { get; }
 		string Name { get; set; }
 	}
 }
