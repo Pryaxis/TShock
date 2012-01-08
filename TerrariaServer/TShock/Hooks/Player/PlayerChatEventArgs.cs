@@ -14,7 +14,6 @@ namespace TShock.Hooks.Player
             Msg = msg;
             Text = text;
         }
-		public IPlayer Player { get; protected set; }
         public messageBuffer Msg { get; protected set; }
         public string Text { get; protected set; }
     }

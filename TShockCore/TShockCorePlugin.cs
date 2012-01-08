@@ -91,12 +91,10 @@ namespace TShockCore
             if (e.Text.StartsWith("/"))
             {
                 Console.WriteLine( "{0} tried to execute: {1}", tsplr.Name, e.Text);
-                e.Handled = true;
             }
             else
             {
                 Console.WriteLine( "{0}:{1}", tsplr.Name, e.Text);
-                e.Handled = true;
             }
         }
 	}
