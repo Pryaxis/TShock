@@ -83,12 +83,6 @@
     <Compile Include="RegionManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TShockAPI\TShockAPI.csproj">
-      <Project>{49606449-072B-4CF5-8088-AA49DA586694}</Project>
-      <Name>TShockAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="BanManagerTest.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

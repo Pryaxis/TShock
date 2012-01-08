@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using TShock;
 
-namespace TerrariaServer.TShock.Hooks.Player
+namespace TShock.Hooks.Player
 {
 	public class PlayerEventArgs : HandledEventArgs
 	{
+		public PlayerEventArgs(IPlayer player)
+		{
+			Player = player;
+		}
+		public IPlayer Player { get; protected set; }
 	}
 }

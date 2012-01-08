@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockDBEditor", "DBEditor\TShockDBEditor.csproj", "{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F3742F51-D7BF-4754-A68A-CD944D2A21FF}"
@@ -30,16 +28,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x86.ActiveCfg = Release|Any CPU
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{F1AE395C-6B4D-40E0-8BF8-0D8A126488D3}.Debug|Mixed Platforms.Build.0 = Debug|x86

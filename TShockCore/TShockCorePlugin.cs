@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TShock;
+using TShock.Hooks.Player;
 
 namespace TShockCore
 {
-	internal class TShockCorePlugin : TShockPlugin
+	internal class TShockCorePlugin : Plugin
 	{
 		public override string Name
 		{
@@ -20,7 +21,7 @@ namespace TShockCore
 
 		public override Version ApiVersion
 		{
-			get { return new Version(1, 0); }
+			get { return new Version(1, 10); }
 		}
 
 		public override string Author
@@ -41,7 +42,12 @@ namespace TShockCore
 
 		public override void Initialize()
 		{
-			
+			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
+		}
+
+		void OnJoin(object sender, PlayerEventArgs e)
+		{
+			Console.WriteLine(e.Player.Name + " Joined");
 		}
 	}
 }

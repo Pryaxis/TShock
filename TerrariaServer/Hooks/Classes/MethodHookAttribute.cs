@@ -1,5 +1,6 @@
 using System;
-namespace Hooks.Classes
+
+namespace TerrariaServer.Hooks.Classes
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	internal class MethodHookAttribute : Attribute

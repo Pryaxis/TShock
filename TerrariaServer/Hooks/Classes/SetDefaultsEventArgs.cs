@@ -1,6 +1,6 @@
-using System;
 using System.ComponentModel;
-namespace Hooks
+
+namespace TerrariaServer.Hooks.Classes
 {
 	public class SetDefaultsEventArgs<T, F> : HandledEventArgs
 	{

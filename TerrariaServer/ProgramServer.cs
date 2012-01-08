@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using TShock;
+using TShock.Hooks;
 
 namespace Terraria
 {
@@ -12,8 +13,10 @@ namespace Terraria
 	{
 		public const string PluginsPath = "Plugins";
 		public static readonly Version ApiVersion = new Version(1, 10, 0, 3);
-		public static List<TShockPlugin> Plugins = new List<TShockPlugin>();
+		public static List<Plugin> Plugins = new List<Plugin>();
 		public static Dictionary<string, Assembly> LoadedAssemblies = new Dictionary<string, Assembly>();
+		public static IGame GameInterface;
+		public static IHooks HooksInterface;
 		public static List<object> PluginInterfaces = new List<object>();
 		private static Main Game;
 
@@ -138,9 +141,10 @@ namespace Terraria
 					for (int j = 0; j < types.Length; j++)
 					{
 						Type type = types[j];
-						if (type.BaseType == typeof(TShockPlugin)) // Mono has this as a TODO.
+						if (type.BaseType == typeof(Plugin) && !type.IsAbstract) // Mono has this as a TODO.
 						{
-							var plugin = (TShockPlugin)Activator.CreateInstance(type);
+							
+							var plugin = (Plugin)Activator.CreateInstance(type);
 							if (Compatible(plugin))
 							{
 								PluginInterfaces.AddRange(plugin.CreateInterfaces());
@@ -168,10 +172,16 @@ namespace Terraria
 					Console.WriteLine("Plugin {0} failed to load", fileInfo.Name);
 				}
 			}
-			IOrderedEnumerable<TShockPlugin> orderedEnumerable =
+			IOrderedEnumerable<Plugin> orderedEnumerable =
 				from x in Plugins
 				orderby x.Order, x.Name
 				select x;
+
+			HooksInterface = new TShockHooks();
+			GameInterface = new TShockGame();
+			PluginInterfaces.Add(HooksInterface);
+			PluginInterfaces.Add(GameInterface);
+
 			foreach (var current in orderedEnumerable)
 			{
 				current.SetInterfaces(PluginInterfaces);
@@ -219,7 +229,7 @@ namespace Terraria
 			AppendLog("Exception while trying to load: {0}\r\n{1}\r\nStack trace:\r\n{2}\r\n", name, e.Message, e.StackTrace);
 		}
 
-		private static bool Compatible(TShockPlugin plugin)
+		private static bool Compatible(Plugin plugin)
 		{
 			return plugin.ApiVersion.Major == ApiVersion.Major && plugin.ApiVersion.Minor == ApiVersion.Minor;
 		}

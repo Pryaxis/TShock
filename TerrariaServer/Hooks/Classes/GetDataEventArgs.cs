@@ -1,7 +1,7 @@
-using System;
 using System.ComponentModel;
 using Terraria;
-namespace Hooks
+
+namespace TerrariaServer.Hooks.Classes
 {
 	public class GetDataEventArgs : HandledEventArgs
 	{

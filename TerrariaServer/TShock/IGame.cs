@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TShock.Hooks
+namespace TShock
 {
-	public interface IPlayerHooks
+	public interface IGame
 	{
-		HandlerList Leave { get; set; }
+		IList<IPlayer> Players { get; } 
 	}
 }

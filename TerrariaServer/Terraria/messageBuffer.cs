@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using Hooks;
+using TerrariaServer.Hooks;
 
 namespace Terraria
 {

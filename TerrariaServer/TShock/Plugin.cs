@@ -6,7 +6,7 @@ using Terraria;
 
 namespace TShock
 {
-	public abstract class TShockPlugin : IDisposable
+	public abstract class Plugin : IDisposable
 	{
 		public abstract string Name { get; }
 		public abstract Version Version { get; }
@@ -16,12 +16,13 @@ namespace TShock
 		public abstract bool Enabled { get; set; }
 		public int Order {get; set; }
 		public IHooks Hooks { get; set; }
+		public IGame Game { get; set; }
 
-		protected TShockPlugin()
+		protected Plugin()
 		{
 			this.Order = 1;
 		}
-		~TShockPlugin()
+		~Plugin()
 		{
 			this.Dispose(false);
 		}
@@ -49,6 +50,7 @@ namespace TShock
 		public virtual void SetInterfaces(IEnumerable<object> interfaces)
 		{
 			Hooks = GetInterface<IHooks>(interfaces);
+			Game = GetInterface<IGame>(interfaces);
 		}
 
 		/// <summary>

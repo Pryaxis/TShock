@@ -26,7 +26,6 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using Hooks;
 using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;

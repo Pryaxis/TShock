@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Hooks;
+using TerrariaServer.Hooks;
 
 namespace Terraria
 {

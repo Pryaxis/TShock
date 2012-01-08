@@ -1,6 +1,7 @@
 using System;
 using Terraria;
-namespace Hooks
+
+namespace TerrariaServer.Hooks
 {
 	public static class PlayerHooks
 	{

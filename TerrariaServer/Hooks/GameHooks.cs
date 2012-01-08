@@ -1,7 +1,8 @@
 using System;
 using System.ComponentModel;
 using Terraria;
-namespace Hooks
+
+namespace TerrariaServer.Hooks
 {
 	public static class GameHooks
 	{

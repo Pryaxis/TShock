@@ -1,6 +1,7 @@
-using Hooks;
 using System;
 using System.Text;
+using TerrariaServer.Hooks;
+
 namespace Terraria
 {
     public class NetMessage

@@ -1,5 +1,6 @@
-using Hooks;
 using System;
+using TerrariaServer.Hooks;
+
 namespace Terraria
 {
 	public class Item

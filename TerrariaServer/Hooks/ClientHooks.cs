@@ -1,8 +1,9 @@
-using System;
 using System.ComponentModel;
 using System.Text;
 using Terraria;
-namespace Hooks
+using TerrariaServer.Hooks.Classes;
+
+namespace TerrariaServer.Hooks
 {
 	public static class ClientHooks
 	{

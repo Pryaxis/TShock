@@ -1,7 +1,7 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
+using TerrariaServer.Hooks.Classes;
 
-namespace Hooks
+namespace TerrariaServer.Hooks
 {
 	public static class ProjectileHooks
 	{

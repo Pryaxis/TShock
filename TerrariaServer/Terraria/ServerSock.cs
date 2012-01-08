@@ -1,6 +1,6 @@
 using System;
 using System.Net.Sockets;
-using Hooks;
+using TerrariaServer.Hooks;
 
 namespace Terraria
 {
