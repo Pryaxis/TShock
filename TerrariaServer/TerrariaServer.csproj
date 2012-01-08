@@ -77,6 +77,7 @@
     <Compile Include="Hooks\ProjectileHooks.cs" />
     <Compile Include="Hooks\ServerHooks.cs" />
     <Compile Include="Hooks\WorldHooks.cs" />
+    <Compile Include="TShock\Hooks\Player\PlayerChatEventArgs.cs" />
     <Compile Include="TShock\Hooks\Player\PlayerHooks.cs" />
     <Compile Include="TShock\IGame.cs" />
     <Compile Include="TShock\IPlayer.cs" />

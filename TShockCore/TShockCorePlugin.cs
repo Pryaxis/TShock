@@ -45,6 +45,7 @@ namespace TShockCore
 			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
 			Hooks.PlayerHooks.Greet.Register(OnGreet); 
             Hooks.PlayerHooks.Leave.Register( OnLeave );
+            Hooks.PlayerHooks.Chat.Register( OnChat );
 		}
 
 		protected override void Dispose(bool disposing)
@@ -53,7 +54,8 @@ namespace TShockCore
 			{
 				Hooks.PlayerHooks.Join -= OnJoin;
 				Hooks.PlayerHooks.Greet -= OnGreet;
-			    //Hooks.PlayerHooks.Leave -= OnLeave;
+			    Hooks.PlayerHooks.Leave -= OnLeave;
+			    Hooks.PlayerHooks.Chat -= OnChat;
 			}
 			base.Dispose(disposing);
 		}
@@ -72,6 +74,30 @@ namespace TShockCore
         void OnLeave( object sender, PlayerEventArgs e)
         {
             Console.WriteLine(e.Player.Name + " has left");
+        }
+
+        void OnChat( object sender, PlayerChatEventArgs e )
+        {
+            if (e.Handled)
+                return;
+
+            var tsplr = e.Player;
+            if (tsplr == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Text.StartsWith("/"))
+            {
+                Console.WriteLine( "{0} tried to execute: {1}", tsplr.Name, e.Text);
+                e.Handled = true;
+            }
+            else
+            {
+                Console.WriteLine( "{0}:{1}", tsplr.Name, e.Text);
+                e.Handled = true;
+            }
         }
 	}
 }
