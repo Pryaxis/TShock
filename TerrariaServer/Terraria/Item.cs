@@ -1629,125 +1629,80 @@ namespace Terraria
 		{
 			if (type < 0)
 			{
-				if (type == -1)
+				switch (type)
 				{
-					this.SetDefaults("Gold Pickaxe");
-					return;
-				}
-				if (type == -2)
-				{
-					this.SetDefaults("Gold Broadsword");
-					return;
-				}
-				if (type == -3)
-				{
-					this.SetDefaults("Gold Shortsword");
-					return;
-				}
-				if (type == -4)
-				{
-					this.SetDefaults("Gold Axe");
-					return;
-				}
-				if (type == -5)
-				{
-					this.SetDefaults("Gold Hammer");
-					return;
-				}
-				if (type == -6)
-				{
-					this.SetDefaults("Gold Bow");
-					return;
-				}
-				if (type == -7)
-				{
-					this.SetDefaults("Silver Pickaxe");
-					return;
-				}
-				if (type == -8)
-				{
-					this.SetDefaults("Silver Broadsword");
-					return;
-				}
-				if (type == -9)
-				{
-					this.SetDefaults("Silver Shortsword");
-					return;
-				}
-				if (type == -10)
-				{
-					this.SetDefaults("Silver Axe");
-					return;
-				}
-				if (type == -11)
-				{
-					this.SetDefaults("Silver Hammer");
-					return;
-				}
-				if (type == -12)
-				{
-					this.SetDefaults("Silver Bow");
-					return;
-				}
-				if (type == -13)
-				{
-					this.SetDefaults("Copper Pickaxe");
-					return;
-				}
-				if (type == -14)
-				{
-					this.SetDefaults("Copper Broadsword");
-					return;
-				}
-				if (type == -15)
-				{
-					this.SetDefaults("Copper Shortsword");
-					return;
-				}
-				if (type == -16)
-				{
-					this.SetDefaults("Copper Axe");
-					return;
-				}
-				if (type == -17)
-				{
-					this.SetDefaults("Copper Hammer");
-					return;
-				}
-				if (type == -18)
-				{
-					this.SetDefaults("Copper Bow");
-					return;
-				}
-				if (type == -19)
-				{
-					this.SetDefaults("Blue Phasesaber");
-					return;
-				}
-				if (type == -20)
-				{
-					this.SetDefaults("Red Phasesaber");
-					return;
-				}
-				if (type == -21)
-				{
-					this.SetDefaults("Green Phasesaber");
-					return;
-				}
-				if (type == -22)
-				{
-					this.SetDefaults("Purple Phasesaber");
-					return;
-				}
-				if (type == -23)
-				{
-					this.SetDefaults("White Phasesaber");
-					return;
-				}
-				if (type == -24)
-				{
-					this.SetDefaults("Yellow Phasesaber");
-					return;
+				    case -1:
+				        this.SetDefaults("Gold Pickaxe");
+				        return;
+				    case -2:
+				        this.SetDefaults("Gold Broadsword");
+				        return;
+				    case -3:
+				        this.SetDefaults("Gold Shortsword");
+				        return;
+				    case -4:
+				        this.SetDefaults("Gold Axe");
+				        return;
+				    case -5:
+				        this.SetDefaults("Gold Hammer");
+				        return;
+				    case -6:
+				        this.SetDefaults("Gold Bow");
+				        return;
+				    case -7:
+				        this.SetDefaults("Silver Pickaxe");
+				        return;
+				    case -8:
+				        this.SetDefaults("Silver Broadsword");
+				        return;
+				    case -9:
+				        this.SetDefaults("Silver Shortsword");
+				        return;
+				    case -10:
+				        this.SetDefaults("Silver Axe");
+				        return;
+				    case -11:
+				        this.SetDefaults("Silver Hammer");
+				        return;
+				    case -12:
+				        this.SetDefaults("Silver Bow");
+				        return;
+				    case -13:
+				        this.SetDefaults("Copper Pickaxe");
+				        return;
+				    case -14:
+				        this.SetDefaults("Copper Broadsword");
+				        return;
+				    case -15:
+				        this.SetDefaults("Copper Shortsword");
+				        return;
+				    case -16:
+				        this.SetDefaults("Copper Axe");
+				        return;
+				    case -17:
+				        this.SetDefaults("Copper Hammer");
+				        return;
+				    case -18:
+				        this.SetDefaults("Copper Bow");
+				        return;
+				    case -19:
+				        this.SetDefaults("Blue Phasesaber");
+				        return;
+				    case -20:
+				        this.SetDefaults("Red Phasesaber");
+				        return;
+				    case -21:
+				        this.SetDefaults("Green Phasesaber");
+				        return;
+				    case -22:
+				        this.SetDefaults("Purple Phasesaber");
+				        return;
+				    case -23:
+				        this.SetDefaults("White Phasesaber");
+				        return;
+				    case -24:
+				        this.SetDefaults("Yellow Phasesaber");
+				        return;
 				}
 			}
 			else
@@ -9868,25 +9823,32 @@ namespace Terraria
 		}
 		public Color GetAlpha(Color newColor)
 		{
-			if (this.type == 75)
+			switch (this.type)
 			{
-				return new Color(255, 255, 255, (int)newColor.A - this.alpha);
-			}
-			if (this.type == 121 || this.type == 122 || this.type == 217 || this.type == 218 || this.type == 219 || this.type == 220 || this.type == 120 || this.type == 119)
-			{
-				return new Color(255, 255, 255, 255);
-			}
-			if (this.type == 501)
-			{
-				return new Color(200, 200, 200, 50);
-			}
-			if (this.type == 520 || this.type == 521 || this.type == 522 || this.type == 547 || this.type == 548 || this.type == 549 || this.type == 575)
-			{
-				return new Color(255, 255, 255, 50);
-			}
-			if (this.type == 58 || this.type == 184)
-			{
-				return new Color(200, 200, 200, 2000);
+			    case 75:
+			        return new Color(255, 255, 255, (int)newColor.A - this.alpha);
+			    case 119:
+			    case 120:
+			    case 220:
+			    case 219:
+			    case 218:
+			    case 217:
+			    case 122:
+			    case 121:
+			        return new Color(255, 255, 255, 255);
+			    case 501:
+			        return new Color(200, 200, 200, 50);
+			    case 575:
+			    case 549:
+			    case 548:
+			    case 547:
+			    case 522:
+			    case 521:
+			    case 520:
+			        return new Color(255, 255, 255, 50);
+			    case 184:
+			    case 58:
+			        return new Color(200, 200, 200, 2000);
 			}
 			float num = (float)(255 - this.alpha) / 255f;
 			int r = (int)((float)newColor.R * num);
@@ -10159,83 +10121,71 @@ namespace Terraria
 							}
 						}
 					}
-					if (this.type == 520)
+					switch (this.type)
 					{
-						float num7 = (float)Main.rand.Next(90, 111) * 0.01f;
-						num7 *= Main.essScale;
-						Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num7, 0.1f * num7, 0.25f * num7);
-					}
-					else
-					{
-						if (this.type == 521)
-						{
-							float num8 = (float)Main.rand.Next(90, 111) * 0.01f;
-							num8 *= Main.essScale;
-							Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.25f * num8, 0.1f * num8, 0.5f * num8);
-						}
-						else
-						{
-							if (this.type == 547)
-							{
-								float num9 = (float)Main.rand.Next(90, 111) * 0.01f;
-								num9 *= Main.essScale;
-								Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num9, 0.3f * num9, 0.05f * num9);
-							}
-							else
-							{
-								if (this.type == 548)
-								{
-									float num10 = (float)Main.rand.Next(90, 111) * 0.01f;
-									num10 *= Main.essScale;
-									Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num10, 0.1f * num10, 0.6f * num10);
-								}
-								else
-								{
-									if (this.type == 575)
-									{
-										float num11 = (float)Main.rand.Next(90, 111) * 0.01f;
-										num11 *= Main.essScale;
-										Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num11, 0.3f * num11, 0.5f * num11);
-									}
-									else
-									{
-										if (this.type == 549)
-										{
-											float num12 = (float)Main.rand.Next(90, 111) * 0.01f;
-											num12 *= Main.essScale;
-											Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num12, 0.5f * num12, 0.2f * num12);
-										}
-										else
-										{
-											if (this.type == 58)
-											{
-												float num13 = (float)Main.rand.Next(90, 111) * 0.01f;
-												num13 *= Main.essScale * 0.5f;
-												Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num13, 0.1f * num13, 0.1f * num13);
-											}
-											else
-											{
-												if (this.type == 184)
-												{
-													float num14 = (float)Main.rand.Next(90, 111) * 0.01f;
-													num14 *= Main.essScale * 0.5f;
-													Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num14, 0.1f * num14, 0.5f * num14);
-												}
-												else
-												{
-													if (this.type == 522)
-													{
-														float num15 = (float)Main.rand.Next(90, 111) * 0.01f;
-														num15 *= Main.essScale * 0.2f;
-														Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num15, 1f * num15, 0.1f * num15);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
+					    case 520:
+					        {
+					            float num7 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num7 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num7, 0.1f * num7, 0.25f * num7);
+					        }
+					        break;
+					    case 521:
+					        {
+					            float num8 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num8 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.25f * num8, 0.1f * num8, 0.5f * num8);
+					        }
+					        break;
+					    case 547:
+					        {
+					            float num9 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num9 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num9, 0.3f * num9, 0.05f * num9);
+					        }
+					        break;
+					    case 548:
+					        {
+					            float num10 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num10 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num10, 0.1f * num10, 0.6f * num10);
+					        }
+					        break;
+					    case 575:
+					        {
+					            float num11 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num11 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num11, 0.3f * num11, 0.5f * num11);
+					        }
+					        break;
+					    case 549:
+					        {
+					            float num12 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num12 *= Main.essScale;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num12, 0.5f * num12, 0.2f * num12);
+					        }
+					        break;
+					    case 58:
+					        {
+					            float num13 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num13 *= Main.essScale * 0.5f;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num13, 0.1f * num13, 0.1f * num13);
+					        }
+					        break;
+					    case 184:
+					        {
+					            float num14 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num14 *= Main.essScale * 0.5f;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.1f * num14, 0.1f * num14, 0.5f * num14);
+					        }
+					        break;
+					    case 522:
+					        {
+					            float num15 = (float)Main.rand.Next(90, 111) * 0.01f;
+					            num15 *= Main.essScale * 0.2f;
+					            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.5f * num15, 1f * num15, 0.1f * num15);
+					        }
+					        break;
 					}
 					if (this.type == 75 && Main.dayTime)
 					{
@@ -10260,127 +10210,103 @@ namespace Terraria
 				{
 					this.beingGrabbed = false;
 				}
-				if (this.type == 501)
+				switch (this.type)
 				{
-					if (Main.rand.Next(6) == 0)
-					{
-						int num16 = Dust.NewDust(this.position, this.width, this.height, 55, 0f, 0f, 200, this.color, 1f);
-						Dust expr_DC0 = Main.dust[num16];
-						expr_DC0.velocity *= 0.3f;
-						Main.dust[num16].scale *= 0.5f;
-					}
-				}
-				else
-				{
-					if (this.type == 8 || this.type == 105)
-					{
-						if (!this.wet)
-						{
-							Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 1f, 0.95f, 0.8f);
-						}
-					}
-					else
-					{
-						if (this.type == 523)
-						{
-							Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.85f, 1f, 0.7f);
-						}
-						else
-						{
-							if (this.type >= 427 && this.type <= 432)
-							{
-								if (!this.wet)
-								{
-									float r = 0f;
-									float g = 0f;
-									float b = 0f;
-									int num17 = this.type - 426;
-									if (num17 == 1)
-									{
-										r = 0.1f;
-										g = 0.2f;
-										b = 1.1f;
-									}
-									if (num17 == 2)
-									{
-										r = 1f;
-										g = 0.1f;
-										b = 0.1f;
-									}
-									if (num17 == 3)
-									{
-										r = 0f;
-										g = 1f;
-										b = 0.1f;
-									}
-									if (num17 == 4)
-									{
-										r = 0.9f;
-										g = 0f;
-										b = 0.9f;
-									}
-									if (num17 == 5)
-									{
-										r = 1.3f;
-										g = 1.3f;
-										b = 1.3f;
-									}
-									if (num17 == 6)
-									{
-										r = 0.9f;
-										g = 0.9f;
-										b = 0f;
-									}
-									Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), r, g, b);
-								}
-							}
-							else
-							{
-								if (this.type == 41)
-								{
-									if (!this.wet)
-									{
-										Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 1f, 0.75f, 0.55f);
-									}
-								}
-								else
-								{
-									if (this.type == 282)
-									{
-										Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.7f, 1f, 0.8f);
-									}
-									else
-									{
-										if (this.type == 286)
-										{
-											Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.7f, 0.8f, 1f);
-										}
-										else
-										{
-											if (this.type == 331)
-											{
-												Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.55f, 0.75f, 0.6f);
-											}
-											else
-											{
-												if (this.type == 183)
-												{
-													Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.15f, 0.45f, 0.9f);
-												}
-												else
-												{
-													if (this.type == 75)
-													{
-														Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.8f, 0.7f, 0.1f);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
+				    case 501:
+				        if (Main.rand.Next(6) == 0)
+				        {
+				            int num16 = Dust.NewDust(this.position, this.width, this.height, 55, 0f, 0f, 200, this.color, 1f);
+				            Dust expr_DC0 = Main.dust[num16];
+				            expr_DC0.velocity *= 0.3f;
+				            Main.dust[num16].scale *= 0.5f;
+				        }
+				        break;
+				    case 105:
+				    case 8:
+				        if (!this.wet)
+				        {
+				            Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 1f, 0.95f, 0.8f);
+				        }
+				        break;
+				    case 523:
+				        Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.85f, 1f, 0.7f);
+				        break;
+				    default:
+				        if (this.type >= 427 && this.type <= 432)
+				        {
+				            if (!this.wet)
+				            {
+				                float r = 0f;
+				                float g = 0f;
+				                float b = 0f;
+				                int num17 = this.type - 426;
+				                if (num17 == 1)
+				                {
+				                    r = 0.1f;
+				                    g = 0.2f;
+				                    b = 1.1f;
+				                }
+				                if (num17 == 2)
+				                {
+				                    r = 1f;
+				                    g = 0.1f;
+				                    b = 0.1f;
+				                }
+				                if (num17 == 3)
+				                {
+				                    r = 0f;
+				                    g = 1f;
+				                    b = 0.1f;
+				                }
+				                if (num17 == 4)
+				                {
+				                    r = 0.9f;
+				                    g = 0f;
+				                    b = 0.9f;
+				                }
+				                if (num17 == 5)
+				                {
+				                    r = 1.3f;
+				                    g = 1.3f;
+				                    b = 1.3f;
+				                }
+				                if (num17 == 6)
+				                {
+				                    r = 0.9f;
+				                    g = 0.9f;
+				                    b = 0f;
+				                }
+				                Lighting.addLight((int)((this.position.X + (float)(this.width / 2)) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), r, g, b);
+				            }
+				        }
+				        else
+				        {
+				            switch (this.type)
+				            {
+				                case 41:
+				                    if (!this.wet)
+				                    {
+				                        Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 1f, 0.75f, 0.55f);
+				                    }
+				                    break;
+				                case 282:
+				                    Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.7f, 1f, 0.8f);
+				                    break;
+				                case 286:
+				                    Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.7f, 0.8f, 1f);
+				                    break;
+				                case 331:
+				                    Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.55f, 0.75f, 0.6f);
+				                    break;
+				                case 183:
+				                    Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.15f, 0.45f, 0.9f);
+				                    break;
+				                case 75:
+				                    Lighting.addLight((int)((this.position.X + (float)this.width) / 16f), (int)((this.position.Y + (float)(this.height / 2)) / 16f), 0.8f, 0.7f, 0.1f);
+				                    break;
+				            }
+				        }
+				        break;
 				}
 				if (this.type == 75)
 				{
