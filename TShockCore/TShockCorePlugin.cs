@@ -45,6 +45,15 @@ namespace TShockCore
 			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Hooks.PlayerHooks.Join.UnRegister(OnJoin);
+			}
+			base.Dispose(disposing);
+		}
+
 		void OnJoin(object sender, PlayerEventArgs e)
 		{
 			Console.WriteLine(e.Player.Name + " Joined");
