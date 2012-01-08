@@ -1,5 +1,7 @@
 using System;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using TerrariaServer.Hooks;
 
 namespace Terraria
@@ -9,15 +11,27 @@ namespace Terraria
         public static messageBuffer[] buffer = new messageBuffer[257];
         public static void SendBytes(ServerSock sock, byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
-            if (NetHooks.OnSendBytes(sock, buffer, offset, count))
+            try
             {
-                return;
+                if (NetHooks.OnSendBytes(sock, buffer, offset, count))
+                {
+                    return;
+                }
+
+                if (Main.runningMono)
+                    sock.networkStream.Write(buffer, offset, count);
+
+                else
+                    sock.networkStream.BeginWrite(buffer, offset, count, callback, state);
             }
-            if (Main.runningMono)
-                sock.networkStream.Write(buffer, offset, count);
-            else
-                sock.networkStream.BeginWrite(buffer, offset, count, callback, state);
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} had an exception thrown when trying to send data.", sock.clientSocket.RemoteEndPoint);
+                Console.WriteLine(e);
+                sock.kill = true;
+            }
         }
+
         public static void SendData(int msgType, int remoteClient = -1, int ignoreClient = -1, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {
             int num = 256;
