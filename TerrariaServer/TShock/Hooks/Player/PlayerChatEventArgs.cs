@@ -9,12 +9,10 @@ namespace TShock.Hooks.Player
 {
     public class PlayerChatEventArgs : PlayerEventArgs
     {
-        public PlayerChatEventArgs(IPlayer player, messageBuffer msg, string text) : base( player )
+        public PlayerChatEventArgs(IPlayer player, string text) : base( player )
         {
-            Msg = msg;
             Text = text;
         }
-        public messageBuffer Msg { get; protected set; }
         public string Text { get; protected set; }
     }
 }

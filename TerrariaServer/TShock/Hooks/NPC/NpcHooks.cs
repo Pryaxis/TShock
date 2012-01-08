@@ -20,6 +20,7 @@ namespace TShock.Hooks.NPC
         {
             var e = new NpcEventArgs(args.Npc);
             Spawn.Invoke(this, e);
+			args.Handled = e.Handled;
         }
 
         /// <summary>

@@ -53,12 +53,9 @@ namespace TShock.Hooks.Player
 
         void ServerHooks_Chat( messageBuffer msg, int who, string text, HandledEventArgs args )
         {
-            if (!args.Handled)
-            {
-                var e = new PlayerChatEventArgs(new TShockPlayer(who), msg, text);
-                Chat.Invoke(this, e);
-                args.Handled = e.Handled;
-            }
+            var e = new PlayerChatEventArgs(new TShockPlayer(who), text);
+            Chat.Invoke(this, e);
+            args.Handled = e.Handled;
 	    }
 
         /// <summary>

@@ -92,9 +92,6 @@ namespace TShockCore
 
         void OnChat( object sender, PlayerChatEventArgs e )
         {
-            if (e.Handled)
-                return;
-
             var tsplr = e.Player;
             if (tsplr == null)
             {
