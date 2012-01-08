@@ -43,15 +43,23 @@ namespace TShockCore
 		public override void Initialize()
 		{
 			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
+			Hooks.PlayerHooks.Greet.Register(OnGreet); 
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				Hooks.PlayerHooks.Join.UnRegister(OnJoin);
+				Hooks.PlayerHooks.Join -= OnJoin;
+				Hooks.PlayerHooks.Greet -= OnGreet;
 			}
 			base.Dispose(disposing);
+		}
+
+
+		void OnGreet(object sender, PlayerEventArgs e)
+		{
+			Game.SendMessage(e.Player, "Hi", Color.Red);
 		}
 
 		void OnJoin(object sender, PlayerEventArgs e)

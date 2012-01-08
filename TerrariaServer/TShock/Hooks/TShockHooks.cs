@@ -15,6 +15,14 @@ namespace TShock.Hooks
 		{
 			PlayerHooks = new PlayerHooks();
 			TerrariaServer.Hooks.ServerHooks.Join += ServerHooks_Join;
+			TerrariaServer.Hooks.NetHooks.GreetPlayer += NetHooks_GreetPlayer;
+		}
+
+		void NetHooks_GreetPlayer(int who, HandledEventArgs arg2)
+		{
+			var e = new PlayerEventArgs(new TShockPlayer(who));
+			PlayerHooks.Greet.Invoke(this, e);
+			arg2.Handled = e.Handled;
 		}
 
 		void ServerHooks_Join(int arg1, HandledEventArgs arg2)

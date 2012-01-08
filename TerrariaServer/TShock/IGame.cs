@@ -17,6 +17,6 @@ namespace TShock
 		/// </summary>
 		/// <param name="ply"></param>
 		/// <param name="msg"></param>
-		void SendMessage(IPlayer ply, string msg);
+		void SendMessage(IPlayer ply, string msg, Color color = default(Color));
 	}
 }
