@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -7,10 +8,27 @@ namespace TShock.Hooks.Player
 {
 	public class PlayerHooks
 	{
-		public PlayerHooks()
+		internal PlayerHooks()
 		{
 			Join = new HandlerList<PlayerEventArgs>();
 			Greet = new HandlerList<PlayerEventArgs>();
+
+			TerrariaServer.Hooks.ServerHooks.Join += ServerHooks_Join;
+			TerrariaServer.Hooks.NetHooks.GreetPlayer += NetHooks_GreetPlayer;
+		}
+
+		void NetHooks_GreetPlayer(int who, HandledEventArgs arg2)
+		{
+			var e = new PlayerEventArgs(new TShockPlayer(who));
+			Greet.Invoke(this, e);
+			arg2.Handled = e.Handled;
+		}
+
+		void ServerHooks_Join(int arg1, HandledEventArgs arg2)
+		{
+			var e = new PlayerEventArgs(new TShockPlayer(arg1));
+			Join.Invoke(this, e);
+			arg2.Handled = e.Handled;
 		}
 
 		/// <summary>
