@@ -31,7 +31,7 @@ namespace TShockCore
 
 		public override string Description
 		{
-			get { return "Core plugin for tshock"; }
+			get { return "Core plugin for TShock."; }
 		}
 
 		public override bool Enabled
