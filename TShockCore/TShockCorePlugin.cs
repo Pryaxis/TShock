@@ -11,7 +11,7 @@ namespace TShockCore
 	{
 		public override string Name
 		{
-			get { return "Core"; }
+			get { return "TShock Core"; }
 		}
 
 		public override Version Version
