@@ -7,18 +7,23 @@ using System.Threading;
 using System.ComponentModel;
 using LuaInterface;
 using TShock;
+using TShock.Hooks;
 using TShock.Hooks.Player;
 
 namespace LuaPlugin
 {
-	public class LuaLoader : LuaPlugin
+	public class LuaLoader
 	{
 		private readonly Lua _lua = null;
 		public string LuaPath = "";
 		public string LuaAutorunPath = "";
-		public LuaLoader(string path)
+		IGame Game;
+		IHooks Hooks;
+		public LuaLoader(string path, IGame game, IHooks hooks)
 		{
 			_lua = new Lua();
+			Game = game;
+			Hooks = hooks;
 			LuaPath = path;
 			LuaAutorunPath = Path.Combine(LuaPath, "autorun");
 			SendLuaDebugMsg("Lua 5.1 (serverside) initialized.");
@@ -91,6 +96,7 @@ namespace LuaPlugin
 			_lua["Game"] = Game;
 			_lua["Color"] = new Color();
 			_lua["Players"] = Game.Players;
+			_lua["HandlerPriority"] = new HandlerPriority();
 			//More Lua Functions
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
 			var LuaFuncMethods = LuaFuncs.GetType().GetMethods();

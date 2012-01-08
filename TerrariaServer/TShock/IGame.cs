@@ -11,5 +11,6 @@ namespace TShock
 		/// List of players
 		/// </summary>
 		IList<IPlayer> Players { get; }
+
 	}
 }

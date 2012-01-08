@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using TShock;
 using TShock.Hooks.Player;
 
@@ -40,8 +41,12 @@ namespace LuaPlugin
 			set;
 		}
 
+		LuaLoader _luaLoader;
+
 		public override void Initialize()
 		{
+			var t = Hooks;
+			_luaLoader = new LuaLoader(Path.Combine(".", "lua"), Game, Hooks);
 		}
 	}
 }
