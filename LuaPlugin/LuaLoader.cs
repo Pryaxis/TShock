@@ -92,11 +92,12 @@ namespace LuaPlugin
 
 		public void RegisterLuaFunctions()
 		{
-			_lua["PlayerHooks"] = Hooks.PlayerHooks;
+			_lua["Hooks"] = Hooks;
 			_lua["Game"] = Game;
 			_lua["Color"] = new Color();
 			_lua["Players"] = Game.Players;
 			_lua["HandlerPriority"] = new HandlerPriority();
+
 			//More Lua Functions
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
 			var LuaFuncMethods = LuaFuncs.GetType().GetMethods();
