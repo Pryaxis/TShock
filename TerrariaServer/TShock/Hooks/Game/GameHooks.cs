@@ -11,7 +11,7 @@ namespace TShock.Hooks.Game
 	{
 		internal GameHooks()
 		{
-			Update = new HandlerList<GameEventArgs>();
+			Update = new HandlerList<HandledEventArgs>();
 
 			TerrariaServer.Hooks.GameHooks.Update += GameHooks_Update;
 			TerrariaServer.Hooks.GameHooks.PostUpdate += GameHooks_PostUpdate;
@@ -19,30 +19,30 @@ namespace TShock.Hooks.Game
 			TerrariaServer.Hooks.GameHooks.PostInitialize += GameHooks_PostInitialize;
 		}
 
-		void GameHooks_Update(GameEventArgs args)
+		void GameHooks_Update(HandledEventArgs args)
 		{
-			var e = new GameEventArgs();
+			var e = new HandledEventArgs();
 			Update.Invoke(this, e);
 			args.Handled = e.Handled;
 		}
 
-		void GameHooks_PostUpdate(GameEventArgs args)
+		void GameHooks_PostUpdate(HandledEventArgs args)
 		{
-			var e = new GameEventArgs();
+			var e = new HandledEventArgs();
 			PostUpdate.Invoke(this, e);
 			args.Handled = e.Handled;
 		}
 		
-		void GameHooks_Initialize(GameEventArgs args)
+		void GameHooks_Initialize(HandledEventArgs args)
 		{
-			var e = new GameEventArgs();
+			var e = new HandledEventArgs();
 			Initialize.Invoke(this, e);
 			args.Handled = e.Handled;
 		}
 
-		void GameHooks_PostInitialize(GameEventArgs args)
+		void GameHooks_PostInitialize(HandledEventArgs args)
 		{
-			var e = new GameEventArgs();
+			var e = new HandledEventArgs();
 			PostInitialize.Invoke(this, e);
 			args.Handled = e.Handled;
 		}
@@ -50,18 +50,18 @@ namespace TShock.Hooks.Game
 		/// <summary>
 		/// Called Before Update
 		/// </summary>
-		public HandlerList<GameEventArgs> Update { get; set; }
+		public HandlerList<HandledEventArgs> Update { get; set; }
 		/// <summary>
 		/// Called After Update
 		/// </summary>
-		public HandlerList<GameEventArgs> PostUpdate { get; set; }
+		public HandlerList<HandledEventArgs> PostUpdate { get; set; }
 		/// <summary>
-		/// Called Before Update
+		/// Called before Initializing
 		/// </summary>
-		public HandlerList<GameEventArgs> Initialize { get; set; }
+		public HandlerList<HandledEventArgs> Initialize { get; set; }
 		/// <summary>
-		/// Called After Update
+		/// Called After Initializing
 		/// </summary>
-		public HandlerList<GameEventArgs> PostInitialize { get; set; }
+		public HandlerList<HandledEventArgs> PostInitialize { get; set; }
 	}
 }

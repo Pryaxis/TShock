@@ -79,7 +79,6 @@
     <Compile Include="Hooks\ServerHooks.cs" />
     <Compile Include="Hooks\WorldHooks.cs" />
     <Compile Include="TShock\Hooks\Game\GameHooks.cs" />
-    <Compile Include="TShock\Hooks\Game\GameEventArgs.cs" />
     <Compile Include="TShock\Hooks\NPC\NpcEventArgs.cs" />
     <Compile Include="TShock\Hooks\NPC\NpcHooks.cs" />
     <Compile Include="TShock\Hooks\Player\PlayerChatEventArgs.cs" />
