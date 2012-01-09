@@ -12,7 +12,7 @@ using TShock.Hooks.Player;
 
 namespace LuaPlugin
 {
-	public class LuaLoader
+	internal class LuaLoader
 	{
 		private readonly Lua _lua = null;
 		public string LuaPath = "";
@@ -95,8 +95,6 @@ namespace LuaPlugin
 			_lua["Hooks"] = Hooks;
 			_lua["Game"] = Game;
 			_lua["Color"] = new Color();
-			_lua["Players"] = Game.Players;
-			_lua["HandlerPriority"] = new HandlerPriority();
 
 			//More Lua Functions
 			LuaFunctions LuaFuncs = new LuaFunctions(this);
@@ -108,7 +106,7 @@ namespace LuaPlugin
 		}
 	}
 
-	public class LuaFunctions
+	internal class LuaFunctions
 	{
 		LuaLoader Parent;
 		public LuaFunctions(LuaLoader parent)

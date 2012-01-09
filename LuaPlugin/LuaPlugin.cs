@@ -8,7 +8,7 @@ using TShock.Hooks.Player;
 
 namespace LuaPlugin
 {
-	public class LuaPlugin : Plugin
+	internal class LuaPlugin : Plugin
 	{
 		public override string Name
 		{
