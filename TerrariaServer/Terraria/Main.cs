@@ -1189,12 +1189,12 @@ namespace Terraria
                     {
                         num7 = 1000.0;
                     }
-                    if (Netplay.anyClients)
-                    {
-                        GameHooks.OnUpdate(true);
-                        Update();
-                        GameHooks.OnUpdate(false);
-                    }
+						  if (Netplay.anyClients)
+						  {
+							  GameHooks.OnUpdate(true);
+							  Update();
+							  GameHooks.OnUpdate(false);
+						  }
                     double num10 = stopwatch.ElapsedMilliseconds + num7;
                     if (num10 < num6)
                     {

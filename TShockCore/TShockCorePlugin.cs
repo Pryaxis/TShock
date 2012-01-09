@@ -43,37 +43,37 @@ namespace TShockCore
 
 		public override void Initialize()
 		{
-            Hooks.PlayerHooks.Connect.Register(OnConnect);
+			Hooks.PlayerHooks.Connect.Register(OnConnect);
 			Hooks.PlayerHooks.Join.Register(OnJoin, HandlerPriority.High);
-			Hooks.PlayerHooks.Greet.Register(OnGreet); 
-            Hooks.PlayerHooks.Leave.Register( OnLeave );
-            Hooks.PlayerHooks.Chat.Register( OnChat );
-		    Hooks.NpcHooks.Spawn.Register( OnNpcSpawn );
+			Hooks.PlayerHooks.Greet.Register(OnGreet);
+			Hooks.PlayerHooks.Leave.Register(OnLeave);
+			Hooks.PlayerHooks.Chat.Register(OnChat);
+			Hooks.NpcHooks.Spawn.Register(OnNpcSpawn);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-			    Hooks.PlayerHooks.Connect -= OnConnect;
+				Hooks.PlayerHooks.Connect -= OnConnect;
 				Hooks.PlayerHooks.Join -= OnJoin;
 				Hooks.PlayerHooks.Greet -= OnGreet;
-			    Hooks.PlayerHooks.Leave -= OnLeave;
-			    Hooks.PlayerHooks.Chat -= OnChat;
-			    Hooks.NpcHooks.Spawn -= OnNpcSpawn;
+				Hooks.PlayerHooks.Leave -= OnLeave;
+				Hooks.PlayerHooks.Chat -= OnChat;
+				Hooks.NpcHooks.Spawn -= OnNpcSpawn;
 			}
 			base.Dispose(disposing);
 		}
 
-        void OnConnect( object sender, PlayerEventArgs e )
-        {
-            if( e.Player == null )
-            {
-                e.Handled = true;
-                return;
-            }
-            Console.WriteLine("{0} is connecting", e.Player.IP);
-        }
+		void OnConnect(object sender, PlayerEventArgs e)
+		{
+			if (e.Player == null)
+			{
+				e.Handled = true;
+				return;
+			}
+			Console.WriteLine("{0} is connecting", e.Player.IP);
+		}
 
 		void OnGreet(object sender, PlayerEventArgs e)
 		{
@@ -85,33 +85,33 @@ namespace TShockCore
 			Console.WriteLine(e.Player.Name + " Joined");
 		}
 
-        void OnLeave( object sender, PlayerEventArgs e)
-        {
-            Console.WriteLine(e.Player.Name + " has left");
-        }
+		void OnLeave(object sender, PlayerEventArgs e)
+		{
+			Console.WriteLine(e.Player.Name + " has left");
+		}
 
-        void OnChat( object sender, PlayerChatEventArgs e )
-        {
-            var tsplr = e.Player;
-            if (tsplr == null)
-            {
-                e.Handled = true;
-                return;
-            }
+		void OnChat(object sender, PlayerChatEventArgs e)
+		{
+			var tsplr = e.Player;
+			if (tsplr == null)
+			{
+				e.Handled = true;
+				return;
+			}
 
-            if (e.Text.StartsWith("/"))
-            {
-                Console.WriteLine( "{0} tried to execute: {1}", tsplr.Name, e.Text);
-            }
-            else
-            {
-                Console.WriteLine( "{0}:{1}", tsplr.Name, e.Text);
-            }
-        }
+			if (e.Text.StartsWith("/"))
+			{
+				Console.WriteLine("{0} tried to execute: {1}", tsplr.Name, e.Text);
+			}
+			else
+			{
+				Console.WriteLine("{0}:{1}", tsplr.Name, e.Text);
+			}
+		}
 
-	    private void OnNpcSpawn(object sender, NpcEventArgs e)
-	    {
-	        Console.WriteLine( e.Npc.name );
-	    }
+		private void OnNpcSpawn(object sender, NpcEventArgs e)
+		{
+			Console.WriteLine(e.Npc.name);
+		}
 	}
 }

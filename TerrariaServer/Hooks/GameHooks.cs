@@ -1,14 +1,26 @@
 using System;
 using System.ComponentModel;
 using Terraria;
+using TerrariaServer.Hooks.Classes;
+using TShock.Hooks.Game;
 
 namespace TerrariaServer.Hooks
 {
 	public static class GameHooks
 	{
+		public delegate void UpdateD(GameEventArgs e);
+		public delegate void PostUpdateD(GameEventArgs e);
+		public delegate void InitializeD(GameEventArgs e);
+		public delegate void PostInitializeD(GameEventArgs e);
+
+		public static event UpdateD Update;
+		public static event PostUpdateD PostUpdate;
+		public static event InitializeD Initialize;
+		public static event PostInitializeD PostInitialize;
+
+		/*
 		private static bool oldGameMenu;
 		public static event Action Update;
-		public static event Action PostUpdate;
 		public static event Action Initialize;
 		public static event Action PostInitialize;
 		public static event Action WorldConnect;
@@ -23,14 +35,14 @@ namespace TerrariaServer.Hooks
 		{
 			GameHooks.oldGameMenu = true;
 			GameHooks.Update += new Action(GameHooks.GameHooks_Update);
-		}
+		}*/
 		public static void OnUpdate(bool pre)
 		{
 			if (pre)
 			{
 				if (GameHooks.Update != null)
 				{
-					GameHooks.Update();
+					GameHooks.Update(new GameEventArgs());
 					return;
 				}
 			}
@@ -38,7 +50,7 @@ namespace TerrariaServer.Hooks
 			{
 				if (GameHooks.PostUpdate != null)
 				{
-					GameHooks.PostUpdate();
+					GameHooks.PostUpdate(new GameEventArgs());
 				}
 			}
 		}
@@ -48,7 +60,7 @@ namespace TerrariaServer.Hooks
 			{
 				if (GameHooks.Initialize != null)
 				{
-					GameHooks.Initialize();
+					GameHooks.Initialize(new GameEventArgs());
 					return;
 				}
 			}
@@ -56,10 +68,10 @@ namespace TerrariaServer.Hooks
 			{
 				if (GameHooks.PostInitialize != null)
 				{
-					GameHooks.PostInitialize();
+					GameHooks.PostInitialize(new GameEventArgs());
 				}
 			}
-		}
+		}/*
 		private static void GameHooks_Update()
 		{
 			if (GameHooks.oldGameMenu != Main.gameMenu)
@@ -99,6 +111,6 @@ namespace TerrariaServer.Hooks
 			HandledEventArgs handledEventArgs = new HandledEventArgs();
 			GameHooks.GetKeyState(handledEventArgs);
 			return handledEventArgs.Handled;
-		}
+		}*/
 	}
 }

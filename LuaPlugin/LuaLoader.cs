@@ -94,7 +94,7 @@ namespace LuaPlugin
 		{
 			_lua["Hooks"] = Hooks;
 			_lua["Game"] = Game;
-			_lua["Color"] = new Color();
+			_lua["Color"] = new Color();			
 
 			//More Lua Functions
 			LuaFunctions LuaFuncs = new LuaFunctions(this);

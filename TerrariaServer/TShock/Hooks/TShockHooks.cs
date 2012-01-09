@@ -6,6 +6,7 @@ using System.Text;
 using TShock.Hooks;
 using TShock.Hooks.NPC;
 using TShock.Hooks.Player;
+using TShock.Hooks.Game;
 using Terraria;
 
 namespace TShock.Hooks
@@ -15,10 +16,13 @@ namespace TShock.Hooks
 		internal TShockHooks()
 		{
 			PlayerHooks = new PlayerHooks();
-            NpcHooks = new NpcHooks();
+			NpcHooks = new NpcHooks();
+			GameHooks = new GameHooks();
 		}
 		public PlayerHooks PlayerHooks { get; protected set; }
 
-	    public NpcHooks NpcHooks{get; protected set;}
+		public NpcHooks NpcHooks { get; protected set; }
+
+		public GameHooks GameHooks { get; protected set; }
 	}
 }
