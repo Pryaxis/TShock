@@ -160,9 +160,9 @@ namespace TShockAPI
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
-			add(Permissions.manageitem, AddItem, "additem");
-			add(Permissions.manageitem, DeleteItem, "delitem");
-			add(Permissions.manageitem, ListItems, "listitems");
+			add(Permissions.manageitem, AddItem, "additem", "banitem");
+			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
+			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
 			add(Permissions.cfg, SetSpawn, "setspawn");
 			add(Permissions.cfg, Reload, "reload");
 			add(Permissions.cfg, ServerPassword, "serverpassword");
