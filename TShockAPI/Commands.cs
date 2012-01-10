@@ -162,6 +162,7 @@ namespace TShockAPI
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
 			add(Permissions.manageitem, AddItem, "additem");
 			add(Permissions.manageitem, DeleteItem, "delitem");
+			add(Permissions.manageitem, ListItems, "listitems");
 			add(Permissions.cfg, SetSpawn, "setspawn");
 			add(Permissions.cfg, Reload, "reload");
 			add(Permissions.cfg, ServerPassword, "serverpassword");
@@ -1799,6 +1800,11 @@ namespace TShockAPI
 			{
 				args.Player.SendMessage("Invalid use: /delItem \"item name\" or /delItem ##", Color.Red);
 			}
+		}
+		
+		private static void ListItems(CommandArgs args)
+		{
+			args.Player.SendMessage("The banned items are: " + String.Join(",", TShock.Itembans.ItemBans), Color.Yellow);
 		}
 
 		#endregion Item Management

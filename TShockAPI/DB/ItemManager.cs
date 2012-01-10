@@ -209,5 +209,10 @@ namespace TShockAPI.DB
 		{
 			return AllowedGroups.Remove(groupName);
 		}
+		
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }
