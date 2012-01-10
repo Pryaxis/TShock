@@ -115,16 +115,23 @@ namespace TShockAPI.DB
 			ItemBan b = GetItemBanByName(item);
 			if (b != null)
 			{
-				groupsNew = String.Join(",", b.AllowedGroups);
-				if (groupsNew.Length > 0)
-					groupsNew += ",";
-				groupsNew += name;
-				b.SetAllowedGroups(groupsNew);
+				try
+				{
+					groupsNew = String.Join(",", b.AllowedGroups);
+					if (groupsNew.Length > 0)
+						groupsNew += ",";
+					groupsNew += name;
+					b.SetAllowedGroups(groupsNew);
 
-				int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groupsNew,
-				                       item);
-
-				return q > 0;
+					int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groupsNew,
+					                       item);
+					
+					return q > 0;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
 			}
 
 			return false;
@@ -135,12 +142,20 @@ namespace TShockAPI.DB
 			ItemBan b = GetItemBanByName(item);
 			if (b != null)
 			{
-				b.RemoveGroup(group);
-				string groups = string.Join(",", b.AllowedGroups);
-				int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groups,
-				                       item);
-				if (q > 0)
-					return true;
+				try
+				{				
+					b.RemoveGroup(group);
+					string groups = string.Join(",", b.AllowedGroups);
+					int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groups,
+					                       item);
+					
+					if (q > 0)
+						return true;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
 			}
 			return false;
 		}
@@ -208,6 +223,11 @@ namespace TShockAPI.DB
 		public bool RemoveGroup(string groupName)
 		{
 			return AllowedGroups.Remove(groupName);
+		}
+		
+		public override string ToString()
+		{
+			return Name + " (" + String.Join(",", AllowedGroups) + ")";
 		}
 	}
 }
