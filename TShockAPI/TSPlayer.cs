@@ -544,6 +544,11 @@ namespace TShockAPI
 
 		public void StoreSlot(int slot, int netID, int prefix, int stack)
 		{
+			if(slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
+			{
+				return;
+			}	
+			
 			this.inventory[slot].netID = netID;
 			if (this.inventory[slot].netID != 0)
 			{
