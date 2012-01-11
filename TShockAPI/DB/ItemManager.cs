@@ -227,7 +227,7 @@ namespace TShockAPI.DB
 		
 		public override string ToString()
 		{
-			return Name + " (" + String.Join(",", AllowedGroups) + ")";
+			return Name + (AllowedGroups.Count > 0 ? " (" + String.Join(",", AllowedGroups) + ")" : "");
 		}
 	}
 }
