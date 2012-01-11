@@ -81,7 +81,7 @@ namespace TShockAPI.DB
 				return;
 			try
 			{
-				database.Query("Delete FROM 'ItemBans' WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
+				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
 				ItemBans.Remove(new ItemBan(itemname));
 			}
 			catch (Exception ex)
