@@ -891,45 +891,47 @@ namespace TShockAPI
 				string encrPass = TShock.Utils.HashPassword(password);
 				if (user.Password.ToUpper() == encrPass.ToUpper())
 				{
-					args.Player.RequiresPassword = false;
-					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+				    args.Player.RequiresPassword = false;
+				    args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
 
-					if (args.Player.State == 1)
-						args.Player.State = 2;
-					NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
+				    if (args.Player.State == 1)
+				        args.Player.State = 2;
+				    NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 
-					var group = TShock.Utils.GetGroup(user.Group);
+				    var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideInventory)
-					{
-						if (group.HasPermission(Permissions.bypassinventorychecks))
-						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
-						}
-						else if (!TShock.CheckInventory(args.Player))
-						{
-							args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
-							args.Player.IgnoreActionsForClearingTrashCan = true;
-							return true;
-						}
-					}
+				    if (TShock.Config.ServerSideInventory)
+				    {
+				        if (group.HasPermission(Permissions.bypassinventorychecks))
+				        {
+				            args.Player.IgnoreActionsForClearingTrashCan = false;
+				        }
+				        else if (!TShock.CheckInventory(args.Player))
+				        {
+				            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
+				            args.Player.IgnoreActionsForClearingTrashCan = true;
+				            return true;
+				        }
+				    }
 
-					if (group.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+				    if (group.HasPermission(Permissions.ignorestackhackdetection))
+				        args.Player.IgnoreActionsForCheating = "none";
 
-					if (group.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+				    if (group.HasPermission(Permissions.usebanneditem))
+				        args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.Group = group;
-					args.Player.UserAccountName = args.Player.Name;
-					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
-					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+				    args.Player.Group = group;
+				    args.Player.UserAccountName = args.Player.Name;
+				    args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+				    args.Player.IsLoggedIn = true;
+				    args.Player.IgnoreActionsForInventory = "none";
 
-					args.Player.PlayerData.CopyInventory(args.Player);
-					TShock.InventoryDB.InsertPlayerData(args.Player);
-
-					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+				    if (!args.Player.IgnoreActionsForClearingTrashCan)
+                    {
+				        args.Player.PlayerData.CopyInventory(args.Player);
+				        TShock.InventoryDB.InsertPlayerData(args.Player);
+			        }
+			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player.Name);
 					return true;
 				}

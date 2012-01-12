@@ -31,7 +31,6 @@ using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Rests;
-using TShockAPI.LuaSystem;
 using Terraria;
 using TShockAPI.DB;
 using TShockAPI.Net;
@@ -65,7 +64,6 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = new Utils();
 		public static StatTracker StatTracker = new StatTracker();
-		public static LuaLoader LuaLoader;
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -422,7 +420,6 @@ namespace TShockAPI
 
 			StatTracker.CheckIn();
 			FixChestStacks();
-			LuaLoader = new LuaLoader(Path.Combine(".", "lua"));
 		}
 
 		private void FixChestStacks()
@@ -462,8 +459,9 @@ namespace TShockAPI
 				foreach (TSPlayer player in Players)
 				{
 					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn)
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
+
 						InventoryDB.InsertPlayerData(player);
 					}
 				}
@@ -666,7 +664,7 @@ namespace TShockAPI
 				}
 				Log.Info(string.Format("{0} left.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn)
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan)
 				{
 					tsplr.PlayerData.CopyInventory(tsplr);
 					InventoryDB.InsertPlayerData(tsplr);

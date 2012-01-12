@@ -24,20 +24,13 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
-using TShockAPI.LuaSystem;
 
 namespace TShockAPI
 {
 	public class Utils
 	{
-		LuaLoader Parent; //For Lua Functions that require the LuaLoader
 		public Utils()
 		{
-		}
-
-		public Utils(LuaLoader parent)
-		{
-		   Parent = parent;
 		}
 
 		public Random Random = new Random();
