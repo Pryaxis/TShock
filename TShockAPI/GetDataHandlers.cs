@@ -2105,7 +2105,7 @@ namespace TShockAPI
 
 			if (TShock.Config.RangeChecks &&
 				TShock.CheckRangePermission(args.Player, (int) (Main.npc[id].position.X/16f), (int) (Main.npc[id].position.Y/16f),
-											100))
+											128))
 			{
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
