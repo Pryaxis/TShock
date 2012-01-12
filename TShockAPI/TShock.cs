@@ -1078,7 +1078,7 @@ namespace TShockAPI
 
 		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
 		{
-			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > 32) || (Math.Abs(player.TileY - y) > 32)))
+			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > range) || (Math.Abs(player.TileY - y) > range)))
 			{
 				return true;
 			}
