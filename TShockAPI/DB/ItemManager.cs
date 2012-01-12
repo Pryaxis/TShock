@@ -214,7 +214,7 @@ namespace TShockAPI.DB
 				for (int i = 0; i < groupArr.Count; i++)
 				{
 					groupArr[i] = groupArr[i].Trim();
-					Console.WriteLine(groupArr[i]);
+					//Console.WriteLine(groupArr[i]);
 				}
 				AllowedGroups = groupArr;
 			}
