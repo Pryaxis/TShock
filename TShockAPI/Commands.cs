@@ -134,7 +134,7 @@ namespace TShockAPI
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
 			add(Permissions.causeevents, Star, "star");
-            add(Permissions.causeevents, Ore, "genore");
+    			add(Permissions.causeevents, Ore, "genore");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
@@ -1015,62 +1015,30 @@ namespace TShockAPI
             {
                 num = 1;
             }
-            else if (args.Parameters[0] == "cobalt")
-            {
-                num = 0;
-            }
             else
             {
                 num = 2;
             }
 
-			if (num == 0)
-			{
-				num = 107;
-				num3 *= 1.05f;
-			}
-			else if (num == 1)
-			{
-				num = 108;
-			}
-			else
-			{
-				num = 111;
-			}
+		if (num == 0)
+		{
+			num = 107;
+			num3 *= 1.05f;
+		}
+		else if (num == 1)
+		{
+			num = 108;
+		}
+		else
+		{
+			num = 111;
+		}
 
-            if (args.Parameters[0] == "iron")
-            {
-                num = 11;
-            }
-            else if (args.Parameters[0] == "gold")
-            {
-                num = 13;
-            }
-            else if (args.Parameters[0] == "silver")
-            {
-                num = 14;
-            }
-            else if (args.Parameters[0] == "copper")
-            {
-                num = 12;
-            }
-            else if (args.Parameters[0] == "demonite")
-            {
-                num = 22;
-            }
-            else if (args.Parameters[0] == "meteorite")
-            {
-                num = 116;
-            }
-            else if (args.Parameters[0] == "hellstone")
-            {
-                num = 58;
-            }
 
             if (args.Parameters.Count > 1)
             {
                 float.TryParse(args.Parameters[1], out num3);
-                //num3 = Math.Min(num3, 1000f);
+                num3 = Math.Min(num3, 1000f);
             }
 
 			int num5 = 0;
@@ -1087,7 +1055,8 @@ namespace TShockAPI
 					num6 = (Main.rockLayer + Main.rockLayer + (double)Main.maxTilesY) / 3.0;
 				}
 				int j2 = WorldGen.genRand.Next((int)num6, Main.maxTilesY - 150);
-				WorldGen.OreRunner(i2, j2, 20.0, 20, num);
+				int num4 = WorldGen.genRand.Next(0, 2 ) - 1;
+				WorldGen.OreRunner(i2, j2, (double)WorldGen.genRand.Next(5, 9 + num4), WorldGen.genRand.Next(5, 9 + num4), num);
 				num5++;
 			}
             ply.SendMessage(String.Format("Spawned {0} tiles of {1}", Math.Floor(num3), num), Color.Green );
