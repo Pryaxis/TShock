@@ -1595,9 +1595,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			int type = Main.projectile[index].type;
+			var type = Main.projectile[index].type;
 
-			if (args.Player.Index != Main.projectile[index].owner)
+			if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100) // workaround for skeletron prime projectiles
 			{
 				args.Player.Disable();
 				args.Player.RemoveProjectile(ident, owner);
@@ -1610,7 +1610,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckProjectilePermission(args.Player, index, type))
+            if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100)
 			{
 				args.Player.Disable();
 				args.Player.RemoveProjectile(ident, owner);
