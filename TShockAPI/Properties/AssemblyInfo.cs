@@ -48,5 +48,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      MMdd of the build
 
-[assembly: AssemblyVersion("3.4.5.0112")]
-[assembly: AssemblyFileVersion("3.4.5.0112")]
+[assembly: AssemblyVersion("3.4.5.0113")]
+[assembly: AssemblyFileVersion("3.4.5.0113")]
