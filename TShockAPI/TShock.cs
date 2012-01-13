@@ -199,6 +199,7 @@ namespace TShockAPI
 			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
+                WorldHooks.SaveWorld += OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -220,7 +221,6 @@ namespace TShockAPI
 				Environment.Exit(1);
 			}
 		}
-
 
 		private RestObject RestApi_Verify(string username, string password)
 		{
@@ -271,6 +271,7 @@ namespace TShockAPI
                 NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
+                WorldHooks.SaveWorld -= OnSaveWorld;
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
@@ -969,7 +970,15 @@ namespace TShockAPI
 				e.Handled = true;
 		}
 
-		/*
+        void OnSaveWorld(bool resettime, HandledEventArgs e)
+        {
+            Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+            var SaveWorld = new Thread(Utils.SaveWorld);
+            SaveWorld.Start();
+            e.Handled = true;
+        }
+
+	    /*
 		 * Useful stuff:
 		 * */
 

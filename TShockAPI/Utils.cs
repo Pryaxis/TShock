@@ -110,7 +110,7 @@ namespace TShockAPI
 		/// </summary>
 		public void SaveWorld()
 		{
-			WorldGen.saveWorld();
+			WorldGen.realsaveWorld();
 			Broadcast("World saved.", Color.Yellow);
 			Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 		}
