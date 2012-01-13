@@ -259,6 +259,7 @@ namespace TShockAPI
 				}
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
+                ServerHooks.Connect -= OnConnect;
 				ServerHooks.Join -= OnJoin;
 				ServerHooks.Leave -= OnLeave;
 				ServerHooks.Chat -= OnChat;
@@ -267,7 +268,9 @@ namespace TShockAPI
 				NetHooks.SendData -= NetHooks_SendData;
 				NetHooks.GreetPlayer -= OnGreetPlayer;
 				NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+                NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
+                WorldHooks.StartHardMode -= OnStartHardMode;
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
