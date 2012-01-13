@@ -1055,7 +1055,6 @@ namespace TShockAPI
 					num6 = (Main.rockLayer + Main.rockLayer + (double)Main.maxTilesY) / 3.0;
 				}
 				int j2 = WorldGen.genRand.Next((int)num6, Main.maxTilesY - 150);
-				int num4 = WorldGen.genRand.Next(0, 2 ) - 1;
 				WorldGen.OreRunner(i2, j2, (double)WorldGen.genRand.Next(5, 9 + num4), WorldGen.genRand.Next(5, 9 + num4), num);
 				num5++;
 			}
