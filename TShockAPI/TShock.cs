@@ -320,19 +320,6 @@ namespace TShockAPI
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-ip")
-				{
-					IPAddress ip;
-					if (IPAddress.TryParse(parms[++i], out ip))
-					{
-						Netplay.serverListenIP = ip;
-						Console.Write("Using IP: {0}", ip);
-					}
-					else
-					{
-						Console.WriteLine("Bad IP: {0}", parms[i]);
-					}
-				}
 				if (parms[i].ToLower() == "-configpath")
 				{
 					var path = parms[++i];
