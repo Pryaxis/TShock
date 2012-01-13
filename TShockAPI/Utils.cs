@@ -627,7 +627,7 @@ namespace TShockAPI
 				if (Main.projectile[i].identity == identity)
 					return i;
 			}
-			return 1000;
+			return 1001;
 		}
 
 		public string SanitizeString(string str)
