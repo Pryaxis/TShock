@@ -484,7 +484,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable();
+							player.Disable("Reached TileKill threshold");
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -497,7 +497,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable();
+							player.Disable("Reached TilePlace threshold");
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -508,7 +508,7 @@ namespace TShockAPI
 					}
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable();
+						player.Disable("Reached TileLiquid threshold");
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -516,7 +516,7 @@ namespace TShockAPI
 					}
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable();
+						player.Disable("Reached Projectile threshold");
 					}
 					if (player.ProjectileThreshold > 0)
 					{

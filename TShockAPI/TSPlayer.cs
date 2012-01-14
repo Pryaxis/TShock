@@ -357,12 +357,14 @@ namespace TShockAPI
 			SendData(PacketTypes.PlayerTeam, "", Index);
 		}
 
-		public virtual void Disable()
+		public virtual void Disable(string reason = "")
 		{
 			LastThreat = DateTime.UtcNow;
 			SetBuff(33, 330, true); //Weak
 			SetBuff(32, 330, true); //Slow
 			SetBuff(23, 330, true); //Cursed
+            if (!string.IsNullOrEmpty(reason))
+                Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}", Name, reason));
 		}
 
 		public virtual void Whoopie(object time)
