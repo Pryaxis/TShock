@@ -1536,9 +1536,9 @@ namespace TShockAPI
 				return true;
 			}
 
-            if (dmg > TShock.Config.MaxProjDamage)
+            if (dmg > TShock.Config.MaxDamage)
 			{
-				args.Player.Disable("Projectile damage is higher than 175");
+				args.Player.Disable("Projectile damage is higher than {0}".SFormat(TShock.Config.MaxDamage));
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
