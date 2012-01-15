@@ -1437,7 +1437,7 @@ namespace TShockAPI
 				}
 
 				if (!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) &&
-					Collision.SolidCollision(pos, args.TPlayer.width, args.TPlayer.height))
+					Collision.SolidCollision(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip)
 				{
 					int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
 					int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);

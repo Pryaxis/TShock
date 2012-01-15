@@ -203,6 +203,8 @@ namespace TShockAPI
 
         [Description("Ignores checking to see if player 'can' kill a projectile")] public bool IgnoreProjKill = false;
 
+	    [Description("Ignores all no clip checks for players")] public bool IgnoreNoClip = false;
+
 		public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
