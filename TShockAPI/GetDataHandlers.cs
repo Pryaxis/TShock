@@ -1538,7 +1538,7 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxProjDamage)
 			{
-				args.Player.Disable("Projectile damage is higher than 175");
+				args.Player.Disable(String.Format("Projectile damage is higher than {0}", TShock.Config.MaxProjDamage));
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -1549,9 +1549,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckProjectilePermission(args.Player, index, type))
+			if (!TShock.Config.IgnoreProjUpdate && TShock.CheckProjectilePermission(args.Player, index, type))
 			{
-				args.Player.Disable("Does not have projectile permission to update projectile");
+				args.Player.Disable("Does not have projectile permission to update projectile.");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -1591,7 +1591,7 @@ namespace TShockAPI
 
 			var type = Main.projectile[index].type;
 
-			if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100) // workaround for skeletron prime projectiles
+			if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
 			{
 				args.Player.Disable("Owner and player ID does not match to kill projectile");
 				args.Player.RemoveProjectile(ident, owner);
@@ -1604,7 +1604,7 @@ namespace TShockAPI
 				return true;
 			}
 
-            if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100)
+            if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
 				args.Player.Disable("Does not have projectile permission to kill projectile");
 				args.Player.RemoveProjectile(ident, owner);
@@ -2031,7 +2031,7 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxDamage)
 			{
-				args.Player.Disable("Player damage exceeded 175");
+                args.Player.Disable(String.Format("Player damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
@@ -2084,7 +2084,7 @@ namespace TShockAPI
 
 			if (dmg > TShock.Config.MaxDamage)
 			{
-				args.Player.Disable("NPC damage exceeded 175");
+                args.Player.Disable(String.Format("NPC damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}

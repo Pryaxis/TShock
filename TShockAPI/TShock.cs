@@ -1067,6 +1067,7 @@ namespace TShockAPI
 
 			if (proj.hostile)
 			{
+                //player.SendMessage( proj.name, Color.Yellow);
 				return true;
 			}
 

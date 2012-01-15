@@ -195,7 +195,13 @@ namespace TShockAPI
 
 		[Description("Allows users to login with any username with /login")] public bool AllowLoginAnyUsername = true;
 
-        [Description("Allows users to login with any username with /login")] public int MaxDamage = 175;
+        [Description("The maximum damage a player/npc can inflict")] public int MaxDamage = 175;
+        
+        [Description("The maximum damage a projectile can inflict")] public int MaxProjDamage = 175;
+
+        [Description("Ignores checking to see if player 'can' update a projectile")] public bool IgnoreProjUpdate = false;
+
+        [Description("Ignores checking to see if player 'can' kill a projectile")] public bool IgnoreProjKill = false;
 
 		public static ConfigFile Read(string path)
 		{
