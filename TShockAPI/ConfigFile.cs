@@ -195,6 +195,8 @@ namespace TShockAPI
 
 		[Description("Allows users to login with any username with /login")] public bool AllowLoginAnyUsername = true;
 
+        [Description("Allows users to login with any username with /login")] public int MaxDamage = 175;
+
 		public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))

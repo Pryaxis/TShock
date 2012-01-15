@@ -1536,7 +1536,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (dmg > 175)
+            if (dmg > TShock.Config.MaxProjDamage)
 			{
 				args.Player.Disable("Projectile damage is higher than 175");
 				args.Player.RemoveProjectile(ident, owner);
@@ -2029,7 +2029,7 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
-			if (dmg > 175)
+            if (dmg > TShock.Config.MaxDamage)
 			{
 				args.Player.Disable("Player damage exceeded 175");
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
@@ -2082,7 +2082,7 @@ namespace TShockAPI
 			if (Main.npc[id] == null)
 				return true;
 
-			if (dmg > 175)
+			if (dmg > TShock.Config.MaxDamage)
 			{
 				args.Player.Disable("NPC damage exceeded 175");
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
