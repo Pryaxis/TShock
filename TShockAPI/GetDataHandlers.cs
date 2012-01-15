@@ -1909,7 +1909,6 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-                args.Player.SendMessage( "Check tile permissions.", Color.Yellow);
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
@@ -1918,9 +1917,6 @@ namespace TShockAPI
             //removed until NPC Home packet actually sends their home coords.
 			/*if (TShock.CheckRangePermission(args.Player, x, y))
 			{
-                args.Player.SendMessage(String.Format("Check range permissions.  NPC:{0}", id), Color.Yellow);
-                args.Player.SendMessage(String.Format("Player x:{0}, Y:{1}", args.Player.TileX, args.Player.TileY ), Color.Yellow);
-                args.Player.SendMessage(String.Format("NPC Flag x:{0}, Y:{1}", x, y), Color.Yellow);
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
