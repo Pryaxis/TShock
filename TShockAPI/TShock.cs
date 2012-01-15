@@ -972,9 +972,12 @@ namespace TShockAPI
 
         void OnSaveWorld(bool resettime, HandledEventArgs e)
         {
-            Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-            var SaveWorld = new Thread(Utils.SaveWorld);
-            SaveWorld.Start();
+            if (!Utils.saving)
+            {
+                Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+                var SaveWorld = new Thread(Utils.SaveWorld);
+                SaveWorld.Start();
+            }
             e.Handled = true;
         }
 

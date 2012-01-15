@@ -29,6 +29,8 @@ namespace TShockAPI
 {
 	public class Utils
 	{
+	    public static bool saving = false;
+
 		public Utils()
 		{
 		}
@@ -110,9 +112,11 @@ namespace TShockAPI
 		/// </summary>
 		public void SaveWorld()
 		{
-			WorldGen.realsaveWorld();
-			Broadcast("World saved.", Color.Yellow);
-			Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+            saving = true;
+            WorldGen.realsaveWorld();
+            Broadcast("World saved.", Color.Yellow);
+            Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+            saving = false;
 		}
 
 		/// <summary>
