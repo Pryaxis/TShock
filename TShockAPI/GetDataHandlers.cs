@@ -1909,17 +1909,22 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
+                args.Player.SendMessage( "Check tile permissions.", Color.Yellow);
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, x, y))
+            //removed until NPC Home packet actually sends their home coords.
+			/*if (TShock.CheckRangePermission(args.Player, x, y))
 			{
+                args.Player.SendMessage(String.Format("Check range permissions.  NPC:{0}", id), Color.Yellow);
+                args.Player.SendMessage(String.Format("Player x:{0}, Y:{1}", args.Player.TileX, args.Player.TileY ), Color.Yellow);
+                args.Player.SendMessage(String.Format("NPC Flag x:{0}, Y:{1}", x, y), Color.Yellow);
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
-			}
+			}*/
 			return false;
 		}
 
@@ -2095,6 +2100,7 @@ namespace TShockAPI
 
 			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.movenpc))
 			{
+                args.Player.SendMessage( "What?", Color.Yellow);
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
