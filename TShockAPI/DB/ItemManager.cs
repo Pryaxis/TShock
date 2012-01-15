@@ -81,7 +81,7 @@ namespace TShockAPI.DB
 				return;
 			try
 			{
-				database.Query("Delete FROM 'ItemBans' WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
+				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
 				ItemBans.Remove(new ItemBan(itemname));
 			}
 			catch (Exception ex)
@@ -115,16 +115,23 @@ namespace TShockAPI.DB
 			ItemBan b = GetItemBanByName(item);
 			if (b != null)
 			{
-				groupsNew = String.Join(",", b.AllowedGroups);
-				if (groupsNew.Length > 0)
-					groupsNew += ",";
-				groupsNew += name;
-				b.SetAllowedGroups(groupsNew);
+				try
+				{
+					groupsNew = String.Join(",", b.AllowedGroups);
+					if (groupsNew.Length > 0)
+						groupsNew += ",";
+					groupsNew += name;
+					b.SetAllowedGroups(groupsNew);
 
-				int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groupsNew,
-				                       item);
-
-				return q > 0;
+					int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groupsNew,
+					                       item);
+					
+					return q > 0;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
 			}
 
 			return false;
@@ -135,12 +142,20 @@ namespace TShockAPI.DB
 			ItemBan b = GetItemBanByName(item);
 			if (b != null)
 			{
-				b.RemoveGroup(group);
-				string groups = string.Join(",", b.AllowedGroups);
-				int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groups,
-				                       item);
-				if (q > 0)
-					return true;
+				try
+				{				
+					b.RemoveGroup(group);
+					string groups = string.Join(",", b.AllowedGroups);
+					int q = database.Query("UPDATE ItemBans SET AllowedGroups=@0 WHERE ItemName=@1", groups,
+					                       item);
+					
+					if (q > 0)
+						return true;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex.ToString());
+				}
 			}
 			return false;
 		}
@@ -199,7 +214,7 @@ namespace TShockAPI.DB
 				for (int i = 0; i < groupArr.Count; i++)
 				{
 					groupArr[i] = groupArr[i].Trim();
-					Console.WriteLine(groupArr[i]);
+					//Console.WriteLine(groupArr[i]);
 				}
 				AllowedGroups = groupArr;
 			}
@@ -208,6 +223,11 @@ namespace TShockAPI.DB
 		public bool RemoveGroup(string groupName)
 		{
 			return AllowedGroups.Remove(groupName);
+		}
+		
+		public override string ToString()
+		{
+			return Name + (AllowedGroups.Count > 0 ? " (" + String.Join(",", AllowedGroups) + ")" : "");
 		}
 	}
 }

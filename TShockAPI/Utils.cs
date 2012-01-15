@@ -24,20 +24,13 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
-using TShockAPI.LuaSystem;
 
 namespace TShockAPI
 {
 	public class Utils
 	{
-		LuaLoader Parent; //For Lua Functions that require the LuaLoader
 		public Utils()
 		{
-		}
-
-		public Utils(LuaLoader parent)
-		{
-		   Parent = parent;
 		}
 
 		public Random Random = new Random();
@@ -117,7 +110,7 @@ namespace TShockAPI
 		/// </summary>
 		public void SaveWorld()
 		{
-			WorldGen.saveWorld();
+			WorldGen.realsaveWorld();
 			Broadcast("World saved.", Color.Yellow);
 			Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 		}
@@ -634,7 +627,7 @@ namespace TShockAPI
 				if (Main.projectile[i].identity == identity)
 					return i;
 			}
-			return 1000;
+			return 1001;
 		}
 
 		public string SanitizeString(string str)

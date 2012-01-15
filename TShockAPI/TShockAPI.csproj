@@ -53,9 +53,6 @@
     <Reference Include="HttpServer">
       <HintPath>..\HttpBins\HttpServer.dll</HintPath>
     </Reference>
-    <Reference Include="LuaInterface">
-      <HintPath>..\LuaBins\LuaInterface.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\SqlBins\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
@@ -110,7 +107,6 @@
     <Compile Include="Group.cs" />
     <Compile Include="Extensions\LinqExt.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="LuaSystem\LuaLoader.cs" />
     <Compile Include="Net\BaseMsg.cs" />
     <Compile Include="Net\DisconnectMsg.cs" />
     <Compile Include="Net\NetTile.cs" />
@@ -191,7 +187,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
+      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

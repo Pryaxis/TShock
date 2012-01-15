@@ -31,7 +31,6 @@ using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Rests;
-using TShockAPI.LuaSystem;
 using Terraria;
 using TShockAPI.DB;
 using TShockAPI.Net;
@@ -65,7 +64,6 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = new Utils();
 		public static StatTracker StatTracker = new StatTracker();
-		public static LuaLoader LuaLoader;
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -201,6 +199,7 @@ namespace TShockAPI
 			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
+                WorldHooks.SaveWorld += OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -222,7 +221,6 @@ namespace TShockAPI
 				Environment.Exit(1);
 			}
 		}
-
 
 		private RestObject RestApi_Verify(string username, string password)
 		{
@@ -261,6 +259,7 @@ namespace TShockAPI
 				}
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
+                ServerHooks.Connect -= OnConnect;
 				ServerHooks.Join -= OnJoin;
 				ServerHooks.Leave -= OnLeave;
 				ServerHooks.Chat -= OnChat;
@@ -269,7 +268,10 @@ namespace TShockAPI
 				NetHooks.SendData -= NetHooks_SendData;
 				NetHooks.GreetPlayer -= OnGreetPlayer;
 				NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
+                NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
+                WorldHooks.StartHardMode -= OnStartHardMode;
+                WorldHooks.SaveWorld -= OnSaveWorld;
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
@@ -322,19 +324,6 @@ namespace TShockAPI
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-ip")
-				{
-					IPAddress ip;
-					if (IPAddress.TryParse(parms[++i], out ip))
-					{
-						Netplay.serverListenIP = ip;
-						Console.Write("Using IP: {0}", ip);
-					}
-					else
-					{
-						Console.WriteLine("Bad IP: {0}", parms[i]);
-					}
-				}
 				if (parms[i].ToLower() == "-configpath")
 				{
 					var path = parms[++i];
@@ -422,7 +411,6 @@ namespace TShockAPI
 
 			StatTracker.CheckIn();
 			FixChestStacks();
-			LuaLoader = new LuaLoader(Path.Combine(".", "lua"));
 		}
 
 		private void FixChestStacks()
@@ -462,8 +450,9 @@ namespace TShockAPI
 				foreach (TSPlayer player in Players)
 				{
 					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn)
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
+
 						InventoryDB.InsertPlayerData(player);
 					}
 				}
@@ -495,7 +484,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable();
+							player.Disable("Reached TileKill threshold");
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -508,7 +497,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable();
+							player.Disable("Reached TilePlace threshold");
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -519,7 +508,7 @@ namespace TShockAPI
 					}
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable();
+						player.Disable("Reached TileLiquid threshold");
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -527,7 +516,7 @@ namespace TShockAPI
 					}
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable();
+						player.Disable("Reached Projectile threshold");
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -666,7 +655,7 @@ namespace TShockAPI
 				}
 				Log.Info(string.Format("{0} left.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn)
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan)
 				{
 					tsplr.PlayerData.CopyInventory(tsplr);
 					InventoryDB.InsertPlayerData(tsplr);
@@ -802,7 +791,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38)
+				(int) type != 38 && (int) type != 5 && (int) type != 21)
 			{
 				e.Handled = true;
 				return;
@@ -981,7 +970,15 @@ namespace TShockAPI
 				e.Handled = true;
 		}
 
-		/*
+        void OnSaveWorld(bool resettime, HandledEventArgs e)
+        {
+            Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+            var SaveWorld = new Thread(Utils.SaveWorld);
+            SaveWorld.Start();
+            e.Handled = true;
+        }
+
+	    /*
 		 * Useful stuff:
 		 * */
 
@@ -1078,7 +1075,7 @@ namespace TShockAPI
 
 		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
 		{
-			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > 32) || (Math.Abs(player.TileY - y) > 32)))
+			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > range) || (Math.Abs(player.TileY - y) > range)))
 			{
 				return true;
 			}
