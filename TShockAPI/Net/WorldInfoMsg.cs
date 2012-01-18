@@ -69,7 +69,7 @@ namespace TShockAPI.Net
 			stream.WriteInt32(RockLayer);
 			stream.WriteInt32(WorldID);
 			stream.WriteInt8((byte) WorldFlags);
-			stream.WriteBytes(Encoding.ASCII.GetBytes(WorldName));
+			stream.WriteBytes(Encoding.UTF8.GetBytes(WorldName));
 		}
 	}
 }
