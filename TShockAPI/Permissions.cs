@@ -149,8 +149,11 @@ namespace TShockAPI
 		[Description("Allow unrestricted Send Tile Square usage, for client side world editing")] public static readonly
 			string allowclientsideworldedit;
 
-		[Description("User can execute Lua files from the hard disk and run Lua strings.")] public static readonly string
-			runlua;
+        [Description("User can summon bosses using items")]
+	    public static readonly string summonboss;
+
+        [Description("User can start invasions (Goblin/Snow Legion) using items")]
+        public static readonly string startinvasion;
 
 		static Permissions()
 		{

@@ -699,7 +699,8 @@ namespace TShockAPI
 											{PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
 											{PacketTypes.PasswordSend, HandlePassword},
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
-											{PacketTypes.ProjectileDestroy, HandleProjectileKill}
+											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
+                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss}
 										};
 		}
 
@@ -2192,6 +2193,40 @@ namespace TShockAPI
 			return true;
 		}
 
-		
+		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
+		{
+		    var spawnboss = false;
+		    var invasion = -1;
+		    var plr = args.Data.ReadInt32();
+		    var Type = args.Data.ReadInt32();
+            spawnboss = (Type == 4 || Type == 13 || (Type == 50 || Type == 125) || (Type == 126 || Type == 134 || (Type == (int) sbyte.MaxValue || Type == 128)));
+            if (!spawnboss)
+            {
+                switch (Type)
+                {
+                    case -1:
+                        invasion = 1;
+                        break;
+                    case -2:
+                        invasion = 2;
+                        break;
+                }
+            }
+            if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
+            {
+                args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
+                return true;
+            }
+            if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
+            {
+                args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
+                return true;
+            }
+            if (!spawnboss && invasion == -1)
+                return true;
+            if (plr != args.Player.Index)
+                return true;
+		    return false;
+		}
 	}
 }
