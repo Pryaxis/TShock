@@ -488,7 +488,7 @@ namespace TShockAPI
 				{
 					foo = foo.Replace("%map%", Main.worldName);
 					foo = foo.Replace("%players%", GetPlayers());
-					foo = SanitizeString(foo);
+					//foo = SanitizeString(foo);
 					if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
 					{
 						string possibleColor = foo.Substring(0, 13);

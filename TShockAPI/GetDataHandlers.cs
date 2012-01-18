@@ -816,16 +816,11 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!TShock.Utils.ValidString(name))
+			/*if (!TShock.Utils.ValidString(name))
 			{
 				TShock.Utils.ForceKick(args.Player, "Unprintable character in name");
 				return true;
-			}
-			if (name.Length > 32)
-			{
-				TShock.Utils.ForceKick(args.Player, "Name exceeded 32 characters.");
-				return true;
-			}
+			}*/
 			if (name.Trim().Length == 0)
 			{
 				TShock.Utils.ForceKick(args.Player, "Empty Name.");
@@ -1634,10 +1629,10 @@ namespace TShockAPI
 			if (textlength > 0)
 			{
 				deathtext = Encoding.ASCII.GetString(args.Data.ReadBytes(textlength));
-				if (!TShock.Utils.ValidString(deathtext))
+				/*if (!TShock.Utils.ValidString(deathtext))
 				{
 					return true;
-				}
+				}*/
 			}
 
 			args.Player.LastDeath = DateTime.Now;
@@ -2021,10 +2016,10 @@ namespace TShockAPI
 			if (textlength > 0)
 			{
 				deathtext = Encoding.ASCII.GetString(args.Data.ReadBytes(textlength));
-				if (!TShock.Utils.ValidString(deathtext))
+				/*if (!TShock.Utils.ValidString(deathtext))
 				{
 					return true;
-				}
+				}*/
 			}
 
 			if (TShock.Players[id] == null)

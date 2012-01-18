@@ -680,11 +680,11 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!Utils.ValidString(text))
+			/*if (!Utils.ValidString(text))
 			{
 				e.Handled = true;
 				return;
-			}
+			}*/
 
 			if (text.StartsWith("/"))
 			{
