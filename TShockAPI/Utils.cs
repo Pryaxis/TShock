@@ -233,7 +233,7 @@ namespace TShockAPI
 			{
 				return new List<Item> {GetItemById(type)};
 			}
-			return GetItemByName(idOrName);
+			return GetItemByMultiLingualName(idOrName);
 		}
 
 		public Item GetItemById(int id)
@@ -273,6 +273,33 @@ namespace TShockAPI
 			return found;
 		}
 
+        public List<Item> GetItemByName(string name, int language)
+        {
+            var orilang = Lang.lang;
+            Lang.lang = language;
+            var list = new List<Item>();
+            try
+            {
+                list = GetItemByName(name);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                Lang.lang = orilang;
+            }
+            return list;
+        }
+
+        public List<Item> GetItemByMultiLingualName(string name)
+        {
+            var list = new List<Item>();
+            for (var i = 1; i < 6; i++)
+                list.AddRange(GetItemByName(name, i));
+            return list;
+        }
+
 		public List<NPC> GetNPCByIdOrName(string idOrName)
 		{
 			int type = -1;
@@ -280,7 +307,7 @@ namespace TShockAPI
 			{
 				return new List<NPC> {GetNPCById(type)};
 			}
-			return GetNPCByName(idOrName);
+			return GetNPCByMultiLingualName(idOrName);
 		}
 
 		public NPC GetNPCById(int id)
@@ -313,6 +340,33 @@ namespace TShockAPI
 			}
 			return found;
 		}
+
+        public List<NPC> GetNPCByName(string name, int language)
+        {
+            var orilang = Lang.lang;
+            Lang.lang = language;
+            var list = new List<NPC>();
+            try
+            {
+                list = GetNPCByName(name);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                Lang.lang = orilang;
+            }
+            return list;
+        }
+
+        public List<NPC> GetNPCByMultiLingualName(string name)
+        {
+            var list = new List<NPC>();
+            for (var i = 1; i < 6; i++)
+                list.AddRange(GetNPCByName(name, i));
+            return list;
+        }
 
 		public string GetBuffName(int id)
 		{
@@ -377,6 +431,33 @@ namespace TShockAPI
 			return found;
 		}
 
+        public List<int> GetPrefixByName(string name, int language)
+        {
+            var orilang = Lang.lang;
+            Lang.lang = language;
+            var list = new List<int>();
+            try
+            {
+                list = GetPrefixByName(name);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                Lang.lang = orilang;
+            }
+            return list;
+        }
+
+        public List<int> GetPrefixByMultiLingualName(string name)
+        {
+            var list = new List<int>();
+            for (var i = 1; i < 6; i++)
+                list.AddRange(GetPrefixByName(name, i));
+            return list;
+        }
+
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
@@ -384,7 +465,7 @@ namespace TShockAPI
 			{
 				return new List<int> {type};
 			}
-			return GetPrefixByName(idOrName);
+			return GetPrefixByMultiLingualName(idOrName);
 		}
 
 		/// <summary>
