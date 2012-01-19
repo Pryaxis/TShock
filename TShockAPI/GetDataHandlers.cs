@@ -2026,7 +2026,7 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
-            if (dmg > TShock.Config.MaxDamage)
+            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
                 args.Player.Disable(String.Format("Player damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
@@ -2079,7 +2079,7 @@ namespace TShockAPI
 			if (Main.npc[id] == null)
 				return true;
 
-			if (dmg > TShock.Config.MaxDamage)
+            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
                 args.Player.Disable(String.Format("NPC damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);

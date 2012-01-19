@@ -63,6 +63,9 @@ namespace TShockAPI
 		[Description("Prevents you from being kicked by hacked health detection")] public static readonly string
 			ignorestathackdetection;
 
+	    [Description("Prevents your attacks from being ignored if your damage is too high")] public static readonly string
+	        ignoredamagecap;
+
 		[Description("Specific log messages are sent to users with this permission")] public static readonly string logs;
 
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max")] public static readonly string
