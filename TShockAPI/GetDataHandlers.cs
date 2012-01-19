@@ -1514,15 +1514,15 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
-
-			var index = TShock.Utils.SearchProjectile(ident);
+		    owner = (byte)args.Player.Index;
+			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
 				return true;
 
 			if (index > Main.maxProjectiles || index < 0)
 			{
-				return true;
+				return false;
 			}
 
 			if (args.Player.Index != owner)
@@ -1577,22 +1577,23 @@ namespace TShockAPI
 		{
 			var ident = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
-
-			var index = TShock.Utils.SearchProjectile(ident);
+            owner = (byte)args.Player.Index;
+			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (index > Main.maxProjectiles || index < 0)
 			{
-				return true;
+				return false;
 			}
 
 			var type = Main.projectile[index].type;
 
-			if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
+            // Players can no longer destroy projectiles that are not theirs as of 1.1.2
+			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
 			{
 				args.Player.Disable("Owner and player ID does not match to kill projectile");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
-			}
+			}*/
 
 			if (TShock.CheckIgnores(args.Player))
 			{
