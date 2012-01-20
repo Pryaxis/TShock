@@ -39,7 +39,15 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
+								try{
 			creator.EnsureExists(table);
+								}
+								catch (DllNotFoundException ex)
+{
+System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
+throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+}
+
 		}
 
 		public Ban GetBanByIp(string ip)
