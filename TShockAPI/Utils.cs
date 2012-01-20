@@ -624,14 +624,14 @@ namespace TShockAPI
 			return true;
 		}
 
-		public int SearchProjectile(short identity)
+		public int SearchProjectile(short identity, int owner)
 		{
 			for (int i = 0; i < Main.maxProjectiles; i++)
 			{
-				if (Main.projectile[i].identity == identity)
+				if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner)
 					return i;
 			}
-			return 1001;
+			return 1000;
 		}
 
 		public string SanitizeString(string str)

@@ -1514,25 +1514,26 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
-
-			var index = TShock.Utils.SearchProjectile(ident);
+		    owner = (byte)args.Player.Index;
+			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
 				return true;
 
 			if (index > Main.maxProjectiles || index < 0)
 			{
-				return true;
+				return false;
 			}
 
-			if (args.Player.Index != owner)
+            // Server now checks owner + ident, if owner is different, server will create new projectile.
+			/*if (args.Player.Index != owner)
 			{
                 args.Player.Disable("Owner and player ID does not match to update projectile");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
-			}
+			}*/
 
-            if (dmg > TShock.Config.MaxProjDamage)
+            if (dmg > TShock.Config.MaxProjDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
 				args.Player.Disable(String.Format("Projectile damage is higher than {0}", TShock.Config.MaxProjDamage));
 				args.Player.RemoveProjectile(ident, owner);
@@ -1577,22 +1578,23 @@ namespace TShockAPI
 		{
 			var ident = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
-
-			var index = TShock.Utils.SearchProjectile(ident);
+            owner = (byte)args.Player.Index;
+			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (index > Main.maxProjectiles || index < 0)
 			{
-				return true;
+				return false;
 			}
 
 			var type = Main.projectile[index].type;
 
-			if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
+            // Players can no longer destroy projectiles that are not theirs as of 1.1.2
+			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
 			{
 				args.Player.Disable("Owner and player ID does not match to kill projectile");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
-			}
+			}*/
 
 			if (TShock.CheckIgnores(args.Player))
 			{
@@ -2025,7 +2027,7 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
-            if (dmg > TShock.Config.MaxDamage)
+            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
                 args.Player.Disable(String.Format("Player damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
@@ -2078,7 +2080,7 @@ namespace TShockAPI
 			if (Main.npc[id] == null)
 				return true;
 
-			if (dmg > TShock.Config.MaxDamage)
+            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
                 args.Player.Disable(String.Format("NPC damage exceeded {0}", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
@@ -2093,7 +2095,7 @@ namespace TShockAPI
 
 			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.movenpc))
 			{
-                args.Player.SendMessage( "What?", Color.Yellow);
+                args.Player.SendMessage( "You don't have permission to move the NPC", Color.Yellow);
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
