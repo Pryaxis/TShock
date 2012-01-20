@@ -1054,10 +1054,11 @@ namespace TShockAPI
 					{
 						continue;
 					}
-					if (TShock.CheckRangePermission(args.Player, realx, realy))
+                    // Server now has a range check built in
+					/*if (TShock.CheckRangePermission(args.Player, realx, realy))
 					{
 						continue;
-					}
+					}*/
 					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105))
 					{
 						if (TShock.Config.EnableInsecureTileFixes)
