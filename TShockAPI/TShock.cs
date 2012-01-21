@@ -1108,7 +1108,6 @@ namespace TShockAPI
 				{
 
 					player.IceTiles.Add(new Point(tileX, tileY));
-					player.SendMessage("Added new IceTile: " + tileX + ", " + tileY);
 					return false;
 				}
 
