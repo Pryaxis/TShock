@@ -1103,6 +1103,7 @@ namespace TShockAPI
 							}
 						}
 					}
+					return true;
 				}
 
 				if (TShock.Config.AllowIce && tileType == 127)
