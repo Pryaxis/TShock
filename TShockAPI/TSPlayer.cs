@@ -75,7 +75,7 @@ namespace TShockAPI
 		public PlayerData PlayerData;
 		public bool RequiresPassword;
 		public bool SilentKickInProgress;
-		public List<Point> IceTiles { get; set; } 
+		public List<Point> IceTiles;
 
 
 		public bool RealPlayer
@@ -184,6 +184,7 @@ namespace TShockAPI
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = index;
 			Group = new Group(TShock.Config.DefaultGuestGroupName);
+			IceTiles = new List<Point>();
 		}
 
 		protected TSPlayer(String playerName)
