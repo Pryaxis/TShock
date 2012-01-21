@@ -1090,13 +1090,15 @@ namespace TShockAPI
         {
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
-				if (TShock.Config.AllowIce && tileType == 0 && (actionType != 1 || actionType != 3))
+				if (TShock.Config.AllowIce && actionType != 1)
 				{
 					foreach (Point p in player.IceTiles)
 					{
-						if (p.X == tileX && p.Y == tileY)
+						if (p.X == tileX && p.Y == tileY && (tileType == 0 || tileType == 127))
 						{
 							player.IceTiles.Remove(p);
+							player.SendMessage("Removing IceTile: " + p.X + ", " + p.Y);
+							player.SendMessage("IceTile size: " + player.IceTiles.Count);
 							return false;
 						}
 					}
@@ -1104,11 +1106,12 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (TShock.Config.AllowIce)
+				if (TShock.Config.AllowIce && actionType == 1)
 				{
 					if (tileType == 127)
 					{
 						player.IceTiles.Add(new Point(tileX, tileY));
+						player.SendMessage("Added new IceTile: " + tileX + ", " + tileY);
 						return false;
 					}
 				}
