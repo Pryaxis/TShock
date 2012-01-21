@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TerrariaServer</name>
+    </assembly>
+    <members>
+        <member name="T:TShock.Hooks.IHooks">
+            <summary>
+            Hooks interface
+            </summary>
+        </member>
+        <member name="P:TShock.IGame.Players">
+            <summary>
+            List of players
+            </summary>
+        </member>
+        <member name="T:TShock.HandlerList">
+            <summary>
+            See generic HandlerList
+            </summary>
+        </member>
+        <member name="T:TShock.HandlerList`1">
+            <summary>
+            Works like an event. Allows for registering delegates with a higher or lower priority.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:TShock.HandlerList`1.Register(System.EventHandler{`0},TShock.HandlerPriority,System.Boolean)">
+            <summary>
+            Register a handler
+            </summary>
+            <param name="handler">Delegate to be called</param>
+            <param name="priority">Priority of the delegate</param>
+            <param name="gethandled">Should the handler receive a call even if it has been handled</param>
+        </member>
+        <member name="M:TShock.IPlayer.Damage(System.Int32)">
+            <summary>
+            Attempts to damage the player.
+            </summary>
+            <param name="amt">int - how much damage to give</param>
+        </member>
+        <member name="M:TShock.IPlayer.SendMessage(System.String,Color)">
+            <summary>
+            Sends message to specified player
+            </summary>
+            <param name="msg">string - text to send</param>
+            <param name="color">Color - color for the text</param>
+        </member>
+        <member name="P:TShock.IPlayer.Id">
+            <summary>
+            Meant to only be used by TServer.
+            </summary>
+        </member>
+        <member name="P:TShock.IPlayer.Name">
+            <summary>
+            The character name of the player.
+            </summary>
+        </member>
+        <member name="M:TShock.Plugin.CreateInterfaces">
+            <summary>
+            Return a list of interfaces this plugin exposes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TShock.Plugin.SetInterfaces(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Called before initialize passing all the interfaces gathered from plugins
+            </summary>
+            <param name="interfaces"></param>
+        </member>
+        <member name="M:TShock.Plugin.GetInterface``1(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Gets the T interface from the collection. Returns null if its not found.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="interfaces"></param>
+            <returns></returns>
+        </member>
+        <member name="P:TShock.Hooks.Player.PlayerHooks.Join">
+            <summary>
+            Called when the player first connects. They are not fully in the game yet, for that see Greet.
+            </summary>
+        </member>
+        <member name="P:TShock.Hooks.Player.PlayerHooks.Greet">
+            <summary>
+            Called when the player is actually loaded into the game.
+            </summary>
+        </member>
+    </members>
+</doc>

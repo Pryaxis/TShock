@@ -1088,10 +1088,32 @@ namespace TShockAPI
 
         public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType )
         {
-            if (!player.Group.HasPermission(Permissions.canbuild) && !(TShock.Config.AllowIce && tileType == 127) )
+            if (!player.Group.HasPermission(Permissions.canbuild))
             {
-                player.SendMessage("You do not have permission to build!", Color.Red);
-                return true;
+				if (TShock.Config.AllowIce && tileType == 0)
+				{
+					foreach (Point p in player.IceTiles)
+					{
+						if (p.X == tileX)
+						{
+							if (p.Y == tileY)
+							{
+								player.IceTiles.Remove(p);
+								return false;
+							}
+						}
+					}
+				}
+
+				if (TShock.Config.AllowIce && tileType == 127)
+				{
+					player.IceTiles.Add(new Point(tileX, tileY));
+				}
+				else
+				{
+					player.SendMessage("You do not have permission to build!", Color.Red);
+					return true;
+				}
             }
             if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
                 Regions.InArea(tileX, tileY))
