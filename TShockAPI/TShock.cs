@@ -1103,18 +1103,20 @@ namespace TShockAPI
 							}
 						}
 					}
-					return true;
 				}
 
-				if (TShock.Config.AllowIce && tileType == 127)
+				if (TShock.Config.AllowIce)
 				{
-					player.IceTiles.Add(new Point(tileX, tileY));
+					if (tileType == 127)
+					{
+						player.IceTiles.Add(new Point(tileX, tileY));
+						return false;
+					}
 				}
-				else
-				{
-					player.SendMessage("You do not have permission to build!", Color.Red);
-					return true;
-				}
+
+				player.SendMessage("You do not have permission to build!", Color.Red);
+				return true;
+
             }
             if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
                 Regions.InArea(tileX, tileY))
