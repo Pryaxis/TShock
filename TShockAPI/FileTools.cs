@@ -72,7 +72,7 @@ namespace TShockAPI
 
 			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
 			CreateIfNot(MotdPath,
-			            "This server is running TShock. Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
+			            "This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
 			CreateIfNot(WhitelistPath);
 
 			try

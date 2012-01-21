@@ -1094,15 +1094,14 @@ namespace TShockAPI
 				{
 					foreach (Point p in player.IceTiles)
 					{
-						if (p.X == tileX)
+						if (p.X == tileX && p.Y == tileY)
 						{
-							if (p.Y == tileY)
-							{
-								player.IceTiles.Remove(p);
-								return false;
-							}
+							player.IceTiles.Remove(p);
+							return false;
 						}
 					}
+					player.SendMessage("You do not have permission to build!", Color.Red);
+					return true;
 				}
 
 				if (TShock.Config.AllowIce)
