@@ -205,6 +205,8 @@ namespace TShockAPI
 
 	    [Description("Ignores all no clip checks for players")] public bool IgnoreNoClip = false;
 
+	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
+
 		public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))

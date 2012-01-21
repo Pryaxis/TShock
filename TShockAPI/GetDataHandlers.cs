@@ -1263,7 +1263,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
+			if (TShock.CheckTilePermission(args.Player, tileX, tileY, tiletype))
 			{
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;

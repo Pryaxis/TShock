@@ -1086,6 +1086,42 @@ namespace TShockAPI
 			return false;
 		}
 
+        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType )
+        {
+            if (!player.Group.HasPermission(Permissions.canbuild) && !(TShock.Config.AllowIce && tileType == 127) )
+            {
+                player.SendMessage("You do not have permission to build!", Color.Red);
+                return true;
+            }
+            if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+                Regions.InArea(tileX, tileY))
+            {
+                player.SendMessage("Region protected from changes.", Color.Red);
+                return true;
+            }
+            if (Config.DisableBuild)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+                    player.SendMessage("World protected from changes.", Color.Red);
+                    return true;
+                }
+            }
+            if (Config.SpawnProtection)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+                    var flag = CheckSpawn(tileX, tileY);
+                    if (flag)
+                    {
+                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
