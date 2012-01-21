@@ -1086,11 +1086,11 @@ namespace TShockAPI
 			return false;
 		}
 
-        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType )
+        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType, byte actionType )
         {
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
-				if (TShock.Config.AllowIce && tileType == 0)
+				if (TShock.Config.AllowIce && tileType == 0 && (actionType != 1 || actionType != 3))
 				{
 					foreach (Point p in player.IceTiles)
 					{
