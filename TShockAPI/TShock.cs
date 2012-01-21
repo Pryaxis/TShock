@@ -1094,7 +1094,7 @@ namespace TShockAPI
 				{
 					foreach (Point p in player.IceTiles)
 					{
-						if (p.X == tileX && p.Y == tileY && (tileType == 0 || tileType == 127))
+						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
 						{
 							player.IceTiles.Remove(p);
 							return false;
@@ -1106,7 +1106,6 @@ namespace TShockAPI
 
 				if (TShock.Config.AllowIce && actionType == 1 && tileType == 127)
 				{
-
 					player.IceTiles.Add(new Point(tileX, tileY));
 					return false;
 				}
