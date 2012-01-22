@@ -143,8 +143,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Sends message to all users with 'logs' permission.
 		/// </summary>
-		/// <param name="log"></param>
-		/// <param name="color"></param>
+		/// <param name="log">Message to send</param>
+		/// <param name="color">Color of the message</param>
 		public void SendLogs(string log, Color color)
 		{
 			Log.Info(log);
@@ -175,9 +175,9 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// 
+		/// Finds a player ID based on name
 		/// </summary>
-		/// <param name="ply"></param>
+		/// <param name="ply">Player name</param>
 		/// <returns></returns>
 		public List<TSPlayer> FindPlayer(string ply)
 		{
@@ -197,6 +197,15 @@ namespace TShockAPI
 			return found;
 		}
 
+		/// <summary>
+		/// Gets a random clear tile in range
+		/// </summary>
+		/// <param name="startTileX">Bound X</param>
+		/// <param name="startTileY">Bound Y</param>
+		/// <param name="tileXRange">Range on the X axis</param>
+		/// <param name="tileYRange">Range on the Y axis</param>
+		/// <param name="tileX">X location</param>
+		/// <param name="tileY">Y location</param>
 		public void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange,
 		                                          out int tileX, out int tileY)
 		{
@@ -216,16 +225,33 @@ namespace TShockAPI
 			} while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
 		}
 
+		/// <summary>
+		/// Determines if a tile is valid
+		/// </summary>
+		/// <param name="tileX">Location X</param>
+		/// <param name="tileY">Location Y</param>
+		/// <returns>If the tile is valid</returns>
 		private bool TileValid(int tileX, int tileY)
 		{
 			return tileX >= 0 && tileX <= Main.maxTilesX && tileY >= 0 && tileY <= Main.maxTilesY;
 		}
 
+		/// <summary>
+		/// Clears a tile
+		/// </summary>
+		/// <param name="tileX">Location X</param>
+		/// <param name="tileY">Location Y</param>
+		/// <returns>The state of the tile</returns>
 		private bool TileClear(int tileX, int tileY)
 		{
 			return !Main.tile[tileX, tileY].active;
 		}
 
+		/// <summary>
+		/// Gets a list of items by ID or name
+		/// </summary>
+		/// <param name="idOrName">Item ID or name</param>
+		/// <returns>List of Items</returns>
 		public List<Item> GetItemByIdOrName(string idOrName)
 		{
 			int type = -1;
@@ -236,6 +262,11 @@ namespace TShockAPI
 			return GetItemByName(idOrName);
 		}
 
+		/// <summary>
+		/// Gets an item by ID
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <returns>Item</returns>
 		public Item GetItemById(int id)
 		{
 			Item item = new Item();
@@ -243,6 +274,11 @@ namespace TShockAPI
 			return item;
 		}
 
+		/// <summary>
+		/// Gets items by name
+		/// </summary>
+		/// <param name="name">name</param>
+		/// <returns>List of Items</returns>
 		public List<Item> GetItemByName(string name)
 		{
 			//Method #1 - must be exact match, allows support for different pickaxes/hammers/swords etc
@@ -273,6 +309,11 @@ namespace TShockAPI
 			return found;
 		}
 
+		/// <summary>
+		/// Gets an NPC by ID or Name
+		/// </summary>
+		/// <param name="idOrName"></param>
+		/// <returns>List of NPCs</returns>
 		public List<NPC> GetNPCByIdOrName(string idOrName)
 		{
 			int type = -1;
@@ -283,6 +324,11 @@ namespace TShockAPI
 			return GetNPCByName(idOrName);
 		}
 
+		/// <summary>
+		/// Gets an NPC by ID
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <returns>NPC</returns>
 		public NPC GetNPCById(int id)
 		{
 			NPC npc = new NPC();
@@ -290,6 +336,11 @@ namespace TShockAPI
 			return npc;
 		}
 
+		/// <summary>
+		/// Gets a NPC by name
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <returns>List of matching NPCs</returns>
 		public List<NPC> GetNPCByName(string name)
 		{
 			//Method #1 - must be exact match, allows support for different coloured slimes
@@ -314,16 +365,31 @@ namespace TShockAPI
 			return found;
 		}
 
+		/// <summary>
+		/// Gets a buff name by id
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
 			return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
 		}
 
+		/// <summary>
+		/// Gets the description of a buff
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
 			return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
 		}
 
+		/// <summary>
+		/// Gets a list of buffs by name
+		/// </summary>
+		/// <param name="name">name</param>
+		/// <returns>Matching list of buff ids</returns>
 		public List<int> GetBuffByName(string name)
 		{
 			for (int i = 1; i < Main.maxBuffs; i++)
@@ -340,6 +406,11 @@ namespace TShockAPI
 			return found;
 		}
 
+		/// <summary>
+		/// Gets a prefix based on its id
+		/// </summary>
+		/// <param name="id">ID</param>
+		/// <returns>Prefix name</returns>
 		public string GetPrefixById(int id)
 		{
 			var item = new Item();
@@ -349,6 +420,11 @@ namespace TShockAPI
 			return item.name.Trim();
 		}
 
+		/// <summary>
+		/// Gets a list of prefixes by name
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <returns>List of prefix IDs</returns>
 		public List<int> GetPrefixByName(string name)
 		{
 			Item item = new Item();
@@ -377,6 +453,11 @@ namespace TShockAPI
 			return found;
 		}
 
+		/// <summary>
+		/// Gets a prefix by ID or name
+		/// </summary>
+		/// <param name="idOrName">ID or name</param>
+		/// <returns>List of prefix IDs</returns>
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
@@ -624,6 +705,12 @@ namespace TShockAPI
 			return true;
 		}
 
+		/// <summary>
+		/// Searches for a projectile by identity and owner
+		/// </summary>
+		/// <param name="identity">identity</param>
+		/// <param name="owner">owner</param>
+		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
 			for (int i = 0; i < Main.maxProjectiles; i++)
@@ -634,6 +721,11 @@ namespace TShockAPI
 			return 1000;
 		}
 
+		/// <summary>
+		/// Sanitizes input strings
+		/// </summary>
+		/// <param name="str">string</param>
+		/// <returns>sanitized string</returns>
 		public string SanitizeString(string str)
 		{
 			var returnstr = str.ToCharArray();
