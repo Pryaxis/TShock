@@ -41,7 +41,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Pre-Release - Code Freeze";
+		public static readonly string VersionCodename = "1.1.2 in the house!";
 
 		public static string SavePath = "tshock";
 
