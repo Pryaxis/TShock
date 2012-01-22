@@ -120,7 +120,6 @@ namespace TShockAPI
 
 		public static void InitCommands()
 		{
-			//When adding new perm in here, add new perm to CommandList in DBEditor
 			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
 			add(Permissions.kick, Kick, "kick");
 			add(Permissions.ban, Ban, "ban");
@@ -134,7 +133,7 @@ namespace TShockAPI
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
 			add(Permissions.causeevents, Star, "star");
-    			add(Permissions.causeevents, Ore, "genore");
+    		add(Permissions.causeevents, Ore, "genore");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
