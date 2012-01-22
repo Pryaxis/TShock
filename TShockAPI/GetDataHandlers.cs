@@ -52,22 +52,35 @@ namespace TShockAPI
 		public static int[] WhitelistBuffMaxTime;
 		#region Events
 		
-		[DisplayName("TileEditEventArgs"), Description("Args")]
+		/// <summary>
+		/// Used when a TileEdit event is called.
+		/// </summary>
 		public class TileEditEventArgs : HandledEventArgs
 		{
-			[Description("Tile X")]
+			/// <summary>
+			/// The tile coordinate on the X plane
+			/// </summary>
 			public int X { get; set; }
-			[Description("Tile Y")]
+
+			/// <summary>
+			/// The tile coordinate on the Y plane
+			/// </summary>
 			public int Y { get; set; }
-			[Description("Tile Type")]
+			
+			/// <summary>
+			/// The Tile ID being edited.
+			/// </summary>
 			public byte Type { get; set; }
-			[Description("Edit Type (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)")]
+			/// <summary>
+			/// The EditType.
+			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
+			/// </summary>
 			public byte EditType { get; set; }
 		} 
+
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
-		[Description("Called when a tile is placed or destroyed")]
 		public static HandlerList<TileEditEventArgs> TileEdit;
 		private static bool OnTileEdit(int x, int y, byte type, byte editType)
 		{
