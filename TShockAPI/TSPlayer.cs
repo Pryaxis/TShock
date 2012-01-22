@@ -76,6 +76,10 @@ namespace TShockAPI
 		public bool RequiresPassword;
 		public bool SilentKickInProgress;
 		public List<Point> IceTiles;
+                public long RPm=1;
+                public long WPm=1;
+                public long SPm=1;
+                public long BPm=1;
 
 
 		public bool RealPlayer
