@@ -97,10 +97,18 @@ namespace TShockAPI
 			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
-
+		/// <summary>
+		/// For use in a TogglePvp event
+		/// </summary>
 		public class TogglePvpEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria player ID of the player
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Enable/disable pvp?
+			/// </summary>
 			public bool Pvp { get; set; }
 		}
 		/// <summary>
@@ -121,13 +129,30 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		
+		/// <summary>
+		/// For use in a PlayerSlot event
+		/// </summary>
 		public class PlayerSlotEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// The slot edited
+			/// </summary>
 			public byte Slot { get; set; }
+			/// <summary>
+			/// The stack edited
+			/// </summary>
 			public byte Stack { get; set; }
+			/// <summary>
+			/// The item prefix
+			/// </summary>
 			public byte Prefix { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
 			public short Type { get; set; }
 		}
 		/// <summary>
@@ -151,11 +176,22 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		
+		/// <summary>
+		/// For use in a PlayerHP event
+		/// </summary>
 		public class PlayerHPEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Current HP
+			/// </summary>
 			public short Current { get; set; }
+			/// <summary>
+			/// Maximum HP
+			/// </summary>
 			public short Max { get; set; }
 		}
 		/// <summary>
@@ -178,7 +214,9 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		
+		/// <summary>
+		/// For use in a PlayerMana event
+		/// </summary>
 		public class PlayerManaEventArgs : HandledEventArgs
 		{
 			public byte PlayerId { get; set; }
@@ -207,10 +245,25 @@ namespace TShockAPI
 		
 		public class PlayerInfoEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Hair color
+			/// </summary>
 			public byte Hair { get; set; }
+			/// <summary>
+			/// Gender (male = true)
+			/// </summary>
 			public bool Male { get; set; }
+			/// <summary>
+			/// Character difficulty
+			/// </summary>
 			public byte Difficulty { get; set; }
+			/// <summary>
+			/// Player/character name
+			/// </summary>
 			public string Name { get; set; }
 		}
 		/// <summary>
@@ -236,11 +289,23 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a TileKill event
+		/// </summary>
 		public class TileKillEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The X coordinate that is being killed
+			/// </summary>
 			public int TileX { get; set; }
+			/// <summary>
+			/// The Y coordinate that is being killed
+			/// </summary>
 			public int TileY { get; set; }
 		}
+		/// <summary>
+		/// TileKill - When a tile is removed fromt he world
+		/// </summary>
 		public static HandlerList<TileKillEventArgs> TileKill;
 
 		private static bool OnTileKill(int tilex, int tiley)
@@ -257,13 +322,31 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a KillMe event
+		/// </summary>
 		public class KillMeEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// The direction the damage is coming from (?)
+			/// </summary>
 			public byte Direction { get; set; }
+			/// <summary>
+			/// Amount of damage delt
+			/// </summary>
 			public short Damage { get; set; }
+			/// <summary>
+			/// Player's current pvp setting
+			/// </summary>
 			public bool Pvp { get; set; }
 		}
+		/// <summary>
+		/// KillMe - Terraria's crappy way of handling damage from players
+		/// </summary>
 		public static HandlerList<KillMeEventArgs> KillMe;
 
 		private static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
@@ -282,14 +365,35 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a PlayerUpdate event
+		/// </summary>
 		public class PlayerUpdateEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte PlayerId { get; set; }
+			/// <summary>
+			/// ???
+			/// </summary>
 			public byte Control { get; set; }
+			/// <summary>
+			/// Current item?
+			/// </summary>
 			public byte Item { get; set; }
+			/// <summary>
+			/// Position of the player
+			/// </summary>
 			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity of the player
+			/// </summary>
 			public Vector2 Velocity { get; set; }
 		}
+		/// <summary>
+		/// PlayerUpdate - When the player sends it's updated information to the server
+		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
 
 		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity)
@@ -309,12 +413,27 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a SendTileSquare event
+		/// </summary>
 		public class SendTileSquareEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// Size of the area
+			/// </summary>
 			public short Size { get; set; }
+			/// <summary>
+			/// A corner of the section
+			/// </summary>
 			public int TileX { get; set; }
+			/// <summary>
+			/// A corner of the section
+			/// </summary>
 			public int TileY { get; set; }
 		}
+		/// <summary>
+		/// SendTileSquare - When the player sends a tile square
+		/// </summary>
 		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
 
 		private static bool OnSendTileSquare(short size, int tilex, int tiley)
@@ -331,18 +450,47 @@ namespace TShockAPI
 			SendTileSquare.Invoke(null, args);
 			return args.Handled;
 		}
-
+		/// <summary>
+		/// For use in a NewProjectile event
+		/// </summary>
 		public class NewProjectileEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// ???
+			/// </summary>
 			public short Identity { get; set; }
+			/// <summary>
+			/// Location of the projectile
+			/// </summary>
 			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity of the projectile
+			/// </summary>
 			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Knockback
+			/// </summary>
 			public float Knockback { get; set; }
+			/// <summary>
+			/// Damage from the projectile
+			/// </summary>
 			public short Damage { get; set; }
+			/// <summary>
+			/// Terraria playerID owner of the projectile
+			/// </summary>
 			public byte Owner { get; set; }
+			/// <summary>
+			/// Type of projectile
+			/// </summary>
 			public byte Type { get; set; }
+			/// <summary>
+			/// ???
+			/// </summary>
 			public int Index { get; set; }
 		}
+		/// <summary>
+		/// NewProjectile - Called when a client creates a new projectile
+		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile;
 
 		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, byte type, int index)
@@ -365,13 +513,31 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a LiquidSet event
+		/// </summary>
 		public class LiquidSetEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// X location of the tile
+			/// </summary>
 			public int TileX { get; set; }
+			/// <summary>
+			/// Y location of the tile
+			/// </summary>
 			public int TileY { get; set; }
+			/// <summary>
+			/// ???
+			/// </summary>
 			public byte Liquid { get; set;}
+			/// <summary>
+			/// True if lava
+			/// </summary>
 			public bool Lava { get; set; }
 		}
+		/// <summary>
+		/// LiquidSet - When ever a liquid is set
+		/// </summary>
 		public static HandlerList<LiquidSetEventArgs> LiquidSet;
 
 		private static bool OnLiquidSet(int tilex, int tiley, byte liquid, bool lava)
@@ -389,13 +555,27 @@ namespace TShockAPI
 			LiquidSet.Invoke(null, args);
 			return args.Handled;
 		}
-
+		/// <summary>
+		/// For use in a PlayerSpawn event
+		/// </summary>
 		public class SpawnEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte Player { get; set; }
+			/// <summary>
+			/// X location of the player's spawn
+			/// </summary>
 			public int SpawnX { get; set; }
+			/// <summary>
+			/// Y location of the player's spawn
+			/// </summary>
 			public int SpawnY { get; set; }
 		}
+		/// <summary>
+		/// PlayerSpawn - When a player spawns
+		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn;
 
 		private static bool OnPlayerSpawn(byte player, int spawnX, int spawnY)
@@ -412,12 +592,23 @@ namespace TShockAPI
 			PlayerSpawn.Invoke(null, args);
 			return args.Handled;
 		}
-
+		/// <summary>
+		/// For use with a ChestOpen event
+		/// </summary>
 		public class ChestOpenEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// X location of said chest
+			/// </summary>
 			public int X { get; set; }
+			/// <summary>
+			/// Y location of said chest
+			/// </summary>
 			public int Y { get; set; }
 		}
+		/// <summary>
+		/// ChestOpen - Called when any chest is opened
+		/// </summary>
 		public static HandlerList<ChestOpenEventArgs> ChestOpen;
 
 		private static bool OnChestOpen(int x, int y)
@@ -434,19 +625,40 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a ChestItemChange event
+		/// </summary>
 		public class ChestItemEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// ChestID
+			/// </summary>
 			public short ID { get; set; }
+			/// <summary>
+			/// Slot of the item
+			/// </summary>
 			public byte Slot { get; set; }
+			/// <summary>
+			/// How many?
+			/// </summary>
 			public byte Stacks { get; set; }
+			/// <summary>
+			/// Item prefix
+			/// </summary>
 			public byte Prefix { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
 			public short Type { get; set; }
 		}
+		/// <summary>
+		/// ChestItemChange - Called when an item in a chest changes
+		/// </summary>
 		public static HandlerList<ChestItemEventArgs> ChestItemChange;
 
 		private static bool OnChestItemChange(short id, byte slot, byte stacks, byte prefix, short type)
 		{
-			if (PlayerSpawn == null)
+			if (ChestItemChange == null)
 				return false;
 
 			var args = new ChestItemEventArgs
@@ -461,12 +673,27 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a Sign event
+		/// </summary>
 		public class SignEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public short ID { get; set; }
+			/// <summary>
+			/// X location of the sign
+			/// </summary>
 			public int X { get; set; }
+			/// <summary>
+			/// Y location of the sign
+			/// </summary>
 			public int Y { get; set; }
 		}
+		/// <summary>
+		/// Sign - Called when a sign is changed
+		/// </summary>
 		public static HandlerList<SignEventArgs> Sign;
 
 		private static bool OnSignEvent(short id, int x, int y)
@@ -484,13 +711,31 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a NPCHome event
+		/// </summary>
 		public class NPCHomeChangeEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public short ID { get; set; }
+			/// <summary>
+			/// X location of the NPC home change
+			/// </summary>
 			public short X { get; set; }
+			/// <summary>
+			/// Y location of the NPC home change
+			/// </summary>
 			public short Y { get; set; }
+			/// <summary>
+			/// ByteBool homeless
+			/// </summary>
 			public byte Homeless { get; set; }
 		}
+		/// <summary>
+		/// NPCHome - Called when an NPC's home is changed
+		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
 
 		private static bool OnUpdateNPCHome(short id, short x, short y, byte homeless)
@@ -509,12 +754,27 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a PlayerBuff event
+		/// </summary>
 		public class PlayerBuffEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte ID { get; set; }
+			/// <summary>
+			/// Buff Type
+			/// </summary>
 			public byte Type { get; set; }
+			/// <summary>
+			/// Time the buff lasts
+			/// </summary>
 			public short Time { get; set; }
 		}
+		/// <summary>
+		/// PlayerBuff - Called when a player is buffed
+		/// </summary>
 		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
 
 		private static bool OnPlayerBuff(byte id, byte type, short time)
@@ -532,15 +792,39 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in an ItemDrop event
+		/// </summary>
 		public class ItemDropEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public short ID { get; set; }
+			/// <summary>
+			/// Position of the item
+			/// </summary>
 			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity at which the item is deployed
+			/// </summary>
 			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Stacks
+			/// </summary>
 			public byte Stacks { get; set; }
+			/// <summary>
+			/// Prefix of the item
+			/// </summary>
 			public byte Prefix { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
 			public short Type { get; set; }
 		}
+		/// <summary>
+		/// ItemDrop - Called when an item is dropped
+		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
 		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, short type)
@@ -561,14 +845,35 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a PlayerDamage event
+		/// </summary>
 		public class PlayerDamageEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte ID { get; set; }
+			/// <summary>
+			/// The direction the damage is occuring from
+			/// </summary>
 			public byte Direction { get; set; }
+			/// <summary>
+			/// Amount of damage
+			/// </summary>
 			public short Damage { get; set; }
+			/// <summary>
+			/// If the player has PVP on
+			/// </summary>
 			public byte PVP { get; set; }
+			/// <summary>
+			/// Is the damage critical?
+			/// </summary>
 			public byte Critical { get; set; }
 		}
+		/// <summary>
+		/// PlayerDamage - Called when a player is damaged
+		/// </summary>
 		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
 
 		private static bool OnPlayerDamage(byte id, byte dir, short dmg, byte pvp, byte crit)
@@ -588,14 +893,35 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use with a NPCStrike event
+		/// </summary>
 		public class NPCStrikeEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// ???
+			/// </summary>
 			public byte ID { get; set; }
+			/// <summary>
+			/// Direction the damage occurred from
+			/// </summary>
 			public byte Direction { get; set; }
+			/// <summary>
+			/// Amount of damage
+			/// </summary>
 			public short Damage { get; set; }
+			/// <summary>
+			/// Is PVP enabled...?
+			/// </summary>
 			public byte PVP { get; set; }
+			/// <summary>
+			/// Critical?
+			/// </summary>
 			public byte Critical { get; set; }
 		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
 		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
 
 		private static bool OnNPCStrike(byte id, byte dir, short dmg, byte pvp, byte crit)
@@ -615,11 +941,23 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use with a NPCSpecial event
+		/// </summary>
 		public class NPCSpecialEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// ???
+			/// </summary>
 			public byte ID { get; set; }
+			/// <summary>
+			/// Type...?
+			/// </summary>
 			public byte Type { get; set; }
 		}
+		/// <summary>
+		/// NPCSpecial - Called at some point
+		/// </summary>
 		public static HandlerList<NPCSpecialEventArgs> NPCSpecial;
 
 		private static bool OnNPCSpecial(byte id, byte type)
@@ -636,9 +974,16 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use with a PlayerAnimation event
+		/// </summary>
 		public class PlayerAnimationEventArgs : HandledEventArgs
 		{
 		}
+
+		/// <summary>
+		/// PlayerAnimation - Called when a player animates
+		/// </summary>
 		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
 
 		private static bool OnPlayerAnimation()
@@ -651,10 +996,19 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a PlayerBuffUpdate event
+		/// </summary>
 		public class PlayerBuffUpdateEventArgs : HandledEventArgs
 		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
 			public byte ID { get; set; }
 		}
+		/// <summary>
+		/// PlayerBuffUpdate - Called when a player updates buffs
+		/// </summary>
 		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate;
 
 		private static bool OnPlayerBuffUpdate(byte id)
