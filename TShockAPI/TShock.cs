@@ -1086,24 +1086,127 @@ namespace TShockAPI
 			return false;
 		}
 
+        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType, byte actionType )
+        {
+            if (!player.Group.HasPermission(Permissions.canbuild))
+            {
+				if (TShock.Config.AllowIce && actionType != 1)
+				{
+					foreach (Point p in player.IceTiles)
+					{
+						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
+						{
+							player.IceTiles.Remove(p);
+							return false;
+						}
+					}
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+					player.SendMessage("You do not have permission to build!", Color.Red);
+			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
+					return true;
+				}
+
+				if (TShock.Config.AllowIce && actionType == 1 && tileType == 127)
+				{
+					player.IceTiles.Add(new Point(tileX, tileY));
+					return false;
+				}
+
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+					player.SendMessage("You do not have permission to build!", Color.Red);
+			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
+				return true;
+
+            }
+            if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+                Regions.InArea(tileX, tileY))
+            {
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
+                        player.SendMessage("Region protected from changes.", Color.Red);
+			player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+                return true;
+            }
+            if (Config.DisableBuild)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
+                        player.SendMessage("World protected from changes.", Color.Red);
+			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
+                    return true;
+                }
+            }
+            if (Config.SpawnProtection)
+            {
+                if (!player.Group.HasPermission(Permissions.editspawn))
+                {
+                    var flag = CheckSpawn(tileX, tileY);
+                    if (flag)
+                    {
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000){
+                        player.SendMessage("Spawn protected from changes.", Color.Red);
+			player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY)
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
 			{
-				player.SendMessage("You do not have permission to build!", Color.Red);
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+					player.SendMessage("You do not have permission to build!", Color.Red);
+			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
 				return true;
 			}
 			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
-				player.SendMessage("Region protected from changes.", Color.Red);
+
+
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
+                        player.SendMessage("Region protected from changes.", Color.Red);
+			player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
 				return true;
 			}
 			if (Config.DisableBuild)
 			{
 				if (!player.Group.HasPermission(Permissions.editspawn))
 				{
-					player.SendMessage("World protected from changes.", Color.Red);
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
+                        player.SendMessage("World protected from changes.", Color.Red);
+			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
 					return true;
 				}
 			}
@@ -1114,7 +1217,13 @@ namespace TShockAPI
 					var flag = CheckSpawn(tileX, tileY);
 					if (flag)
 					{
-						player.SendMessage("Spawn protected from changes.", Color.Red);
+		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000){
+                        player.SendMessage("Spawn protected from changes.", Color.Red);
+			player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+}
+
+
 						return true;
 					}
 				}

@@ -75,6 +75,11 @@ namespace TShockAPI
 		public PlayerData PlayerData;
 		public bool RequiresPassword;
 		public bool SilentKickInProgress;
+		public List<Point> IceTiles;
+		public long RPm=1;
+		public long WPm=1;
+		public long SPm=1;
+		public long BPm=1;
 
 		public bool RealPlayer
 		{
@@ -86,7 +91,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer &&
-				       (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
+					   (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
 			}
 		}
 
@@ -105,8 +110,8 @@ namespace TShockAPI
 						CacheIP =
 						RealPlayer
 							? (Netplay.serverSock[Index].tcpClient.Connected
-							   	? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString())
-							   	: "")
+								? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString())
+								: "")
 							: "";
 				else
 					return CacheIP;
@@ -182,6 +187,7 @@ namespace TShockAPI
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = index;
 			Group = new Group(TShock.Config.DefaultGuestGroupName);
+			IceTiles = new List<Point>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -213,28 +219,28 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new WorldInfoMsg
-				          	{
-				          		Time = (int) Main.time,
-				          		DayTime = Main.dayTime,
-				          		MoonPhase = (byte) Main.moonPhase,
-				          		BloodMoon = Main.bloodMoon,
-				          		MaxTilesX = Main.maxTilesX,
-				          		MaxTilesY = Main.maxTilesY,
-				          		SpawnX = tilex,
-				          		SpawnY = tiley,
-				          		WorldSurface = (int) Main.worldSurface,
-				          		RockLayer = (int) Main.rockLayer,
-				          		//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
-				          		//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
-				          		WorldID = !fakeid ? Main.worldID : -1,
-				          		WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
-				          		             (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
-				          		             (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-				          		             (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
-				          		             (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
-				          		             (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
-				          		WorldName = Main.worldName
-				          	};
+							{
+								Time = (int) Main.time,
+								DayTime = Main.dayTime,
+								MoonPhase = (byte) Main.moonPhase,
+								BloodMoon = Main.bloodMoon,
+								MaxTilesX = Main.maxTilesX,
+								MaxTilesY = Main.maxTilesY,
+								SpawnX = tilex,
+								SpawnY = tiley,
+								WorldSurface = (int) Main.worldSurface,
+								RockLayer = (int) Main.rockLayer,
+								//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
+								//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
+								WorldID = !fakeid ? Main.worldID : -1,
+								WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
+											 (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
+											 (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
+											 (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+											 (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+											 (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
+								WorldName = Main.worldName
+							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -277,11 +283,11 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new SpawnMsg
-				          	{
-				          		PlayerIndex = (byte) Index,
-				          		TileX = tilex,
-				          		TileY = tiley
-				          	};
+							{
+								PlayerIndex = (byte) Index,
+								TileX = tilex,
+								TileY = tiley
+							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -292,10 +298,10 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg
-				          	{
-				          		Index = (short) index,
-				          		Owner = (byte) owner
-				          	};
+							{
+								Index = (short) index,
+								Owner = (byte) owner
+							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -323,7 +329,7 @@ namespace TShockAPI
 			Main.item[itemid].SetDefaults(name);
 			// The set default overrides the wet and stack set by NewItem
 			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
-			                                               Main.item[itemid].height);
+														   Main.item[itemid].height);
 			Main.item[itemid].stack = stack;
 			Main.item[itemid].owner = Index;
 			Main.item[itemid].prefix = (byte) prefix;
@@ -349,7 +355,7 @@ namespace TShockAPI
 		public virtual void DamagePlayer(int damage)
 		{
 			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
-			                    (float) 0);
+								(float) 0);
 		}
 
 		public virtual void SetTeam(int team)
@@ -364,14 +370,14 @@ namespace TShockAPI
 			SetBuff(33, 330, true); //Weak
 			SetBuff(32, 330, true); //Slow
 			SetBuff(23, 330, true); //Cursed
-            if (!string.IsNullOrEmpty(reason))
-                Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}", Name, reason));
+			if (!string.IsNullOrEmpty(reason))
+				Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}", Name, reason));
 
-            var trace = new StackTrace();
-            StackFrame frame = null;
-            frame = trace.GetFrame(1);
-            if (frame != null && frame.GetMethod().DeclaringType != null)
-                Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable()");
+			var trace = new StackTrace();
+			StackFrame frame = null;
+			frame = trace.GetFrame(1);
+			if (frame != null && frame.GetMethod().DeclaringType != null)
+				Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable()");
 		}
 
 		public virtual void Whoopie(object time)
@@ -397,7 +403,7 @@ namespace TShockAPI
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
 		public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f,
-		                             float number3 = 0f, float number4 = 0f, int number5 = 0)
+									 float number3 = 0f, float number4 = 0f, int number5 = 0)
 		{
 			if (RealPlayer && !ConnectionAlive)
 				return;
@@ -489,14 +495,14 @@ namespace TShockAPI
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
-		                     int tileYRange = 50)
+							 int tileYRange = 50)
 		{
 			for (int i = 0; i < amount; i++)
 			{
 				int spawnTileX;
 				int spawnTileY;
 				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
-				                                           out spawnTileY);
+														   out spawnTileY);
 				int npcid = NPC.NewNPC(spawnTileX*16, spawnTileY*16, type, 0);
 				// This is for special slimes
 				Main.npc[npcid].SetDefaults(name);
