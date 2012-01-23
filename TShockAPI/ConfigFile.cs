@@ -175,6 +175,9 @@ namespace TShockAPI
 		[Description("Disable a player if they exceed this number of projectile new within 1 second.")] public int
 			ProjectileThreshold = 50;
 
+		[Description("Ignore shrapnel from crystal bullets for Projectile Threshold.")] public bool 
+			ProjIgnoreShrapnel = true;
+		
 		[Description("Require all players to register or login before being allowed to play.")] public bool RequireLogin;
 
 		[Description(
@@ -200,7 +203,7 @@ namespace TShockAPI
         [Description("The maximum damage a projectile can inflict")] public int MaxProjDamage = 175;
 
         [Description("Ignores checking to see if player 'can' update a projectile")] public bool IgnoreProjUpdate = false;
-
+		
         [Description("Ignores checking to see if player 'can' kill a projectile")] public bool IgnoreProjKill = false;
 
 	    [Description("Ignores all no clip checks for players")] public bool IgnoreNoClip = false;
