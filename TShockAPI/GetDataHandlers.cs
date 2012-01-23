@@ -1916,8 +1916,15 @@ namespace TShockAPI
 
 			if (!TShock.Config.IgnoreProjUpdate && TShock.CheckProjectilePermission(args.Player, index, type))
 			{
-				args.Player.Disable("Does not have projectile permission to update projectile.");
-				args.Player.RemoveProjectile(ident, owner);
+			if (type == 100)
+					{	//fix for skele prime
+						Log.Debug("Skeletron Prime's death laser ignored for cheat detection..");
+					}
+					else
+					{
+						args.Player.Disable("Does not have projectile permission to update projectile.");
+						args.Player.RemoveProjectile(ident, owner);
+					}
 				return true;
 			}
 
@@ -1936,7 +1943,14 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				args.Player.ProjectileThreshold++;
+				if ((type ==90) && (TShock.Config.ProjIgnoreShrapnel))// ignore shrapnel
+					{
+						Log.Debug("Ignoring shrapnel per config..");
+					}
+					else
+					{
+						args.Player.ProjectileThreshold++;
+					}
 			}
 
 			return false;
