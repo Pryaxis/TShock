@@ -703,7 +703,6 @@ namespace TShockAPI
 				Utils.Broadcast(
 					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
 					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-				e.Handled = true;
 			}
 			else if (tsplr.mute)
 			{
