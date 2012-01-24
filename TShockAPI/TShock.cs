@@ -41,7 +41,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Pre-Release - Code Freeze";
+		public static readonly string VersionCodename = "1.1.2 was sudden";
 
 		public static string SavePath = "tshock";
 
@@ -819,7 +819,8 @@ namespace TShockAPI
 				e.Handled = true;
 				return;
 			}
-
+			player.LoginMS= DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			
 			Utils.ShowFileToUser(player, "motd.txt");
 
 			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
@@ -1153,10 +1154,9 @@ namespace TShockAPI
                     {		
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000){
                         player.SendMessage("Spawn protected from changes.", Color.Red);
-			player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-}
-                        return true;
+						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+						}
+                    return true;
                     }
                 }
             }
@@ -1167,14 +1167,14 @@ namespace TShockAPI
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
 			{
+
 		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
 					player.SendMessage("You do not have permission to build!", Color.Red);
-			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-}
-
+					player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					}
 				return true;
 			}
+			
 			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
@@ -1182,24 +1182,19 @@ namespace TShockAPI
 
 		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
                         player.SendMessage("Region protected from changes.", Color.Red);
-			player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-}
-
-
+						player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+						}
 				return true;
 			}
+			
 			if (Config.DisableBuild)
 			{
 				if (!player.Group.HasPermission(Permissions.editspawn))
 				{
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
+				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
                         player.SendMessage("World protected from changes.", Color.Red);
-			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-}
-
-
+						player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+						}
 					return true;
 				}
 			}
@@ -1210,11 +1205,11 @@ namespace TShockAPI
 					var flag = CheckSpawn(tileX, tileY);
 					if (flag)
 					{
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000){
+					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000){
                         player.SendMessage("Spawn protected from changes.", Color.Red);
-			player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-}
+						}
 
 
 						return true;
