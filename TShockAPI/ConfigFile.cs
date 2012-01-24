@@ -151,6 +151,8 @@ namespace TShockAPI
 
 		[Description("Enable Server Side Inventory checks, EXPERIMENTAL")] public bool ServerSideInventory;
 
+		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON")] public int LogonDiscardThreshold=250;
+		
 		[Description("Disables reporting of playercount to the stat system.")] public bool DisablePlayerCountReporting;
 
 		[Description("Disables clown bomb projectiles from spawning")] public bool DisableClownBombs;

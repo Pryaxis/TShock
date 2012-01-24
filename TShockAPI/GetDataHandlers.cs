@@ -2374,7 +2374,14 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
-
+			if ((TShock.Config.ServerSideInventory) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.Config.LogonDiscardThreshold))
+			{
+			//Player is probably trying to sneak items onto the server in their hands!!!
+				Log.ConsoleInfo(string.Format("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				return true;
+			
+			}
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
