@@ -1426,7 +1426,7 @@ namespace TShockAPI
 					{
 						continue;
 					}*/
-					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105))
+					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105) || (tile.type == 139 && newtile.Type == 139))
 					{
 						if (TShock.Config.EnableInsecureTileFixes)
 						{
