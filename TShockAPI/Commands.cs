@@ -2636,7 +2636,10 @@ namespace TShockAPI
 
 		private static void Playing(CommandArgs args)
 		{
-			args.Player.SendMessage(string.Format("Current players: {0}.", TShock.Utils.GetPlayers()), 255, 240, 20);
+		    string response = args.Player.Group.HasPermission(Permissions.seeids)
+		                          ? TShock.Utils.GetPlayersWithIds()
+		                          : TShock.Utils.GetPlayers();
+            args.Player.SendMessage(string.Format("Current players: {0}.", response), 255, 240, 20);
 			args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
 												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
 		}

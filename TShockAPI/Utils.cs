@@ -69,6 +69,29 @@ namespace TShockAPI
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Used for some places where a list of players might be used.
+        /// </summary>
+        /// <returns>String of players and their id seperated by commas.</returns>
+        public string GetPlayersWithIds()
+        {
+            var sb = new StringBuilder();
+            foreach (TSPlayer player in TShock.Players)
+            {
+                if (player != null && player.Active)
+                {
+                    if (sb.Length != 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(player.Name);
+                    string id = "( " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + " )";
+                    sb.Append(id);
+                }
+            }
+            return sb.ToString();
+        }
+
 		/// <summary>
 		/// Finds a player and gets IP as string
 		/// </summary>
