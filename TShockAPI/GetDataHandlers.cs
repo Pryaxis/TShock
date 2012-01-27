@@ -2612,6 +2612,46 @@ namespace TShockAPI
                 return true;
             if (plr != args.Player.Index)
                 return true;
+
+		    string boss;
+            switch (Type)
+            {
+                case -2:
+                    boss = "the Snow Legion";
+                    break;
+                case -1:
+                    boss = "a Goblin Invasion";
+                    break;
+                case 4:
+                    boss = "the Eye of Cthulhu";
+                    break;
+                case 13:
+                    boss = "the Eater of Worlds";
+                    break;
+                case 50:
+                    boss = "the King Slime";
+                    break;
+                case 125:
+                    boss = "Retinazer";
+                    break;
+                case 126:
+                    boss = "Spazmatism";
+                    break;
+                case 134:
+                    boss = "the Destroyer";
+                    break;
+                case sbyte.MaxValue:
+                    boss = "Skeleton Prime";
+                    break;
+                case 128:
+                    boss = "Skeleton Prime";
+                    break;
+                default:
+                    boss = "error";
+                    break;
+            }
+
+		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.Red);
 		    return false;
 		}
 	}
