@@ -160,6 +160,7 @@ namespace TShockAPI
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
+            add(Permissions.managegroup, ViewGroups, "group");
 			add(Permissions.manageitem, AddItem, "additem", "banitem");
 			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
 			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
@@ -1813,6 +1814,80 @@ namespace TShockAPI
 			}
 			args.Player.SendMessage("Incorrect format: /modGroup add|del <group name> <permission to add or remove>", Color.Red);
 		}
+
+        private static void ViewGroups(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                String com = args.Parameters[0];
+
+                if( com == "list" )
+                {
+                    string ret = "Groups: ";
+                    foreach( Group g in TShock.Groups.groups )
+                    {
+                        if (ret.Length > 50)
+                        {
+                            args.Player.SendMessage(ret, Color.Green);
+                            ret = "";
+                        }
+
+                        if( ret != "" )
+                        {
+                            ret += ", ";
+                        }
+                        
+                        ret += g.Name;
+                    }
+
+                    if (ret.Length > 0)
+                    {
+                        args.Player.SendMessage(ret, Color.Green);
+                    }
+                    return;
+                }
+                else if( com == "perm")
+                {
+                    if (args.Parameters.Count > 1)
+                    {
+                        String groupname = args.Parameters[1];
+
+                        if( TShock.Groups.GroupExists( groupname ) )
+                        {
+                            string ret = String.Format("Permissions for {0}: ", groupname);
+                            foreach (string p in TShock.Utils.GetGroup( groupname ).permissions)
+                            {
+                                if (ret.Length > 50)
+                                {
+                                    args.Player.SendMessage(ret, Color.Green);
+                                    ret = "";
+                                }
+
+                                if (ret != "")
+                                {
+                                    ret += ", ";
+                                }
+
+                                ret += p;
+                            }
+                            if (ret.Length > 0)
+                            {
+                                args.Player.SendMessage(ret, Color.Green);
+                            }
+
+                            return;
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Group does not exist.", Color.Red);
+                            return;
+                        }
+                    }
+                }
+            }
+            args.Player.SendMessage("Incorrect format: /group list", Color.Red);
+            args.Player.SendMessage("                  /group perm <group name>", Color.Red);
+        }
 
 		#endregion Group Management
 
