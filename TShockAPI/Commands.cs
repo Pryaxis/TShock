@@ -160,6 +160,7 @@ namespace TShockAPI
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
+            add(Permissions.managegroup, ViewGroups, "group");
 			add(Permissions.manageitem, AddItem, "additem", "banitem");
 			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
 			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
@@ -209,6 +210,7 @@ namespace TShockAPI
 			add(Permissions.hardmode, StartHardMode, "hardmode");
 			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
 			add(Permissions.cfg, ServerInfo, "stats");
+            add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
 		}
@@ -678,6 +680,12 @@ namespace TShockAPI
 			args.Player.SendMessage("Machine name: " + Environment.MachineName);
 		}
 
+        public static void WorldInfo(CommandArgs args)
+        {
+            args.Player.SendMessage("World Name: " + Main.worldName);
+            args.Player.SendMessage("World ID: " + Main.worldID);
+        }
+
 		#endregion
 
 		#region Player Management Commands
@@ -693,12 +701,24 @@ namespace TShockAPI
 			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
 			if (players.Count > 1)
 			{
-				args.Player.SendMessage("More than one player matched your query.", Color.Red);
+                var plrMatches = "";
+                foreach (TSPlayer plr in players)
+                {
+                    if (plrMatches.Length != 0)
+                    {
+                        plrMatches += ", " + plr.Name;
+                    }
+                    else
+                    {
+                        plrMatches += plr.Name;
+                    }
+                }
+                args.Player.SendMessage("More than one player matched! Matches: " + plrMatches, Color.Red);
 				return;
 			}
 			try
 			{
-				args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName, Color.Green);
+                args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName + "Group: " + players[0].Group.Name, Color.Green);
 			}
 			catch (Exception)
 			{
@@ -727,8 +747,20 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendMessage("More than one player matched!", Color.Red);
-			}
+                var plrMatches = "";
+                foreach (TSPlayer plr in players)
+                {
+                    if (plrMatches.Length != 0)
+                    {
+                        plrMatches += ", " + plr.Name;
+                    }
+                    else
+                    {
+                        plrMatches += plr.Name;
+                    }
+                }
+                args.Player.SendMessage("More than one player matched! Matches: " + plrMatches, Color.Red);
+            }
 			else
 			{
 				string reason = args.Parameters.Count > 1
@@ -762,8 +794,20 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendMessage("More than one player matched!", Color.Red);
-			}
+                var plrMatches = "";
+                foreach (TSPlayer plr in players)
+                {
+                    if (plrMatches.Length != 0)
+                    {
+                        plrMatches += ", " + plr.Name;
+                    }
+                    else
+                    {
+                        plrMatches += plr.Name;
+                    }
+                }
+                args.Player.SendMessage("More than one player matched! Matches: " + plrMatches, Color.Red);
+            }
 			else
 			{
 				string reason = args.Parameters.Count > 1
@@ -1771,6 +1815,80 @@ namespace TShockAPI
 			args.Player.SendMessage("Incorrect format: /modGroup add|del <group name> <permission to add or remove>", Color.Red);
 		}
 
+        private static void ViewGroups(CommandArgs args)
+        {
+            if (args.Parameters.Count > 0)
+            {
+                String com = args.Parameters[0];
+
+                if( com == "list" )
+                {
+                    string ret = "Groups: ";
+                    foreach( Group g in TShock.Groups.groups )
+                    {
+                        if (ret.Length > 50)
+                        {
+                            args.Player.SendMessage(ret, Color.Green);
+                            ret = "";
+                        }
+
+                        if( ret != "" )
+                        {
+                            ret += ", ";
+                        }
+                        
+                        ret += g.Name;
+                    }
+
+                    if (ret.Length > 0)
+                    {
+                        args.Player.SendMessage(ret, Color.Green);
+                    }
+                    return;
+                }
+                else if( com == "perm")
+                {
+                    if (args.Parameters.Count > 1)
+                    {
+                        String groupname = args.Parameters[1];
+
+                        if( TShock.Groups.GroupExists( groupname ) )
+                        {
+                            string ret = String.Format("Permissions for {0}: ", groupname);
+                            foreach (string p in TShock.Utils.GetGroup( groupname ).permissions)
+                            {
+                                if (ret.Length > 50)
+                                {
+                                    args.Player.SendMessage(ret, Color.Green);
+                                    ret = "";
+                                }
+
+                                if (ret != "")
+                                {
+                                    ret += ", ";
+                                }
+
+                                ret += p;
+                            }
+                            if (ret.Length > 0)
+                            {
+                                args.Player.SendMessage(ret, Color.Green);
+                            }
+
+                            return;
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Group does not exist.", Color.Red);
+                            return;
+                        }
+                    }
+                }
+            }
+            args.Player.SendMessage("Incorrect format: /group list", Color.Red);
+            args.Player.SendMessage("                  /group perm <group name>", Color.Red);
+        }
+
 		#endregion Group Management
 
 		#region Item Management
@@ -2600,7 +2718,10 @@ namespace TShockAPI
 
 		private static void Playing(CommandArgs args)
 		{
-			args.Player.SendMessage(string.Format("Current players: {0}.", TShock.Utils.GetPlayers()), 255, 240, 20);
+		    string response = args.Player.Group.HasPermission(Permissions.seeids)
+		                          ? TShock.Utils.GetPlayersWithIds()
+		                          : TShock.Utils.GetPlayers();
+            args.Player.SendMessage(string.Format("Current players: {0}.", response), 255, 240, 20);
 			args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
 												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
 		}

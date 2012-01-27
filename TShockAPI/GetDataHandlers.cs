@@ -1426,7 +1426,7 @@ namespace TShockAPI
 					{
 						continue;
 					}*/
-					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105))
+					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105) || (tile.type == 139 && newtile.Type == 139))
 					{
 						if (TShock.Config.EnableInsecureTileFixes)
 						{
@@ -1896,7 +1896,7 @@ namespace TShockAPI
             // Server now checks owner + ident, if owner is different, server will create new projectile.
 			/*if (args.Player.Index != owner)
 			{
-                args.Player.Disable("Owner and player ID does not match to update projectile");
+                args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to update projectile", owner, args.Player.Index));
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}*/
@@ -1916,8 +1916,15 @@ namespace TShockAPI
 
 			if (!TShock.Config.IgnoreProjUpdate && TShock.CheckProjectilePermission(args.Player, index, type))
 			{
-				args.Player.Disable("Does not have projectile permission to update projectile.");
-				args.Player.RemoveProjectile(ident, owner);
+			if (type == 100)
+					{	//fix for skele prime
+						Log.Debug("Skeletron Prime's death laser ignored for cheat detection..");
+					}
+					else
+					{
+						args.Player.Disable("Does not have projectile permission to update projectile.");
+						args.Player.RemoveProjectile(ident, owner);
+					}
 				return true;
 			}
 
@@ -1936,7 +1943,14 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				args.Player.ProjectileThreshold++;
+				if ((type ==90) && (TShock.Config.ProjIgnoreShrapnel))// ignore shrapnel
+					{
+						Log.Debug("Ignoring shrapnel per config..");
+					}
+					else
+					{
+						args.Player.ProjectileThreshold++;
+					}
 			}
 
 			return false;
@@ -1959,7 +1973,7 @@ namespace TShockAPI
             // Players can no longer destroy projectiles that are not theirs as of 1.1.2
 			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
 			{
-				args.Player.Disable("Owner and player ID does not match to kill projectile");
+				args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to kill projectile of type: {3}", Main.projectile[index].owner, args.Player.Index, type));
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}*/
@@ -2360,7 +2374,14 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
-
+			if ((TShock.Config.ServerSideInventory) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.Config.LogonDiscardThreshold))
+			{
+			//Player is probably trying to sneak items onto the server in their hands!!!
+				Log.ConsoleInfo(string.Format("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				return true;
+			
+			}
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -2591,6 +2612,46 @@ namespace TShockAPI
                 return true;
             if (plr != args.Player.Index)
                 return true;
+
+		    string boss;
+            switch (Type)
+            {
+                case -2:
+                    boss = "the Snow Legion";
+                    break;
+                case -1:
+                    boss = "a Goblin Invasion";
+                    break;
+                case 4:
+                    boss = "the Eye of Cthulhu";
+                    break;
+                case 13:
+                    boss = "the Eater of Worlds";
+                    break;
+                case 50:
+                    boss = "the King Slime";
+                    break;
+                case 125:
+                    boss = "Retinazer";
+                    break;
+                case 126:
+                    boss = "Spazmatism";
+                    break;
+                case 134:
+                    boss = "the Destroyer";
+                    break;
+                case sbyte.MaxValue:
+                    boss = "Skeleton Prime";
+                    break;
+                case 128:
+                    boss = "Skeleton Prime";
+                    break;
+                default:
+                    boss = "error";
+                    break;
+            }
+
+		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.Red);
 		    return false;
 		}
 	}

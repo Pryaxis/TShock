@@ -76,11 +76,11 @@ namespace TShockAPI
 		public bool RequiresPassword;
 		public bool SilentKickInProgress;
 		public List<Point> IceTiles;
-                public long RPm=1;
-                public long WPm=1;
-                public long SPm=1;
-                public long BPm=1;
-
+        public long RPm=1;
+        public long WPm=1;
+        public long SPm=1;
+        public long BPm=1;
+		public long LoginMS;
 
 		public bool RealPlayer
 		{
@@ -268,8 +268,8 @@ namespace TShockAPI
 
 			SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
 
-			TPlayer.position.X = tilex * 16;
-			TPlayer.position.Y = tiley * 16;
+			TPlayer.position.X = (float)(tilex * 16 + 8 - TPlayer.width /2);
+			TPlayer.position.Y = (float)(tiley * 16 - TPlayer.height);
 
 			return true;
 		}
@@ -308,22 +308,26 @@ namespace TShockAPI
 			}
 		}
 
-		public virtual bool SendTileSquare(int x, int y, int size = 10)
-		{
-			try
-			{
-				int num = (size - 1)/2;
-				SendData(PacketTypes.TileSendSquare, "", size, (x - num), (y - num));
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex.ToString());
-			}
-			return false;
-		}
+        public virtual bool SendTileSquare(int x, int y, int size = 10)
+        {
+            try
+            {
+                int num = (size - 1)/2;
+                SendData(PacketTypes.TileSendSquare, "", size, (x - num), (y - num));
+                return true;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                // This is expected if square exceeds array.
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+            return false;
+        }
 
-		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
+	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
 			// This is for special pickaxe/hammers/swords etc

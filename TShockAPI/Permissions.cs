@@ -158,7 +158,10 @@ namespace TShockAPI
         [Description("User can start invasions (Goblin/Snow Legion) using items")]
         public static readonly string startinvasion;
 
-		static Permissions()
+        [Description("User can see the id of players with /who")]
+        public static readonly string seeids;
+
+        static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
