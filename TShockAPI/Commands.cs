@@ -209,6 +209,7 @@ namespace TShockAPI
 			add(Permissions.hardmode, StartHardMode, "hardmode");
 			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
 			add(Permissions.cfg, ServerInfo, "stats");
+            add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
 		}
@@ -677,6 +678,12 @@ namespace TShockAPI
 			args.Player.SendMessage("Proc count: " + Environment.ProcessorCount);
 			args.Player.SendMessage("Machine name: " + Environment.MachineName);
 		}
+
+        public static void WorldInfo(CommandArgs args)
+        {
+            args.Player.SendMessage("World Name: " + Main.worldName);
+            args.Player.SendMessage("World ID: " + Main.worldID);
+        }
 
 		#endregion
 
