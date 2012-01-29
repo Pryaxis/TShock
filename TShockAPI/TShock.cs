@@ -492,6 +492,8 @@ namespace TShockAPI
 					if (player.TileKillThreshold > 0)
 					{
 						player.TileKillThreshold = 0;
+						//We don't want to revert the entire map in case of a disable.
+						player.TilesDestroyed.Clear();
 					}
 					if (player.TilesCreated != null)
 					{
