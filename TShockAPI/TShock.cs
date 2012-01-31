@@ -108,7 +108,8 @@ namespace TShockAPI
 				Directory.CreateDirectory(SavePath);
 
 #if DEBUG
-			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+            DateTime now = DateTime.Now;
+			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All, false);
 #else
 			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
