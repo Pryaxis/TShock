@@ -986,6 +986,18 @@ namespace TShockAPI
 
 		private static void Off(CommandArgs args)
 		{
+
+			if (TShock.Config.ServerSideInventory)
+			{
+				foreach (TSPlayer player in TShock.Players)
+				{
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					{
+						TShock.InventoryDB.InsertPlayerData(player);
+					}
+				}
+			}
+
 			TShock.Utils.ForceKickAll("Server shutting down!");
 			WorldGen.saveWorld();
 			Netplay.disconnect = true;
