@@ -107,13 +107,13 @@ namespace TShockAPI
 			if (!Directory.Exists(SavePath))
 				Directory.CreateDirectory(SavePath);
 
-#if DEBUG
             DateTime now = DateTime.Now;
+#if DEBUG
 			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All, false);
 #else
-			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
+			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			try
 			{
