@@ -2132,8 +2132,23 @@ namespace TShockAPI
 			if (args.Parameters.Count != 1)
 			{
 				args.Player.SendMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>", Color.Red);
+                args.Player.SendMessage("Proper syntax: /maxspawns show", Color.Red);
+                args.Player.SendMessage("Proper syntax: /maxspawns default", Color.Red);
 				return;
 			}
+
+            if (args.Parameters[0] == "show")
+            {
+                args.Player.SendMessage("Current maximum spawns is: " + TShock.Config.DefaultMaximumSpawns);
+                return;
+            }
+            
+            if(args.Parameters[0]=="default"){
+                TShock.Config.DefaultMaximumSpawns = 5;
+                NPC.defaultMaxSpawns = 5;
+                TShock.Utils.Broadcast(string.Format("{0} changed the maximum spawns to: 5", args.Player.Name));
+                return;
+            }
 
 			int amount = Convert.ToInt32(args.Parameters[0]);
 			int.TryParse(args.Parameters[0], out amount);
@@ -2147,8 +2162,24 @@ namespace TShockAPI
 			if (args.Parameters.Count != 1)
 			{
 				args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnrate <spawnrate>", Color.Red);
+                args.Player.SendMessage("/spawnrate show", Color.Red);
+                args.Player.SendMessage("/spawnrate default", Color.Red);
 				return;
 			}
+
+            if (args.Parameters[0] == "show")
+            {
+                args.Player.SendMessage("Current spawn rate is: " + TShock.Config.DefaultSpawnRate);
+                return;
+            }
+
+            if (args.Parameters[0] == "default")
+            {
+                TShock.Config.DefaultSpawnRate = 600;
+                NPC.defaultSpawnRate = 600;
+                TShock.Utils.Broadcast(string.Format("{0} changed the spawn rate to: 600", args.Player.Name));
+                return;
+            }
 
 			int amount = Convert.ToInt32(args.Parameters[0]);
 			int.TryParse(args.Parameters[0], out amount);
