@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using TShockAPI.DB;
+using System.Reflection;
 
 namespace TShockAPI
 {
@@ -129,6 +130,7 @@ namespace TShockAPI
 			add(Permissions.maintenance, ClearBans, "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
+            add(Permissions.maintenance, Restart, "restart"); //Added restart command
 			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
@@ -1002,6 +1004,27 @@ namespace TShockAPI
 			WorldGen.saveWorld();
 			Netplay.disconnect = true;
 		}
+        //Added restart command
+        private static void Restart(CommandArgs args)
+        {
+
+            if (TShock.Config.ServerSideInventory)
+            {
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+                    {
+                        TShock.InventoryDB.InsertPlayerData(player);
+                    }
+                }
+            }
+
+            TShock.Utils.ForceKickAll("Server restarting!");
+            WorldGen.saveWorld();
+            Netplay.disconnect = true;
+            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+            Environment.Exit(0);
+        }
 
 		private static void OffNoSave(CommandArgs args)
 		{
