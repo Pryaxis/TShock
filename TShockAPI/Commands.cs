@@ -1007,7 +1007,9 @@ namespace TShockAPI
         //Added restart command
         private static void Restart(CommandArgs args)
         {
-
+	if (Main.runningMono){
+	Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
+	}else{
             if (TShock.Config.ServerSideInventory)
             {
                 foreach (TSPlayer player in TShock.Players)
@@ -1024,7 +1026,7 @@ namespace TShockAPI
             Netplay.disconnect = true;
             System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
             Environment.Exit(0);
-        }
+        }}
 
 		private static void OffNoSave(CommandArgs args)
 		{

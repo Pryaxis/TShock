@@ -44,6 +44,28 @@ namespace TShockAPI.DB
 			creator.EnsureExists(table);
 		}
 
+		public Vector2 CheckLeavePos(string name)
+		{
+			try
+			{
+				using (var reader = database.QueryReader("SELECT * FROM RememberedPos WHERE Name=@0", name))
+				{
+					if (reader.Read())
+					{
+						return new Vector2(reader.Get<int>("X"), reader.Get<int>("Y"));
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+
+			return new Vector2();
+		}
+
+
+
 		public Vector2 GetLeavePos(string name, string IP)
 		{
 			try
@@ -66,12 +88,11 @@ namespace TShockAPI.DB
 
 		public void InsertLeavePos(string name, string IP, int X, int Y)
 		{
-			if (GetLeavePos(name, IP) == Vector2.Zero)
+			if (CheckLeavePos(name) == Vector2.Zero)
 			{
 				try
 				{
-					database.Query("INSERT INTO RememberedPos (Name, IP, X, Y, WorldID) VALUES (@0, @1, @2, @3, @4);", name, IP, X,
-					               Y + 3, Main.worldID.ToString());
+					database.Query("INSERT INTO RememberedPos (Name, IP, X, Y, WorldID) VALUES (@0, @1, @2, @3, @4);", name, IP, X, Y , Main.worldID.ToString());
 				}
 				catch (Exception ex)
 				{
@@ -82,8 +103,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("UPDATE RememberedPos SET X = @0, Y = @1 WHERE Name = @2 AND IP = @3 AND WorldID = @4;", X, Y + 3,
-					               name, IP, Main.worldID.ToString());
+					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2 WHERE Name = @3 AND WorldID = @4;", X, Y, IP, name, Main.worldID.ToString());
 				}
 				catch (Exception ex)
 				{
