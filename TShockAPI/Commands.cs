@@ -1516,6 +1516,9 @@ namespace TShockAPI
                         case 116:
                             Main.tile[x, y].type = 169;
                             break;
+                        case 118:
+                            Main.tile[x, y].type = 38;
+                            break;
                         default:
                             continue;
                     }
