@@ -215,6 +215,7 @@ namespace TShockAPI
             add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
+            add(Permissions.converthardmode, RemoveSpecial, "removespecial");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -1431,7 +1432,6 @@ namespace TShockAPI
 				{
 					switch (Main.tile[x, y].type)
 					{
-						case 22:
 						case 25:
 							Main.tile[x, y].type = 117;
 							break;
@@ -1488,6 +1488,47 @@ namespace TShockAPI
 			TShock.Utils.Broadcast("Hallow conversion done.");
 		}
 
+        private static void RemoveSpecial(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server may lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 117:
+                        case 25:
+                            Main.tile[x, y].type = 1;
+                            break;
+                        case 109:
+                        case 23:
+                            Main.tile[x, y].type = 2;
+                            break;
+                        case 32:
+                            Main.tile[x, y].type = 0;
+                            Main.tile[x, y].active = false;
+                            break;
+                        case 24:
+                            Main.tile[x, y].type = 3;
+                            break;
+                        case 112:
+                        case 116:
+                            Main.tile[x, y].type = 169;
+                            break;
+                        case 113:
+                            Main.tile[x, y].type = 38;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            WorldGen.CountTiles(0);
+            TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
+            Netplay.ResetSections();
+            TShock.Utils.Broadcast("Special tile conversion done.");
+        }
 		#endregion Cause Events and Spawn Monsters Commands
 
 		#region Teleport Commands
