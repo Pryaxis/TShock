@@ -1432,7 +1432,6 @@ namespace TShockAPI
 				{
 					switch (Main.tile[x, y].type)
 					{
-						case 22:
 						case 25:
 							Main.tile[x, y].type = 117;
 							break;
@@ -1498,7 +1497,6 @@ namespace TShockAPI
                 {
                     switch (Main.tile[x, y].type)
                     {
-                        case 22:
                         case 117:
                         case 25:
                             Main.tile[x, y].type = 1;
