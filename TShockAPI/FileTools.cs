@@ -74,24 +74,13 @@ namespace TShockAPI
 			CreateIfNot(MotdPath,
 			            "This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
 			CreateIfNot(WhitelistPath);
+			if (File.Exists(ConfigPath))
+			{
+				TShock.Config = ConfigFile.Read(ConfigPath);
+				// Add all the missing config properties in the json file
+			}
+			TShock.Config.Write(ConfigPath);
 
-			try
-			{
-				if (File.Exists(ConfigPath))
-				{
-					TShock.Config = ConfigFile.Read(ConfigPath);
-					// Add all the missing config properties in the json file
-				}
-				TShock.Config.Write(ConfigPath);
-			}
-			catch (Exception ex)
-			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Error in config file");
-				Console.ForegroundColor = ConsoleColor.Gray;
-				Log.Error("Config Exception");
-				Log.Error(ex.ToString());
-			}
 		}
 
 		/// <summary>
