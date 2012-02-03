@@ -41,7 +41,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "1.1.2 was sudden";
+		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
 
 		public static string SavePath = "tshock";
 
@@ -107,12 +107,13 @@ namespace TShockAPI
 			if (!Directory.Exists(SavePath))
 				Directory.CreateDirectory(SavePath);
 
+            DateTime now = DateTime.Now;
 #if DEBUG
-			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All, false);
+			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All, false);
 #else
-			Log.Initialize(Path.Combine(SavePath, "log.txt"), LogLevel.All & ~LogLevel.Debug, false);
+			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All & ~LogLevel.Debug, false);
 #endif
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			try
 			{
@@ -492,6 +493,8 @@ namespace TShockAPI
 					if (player.TileKillThreshold > 0)
 					{
 						player.TileKillThreshold = 0;
+						//We don't want to revert the entire map in case of a disable.
+						player.TilesDestroyed.Clear();
 					}
 					if (player.TilesCreated != null)
 					{
@@ -851,10 +854,11 @@ namespace TShockAPI
 
 			if (Config.RememberLeavePos)
 			{
+			if (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero){
 				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
 				player.LastNetPosition = pos;
 				player.Teleport((int) pos.X, (int) pos.Y + 3);
-			}
+			}}
 
 			e.Handled = true;
 		}

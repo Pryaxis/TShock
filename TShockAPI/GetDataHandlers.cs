@@ -412,7 +412,47 @@ namespace TShockAPI
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
 		}
-
+		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
+		{
+			int num = (int)(Position.X / 16f) - 1;
+			int num2 = (int)((Position.X + (float)Width) / 16f) + 2;
+			int num3 = (int)(Position.Y / 16f) - 1;
+			int num4 = (int)((Position.Y + (float)Height) / 16f) + 2;
+			if (num < 0)
+			{
+				num = 0;
+			}
+			if (num2 > Main.maxTilesX)
+			{
+				num2 = Main.maxTilesX;
+			}
+			if (num3 < 0)
+			{
+				num3 = 0;
+			}
+			if (num4 > Main.maxTilesY)
+			{
+				num4 = Main.maxTilesY;
+			}
+			for (int i = num; i < num2; i++)
+			{
+				for (int j = num3; j < num4; j++)
+				{
+					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)))
+					{
+						Vector2 vector;
+						vector.X = (float)(i * 16);
+						vector.Y = (float)(j * 16);
+						if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + 16f)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		
 		/// <summary>
 		/// For use in a SendTileSquare event
 		/// </summary>
@@ -1801,7 +1841,7 @@ namespace TShockAPI
 				}
 
 				if (!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) &&
-					Collision.SolidCollision(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip)
+					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip)
 				{
 					int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
 					int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);

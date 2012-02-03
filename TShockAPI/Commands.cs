@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using TShockAPI.DB;
+using System.Reflection;
 
 namespace TShockAPI
 {
@@ -129,6 +130,7 @@ namespace TShockAPI
 			add(Permissions.maintenance, ClearBans, "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
+            add(Permissions.maintenance, Restart, "restart"); //Added restart command
 			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
@@ -213,6 +215,7 @@ namespace TShockAPI
             add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
+            add(Permissions.converthardmode, RemoveSpecial, "removespecial");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -986,10 +989,45 @@ namespace TShockAPI
 
 		private static void Off(CommandArgs args)
 		{
+
+			if (TShock.Config.ServerSideInventory)
+			{
+				foreach (TSPlayer player in TShock.Players)
+				{
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					{
+						TShock.InventoryDB.InsertPlayerData(player);
+					}
+				}
+			}
+
 			TShock.Utils.ForceKickAll("Server shutting down!");
 			WorldGen.saveWorld();
 			Netplay.disconnect = true;
 		}
+        //Added restart command
+        private static void Restart(CommandArgs args)
+        {
+	if (Main.runningMono){
+	Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
+	}else{
+            if (TShock.Config.ServerSideInventory)
+            {
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+                    {
+                        TShock.InventoryDB.InsertPlayerData(player);
+                    }
+                }
+            }
+
+            TShock.Utils.ForceKickAll("Server restarting!");
+            WorldGen.saveWorld();
+            Netplay.disconnect = true;
+            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+            Environment.Exit(0);
+        }}
 
 		private static void OffNoSave(CommandArgs args)
 		{
@@ -1394,7 +1432,6 @@ namespace TShockAPI
 				{
 					switch (Main.tile[x, y].type)
 					{
-						case 22:
 						case 25:
 							Main.tile[x, y].type = 117;
 							break;
@@ -1451,6 +1488,47 @@ namespace TShockAPI
 			TShock.Utils.Broadcast("Hallow conversion done.");
 		}
 
+        private static void RemoveSpecial(CommandArgs args)
+        {
+            TShock.Utils.Broadcast("Server may lag for a moment.", Color.Red);
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 117:
+                        case 25:
+                            Main.tile[x, y].type = 1;
+                            break;
+                        case 109:
+                        case 23:
+                            Main.tile[x, y].type = 2;
+                            break;
+                        case 32:
+                            Main.tile[x, y].type = 0;
+                            Main.tile[x, y].active = false;
+                            break;
+                        case 24:
+                            Main.tile[x, y].type = 3;
+                            break;
+                        case 112:
+                        case 116:
+                            Main.tile[x, y].type = 169;
+                            break;
+                        case 113:
+                            Main.tile[x, y].type = 38;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            WorldGen.CountTiles(0);
+            TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
+            Netplay.ResetSections();
+            TShock.Utils.Broadcast("Special tile conversion done.");
+        }
 		#endregion Cause Events and Spawn Monsters Commands
 
 		#region Teleport Commands
@@ -2120,8 +2198,23 @@ namespace TShockAPI
 			if (args.Parameters.Count != 1)
 			{
 				args.Player.SendMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>", Color.Red);
+                args.Player.SendMessage("Proper syntax: /maxspawns show", Color.Red);
+                args.Player.SendMessage("Proper syntax: /maxspawns default", Color.Red);
 				return;
 			}
+
+            if (args.Parameters[0] == "show")
+            {
+                args.Player.SendMessage("Current maximum spawns is: " + TShock.Config.DefaultMaximumSpawns);
+                return;
+            }
+            
+            if(args.Parameters[0]=="default"){
+                TShock.Config.DefaultMaximumSpawns = 5;
+                NPC.defaultMaxSpawns = 5;
+                TShock.Utils.Broadcast(string.Format("{0} changed the maximum spawns to: 5", args.Player.Name));
+                return;
+            }
 
 			int amount = Convert.ToInt32(args.Parameters[0]);
 			int.TryParse(args.Parameters[0], out amount);
@@ -2135,8 +2228,24 @@ namespace TShockAPI
 			if (args.Parameters.Count != 1)
 			{
 				args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnrate <spawnrate>", Color.Red);
+                args.Player.SendMessage("/spawnrate show", Color.Red);
+                args.Player.SendMessage("/spawnrate default", Color.Red);
 				return;
 			}
+
+            if (args.Parameters[0] == "show")
+            {
+                args.Player.SendMessage("Current spawn rate is: " + TShock.Config.DefaultSpawnRate);
+                return;
+            }
+
+            if (args.Parameters[0] == "default")
+            {
+                TShock.Config.DefaultSpawnRate = 600;
+                NPC.defaultSpawnRate = 600;
+                TShock.Utils.Broadcast(string.Format("{0} changed the spawn rate to: 600", args.Player.Name));
+                return;
+            }
 
 			int amount = Convert.ToInt32(args.Parameters[0]);
 			int.TryParse(args.Parameters[0], out amount);
