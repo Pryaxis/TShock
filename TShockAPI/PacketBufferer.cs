@@ -196,15 +196,15 @@ namespace TShockAPI
 			}
 			catch (ObjectDisposedException e)
 			{
-                Log.Error(e.ToString());
+                Log.Warn(e.ToString());
 			}
 			catch (SocketException e)
 			{
-                Log.Error(e.ToString());
+                Log.Warn(e.ToString());
 			}
 			catch (IOException e)
 			{
-                Log.Error(e.ToString());
+                Log.Warn(e.ToString());
 			}
 			return false;
 		}
