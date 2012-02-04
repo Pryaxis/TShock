@@ -236,7 +236,7 @@ namespace TShockAPI.DB
 			}
 			for (int i = 0; i < Regions.Count; i++)
 			{
-				if (Regions[i].InArea(new Rectangle(x, y, 0, 0)) && !Regions[i].HasPermissionToBuildInRegion(ply))
+				if (Regions[i].InArea(x,y) && !Regions[i].HasPermissionToBuildInRegion(ply))
 				{
 					return false;
 				}
@@ -530,6 +530,18 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
+		
+		public bool InArea(int x, int y) //overloaded with x,y
+		{
+			
+				if (x >= Area.Left && x <= Area.Right && y >= Area.Top && y <= Area.Bottom)
+				{
+					return true;
+				}
+			
+			return false;
+		}
+
 
 		public bool HasPermissionToBuildInRegion(TSPlayer ply)
 		{
