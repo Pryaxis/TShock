@@ -151,6 +151,8 @@ namespace TShockAPI
 
 		[Description("Enable Server Side Inventory checks, EXPERIMENTAL")] public bool ServerSideInventory;
 
+        [Description("How often SSI should save, in minutes")] public int ServerSideInventorySave = 15;
+
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON")] public int LogonDiscardThreshold=250;
 		
 		[Description("Disables reporting of playercount to the stat system.")] public bool DisablePlayerCountReporting;
