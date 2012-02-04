@@ -856,7 +856,7 @@ namespace TShockAPI
 			{
 			if (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero){
 				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
-				player.LastNetPosition = pos;
+
 				player.Teleport((int) pos.X, (int) pos.Y + 3);
 			}}
 
