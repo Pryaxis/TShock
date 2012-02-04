@@ -1086,7 +1086,7 @@ namespace TShockAPI
             if (args.Parameters.Count < 1)
             {
                 ply.SendMessage("Picking a random ore!", Color.Green);
-                num = WorldGen.genRand.Next(2);
+                num = WorldGen.genRand.Next(6);
             }
             else if (args.Parameters[0] == "cobalt")
             {
@@ -1096,6 +1096,23 @@ namespace TShockAPI
             {
                 num = 1;
             }
+            else if (args.Parameters[0] == "copper")
+            {
+                num = 3;
+            }
+            else if (args.Parameters[0] == "iron")
+            {
+                num = 4;
+            }
+            else if (args.Parameters[0] == "silver")
+            {
+                num = 6;
+            }
+            else if (args.Parameters[0] == "gold")
+            {
+                num = 5;
+            }
+
             else
             {
                 num = 2;
@@ -1110,6 +1127,27 @@ namespace TShockAPI
 		{
 			num = 108;
 		}
+		else if (num == 3)
+		{
+			num = 7;
+			num3 *= 1.1f;
+		}
+		else if (num == 4)
+		{
+			num = 6;
+			num3 *= 1.1f;
+		}
+		else if (num == 5)
+		{
+			num = 8;
+			num3 *= 1.1f;
+		}
+		else if (num == 6)
+		{
+			num = 9;
+			num3 *= 1.1f;
+		}
+
 		else
 		{
 			num = 111;
@@ -1127,7 +1165,7 @@ namespace TShockAPI
 			{
 				int i2 = WorldGen.genRand.Next(100, Main.maxTilesX - 100);
 				double num6 = Main.worldSurface;
-				if (num == 108)
+				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9))
 				{
 					num6 = Main.rockLayer;
 				}
