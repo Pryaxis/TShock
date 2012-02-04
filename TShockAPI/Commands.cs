@@ -721,7 +721,7 @@ namespace TShockAPI
 			}
 			try
 			{
-                args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName + "Group: " + players[0].Group.Name, Color.Green);
+                args.Player.SendMessage("IP Address: " + players[0].IP + " Logged In As: " + players[0].UserAccountName + " Group: " + players[0].Group.Name, Color.Green);
 			}
 			catch (Exception)
 			{
