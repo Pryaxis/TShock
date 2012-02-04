@@ -70,7 +70,7 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				using (var reader = database.QueryReader("SELECT * FROM RememberedPos WHERE Name=@0 AND IP=@1", name, IP))
+				using (var reader = database.QueryReader("SELECT * FROM RememberedPos WHERE Name=@0 AND IP=@1 AND WorldID=@2", name, IP, Main.worldID.ToString()))
 				{
 					if (reader.Read())
 					{
