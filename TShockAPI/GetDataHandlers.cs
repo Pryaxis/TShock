@@ -57,6 +57,11 @@ namespace TShockAPI
 		/// </summary>
 		public class TileEditEventArgs : HandledEventArgs
 		{
+            /// <summary>
+            /// The TSPlayer who made the tile edit
+            /// </summary>
+            public TSPlayer Player { get; set; }
+
 			/// <summary>
 			/// The tile coordinate on the X plane
 			/// </summary>
@@ -82,13 +87,14 @@ namespace TShockAPI
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(int x, int y, byte type, byte editType)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType)
 		{
 			if (TileEdit == null)
 				return false;
 
 			var args = new TileEditEventArgs
 			{
+                Player = ply,
 				X = x,
 				Y = y,
 				Type = type,
@@ -1598,7 +1604,7 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
 			var tiletype = args.Data.ReadInt8();
-			if (OnTileEdit(tileX, tileY, tiletype, type))
+			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type))
 				return true;
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;

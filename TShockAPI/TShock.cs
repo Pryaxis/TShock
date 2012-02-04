@@ -446,7 +446,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 
-			if ((DateTime.UtcNow - LastSave).TotalMinutes >= 15)
+			if ((DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideInventorySave)
 			{
 				foreach (TSPlayer player in Players)
 				{
