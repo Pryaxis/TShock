@@ -1,8 +1,8 @@
 TShock is a server modification based upon High6's mod API that allows for basic server administration commands.
 
-__Constant builds__: http://ci.tshock.co/
-__Bug Reporting__: http://ci.tshock.co:8080/
+__Continuous Integration__: http://ci.tshock.co/
 __Support Forums__: http://tshock.co/
+__Wiki__: http://ci.tshock.co:8080/
 
 ----
 
@@ -41,6 +41,8 @@ Required:
 
 Optional:
 - Build Version Increment (http://autobuildversion.codeplex.com/).
+
+----
 
 ### Dev Team Guidelines
 
