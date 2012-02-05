@@ -1,4 +1,4 @@
-TShock is a server modification based upon High6's mod API that allows for basic server administration commands.
+TShock is a server modification for Terraria.
 
 __Continuous Integration__: http://ci.tshock.co/
 
