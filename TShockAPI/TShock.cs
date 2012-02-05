@@ -371,14 +371,19 @@ namespace TShockAPI
 				{
 					string token = Convert.ToString(parms[++i]);
 					RESTStartupTokens.Add(token, "null");
+					Console.WriteLine("Startup parameter overrode REST token.");
 				}
 				if (parms[i].ToLower() == "-rest-enabled")
 				{
-					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
+					Config.RestApiEnabled = true;
+					Console.WriteLine("Startup parameter overrode REST enable.");
+
 				}
 				if (parms[i].ToLower() == "-rest-port")
 				{
 					Config.RestApiPort = Convert.ToInt32(parms[++i]);
+					Console.WriteLine("Startup parameter overrode REST port.");
+
 				}
 			}
 		}
