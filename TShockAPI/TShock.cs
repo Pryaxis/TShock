@@ -376,6 +376,14 @@ namespace TShockAPI
 				{
 					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
 				}
+				if (parms[i].ToLower() == "-rest-enabled")
+				{
+					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
+				}
+				if (parms[i].ToLower() == "-rest-port")
+				{
+					Config.RestApiPort = Convert.ToInt32(parms[++i]);
+				}
 			}
 		}
 
