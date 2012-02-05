@@ -375,7 +375,7 @@ namespace TShockAPI
 				}
 				if (parms[i].ToLower() == "-rest-enabled")
 				{
-					Config.RestApiEnabled = true;
+					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
 					Console.WriteLine("Startup parameter overrode REST enable.");
 
 				}
