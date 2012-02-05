@@ -372,6 +372,10 @@ namespace TShockAPI
 					string token = Convert.ToString(parms[++i]);
 					RESTStartupTokens.Add(token, "null");
 				}
+				if (parms[i].ToLower() == "-rest-enabled")
+				{
+					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
+				}
 			}
 		}
 
