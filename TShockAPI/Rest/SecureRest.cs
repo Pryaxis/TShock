@@ -43,6 +43,10 @@ namespace Rests
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) {RequiresToken = false});
 			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { RequiresToken = false });
 			Register(new RestCommand("/token/destroy/{token}", DestroyToken) {RequiresToken = true});
+			foreach (KeyValuePair<string, string> t in TShockAPI.TShock.RESTStartupTokens)
+			{
+				Tokens.Add(t.Key, t.Value);
+			}
 		}
 
 		private object DestroyToken(RestVerbs verbs, IParameterCollection parameters)
