@@ -64,6 +64,10 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = new Utils();
 		public static StatTracker StatTracker = new StatTracker();
+		/// <summary>
+		/// Used for implementing REST Tokens prior to the REST system starting up.
+		/// </summary>
+		public static Dictionary<string, string> RESTStartupTokens = new Dictionary<string, string>();
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -128,7 +132,7 @@ namespace TShockAPI
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
 
-				HandleCommandLine_Port(Environment.GetCommandLineArgs());
+				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
@@ -173,7 +177,7 @@ namespace TShockAPI
 				Itembans = new ItemManager(DB);
 				RememberedPos = new RemeberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
-				RestApi = new SecureRest(Netplay.serverListenIP, 8080);
+				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
 				RestApi.Verify += RestApi_Verify;
 				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
@@ -351,7 +355,7 @@ namespace TShockAPI
 			}
 		}
 
-		private void HandleCommandLine_Port(string[] parms)
+		private void HandleCommandLinePostConfigLoad(string[] parms)
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
@@ -362,6 +366,11 @@ namespace TShockAPI
 					Config.ServerPort = port;
 					OverridePort = true;
 					Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
+				}
+				if (parms[i].ToLower() == "-rest-token")
+				{
+					string token = Convert.ToString(parms[++i]);
+					RESTStartupTokens.Add(token, "null");
 				}
 			}
 		}
