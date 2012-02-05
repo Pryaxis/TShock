@@ -1,7 +1,9 @@
 TShock is a server modification based upon High6's mod API that allows for basic server administration commands.
 
 __Continuous Integration__: http://ci.tshock.co/
+
 __Support Forums__: http://tshock.co/
+
 __Wiki__: http://ci.tshock.co:8080/
 
 ----
@@ -27,6 +29,8 @@ We love IRC (although a little less than Teamspeak). If you need support, or jus
 __IP__: irc.shankshock.com
 
 __Channel__: #terraria-dev or #terraria
+
+----
 
 ### Pull Request Dev Guidelines
 
