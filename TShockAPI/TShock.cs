@@ -686,7 +686,7 @@ namespace TShockAPI
 					InventoryDB.InsertPlayerData(tsplr);
 				}
 
-				if (Config.RememberLeavePos)
+				if ((Config.RememberLeavePos) &&(!tsplr.LoginHarassed))
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
@@ -860,10 +860,12 @@ namespace TShockAPI
 					player.SendMessage(
 						player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!",
 						Color.Red);
+						player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
 					player.SendMessage("Please /register or /login to play!", Color.Red);
+					player.LoginHarassed = true;
 				}
 			}
 
