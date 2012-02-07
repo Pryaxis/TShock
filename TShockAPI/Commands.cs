@@ -407,8 +407,18 @@ namespace TShockAPI
                         TShock.InventoryDB.InsertPlayerData(args.Player);
                     }
 				    args.Player.SendMessage("Authenticated as " + user.Name + " successfully.", Color.LimeGreen);
+
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name);
-				}
+					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos)){
+					if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
+					{
+					Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
+
+					args.Player.Teleport((int) pos.X, (int) pos.Y + 3);
+					}
+					args.Player.LoginHarassed = false;
+				
+				}}
 				else
 				{
 					args.Player.SendMessage("Incorrect password", Color.LimeGreen);
