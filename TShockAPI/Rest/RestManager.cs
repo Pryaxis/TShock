@@ -148,6 +148,7 @@ namespace TShockAPI
 			ret["playercount"] = Convert.ToString(activeplayers.Count());
 			ret["players"] = currentPlayers;
 
+			ret["maxplayers"] = TShock.Config.MaxSlots;
 			return ret;
 		}
 
