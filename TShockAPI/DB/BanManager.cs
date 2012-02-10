@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using MySql.Data.MySqlClient;
@@ -63,6 +64,28 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			catch (Exception ex)
 			{
 				Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
+		public List<Ban> GetBans()
+		{
+			List<Ban> banlist = new List<Ban>();
+			try
+			{
+				using (var reader = database.QueryReader("SELECT * FROM Bans"))
+				{
+					while (reader.Read())
+					{
+						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason")));						
+					}
+					return banlist;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+				Console.WriteLine(ex.StackTrace);
 			}
 			return null;
 		}

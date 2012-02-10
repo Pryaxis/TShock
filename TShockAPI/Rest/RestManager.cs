@@ -48,6 +48,7 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/bans/read", BanInfoV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/bans/destroy", BanDestroyV2) { RequiresToken = true });
 
+			Rest.Register(new RestCommand("/lists/bans", BanListIPs) { RequiresToken = true });
 			Rest.Register(new RestCommand("/lists/players", PlayerList) {RequiresToken = true});
 
 			Rest.Register(new RestCommand("/world/read", WorldRead) {RequiresToken = true});
@@ -251,6 +252,14 @@ namespace TShockAPI
 		#endregion
 
 		#region RestBanMethods
+
+		private object BanListIPs(RestVerbs verbs, IParameterCollection parameters)
+		{
+			RestObject returnItem = new RestObject("200");
+			returnItem.Add("bans", TShock.Bans.GetBans());
+
+			return returnItem;
+		}
 
 		private object BanCreate(RestVerbs verbs, IParameterCollection parameters)
 		{
