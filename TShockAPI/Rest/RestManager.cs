@@ -578,6 +578,12 @@ namespace TShockAPI
 		{
 			var returnBlock = new Dictionary<string, object>();
 			var playerParam = parameters["player"];
+			if (playerParam == null)
+			{
+				returnBlock.Add("status", "400");
+				returnBlock.Add("error", "Unspecified name.");
+				return returnBlock;
+			}
 			var found = TShock.Utils.FindPlayer(playerParam);
 			var reason = parameters["reason"];
 			if (found.Count == 0)
