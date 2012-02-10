@@ -1562,7 +1562,7 @@ namespace TShockAPI
                             break;
                         case 112:
                         case 116:
-                            Main.tile[x, y].type = 169;
+                            Main.tile[x, y].type = 53;
                             break;
                         case 113:
                             Main.tile[x, y].type = 38;
