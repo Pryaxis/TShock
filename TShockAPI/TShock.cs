@@ -385,6 +385,11 @@ namespace TShockAPI
 					Console.WriteLine("Startup parameter overrode REST port.");
 
 				}
+                if (parms[i].ToLower() == "-maxplayers")
+                {
+                    Config.MaxSlots = Convert.ToInt32(parms[++i]);
+                    Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+                }
 			}
 		}
 
