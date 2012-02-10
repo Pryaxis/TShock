@@ -161,6 +161,10 @@ namespace TShockAPI
 			string playerlist = "";
 			foreach (var TSPlayer in TShock.Players)
 			{
+				if (TSPlayer == null)
+				{
+					continue;
+				}
 				playerlist += playerlist == "" ? TSPlayer.UserAccountName : "\t" + TSPlayer.UserAccountName;
 			}
             var returnBlock = new Dictionary<string, string>();
