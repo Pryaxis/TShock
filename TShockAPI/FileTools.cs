@@ -115,5 +115,29 @@ namespace TShockAPI
 				return true;
 			}
 		}
+        public static bool CheckWhitelist(string ip)
+        {
+            CreateIfNot(WhitelistPath, "127.0.0.1");
+            using (var tr = new StreamReader(WhitelistPath))
+            {
+                string whitelist = tr.ReadToEnd();
+                ip = TShock.Utils.GetRealIP(ip);
+                bool contains = whitelist.Contains(ip);
+                if (!contains)
+                {
+                    foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
+                    {
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+                        contains = TShock.Utils.GetIPv4Address(line).Equals(ip);
+                        if (contains)
+                            return true;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
 	}
 }
