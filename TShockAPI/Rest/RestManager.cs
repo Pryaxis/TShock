@@ -48,8 +48,9 @@ namespace TShockAPI
 			Rest.Register(new RestCommand("/v2/bans/read", BanInfoV2) { RequiresToken = true });
 			Rest.Register(new RestCommand("/v2/bans/destroy", BanDestroyV2) { RequiresToken = true });
 
-			Rest.Register(new RestCommand("/lists/bans", BanListIPs) { RequiresToken = true });
+			Rest.Register(new RestCommand("/v2/lists/bans", BanListIPs) { RequiresToken = true });
 			Rest.Register(new RestCommand("/lists/players", PlayerList) {RequiresToken = true});
+			Rest.Register(new RestCommand("/v2/lists/players", PlayerListV2) { RequiresToken = true });
 
 			Rest.Register(new RestCommand("/world/read", WorldRead) {RequiresToken = true});
 			Rest.Register(new RestCommand("/world/meteor", WorldMeteor) {RequiresToken = true});
@@ -543,12 +544,20 @@ namespace TShockAPI
 			return returnBlock;
 		}
 
+		private object PlayerListV2(RestVerbs verbs, IParameterCollection parameters)
+		{
+			RestObject returnBlock = new RestObject("200");
+			returnBlock.Add("players", TShock.Players.Where(p => p != null && p.Active));
+			return returnBlock;
+		}
+
 		private object PlayerList(RestVerbs verbs, IParameterCollection parameters)
 		{
 			var activeplayers = Main.player.Where(p => p != null && p.active).ToList();
 			string currentPlayers = string.Join(", ", activeplayers.Select(p => p.name));
 			var ret = new RestObject("200");
 			ret["players"] = currentPlayers;
+			ret.Add("deprecated", "This endpoint is deprecated and has been replaced with /v2/lists/players.");
 			return ret;
 		}
 
