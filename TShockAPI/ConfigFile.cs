@@ -214,6 +214,12 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
+	    [Description(
+	        "Enables DNSBL blacklist checking (kicks clients if they are on known lists of open proxies, TOR exit nodes, and more"
+	        )] public bool EnableDNSBL = true;
+
+	    [Description("DNSBL provider")] public string DNSBLProvider = "xbl.spamhaus.org";
+
 		public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))

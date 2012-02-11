@@ -385,6 +385,11 @@ namespace TShockAPI
 					Console.WriteLine("Startup parameter overrode REST port.");
 
 				}
+                if (parms[i].ToLower() == "-maxplayers")
+                {
+                    Config.MaxSlots = Convert.ToInt32(parms[++i]);
+                    Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+                }
 			}
 		}
 
@@ -626,8 +631,26 @@ namespace TShockAPI
 				handler.Handled = true;
 				return;
 			}
+            
+            if (Config.EnableDNSBL)
+            {
+                if (!FileTools.CheckWhitelist(player.IP))
+                {
+                    string[] blProvider = new string[] {Config.DNSBLProvider};
+                    Utils.CheckProxy m_checker = new Utils.CheckProxy(player.IP, blProvider);
+                    if (m_checker.IPAddr.Valid)
+                    {
+                        if (m_checker.BlackList.IsListed)
+                        {
+                            Utils.ForceKick(player, string.Format("You are listed on the blacklist at {0}.",m_checker.BlackList.VerifiedOnServer));
+                            handler.Handled = true;
+                            return;
+                        }
+                    }
+                }
+            }
 
-			if (Geo != null)
+		    if (Geo != null)
 			{
 				var code = Geo.TryGetCountryCode(IPAddress.Parse(player.IP));
 				player.Country = code == null ? "N/A" : GeoIPCountry.GetCountryNameByCode(code);
