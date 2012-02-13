@@ -358,7 +358,7 @@ namespace TShockAPI
 			}
 		}
 
-		private void HandleCommandLinePostConfigLoad(string[] parms)
+		public static void HandleCommandLinePostConfigLoad(string[] parms)
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
@@ -388,6 +388,11 @@ namespace TShockAPI
 					Console.WriteLine("Startup parameter overrode REST port.");
 
 				}
+                if ((parms[i].ToLower() == "-maxplayers")||(parms[i].ToLower() == "-players"))
+                {
+                    Config.MaxSlots = Convert.ToInt32(parms[++i]);
+                    Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+                }
 			}
 		}
 

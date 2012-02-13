@@ -1554,6 +1554,8 @@ namespace TShockAPI
                             Main.tile[x, y].type = 2;
                             break;
                         case 32:
+                        case 113:
+                        case 110:
                             Main.tile[x, y].type = 0;
                             Main.tile[x, y].active = false;
                             break;
@@ -1564,8 +1566,11 @@ namespace TShockAPI
                         case 116:
                             Main.tile[x, y].type = 53;
                             break;
-                        case 113:
+                        case 118:
                             Main.tile[x, y].type = 38;
+                            break;
+                        case 115:
+                            Main.tile[x, y].type = 52;
                             break;
                         default:
                             continue;
@@ -2205,6 +2210,7 @@ namespace TShockAPI
 		private static void Reload(CommandArgs args)
 		{
 			FileTools.SetupConfig();
+            TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.ReloadAllRegions();
 			args.Player.SendMessage(
