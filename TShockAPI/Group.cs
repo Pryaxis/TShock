@@ -44,6 +44,11 @@ namespace TShockAPI
 			byte.TryParse(chatcolor.Split(',')[2], out B);
 		}
 
+		public string ChatColor()
+		{
+			return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2"));
+		}
+
 		public virtual bool HasPermission(string permission)
 		{
 			var cur = this;
