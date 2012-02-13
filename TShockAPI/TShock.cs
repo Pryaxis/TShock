@@ -210,6 +210,9 @@ namespace TShockAPI
 				Commands.InitCommands();
 				//RconHandler.StartThread();
 
+				if (Config.RestApiEnabled)
+					RestApi.Start();
+
 				if (Config.BufferPackets)
 					PacketBuffer = new PacketBufferer();
 
@@ -429,8 +432,6 @@ namespace TShockAPI
 				AuthToken = 0;
 			}
 			Regions.ReloadAllRegions();
-			if (Config.RestApiEnabled)
-				RestApi.Start();
 
 			StatTracker.CheckIn();
 			FixChestStacks();
