@@ -123,11 +123,15 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			return false;
 		}
 
-		public bool RemoveBan(string ip)
+		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true)
 		{
 			try
 			{
-				return database.Query("DELETE FROM Bans WHERE IP=@0", ip) != 0;
+				if (!byName)
+					return database.Query("DELETE FROM Bans WHERE IP=@0", match) != 0;
+
+				var namecol = casesensitive ? "Name" : "UPPER(Name)";
+				return database.Query("DELETE FROM Bans WHERE " + namecol + "=@0", casesensitive ? match : match.ToUpper()) != 0;
 			}
 			catch (Exception ex)
 			{
