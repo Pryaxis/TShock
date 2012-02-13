@@ -355,7 +355,7 @@ namespace TShockAPI
 			}
 		}
 
-		private void HandleCommandLinePostConfigLoad(string[] parms)
+		public static void HandleCommandLinePostConfigLoad(string[] parms)
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
