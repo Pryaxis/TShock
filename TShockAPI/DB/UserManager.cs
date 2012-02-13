@@ -50,20 +50,22 @@ namespace TShockAPI.DB
 		/// <param name="user">User user</param>
 		public void AddUser(User user)
 		{
+			if (!TShock.Groups.GroupExists(user.Group))
+				throw new GroupNotExistsException(user.Group);
+
+			int ret;
 			try
 			{
-				if (!TShock.Groups.GroupExists(user.Group))
-					throw new GroupNotExistsException(user.Group);
-
-				if (
-					database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
-					               TShock.Utils.HashPassword(user.Password), user.Group, user.Address) < 1)
-					throw new UserExistsException(user.Name);
+				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.Group, user.Address);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("AddUser SQL returned an error", ex);
+				throw new UserManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
+
+			if (1 > ret)
+				throw new UserExistsException(user.Name);
 		}
 
 		/// <summary>
