@@ -41,7 +41,7 @@ namespace Rests
 			set { this["response"] = value; }
 		}
 
-		public RestObject(string status)
+		public RestObject(string status = "200")
 		{
 			Status = status;
 		}
