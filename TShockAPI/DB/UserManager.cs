@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Data;
 using System.IO;
+using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
@@ -256,14 +257,7 @@ namespace TShockAPI.DB
 				using (var reader = result)
 				{
 					if (reader.Read())
-					{
-						user.ID = reader.Get<int>("ID");
-						user.Group = reader.Get<string>("Usergroup");
-						user.Password = reader.Get<string>("Password");
-						user.Name = reader.Get<string>("Username");
-						user.Address = reader.Get<string>("IP");
-						return user;
-					}
+						return LoadUserFromResult(user, result);
 				}
 			}
 			catch (Exception ex)
@@ -271,6 +265,37 @@ namespace TShockAPI.DB
 				throw new UserManagerException("GetUserID SQL returned an error", ex);
 			}
 			throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+		}
+
+		public List<User> GetUsers()
+		{
+			try
+			{
+				List<User> users = new List<User>();
+				using (var reader = database.QueryReader("SELECT * FROM Users"))
+				{
+					while (reader.Read())
+					{
+						users.Add(LoadUserFromResult(new User(), reader));
+					}
+					return users;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
+		private User LoadUserFromResult(User user, QueryResult result)
+		{
+			user.ID = result.Get<int>("ID");
+			user.Group = result.Get<string>("Usergroup");
+			user.Password = result.Get<string>("Password");
+			user.Name = result.Get<string>("Username");
+			user.Address = result.Get<string>("IP");
+			return user;
 		}
 	}
 
