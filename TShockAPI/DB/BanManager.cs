@@ -92,10 +92,6 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 
 		public Ban GetBanByName(string name, bool casesensitive = true)
 		{
-			if (!TShock.Config.EnableBanOnUsernames)
-			{
-				return null;
-			}
 			try
 			{
 				var namecol = casesensitive ? "Name" : "UPPER(Name)";
