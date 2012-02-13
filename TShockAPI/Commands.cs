@@ -2210,6 +2210,7 @@ namespace TShockAPI
 		private static void Reload(CommandArgs args)
 		{
 			FileTools.SetupConfig();
+            TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.ReloadAllRegions();
 			args.Player.SendMessage(
