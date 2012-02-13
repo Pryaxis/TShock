@@ -205,6 +205,9 @@ namespace TShockAPI
 		public List<TSPlayer> FindPlayer(string ply)
 		{
 			var found = new List<TSPlayer>();
+			// Avoid errors caused by null search
+			if (null == ply)
+				return found;
 			ply = ply.ToLower();
 			foreach (TSPlayer player in TShock.Players)
 			{
