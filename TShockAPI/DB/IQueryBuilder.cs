@@ -42,7 +42,7 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"'{0}' {1} {2} {3} {4}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
+					"'{0}' {1} {2} {3} {4} {5}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
 					                                c.AutoIncrement ? "AUTOINCREMENT" : "", c.NotNull ? "NOT NULL" : "",
 					                                c.Unique ? "UNIQUE" : ""));
 			return "CREATE TABLE '{0}' ({1})".SFormat(table.Name, string.Join(", ", columns));
@@ -198,7 +198,7 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"{0} {1} {2} {3}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
+					"{0} {1} {2} {3} {4}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
 					                          c.AutoIncrement ? "AUTO_INCREMENT" : "", c.NotNull ? "NOT NULL" : ""));
 			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
 			return "CREATE TABLE {0} ({1} {2})".SFormat(table.Name, string.Join(", ", columns),
