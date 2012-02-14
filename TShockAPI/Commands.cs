@@ -382,9 +382,9 @@ namespace TShockAPI
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
-						else if (args.Player.IgnoreActionsForInventory == "/login to exempt your inventory.")
+                        else if (args.Player.IgnoreActionsForInventory == "/login to exempt your inventory.")
                         {
-                            args.Player.IgnoreActionsForInventory == "none"
+                            args.Player.IgnoreActionsForInventory = "none";
                             args.Player.PlayerData.CopyInventory(args.Player);
                             TShock.InventoryDB.InsertPlayerData(args.Player);
                         }
