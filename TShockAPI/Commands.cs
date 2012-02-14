@@ -196,6 +196,7 @@ namespace TShockAPI
 			add(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
 			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
+			add(Permissions.serversideinventory, ExemptSSI, "exempt");
 			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");
@@ -381,6 +382,12 @@ namespace TShockAPI
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
+						else if (args.Player.IgnoreActionsForInventory == "/login to exempt your inventory.")
+                        {
+                            args.Player.IgnoreActionsForInventory == "none"
+                            args.Player.PlayerData.CopyInventory(args.Player);
+                            TShock.InventoryDB.InsertPlayerData(args.Player);
+                        }
 						else if (!TShock.CheckInventory(args.Player))
 						{
 							args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
@@ -668,6 +675,44 @@ namespace TShockAPI
 				args.Player.SendMessage("Invalid user syntax. Try /user help.", Color.Red);
 			}
 		}
+		
+		public static void ExemptSSI(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /exempt <player> ", Color.Red);
+                return;
+            }
+
+            if (!TShock.Config.ServerSideInventory)
+            {
+                args.Player.SendMessage("Server side inventory is disabled. ", Color.Red);
+                return;
+            }
+
+            string plStr = String.Join(" ", args.Parameters);
+            var players = TShock.Utils.FindPlayer(plStr);
+
+            if (players.Count == 0)
+                args.Player.SendMessage("Invalid player!", Color.Red);
+            else if (players.Count > 1)
+                args.Player.SendMessage("More than one player matched!", Color.Red);
+            else
+            {
+                var tsplr = players[0];
+                if (tsplr.IgnoreActionsForInventory == "none")
+                {
+                    args.Player.SendMessage("Player isn't disabled for server side inventory.");
+                    return;
+                }
+				
+                tsplr.IgnoreActionsForClearingTrashCan = false;
+                tsplr.IgnoreActionsForInventory = "/login to exempt your inventory.";
+                tsplr.SendMessage("Your inventory has been exempt, please /login again.");
+				
+                args.Player.SendMessage(string.Format("You have exempted {0}'s inventory.", tsplr.Name));
+            }
+        }
 
 		#endregion
 
