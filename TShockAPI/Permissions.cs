@@ -94,8 +94,8 @@ namespace TShockAPI
 		[Description("User can manage item bans")] public static readonly string manageitem;
 
 		[Description("User can manage groups")] public static readonly string managegroup;
-		
-		[Description("User can manage server side inventory")] public static readonly string serversideinventory;
+
+        [Description("User can manage server side inventory")] public static readonly string serversideinventory;
 
 		[Description("User can edit sevrer configurations")] public static readonly string cfg;
 
