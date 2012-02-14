@@ -376,25 +376,25 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideInventory)
-					{
-						if (group.HasPermission(Permissions.bypassinventorychecks))
-						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
-						}
-						else if (args.Player.IgnoreActionsForInventory == "/login to exempt your inventory.")
+                    if (TShock.Config.ServerSideInventory)
+                    {
+                        if (group.HasPermission(Permissions.bypassinventorychecks))
                         {
-                            args.Player.IgnoreActionsForInventory == "none"
+                            args.Player.IgnoreActionsForClearingTrashCan = false;
+                        }
+                        else if (args.Player.IgnoreActionsForInventory == "/login to exempt your inventory.")
+                        {
+                            args.Player.IgnoreActionsForInventory == "none";
                             args.Player.PlayerData.CopyInventory(args.Player);
                             TShock.InventoryDB.InsertPlayerData(args.Player);
                         }
-						else if (!TShock.CheckInventory(args.Player))
-						{
-							args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
-							args.Player.IgnoreActionsForClearingTrashCan = true;
-							return;
-						}
-					}
+                        else if (!TShock.CheckInventory(args.Player))
+                        {
+                            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
+                            args.Player.IgnoreActionsForClearingTrashCan = true;
+                            return;
+                        }
+                    }
 
 					if (group.HasPermission(Permissions.ignorestackhackdetection))
 						args.Player.IgnoreActionsForCheating = "none";
