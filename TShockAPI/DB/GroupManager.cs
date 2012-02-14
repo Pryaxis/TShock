@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -24,7 +25,7 @@ using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
-	public class GroupManager
+	public class GroupManager : IEnumerable<Group>
 	{
 		private IDbConnection database;
 
@@ -64,8 +65,23 @@ namespace TShockAPI.DB
 			if (group == "superadmin")
 				return true;
 
-
 			return groups.Any(g => g.Name.Equals(group));
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public IEnumerator<Group> GetEnumerator()
+		{
+			return groups.GetEnumerator();
+		}
+
+		public Group GetGroupByName(string name)
+		{
+			var ret = groups.Where(g => g.Name == name);
+			return 1 == ret.Count() ? ret.ElementAt(0) : null;
 		}
 
 		/// <summary>
@@ -74,11 +90,17 @@ namespace TShockAPI.DB
 		/// <param name="name">name of group</param>
 		/// <param name="parentname">parent of group</param>
 		/// <param name="permissions">permissions</param>
-		public String AddGroup(String name, string parentname, String permissions, String chatcolor)
+		/// <param name="chatcolor">chatcolor</param>
+		/// <param name="exceptions">exceptions true indicates use exceptions for errors false otherwise</param>
+		public String AddGroup(String name, string parentname, String permissions, String chatcolor, bool exceptions = false)
 		{
 			String message = "";
 			if (GroupExists(name))
+			{
+				if (exceptions)
+					throw new GroupExistsException(name);
 				return "Error: Group already exists.  Use /modGroup to change permissions.";
+			}
 
 			var group = new Group(name, null, chatcolor);
 			group.permissions.Add(permissions);
@@ -88,6 +110,8 @@ namespace TShockAPI.DB
 				if (parent == null)
 				{
 					var error = "Invalid parent {0} for group {1}".SFormat(group.Name, parentname);
+					if (exceptions)
+						throw new GroupManagerException(error);
 					Log.ConsoleError(error);
 					return error;
 				}
@@ -98,9 +122,12 @@ namespace TShockAPI.DB
 			               	? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
 			               	: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
 			if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
+			{
 				message = "Group " + name + " has been created successfully.";
-
-			groups.Add(group);
+				groups.Add(group);
+			}
+			else if (exceptions)
+				throw new GroupManagerException("Failed to add group '" + name + "'");
 
 			return message;
 		}
@@ -115,15 +142,23 @@ namespace TShockAPI.DB
 			return AddGroup(name, parent, permissions, "255,255,255");
 		}
 
-		public String DeleteGroup(String name)
+		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			String message = "";
 			if (!GroupExists(name))
+			{
+				if (exceptions)
+					throw new GroupNotExistException(name);
 				return "Error: Group doesn't exists.";
+			}
 
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
+			{
 				message = "Group " + name + " has been deleted successfully.";
-			groups.Remove(TShock.Utils.GetGroup(name));
+				groups.Remove(TShock.Utils.GetGroup(name));
+			}
+			else if (exceptions)
+				throw new GroupManagerException("Failed to delete group '" + name + "'");
 
 			return message;
 		}
@@ -239,4 +274,36 @@ namespace TShockAPI.DB
 			}
 		}
 	}
-}
+
+	[Serializable]
+	public class GroupManagerException : Exception
+	{
+		public GroupManagerException(string message)
+			: base(message)
+		{
+		}
+
+		public GroupManagerException(string message, Exception inner)
+			: base(message, inner)
+		{
+		}
+	}
+
+    [Serializable]
+    public class GroupExistsException : GroupManagerException
+    {
+        public GroupExistsException(string name)
+            : base("Group '" + name + "' already exists")
+        {
+        }
+    }
+
+    [Serializable]
+    public class GroupNotExistException : GroupManagerException
+    {
+        public GroupNotExistException(string name)
+            : base("Group '" + name + "' does not exist")
+        {
+        }
+    }
+} 
