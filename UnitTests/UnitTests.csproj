@@ -49,6 +49,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.WebTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\SqlBins\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
@@ -87,6 +88,10 @@
       <Project>{49606449-072B-4CF5-8088-AA49DA586694}</Project>
       <Name>TShockAPI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TShockRestTestPlugin\TShockRestTestPlugin.csproj">
+      <Project>{F2FEDAFB-58DE-4611-9168-A86112C346C7}</Project>
+      <Name>TShockRestTestPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="BanManagerTest.orderedtest">
@@ -102,6 +107,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="UnitTests.licenseheader" />
+    <None Include="RestApiTests.webtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
