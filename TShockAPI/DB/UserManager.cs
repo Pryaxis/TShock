@@ -20,6 +20,7 @@ using System.Data;
 using System.IO;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 namespace TShockAPI.DB
 {
@@ -62,6 +63,9 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
+				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
+				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
+					throw new UserExistsException(user.Name);
 				throw new UserManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
 
@@ -254,15 +258,22 @@ namespace TShockAPI.DB
 					result = database.QueryReader("SELECT * FROM Users WHERE IP=@0", user.Address);
 				}
 
-				using (var reader = result)
+				if (result.Read())
 				{
-					if (reader.Read())
-						return LoadUserFromResult(user, result);
+					user = LoadUserFromResult(user, result);
+					// Check for multiple matches
+					if (!result.Read())
+						return user;
+
+					if (string.IsNullOrEmpty(user.Address))
+						throw new UserManagerException(String.Format("Multiple users found for name '{0}'", user.Name));
+					else
+						throw new UserManagerException(String.Format("Multiple users found for ip '{0}'", user.Address));
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("GetUserID SQL returned an error", ex);
+				throw new UserManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
 			}
 			throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
 		}

@@ -30,23 +30,57 @@ namespace TShockAPI
 		public int Order { get; set; }
 		public string Prefix { get; set; }
 		public string Suffix { get; set; }
+		public string ParentName { get { return (null == Parent) ? "" : Parent.Name; } }
+		public string ChatColor
+		{
+			get { return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2")); }
+			set
+			{
+				if (null != value)
+				{
+					string[] parts = value.Split(',');
+					if (3 == parts.Length)
+					{
+						byte r, g, b;
+						if (byte.TryParse(parts[0], out r) && byte.TryParse(parts[1], out g) && byte.TryParse(parts[2], out b))
+						{
+							R = r;
+							G = g;
+							B = b;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		public string Permissions
+		{
+			get
+			{
+				List<string> all = new List<string>(permissions);
+				permissions.ForEach(p => all.Add("!" + p));
+				return string.Join(",", all);
+			}
+			set
+			{
+				permissions.Clear();
+				negatedpermissions.Clear();
+				if (null != value)
+					value.Split(',').ForEach(p => AddPermission(p.Trim()));
+			}
+		}
 
 		public byte R = 255;
 		public byte G = 255;
 		public byte B = 255;
 
-		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255")
+		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255", string permissions = null)
 		{
 			Name = groupname;
 			Parent = parentgroup;
-			byte.TryParse(chatcolor.Split(',')[0], out R);
-			byte.TryParse(chatcolor.Split(',')[1], out G);
-			byte.TryParse(chatcolor.Split(',')[2], out B);
-		}
-
-		public string ChatColor()
-		{
-			return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2"));
+			ChatColor = chatcolor;
+			Permissions = permissions;
 		}
 
 		public virtual bool HasPermission(string permission)
@@ -73,21 +107,44 @@ namespace TShockAPI
 
 		public void NegatePermission(string permission)
 		{
-			negatedpermissions.Add(permission);
+			// Avoid duplicates
+			if (!negatedpermissions.Contains(permission))
+			{
+				negatedpermissions.Add(permission);
+				permissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
+			}
 		}
 
 		public void AddPermission(string permission)
 		{
-			permissions.Add(permission);
+			if (permission.StartsWith("!"))
+			{
+				NegatePermission(permission.Substring(1));
+				return;
+			}
+			// Avoid duplicates
+			if (!permissions.Contains(permission))
+			{
+				permissions.Add(permission);
+				negatedpermissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
+			}
 		}
 
 		public void SetPermission(List<string> permission)
 		{
 			permissions.Clear();
-			foreach (string s in permission)
+			negatedpermissions.Clear();
+			permission.ForEach(p => AddPermission(p));
+		}
+
+		public void RemovePermission(string permission)
+		{
+			if (permission.StartsWith("!"))
 			{
-				permissions.Add(s);
+				negatedpermissions.Remove(permission.Substring(1));
+				return;
 			}
+			permissions.Remove(permission);
 		}
 	}
 

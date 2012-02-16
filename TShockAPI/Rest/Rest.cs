@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Reflection;
 using HttpServer;
 using HttpServer.Headers;
 using Newtonsoft.Json;
@@ -41,6 +42,7 @@ namespace Rests
 	{
 		private readonly List<RestCommand> commands = new List<RestCommand>();
 		private HttpListener listener;
+		private StringHeader serverHeader;
 		public IPAddress Ip { get; set; }
 		public int Port { get; set; }
 
@@ -48,6 +50,9 @@ namespace Rests
 		{
 			Ip = ip;
 			Port = port;
+			string appName = this.GetType().Assembly.GetName().Version.ToString();
+			AssemblyName ass = this.GetType().Assembly.GetName();
+			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", ass.Name, ass.Version));
 		}
 
 		public virtual void Start()
@@ -117,14 +122,14 @@ namespace Rests
 				throw new NullReferenceException("obj");
 
 			if (OnRestRequestCall(e))
-			return;
+				return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
 			e.Response.Connection.Type = ConnectionType.Close;
-			e.Response.Add(new ContentTypeHeader("application/json"));
+			e.Response.ContentType = new ContentTypeHeader("application/json");
+			e.Response.Add(serverHeader);
 			e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
 			e.Response.Status = HttpStatusCode.OK;
-			return;
 		}
 
 		protected virtual object ProcessRequest(object sender, RequestEventArgs e)
