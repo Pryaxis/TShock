@@ -61,11 +61,7 @@ namespace UnitTests
         public void FindBanTest()
         {
             Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
-            TShock.Config.EnableBanOnUsernames = true;
             Assert.IsNotNull(Bans.GetBanByName("BanTest"));
-            // Disabled this this for now as its currently expected behavour
-            //TShock.Config.EnableBanOnUsernames = false;
-            //Assert.IsNull(Bans.GetBanByName("BanTest"));
         }
     }
 }

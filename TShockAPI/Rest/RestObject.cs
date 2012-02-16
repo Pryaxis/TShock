@@ -41,6 +41,13 @@ namespace Rests
 			set { this["response"] = value; }
 		}
 
+		// Parameterless constructor for deseralisation required by JavaScriptSerializer.Deserialize in TShockRestTestPlugin
+		// Note: The constructor with all defaults isn't good enough :(
+		public RestObject()
+		{
+			Status = "200";
+		}
+
 		public RestObject(string status = "200")
 		{
 			Status = status;
