@@ -172,7 +172,6 @@ namespace TShockAPI
 				Warps = new WarpManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
-				Groups.LoadPermisions();
 				Regions = new RegionManager(DB);
 				Itembans = new ItemManager(DB);
 				RememberedPos = new RemeberedPosManager(DB);
@@ -388,11 +387,11 @@ namespace TShockAPI
 					Console.WriteLine("Startup parameter overrode REST port.");
 
 				}
-                if ((parms[i].ToLower() == "-maxplayers")||(parms[i].ToLower() == "-players"))
-                {
-                    Config.MaxSlots = Convert.ToInt32(parms[++i]);
-                    Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
-                }
+				if ((parms[i].ToLower() == "-maxplayers")||(parms[i].ToLower() == "-players"))
+				{
+					Config.MaxSlots = Convert.ToInt32(parms[++i]);
+					Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+				}
 			}
 		}
 
@@ -659,10 +658,18 @@ namespace TShockAPI
 				return;
 			}
 
-			var nameban = Bans.GetBanByName(player.Name);
 			Ban ban = null;
-			if (nameban != null && Config.EnableBanOnUsernames)
-				ban = nameban;
+			if (Config.EnableBanOnUsernames)
+			{
+				var newban = Bans.GetBanByName(player.Name);
+				if (null != newban)
+					ban = newban;
+			}
+
+			if (Config.EnableIPBans && null == ban)
+			{
+				ban = Bans.GetBanByIp(player.IP);
+			}
 
 			if (ban != null)
 			{

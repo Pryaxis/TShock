@@ -40,15 +40,15 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-								try{
-			creator.EnsureExists(table);
-								}
-								catch (DllNotFoundException ex)
-{
-System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
-throw new Exception("Could not find a database library (probably Sqlite3.dll)");
-}
-
+			try
+			{
+				creator.EnsureExists(table);
+			}
+			catch (DllNotFoundException)
+			{
+				System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
+				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+			}
 		}
 
 		public Ban GetBanByIp(string ip)
@@ -110,7 +110,7 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			return null;
 		}
 
-		public bool AddBan(string ip, string name = "", string reason = "")
+		public bool AddBan(string ip, string name = "", string reason = "", bool exceptions = false)
 		{
 			try
 			{
@@ -118,12 +118,15 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			}
 			catch (Exception ex)
 			{
+				if (exceptions)
+					throw ex;
 				Log.Error(ex.ToString());
 			}
 			return false;
 		}
+		
 
-		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true)
+		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true, bool exceptions = false)
 		{
 			try
 			{
@@ -135,6 +138,8 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			}
 			catch (Exception ex)
 			{
+				if (exceptions)
+					throw ex;
 				Log.Error(ex.ToString());
 			}
 			return false;
