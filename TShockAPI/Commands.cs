@@ -584,7 +584,10 @@ namespace TShockAPI
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+                if (args.Parameters[1].Split('.').Count() ==4)
+
+                    //              changed to support dot character in usernames
+                    //				if (args.Parameters[1].Contains("."))
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
@@ -630,7 +633,11 @@ namespace TShockAPI
 			else if (subcmd == "group")
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+			    if (args.Parameters[1].Split('.').Count()==4)
+
+                //changed to support dot character in usernames
+                //if (args.Parameters[1].Contains("."))
+
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
