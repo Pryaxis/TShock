@@ -584,7 +584,10 @@ namespace TShockAPI
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+                if (args.Parameters[1].Split('.').Count() ==4)
+
+                    //              changed to support dot character in usernames
+                    //				if (args.Parameters[1].Contains("."))
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
@@ -630,7 +633,11 @@ namespace TShockAPI
 			else if (subcmd == "group")
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+			    if (args.Parameters[1].Split('.').Count()==4)
+
+                //changed to support dot character in usernames
+                //if (args.Parameters[1].Contains("."))
+
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
@@ -1084,7 +1091,7 @@ namespace TShockAPI
 
             if (args.Parameters.Count < 1)
             {
-                ply.SendMessage("Picking a random ore!", Color.Green);
+                ply.SendMessage("Picking a random ore!", Color.Green);    //should this be a help message instead?
                 num = WorldGen.genRand.Next(6);
             }
             else if (args.Parameters[0] == "cobalt")
@@ -1111,7 +1118,34 @@ namespace TShockAPI
             {
                 num = 5;
             }
-
+            else if (args.Parameters[0] == "demonite")
+            {
+                num = 7;
+            }
+            else if (args.Parameters[0] == "sapphire")
+            {
+                num = 8;
+            }
+            else if (args.Parameters[0] == "ruby")
+            {
+                num = 9;
+            }
+            else if (args.Parameters[0] == "emerald")
+            {
+                num = 10;
+            }
+            else if (args.Parameters[0] == "topaz")
+            {
+                num = 11;
+            }
+            else if (args.Parameters[0] == "amethyst")
+            {
+                num = 12;
+            }
+            else if (args.Parameters[0] == "diamond")
+            {
+                num = 13;
+            }
             else
             {
                 num = 2;
@@ -1146,7 +1180,41 @@ namespace TShockAPI
 			num = 9;
 			num3 *= 1.1f;
 		}
-
+        else if (num == 7)
+        {
+            num = 22;
+            num3 *= 1;
+        }
+        else if (num == 8)
+        {
+            num = 63;
+            num3 *= .80f;
+        }
+        else if (num == 9)
+        {
+            num = 64;
+            num3 *=1;
+        }
+        else if (num == 10)
+        {
+            num = 65;
+            num3 *= 1;
+        }
+        else if (num == 11)
+        {
+            num = 66;
+            num3 *= 1;
+        }
+        else if (num == 12)
+        {
+            num = 67;
+            num3 *= 1;
+        }
+        else if (num == 13)
+        {
+            num = 68;
+            num3 *= 1;
+        }
 		else
 		{
 			num = 111;
@@ -1164,11 +1232,11 @@ namespace TShockAPI
 			{
 				int i2 = WorldGen.genRand.Next(100, Main.maxTilesX - 100);
 				double num6 = Main.worldSurface;
-				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9))
+				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9) ||((num > 62) && (num < 69)))
 				{
 					num6 = Main.rockLayer;
 				}
-				if (num == 111)
+				if ((num == 111) || (num == 22) || (num == 68))
 				{
 					num6 = (Main.rockLayer + Main.rockLayer + (double)Main.maxTilesY) / 3.0;
 				}
