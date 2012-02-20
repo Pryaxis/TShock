@@ -19,6 +19,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
@@ -130,11 +131,18 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				if (!TShock.Groups.GroupExists(group))
+				Group grp = TShock.Groups.GetGroupByName(group);
+				if (null == grp)
 					throw new GroupNotExistsException(group);
 
 				if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
 					throw new UserNotExistException(user.Name);
+				
+				// Update player group reference for any logged in player
+				foreach (var player in TShock.Players.Where(p => null != p && p.UserAccountName == user.Name))
+				{
+					player.Group = grp;
+				}
 			}
 			catch (Exception ex)
 			{
