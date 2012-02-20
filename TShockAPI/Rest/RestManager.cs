@@ -584,7 +584,8 @@ namespace TShockAPI
 				{"parent", group.ParentName},
 				{"chatcolor", group.ChatColor},
 				{"permissions", group.permissions},
-				{"negatedpermissions", group.negatedpermissions}
+				{"negatedpermissions", group.negatedpermissions},
+				{"totalpermissions", group.TotalPermissions}
 			};
 		}
 

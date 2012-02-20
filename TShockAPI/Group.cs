@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace TShockAPI
@@ -59,7 +60,7 @@ namespace TShockAPI
 			get
 			{
 				List<string> all = new List<string>(permissions);
-				permissions.ForEach(p => all.Add("!" + p));
+				negatedpermissions.ForEach(p => all.Add("!" + p));
 				return string.Join(",", all);
 			}
 			set
@@ -68,6 +69,36 @@ namespace TShockAPI
 				negatedpermissions.Clear();
 				if (null != value)
 					value.Split(',').ForEach(p => AddPermission(p.Trim()));
+			}
+		}
+
+		public List<string> TotalPermissions
+		{
+			get
+			{
+				var cur = this;
+				var traversed = new List<Group>();
+				HashSet<string> all = new HashSet<string>();
+				while (cur != null)
+				{
+					foreach (var perm in cur.permissions)
+					{
+						all.Add(perm);
+					}
+
+					foreach (var perm in cur.negatedpermissions)
+					{
+						all.Remove(perm);
+					}
+
+					if (traversed.Contains(cur))
+					{
+						throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+					}
+					traversed.Add(cur);
+					cur = cur.Parent;
+				}
+				return all.ToList();
 			}
 		}
 
@@ -85,12 +116,13 @@ namespace TShockAPI
 
 		public virtual bool HasPermission(string permission)
 		{
+			if (string.IsNullOrEmpty(permission))
+				return true;
+
 			var cur = this;
 			var traversed = new List<Group>();
 			while (cur != null)
 			{
-				if (string.IsNullOrEmpty(permission))
-					return true;
 				if (cur.negatedpermissions.Contains(permission))
 					return false;
 				if (cur.permissions.Contains(permission))
