@@ -253,9 +253,7 @@ namespace TShockAPI
 				WorldGen.genRand = new Random();
 			if (text.StartsWith("exit"))
 			{
-				TShock.Utils.ForceKickAll("Server shutting down!");
-				WorldGen.saveWorld(false);
-				Netplay.disconnect = true;
+				TShock.Utils.StopServer();
 				return "Server shutting down.";
 			}
 			else if (text.StartsWith("playing") || text.StartsWith("/playing"))

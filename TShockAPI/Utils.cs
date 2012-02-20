@@ -29,11 +29,10 @@ namespace TShockAPI
 {
 	public class Utils
 	{
-	    public static bool saving = false;
-
-		public Utils()
-		{
-		}
+		// Utils is a Singleton
+		private static readonly Utils instance = new Utils();
+		private Utils() {}
+		public static Utils Instance { get { return instance; } }
 
 		public Random Random = new Random();
 		//private static List<Group> groups = new List<Group>();
@@ -135,11 +134,7 @@ namespace TShockAPI
 		/// </summary>
 		public void SaveWorld()
 		{
-            saving = true;
-            WorldGen.realsaveWorld();
-            Broadcast("World saved.", Color.Yellow);
-            Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
-            saving = false;
+			SaveManager.Instance.SaveWorld();
 		}
 
 		/// <summary>
@@ -186,15 +181,7 @@ namespace TShockAPI
 		/// <returns>int playerCount</returns>
 		public int ActivePlayers()
 		{
-			int num = 0;
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					num++;
-				}
-			}
-			return num;
+			return Main.player.Where(p => null != p && p.active).Count();
 		}
 
 		/// <summary>
@@ -508,6 +495,27 @@ namespace TShockAPI
 					ForceKick(player, reason);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world
+		/// </summary>
+		/// <param name="save">bool perform a world save before stop (default: true)</param>
+		/// <param name="reason">string reason (default: "Server shutting down!")</param>
+		public void StopServer(bool save = true, string reason = "Server shutting down!")
+		{
+			ForceKickAll(reason);
+			if (save)
+				SaveManager.Instance.SaveWorld();
+
+			// Save takes a while so kick again
+			ForceKickAll(reason);
+
+			// Broadcast so console can see we are shutting down as well
+			TShock.Utils.Broadcast(reason, Color.Red);
+
+			// Disconnect after kick as that signifies server is exiting and could cause a race
+			Netplay.disconnect = true;
 		}
 
 		/// <summary>

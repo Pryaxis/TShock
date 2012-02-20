@@ -63,11 +63,7 @@ namespace TShockAPI
 				TShock.Utils.Broadcast("Server map saving, potential lag spike");
 				Console.WriteLine("Backing up world...");
 
-				Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-				SaveWorld.Start();
-
-				while (SaveWorld.ThreadState == ThreadState.Running)
-					Thread.Sleep(50);
+				SaveManager.Instance.SaveWorld();
 				Console.WriteLine("World backed up");
 				Console.ForegroundColor = ConsoleColor.Gray;
 				Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
