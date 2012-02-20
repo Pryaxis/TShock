@@ -62,7 +62,7 @@ namespace TShockAPI
 		public static GeoIPCountry Geo;
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
-		public static Utils Utils = new Utils();
+		public static Utils Utils = Utils.Instance;
 		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
@@ -186,7 +186,6 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Console.Title = string.Format("TerrariaShock Version {0} ({1})", Version, VersionCodename);
 				Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
 
 				GameHooks.PostInitialize += OnPostInit;
@@ -203,7 +202,7 @@ namespace TShockAPI
 			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
-                WorldHooks.SaveWorld += OnSaveWorld;
+				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -260,10 +259,13 @@ namespace TShockAPI
 		{
 			if (disposing)
 			{
+				// NOTE: order is important here
 				if (Geo != null)
 				{
 					Geo.Dispose();
 				}
+				SaveManager.Instance.Dispose();
+
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
                 ServerHooks.Connect -= OnConnect;
@@ -278,15 +280,16 @@ namespace TShockAPI
                 NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
-                WorldHooks.SaveWorld -= OnSaveWorld;
+				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
+
 				RestApi.Dispose();
 				Log.Dispose();
 			}
-
 			base.Dispose(disposing);
 		}
 
@@ -322,7 +325,7 @@ namespace TShockAPI
 				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
 				{
 					Main.worldPathName += ".crash";
-					WorldGen.saveWorld();
+					SaveManager.Instance.SaveWorld();
 				}
 			}
 		}
@@ -361,36 +364,33 @@ namespace TShockAPI
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-port")
+				switch(parms[i].ToLower())
 				{
-					int port = Convert.ToInt32(parms[++i]);
-					Netplay.serverPort = port;
-					Config.ServerPort = port;
-					OverridePort = true;
-					Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
-				}
-				if (parms[i].ToLower() == "-rest-token")
-				{
-					string token = Convert.ToString(parms[++i]);
-					RESTStartupTokens.Add(token, "null");
-					Console.WriteLine("Startup parameter overrode REST token.");
-				}
-				if (parms[i].ToLower() == "-rest-enabled")
-				{
-					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
-					Console.WriteLine("Startup parameter overrode REST enable.");
-
-				}
-				if (parms[i].ToLower() == "-rest-port")
-				{
-					Config.RestApiPort = Convert.ToInt32(parms[++i]);
-					Console.WriteLine("Startup parameter overrode REST port.");
-
-				}
-				if ((parms[i].ToLower() == "-maxplayers")||(parms[i].ToLower() == "-players"))
-				{
-					Config.MaxSlots = Convert.ToInt32(parms[++i]);
-					Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+					case "-port":
+						int port = Convert.ToInt32(parms[++i]);
+						Netplay.serverPort = port;
+						Config.ServerPort = port;
+						OverridePort = true;
+						Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
+						break;
+					case "-rest-token":
+						string token = Convert.ToString(parms[++i]);
+						RESTStartupTokens.Add(token, "null");
+						Console.WriteLine("Startup parameter overrode REST token.");
+						break;
+					case "-rest-enabled":
+						Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
+						Console.WriteLine("Startup parameter overrode REST enable.");
+						break;
+					case "-rest-port":
+						Config.RestApiPort = Convert.ToInt32(parms[++i]);
+						Console.WriteLine("Startup parameter overrode REST port.");
+						break;
+					case "-maxplayers":
+					case "-players":
+						Config.MaxSlots = Convert.ToInt32(parms[++i]);
+						Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+						break;
 				}
 			}
 		}
@@ -404,6 +404,7 @@ namespace TShockAPI
 
 		private void OnPostInit()
 		{
+			SetConsoleTitle();
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int) DateTime.Now.ToBinary());
@@ -465,7 +466,6 @@ namespace TShockAPI
 			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
-
 			//call these every second, not every update
 			if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
 			{
@@ -590,8 +590,13 @@ namespace TShockAPI
 					}
 				}
 			}
-			Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count,
-										  Config.MaxSlots);
+			SetConsoleTitle();
+		}
+
+		private void SetConsoleTitle()
+		{
+			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
+								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
 		}
 
 		private void OnConnect(int ply, HandledEventArgs handler)
@@ -1011,17 +1016,6 @@ namespace TShockAPI
 			if (Config.DisableHardmode)
 				e.Handled = true;
 		}
-
-        void OnSaveWorld(bool resettime, HandledEventArgs e)
-        {
-            if (!Utils.saving)
-            {
-                Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-                var SaveWorld = new Thread(Utils.SaveWorld);
-                SaveWorld.Start();
-            }
-            e.Handled = true;
-        }
 
 	    /*
 		 * Useful stuff:

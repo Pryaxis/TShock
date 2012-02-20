@@ -102,16 +102,10 @@ namespace TShockAPI
 			if (!GetBool(parameters["confirm"], false))
 				return RestInvalidParam("confirm");
 
-			if (!GetBool(parameters["nosave"], false))
-				WorldGen.saveWorld();
-			Netplay.disconnect = true;
-
 			// Inform players the server is shutting down
 			var msg = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is shutting down" : parameters["message"];
-			foreach (TSPlayer player in TShock.Players.Where(p => null != p))
-			{
-				TShock.Utils.ForceKick(player, msg);
-			}
+			TShock.Utils.StopServer(!GetBool(parameters["nosave"], false), msg);
+
 			return RestResponse("The server is shutting down");
 		}
 
@@ -305,7 +299,7 @@ namespace TShockAPI
 				return ret;
 
 			User user = (User)ret;
-			return new RestObject() { { "group", user.Group }, { "id", user.ID.ToString() } };
+			return new RestObject() { { "group", user.Group }, { "id", user.ID.ToString() }, { "name", user.Name } };
 		}
 
 		#endregion
@@ -411,7 +405,7 @@ namespace TShockAPI
 
 		private object WorldSave(RestVerbs verbs, IParameterCollection parameters)
 		{
-			TShock.Utils.SaveWorld();
+			SaveManager.Instance.SaveWorld();
 
 			return RestResponse("World saved");
 		}

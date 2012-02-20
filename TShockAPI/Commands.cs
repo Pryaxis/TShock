@@ -1007,38 +1007,37 @@ namespace TShockAPI
 				}
 			}
 
-			TShock.Utils.ForceKickAll("Server shutting down!");
-			WorldGen.saveWorld();
-			Netplay.disconnect = true;
+			TShock.Utils.StopServer();
 		}
-        //Added restart command
-        private static void Restart(CommandArgs args)
-        {
-	if (Main.runningMono){
-	Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
-	}else{
-            if (TShock.Config.ServerSideInventory)
-            {
-                foreach (TSPlayer player in TShock.Players)
-                {
-                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-                    {
-                        TShock.InventoryDB.InsertPlayerData(player);
-                    }
-                }
-            }
+		//Added restart command
+		private static void Restart(CommandArgs args)
+		{
+			if (Main.runningMono)
+			{
+				Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
+			}
+			else
+			{
+				if (TShock.Config.ServerSideInventory)
+				{
+					foreach (TSPlayer player in TShock.Players)
+					{
+						if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+						{
+							TShock.InventoryDB.InsertPlayerData(player);
+						}
+					}
+				}
 
-            TShock.Utils.ForceKickAll("Server restarting!");
-            WorldGen.saveWorld();
-            Netplay.disconnect = true;
-            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-            Environment.Exit(0);
-        }}
+				TShock.Utils.StopServer();
+				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+				Environment.Exit(0);
+			}
+		}
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			TShock.Utils.ForceKickAll("Server shutting down!");
-			Netplay.disconnect = true;
+			TShock.Utils.StopServer(false);
 		}
 
 		private static void CheckUpdates(CommandArgs args)
@@ -2258,10 +2257,7 @@ namespace TShockAPI
 		{
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
-
-			TShock.Utils.Broadcast("Server map saving, potential lag spike");
-			Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-			SaveWorld.Start();
+			SaveManager.Instance.SaveWorld(false);
 		}
 
 		private static void Reload(CommandArgs args)
@@ -2288,9 +2284,7 @@ namespace TShockAPI
 
 		private static void Save(CommandArgs args)
 		{
-			TShock.Utils.Broadcast("Server map saving, potential lag spike");
-			Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-			SaveWorld.Start();
+			SaveManager.Instance.SaveWorld(false);
 		}
 
 		private static void Settle(CommandArgs args)
