@@ -257,14 +257,12 @@ namespace TShockAPI.DB
 			try
 			{
 				QueryResult result;
-				if (string.IsNullOrEmpty(user.Address))
-				{
+				if (0 != user.ID)
+					result = database.QueryReader("SELECT * FROM Users WHERE ID=@0", user.ID);
+				else if (string.IsNullOrEmpty(user.Address))
 					result = database.QueryReader("SELECT * FROM Users WHERE Username=@0", user.Name);
-				}
 				else
-				{
 					result = database.QueryReader("SELECT * FROM Users WHERE IP=@0", user.Address);
-				}
 
 				if (result.Read())
 				{
@@ -273,7 +271,9 @@ namespace TShockAPI.DB
 					if (!result.Read())
 						return user;
 
-					if (string.IsNullOrEmpty(user.Address))
+					if (0 != user.ID)
+						throw new UserManagerException(String.Format("Multiple users found for id '{0}'", user.ID));
+					else if (string.IsNullOrEmpty(user.Address))
 						throw new UserManagerException(String.Format("Multiple users found for name '{0}'", user.Name));
 					else
 						throw new UserManagerException(String.Format("Multiple users found for ip '{0}'", user.Address));
