@@ -535,21 +535,10 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public void ForceKick(TSPlayer player, string reason)
+		/// <param name="silent">bool silent (default: false)</param>
+		public void ForceKick(TSPlayer player, string reason, bool silent = false)
 		{
-			if (!player.ConnectionAlive)
-				return;
-			player.Disconnect(reason);
-			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
-		}
-
-		public void ForceKick(TSPlayer player, string reason, bool silent)
-		{
-			player.SilentKickInProgress = true;
-			if (!player.ConnectionAlive)
-				return;
-			player.Disconnect(reason);
-			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
+			Kick(player, reason, true, silent);
 		}
 
 		/// <summary>
@@ -557,19 +546,24 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public bool Kick(TSPlayer player, string reason, string adminUserName = "")
+		/// <param name="force">bool force (default: false)</param>
+		/// <param name="silent">bool silent (default: false)</param>
+		/// <param name="adminUserName">bool silent (default: null)</param>
+		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
 				return true;
-			if (!player.Group.HasPermission(Permissions.immunetokick))
+			if (force || !player.Group.HasPermission(Permissions.immunetokick))
 			{
 				string playerName = player.Name;
+				player.SilentKickInProgress = silent;
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
-				if (adminUserName.Length == 0)
-					Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
@@ -580,21 +574,24 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public bool Ban(TSPlayer player, string reason, string adminUserName = "")
+		/// <param name="force">bool force (default: false)</param>
+		/// <param name="adminUserName">bool silent (default: null)</param>
+		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
 				return true;
-			if (!player.Group.HasPermission(Permissions.immunetoban))
+			if (force || !player.Group.HasPermission(Permissions.immunetoban))
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
 				TShock.Bans.AddBan(ip, playerName, reason);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
-				if (adminUserName.Length == 0)
-					Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					Broadcast(string.Format("{0} was {1}banned for {1}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {1} for {2}", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
