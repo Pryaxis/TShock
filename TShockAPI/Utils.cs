@@ -29,6 +29,8 @@ namespace TShockAPI
 {
 	public class Utils
 	{
+		private readonly static int firstItemPrefix = 1;
+		private readonly static int lastItemPrefix = 83;
 		// Utils is a Singleton
 		private static readonly Utils instance = new Utils();
 		private Utils() {}
@@ -442,22 +444,32 @@ namespace TShockAPI
 		{
 			Item item = new Item();
 			item.SetDefaults(0);
-			for (int i = 1; i < 83; i++)
-			{
-				item.prefix = (byte) i;
-				if (item.AffixName().Trim() == name)
-					return new List<int> {i};
-			}
+			string lowerName = name.ToLower();
 			var found = new List<int>();
-			for (int i = 1; i < 83; i++)
+			for (int i = firstItemPrefix; i <= lastItemPrefix; i++)
 			{
 				try
 				{
-					item.prefix = (byte) i;
-					if (item.AffixName().Trim().ToLower() == name.ToLower())
-						return new List<int> {i};
-					if (item.AffixName().Trim().ToLower().StartsWith(name.ToLower()))
+					item.prefix = (byte)i;
+					string trimmed = item.AffixName().Trim();
+					if (trimmed == name)
+					{
+						// Exact match
 						found.Add(i);
+						return found;
+					}
+					else
+					{
+						string trimmedLower = trimmed.ToLower();
+						if (trimmedLower == lowerName)
+						{
+							// Exact match (caseinsensitive)
+							found.Add(i);
+							return found;
+						}
+						else if (trimmedLower.StartsWith(lowerName)) // Partial match
+							found.Add(i);
+					}
 				}
 				catch
 				{
@@ -474,7 +486,7 @@ namespace TShockAPI
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
-			if (int.TryParse(idOrName, out type) && type > 0 && type < 84)
+			if (int.TryParse(idOrName, out type) && type >= firstItemPrefix && type <= lastItemPrefix)
 			{
 				return new List<int> {type};
 			}
