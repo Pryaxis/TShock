@@ -786,7 +786,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!TShock.Utils.Kick(players[0], reason))
+				if (!TShock.Utils.Kick(players[0], reason, !args.Player.RealPlayer, false, args.Player.Name))
 				{
 					args.Player.SendMessage("You can't kick another admin!", Color.Red);
 				}
@@ -833,7 +833,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!TShock.Utils.Ban(players[0], reason))
+				if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.Name))
 				{
 					args.Player.SendMessage("You can't ban another admin!", Color.Red);
 				}
