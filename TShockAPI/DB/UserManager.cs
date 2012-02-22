@@ -254,35 +254,50 @@ namespace TShockAPI.DB
 
 		public User GetUser(User user)
 		{
+			bool multiple = false;
+			string query;
+			string type;
+			object arg;
+			if (0 != user.ID)
+			{
+				query = "SELECT * FROM Users WHERE ID=@0";
+				arg = user.ID;
+				type = "id";
+			}
+			else if (string.IsNullOrEmpty(user.Address))
+			{
+				query = "SELECT * FROM Users WHERE Username=@0";
+				arg = user.Name;
+				type = "name";
+			}
+			else
+			{
+				query = "SELECT * FROM Users WHERE IP=@0";
+				arg = user.Address;
+				type = "ip";
+			}
+
 			try
 			{
-				QueryResult result;
-				if (0 != user.ID)
-					result = database.QueryReader("SELECT * FROM Users WHERE ID=@0", user.ID);
-				else if (string.IsNullOrEmpty(user.Address))
-					result = database.QueryReader("SELECT * FROM Users WHERE Username=@0", user.Name);
-				else
-					result = database.QueryReader("SELECT * FROM Users WHERE IP=@0", user.Address);
-
-				if (result.Read())
+				using (var result = database.QueryReader(query, arg))
 				{
-					user = LoadUserFromResult(user, result);
-					// Check for multiple matches
-					if (!result.Read())
-						return user;
-
-					if (0 != user.ID)
-						throw new UserManagerException(String.Format("Multiple users found for id '{0}'", user.ID));
-					else if (string.IsNullOrEmpty(user.Address))
-						throw new UserManagerException(String.Format("Multiple users found for name '{0}'", user.Name));
-					else
-						throw new UserManagerException(String.Format("Multiple users found for ip '{0}'", user.Address));
+					if (result.Read())
+					{
+						user = LoadUserFromResult(user, result);
+						// Check for multiple matches
+						if (!result.Read())
+							return user;
+						multiple = true;
+					}
 				}
 			}
 			catch (Exception ex)
 			{
 				throw new UserManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
 			}
+			if (multiple)
+				throw new UserManagerException(String.Format("Multiple users found for {0} '{1}'", type, arg));
+
 			throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
 		}
 
