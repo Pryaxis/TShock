@@ -1007,7 +1007,14 @@ namespace TShockAPI
 				}
 			}
 
-			TShock.Utils.StopServer();
+			if (args.Parameters.Count > 0)
+            		{
+                		TShock.Utils.StopServer(true, "Server shutting down: " + args.Parameters[0]);
+            		}
+            		else
+            		{
+                		TShock.Utils.StopServer();
+            		}
 		}
 		//Added restart command
 		private static void Restart(CommandArgs args)
@@ -1037,7 +1044,14 @@ namespace TShockAPI
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			TShock.Utils.StopServer(false);
+	            if (args.Parameters.Count > 0)
+	            {
+	                TShock.Utils.StopServer(false, "Server shutting down: " + args.Parameters[0]);
+	            }
+	            else
+	            {
+	                TShock.Utils.StopServer(false);
+	            }
 		}
 
 		private static void CheckUpdates(CommandArgs args)
