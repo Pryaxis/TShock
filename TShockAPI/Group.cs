@@ -23,6 +23,9 @@ namespace TShockAPI
 {
 	public class Group
 	{
+		// NOTE: Using a const still suffers from needing to recompile to change the default
+		// ideally we would use a static but this means it can't be used for the default parameter :(
+		public const string defaultChatColor = "255.255.255";
 		public readonly List<string> permissions = new List<string>();
 		public readonly List<string> negatedpermissions = new List<string>();
 
@@ -105,6 +108,14 @@ namespace TShockAPI
 		public byte R = 255;
 		public byte G = 255;
 		public byte B = 255;
+
+#if COMPAT_SIGS
+		[Obsolete("This constructor is for signature compatibility for external code only")]
+		public Group(string groupname, Group parentgroup, string chatcolor)
+			: this(groupname, parentgroup, chatcolor, null)
+		{
+		}
+#endif
 
 		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255", string permissions = null)
 		{
