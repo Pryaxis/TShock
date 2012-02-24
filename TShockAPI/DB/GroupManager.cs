@@ -28,7 +28,6 @@ namespace TShockAPI.DB
 	public class GroupManager : IEnumerable<Group>
 	{
 		private IDbConnection database;
-
 		public readonly List<Group> groups = new List<Group>();
 
 		public GroupManager(IDbConnection db)
@@ -101,7 +100,7 @@ namespace TShockAPI.DB
 		/// <param name="permissions">permissions</param>
 		/// <param name="chatcolor">chatcolor</param>
 		/// <param name="exceptions">exceptions true indicates use exceptions for errors false otherwise</param>
-		public String AddGroup(String name, string parentname, String permissions, String chatcolor = "255,255,255", bool exceptions = false)
+		public String AddGroup(String name, string parentname, String permissions, String chatcolor = Group.defaultChatColor, bool exceptions = false)
 		{
 			if (GroupExists(name))
 			{
@@ -142,9 +141,22 @@ namespace TShockAPI.DB
 
 		public String AddGroup(String name, String permissions)
 		{
-			return AddGroup(name, "", permissions, "255,255,255");
+			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public String AddGroup(String name, string parentname, String permissions)
+		{
+			return AddGroup(name, parentname, permissions, Group.defaultChatColor, false);
+		}
+
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public String AddGroup(String name, string parentname, String permissions, String chatcolor)
+		{
+			return AddGroup(name, parentname, permissions, chatcolor, false);
+		}
+#endif
 		/// <summary>
 		/// Updates a group including permissions
 		/// </summary>
@@ -175,6 +187,13 @@ namespace TShockAPI.DB
 			groups.Add(newgroup);
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public String DeleteGroup(String name)
+		{
+			return DeleteGroup(name, false);
+		}
+#endif
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			if (!GroupExists(name))
