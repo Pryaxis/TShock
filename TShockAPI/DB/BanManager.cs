@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using MySql.Data.MySqlClient;
@@ -39,15 +40,15 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-								try{
-			creator.EnsureExists(table);
-								}
-								catch (DllNotFoundException ex)
-{
-System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
-throw new Exception("Could not find a database library (probably Sqlite3.dll)");
-}
-
+			try
+			{
+				creator.EnsureExists(table);
+			}
+			catch (DllNotFoundException)
+			{
+				System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
+				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+			}
 		}
 
 		public Ban GetBanByIp(string ip)
@@ -67,12 +68,30 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			return null;
 		}
 
+		public List<Ban> GetBans()
+		{
+			List<Ban> banlist = new List<Ban>();
+			try
+			{
+				using (var reader = database.QueryReader("SELECT * FROM Bans"))
+				{
+					while (reader.Read())
+					{
+						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason")));						
+					}
+					return banlist;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+				Console.WriteLine(ex.StackTrace);
+			}
+			return null;
+		}
+
 		public Ban GetBanByName(string name, bool casesensitive = true)
 		{
-			if (!TShock.Config.EnableBanOnUsernames)
-			{
-				return null;
-			}
 			try
 			{
 				var namecol = casesensitive ? "Name" : "UPPER(Name)";
@@ -91,7 +110,14 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			return null;
 		}
 
-		public bool AddBan(string ip, string name = "", string reason = "")
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool AddBan(string ip, string name, string reason)
+		{
+			return AddBan(ip, name, reason, false);
+		}
+#endif
+		public bool AddBan(string ip, string name = "", string reason = "", bool exceptions = false)
 		{
 			try
 			{
@@ -99,19 +125,34 @@ throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			}
 			catch (Exception ex)
 			{
+				if (exceptions)
+					throw ex;
 				Log.Error(ex.ToString());
 			}
 			return false;
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
 		public bool RemoveBan(string ip)
+		{
+			return RemoveBan(ip, false, true, false);
+		}
+#endif
+		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true, bool exceptions = false)
 		{
 			try
 			{
-				return database.Query("DELETE FROM Bans WHERE IP=@0", ip) != 0;
+				if (!byName)
+					return database.Query("DELETE FROM Bans WHERE IP=@0", match) != 0;
+
+				var namecol = casesensitive ? "Name" : "UPPER(Name)";
+				return database.Query("DELETE FROM Bans WHERE " + namecol + "=@0", casesensitive ? match : match.ToUpper()) != 0;
 			}
 			catch (Exception ex)
 			{
+				if (exceptions)
+					throw ex;
 				Log.Error(ex.ToString());
 			}
 			return false;

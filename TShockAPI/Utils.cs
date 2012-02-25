@@ -29,11 +29,12 @@ namespace TShockAPI
 {
 	public class Utils
 	{
-	    public static bool saving = false;
-
-		public Utils()
-		{
-		}
+		private readonly static int firstItemPrefix = 1;
+		private readonly static int lastItemPrefix = 83;
+		// Utils is a Singleton
+		private static readonly Utils instance = new Utils();
+		private Utils() {}
+		public static Utils Instance { get { return instance; } }
 
 		public Random Random = new Random();
 		//private static List<Group> groups = new List<Group>();
@@ -135,11 +136,7 @@ namespace TShockAPI
 		/// </summary>
 		public void SaveWorld()
 		{
-            saving = true;
-            WorldGen.realsaveWorld();
-            Broadcast("World saved.", Color.Yellow);
-            Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
-            saving = false;
+			SaveManager.Instance.SaveWorld();
 		}
 
 		/// <summary>
@@ -186,15 +183,7 @@ namespace TShockAPI
 		/// <returns>int playerCount</returns>
 		public int ActivePlayers()
 		{
-			int num = 0;
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					num++;
-				}
-			}
-			return num;
+			return Main.player.Where(p => null != p && p.active).Count();
 		}
 
 		/// <summary>
@@ -205,6 +194,9 @@ namespace TShockAPI
 		public List<TSPlayer> FindPlayer(string ply)
 		{
 			var found = new List<TSPlayer>();
+			// Avoid errors caused by null search
+			if (null == ply)
+				return found;
 			ply = ply.ToLower();
 			foreach (TSPlayer player in TShock.Players)
 			{
@@ -452,22 +444,32 @@ namespace TShockAPI
 		{
 			Item item = new Item();
 			item.SetDefaults(0);
-			for (int i = 1; i < 83; i++)
-			{
-				item.prefix = (byte) i;
-				if (item.AffixName().Trim() == name)
-					return new List<int> {i};
-			}
+			string lowerName = name.ToLower();
 			var found = new List<int>();
-			for (int i = 1; i < 83; i++)
+			for (int i = firstItemPrefix; i <= lastItemPrefix; i++)
 			{
 				try
 				{
-					item.prefix = (byte) i;
-					if (item.AffixName().Trim().ToLower() == name.ToLower())
-						return new List<int> {i};
-					if (item.AffixName().Trim().ToLower().StartsWith(name.ToLower()))
+					item.prefix = (byte)i;
+					string trimmed = item.AffixName().Trim();
+					if (trimmed == name)
+					{
+						// Exact match
 						found.Add(i);
+						return found;
+					}
+					else
+					{
+						string trimmedLower = trimmed.ToLower();
+						if (trimmedLower == lowerName)
+						{
+							// Exact match (caseinsensitive)
+							found.Add(i);
+							return found;
+						}
+						else if (trimmedLower.StartsWith(lowerName)) // Partial match
+							found.Add(i);
+					}
 				}
 				catch
 				{
@@ -484,7 +486,7 @@ namespace TShockAPI
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
-			if (int.TryParse(idOrName, out type) && type > 0 && type < 84)
+			if (int.TryParse(idOrName, out type) && type >= firstItemPrefix && type <= lastItemPrefix)
 			{
 				return new List<int> {type};
 			}
@@ -508,70 +510,109 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world
+		/// </summary>
+		/// <param name="save">bool perform a world save before stop (default: true)</param>
+		/// <param name="reason">string reason (default: "Server shutting down!")</param>
+		public void StopServer(bool save = true, string reason = "Server shutting down!")
+		{
+			ForceKickAll(reason);
+			if (save)
+				SaveManager.Instance.SaveWorld();
+
+			// Save takes a while so kick again
+			ForceKickAll(reason);
+
+			// Broadcast so console can see we are shutting down as well
+			TShock.Utils.Broadcast(reason, Color.Red);
+
+			// Disconnect after kick as that signifies server is exiting and could cause a race
+			Netplay.disconnect = true;
+		}
+
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool ForceKick(TSPlayer player, string reason)
+		{
+			return Kick(player, reason, true, false, string.Empty);
+		}
+#endif
+		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public void ForceKick(TSPlayer player, string reason)
+		/// <param name="silent">bool silent (default: false)</param>
+		public void ForceKick(TSPlayer player, string reason, bool silent = false)
 		{
-			if (!player.ConnectionAlive)
-				return;
-			player.Disconnect(reason);
-			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
+			Kick(player, reason, true, silent);
 		}
 
-		public void ForceKick(TSPlayer player, string reason, bool silent)
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool Kick(TSPlayer player, string reason, string adminUserName)
 		{
-			player.SilentKickInProgress = true;
-			if (!player.ConnectionAlive)
-				return;
-			player.Disconnect(reason);
-			Log.ConsoleInfo(string.Format("{0} was force kicked for : {1}", player.IP, reason));
+			return Kick(player, reason, false, false, adminUserName);
 		}
-
+#endif
 		/// <summary>
 		/// Kicks a player from the server.
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public bool Kick(TSPlayer player, string reason, string adminUserName = "")
+		/// <param name="force">bool force (default: false)</param>
+		/// <param name="silent">bool silent (default: false)</param>
+		/// <param name="adminUserName">bool silent (default: null)</param>
+		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
 				return true;
-			if (!player.Group.HasPermission(Permissions.immunetokick))
+			if (force || !player.Group.HasPermission(Permissions.immunetokick))
 			{
 				string playerName = player.Name;
+				player.SilentKickInProgress = silent;
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
-				if (adminUserName.Length == 0)
-					Broadcast(string.Format("{0} was kicked for {1}", playerName, reason.ToLower()));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} kicked {1} for {2}", adminUserName, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool Ban(TSPlayer player, string reason, string adminUserName)
+		{
+			return Ban(player, reason, false, adminUserName);
+		}
+#endif
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
-		public bool Ban(TSPlayer player, string reason, string adminUserName = "")
+		/// <param name="force">bool force (default: false)</param>
+		/// <param name="adminUserName">bool silent (default: null)</param>
+		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
 				return true;
-			if (!player.Group.HasPermission(Permissions.immunetoban))
+			if (force || !player.Group.HasPermission(Permissions.immunetoban))
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
 				TShock.Bans.AddBan(ip, playerName, reason);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
-				if (adminUserName.Length == 0)
-					Broadcast(string.Format("{0} was banned for {1}", playerName, reason.ToLower()));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					Broadcast(string.Format("{0} was {1}banned for {1}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} banned {1} for {2}", adminUserName, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {1} for {2}", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
