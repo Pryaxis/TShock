@@ -134,6 +134,12 @@ namespace TShockAPI
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
+				if (Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile != "true" || Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile != "yes")
+				{
+					Log.Info("You have not read the installation instructions on the wiki. Please read them to enable TShock.");
+					Environment.Exit(1235);
+				}
+
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
@@ -356,6 +362,10 @@ namespace TShockAPI
 				{
 					ConfigFile.DumpDescriptions();
 					Permissions.DumpDescriptions();
+				}
+				if (parms[i].ToLower() == "-gsp")
+				{
+					Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile = "true";
 				}
 			}
 		}
