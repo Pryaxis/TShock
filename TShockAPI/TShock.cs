@@ -134,7 +134,7 @@ namespace TShockAPI
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
-				if (Config.HaveYouReadTheWiki != "flamelash")
+				if (Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile != "true" || Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile != "yes")
 				{
 					Log.Info("You have not read the installation instructions on the wiki. Please read them to enable TShock.");
 					Environment.Exit(1235);
@@ -365,7 +365,7 @@ namespace TShockAPI
 				}
 				if (parms[i].ToLower() == "-gsp")
 				{
-					Config.HaveYouReadTheWiki = "flamelash";
+					Config.DontShutDownTShockOnStartupBecauseIReadTheConfigFile = "true";
 				}
 			}
 		}

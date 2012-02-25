@@ -214,7 +214,7 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
-		[Description("I have read the wiki.")] public string HaveYouReadTheWiki = "";
+		[Description("I have read the wiki.")] public string DontShutDownTShockOnStartupBecauseIReadTheConfigFile = "";
 
 		public static ConfigFile Read(string path)
 		{
