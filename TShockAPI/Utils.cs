@@ -530,6 +530,13 @@ namespace TShockAPI
 			Netplay.disconnect = true;
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool ForceKick(TSPlayer player, string reason)
+		{
+			return Kick(player, reason, true, false, string.Empty);
+		}
+#endif
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
@@ -541,6 +548,13 @@ namespace TShockAPI
 			Kick(player, reason, true, silent);
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool Kick(TSPlayer player, string reason, string adminUserName)
+		{
+			return Kick(player, reason, false, false, adminUserName);
+		}
+#endif
 		/// <summary>
 		/// Kicks a player from the server.
 		/// </summary>
@@ -569,6 +583,13 @@ namespace TShockAPI
 			return false;
 		}
 
+#if COMPAT_SIGS
+		[Obsolete("This method is for signature compatibility for external code only")]
+		public bool Ban(TSPlayer player, string reason, string adminUserName)
+		{
+			return Ban(player, reason, false, adminUserName);
+		}
+#endif
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
