@@ -134,6 +134,12 @@ namespace TShockAPI
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
+				if (Config.HaveYouReadTheWiki != "flamelash")
+				{
+					Log.Info("You have not read the installation instructions on the wiki. Please read them to enable TShock.");
+					Environment.Exit(Environment.ExitCode);
+				}
+
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
@@ -356,6 +362,10 @@ namespace TShockAPI
 				{
 					ConfigFile.DumpDescriptions();
 					Permissions.DumpDescriptions();
+				}
+				if (parms[i].ToLower() == "-gsp")
+				{
+					Config.HaveYouReadTheWiki = "flamelash";
 				}
 			}
 		}
