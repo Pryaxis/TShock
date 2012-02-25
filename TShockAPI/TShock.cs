@@ -137,7 +137,7 @@ namespace TShockAPI
 				if (Config.HaveYouReadTheWiki != "flamelash")
 				{
 					Log.Info("You have not read the installation instructions on the wiki. Please read them to enable TShock.");
-					Environment.Exit(Environment.ExitCode);
+					Environment.Exit(1235);
 				}
 
 				if (Config.StorageType.ToLower() == "sqlite")
