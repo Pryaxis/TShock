@@ -1,3 +1,0 @@
-For installation instructions, please refer to:
-
-https://github.com/TShock/TShock/wiki/Installation-instructions
