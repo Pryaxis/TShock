@@ -29,6 +29,7 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 5. [The config file](#Config)
 6. [Plugins](#Plugins)
 7. [Closing remarks](#Closing)
+8. [Credits](#Credits)
 
 ----
 
@@ -425,13 +426,13 @@ You can find all plugins on the [forums](http://tshock.co/xf/index.php?forums/pl
 
 ---
 
-## Closing remarks<a id="Permissions"></a>
+## Closing remarks<a id="Closing"></a>
 
 Thanks for downloading TShock. Your continued support helps make TShock what it is today. We wouldn't be here without you.
 
 From everyone at TShock, thank-you.
 
-## Credits
+## Credits<a id="Credits"></a>
 
 TShock wouldn't be possible without:
 
