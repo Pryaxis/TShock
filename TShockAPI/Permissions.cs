@@ -200,7 +200,7 @@ namespace TShockAPI
 						c =>
 						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
-				sb.AppendLine("## <a name=\"{0}\">{0}</a>  ".SFormat(name));
+				sb.AppendLine("## <a id=\"{0}\">{0}</a>  ".SFormat(name));
 				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
 				sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
 				sb.AppendLine();
