@@ -28,6 +28,7 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 4. [Permissions](#Permissions)
 5. [The config file](#Config)
 6. [Plugins](#Plugins)
+7. [Closing remarks](#Closing)
 
 ----
 
@@ -414,3 +415,29 @@ In this file, if you wanted to change the maximum players to 64, you would edit 
 
 	"MaxSlots": 64,
 
+----
+
+### Plugins<a id="Plugins"></a>
+
+TShock, like most other administration modifications, allows the use of plugins. Logically, all plugins go in the *serverplugins* folder, and can be **either .dll or .dll-plugin** files. TShock is itself a plugin on the TerrariaServerAPI.
+
+You can find all plugins on the [forums](http://tshock.co/xf/index.php?forums/plugin-releases.15/), and the documentation for creating plugins can be found on the [wiki](http://develop.tshock.co:8080/display/docs/Plugin+Development).
+
+---
+
+## Closing remarks<a id="Permissions"></a>
+
+Thanks for downloading TShock. Your continued support helps make TShock what it is today. We wouldn't be here without you.
+
+From everyone at TShock, thank-you.
+
+## Credits
+
+TShock wouldn't be possible without:
+
+* Xenon Servers
+* Kerplunc Gaming
+* Multiplay UK
+* Atlassian
+* Github
+* You :)
