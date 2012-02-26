@@ -2,7 +2,8 @@
 
 1. Install [Pandoc](http://johnmacfarlane.net/pandoc).
 2. cd to docs/src
-3. pandoc *.md -o ../
+3. pandoc index.md -o ../index.html
+4. pandoc permissions.md -o ../permissions.html
 
 # Adding stuff
 
