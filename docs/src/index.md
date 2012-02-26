@@ -24,9 +24,9 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 
 ## Table of contents
 
-1. [Installation & basic usage](install.html)
-2. [Permissions](perms.html)
-3. [The config file](config.html)
+1. [Installation & basic usage](install.md.html)
+2. [Permissions](perms.md.html)
+3. [The config file](config.md.html)
 4. [Credits](#Credits)
 
 ----

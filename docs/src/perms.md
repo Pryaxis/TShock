@@ -2,7 +2,7 @@
 
 # Permissions
 
-[Back to index](index.html)
+[Back to index](index.md.html)
 
 ## Permissions<a id="Permissions"></a>
 
@@ -14,4 +14,4 @@ To add a permission to a given group, use the command "**/modgroup [add|del] [gr
 
 ## Permission nodes:
 
-[A list of permission nodes can be found here.](permissions.html)
+[A list of permission nodes can be found here.](permissions.md.html)

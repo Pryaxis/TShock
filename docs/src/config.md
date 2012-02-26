@@ -2,7 +2,7 @@
 
 # The config file
 
-[Back to index](index.html)
+[Back to index](index.md.html)
 
 ----
 

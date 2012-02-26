@@ -2,7 +2,7 @@
 
 # Install instructions & basic usage
 
-[Back to index](index.html)
+[Back to index](index.md.html)
 
 ----
 

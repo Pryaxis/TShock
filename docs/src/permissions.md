@@ -2,7 +2,7 @@
 
 # Permission Nodes
 
-These are the permissions that TShock currently supports, with associated commands. [Back to permissions](perms.html)
+These are the permissions that TShock currently supports, with associated commands. [Back to permissions](perms.md.html)
 
 ----
 
