@@ -23,8 +23,8 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 ## Table of contents
 
 1. [Installation](#Installation)
-2. [Configuration](#Configuration)
-3. [Basic usage](#Basic usage)
+2. [Basic usage](#Basics)
+3. [Configuration](#Configuration)
 4. [Plugins](#Plugins)
 
 ----
@@ -41,7 +41,10 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 8. Assuming the last step was a success, login. Run the command "**/login [username] [password]**".
 9. To finalize installation, run the command "**/auth-verify**". This will disable the authcode, enable any previously disabled functionality, and allow the server to be used in production.
 
-### Basic Usage
+----
+
+
+### Basic Usage<a id="Basics"></a>
 
 Now that TShock is running, you may be interested in a few other features prior to playing Terraria.
 
