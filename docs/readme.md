@@ -2,7 +2,7 @@
 
 1. Install [Pandoc](http://johnmacfarlane.net/pandoc).
 2. cd to docs/src
-3. pandoc index.md -o ../index.html
+3. pandoc *.md -o ../
 
 # Adding stuff
 
