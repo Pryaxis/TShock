@@ -436,9 +436,9 @@ From everyone at TShock, thank-you.
 
 TShock wouldn't be possible without:
 
-* Xenon Servers
-* Kerplunc Gaming
-* Multiplay UK
-* Atlassian
-* Github
+* [Xenon Servers](http://xns.cc/)
+* [Kerplunc Gaming](http://kerpluncgaming.com/)
+* [Multiplay UK](http://multiplay.co.uk/)
+* [Atlassian](http://www.atlassian.com/)
+* [Github](http://github.com/)
 * You :)
