@@ -1,8 +1,8 @@
 <link href="https://raw.github.com/clownfart/Markdown-CSS/master/markdown.css" rel="stylesheet"></link>
 
-# Intro
+# Permission Nodes
 
-These are the permissions that TShock currently supports, with associated commands. [Back to docs](index.html)
+These are the permissions that TShock currently supports, with associated commands. [Back to permissions](perms.html)
 
 ----
 
