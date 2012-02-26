@@ -1,3 +1,5 @@
+<link href="https://raw.github.com/clownfart/Markdown-CSS/master/markdown.css" rel="stylesheet"></link>
+
 # TShock Downloaded Documentation
 
 *Created for TShock version: 3.5.x.x*
@@ -51,7 +53,7 @@ Welcome to the official TShock for Terraria downloaded documentation. This guide
 
 Now that TShock is running, you may be interested in a few other features prior to playing Terraria.
 
-* You can add admins through two methods. If the user is already registered, you can use "**/user group [username] [group-to-change-to]**". By default, TShock comes with the "vip" group, the "trustedadmin" group, and the "newadmin" group.
+* You can add admins through two methods. If the user is already registered, you can use "**/user group [username] [group-to-change-to]**". By default, TShock comes with the "vip" group, the "trustedadmin" group, and the "newadmin" group. If the user has yet to register, you can use "**/user add [username]:[password] [group]**" to generate an account with elevated permissions for them.
 * When you join the server and already have an account, the server will ask for your account password, even if the server has no password setup. In the event that you set a password on the server, unregistered users will be required to enter it. Users that already have an account must enter their own password.
 * If a user wishes to change accounts but retain their group, a config option exists that will allow you to allow users to login to accounts with any username.
 
