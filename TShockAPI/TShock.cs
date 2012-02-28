@@ -40,6 +40,9 @@ namespace TShockAPI
 	[APIVersion(1, 11)]
 	public class TShock : TerrariaPlugin
 	{
+		private const string LogFormatDefault = "yyyyMMddHHmmss";
+		private static string LogFormat = LogFormatDefault;
+		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
 
@@ -111,13 +114,23 @@ namespace TShockAPI
 			if (!Directory.Exists(SavePath))
 				Directory.CreateDirectory(SavePath);
 
-            DateTime now = DateTime.Now;
+			DateTime now = DateTime.Now;
+			string logFilename;
+			try
+			{
+				logFilename = Path.Combine(SavePath, now.ToString(LogFormat)+".log");
+			}
+			catch(Exception)
+			{
+				// Problem with the log format use the default
+				logFilename = Path.Combine(SavePath, now.ToString(LogFormatDefault) + ".log");
+			}
 #if DEBUG
-			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All, false);
+			Log.Initialize(logFilename, LogLevel.All, false);
 #else
-			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All & ~LogLevel.Debug, false);
+			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			try
 			{
@@ -332,30 +345,41 @@ namespace TShockAPI
 
 		private void HandleCommandLine(string[] parms)
 		{
+			string path;
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-configpath")
+				switch(parms[i].ToLower())
 				{
-					var path = parms[++i];
-					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-					{
-						SavePath = path;
-						Log.ConsoleInfo("Config path has been set to " + path);
-					}
-				}
-				if (parms[i].ToLower() == "-worldpath")
-				{
-					var path = parms[++i];
-					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-					{
-						Main.WorldPath = path;
-						Log.ConsoleInfo("World path has been set to " + path);
-					}
-				}
-				if (parms[i].ToLower() == "-dump")
-				{
-					ConfigFile.DumpDescriptions();
-					Permissions.DumpDescriptions();
+					case "-configpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							SavePath = path;
+							Log.ConsoleInfo("Config path has been set to " + path);
+						}
+						break;
+
+					case "-worldpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							Main.WorldPath = path;
+							Log.ConsoleInfo("World path has been set to " + path);
+						}
+						break;
+
+					case "-dump":
+						ConfigFile.DumpDescriptions();
+						Permissions.DumpDescriptions();
+						break;
+
+					case "-logformat":
+						LogFormat = parms[++i];
+						break;
+
+					case "-logclear":
+						bool.TryParse(parms[++i], out LogClear);
+						break;
 				}
 			}
 		}
