@@ -532,9 +532,9 @@ namespace TShockAPI
 
 #if COMPAT_SIGS
 		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool ForceKick(TSPlayer player, string reason)
+		public void ForceKick(TSPlayer player, string reason)
 		{
-			return Kick(player, reason, true, false, string.Empty);
+			Kick(player, reason, true, false, string.Empty);
 		}
 #endif
 		/// <summary>
