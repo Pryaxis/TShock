@@ -31,7 +31,17 @@ namespace TShockAPI
 		/// </summary>
 		public void OnSaveWorld(bool resettime = false, HandledEventArgs e = null)
 		{
-			TShock.Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+			// Protect against internal errors causing save failures
+			// These can be caused by an unexpected error such as a bad or out of date plugin
+			try
+			{
+				TShock.Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+			}
+			catch (Exception ex)
+			{
+				Log.Error("World saved notification failed");
+				Log.Error(ex.ToString());
+			}
 		}
 
 		/// <summary>
@@ -88,15 +98,25 @@ namespace TShockAPI
 							return;
 						else
 						{
-							if (task.direct)
+							// Ensure that save handler errors don't bubble up and cause a recursive call
+							// These can be caused by an unexpected error such as a bad or out of date plugin
+							try
 							{
-								OnSaveWorld();
-								WorldGen.realsaveWorld(task.resetTime);
+								if (task.direct)
+								{
+									OnSaveWorld();
+									WorldGen.realsaveWorld(task.resetTime);
+								}
+								else
+									WorldGen.saveWorld(task.resetTime);
+								TShock.Utils.Broadcast("World saved.", Color.Yellow);
+								Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
-							else
-								WorldGen.saveWorld(task.resetTime);
-							TShock.Utils.Broadcast("World saved.", Color.Yellow);
-							Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+							catch (Exception e)
+							{
+								Log.Error("World saved failed");
+								Log.Error(e.ToString());
+							}
 						}
 					}
 				}
