@@ -165,7 +165,7 @@ namespace TShockAPI.DB
 
 		public string DeleteRow(string table, List<SqlValue> wheres)
 		{
-			return "DELETE FROM {0}{1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
+			return "DELETE FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
 		}
 
 		public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
@@ -173,12 +173,12 @@ namespace TShockAPI.DB
 			if (0 == values.Count)
 				throw new ArgumentException("No values supplied");
 
-			return "UPDATE {0} SET {1}{2}".SFormat(EscapeTableName(table), string.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
+			return "UPDATE {0} SET {1} {2}".SFormat(EscapeTableName(table), string.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
 		}
 
 		public string ReadColumn(string table, List<SqlValue> wheres)
 		{
-			return "SELECT * FROM {0}{1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
+			return "SELECT * FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
 		}
 
 		public string InsertValues(string table, List<SqlValue> values)
