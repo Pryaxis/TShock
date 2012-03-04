@@ -277,7 +277,7 @@ namespace TShockAPI
 			TPlayer.position.Y = (float)(tiley * 16 - TPlayer.height);
 			//We need to send the tile data again to prevent clients from thinking they *really* destroyed blocks just now.
 
-			SendTileSquare(tilex, tiley, 150);
+			SendTileSquare(tilex, tiley, 10);
 
 			return true;
 		}
