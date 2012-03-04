@@ -207,7 +207,7 @@ namespace TShockAPI.DB
 			if (0 == wheres.Count)
 				return string.Empty;
 
-			return "WHERE {2}".SFormat(string.Join(", ", wheres.Select(v => v.Name + " = " + v.Value)));
+			return "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => v.Name + " = " + v.Value)));
 		}
 	}
 }
