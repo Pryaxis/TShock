@@ -40,6 +40,9 @@ namespace TShockAPI
 	[APIVersion(1, 11)]
 	public class TShock : TerrariaPlugin
 	{
+		private const string LogFormatDefault = "yyyyMMddHHmmss";
+		private static string LogFormat = LogFormatDefault;
+		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
 
@@ -62,7 +65,7 @@ namespace TShockAPI
 		public static GeoIPCountry Geo;
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
-		public static Utils Utils = new Utils();
+		public static Utils Utils = Utils.Instance;
 		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
@@ -111,20 +114,30 @@ namespace TShockAPI
 			if (!Directory.Exists(SavePath))
 				Directory.CreateDirectory(SavePath);
 
-            DateTime now = DateTime.Now;
+			DateTime now = DateTime.Now;
+			string logFilename;
+			try
+			{
+				logFilename = Path.Combine(SavePath, now.ToString(LogFormat)+".log");
+			}
+			catch(Exception)
+			{
+				// Problem with the log format use the default
+				logFilename = Path.Combine(SavePath, now.ToString(LogFormatDefault) + ".log");
+			}
 #if DEBUG
-			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All, false);
+			Log.Initialize(logFilename, LogLevel.All, false);
 #else
-			Log.Initialize(Path.Combine(SavePath, now.ToString("yyyyMMddHHmmss")+".log"), LogLevel.All & ~LogLevel.Debug, false);
+			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			try
 			{
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					Log.ConsoleInfo(
-						"TShock was improperly shut down. Please avoid this in the future, world corruption may result from this.");
+						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
@@ -172,7 +185,6 @@ namespace TShockAPI
 				Warps = new WarpManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
-				Groups.LoadPermisions();
 				Regions = new RegionManager(DB);
 				Itembans = new ItemManager(DB);
 				RememberedPos = new RemeberedPosManager(DB);
@@ -187,7 +199,6 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Console.Title = string.Format("TerrariaShock Version {0} ({1})", Version, VersionCodename);
 				Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
 
 				GameHooks.PostInitialize += OnPostInit;
@@ -204,11 +215,14 @@ namespace TShockAPI
 			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
-                WorldHooks.SaveWorld += OnSaveWorld;
+				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
 				//RconHandler.StartThread();
+
+				if (Config.RestApiEnabled)
+					RestApi.Start();
 
 				if (Config.BufferPackets)
 					PacketBuffer = new PacketBufferer();
@@ -258,10 +272,13 @@ namespace TShockAPI
 		{
 			if (disposing)
 			{
+				// NOTE: order is important here
 				if (Geo != null)
 				{
 					Geo.Dispose();
 				}
+				SaveManager.Instance.Dispose();
+
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
                 ServerHooks.Connect -= OnConnect;
@@ -276,15 +293,16 @@ namespace TShockAPI
                 NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
-                WorldHooks.SaveWorld -= OnSaveWorld;
+				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
+
 				RestApi.Dispose();
 				Log.Dispose();
 			}
-
 			base.Dispose(disposing);
 		}
 
@@ -320,70 +338,83 @@ namespace TShockAPI
 				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
 				{
 					Main.worldPathName += ".crash";
-					WorldGen.saveWorld();
+					SaveManager.Instance.SaveWorld();
 				}
 			}
 		}
 
 		private void HandleCommandLine(string[] parms)
 		{
+			string path;
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-configpath")
+				switch(parms[i].ToLower())
 				{
-					var path = parms[++i];
-					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-					{
-						SavePath = path;
-						Log.ConsoleInfo("Config path has been set to " + path);
-					}
-				}
-				if (parms[i].ToLower() == "-worldpath")
-				{
-					var path = parms[++i];
-					if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-					{
-						Main.WorldPath = path;
-						Log.ConsoleInfo("World path has been set to " + path);
-					}
-				}
-				if (parms[i].ToLower() == "-dump")
-				{
-					ConfigFile.DumpDescriptions();
-					Permissions.DumpDescriptions();
+					case "-configpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							SavePath = path;
+							Log.ConsoleInfo("Config path has been set to " + path);
+						}
+						break;
+
+					case "-worldpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							Main.WorldPath = path;
+							Log.ConsoleInfo("World path has been set to " + path);
+						}
+						break;
+
+					case "-dump":
+						ConfigFile.DumpDescriptions();
+						Permissions.DumpDescriptions();
+						break;
+
+					case "-logformat":
+						LogFormat = parms[++i];
+						break;
+
+					case "-logclear":
+						bool.TryParse(parms[++i], out LogClear);
+						break;
 				}
 			}
 		}
 
-		private void HandleCommandLinePostConfigLoad(string[] parms)
+		public static void HandleCommandLinePostConfigLoad(string[] parms)
 		{
 			for (int i = 0; i < parms.Length; i++)
 			{
-				if (parms[i].ToLower() == "-port")
+				switch(parms[i].ToLower())
 				{
-					int port = Convert.ToInt32(parms[++i]);
-					Netplay.serverPort = port;
-					Config.ServerPort = port;
-					OverridePort = true;
-					Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
-				}
-				if (parms[i].ToLower() == "-rest-token")
-				{
-					string token = Convert.ToString(parms[++i]);
-					RESTStartupTokens.Add(token, "null");
-					Console.WriteLine("Startup parameter overrode REST token.");
-				}
-				if (parms[i].ToLower() == "-rest-enabled")
-				{
-					Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
-					Console.WriteLine("Startup parameter overrode REST enable.");
-
-				}
-				if (parms[i].ToLower() == "-rest-port")
-				{
-					Config.RestApiPort = Convert.ToInt32(parms[++i]);
-					Console.WriteLine("Startup parameter overrode REST port.");
-
+					case "-port":
+						int port = Convert.ToInt32(parms[++i]);
+						Netplay.serverPort = port;
+						Config.ServerPort = port;
+						OverridePort = true;
+						Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
+						break;
+					case "-rest-token":
+						string token = Convert.ToString(parms[++i]);
+						RESTStartupTokens.Add(token, "null");
+						Console.WriteLine("Startup parameter overrode REST token.");
+						break;
+					case "-rest-enabled":
+						Config.RestApiEnabled = Convert.ToBoolean(parms[++i]);
+						Console.WriteLine("Startup parameter overrode REST enable.");
+						break;
+					case "-rest-port":
+						Config.RestApiPort = Convert.ToInt32(parms[++i]);
+						Console.WriteLine("Startup parameter overrode REST port.");
+						break;
+					case "-maxplayers":
+					case "-players":
+						Config.MaxSlots = Convert.ToInt32(parms[++i]);
+						Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+						break;
 				}
 			}
 		}
@@ -397,6 +428,7 @@ namespace TShockAPI
 
 		private void OnPostInit()
 		{
+			SetConsoleTitle();
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int) DateTime.Now.ToBinary());
@@ -429,8 +461,6 @@ namespace TShockAPI
 				AuthToken = 0;
 			}
 			Regions.ReloadAllRegions();
-			if (Config.RestApiEnabled)
-				RestApi.Start();
 
 			StatTracker.CheckIn();
 			FixChestStacks();
@@ -460,7 +490,6 @@ namespace TShockAPI
 			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
-
 			//call these every second, not every update
 			if ((DateTime.UtcNow - LastCheck).TotalSeconds >= 1)
 			{
@@ -585,8 +614,13 @@ namespace TShockAPI
 					}
 				}
 			}
-			Console.Title = string.Format("TerrariaShock Version {0} ({1}) ({2}/{3})", Version, VersionCodename, count,
-										  Config.MaxSlots);
+			SetConsoleTitle();
+		}
+
+		private void SetConsoleTitle()
+		{
+			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
+								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
 		}
 
 		private void OnConnect(int ply, HandledEventArgs handler)
@@ -653,10 +687,18 @@ namespace TShockAPI
 				return;
 			}
 
-			var nameban = Bans.GetBanByName(player.Name);
 			Ban ban = null;
-			if (nameban != null && Config.EnableBanOnUsernames)
-				ban = nameban;
+			if (Config.EnableBanOnUsernames)
+			{
+				var newban = Bans.GetBanByName(player.Name);
+				if (null != newban)
+					ban = newban;
+			}
+
+			if (Config.EnableIPBans && null == ban)
+			{
+				ban = Bans.GetBanByIp(player.IP);
+			}
 
 			if (ban != null)
 			{
@@ -686,7 +728,7 @@ namespace TShockAPI
 					InventoryDB.InsertPlayerData(tsplr);
 				}
 
-				if (Config.RememberLeavePos)
+				if ((Config.RememberLeavePos) &&(!tsplr.LoginHarassed))
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
@@ -860,10 +902,12 @@ namespace TShockAPI
 					player.SendMessage(
 						player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!",
 						Color.Red);
+						player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
 					player.SendMessage("Please /register or /login to play!", Color.Red);
+					player.LoginHarassed = true;
 				}
 			}
 
@@ -996,17 +1040,6 @@ namespace TShockAPI
 			if (Config.DisableHardmode)
 				e.Handled = true;
 		}
-
-        void OnSaveWorld(bool resettime, HandledEventArgs e)
-        {
-            if (!Utils.saving)
-            {
-                Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-                var SaveWorld = new Thread(Utils.SaveWorld);
-                SaveWorld.Start();
-            }
-            e.Handled = true;
-        }
 
 	    /*
 		 * Useful stuff:

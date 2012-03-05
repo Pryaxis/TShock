@@ -76,12 +76,12 @@ namespace TShockAPI
 		public bool RequiresPassword;
 		public bool SilentKickInProgress;
 		public List<Point> IceTiles;
-        public long RPm=1;
-        public long WPm=1;
-        public long SPm=1;
-        public long BPm=1;
+	        public long RPm = 1;
+        	public long WPm = 1;
+        	public long SPm = 1;
+        	public long BPm = 1;
 		public long LoginMS;
-
+		public bool LoginHarassed = false;
 		public bool RealPlayer
 		{
 			get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
@@ -257,6 +257,10 @@ namespace TShockAPI
 			//The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
 			//Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
 			//Should we properly send sections so that clients don't get tiles twice?
+			SendTileSquare(tilex, tiley, 150);
+
+/*	//We shouldn't need this section anymore -it can prevent otherwise acceptable teleportation under some circumstances. 
+		
 			if (!SendTileSquare(tilex, tiley, 150))
 			{
 				InitSpawn = true;
@@ -264,6 +268,7 @@ namespace TShockAPI
 				return false;
 			}
 
+*/
 			Spawn(-1, -1);
 
 			SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
@@ -272,7 +277,7 @@ namespace TShockAPI
 			TPlayer.position.Y = (float)(tiley * 16 - TPlayer.height);
 			//We need to send the tile data again to prevent clients from thinking they *really* destroyed blocks just now.
 
-			SendTileSquare(tilex, tiley, 150);
+			SendTileSquare(tilex, tiley, 10);
 
 			return true;
 		}
