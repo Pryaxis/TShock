@@ -135,6 +135,38 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+        /// <summary>
+        /// For use in a PlayerTeam event
+        /// </summary>
+        public class PlayerTeamEventArgs : HandledEventArgs
+        {
+            /// <summary>
+            /// The Terraria player ID of the player
+            /// </summary>
+            public byte PlayerId { get; set; }
+            /// <summary>
+            /// Enable/disable pvp?
+            /// </summary>
+            public byte Team { get; set; }
+        }
+        /// <summary>
+        /// TogglePvp - called when a player toggles pvp
+        /// </summary>
+        public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
+        private static bool OnPlayerTeam(byte _id, byte _team)
+        {
+            if (PlayerTeam == null)
+                return false;
+
+            var args = new PlayerTeamEventArgs
+            {
+                PlayerId = _id,
+                Team = _team,
+            };
+            PlayerTeam.Invoke(null, args);
+            return args.Handled;
+        }
+
 		/// <summary>
 		/// For use in a PlayerSlot event
 		/// </summary>
@@ -444,7 +476,7 @@ namespace TShockAPI
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)))
+					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && ((Main.tile[i,j].liquid == 0 )&& !Main.tile[i,j].lava))
 					{
 						Vector2 vector;
 						vector.X = (float)(i * 16);
@@ -1091,6 +1123,7 @@ namespace TShockAPI
 											{PacketTypes.TileSendSquare, HandleSendTileSquare},
 											{PacketTypes.ProjectileNew, HandleProjectileNew},
 											{PacketTypes.TogglePvp, HandleTogglePvp},
+                                            {PacketTypes.PlayerTeam, HandlePlayerTeam},
 											{PacketTypes.TileKill, HandleTileKill},
 											{PacketTypes.PlayerKillMe, HandlePlayerKillMe},
 											{PacketTypes.LiquidSet, HandleLiquidSet},
@@ -1773,6 +1806,25 @@ namespace TShockAPI
 
 			return true;
 		}
+
+        private static bool HandlePlayerTeam(GetDataHandlerArgs args)
+        {
+            byte id = args.Data.ReadInt8();
+            byte team = args.Data.ReadInt8();
+            if (OnPlayerTeam(id, team))
+                return true;
+
+            if (id != args.Player.Index)
+            {
+                return true;
+            }
+
+            args.TPlayer.team = team;
+
+            NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, "", args.Player.Index);
+
+            return true;
+        }
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{

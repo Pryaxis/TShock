@@ -18,7 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Data;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 namespace TShockAPI.DB
 {
@@ -50,20 +53,25 @@ namespace TShockAPI.DB
 		/// <param name="user">User user</param>
 		public void AddUser(User user)
 		{
+			if (!TShock.Groups.GroupExists(user.Group))
+				throw new GroupNotExistsException(user.Group);
+
+			int ret;
 			try
 			{
-				if (!TShock.Groups.GroupExists(user.Group))
-					throw new GroupNotExistsException(user.Group);
-
-				if (
-					database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
-					               TShock.Utils.HashPassword(user.Password), user.Group, user.Address) < 1)
-					throw new UserExistsException(user.Name);
+				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.Group, user.Address);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("AddUser SQL returned an error", ex);
+				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
+				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
+					throw new UserExistsException(user.Name);
+				throw new UserManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
+
+			if (1 > ret)
+				throw new UserExistsException(user.Name);
 		}
 
 		/// <summary>
@@ -123,11 +131,18 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				if (!TShock.Groups.GroupExists(group))
+				Group grp = TShock.Groups.GetGroupByName(group);
+				if (null == grp)
 					throw new GroupNotExistsException(group);
 
 				if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
 					throw new UserNotExistException(user.Name);
+				
+				// Update player group reference for any logged in player
+				foreach (var player in TShock.Players.Where(p => null != p && p.UserAccountName == user.Name))
+				{
+					player.Group = grp;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -239,36 +254,82 @@ namespace TShockAPI.DB
 
 		public User GetUser(User user)
 		{
+			bool multiple = false;
+			string query;
+			string type;
+			object arg;
+			if (0 != user.ID)
+			{
+				query = "SELECT * FROM Users WHERE ID=@0";
+				arg = user.ID;
+				type = "id";
+			}
+			else if (string.IsNullOrEmpty(user.Address))
+			{
+				query = "SELECT * FROM Users WHERE Username=@0";
+				arg = user.Name;
+				type = "name";
+			}
+			else
+			{
+				query = "SELECT * FROM Users WHERE IP=@0";
+				arg = user.Address;
+				type = "ip";
+			}
+
 			try
 			{
-				QueryResult result;
-				if (string.IsNullOrEmpty(user.Address))
+				using (var result = database.QueryReader(query, arg))
 				{
-					result = database.QueryReader("SELECT * FROM Users WHERE Username=@0", user.Name);
-				}
-				else
-				{
-					result = database.QueryReader("SELECT * FROM Users WHERE IP=@0", user.Address);
-				}
-
-				using (var reader = result)
-				{
-					if (reader.Read())
+					if (result.Read())
 					{
-						user.ID = reader.Get<int>("ID");
-						user.Group = reader.Get<string>("Usergroup");
-						user.Password = reader.Get<string>("Password");
-						user.Name = reader.Get<string>("Username");
-						user.Address = reader.Get<string>("IP");
-						return user;
+						user = LoadUserFromResult(user, result);
+						// Check for multiple matches
+						if (!result.Read())
+							return user;
+						multiple = true;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("GetUserID SQL returned an error", ex);
+				throw new UserManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
 			}
+			if (multiple)
+				throw new UserManagerException(String.Format("Multiple users found for {0} '{1}'", type, arg));
+
 			throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+		}
+
+		public List<User> GetUsers()
+		{
+			try
+			{
+				List<User> users = new List<User>();
+				using (var reader = database.QueryReader("SELECT * FROM Users"))
+				{
+					while (reader.Read())
+					{
+						users.Add(LoadUserFromResult(new User(), reader));
+					}
+					return users;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
+		private User LoadUserFromResult(User user, QueryResult result)
+		{
+			user.ID = result.Get<int>("ID");
+			user.Group = result.Get<string>("Usergroup");
+			user.Password = result.Get<string>("Password");
+			user.Name = result.Get<string>("Username");
+			user.Address = result.Get<string>("IP");
+			return user;
 		}
 	}
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -407,8 +407,18 @@ namespace TShockAPI
                         TShock.InventoryDB.InsertPlayerData(args.Player);
                     }
 				    args.Player.SendMessage("Authenticated as " + user.Name + " successfully.", Color.LimeGreen);
+
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name);
-				}
+					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos)){
+					if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
+					{
+					Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
+
+					args.Player.Teleport((int) pos.X, (int) pos.Y + 3);
+					}
+					args.Player.LoginHarassed = false;
+				
+				}}
 				else
 				{
 					args.Player.SendMessage("Incorrect password", Color.LimeGreen);
@@ -574,7 +584,10 @@ namespace TShockAPI
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+                if (args.Parameters[1].Split('.').Count() ==4)
+
+                    //              changed to support dot character in usernames
+                    //				if (args.Parameters[1].Contains("."))
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
@@ -620,7 +633,11 @@ namespace TShockAPI
 			else if (subcmd == "group")
 			{
 				var user = new User();
-				if (args.Parameters[1].Contains("."))
+			    if (args.Parameters[1].Split('.').Count()==4)
+
+                //changed to support dot character in usernames
+                //if (args.Parameters[1].Contains("."))
+
 					user.Address = args.Parameters[1];
 				else
 					user.Name = args.Parameters[1];
@@ -769,7 +786,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!TShock.Utils.Kick(players[0], reason))
+				if (!TShock.Utils.Kick(players[0], reason, !args.Player.RealPlayer, false, args.Player.Name))
 				{
 					args.Player.SendMessage("You can't kick another admin!", Color.Red);
 				}
@@ -816,7 +833,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!TShock.Utils.Ban(players[0], reason))
+				if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.Name))
 				{
 					args.Player.SendMessage("You can't ban another admin!", Color.Red);
 				}
@@ -860,25 +877,14 @@ namespace TShockAPI
 			var ban = TShock.Bans.GetBanByName(plStr);
 			if (ban != null)
 			{
-				if (TShock.Bans.RemoveBan(ban.IP))
-					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
-				else
-					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
-			}
-			else if (!TShock.Config.EnableBanOnUsernames)
-			{
-				ban = TShock.Bans.GetBanByIp(plStr);
-
-				if (ban == null)
-					args.Player.SendMessage(string.Format("Failed to unban {0}, not found.", args.Parameters[0]), Color.Red);
-				else if (TShock.Bans.RemoveBan(ban.IP))
+				if (TShock.Bans.RemoveBan(ban.IP, true))
 					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
 				else
 					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
 			}
 			else
 			{
-				args.Player.SendMessage("Invalid player!", Color.Red);
+				args.Player.SendMessage(string.Format("No bans for player {0} exist", plStr), Color.Red);
 			}
 		}
 
@@ -937,8 +943,8 @@ namespace TShockAPI
 				return;
 			}
 
-			string plStr = args.Parameters[0];
-			var ban = TShock.Bans.GetBanByIp(plStr);
+			var ip = args.Parameters[0];
+			var ban = TShock.Bans.GetBanByIp(ip);
 			if (ban != null)
 			{
 				if (TShock.Bans.RemoveBan(ban.IP))
@@ -948,7 +954,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendMessage("Invalid player!", Color.Red);
+				args.Player.SendMessage(string.Format("No bans for ip {0} exist", ip), Color.Red);
 			}
 		}
 
@@ -1001,38 +1007,37 @@ namespace TShockAPI
 				}
 			}
 
-			TShock.Utils.ForceKickAll("Server shutting down!");
-			WorldGen.saveWorld();
-			Netplay.disconnect = true;
+			TShock.Utils.StopServer();
 		}
-        //Added restart command
-        private static void Restart(CommandArgs args)
-        {
-	if (Main.runningMono){
-	Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
-	}else{
-            if (TShock.Config.ServerSideInventory)
-            {
-                foreach (TSPlayer player in TShock.Players)
-                {
-                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-                    {
-                        TShock.InventoryDB.InsertPlayerData(player);
-                    }
-                }
-            }
+		//Added restart command
+		private static void Restart(CommandArgs args)
+		{
+			if (Main.runningMono)
+			{
+				Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono");
+			}
+			else
+			{
+				if (TShock.Config.ServerSideInventory)
+				{
+					foreach (TSPlayer player in TShock.Players)
+					{
+						if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+						{
+							TShock.InventoryDB.InsertPlayerData(player);
+						}
+					}
+				}
 
-            TShock.Utils.ForceKickAll("Server restarting!");
-            WorldGen.saveWorld();
-            Netplay.disconnect = true;
-            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-            Environment.Exit(0);
-        }}
+				TShock.Utils.StopServer();
+				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+				Environment.Exit(0);
+			}
+		}
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			TShock.Utils.ForceKickAll("Server shutting down!");
-			Netplay.disconnect = true;
+			TShock.Utils.StopServer(false);
 		}
 
 		private static void CheckUpdates(CommandArgs args)
@@ -1085,7 +1090,7 @@ namespace TShockAPI
 
             if (args.Parameters.Count < 1)
             {
-                ply.SendMessage("Picking a random ore!", Color.Green);
+                ply.SendMessage("Picking a random ore!", Color.Green);    //should this be a help message instead?
                 num = WorldGen.genRand.Next(6);
             }
             else if (args.Parameters[0] == "cobalt")
@@ -1112,7 +1117,34 @@ namespace TShockAPI
             {
                 num = 5;
             }
-
+            else if (args.Parameters[0] == "demonite")
+            {
+                num = 7;
+            }
+            else if (args.Parameters[0] == "sapphire")
+            {
+                num = 8;
+            }
+            else if (args.Parameters[0] == "ruby")
+            {
+                num = 9;
+            }
+            else if (args.Parameters[0] == "emerald")
+            {
+                num = 10;
+            }
+            else if (args.Parameters[0] == "topaz")
+            {
+                num = 11;
+            }
+            else if (args.Parameters[0] == "amethyst")
+            {
+                num = 12;
+            }
+            else if (args.Parameters[0] == "diamond")
+            {
+                num = 13;
+            }
             else
             {
                 num = 2;
@@ -1147,7 +1179,41 @@ namespace TShockAPI
 			num = 9;
 			num3 *= 1.1f;
 		}
-
+        else if (num == 7)
+        {
+            num = 22;
+            num3 *= 1;
+        }
+        else if (num == 8)
+        {
+            num = 63;
+            num3 *= .80f;
+        }
+        else if (num == 9)
+        {
+            num = 64;
+            num3 *=1;
+        }
+        else if (num == 10)
+        {
+            num = 65;
+            num3 *= 1;
+        }
+        else if (num == 11)
+        {
+            num = 66;
+            num3 *= 1;
+        }
+        else if (num == 12)
+        {
+            num = 67;
+            num3 *= 1;
+        }
+        else if (num == 13)
+        {
+            num = 68;
+            num3 *= 1;
+        }
 		else
 		{
 			num = 111;
@@ -1165,11 +1231,11 @@ namespace TShockAPI
 			{
 				int i2 = WorldGen.genRand.Next(100, Main.maxTilesX - 100);
 				double num6 = Main.worldSurface;
-				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9))
+				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9) ||((num > 62) && (num < 69)))
 				{
 					num6 = Main.rockLayer;
 				}
-				if (num == 111)
+				if ((num == 111) || (num == 22) || (num == 68))
 				{
 					num6 = (Main.rockLayer + Main.rockLayer + (double)Main.maxTilesY) / 3.0;
 				}
@@ -1544,6 +1610,8 @@ namespace TShockAPI
                             Main.tile[x, y].type = 2;
                             break;
                         case 32:
+                        case 113:
+                        case 110:
                             Main.tile[x, y].type = 0;
                             Main.tile[x, y].active = false;
                             break;
@@ -1552,10 +1620,13 @@ namespace TShockAPI
                             break;
                         case 112:
                         case 116:
-                            Main.tile[x, y].type = 169;
+                            Main.tile[x, y].type = 53;
                             break;
-                        case 113:
+                        case 118:
                             Main.tile[x, y].type = 38;
+                            break;
+                        case 115:
+                            Main.tile[x, y].type = 52;
                             break;
                         default:
                             continue;
@@ -2186,15 +2257,13 @@ namespace TShockAPI
 		{
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
-
-			TShock.Utils.Broadcast("Server map saving, potential lag spike");
-			Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-			SaveWorld.Start();
+			SaveManager.Instance.SaveWorld(false);
 		}
 
 		private static void Reload(CommandArgs args)
 		{
 			FileTools.SetupConfig();
+            TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.ReloadAllRegions();
 			args.Player.SendMessage(
@@ -2215,9 +2284,7 @@ namespace TShockAPI
 
 		private static void Save(CommandArgs args)
 		{
-			TShock.Utils.Broadcast("Server map saving, potential lag spike");
-			Thread SaveWorld = new Thread(TShock.Utils.SaveWorld);
-			SaveWorld.Start();
+			SaveManager.Instance.SaveWorld(false);
 		}
 
 		private static void Settle(CommandArgs args)
