@@ -193,7 +193,7 @@ namespace TShockAPI
 			ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") {DoLog = false});
 			ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") {DoLog = false});
 			ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") {DoLog = false});
-			add(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui");
+			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
 			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
 			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
