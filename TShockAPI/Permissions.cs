@@ -27,6 +27,7 @@ namespace TShockAPI
 	public static class Permissions
 	{
 		//Permissions with blank descriptions basically means its described by the commands it gives access to.
+        [Description("Allows players to view user information")] public static readonly string userinfo;
 
 		[Description("")] public static readonly string causeevents;
 
