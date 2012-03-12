@@ -472,6 +472,16 @@ namespace TShockAPI
 			{
 				num4 = Main.maxTilesY;
 			}
+                       for (int c = num; c < num2; c++)
+                       {
+                               for (int d = num3; d< num4; d++)
+                               {
+                                       if (Main.tile[c,d].liquid != 0)
+                                          return false;
+                               }
+                       }
+
+
 			for (int i = num; i < num2; i++)
 			{
 				for (int j = num3; j < num4; j++)
