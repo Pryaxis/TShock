@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011 The TShock Team
 
@@ -182,7 +182,8 @@ namespace TShockAPI
 			add(Permissions.manageregion, Region, "region");
 			add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(null, Help, "help");
-			add(null, Playing, "playing", "online", "who", "version");
+			add(null, Playing, "playing", "online", "who");
+			add(null, CheckVersion, "version");
 			add(null, AuthToken, "auth");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
@@ -2924,7 +2925,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			if (cmdlist.Count > (15*page))
+			if (cmdlist.Count > (15 * page))
 			{
 				args.Player.SendMessage(string.Format("Type /help {0} for more commands.", (page + 1)), Color.Yellow);
 			}
@@ -2932,12 +2933,76 @@ namespace TShockAPI
 
 		private static void Playing(CommandArgs args)
 		{
-		    string response = args.Player.Group.HasPermission(Permissions.seeids)
-		                          ? TShock.Utils.GetPlayersWithIds()
-		                          : TShock.Utils.GetPlayers();
-            args.Player.SendMessage(string.Format("Current players: {0}.", response), 255, 240, 20);
+			List<string> players = new List<string>();
+			if (args.Player.Group.HasPermission(Permissions.seeids))
+			{
+				foreach (TSPlayer player in TShock.Players)
+					if (player != null && player.Active)
+					{
+						players.Add(player.Name + " (" +
+							Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ")");
+					}
+			}
+			else
+			{
+				foreach (TSPlayer player in TShock.Players)
+					if (player != null && player.Active)
+					{
+						players.Add(player.Name);
+					}
+			}
+			//How many names per page
+			const int pagelimit = 15;
+			//How many names per line
+			const int perline = 5;
+			//Pages start at 0 but are displayed and parsed at 1
+			int page = 0;
+
+			if (args.Parameters.Count > 0)
+			{
+				if (!int.TryParse(args.Parameters[0], out page) || page < 1)
+				{
+					args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
+					return;
+				}
+				page--; //Substract 1 as pages are parsed starting at 1 and not 0
+			}
+
+			//Check if they are trying to access a page that doesn't exist.
+			int pagecount = players.Count / pagelimit;
+			if (page > pagecount)
+			{
+				args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
+				return;
+			}
+
+			//Display the current page and the number of pages.
+			args.Player.SendMessage(string.Format("Current players ({0}/{1}):", page + 1, pagecount + 1), Color.Green);
+
+			//Add up to pagelimit names to a list
+			var nameslist = new List<string>();
+			for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < players.Count; i++)
+			{
+				nameslist.Add(players[i]);
+			}
+
+			//convert the list to an array for joining
+			var names = nameslist.ToArray();
+			for (int i = 0; i < names.Length; i += perline)
+			{
+				args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
+			}
+
+			if (page < pagecount)
+			{
+				args.Player.SendMessage(string.Format("Type /playing {0} for more players.", (page + 2)), Color.Yellow);
+			}
+		}
+
+		private static void CheckVersion(CommandArgs args)
+		{
 			args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
-												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+									  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
 		}
 
 		private static void AuthToken(CommandArgs args)
