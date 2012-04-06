@@ -216,6 +216,8 @@ namespace TShockAPI
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
             add(Permissions.converthardmode, RemoveSpecial, "removespecial");
+            add(Permissions.savessi, SaveSSI, "savessi");
+            add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -975,6 +977,48 @@ namespace TShockAPI
 			args.Player.DisplayLogs = (!args.Player.DisplayLogs);
 			args.Player.SendMessage("You now " + (args.Player.DisplayLogs ? "receive" : "stopped receiving") + " logs");
 		}
+
+        public static void SaveSSI(CommandArgs args )
+        {
+            if (TShock.Config.ServerSideInventory)
+            {
+                args.Player.SendMessage("SSI has been saved.", Color.Green);
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+                    {
+                        TShock.InventoryDB.InsertPlayerData(player);
+                    }
+                }
+            }
+        }
+
+        public static void OverrideSSI( CommandArgs args )
+        {
+            if( args.Parameters.Count < 1 )
+            {
+                args.Player.SendMessage("Correct usage: /overridessi(/ossi) <player name>", Color.Red);
+                return;
+            }
+
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+            if( players.Count < 1 )
+            {
+                args.Player.SendMessage("No players match " + args.Parameters[0], Color.Red);
+            }
+            else if( players.Count > 1 )
+            {
+                args.Player.SendMessage( players.Count + " players matched " + args.Parameters[0], Color.Red);
+            }
+            else if (TShock.Config.ServerSideInventory)
+            {
+                if( players[0] != null && players[0].IsLoggedIn && !players[0].IgnoreActionsForClearingTrashCan)
+                {
+                    args.Player.SendMessage( players[0].Name + " has been exempted and updated.", Color.Green);
+                    TShock.InventoryDB.InsertPlayerData(players[0]);
+                }
+            }
+        }
 
 		#endregion Player Management Commands
 

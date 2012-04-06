@@ -161,6 +161,9 @@ namespace TShockAPI
         [Description("User can see the id of players with /who")]
         public static readonly string seeids;
 
+	    [Description("User can save all the players SSI state.")] 
+        public static readonly string savessi;
+
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
