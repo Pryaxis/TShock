@@ -2028,16 +2028,42 @@ namespace TShockAPI
 				String groupname = args.Parameters[0];
 				args.Parameters.RemoveAt(0);
 
+			    string response = "";
 				if (com.Equals("add"))
 				{
-					String response = TShock.Groups.AddPermissions(groupname, args.Parameters);
+                    if( groupname == "*" )
+                    {
+                        int count = 0;
+                        foreach( Group g in TShock.Groups )
+                        {
+                            response = TShock.Groups.AddPermissions(g.Name, args.Parameters);
+                            if (!response.StartsWith("Error:"))
+                                count++;
+                        }
+                        args.Player.SendMessage(String.Format("{0} groups were modified.", count ), Color.Green );
+                        return;
+                    }
+					response = TShock.Groups.AddPermissions(groupname, args.Parameters);
 					if (response.Length > 0)
 						args.Player.SendMessage(response, Color.Green);
 					return;
 				}
-				else if (com.Equals("del") || com.Equals("delete"))
-				{
-					String response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
+				
+                if (com.Equals("del") || com.Equals("delete"))
+                {
+                    if (groupname == "*")
+                    {
+                        int count = 0;
+                        foreach (Group g in TShock.Groups)
+                        {
+                            response = TShock.Groups.DeletePermissions(g.Name, args.Parameters);
+                            if (!response.StartsWith("Error:"))
+                                count++;
+                        }
+                        args.Player.SendMessage(String.Format("{0} groups were modified.", count), Color.Green);
+                        return;
+                    }
+                    response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
 					if (response.Length > 0)
 						args.Player.SendMessage(response, Color.Green);
 					return;
