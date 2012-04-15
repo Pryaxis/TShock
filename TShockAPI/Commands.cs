@@ -1051,7 +1051,8 @@ namespace TShockAPI
 				}
 			}
 
-			TShock.Utils.StopServer();
+            string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+			TShock.Utils.StopServer(true, reason);
 		}
 		//Added restart command
 		private static void Restart(CommandArgs args)
@@ -1073,7 +1074,8 @@ namespace TShockAPI
 					}
 				}
 
-				TShock.Utils.StopServer();
+                string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+                TShock.Utils.StopServer(true, reason);
 				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
 				Environment.Exit(0);
 			}
@@ -1081,7 +1083,8 @@ namespace TShockAPI
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			TShock.Utils.StopServer(false);
+            string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+            TShock.Utils.StopServer(false, reason);
 		}
 
 		private static void CheckUpdates(CommandArgs args)
