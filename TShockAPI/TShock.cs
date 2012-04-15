@@ -656,7 +656,7 @@ namespace TShockAPI
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, "Not on whitelist.");
+				Utils.ForceKick(player, Config.WhitelistKickReason);
 				handler.Handled = true;
 				return;
 			}

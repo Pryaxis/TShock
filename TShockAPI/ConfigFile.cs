@@ -118,6 +118,8 @@ namespace TShockAPI
 		[Description("String that is used when kicking people when the server is full.")] public string ServerFullReason =
 			"Server is full";
 
+	    [Description("String that is used when a user is kicked due to not being on the whitelist.")] public string WhitelistKickReason = "You are not on the whitelist.";
+
 		[Description("String that is used when kicking people when the server is full with no reserved slots.")] public string
 			ServerFullNoReservedReason = "Server is full. No reserved slots open.";
 
