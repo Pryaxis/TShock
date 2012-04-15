@@ -2883,6 +2883,26 @@ namespace TShockAPI
 
 						break;
 					}
+                case "z":
+                    {
+                        if (args.Parameters.Count == 3)
+                        {
+                            string regionName = args.Parameters[1];
+                            int z = 0;
+                            if (int.TryParse(args.Parameters[2], out z ) )
+                            {
+                                if (TShock.Regions.SetZ(regionName, z))
+                                    args.Player.SendMessage("Region's z is now " + z, Color.Yellow);
+                                else
+                                    args.Player.SendMessage("Could not find specified region", Color.Red);
+                            }
+                            else
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                        }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                        break;
+			        }
 				case "resize":
 				case "expand":
 					{
