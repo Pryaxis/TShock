@@ -256,7 +256,7 @@ namespace TShockAPI
 						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
 			}
 
-			if (!Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+			if (!Utils.GetGroup(userAccount.Group).HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
 			{
 				return new RestObject("403")
 						{

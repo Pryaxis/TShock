@@ -164,12 +164,18 @@ namespace TShockAPI
 	    [Description("User can save all the players SSI state.")] 
         public static readonly string savessi;
 
+        [Description("User can use rest api calls.")]
+	    public static readonly string restapi;
+
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
 				field.SetValue(null, field.Name);
 			}
+
+            //Backwards compatability.
+            restapi = "api";
 		}
 
 		private static List<Command> GetCommands(string perm)
