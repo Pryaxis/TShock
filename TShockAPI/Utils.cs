@@ -571,6 +571,7 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
+                TShock.InventoryDB.InsertPlayerData(player);
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
