@@ -634,18 +634,13 @@ namespace TShockAPI
                 args.Type == 112 || args.Type == 23 || args.Type == 32 ) )
             {
                 args.Handled = true;
-                Console.WriteLine("{0} has been prevented from creeping to {1}, {2}", args.Type, args.X, args.Y);
                 return;
             }
 
             if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 ) )
             {
                 args.Handled = true;
-                Console.WriteLine("{0} has been prevented from creeping to {1}, {2}", args.Type, args.X, args.Y);
-                return;
             }
-
-            Console.WriteLine("{0} has creeped to {1}, {2}", args.Type, args.X, args.Y);
         }
 
 		private void OnConnect(int ply, HandledEventArgs handler)
