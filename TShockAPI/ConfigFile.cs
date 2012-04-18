@@ -216,7 +216,11 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
-		public static ConfigFile Read(string path)
+	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowCorruptionCreep = true;
+
+        [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHallowCreep = true;
+
+        public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
 				return new ConfigFile();

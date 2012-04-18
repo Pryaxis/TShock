@@ -203,6 +203,7 @@ namespace TShockAPI
 
 				GameHooks.PostInitialize += OnPostInit;
 				GameHooks.Update += OnUpdate;
+                GameHooks.HardUpdate += OnHardUpdate;
 				ServerHooks.Connect += OnConnect;
 				ServerHooks.Join += OnJoin;
 				ServerHooks.Leave += OnLeave;
@@ -281,6 +282,7 @@ namespace TShockAPI
 
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
+			    GameHooks.HardUpdate -= OnHardUpdate;
                 ServerHooks.Connect -= OnConnect;
 				ServerHooks.Join -= OnJoin;
 				ServerHooks.Leave -= OnLeave;
@@ -622,6 +624,29 @@ namespace TShockAPI
 			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
 								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
 		}
+
+        private void OnHardUpdate( HardUpdateEventArgs args )
+        {
+            if (args.Handled)
+                return;
+
+            if (!Config.AllowCorruptionCreep && ( args.Type == 23 || args.Type == 25 || args.Type == 0 ||
+                args.Type == 112 || args.Type == 23 || args.Type == 32 ) )
+            {
+                args.Handled = true;
+                Console.WriteLine("{0} has been prevented from creeping to {1}, {2}", args.Type, args.X, args.Y);
+                return;
+            }
+
+            if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 ) )
+            {
+                args.Handled = true;
+                Console.WriteLine("{0} has been prevented from creeping to {1}, {2}", args.Type, args.X, args.Y);
+                return;
+            }
+
+            Console.WriteLine("{0} has creeped to {1}, {2}", args.Type, args.X, args.Y);
+        }
 
 		private void OnConnect(int ply, HandledEventArgs handler)
 		{
