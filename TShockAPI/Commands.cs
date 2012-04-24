@@ -182,7 +182,7 @@ namespace TShockAPI
 			add(Permissions.manageregion, Region, "region");
 			add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(null, Help, "help");
-			add(null, Playing, "playing", "online", "who", "version");
+			add(null, ListConnectedPlayers, "playing", "online", "who", "version");
 			add(null, AuthToken, "auth");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
@@ -3023,7 +3023,7 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Playing(CommandArgs args)
+		private static void ListConnectedPlayers(CommandArgs args)
 		{
 		    string response = args.Player.Group.HasPermission(Permissions.seeids)
 		                          ? TShock.Utils.GetPlayersWithIds()
