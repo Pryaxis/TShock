@@ -204,6 +204,7 @@ namespace TShockAPI
 				GameHooks.PostInitialize += OnPostInit;
 				GameHooks.Update += OnUpdate;
                 GameHooks.HardUpdate += OnHardUpdate;
+                GameHooks.StatueSpawn += OnStatueSpawn;
 				ServerHooks.Connect += OnConnect;
 				ServerHooks.Join += OnJoin;
 				ServerHooks.Leave += OnLeave;
@@ -283,6 +284,7 @@ namespace TShockAPI
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
 			    GameHooks.HardUpdate -= OnHardUpdate;
+			    GameHooks.StatueSpawn -= OnStatueSpawn;
                 ServerHooks.Connect -= OnConnect;
 				ServerHooks.Join -= OnJoin;
 				ServerHooks.Leave -= OnLeave;
@@ -640,6 +642,18 @@ namespace TShockAPI
             if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 ) )
             {
                 args.Handled = true;
+            }
+        }
+
+        private void OnStatueSpawn( StatueSpawnEventArgs args )
+        {
+            if( args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld )
+            {
+                args.Handled = true;
+            }
+            else
+            {
+                args.Handled = false;
             }
         }
 
