@@ -220,14 +220,13 @@ namespace TShockAPI
 
         [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHallowCreep = true;
 
-        [Description("How many things a statue can spawn within 200 pixels(?) before it stops spawning. Default = 3")]
-        public int StatueSpawn200 = 3;
+        [Description("How many things a statue can spawn within 200 pixels(?) before it stops spawning. Default = 3")] public int StatueSpawn200 = 3;
 
-        [Description("How many things a statue can spawn within 600 pixels(?) before it stops spawning. Default = 6")]
-        public int StatueSpawn600 = 6;
+        [Description("How many things a statue can spawn within 600 pixels(?) before it stops spawning. Default = 6")] public int StatueSpawn600 = 6;
 
-        [Description("How many things a statue spawns can exist in the world before it stops spawning. Default = 10")]
-        public int StatueSpawnWorld = 10;
+        [Description("How many things a statue spawns can exist in the world before it stops spawning. Default = 10")] public int StatueSpawnWorld = 10;
+
+	    [Description("Prevent banned items from being /i or /give")] public bool PreventBannedItemSpawn = false;
 
         public static ConfigFile Read(string path)
 		{

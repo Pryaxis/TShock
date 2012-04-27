@@ -3347,8 +3347,14 @@ namespace TShockAPI
 					{
 						if (itemAmount == 0 || itemAmount > item.maxStack)
 							itemAmount = item.maxStack;
-						args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
-						args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
+                        if (args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix))
+                        {
+                            args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("The item is banned and the config prevents you from spawning banned items.", Color.Red);
+                        }
 					}
 					else
 					{
@@ -3425,9 +3431,16 @@ namespace TShockAPI
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
-							plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
-							args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
-							plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
+							if( plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix))
+						    {
+						        args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
+							    plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
+						    }
+						    else
+						    {
+						        args.Player.SendMessage("The item is banned and the config prevents spawning banned items.", Color.Red);
+						    }
+							
 						}
 						else
 						{
