@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ namespace TShockAPI
                         sb.Append(", ");
                     }
                     sb.Append(player.Name);
-                    string id = "( " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + " )";
+                    string id = "(ID: " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ", IX:" + player.Index + ")";
                     sb.Append(id);
                 }
             }
@@ -187,7 +187,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Finds a player ID based on name
+		/// Finds a TSPlayer based on name or id
 		/// </summary>
 		/// <param name="ply">Player name</param>
 		/// <returns></returns>
@@ -202,6 +202,18 @@ namespace TShockAPI
 			{
 				if (player == null)
 					continue;
+
+                try
+                {
+                    if (Convert.ToInt32(ply) == player.Index && player.Active)
+                    {
+                        return new List<TSPlayer> { player };
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Conversion failed
+                }
 
 				string name = player.Name.ToLower();
 				if (name.Equals(ply))

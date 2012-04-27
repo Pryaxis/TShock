@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ namespace TShockAPI
 			add(Permissions.manageregion, Region, "region");
 			add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(null, Help, "help");
-			add(null, Playing, "playing", "online", "who", "version");
+			add(null, ListConnectedPlayers, "playing", "online", "who", "version");
 			add(null, AuthToken, "auth");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
@@ -3023,7 +3023,7 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Playing(CommandArgs args)
+		private static void ListConnectedPlayers(CommandArgs args)
 		{
 		    string response = args.Player.Group.HasPermission(Permissions.seeids)
 		                          ? TShock.Utils.GetPlayersWithIds()
