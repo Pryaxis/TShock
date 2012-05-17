@@ -1336,7 +1336,7 @@ namespace TShockAPI
 
 			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
 			var user = TShock.Users.GetUserByName(args.Player.Name);
-			if (user != null)
+            if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				string encrPass = TShock.Utils.HashPassword(password);
 				if (user.Password.ToUpper() == encrPass.ToUpper())

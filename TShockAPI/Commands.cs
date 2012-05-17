@@ -879,7 +879,7 @@ namespace TShockAPI
 			var ban = TShock.Bans.GetBanByName(plStr);
 			if (ban != null)
 			{
-				if (TShock.Bans.RemoveBan(ban.IP, true))
+				if (TShock.Bans.RemoveBan(ban.Name, true))
 					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
 				else
 					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
