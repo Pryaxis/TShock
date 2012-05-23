@@ -683,7 +683,7 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				Utils.Kick(player, string.Format("You are banned: {0}", ban.Reason), true, true);
 				handler.Handled = true;
 				return;
 			}
