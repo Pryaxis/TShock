@@ -854,12 +854,13 @@ namespace TShockAPI
 				args.Player.SendMessage("Missing IP address", Color.Red);
 				return;
 			}
-
+			
+			string admin = args.Player.Name;
 			string ip = args.Parameters[0];
 			string reason = args.Parameters.Count > 1
 								? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 								: "Manually added IP address ban.";
-			TShock.Bans.AddBan(ip, "", reason);
+			TShock.Bans.AddBan(ip, "", reason, admin);
 		}
 
 		private static void UnBan(CommandArgs args)

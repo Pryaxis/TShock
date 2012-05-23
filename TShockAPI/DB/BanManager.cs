@@ -34,7 +34,8 @@ namespace TShockAPI.DB
 			var table = new SqlTable("Bans",
 			                         new SqlColumn("IP", MySqlDbType.String, 16) {Primary = true},
 			                         new SqlColumn("Name", MySqlDbType.Text),
-			                         new SqlColumn("Reason", MySqlDbType.Text)
+			                         new SqlColumn("Reason", MySqlDbType.Text),
+			                         new SqlColumn("Admin", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -58,7 +59,7 @@ namespace TShockAPI.DB
 				using (var reader = database.QueryReader("SELECT * FROM Bans WHERE IP=@0", ip))
 				{
 					if (reader.Read())
-						return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"));
+						return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"), reader.Get<string>("Admin"));
 				}
 			}
 			catch (Exception ex)
@@ -77,7 +78,7 @@ namespace TShockAPI.DB
 				{
 					while (reader.Read())
 					{
-						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason")));						
+						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"), reader.Get<string>("Admin")));						
 					}
 					return banlist;
 				}
@@ -100,7 +101,7 @@ namespace TShockAPI.DB
 				using (var reader = database.QueryReader("SELECT * FROM Bans WHERE " + namecol + "=@0", name))
 				{
 					if (reader.Read())
-						return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"));
+						return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("Reason"), reader.Get<string>("Admin"));
 				}
 			}
 			catch (Exception ex)
@@ -112,16 +113,16 @@ namespace TShockAPI.DB
 
 #if COMPAT_SIGS
 		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool AddBan(string ip, string name, string reason)
+		public bool AddBan(string ip, string name, string reason, string admin)
 		{
-			return AddBan(ip, name, reason, false);
+			return AddBan(ip, name, reason, admin, false);
 		}
 #endif
-		public bool AddBan(string ip, string name = "", string reason = "", bool exceptions = false)
+		public bool AddBan(string ip, string name = "", string reason = "", string admin = "", bool exceptions = false)
 		{
 			try
 			{
-				return database.Query("INSERT INTO Bans (IP, Name, Reason) VALUES (@0, @1, @2);", ip, name, reason) != 0;
+				return database.Query("INSERT INTO Bans (IP, Name, Reason, Admin) VALUES (@0, @1, @2, @3);", ip, name, reason, admin) != 0;
 			}
 			catch (Exception ex)
 			{
@@ -179,12 +180,15 @@ namespace TShockAPI.DB
 		public string Name { get; set; }
 
 		public string Reason { get; set; }
+		
+		public string Admin { get; set; }
 
-		public Ban(string ip, string name, string reason)
+		public Ban(string ip, string name, string reason, string admin)
 		{
 			IP = ip;
 			Name = name;
 			Reason = reason;
+			Admin = admin;
 		}
 
 		public Ban()
@@ -192,6 +196,7 @@ namespace TShockAPI.DB
 			IP = string.Empty;
 			Name = string.Empty;
 			Reason = string.Empty;
+			Admin = string.Empty;
 		}
 	}
 }

@@ -310,13 +310,14 @@ namespace TShockAPI
 		{
 			var ip = parameters["ip"];
 			var name = parameters["name"];
+			var admin = parameters["admin"];
 
 			if (string.IsNullOrWhiteSpace(ip) && string.IsNullOrWhiteSpace(name))
-				return RestMissingParam("ip", "name");
+				return RestMissingParam("ip", "name", "admin");
 
 			try
 			{
-				TShock.Bans.AddBan(ip, name, parameters["reason"], true);
+				TShock.Bans.AddBan(ip, name, parameters["reason"], admin, true);
 			}
 			catch (Exception e)
 			{

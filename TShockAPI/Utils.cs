@@ -619,7 +619,8 @@ namespace TShockAPI
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, reason);
+                string admin = adminUserName;
+				TShock.Bans.AddBan(ip, playerName, reason, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
