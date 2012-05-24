@@ -359,11 +359,19 @@ namespace TShockAPI
             return false;
         }
 
-	    public virtual bool GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
-		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+        public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
+        {
             if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
                 return false;
+
+            GiveItem(type,name,width,height,stack,prefix);
+            return true;
+        }
+
+	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
+		{
+			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+
 			// This is for special pickaxe/hammers/swords etc
 			Main.item[itemid].SetDefaults(name);
 			// The set default overrides the wet and stack set by NewItem
@@ -374,7 +382,6 @@ namespace TShockAPI
 			Main.item[itemid].prefix = (byte) prefix;
 			NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
 			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
-	        return true;
 		}
 
 		public virtual void SendMessage(string msg)

@@ -3347,7 +3347,7 @@ namespace TShockAPI
 					{
 						if (itemAmount == 0 || itemAmount > item.maxStack)
 							itemAmount = item.maxStack;
-                        if (args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix))
+                        if (args.Player.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
                         {
                             args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
                         }
@@ -3431,7 +3431,7 @@ namespace TShockAPI
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
-							if( plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix))
+                            if (plr.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
 						    {
 						        args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
 							    plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
