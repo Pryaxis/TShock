@@ -555,9 +555,9 @@ namespace TShockAPI
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		public void ForceKick(TSPlayer player, string reason, bool silent = false)
+		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool dontSaveSSI = false)
 		{
-			Kick(player, reason, true, silent);
+			Kick(player, reason, true, silent, null, dontSaveSSI);
 		}
 
 #if COMPAT_SIGS
@@ -575,7 +575,7 @@ namespace TShockAPI
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
 		/// <param name="adminUserName">bool silent (default: null)</param>
-		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null)
+		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool dontSaveSSI = false)
 		{
 			if (!player.ConnectionAlive)
 				return true;
@@ -583,7 +583,7 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-                if( player.IsLoggedIn )
+                if( player.IsLoggedIn && !dontSaveSSI)
                     TShock.InventoryDB.InsertPlayerData(player);
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
