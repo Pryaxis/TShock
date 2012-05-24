@@ -1425,8 +1425,7 @@ namespace TShockAPI
 			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
 				!args.Player.Group.HasPermission(Permissions.reservedslot))
 			{
-				args.Player.SilentKickInProgress = true;
-				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason);
+				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason, true);
 				return true;
 			}
 
