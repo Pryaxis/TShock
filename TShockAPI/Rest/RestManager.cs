@@ -312,7 +312,7 @@ namespace TShockAPI
 			var name = parameters["name"];
 			var admin = parameters["admin"];
 
-			if (string.IsNullOrWhiteSpace(ip) && string.IsNullOrWhiteSpace(name))
+			if (string.IsNullOrWhiteSpace(ip) && string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(admin))
 				return RestMissingParam("ip", "name", "admin");
 
 			try
