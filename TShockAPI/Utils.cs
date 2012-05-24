@@ -568,7 +568,7 @@ namespace TShockAPI
 		}
 #endif
 		/// <summary>
-		/// Kicks a player from the server.
+		/// Kicks a player from the server..
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
