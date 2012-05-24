@@ -588,10 +588,13 @@ namespace TShockAPI
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
-				else
-					Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                if (!silent)
+                {
+                    if (string.IsNullOrWhiteSpace(adminUserName))
+                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
+                    else
+                        Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                }
 				return true;
 			}
 			return false;
