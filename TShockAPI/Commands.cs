@@ -3107,9 +3107,9 @@ namespace TShockAPI
 
 		private static void Butcher(CommandArgs args)
 		{
-			if (args.Parameters.Count > 1)
+			if (args.Parameters.Count > 2)
 			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killFriendly(true/false)]", Color.Red);
+				args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killFriendly(true/false)] [killTownNPCs(true/false)]", Color.Red);
 				return;
 			}
 
@@ -3117,10 +3117,14 @@ namespace TShockAPI
 			if (args.Parameters.Count == 1)
 				bool.TryParse(args.Parameters[0], out killFriendly);
 
+		    bool killTownNPCs = false;
+            if (args.Parameters.Count == 2)
+                bool.TryParse(args.Parameters[1], out killTownNPCs);
+
 			int killcount = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
-				if (Main.npc[i].active && Main.npc[i].type != 0 && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
+				if (Main.npc[i].active && Main.npc[i].type != 0 && (!Main.npc[i].townNPC || killTownNPCs) && (!Main.npc[i].friendly || killFriendly))
 				{
 					TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
 					killcount++;
