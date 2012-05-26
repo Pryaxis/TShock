@@ -60,7 +60,7 @@ These are the permissions that TShock currently supports, with associated comman
 
 ## <a id="causeevents">causeevents</a>  
 **Description:** None  
-**Commands:** /dropmeteor /star /genore /fullmoon /bloodmoon /invade  
+**Commands:** /dropmeteor /star /fullmoon /bloodmoon /invade  
 
 ## <a id="cfg">cfg</a>  
 **Description:** User can edit sevrer configurations  
@@ -182,9 +182,17 @@ These are the permissions that TShock currently supports, with associated comman
 **Description:** Allows you to bypass the max slots for up to 5 slots above your max  
 **Commands:** None  
 
+## <a id="restapi">restapi</a>  
+**Description:** User can use rest api calls.  
+**Commands:** None  
+
 ## <a id="rootonly">rootonly</a>  
 **Description:** Meant for super admins only  
-**Commands:** /user /userinfo(/ui) /auth-verify  
+**Commands:** /user /auth-verify  
+
+## <a id="savessi">savessi</a>  
+**Description:** User can save all the players SSI state.  
+**Commands:** /savessi /overridessi(/ossi)  
 
 ## <a id="seeids">seeids</a>  
 **Description:** User can see the id of players with /who  
@@ -234,6 +242,10 @@ These are the permissions that TShock currently supports, with associated comman
 **Description:** Allows you to use banned items  
 **Commands:** None  
 
+## <a id="userinfo">userinfo</a>  
+**Description:** Allows player to get user info  
+**Commands:** /userinfo(/ui)  
+
 ## <a id="warp">warp</a>  
 **Description:** User can use warps  
 **Commands:** /warp  
@@ -245,4 +257,3 @@ These are the permissions that TShock currently supports, with associated comman
 ## <a id="whitelist">whitelist</a>  
 **Description:** User can modify the whitelist  
 **Commands:** /whitelist  
-
