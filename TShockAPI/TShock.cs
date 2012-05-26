@@ -623,7 +623,7 @@ namespace TShockAPI
 		private void SetConsoleTitle()
 		{
 			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
-								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
+								  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
         private void OnHardUpdate( HardUpdateEventArgs args )

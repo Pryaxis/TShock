@@ -1405,8 +1405,7 @@ namespace TShockAPI
 		{
 			if (args.Player.RequestedSection)
 				return true;
-
-			args.Player.RequestedSection = true;
+            args.Player.RequestedSection = true;
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.", true);

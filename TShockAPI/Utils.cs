@@ -35,12 +35,12 @@ namespace TShockAPI
 	    /// <summary>
 	    /// Document me
 	    /// </summary>
-	    private const int firstItemPrefix = 1;
+	    private const int FirstItemPrefix = 1;
 
 	    /// <summary>
 	    /// Document me
 	    /// </summary>
-	    private const int lastItemPrefix = 83;
+	    private const int LastItemPrefix = 83;
 
 	    // Utils is a Singleton
 		private static readonly Utils instance = new Utils();
@@ -471,7 +471,7 @@ namespace TShockAPI
 			item.SetDefaults(0);
 			string lowerName = name.ToLower();
 			var found = new List<int>();
-			for (int i = firstItemPrefix; i <= lastItemPrefix; i++)
+			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
 				try
 				{
@@ -511,7 +511,7 @@ namespace TShockAPI
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
-			if (int.TryParse(idOrName, out type) && type >= firstItemPrefix && type <= lastItemPrefix)
+			if (int.TryParse(idOrName, out type) && type >= FirstItemPrefix && type <= LastItemPrefix)
 			{
 				return new List<int> {type};
 			}
