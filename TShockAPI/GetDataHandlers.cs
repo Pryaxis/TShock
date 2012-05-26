@@ -1691,20 +1691,20 @@ namespace TShockAPI
 				if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Spike", args.Player))
 				{
-					args.Player.Disable("Using banned spikes without permissions");
+					args.Player.Disable("Used banned spikes without permission.");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (type == 1 && tiletype == 21 && TShock.Utils.MaxChests())
 				{
-					args.Player.SendMessage("Reached world's max chest limit, unable to place more!", Color.Red);
+					args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
 				{
-                    args.Player.Disable("Using banned explosives tile without permissions");
+                    args.Player.Disable("Used banned explosives tile without permission.");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -1735,14 +1735,14 @@ namespace TShockAPI
 
 			if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
 			{
-				args.Player.Disable("Reached TileKill threshold");
+				args.Player.Disable("Reached TileKill threshold.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
 
 			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
 			{
-				args.Player.Disable("Reached TilePlace threshold");
+				args.Player.Disable("Reached TilePlace threshold.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
