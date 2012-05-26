@@ -37,7 +37,7 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 11)]
+	[APIVersion(1, 12)]
 	public class TShock : TerrariaPlugin
 	{
 		private const string LogFormatDefault = "yyyyMMddHHmmss";
