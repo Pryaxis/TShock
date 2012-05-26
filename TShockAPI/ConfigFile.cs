@@ -216,9 +216,9 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
-	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowCorruptionCreep = true;
+	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowHardmoreCorruptionCreep = true;
 
-        [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHallowCreep = true;
+        [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHardmodeHallowCreep = true;
 
         [Description("How many things a statue can spawn within 200 pixels(?) before it stops spawning. Default = 3")] public int StatueSpawn200 = 3;
 
