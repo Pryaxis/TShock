@@ -180,6 +180,11 @@ namespace TShockAPI
             restapi = "api";
 		}
 
+        /// <summary>
+        /// Lists all commands associated with a given permission
+        /// </summary>
+        /// <param name="perm">string permission - the permission to get information on</param>
+        /// <returns>List of commands</returns>
 		private static List<Command> GetCommands(string perm)
 		{
 			if (Commands.ChatCommands.Count < 1)
@@ -187,6 +192,9 @@ namespace TShockAPI
 			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
 		}
 
+        /// <summary>
+        /// Dumps the descriptions of each permission to a file in Markdown format.
+        /// </summary>
 		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();
