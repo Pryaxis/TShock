@@ -216,7 +216,7 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
-	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowHardmoreCorruptionCreep = true;
+	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowHardmodeCorruptionCreep = true;
 
         [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHardmodeHallowCreep = true;
 
