@@ -3128,7 +3128,7 @@ namespace TShockAPI
 			}
 			TShock.Utils.Broadcast(string.Format("Killed {0} NPCs.", killcount));
 		}
-
+        
 		private static void Item(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
