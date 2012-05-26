@@ -44,7 +44,7 @@ namespace TShockAPI
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
+		public static readonly string VersionCodename = "Zack time: 1 week = 3 months";
 
 		public static string SavePath = "tshock";
 
