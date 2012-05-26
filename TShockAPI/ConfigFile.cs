@@ -228,6 +228,8 @@ namespace TShockAPI
 
 	    [Description("Prevent banned items from being /i or /give")] public bool PreventBannedItemSpawn = false;
 
+	    [Description("Prevent banks on SSI")] public bool PreventPiggyBanksOnServerSideInventory = false;
+
         public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
