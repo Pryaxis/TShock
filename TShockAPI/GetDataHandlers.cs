@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -472,11 +472,19 @@ namespace TShockAPI
 			{
 				num4 = Main.maxTilesY;
 			}
+                       for (int c = num; c < num2; c++)
+                       {
+                               for (int d = num3; d< num4; d++)
+                               {
+                                       if (Main.tile[c,d].liquid != 0)
+                                          return false;
+                               }
+                       }
 			for (int i = num; i < num2; i++)
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && ((Main.tile[i,j].liquid == 0 )&& !Main.tile[i,j].lava))
+					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava)
 					{
 						Vector2 vector;
 						vector.X = (float)(i * 16);
@@ -1214,7 +1222,7 @@ namespace TShockAPI
 
 			if (max > 400 && max > args.Player.FirstMaxHP)
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
+				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
 			}
 
@@ -1240,7 +1248,7 @@ namespace TShockAPI
 
 			if (max > 400 && max > args.Player.FirstMaxMP)
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
+				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
 			}
 
@@ -1258,7 +1266,7 @@ namespace TShockAPI
 
 			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
 			{
-				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.");
+				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
 				return true;
 			}
 
@@ -1269,13 +1277,13 @@ namespace TShockAPI
 			}*/
 			if (name.Trim().Length == 0)
 			{
-				TShock.Utils.ForceKick(args.Player, "Empty Name.");
+				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
 				return true;
 			}
 			var ban = TShock.Bans.GetBanByName(name);
 			if (ban != null)
 			{
-				TShock.Utils.ForceKick(args.Player, string.Format("You are banned: {0}", ban.Reason));
+				TShock.Utils.ForceKick(args.Player, string.Format("You are banned: {0}", ban.Reason), true);
 				return true;
 			}
 			if (args.Player.ReceivedInfo)
@@ -1284,12 +1292,12 @@ namespace TShockAPI
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!");
+				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!", true);
 				return true;
 			}
 			if (TShock.Config.HardcoreOnly && difficulty < 2)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!");
+				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!", true);
 				return true;
 			}
 			args.Player.Difficulty = difficulty;
@@ -1328,7 +1336,7 @@ namespace TShockAPI
 
 			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
 			var user = TShock.Users.GetUserByName(args.Player.Name);
-			if (user != null)
+            if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				string encrPass = TShock.Utils.HashPassword(password);
 				if (user.Password.ToUpper() == encrPass.ToUpper())
@@ -1390,11 +1398,11 @@ namespace TShockAPI
 					NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect Server Password");
+				TShock.Utils.ForceKick(args.Player, "Incorrect Server Password", true);
 				return true;
 			}
 
-			TShock.Utils.ForceKick(args.Player, "Bad Password Attempt");
+			TShock.Utils.ForceKick(args.Player, "Bad Password Attempt", true);
 			return true;
 		}
 
@@ -1406,7 +1414,7 @@ namespace TShockAPI
 			args.Player.RequestedSection = true;
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
-				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.", true);
 			}
 
 			if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
@@ -1417,8 +1425,7 @@ namespace TShockAPI
 			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
 				!args.Player.Group.HasPermission(Permissions.reservedslot))
 			{
-				args.Player.SilentKickInProgress = true;
-				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason);
+				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason, true);
 				return true;
 			}
 
@@ -1675,29 +1682,29 @@ namespace TShockAPI
 				{
 					return true;
 				}
-				if (tiletype == 29 && tiletype == 97 && TShock.Config.ServerSideInventory)
+				if ((tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
-					args.Player.SendMessage("You cannot place this tile, Server side inventory is enabled.", Color.Red);
+					args.Player.SendMessage("You cannot place this tile, server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Spike", args.Player))
 				{
-					args.Player.Disable("Using banned spikes without permissions");
+					args.Player.Disable("Used banned spikes without permission.");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (type == 1 && tiletype == 21 && TShock.Utils.MaxChests())
 				{
-					args.Player.SendMessage("Reached world's max chest limit, unable to place more!", Color.Red);
+					args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
 				{
-                    args.Player.Disable("Using banned explosives tile without permissions");
+                    args.Player.Disable("Used banned explosives tile without permission.");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -1728,14 +1735,14 @@ namespace TShockAPI
 
 			if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
 			{
-				args.Player.Disable("Reached TileKill threshold");
+				args.Player.Disable("Reached TileKill threshold.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
 
 			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
 			{
-				args.Player.Disable("Reached TilePlace threshold");
+				args.Player.Disable("Reached TilePlace threshold.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
@@ -2259,7 +2266,7 @@ namespace TShockAPI
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
 							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason))
-								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you");
+								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
 						}
 						else
 						{

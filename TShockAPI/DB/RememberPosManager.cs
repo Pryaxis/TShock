@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +52,14 @@ namespace TShockAPI.DB
 				{
 					if (reader.Read())
 					{
-						return new Vector2(reader.Get<int>("X"), reader.Get<int>("Y"));
+						int checkX=reader.Get<int>("X");
+						int checkY=reader.Get<int>("Y");
+						//fix leftover inconsistancies
+						if (checkX==0)
+						   checkX++;
+						if (checkY==0)
+						   checkY++;
+						return new Vector2(checkX, checkY);
 					}
 				}
 			}
@@ -92,6 +99,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
+					if ((X != 0) && ( Y !=0)) //invalid pos!
 					database.Query("INSERT INTO RememberedPos (Name, IP, X, Y, WorldID) VALUES (@0, @1, @2, @3, @4);", name, IP, X, Y , Main.worldID.ToString());
 				}
 				catch (Exception ex)
@@ -103,6 +111,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
+					if ((X != 0) && ( Y !=0)) //invalid pos!
 					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2 WHERE Name = @3 AND WorldID = @4;", X, Y, IP, name, Main.worldID.ToString());
 				}
 				catch (Exception ex)

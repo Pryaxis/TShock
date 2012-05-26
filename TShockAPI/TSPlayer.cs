@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -118,6 +118,29 @@ namespace TShockAPI
 					return CacheIP;
 			}
 		}
+
+        /// <summary>
+        /// Saves the player's inventory to SSI
+        /// </summary>
+        /// <returns>bool - True/false if it saved successfully</returns>
+        public bool SaveServerInventory()
+        {
+            if (!TShock.Config.ServerSideInventory)
+            {
+                return false;
+            }
+            try
+            {
+                PlayerData.CopyInventory(this);
+                TShock.InventoryDB.InsertPlayerData(this);
+                return true;
+            } catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
+
+        }
 
 		/// <summary>
 		/// Terraria Player
@@ -359,9 +382,19 @@ namespace TShockAPI
             return false;
         }
 
+        public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
+        {
+            if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
+                return false;
+
+            GiveItem(type,name,width,height,stack,prefix);
+            return true;
+        }
+
 	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+
 			// This is for special pickaxe/hammers/swords etc
 			Main.item[itemid].SetDefaults(name);
 			// The set default overrides the wet and stack set by NewItem

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -118,6 +118,8 @@ namespace TShockAPI
 		[Description("String that is used when kicking people when the server is full.")] public string ServerFullReason =
 			"Server is full";
 
+	    [Description("String that is used when a user is kicked due to not being on the whitelist.")] public string WhitelistKickReason = "You are not on the whitelist.";
+
 		[Description("String that is used when kicking people when the server is full with no reserved slots.")] public string
 			ServerFullNoReservedReason = "Server is full. No reserved slots open.";
 
@@ -214,7 +216,21 @@ namespace TShockAPI
 
 	    [Description("Allow Ice placement even when user does not have canbuild")] public bool AllowIce = false;
 
-		public static ConfigFile Read(string path)
+	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowCorruptionCreep = true;
+
+        [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHallowCreep = true;
+
+        [Description("How many things a statue can spawn within 200 pixels(?) before it stops spawning. Default = 3")] public int StatueSpawn200 = 3;
+
+        [Description("How many things a statue can spawn within 600 pixels(?) before it stops spawning. Default = 6")] public int StatueSpawn600 = 6;
+
+        [Description("How many things a statue spawns can exist in the world before it stops spawning. Default = 10")] public int StatueSpawnWorld = 10;
+
+	    [Description("Prevent banned items from being /i or /give")] public bool PreventBannedItemSpawn = false;
+
+	    [Description("Prevent banks on SSI")] public bool DisablePiggybanksOnSSI = false;
+
+        public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
 				return new ConfigFile();
