@@ -490,7 +490,7 @@ namespace TShockAPI
 					return;
 				}
 
-				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB.
+				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
 
 				if (TShock.Users.GetUserByName(user.Name) == null) // Cheap way of checking for existance of a user
 				{
@@ -516,15 +516,6 @@ namespace TShockAPI
 
 		private static void ManageUsers(CommandArgs args)
 		{
-			// This guy needs to go away for the help later on to take effect.
-
-			//if (args.Parameters.Count < 2)
-			//{
-			//    args.Player.SendMessage("Syntax: /user <add/del> <ip/user:pass> [group]");
-			//    args.Player.SendMessage("Note: Passwords are stored with SHA512 hashing. To reset a user's password, remove and re-add them.");
-			//    return;
-			//}
-
 			// This guy needs to be here so that people don't get exceptions when they type /user
 			if (args.Parameters.Count < 1)
 			{
