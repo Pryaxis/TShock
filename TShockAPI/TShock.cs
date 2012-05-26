@@ -77,6 +77,7 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
+	    public static List<int> TakenPlayerIDs = new List<int>(); 
 
 		public override Version Version
 		{

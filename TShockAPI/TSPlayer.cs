@@ -119,6 +119,29 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Saves the player's inventory to SSI
+        /// </summary>
+        /// <returns>bool - True/false if it saved successfully</returns>
+        public bool SaveServerInventory()
+        {
+            if (!TShock.Config.ServerSideInventory)
+            {
+                return false;
+            }
+            try
+            {
+                PlayerData.CopyInventory(this);
+                TShock.InventoryDB.InsertPlayerData(this);
+                return true;
+            } catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
+
+        }
+
 		/// <summary>
 		/// Terraria Player
 		/// </summary>

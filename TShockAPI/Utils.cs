@@ -574,7 +574,8 @@ namespace TShockAPI
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
+		/// <param name="adminUserName">string adminUserName (default: null)</param>
+		/// <param name="saveSSI">bool saveSSI (default: false)</param>
 		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
 		{
 			if (!player.ConnectionAlive)
@@ -583,8 +584,8 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-                if( player.IsLoggedIn && saveSSI)
-                    TShock.InventoryDB.InsertPlayerData(player);
+                if (player.IsLoggedIn && saveSSI)
+                    player.SaveServerInventory();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
