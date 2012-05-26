@@ -1684,7 +1684,7 @@ namespace TShockAPI
 				}
 				if (tiletype == 29 && tiletype == 97 && TShock.Config.ServerSideInventory)
 				{
-					args.Player.SendMessage("You cannot place this tile, Server side inventory is enabled.", Color.Red);
+					args.Player.SendMessage("You cannot place this tile, server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
