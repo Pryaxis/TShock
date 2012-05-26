@@ -1649,6 +1649,9 @@ namespace TShockAPI
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
+            if (args.Player.Dead && TShock.Config.PreventDeadModification)
+                return true;
+
 			if (args.Player.AwaitingName)
 			{
 				var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
@@ -2220,6 +2223,9 @@ namespace TShockAPI
 				return true;
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
+
+            if (args.Player.Dead && TShock.Config.PreventDeadModification)
+                return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{

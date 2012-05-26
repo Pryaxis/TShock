@@ -230,6 +230,9 @@ namespace TShockAPI
 
 	    [Description("Prevent banks on SSI")] public bool DisablePiggybanksOnSSI = false;
 
+	    [Description("Prevent players from interacting with the world if dead")] public bool PreventDeadModification =
+	        false;
+
         public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
