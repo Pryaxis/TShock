@@ -1270,11 +1270,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			/*if (!TShock.Utils.ValidString(name))
-			{
-				TShock.Utils.ForceKick(args.Player, "Unprintable character in name");
-				return true;
-			}*/
 			if (name.Trim().Length == 0)
 			{
 				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
