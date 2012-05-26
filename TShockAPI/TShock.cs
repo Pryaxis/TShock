@@ -672,7 +672,7 @@ namespace TShockAPI
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
 			{
-				Utils.ForceKick(player, Config.ServerFullNoReservedReason);
+				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
 				handler.Handled = true;
 				return;
 			}
@@ -684,14 +684,14 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
 				handler.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, Config.WhitelistKickReason);
+				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
 				handler.Handled = true;
 				return;
 			}
@@ -704,7 +704,7 @@ namespace TShockAPI
 				{
 					if (Config.KickProxyUsers)
 					{
-						Utils.ForceKick(player, "Proxies are not allowed");
+						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
 						handler.Handled = true;
 						return;
 					}
@@ -737,7 +737,7 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
 				handler.Handled = true;
 				return;
 			}

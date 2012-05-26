@@ -2271,7 +2271,7 @@ namespace TShockAPI
 						}
 						else
 						{
-							TShock.Utils.ForceKick(args.Player, TShock.Config.MediumcoreKickReason);
+							TShock.Utils.ForceKick(args.Player, TShock.Config.MediumcoreKickReason, true, false);
 						}
 						return true;
 					}

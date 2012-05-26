@@ -516,7 +516,7 @@ namespace TShockAPI
 			{
 				if (player != null && player.Active)
 				{
-					ForceKick(player, reason);
+					ForceKick(player, reason, false, true);
 				}
 			}
 		}
