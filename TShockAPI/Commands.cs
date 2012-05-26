@@ -1045,7 +1045,7 @@ namespace TShockAPI
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						TShock.InventoryDB.InsertPlayerData(player);
+					    player.SaveServerInventory();
 					}
 				}
 			}
@@ -2182,6 +2182,10 @@ namespace TShockAPI
 		private static void Save(CommandArgs args)
 		{
 			SaveManager.Instance.SaveWorld(false);
+            foreach (TSPlayer tsply in TShock.Players)
+            {
+                tsply.SaveServerInventory();
+            }
 		}
 
 		private static void Settle(CommandArgs args)
