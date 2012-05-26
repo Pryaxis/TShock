@@ -1222,7 +1222,7 @@ namespace TShockAPI
 
 			if (max > 400 && max > args.Player.FirstMaxHP)
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
+				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
 			}
 
@@ -1248,7 +1248,7 @@ namespace TShockAPI
 
 			if (max > 400 && max > args.Player.FirstMaxMP)
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.");
+				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
 			}
 
@@ -1266,7 +1266,7 @@ namespace TShockAPI
 
 			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
 			{
-				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.");
+				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
 				return true;
 			}
 
@@ -1277,13 +1277,13 @@ namespace TShockAPI
 			}*/
 			if (name.Trim().Length == 0)
 			{
-				TShock.Utils.ForceKick(args.Player, "Empty Name.");
+				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
 				return true;
 			}
 			var ban = TShock.Bans.GetBanByName(name);
 			if (ban != null)
 			{
-				TShock.Utils.ForceKick(args.Player, string.Format("You are banned: {0}", ban.Reason));
+				TShock.Utils.ForceKick(args.Player, string.Format("You are banned: {0}", ban.Reason), true);
 				return true;
 			}
 			if (args.Player.ReceivedInfo)
@@ -1292,12 +1292,12 @@ namespace TShockAPI
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!");
+				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!", true);
 				return true;
 			}
 			if (TShock.Config.HardcoreOnly && difficulty < 2)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!");
+				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!", true);
 				return true;
 			}
 			args.Player.Difficulty = difficulty;
@@ -1398,11 +1398,11 @@ namespace TShockAPI
 					NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect Server Password");
+				TShock.Utils.ForceKick(args.Player, "Incorrect Server Password", true);
 				return true;
 			}
 
-			TShock.Utils.ForceKick(args.Player, "Bad Password Attempt");
+			TShock.Utils.ForceKick(args.Player, "Bad Password Attempt", true);
 			return true;
 		}
 
@@ -1414,7 +1414,7 @@ namespace TShockAPI
 			args.Player.RequestedSection = true;
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
-				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.");
+				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.", true);
 			}
 
 			if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
@@ -2266,7 +2266,7 @@ namespace TShockAPI
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
 							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason))
-								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you");
+								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
 						}
 						else
 						{
