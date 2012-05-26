@@ -27,11 +27,22 @@ using Terraria;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Utilities and other TShock core calls that don't fit anywhere else
+	/// </summary>
 	public class Utils
 	{
-		private readonly static int firstItemPrefix = 1;
-		private readonly static int lastItemPrefix = 83;
-		// Utils is a Singleton
+	    /// <summary>
+	    /// Document me
+	    /// </summary>
+	    private const int firstItemPrefix = 1;
+
+	    /// <summary>
+	    /// Document me
+	    /// </summary>
+	    private const int lastItemPrefix = 83;
+
+	    // Utils is a Singleton
 		private static readonly Utils instance = new Utils();
 		private Utils() {}
 		public static Utils Instance { get { return instance; } }
@@ -96,7 +107,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Finds a player and gets IP as string
 		/// </summary>
-		/// <param name="msg">Player name</param>
+		/// <param name="playername">string playername</param>
 		public string GetPlayerIP(string playername)
 		{
 			foreach (TSPlayer player in TShock.Players)
@@ -210,7 +221,9 @@ namespace TShockAPI
                         return new List<TSPlayer> { player };
                     }
                 }
+// ReSharper disable EmptyGeneralCatchClause
                 catch (Exception e)
+// ReSharper restore EmptyGeneralCatchClause
                 {
                     // Conversion failed
                 }
