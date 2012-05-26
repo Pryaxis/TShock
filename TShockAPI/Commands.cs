@@ -3111,15 +3111,15 @@ namespace TShockAPI
 
 		private static void Butcher(CommandArgs args)
 		{
-			if (args.Parameters.Count > 2)
+			if (args.Parameters.Count > 1)
 			{
 				args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killTownNPCs(true/false)]", Color.Red);
 				return;
 			}
 
 		    bool killTownNPCs = false;
-            if (args.Parameters.Count == 2)
-                bool.TryParse(args.Parameters[1], out killTownNPCs);
+            if (args.Parameters.Count == 1)
+                bool.TryParse(args.Parameters[0], out killTownNPCs);
 
 			int killcount = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
