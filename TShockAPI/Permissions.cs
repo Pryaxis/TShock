@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ namespace TShockAPI
 	public static class Permissions
 	{
 		//Permissions with blank descriptions basically means its described by the commands it gives access to.
+
+        [Description("Allows player to get user info")] public static readonly string userinfo;
 
 		[Description("")] public static readonly string causeevents;
 
@@ -161,12 +163,21 @@ namespace TShockAPI
         [Description("User can see the id of players with /who")]
         public static readonly string seeids;
 
+	    [Description("User can save all the players SSI state.")] 
+        public static readonly string savessi;
+
+        [Description("User can use rest api calls.")]
+	    public static readonly string restapi;
+
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
 				field.SetValue(null, field.Name);
 			}
+
+            //Backwards compatability.
+            restapi = "api";
 		}
 
 		private static List<Command> GetCommands(string perm)

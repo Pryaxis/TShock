@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ namespace TShockAPI
                         sb.Append(", ");
                     }
                     sb.Append(player.Name);
-                    string id = "( " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + " )";
+                    string id = "(ID: " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ", IX:" + player.Index + ")";
                     sb.Append(id);
                 }
             }
@@ -187,7 +187,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Finds a player ID based on name
+		/// Finds a TSPlayer based on name or id
 		/// </summary>
 		/// <param name="ply">Player name</param>
 		/// <returns></returns>
@@ -202,6 +202,18 @@ namespace TShockAPI
 			{
 				if (player == null)
 					continue;
+
+                try
+                {
+                    if (Convert.ToInt32(ply) == player.Index && player.Active)
+                    {
+                        return new List<TSPlayer> { player };
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Conversion failed
+                }
 
 				string name = player.Name.ToLower();
 				if (name.Equals(ply))
@@ -543,9 +555,9 @@ namespace TShockAPI
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		public void ForceKick(TSPlayer player, string reason, bool silent = false)
+		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
-			Kick(player, reason, true, silent);
+			Kick(player, reason, true, silent, null, saveSSI);
 		}
 
 #if COMPAT_SIGS
@@ -556,14 +568,15 @@ namespace TShockAPI
 		}
 #endif
 		/// <summary>
-		/// Kicks a player from the server.
+		/// Kicks a player from the server..
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
-		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null)
+		/// <param name="adminUserName">string adminUserName (default: null)</param>
+		/// <param name="saveSSI">bool saveSSI (default: false)</param>
+		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
 		{
 			if (!player.ConnectionAlive)
 				return true;
@@ -571,13 +584,18 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
+                if (player.IsLoggedIn && saveSSI)
+                    player.SaveServerInventory();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
-				else
-					Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                if (!silent)
+                {
+                    if (string.IsNullOrWhiteSpace(adminUserName))
+                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
+                    else
+                        Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                }
 				return true;
 			}
 			return false;

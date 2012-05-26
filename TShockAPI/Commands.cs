@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -135,7 +135,6 @@ namespace TShockAPI
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
 			add(Permissions.causeevents, Star, "star");
-    		add(Permissions.causeevents, Ore, "genore");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
@@ -182,7 +181,7 @@ namespace TShockAPI
 			add(Permissions.manageregion, Region, "region");
 			add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(null, Help, "help");
-			add(null, Playing, "playing", "online", "who", "version");
+			add(null, ListConnectedPlayers, "playing", "online", "who", "version");
 			add(null, AuthToken, "auth");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
@@ -193,7 +192,7 @@ namespace TShockAPI
 			ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") {DoLog = false});
 			ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") {DoLog = false});
 			ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") {DoLog = false});
-			add(Permissions.rootonly, GrabUserUserInfo, "userinfo", "ui");
+			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
 			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
 			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
@@ -216,6 +215,8 @@ namespace TShockAPI
 			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
 			add(Permissions.converthardmode, ConvertHallow, "converthallow");
             add(Permissions.converthardmode, RemoveSpecial, "removespecial");
+            add(Permissions.savessi, SaveSSI, "savessi");
+            add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -877,7 +878,7 @@ namespace TShockAPI
 			var ban = TShock.Bans.GetBanByName(plStr);
 			if (ban != null)
 			{
-				if (TShock.Bans.RemoveBan(ban.IP, true))
+				if (TShock.Bans.RemoveBan(ban.Name, true))
 					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
 				else
 					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
@@ -976,6 +977,48 @@ namespace TShockAPI
 			args.Player.SendMessage("You now " + (args.Player.DisplayLogs ? "receive" : "stopped receiving") + " logs");
 		}
 
+        public static void SaveSSI(CommandArgs args )
+        {
+            if (TShock.Config.ServerSideInventory)
+            {
+                args.Player.SendMessage("SSI has been saved.", Color.Green);
+                foreach (TSPlayer player in TShock.Players)
+                {
+                    if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+                    {
+                        TShock.InventoryDB.InsertPlayerData(player);
+                    }
+                }
+            }
+        }
+
+        public static void OverrideSSI( CommandArgs args )
+        {
+            if( args.Parameters.Count < 1 )
+            {
+                args.Player.SendMessage("Correct usage: /overridessi(/ossi) <player name>", Color.Red);
+                return;
+            }
+
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+            if( players.Count < 1 )
+            {
+                args.Player.SendMessage("No players match " + args.Parameters[0], Color.Red);
+            }
+            else if( players.Count > 1 )
+            {
+                args.Player.SendMessage( players.Count + " players matched " + args.Parameters[0], Color.Red);
+            }
+            else if (TShock.Config.ServerSideInventory)
+            {
+                if( players[0] != null && players[0].IsLoggedIn && !players[0].IgnoreActionsForClearingTrashCan)
+                {
+                    args.Player.SendMessage( players[0].Name + " has been exempted and updated.", Color.Green);
+                    TShock.InventoryDB.InsertPlayerData(players[0]);
+                }
+            }
+        }
+
 		#endregion Player Management Commands
 
 		#region Server Maintenence Commands
@@ -1002,12 +1045,13 @@ namespace TShockAPI
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						TShock.InventoryDB.InsertPlayerData(player);
+					    player.SaveServerInventory();
 					}
 				}
 			}
 
-			TShock.Utils.StopServer();
+            string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+			TShock.Utils.StopServer(true, reason);
 		}
 		//Added restart command
 		private static void Restart(CommandArgs args)
@@ -1029,7 +1073,8 @@ namespace TShockAPI
 					}
 				}
 
-				TShock.Utils.StopServer();
+                string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+                TShock.Utils.StopServer(true, reason);
 				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
 				Environment.Exit(0);
 			}
@@ -1037,7 +1082,8 @@ namespace TShockAPI
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			TShock.Utils.StopServer(false);
+            string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
+            TShock.Utils.StopServer(false, reason);
 		}
 
 		private static void CheckUpdates(CommandArgs args)
@@ -1070,181 +1116,6 @@ namespace TShockAPI
 			speedY *= penis61;
 			Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
 		}
-
-        private static void Ore(CommandArgs args)
-        {
-            if (WorldGen.genRand == null)
-                WorldGen.genRand = new Random();
-
-            TSPlayer ply = args.Player;
-
-
-
-            int num = WorldGen.altarCount % 3;
-			int num2 = WorldGen.altarCount / 3 + 1;
-			float num3 = (float)(Main.maxTilesX / 4200);
-			int num4 = 1 - num;
-			num3 = num3 * 310f - (float)(85 * num);
-			num3 *= 0.85f;
-			num3 /= (float)num2;
-
-            if (args.Parameters.Count < 1)
-            {
-                ply.SendMessage("Picking a random ore!", Color.Green);    //should this be a help message instead?
-                num = WorldGen.genRand.Next(6);
-            }
-            else if (args.Parameters[0] == "cobalt")
-            {
-                num = 0;
-            }
-            else if (args.Parameters[0] == "mythril")
-            {
-                num = 1;
-            }
-            else if (args.Parameters[0] == "copper")
-            {
-                num = 3;
-            }
-            else if (args.Parameters[0] == "iron")
-            {
-                num = 4;
-            }
-            else if (args.Parameters[0] == "silver")
-            {
-                num = 6;
-            }
-            else if (args.Parameters[0] == "gold")
-            {
-                num = 5;
-            }
-            else if (args.Parameters[0] == "demonite")
-            {
-                num = 7;
-            }
-            else if (args.Parameters[0] == "sapphire")
-            {
-                num = 8;
-            }
-            else if (args.Parameters[0] == "ruby")
-            {
-                num = 9;
-            }
-            else if (args.Parameters[0] == "emerald")
-            {
-                num = 10;
-            }
-            else if (args.Parameters[0] == "topaz")
-            {
-                num = 11;
-            }
-            else if (args.Parameters[0] == "amethyst")
-            {
-                num = 12;
-            }
-            else if (args.Parameters[0] == "diamond")
-            {
-                num = 13;
-            }
-            else
-            {
-                num = 2;
-            }
-
-		if (num == 0)
-		{
-			num = 107;
-			num3 *= 1.05f;
-		}
-		else if (num == 1)
-		{
-			num = 108;
-		}
-		else if (num == 3)
-		{
-			num = 7;
-			num3 *= 1.1f;
-		}
-		else if (num == 4)
-		{
-			num = 6;
-			num3 *= 1.1f;
-		}
-		else if (num == 5)
-		{
-			num = 8;
-			num3 *= 1.1f;
-		}
-		else if (num == 6)
-		{
-			num = 9;
-			num3 *= 1.1f;
-		}
-        else if (num == 7)
-        {
-            num = 22;
-            num3 *= 1;
-        }
-        else if (num == 8)
-        {
-            num = 63;
-            num3 *= .80f;
-        }
-        else if (num == 9)
-        {
-            num = 64;
-            num3 *=1;
-        }
-        else if (num == 10)
-        {
-            num = 65;
-            num3 *= 1;
-        }
-        else if (num == 11)
-        {
-            num = 66;
-            num3 *= 1;
-        }
-        else if (num == 12)
-        {
-            num = 67;
-            num3 *= 1;
-        }
-        else if (num == 13)
-        {
-            num = 68;
-            num3 *= 1;
-        }
-		else
-		{
-			num = 111;
-		}
-
-
-            if (args.Parameters.Count > 1)
-            {
-                float.TryParse(args.Parameters[1], out num3);
-                num3 = Math.Min(num3, 1000f);
-            }
-
-			int num5 = 0;
-			while ((float)num5 < num3)
-			{
-				int i2 = WorldGen.genRand.Next(100, Main.maxTilesX - 100);
-				double num6 = Main.worldSurface;
-				if ((num == 108) || (num == 6) || (num == 7) || (num == 8) || (num == 9) ||((num > 62) && (num < 69)))
-				{
-					num6 = Main.rockLayer;
-				}
-				if ((num == 111) || (num == 22) || (num == 68))
-				{
-					num6 = (Main.rockLayer + Main.rockLayer + (double)Main.maxTilesY) / 3.0;
-				}
-				int j2 = WorldGen.genRand.Next((int)num6, Main.maxTilesY - 150);
-				WorldGen.OreRunner(i2, j2, (double)WorldGen.genRand.Next(5, 9 + num4), WorldGen.genRand.Next(5, 9 + num4), num);
-				num5++;
-			}
-            ply.SendMessage(String.Format("Spawned {0} tiles of {1}", Math.Floor(num3), num), Color.Green );
-        }
 
 		private static void Fullmoon(CommandArgs args)
 		{
@@ -1984,16 +1855,42 @@ namespace TShockAPI
 				String groupname = args.Parameters[0];
 				args.Parameters.RemoveAt(0);
 
+			    string response = "";
 				if (com.Equals("add"))
 				{
-					String response = TShock.Groups.AddPermissions(groupname, args.Parameters);
+                    if( groupname == "*" )
+                    {
+                        int count = 0;
+                        foreach( Group g in TShock.Groups )
+                        {
+                            response = TShock.Groups.AddPermissions(g.Name, args.Parameters);
+                            if (!response.StartsWith("Error:"))
+                                count++;
+                        }
+                        args.Player.SendMessage(String.Format("{0} groups were modified.", count ), Color.Green );
+                        return;
+                    }
+					response = TShock.Groups.AddPermissions(groupname, args.Parameters);
 					if (response.Length > 0)
 						args.Player.SendMessage(response, Color.Green);
 					return;
 				}
-				else if (com.Equals("del") || com.Equals("delete"))
-				{
-					String response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
+				
+                if (com.Equals("del") || com.Equals("delete"))
+                {
+                    if (groupname == "*")
+                    {
+                        int count = 0;
+                        foreach (Group g in TShock.Groups)
+                        {
+                            response = TShock.Groups.DeletePermissions(g.Name, args.Parameters);
+                            if (!response.StartsWith("Error:"))
+                                count++;
+                        }
+                        args.Player.SendMessage(String.Format("{0} groups were modified.", count), Color.Green);
+                        return;
+                    }
+                    response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
 					if (response.Length > 0)
 						args.Player.SendMessage(response, Color.Green);
 					return;
@@ -2285,6 +2182,10 @@ namespace TShockAPI
 		private static void Save(CommandArgs args)
 		{
 			SaveManager.Instance.SaveWorld(false);
+            foreach (TSPlayer tsply in TShock.Players)
+            {
+                tsply.SaveServerInventory();
+            }
 		}
 
 		private static void Settle(CommandArgs args)
@@ -2813,6 +2714,26 @@ namespace TShockAPI
 
 						break;
 					}
+                case "z":
+                    {
+                        if (args.Parameters.Count == 3)
+                        {
+                            string regionName = args.Parameters[1];
+                            int z = 0;
+                            if (int.TryParse(args.Parameters[2], out z ) )
+                            {
+                                if (TShock.Regions.SetZ(regionName, z))
+                                    args.Player.SendMessage("Region's z is now " + z, Color.Yellow);
+                                else
+                                    args.Player.SendMessage("Could not find specified region", Color.Red);
+                            }
+                            else
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                        }
+                        else
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                        break;
+			        }
 				case "resize":
 				case "expand":
 					{
@@ -2930,7 +2851,7 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Playing(CommandArgs args)
+		private static void ListConnectedPlayers(CommandArgs args)
 		{
 		    string response = args.Player.Group.HasPermission(Permissions.seeids)
 		                          ? TShock.Utils.GetPlayersWithIds()
@@ -3190,20 +3111,20 @@ namespace TShockAPI
 
 		private static void Butcher(CommandArgs args)
 		{
-			if (args.Parameters.Count > 1)
+			if (args.Parameters.Count > 2)
 			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killFriendly(true/false)]", Color.Red);
+				args.Player.SendMessage("Invalid syntax! Proper syntax: /butcher [killTownNPCs(true/false)]", Color.Red);
 				return;
 			}
 
-			bool killFriendly = true;
-			if (args.Parameters.Count == 1)
-				bool.TryParse(args.Parameters[0], out killFriendly);
+		    bool killTownNPCs = false;
+            if (args.Parameters.Count == 2)
+                bool.TryParse(args.Parameters[1], out killTownNPCs);
 
 			int killcount = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
-				if (Main.npc[i].active && Main.npc[i].type != 0 && !Main.npc[i].townNPC && (!Main.npc[i].friendly || killFriendly))
+				if (Main.npc[i].active && Main.npc[i].type != 0 && (!Main.npc[i].townNPC || killTownNPCs))
 				{
 					TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
 					killcount++;
@@ -3211,7 +3132,7 @@ namespace TShockAPI
 			}
 			TShock.Utils.Broadcast(string.Format("Killed {0} NPCs.", killcount));
 		}
-
+        
 		private static void Item(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
@@ -3254,8 +3175,14 @@ namespace TShockAPI
 					{
 						if (itemAmount == 0 || itemAmount > item.maxStack)
 							itemAmount = item.maxStack;
-						args.Player.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
-						args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
+                        if (args.Player.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
+                        {
+                            args.Player.SendMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("The item is banned and the config prevents you from spawning banned items.", Color.Red);
+                        }
 					}
 					else
 					{
@@ -3332,9 +3259,16 @@ namespace TShockAPI
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
-							plr.GiveItem(item.type, item.name, item.width, item.height, itemAmount, prefix);
-							args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
-							plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
+                            if (plr.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
+						    {
+						        args.Player.SendMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
+							    plr.SendMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
+						    }
+						    else
+						    {
+						        args.Player.SendMessage("The item is banned and the config prevents spawning banned items.", Color.Red);
+						    }
+							
 						}
 						else
 						{

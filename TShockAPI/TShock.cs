@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011 The TShock Team
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 11)]
+	[APIVersion(1, 12)]
 	public class TShock : TerrariaPlugin
 	{
 		private const string LogFormatDefault = "yyyyMMddHHmmss";
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
+		public static readonly string VersionCodename = "Zack time: 1 week = 3 months";
 
 		public static string SavePath = "tshock";
 
@@ -77,6 +77,7 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
+	    public static List<int> TakenPlayerIDs = new List<int>(); 
 
 		public override Version Version
 		{
@@ -203,6 +204,8 @@ namespace TShockAPI
 
 				GameHooks.PostInitialize += OnPostInit;
 				GameHooks.Update += OnUpdate;
+                GameHooks.HardUpdate += OnHardUpdate;
+                GameHooks.StatueSpawn += OnStatueSpawn;
 				ServerHooks.Connect += OnConnect;
 				ServerHooks.Join += OnJoin;
 				ServerHooks.Leave += OnLeave;
@@ -256,7 +259,7 @@ namespace TShockAPI
 						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
 			}
 
-			if (!Utils.GetGroup(userAccount.Group).HasPermission("api") && userAccount.Group != "superadmin")
+			if (!Utils.GetGroup(userAccount.Group).HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
 			{
 				return new RestObject("403")
 						{
@@ -281,6 +284,8 @@ namespace TShockAPI
 
 				GameHooks.PostInitialize -= OnPostInit;
 				GameHooks.Update -= OnUpdate;
+			    GameHooks.HardUpdate -= OnHardUpdate;
+			    GameHooks.StatueSpawn -= OnStatueSpawn;
                 ServerHooks.Connect -= OnConnect;
 				ServerHooks.Join -= OnJoin;
 				ServerHooks.Leave -= OnLeave;
@@ -623,6 +628,36 @@ namespace TShockAPI
 								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
 		}
 
+        private void OnHardUpdate( HardUpdateEventArgs args )
+        {
+            if (args.Handled)
+                return;
+
+            if (!Config.AllowCorruptionCreep && ( args.Type == 23 || args.Type == 25 || args.Type == 0 ||
+                args.Type == 112 || args.Type == 23 || args.Type == 32 ) )
+            {
+                args.Handled = true;
+                return;
+            }
+
+            if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 ) )
+            {
+                args.Handled = true;
+            }
+        }
+
+        private void OnStatueSpawn( StatueSpawnEventArgs args )
+        {
+            if( args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld )
+            {
+                args.Handled = true;
+            }
+            else
+            {
+                args.Handled = false;
+            }
+        }
+
 		private void OnConnect(int ply, HandledEventArgs handler)
 		{
 			var player = new TSPlayer(ply);
@@ -656,7 +691,7 @@ namespace TShockAPI
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, "Not on whitelist.");
+				Utils.ForceKick(player, Config.WhitelistKickReason);
 				handler.Handled = true;
 				return;
 			}
