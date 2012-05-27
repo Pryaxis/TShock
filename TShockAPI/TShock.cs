@@ -801,12 +801,16 @@ namespace TShockAPI
 					Log.Error(ex.ToString());
 				}
 			}
-			else if (!tsplr.mute)
+			else if (!tsplr.mute && !TShock.Config.EnableChatAboveHeads)
 			{
 				Utils.Broadcast(
 					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
 					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 				e.Handled = true;
+			} else if (!tsplr.mute && TShock.Config.EnableChatAboveHeads)
+			{
+			    Utils.Broadcast(ply, text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+			    e.Handled = true;
 			}
 			else if (tsplr.mute)
 			{

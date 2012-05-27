@@ -234,6 +234,9 @@ namespace TShockAPI
 	    [Description("Prevent players from interacting with the world if dead")] public bool PreventDeadModification =
 	        false;
 
+	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
+	        bool EnableChatAboveHeads = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
