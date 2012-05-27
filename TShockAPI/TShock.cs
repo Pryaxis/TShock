@@ -708,7 +708,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			Players[ply] = player;
+		    Players[ply] = player;
 		}
 
 		private void OnJoin(int ply, HandledEventArgs handler)
@@ -738,8 +738,7 @@ namespace TShockAPI
 				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
 				handler.Handled = true;
 				return;
-			}
-            player.SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
+			}            
 		}
 
 		private void OnLeave(int ply)
@@ -1070,6 +1069,43 @@ namespace TShockAPI
 				}
 				e.Handled = true;
 			}
+            if (e.MsgID == PacketTypes.WorldInfo)
+            {
+                if (e.remoteClient == -1) return;
+                var player = Players[e.remoteClient];
+                if (player == null) return;
+                if (Config.UseServerName)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        var msg = new WorldInfoMsg
+                        {
+                            Time = (int)Main.time,
+                            DayTime = Main.dayTime,
+                            MoonPhase = (byte)Main.moonPhase,
+                            BloodMoon = Main.bloodMoon,
+                            MaxTilesX = Main.maxTilesX,
+                            MaxTilesY = Main.maxTilesY,
+                            SpawnX = Main.spawnTileX,
+                            SpawnY = Main.spawnTileY,
+                            WorldSurface = (int)Main.worldSurface,
+                            RockLayer = (int)Main.rockLayer,
+                            WorldID = Main.worldID,
+                            WorldFlags =
+                                (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
+                                (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
+                                (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
+                                (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+                                (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+                                (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
+                            WorldName = Config.ServerName
+                        };
+                        msg.PackFull(ms);
+                        player.SendRawData(ms.ToArray());
+                    }
+                    e.Handled = true;
+                }
+            }
 		}
 
 		private void OnStartHardMode(HandledEventArgs e)
