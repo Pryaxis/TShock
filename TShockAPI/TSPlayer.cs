@@ -424,7 +424,7 @@ namespace TShockAPI
 
         public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
         {
-            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue);
+            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
         }
 
 		public virtual void DamagePlayer(int damage)
