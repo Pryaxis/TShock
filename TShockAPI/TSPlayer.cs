@@ -424,7 +424,7 @@ namespace TShockAPI
 
         public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
         {
-            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, 255, red, green, blue);
+            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue);
         }
 
 		public virtual void DamagePlayer(int damage)
@@ -486,12 +486,12 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
 
-        public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
+        public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
         {
             if (RealPlayer && !ConnectionAlive)
                 return;
 
-            NetMessage.SendData((int) msgType, Index, ply, text, number, number2, number3, number4, number5);
+            NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
         }
 
 		public virtual bool SendRawData(byte[] data)
