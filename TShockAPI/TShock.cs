@@ -44,7 +44,7 @@ namespace TShockAPI
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "4.x & 50th download milestone";
+		public static readonly string VersionCodename = "4.x & 50,000th download milestone";
 
 		public static string SavePath = "tshock";
 
