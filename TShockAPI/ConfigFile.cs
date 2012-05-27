@@ -83,7 +83,8 @@ namespace TShockAPI
 		[Description("Not implemented")] public string RconPassword = "";
 		[Description("Not implemented")] public int RconPort = 7777;
 
-		[Description("Used when replying to a rest /status request.")] public string ServerName = "";
+		[Description("Used when replying to a rest /status request or sent to the client when UseServerName is true.")] public string ServerName = "";
+	    [Description("Sends ServerName in place of the world name to clients.")] public bool UseServerName = false;
 		[Description("Not implemented")] public string MasterServer = "127.0.0.1";
 
 		[Description("Valid types are \"sqlite\" and \"mysql\"")] public string StorageType = "sqlite";

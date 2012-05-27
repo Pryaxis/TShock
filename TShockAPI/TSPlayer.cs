@@ -238,7 +238,7 @@ namespace TShockAPI
 		}
 
 
-		private void SendWorldInfo(int tilex, int tiley, bool fakeid)
+		public void SendWorldInfo(int tilex, int tiley, bool fakeid)
 		{
 			using (var ms = new MemoryStream())
 			{
@@ -263,7 +263,7 @@ namespace TShockAPI
 											 (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
 											 (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
 											 (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
-								WorldName = Main.worldName
+								WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());

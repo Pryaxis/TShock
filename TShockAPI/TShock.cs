@@ -739,6 +739,7 @@ namespace TShockAPI
 				handler.Handled = true;
 				return;
 			}
+            player.SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
 		}
 
 		private void OnLeave(int ply)
