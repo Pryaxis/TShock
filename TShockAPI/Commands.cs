@@ -2172,14 +2172,14 @@ namespace TShockAPI
 
 		private static void Save(CommandArgs args)
 		{
-			SaveManager.Instance.SaveWorld(false);
-            foreach (TSPlayer tsply in TShock.Players)
-            {
-                tsply.SaveServerInventory();
-            }
+		    SaveManager.Instance.SaveWorld(false);
+		    foreach (TSPlayer tsply in TShock.Players.Where(tsply => tsply != null))
+		    {
+		        tsply.SaveServerInventory();
+		    }
 		}
 
-		private static void Settle(CommandArgs args)
+	    private static void Settle(CommandArgs args)
 		{
 			if (Liquid.panicMode)
 			{
