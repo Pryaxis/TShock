@@ -44,7 +44,7 @@ namespace TShockAPI
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Zack time: 1 week = 3 months";
+		public static readonly string VersionCodename = "4.x & 50th download milestone";
 
 		public static string SavePath = "tshock";
 
@@ -131,7 +131,11 @@ namespace TShockAPI
 #endif
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-		    getTShockAscii();
+            if (Version.Major >= 4)
+            {
+                getTShockAscii();                
+            }
+
 
 			try
 			{
@@ -200,7 +204,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
 
 				GameHooks.PostInitialize += OnPostInit;
 				GameHooks.Update += OnUpdate;
@@ -259,6 +263,7 @@ namespace TShockAPI
 	                      "      \\__\\/  /__/:/      \\  \\:\\       \\  \\::/      \\  \\::/      \\  \\:\\    \n" +
 	                      "             \\__\\/        \\__\\/        \\__\\/        \\__\\/        \\__\\/    \n" +
 	                      "");
+            Console.WriteLine("TShock for Terraria is open & free software. If you paid, you were scammed.");
 // ReSharper restore LocalizableElement
 	    }
 
