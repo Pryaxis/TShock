@@ -866,7 +866,7 @@ namespace TShockAPI
 			}
 
 			string plStr = args.Parameters[0];
-			var ban = TShock.Bans.GetBanByName(plStr);
+			var ban = TShock.Bans.GetBanByName(plStr, false);
 			if (ban != null)
 			{
 				if (TShock.Bans.RemoveBan(ban.Name, true))
