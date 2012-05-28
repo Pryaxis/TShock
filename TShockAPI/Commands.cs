@@ -2146,6 +2146,7 @@ namespace TShockAPI
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
 			SaveManager.Instance.SaveWorld(false);
+            args.Player.SendMessage( "Spawn has now been set at your location.", Color.Green);
 		}
 
 		private static void Reload(CommandArgs args)
