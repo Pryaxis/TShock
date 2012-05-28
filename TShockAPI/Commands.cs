@@ -127,6 +127,7 @@ namespace TShockAPI
 			add(Permissions.ban, BanIP, "banip");
 			add(Permissions.ban, UnBan, "unban");
 			add(Permissions.ban, UnBanIP, "unbanip");
+		    add(Permissions.ban, ListBans, "listbans");
 			add(Permissions.maintenance, ClearBans, "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
@@ -851,6 +852,59 @@ namespace TShockAPI
 								: "Manually added IP address ban.";
 			TShock.Bans.AddBan(ip, "", reason);
 		}
+
+        private static void ListBans(CommandArgs args)
+        {
+            if (TShock.Bans.GetBans().Count == 0)
+            {
+                args.Player.SendMessage("There are currently no players banned.");
+                return;
+            }
+
+            string banString = "";
+            foreach (Ban b in TShock.Bans.GetBans())
+            {
+
+                if (b.Name.Trim() == "")
+                {
+                    continue;
+                }
+
+                if (banString.Length == 0)
+                {
+                    banString = b.Name;
+                }
+                else
+                {
+                    int length = banString.Length;
+                    while (length > 60)
+                    {
+                        length = length - 60;
+                    }
+                    if (length + b.Name.Length >= 60)
+                    {
+                        banString += "|, " + b.Name;
+                    } else
+                    {
+                        banString += ", " + b.Name;
+                    }
+                }
+            }
+
+            String[] banStrings = banString.Split('|');
+
+            if (banStrings.Length == 0)
+            {
+                args.Player.SendMessage("There are currently no players with valid names banned.");
+                return;
+            }
+
+            args.Player.SendMessage("List of banned players:");
+            foreach (string s in banStrings)
+            {
+                args.Player.SendMessage(s, Color.Yellow);
+            }
+        }
 
 		private static void UnBan(CommandArgs args)
 		{
