@@ -123,12 +123,7 @@ namespace TShockAPI
 		{
 			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
 			add(Permissions.kick, Kick, "kick");
-			add(Permissions.ban, Ban, "ban");
-			add(Permissions.ban, BanIP, "banip");
-			add(Permissions.ban, UnBan, "unban");
-			add(Permissions.ban, UnBanIP, "unbanip");
-		    add(Permissions.ban, ListBans, "listbans");
-			add(Permissions.maintenance, ClearBans, "clearbans");
+			add(Permissions.ban, Ban, "ban", "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
             add(Permissions.maintenance, Restart, "restart"); //Added restart command
@@ -786,223 +781,283 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Ban(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /ban <player> [reason]", Color.Red);
-				return;
-			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendMessage("Missing player name", Color.Red);
-				return;
-			}
+        private static void Ban(CommandArgs args)
+        {
 
-			string plStr = args.Parameters[0];
-			var players = TShock.Utils.FindPlayer(plStr);
-			if (players.Count == 0)
-			{
-				args.Player.SendMessage("Invalid player!", Color.Red);
-			}
-			else if (players.Count > 1)
-			{
-                var plrMatches = "";
-                foreach (TSPlayer plr in players)
+            if (args.Parameters[0].ToLower() == "help")
+            {
+                args.Player.SendMessage("All ban commands were merged into one in TShock 4.0.", Color.Yellow);
+                args.Player.SendMessage("Syntax: /ban [option] [arguments]", Color.Green);
+                args.Player.SendMessage("Options: list, listip, clear, add, addip, del, delip", Color.Green);
+                args.Player.SendMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]", Color.Green);
+                args.Player.SendMessage("In addition, a reason may be provided for all new bans after the arguments.", Color.Green);
+                return;
+            }
+            if (args.Parameters[0].ToLower() == "list")
+            {
+                #region List bans
+                if (TShock.Bans.GetBans().Count == 0)
                 {
-                    if (plrMatches.Length != 0)
+                    args.Player.SendMessage("There are currently no players banned.");
+                    return;
+                }
+
+                string banString = "";
+                foreach (Ban b in TShock.Bans.GetBans())
+                {
+
+                    if (b.Name.Trim() == "")
                     {
-                        plrMatches += ", " + plr.Name;
+                        continue;
+                    }
+
+                    if (banString.Length == 0)
+                    {
+                        banString = b.Name;
                     }
                     else
                     {
-                        plrMatches += plr.Name;
+                        int length = banString.Length;
+                        while (length > 60)
+                        {
+                            length = length - 60;
+                        }
+                        if (length + b.Name.Length >= 60)
+                        {
+                            banString += "|, " + b.Name;
+                        }
+                        else
+                        {
+                            banString += ", " + b.Name;
+                        }
                     }
                 }
-                args.Player.SendMessage("More than one player matched! Matches: " + plrMatches, Color.Red);
-            }
-			else
-			{
-				string reason = args.Parameters.Count > 1
-									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
-									: "Misbehaviour.";
-				if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.Name))
-				{
-					args.Player.SendMessage("You can't ban another admin!", Color.Red);
-				}
-			}
-		}
 
-		private static void BanIP(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Syntax: /banip <ip> [reason]", Color.Red);
-				return;
-			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendMessage("Missing IP address", Color.Red);
-				return;
-			}
+                String[] banStrings = banString.Split('|');
 
-			string ip = args.Parameters[0];
-			string reason = args.Parameters.Count > 1
-								? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
-								: "Manually added IP address ban.";
-			TShock.Bans.AddBan(ip, "", reason);
-		}
+                if (banStrings.Length == 0)
+                {
+                    args.Player.SendMessage("There are currently no players with valid names banned.");
+                    return;
+                }
 
-        private static void ListBans(CommandArgs args)
-        {
-            if (TShock.Bans.GetBans().Count == 0)
-            {
-                args.Player.SendMessage("There are currently no players banned.");
+                if (banStrings[0].Trim() == "")
+                {
+                    args.Player.SendMessage("There are currently no bans with valid names found.");
+                    return;
+                }
+
+                args.Player.SendMessage("List of banned players:");
+                foreach (string s in banStrings)
+                {
+                    args.Player.SendMessage(s, Color.Yellow);
+                }
                 return;
+                #endregion List bans
             }
 
-            string banString = "";
-            foreach (Ban b in TShock.Bans.GetBans())
+            if (args.Parameters[0].ToLower() == "listip")
             {
-
-                if (b.Name.Trim() == "")
+                #region List ip bans
+                if (TShock.Bans.GetBans().Count == 0)
                 {
-                    continue;
+                    args.Player.SendMessage("There are currently no players banned.");
+                    return;
                 }
 
-                if (banString.Length == 0)
+                string banString = "";
+                foreach (Ban b in TShock.Bans.GetBans())
                 {
-                    banString = b.Name;
-                }
-                else
-                {
-                    int length = banString.Length;
-                    while (length > 60)
+
+                    if (b.IP.Trim() == "")
                     {
-                        length = length - 60;
+                        continue;
                     }
-                    if (length + b.Name.Length >= 60)
+
+                    if (banString.Length == 0)
                     {
-                        banString += "|, " + b.Name;
-                    } else
+                        banString = b.IP;
+                    }
+                    else
                     {
-                        banString += ", " + b.Name;
+                        int length = banString.Length;
+                        while (length > 60)
+                        {
+                            length = length - 60;
+                        }
+                        if (length + b.Name.Length >= 60)
+                        {
+                            banString += "|, " + b.IP;
+                        }
+                        else
+                        {
+                            banString += ", " + b.IP;
+                        }
                     }
                 }
-            }
 
-            String[] banStrings = banString.Split('|');
+                String[] banStrings = banString.Split('|');
 
-            if (banStrings.Length == 0)
-            {
-                args.Player.SendMessage("There are currently no players with valid names banned.");
+                if (banStrings.Length == 0)
+                {
+                    args.Player.SendMessage("There are currently no players with valid IPs banned.");
+                    return;
+                }
+
+                if (banStrings[0].Trim() == "")
+                {
+                    args.Player.SendMessage("There are currently no bans with valid IPs found.");
+                    return;
+                }
+
+                args.Player.SendMessage("List of IP banned players:");
+                foreach (string s in banStrings)
+                {
+                    args.Player.SendMessage(s, Color.Yellow);
+                }
                 return;
+                #endregion List ip bans
             }
 
-            args.Player.SendMessage("List of banned players:");
-            foreach (string s in banStrings)
+            if (args.Parameters.Count >= 2)
             {
-                args.Player.SendMessage(s, Color.Yellow);
+                if (args.Parameters[0].ToLower() == "add")
+                {
+                    #region Add ban
+                    string plStr = args.Parameters[1];
+                    var players = TShock.Utils.FindPlayer(plStr);
+                    if (players.Count == 0)
+                    {
+                        args.Player.SendMessage("Invalid player!", Color.Red);
+                    }
+                    else if (players.Count > 1)
+                    {
+                        var plrMatches = "";
+                        foreach (TSPlayer plr in players)
+                        {
+                            if (plrMatches.Length != 0)
+                            {
+                                plrMatches += ", " + plr.Name;
+                            }
+                            else
+                            {
+                                plrMatches += plr.Name;
+                            }
+                        }
+                        args.Player.SendMessage("More than one player matched! Matches: " + plrMatches, Color.Red);
+                    }
+                    else
+                    {
+                        string reason = args.Parameters.Count > 2
+                                            ? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
+                                            : "Misbehavior.";
+                        if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.Name))
+                        {
+                            args.Player.SendMessage("You can't ban another admin!", Color.Red);
+                        }
+                    }
+                    return;
+                    #endregion Add ban
+                }
+                else if (args.Parameters[0].ToLower() == "addip")
+                {
+                    #region Add ip ban
+                    string ip = args.Parameters[1];
+                    string reason = args.Parameters.Count > 2
+                                        ? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
+                                        : "Manually added IP address ban.";
+                    TShock.Bans.AddBan(ip, "", reason);
+                    args.Player.SendMessage(ip + " banned.", Color.Green);
+                    return;
+                    #endregion Add ip ban
+                }
+                else if (args.Parameters[0].ToLower() == "delip")
+                {
+                    #region Delete ip ban
+                    var ip = args.Parameters[1];
+                    var ban = TShock.Bans.GetBanByIp(ip);
+                    if (ban != null)
+                    {
+                        if (TShock.Bans.RemoveBan(ban.IP))
+                            args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                        else
+                            args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage(string.Format("No bans for ip {0} exist", ip), Color.Red);
+                    }
+                    return;
+                    #endregion Delete ip ban
+                }
+                else if (args.Parameters[0].ToLower() == "del")
+                {
+                    #region Delete ban
+                    string plStr = args.Parameters[1];
+                    var ban = TShock.Bans.GetBanByName(plStr, false);
+                    if (ban != null)
+                    {
+                        if (TShock.Bans.RemoveBan(ban.Name, true))
+                            args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                        else
+                            args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage(string.Format("No bans for player {0} exist", plStr), Color.Red);
+                    }
+                    return;
+                    #endregion Delete ban
+                }
+
+                #region Clear bans
+                if (args.Parameters[0].ToLower() == "clear")
+                {
+                    if (args.Parameters.Count < 1 && ClearBansCode == -1)
+                    {
+                        ClearBansCode = new Random().Next(0, short.MaxValue);
+                        args.Player.SendMessage("ClearBans Code: " + ClearBansCode, Color.Red);
+                        return;
+                    }
+                    if (args.Parameters.Count < 1)
+                    {
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /ban clear <code>");
+                        return;
+                    }
+
+                    int num;
+                    if (!int.TryParse(args.Parameters[1], out num))
+                    {
+                        args.Player.SendMessage("Invalid syntax! Expecting number");
+                        return;
+                    }
+
+                    if (num == ClearBansCode)
+                    {
+                        ClearBansCode = -1;
+                        if (TShock.Bans.ClearBans())
+                        {
+                            Log.ConsoleInfo("Bans cleared");
+                            args.Player.SendMessage("Bans cleared");
+                        }
+                        else
+                        {
+                            args.Player.SendMessage("Failed to clear bans");
+                        }
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Incorrect clear code");
+                    }
+                }
+                return;
+                #endregion Clear bans
             }
+            args.Player.SendMessage("Invalid syntax or old command provided.", Color.Red);
+            args.Player.SendMessage("Type /ban help for more information.", Color.Red);
         }
 
-		private static void UnBan(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /unban <player>", Color.Red);
-				return;
-			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendMessage("Missing player name", Color.Red);
-				return;
-			}
-
-			string plStr = args.Parameters[0];
-			var ban = TShock.Bans.GetBanByName(plStr, false);
-			if (ban != null)
-			{
-				if (TShock.Bans.RemoveBan(ban.Name, true))
-					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
-				else
-					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
-			}
-			else
-			{
-				args.Player.SendMessage(string.Format("No bans for player {0} exist", plStr), Color.Red);
-			}
-		}
-
 		private static int ClearBansCode = -1;
-
-		private static void ClearBans(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1 && ClearBansCode == -1)
-			{
-				ClearBansCode = new Random().Next(0, short.MaxValue);
-				args.Player.SendMessage("ClearBans Code: " + ClearBansCode, Color.Red);
-				return;
-			}
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /clearbans <code>");
-				return;
-			}
-
-			int num;
-			if (!int.TryParse(args.Parameters[0], out num))
-			{
-				args.Player.SendMessage("Invalid syntax! Expecting number");
-				return;
-			}
-
-			if (num == ClearBansCode)
-			{
-				ClearBansCode = -1;
-				if (TShock.Bans.ClearBans())
-				{
-					Log.ConsoleInfo("Bans cleared");
-					args.Player.SendMessage("Bans cleared");
-				}
-				else
-				{
-					args.Player.SendMessage("Failed to clear bans");
-				}
-			}
-			else
-			{
-				args.Player.SendMessage("Incorrect clear code");
-			}
-		}
-
-		private static void UnBanIP(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /unbanip <ip>", Color.Red);
-				return;
-			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendMessage("Missing ip", Color.Red);
-				return;
-			}
-
-			var ip = args.Parameters[0];
-			var ban = TShock.Bans.GetBanByIp(ip);
-			if (ban != null)
-			{
-				if (TShock.Bans.RemoveBan(ban.IP))
-					args.Player.SendMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP), Color.Red);
-				else
-					args.Player.SendMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP), Color.Red);
-			}
-			else
-			{
-				args.Player.SendMessage(string.Format("No bans for ip {0} exist", ip), Color.Red);
-			}
-		}
 
 		public static void Whitelist(CommandArgs args)
 		{
