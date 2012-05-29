@@ -35,7 +35,7 @@ namespace TShockAPI.DB
 			                         new SqlColumn("IP", MySqlDbType.String, 16) {Primary = true},
 			                         new SqlColumn("Name", MySqlDbType.Text),
 			                         new SqlColumn("Reason", MySqlDbType.Text),
-			                         new SqlColumn("Admin", MySqlDbType.Text)
+			                         new SqlColumn("Admin", MySqlDbType.Text) { NotNull = true }
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -120,17 +120,34 @@ namespace TShockAPI.DB
 #endif
 		public bool AddBan(string ip, string name = "", string reason = "", string admin = "", bool exceptions = false)
 		{
-			try
-			{
-				return database.Query("INSERT INTO Bans (IP, Name, Reason, Admin) VALUES (@0, @1, @2, @3);", ip, name, reason, admin) != 0;
-			}
-			catch (Exception ex)
-			{
-				if (exceptions)
-					throw ex;
-				Log.Error(ex.ToString());
-			}
-			return false;
+            if (string.IsNullOrWhiteSpace(admin))
+            {
+                try
+                {
+                    return database.Query("INSERT INTO Bans (IP, Name, Reason, Admin) VALUES (@0, @1, @2, @3);", ip, name, reason, admin) != 0;
+                }
+                catch (Exception ex)
+                {
+                    if (exceptions)
+                        throw ex;
+                    Log.Error(ex.ToString());
+                }
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    return database.Query("INSERT INTO Bans (IP, Name, Reason, Admin) VALUES (@0, @1, @2, @3);", ip, name, reason, admin) != 0;
+                }
+                catch (Exception ex)
+                {
+                    if (exceptions)
+                        throw ex;
+                    Log.Error(ex.ToString());
+                }
+                return false;
+            }
 		}
 
 #if COMPAT_SIGS
