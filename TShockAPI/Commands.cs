@@ -151,9 +151,9 @@ namespace TShockAPI
 			add(Permissions.tphere, SendWarp, "sendwarp", "sw");
 			add(Permissions.tpallow, TPAllow, "tpallow");
 			add(Permissions.warp, UseWarp, "warp");
-			add(Permissions.managewarp, SetWarp, "setwarp");
-			add(Permissions.managewarp, DeleteWarp, "delwarp");
-			add(Permissions.managewarp, HideWarp, "hidewarp");
+			//add(Permissions.managewarp, SetWarp, "setwarp");
+			//add(Permissions.managewarp, DeleteWarp, "delwarp");
+			//add(Permissions.managewarp, HideWarp, "hidewarp");
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
@@ -1771,74 +1771,26 @@ namespace TShockAPI
 			}
 		}
 
-		private static void SetWarp(CommandArgs args)
-		{
-			if (args.Parameters.Count > 0)
-			{
-				string warpName = String.Join(" ", args.Parameters);
-				if (warpName.Equals("list"))
-				{
-					args.Player.SendMessage("Name reserved, use a different name", Color.Red);
-				}
-				else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
-				{
-					args.Player.SendMessage("Set warp " + warpName, Color.Yellow);
-				}
-				else
-				{
-					args.Player.SendMessage("Warp " + warpName + " already exists", Color.Red);
-				}
-			}
-			else
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /setwarp [name]", Color.Red);
-		}
-
-		private static void DeleteWarp(CommandArgs args)
-		{
-			if (args.Parameters.Count > 0)
-			{
-				string warpName = String.Join(" ", args.Parameters);
-				if (TShock.Warps.RemoveWarp(warpName))
-					args.Player.SendMessage("Deleted warp " + warpName, Color.Yellow);
-				else
-					args.Player.SendMessage("Could not find specified warp", Color.Red);
-			}
-			else
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /delwarp [name]", Color.Red);
-		}
-
-		private static void HideWarp(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				string warpName = String.Join(" ", args.Parameters);
-				bool state = false;
-				if (Boolean.TryParse(args.Parameters[1], out state))
-				{
-					if (TShock.Warps.HideWarp(args.Parameters[0], state))
-					{
-						if (state)
-							args.Player.SendMessage("Made warp " + warpName + " private", Color.Yellow);
-						else
-							args.Player.SendMessage("Made warp " + warpName + " public", Color.Yellow);
-					}
-					else
-						args.Player.SendMessage("Could not find specified warp", Color.Red);
-				}
-				else
-					args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
-			}
-			else
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /hidewarp [name] <true/false>", Color.Red);
-		}
-
 		private static void UseWarp(CommandArgs args)
 		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /warp [name] or /warp list <page>", Color.Red);
-				return;
-			}
+		    bool hasManageWarpPermission = args.Player.Group.HasPermission(Permissions.managewarp);
+            if (args.Parameters.Count < 1)
+            {
+                if (hasManageWarpPermission)
+                {
+                    args.Player.SendMessage("All warp commands were merged into one in TShock 4.0.", Color.Yellow);
+                    args.Player.SendMessage("Invalid syntax. Syntax: /warp [command] [arguments]", Color.Green);
+                    args.Player.SendMessage("Commands: add, del, hide, list, [warpname]", Color.Green);
+                    args.Player.SendMessage("Arguments: add [warp name], del [warp name], hide [warp name] [Enable(true/false)], list [page]", Color.Green);
+                    args.Player.SendMessage("Examples: /warp add foobar, /warp hide foobar true, /warp foobar", Color.Green);
+                    return;
+                }
+                else
+                {
+                    args.Player.SendMessage("Invalid syntax. Syntax: /warp [name] or /warp list <page>", Color.Red);
+                    return;
+                }
+            }
 
 			if (args.Parameters[0].Equals("list"))
 			{
@@ -1891,21 +1843,79 @@ namespace TShockAPI
 				{
 					args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 2)), Color.Yellow);
 				}
-			}
-			else
-			{
-				string warpName = String.Join(" ", args.Parameters);
-				var warp = TShock.Warps.FindWarp(warpName);
-				if (warp.WarpPos != Vector2.Zero)
-				{
-					if (args.Player.Teleport((int) warp.WarpPos.X, (int) warp.WarpPos.Y + 3))
-						args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
-				}
-				else
-				{
-					args.Player.SendMessage("Specified warp not found", Color.Red);
-				}
-			}
+            }
+            else if (args.Parameters[0].ToLower() == "add" && hasManageWarpPermission)
+            {
+                if (args.Parameters.Count == 2)
+                {
+                    string warpName = args.Parameters[1];
+                    if (warpName == "list" || warpName == "hide" || warpName == "del" || warpName == "add")
+                    {
+                        args.Player.SendMessage("Name reserved, use a different name", Color.Red);
+                    }
+                    else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
+                    {
+                        args.Player.SendMessage("Warp added: " + warpName, Color.Yellow);
+                    }
+                    else
+                    {
+                        args.Player.SendMessage("Warp " + warpName + " already exists", Color.Red);
+                    }
+                }
+                else
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /warp add [name]", Color.Red);
+            }
+            else if (args.Parameters[0].ToLower() == "del" && hasManageWarpPermission)
+            {
+                if (args.Parameters.Count == 2)
+                {
+                    string warpName = args.Parameters[1];
+                    if (TShock.Warps.RemoveWarp(warpName))
+                        args.Player.SendMessage("Warp deleted: " + warpName, Color.Yellow);
+                    else
+                        args.Player.SendMessage("Could not find specified warp.", Color.Red);
+                }
+                else
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /warp del [name]", Color.Red);
+            }
+            else if (args.Parameters[0].ToLower() == "hide" && hasManageWarpPermission)
+            {
+                if (args.Parameters.Count == 3)
+                {
+                    string warpName = args.Parameters[1];
+                    bool state = false;
+                    if (Boolean.TryParse(args.Parameters[2], out state))
+                    {
+                        if (TShock.Warps.HideWarp(args.Parameters[0], state))
+                        {
+                            if (state)
+                                args.Player.SendMessage("Warp " + warpName + " is now private.", Color.Yellow);
+                            else
+                                args.Player.SendMessage("Warp " + warpName + " is now public.", Color.Yellow);
+                        }
+                        else
+                            args.Player.SendMessage("Could not find specified warp.", Color.Red);
+                    }
+                    else
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /warp hide [name] <true/false>", Color.Red);
+                }
+                else
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /warp hide [name] <true/false>", Color.Red);
+            }
+            else
+            {
+                string warpName = String.Join(" ", args.Parameters);
+                var warp = TShock.Warps.FindWarp(warpName);
+                if (warp.WarpPos != Vector2.Zero)
+                {
+                    if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                        args.Player.SendMessage("Warped to " + warpName, Color.Yellow);
+                }
+                else
+                {
+                    args.Player.SendMessage("Specified warp not found", Color.Red);
+                }
+            }
 		}
 
 		#endregion Teleport Commands
