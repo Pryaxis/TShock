@@ -177,7 +177,8 @@ namespace TShockAPI
 			add(Permissions.manageregion, Region, "region");
 			add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(null, Help, "help");
-			add(null, ListConnectedPlayers, "playing", "online", "who", "version");
+			add(null, ListConnectedPlayers, "playing", "online", "who");
+		    add(Permissions.maintenance, GetVersion, "version");
 			add(null, AuthToken, "auth");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
@@ -2952,15 +2953,69 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ListConnectedPlayers(CommandArgs args)
-		{
-			string response = args.Player.Group.HasPermission(Permissions.seeids)
-								  ? TShock.Utils.GetPlayersWithIds()
-								  : TShock.Utils.GetPlayers();
-			args.Player.SendMessage(string.Format("Current players: {0}.", response), 255, 240, 20);
-			args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
-												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-		}
+        private static void GetVersion(CommandArgs args)
+        {
+            args.Player.SendMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
+                                                  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+        }
+
+        //TODO: Continue this
+        private static void ListConnectedPlayers(CommandArgs args)
+        {
+            //How many players per page
+            const int pagelimit = 15;
+            //How many players per line
+            const int perline = 5;
+            //Pages start at 0 but are displayed and parsed at 1
+            int page = 0;
+
+
+            if (args.Parameters.Count > 0)
+            {
+                if (!int.TryParse(args.Parameters[0], out page) || page < 1)
+                {
+                    args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
+                    return;
+                }
+                page--; //Substract 1 as pages are parsed starting at 1 and not 0
+            }
+
+            var playerList = args.Player.Group.HasPermission(Permissions.seeids)
+                                 ? TShock.Utils.GetPlayers(true)
+                                 : TShock.Utils.GetPlayers(false);
+
+            //Check if they are trying to access a page that doesn't exist.
+            int pagecount = playerList.Count / pagelimit;
+            if (page > pagecount)
+            {
+                args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
+                return;
+            }
+
+            //Display the current page and the number of pages.
+            args.Player.SendMessage(string.Format("Players: {0}/{1}",
+                                                  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+            args.Player.SendMessage(string.Format("Current players page {0}/{1}:", page + 1, pagecount + 1), Color.Green);
+
+            //Add up to pagelimit names to a list
+            var nameslist = new List<string>();
+            for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < playerList.Count; i++)
+            {
+                nameslist.Add(playerList[i]);
+            }
+
+            //convert the list to an array for joining
+            var names = nameslist.ToArray();
+            for (int i = 0; i < names.Length; i += perline)
+            {
+                args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
+            }
+
+            if (page < pagecount)
+            {
+                args.Player.SendMessage(string.Format("Type /who {0} for more warps.", (page + 2)), Color.Yellow);
+            }
+        }
 
 		private static void AuthToken(CommandArgs args)
 		{

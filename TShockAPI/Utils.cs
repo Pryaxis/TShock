@@ -64,6 +64,7 @@ namespace TShockAPI
 		/// Used for some places where a list of players might be used.
 		/// </summary>
 		/// <returns>String of players seperated by commas.</returns>
+        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
 		public string GetPlayers()
 		{
 			var sb = new StringBuilder();
@@ -82,9 +83,37 @@ namespace TShockAPI
 		}
 
         /// <summary>
+        /// Returns a list of current players on the server
+        /// </summary>
+        /// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
+        /// <returns>List of strings with names</returns>
+        public List<string> GetPlayers(bool includeIDs)
+        {
+            var players = new List<string>();
+
+            foreach (TSPlayer ply in TShock.Players)
+            {
+                if (ply != null && ply.Active)
+                {
+                    if (includeIDs)
+                    {
+                        players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
+                    }
+                    else
+                    {
+                        players.Add(ply.Name);
+                    }
+                }
+            }
+
+            return players;
+        }
+
+        /// <summary>
         /// Used for some places where a list of players might be used.
         /// </summary>
         /// <returns>String of players and their id seperated by commas.</returns>
+        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
         public string GetPlayersWithIds()
         {
             var sb = new StringBuilder();
