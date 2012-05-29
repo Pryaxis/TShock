@@ -369,6 +369,7 @@ namespace TShockAPI
 				{"name", null == ban.Name ? "" : ban.Name},
 				{"ip", null == ban.IP ? "" : ban.IP},
 				{"reason", null == ban.Reason ? "" : ban.Reason},
+				{"admin", null == ban.Admin ? "" : ban.Admin},
 			};
 		}
 
@@ -383,6 +384,7 @@ namespace TShockAPI
 						{"name", null == ban.Name ? "" : ban.Name},
 						{"ip", null == ban.IP ? "" : ban.IP},
 						{"reason", null == ban.Reason ? "" : ban.Reason},
+						{"admin", null == ban.Admin ? "" : ban.Admin},
 					}
 				);
 			}
