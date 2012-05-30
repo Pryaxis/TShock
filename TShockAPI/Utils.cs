@@ -698,7 +698,6 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="file">string filename reletave to savedir</param>
-		//Todo: Fix this
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
 			string foo = "";

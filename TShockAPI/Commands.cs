@@ -122,6 +122,10 @@ namespace TShockAPI
 		public static void InitCommands()
 		{
 			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
+            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { DoLog = false });
 			add(Permissions.kick, Kick, "kick");
 			add(Permissions.ban, Ban, "ban", "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
@@ -164,23 +168,19 @@ namespace TShockAPI
 			add(Permissions.editspawn, ToggleAntiBuild, "antibuild");
 			add(Permissions.editspawn, ProtectSpawn, "protectspawn");
 			add(Permissions.manageregion, Region, "region");
-			add(Permissions.manageregion, DebugRegions, "debugreg");
-			add(null, Help, "help");
+			add(Permissions.manageregion, DebugRegions, "debgreg");
+            add(Permissions.maintenance, GetVersion, "version");
 			add(null, ListConnectedPlayers, "playing", "online", "who");
-		    add(Permissions.maintenance, GetVersion, "version");
 			add(null, AuthToken, "auth");
+            add(null, Motd, "motd");
+            add(null, Rules, "rules");
+            add(null, Help, "help");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
 			add(Permissions.canpartychat, PartyChat, "p");
-			add(null, Motd, "motd");
-			add(null, Rules, "rules");
 			add(Permissions.mute, Mute, "mute", "unmute");
 			add(Permissions.logs, DisplayLogs, "displaylogs");
-			ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") {DoLog = false});
-			ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") {DoLog = false});
-			ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") {DoLog = false});
 			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
 			add(Permissions.rootonly, AuthVerify, "auth-verify");
-			ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") {DoLog = false});
 			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");
@@ -198,9 +198,6 @@ namespace TShockAPI
 			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
 			add(Permissions.cfg, ServerInfo, "stats");
 			add(Permissions.cfg, WorldInfo, "world");
-			add(Permissions.converthardmode, ConvertCorruption, "convertcorruption");
-			add(Permissions.converthardmode, ConvertHallow, "converthallow");
-			add(Permissions.converthardmode, RemoveSpecial, "removespecial");
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		}
@@ -1406,118 +1403,6 @@ namespace TShockAPI
             Main.hardMode = false;
             args.Player.SendMessage("Hardmode is now disabled.", Color.Green);
         }
-
-		private static void ConvertCorruption(CommandArgs args)
-		{
-			TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
-			for (int x = 0; x < Main.maxTilesX; x++)
-			{
-				for (int y = 0; y < Main.maxTilesY; y++)
-				{
-					switch (Main.tile[x, y].type)
-					{
-						case 25:
-							Main.tile[x, y].type = 117;
-							break;
-						case 23:
-							Main.tile[x, y].type = 109;
-							break;
-						case 32:
-							Main.tile[x, y].type = 0;
-							Main.tile[x, y].active = false;
-							break;
-						case 24:
-							Main.tile[x, y].type = 110;
-							break;
-						case 112:
-							Main.tile[x, y].type = 116;
-							break;
-						default:
-							continue;
-					}
-				}
-			}
-			WorldGen.CountTiles(0);
-			TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
-			Netplay.ResetSections();
-			TShock.Utils.Broadcast("Corruption conversion done.");
-		}
-
-		private static void ConvertHallow(CommandArgs args)
-		{
-			TShock.Utils.Broadcast("Server is might lag for a moment.", Color.Red);
-			for (int x = 0; x < Main.maxTilesX; x++)
-			{
-				for (int y = 0; y < Main.maxTilesY; y++)
-				{
-					switch (Main.tile[x, y].type)
-					{
-						case 117:
-							Main.tile[x, y].type = 25;
-							break;
-						case 109:
-							Main.tile[x, y].type = 23;
-							break;
-						case 116:
-							Main.tile[x, y].type = 112;
-							break;
-						default:
-							continue;
-					}
-				}
-			}
-			WorldGen.CountTiles(0);
-			TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
-			Netplay.ResetSections();
-			TShock.Utils.Broadcast("Hallow conversion done.");
-		}
-
-		private static void RemoveSpecial(CommandArgs args)
-		{
-			TShock.Utils.Broadcast("Server may lag for a moment.", Color.Red);
-			for (int x = 0; x < Main.maxTilesX; x++)
-			{
-				for (int y = 0; y < Main.maxTilesY; y++)
-				{
-					switch (Main.tile[x, y].type)
-					{
-						case 117:
-						case 25:
-							Main.tile[x, y].type = 1;
-							break;
-						case 109:
-						case 23:
-							Main.tile[x, y].type = 2;
-							break;
-						case 32:
-						case 113:
-						case 110:
-							Main.tile[x, y].type = 0;
-							Main.tile[x, y].active = false;
-							break;
-						case 24:
-							Main.tile[x, y].type = 3;
-							break;
-						case 112:
-						case 116:
-							Main.tile[x, y].type = 53;
-							break;
-						case 118:
-							Main.tile[x, y].type = 38;
-							break;
-						case 115:
-							Main.tile[x, y].type = 52;
-							break;
-						default:
-							continue;
-					}
-				}
-			}
-			WorldGen.CountTiles(0);
-			TSPlayer.All.SendData(PacketTypes.UpdateGoodEvil);
-			Netplay.ResetSections();
-			TShock.Utils.Broadcast("Special tile conversion done.");
-		}
 		#endregion Cause Events and Spawn Monsters Commands
 
 		#region Teleport Commands
