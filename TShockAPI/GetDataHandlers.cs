@@ -1758,7 +1758,7 @@ namespace TShockAPI
 					args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY].Data);
 			}
 
-			if ((type == 0 || type == 4) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+			if ((type == 0 || type == 4 || type == 2) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
 				!args.Player.Group.HasPermission(Permissions.ignorekilltiledetection))
 			{
 				args.Player.TileKillThreshold++;
