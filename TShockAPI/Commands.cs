@@ -2981,7 +2981,6 @@ namespace TShockAPI
                                                   TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
         }
 
-        //TODO: Continue this
         private static void ListConnectedPlayers(CommandArgs args)
         {
             //How many players per page
