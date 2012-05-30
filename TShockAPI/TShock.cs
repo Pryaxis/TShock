@@ -351,7 +351,6 @@ namespace TShockAPI
                     {
                         if (ply.State < 2)
                         {
-                            Console.WriteLine("A name collision has occurred and a client was kicked with less stateful data.");
                             Utils.ForceKick(ply, "Name collision and this client has no world data.", true, false);
                             e.Handled = true;
                             return;
