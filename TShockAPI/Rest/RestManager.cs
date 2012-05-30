@@ -126,7 +126,7 @@ namespace TShockAPI
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
 			return new RestObject()
 			{
-				{"name", TShock.Config.ServerNickname},
+				{"name", TShock.Config.ServerName},
 				{"port", Convert.ToString(Netplay.serverPort)},
 				{"playercount", Convert.ToString(activeplayers.Count())},
 				{"players", string.Join(", ", activeplayers.Select(p => p.name))},
@@ -140,7 +140,7 @@ namespace TShockAPI
 
 			var ret = new RestObject()
 			{
-				{"name", TShock.Config.ServerNickname},
+				{"name", TShock.Config.ServerName},
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},

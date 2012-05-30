@@ -132,7 +132,7 @@ namespace TShockAPI
 		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
 			EnableTokenEndpointAuthentication;
 
-		[Description("This is used when the API endpoint /status is queried.")] public string ServerNickname = "TShock Server";
+        [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
 
 		[Description("Enable/Disable the rest api.")] public bool RestApiEnabled;
 
@@ -168,7 +168,7 @@ namespace TShockAPI
 			"Change ingame chat format, {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message"
 			)] public string ChatFormat = "{1}{2}{3}: {4}";
 
-	    [Description("Change the chat format when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat.")] public string ChatAboveHeadsFormat = "{3}:";
+	    [Description("Change the chat format when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat.")] public string ChatAboveHeadsFormat = "{4}";
 
 		[Description("Force the world time to be normal, day, or night")] public string ForceTime = "normal";
 
@@ -238,6 +238,8 @@ namespace TShockAPI
 
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
+
+	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
 
         /// <summary>
         /// Reads a configuration file from a given path

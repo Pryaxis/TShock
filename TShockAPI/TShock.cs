@@ -647,8 +647,10 @@ namespace TShockAPI
 
 		private void SetConsoleTitle()
 		{
-			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
-								  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
+		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TerrariaShock v{5})",
+		                                  !string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
+		                                  Utils.ActivePlayers(),
+		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
         private void OnHardUpdate( HardUpdateEventArgs args )
@@ -1588,6 +1590,8 @@ namespace TShockAPI
 			RconHandler.ListenPort = file.RconPort;
 
 			Utils.HashAlgo = file.HashAlgorithm;
+
+            file.ServerName = file.ServerNickname;
 		}
 	}
 }
