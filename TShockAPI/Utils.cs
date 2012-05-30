@@ -660,9 +660,9 @@ namespace TShockAPI
 
 #if COMPAT_SIGS
 		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool Ban(TSPlayer player, string reason, string adminUserName)
+		public bool Ban(TSPlayer player, string reason, string admin)
 		{
-			return Ban(player, reason, false, adminUserName);
+			return Ban(player, reason, false, admin);
 		}
 #endif
 		/// <summary>
@@ -671,8 +671,8 @@ namespace TShockAPI
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
-		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
+		/// <param name="admin">bool silent (default: "")</param>
+		public bool Ban(TSPlayer player, string reason, bool force = false, string admin = "")
 		{
 			if (!player.ConnectionAlive)
 				return true;
@@ -680,15 +680,14 @@ namespace TShockAPI
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
-                string admin = adminUserName;
-				TShock.Bans.AddBan(ip, playerName, reason, adminUserName);
+				TShock.Bans.AddBan(ip, playerName, reason, admin);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
+				if (string.IsNullOrWhiteSpace(admin))
 					Broadcast(string.Format("{0} was {1}banned for {1}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} {1}banned {1} for {2}", adminUserName, verb, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {1} for {2}", admin, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
