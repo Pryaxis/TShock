@@ -1750,7 +1750,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (type == 1 && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+			if ( ( type == 1 || type == 3 ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(tileX, tileY);

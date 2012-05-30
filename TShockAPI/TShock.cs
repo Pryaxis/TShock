@@ -1289,6 +1289,7 @@ namespace TShockAPI
             {
 				if (TShock.Config.AllowIce && actionType != 1)
 				{
+
 					foreach (Point p in player.IceTiles)
 					{
 						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
@@ -1297,11 +1298,12 @@ namespace TShockAPI
 							return false;
 						}
 					}
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
-					player.SendMessage("You do not have permission to build!", Color.Red);
-			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-}
+    		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+					    player.SendMessage("You do not have permission to build!", Color.Red);
+			            player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    }
+
 					return true;
 				}
 
@@ -1311,11 +1313,11 @@ namespace TShockAPI
 					return false;
 				}
 				
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
 					player.SendMessage("You do not have permission to build!", Color.Red);
-			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			        player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                }   
 
-}
 				return true;
 
             }
