@@ -1425,7 +1425,7 @@ namespace TShockAPI
 		{
 			if (!args.Player.RealPlayer)
 			{
-				args.Player.SendErrorMessage"You cannot use teleport commands!");
+				args.Player.SendErrorMessage("You cannot use teleport commands!");
 				return;
 			}
 
