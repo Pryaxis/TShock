@@ -168,7 +168,6 @@ namespace TShockAPI
 			add(Permissions.editspawn, ToggleAntiBuild, "antibuild");
 			add(Permissions.editspawn, ProtectSpawn, "protectspawn");
 			add(Permissions.manageregion, Region, "region");
-			add(Permissions.manageregion, DebugRegions, "debgreg");
             add(Permissions.maintenance, GetVersion, "version");
 			add(null, ListConnectedPlayers, "playing", "online", "who");
 			add(null, AuthToken, "auth");
@@ -2244,11 +2243,11 @@ namespace TShockAPI
 			var players = TShock.Utils.FindPlayer(plStr);
 			if (players.Count == 0)
 			{
-				args.Player.SendMessage("Invalid player!", Color.Red);
+				args.Player.SendErrorMessage("Invalid player!");
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendMessage("More than one player matched!", Color.Red);
+				args.Player.SendErrorMessage("More than one player matched!");
 			}
 			else
 			{
@@ -2263,7 +2262,7 @@ namespace TShockAPI
 					damage = TShock.Utils.Clamp(damage, 15, 0);
 				}
 				plr.DamagePlayer(damage);
-				TShock.Utils.Broadcast(string.Format("{0} slapped {1} for {2} damage.",
+				TSPlayer.All.SendSuccessMessage(string.Format("{0} slapped {1} for {2} damage.",
 													 args.Player.Name, plr.Name, damage));
 				Log.Info(args.Player.Name + " slapped " + plr.Name + " with " + damage + " damage.");
 			}
@@ -2276,26 +2275,13 @@ namespace TShockAPI
 		private static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
-			TShock.Utils.Broadcast(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
+			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
 		}
 
 		private static void ProtectSpawn(CommandArgs args)
 		{
 			TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
-			TShock.Utils.Broadcast(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
-		}
-
-		private static void DebugRegions(CommandArgs args)
-		{
-			foreach (Region r in TShock.Regions.Regions)
-			{
-				args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " +
-										r.Area.Width + " H: " + r.Area.Height);
-				foreach (int s in r.AllowedIDs)
-				{
-					args.Player.SendMessage(r.Name + ": " + s);
-				}
-			}
+			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
 		}
 
 		private static void Region(CommandArgs args)
@@ -2310,7 +2296,7 @@ namespace TShockAPI
 				case "name":
 					{
 						{
-							args.Player.SendMessage("Hit a block to get the name of the region", Color.Yellow);
+							args.Player.SendInfoMessage("Hit a block to get the name of the region");
 							args.Player.AwaitingName = true;
 						}
 						break;
@@ -2322,12 +2308,12 @@ namespace TShockAPI
 							int.TryParse(args.Parameters[1], out choice) &&
 							choice >= 1 && choice <= 2)
 						{
-							args.Player.SendMessage("Hit a block to Set Point " + choice, Color.Yellow);
+							args.Player.SendInfoMessage("Hit a block to Set Point " + choice);
 							args.Player.AwaitingTempPoint = choice;
 						}
 						else
 						{
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region set [1/2]");
 						}
 						break;
 					}
@@ -2348,20 +2334,20 @@ namespace TShockAPI
 								{
 									args.Player.TempPoints[0] = Point.Zero;
 									args.Player.TempPoints[1] = Point.Zero;
-									args.Player.SendMessage("Set region " + regionName, Color.Yellow);
+									args.Player.SendSuccessMessage("Set region " + regionName);
 								}
 								else
 								{
-									args.Player.SendMessage("Region " + regionName + " already exists", Color.Red);
+									args.Player.SendWarningMessage("Region " + regionName + " already exists");
 								}
 							}
 							else
 							{
-								args.Player.SendMessage("Points not set up yet", Color.Red);
+								args.Player.SendErrorMessage("Points not set up yet.");
 							}
 						}
 						else
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region define [name]");
 						break;
 					}
 				case "protect":
@@ -2372,22 +2358,22 @@ namespace TShockAPI
 							if (args.Parameters[2].ToLower() == "true")
 							{
 								if (TShock.Regions.SetRegionState(regionName, true))
-									args.Player.SendMessage("Protected region " + regionName, Color.Yellow);
+									args.Player.SendSuccessMessage("Protected region " + regionName);
 								else
-									args.Player.SendMessage("Could not find specified region", Color.Red);
+									args.Player.SendErrorMessage("Could not find specified region");
 							}
 							else if (args.Parameters[2].ToLower() == "false")
 							{
 								if (TShock.Regions.SetRegionState(regionName, false))
-									args.Player.SendMessage("Unprotected region " + regionName, Color.Yellow);
+									args.Player.SendSuccessMessage("Unprotected region " + regionName);
 								else
-									args.Player.SendMessage("Could not find specified region", Color.Red);
+									args.Player.SendErrorMessage("Could not find specified region");
 							}
 							else
-								args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
+								args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]");
 						}
 						else
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]");
 						break;
 					}
 				case "delete":
@@ -2396,19 +2382,19 @@ namespace TShockAPI
 						{
 							string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
 							if (TShock.Regions.DeleteRegion(regionName))
-								args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
+								args.Player.SendSuccessMessage("Deleted region " + regionName);
 							else
-								args.Player.SendMessage("Could not find specified region", Color.Red);
+								args.Player.SendErrorMessage("Could not find specified region");
 						}
 						else
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region delete [name]");
 						break;
 					}
 				case "clear":
 					{
 						args.Player.TempPoints[0] = Point.Zero;
 						args.Player.TempPoints[1] = Point.Zero;
-						args.Player.SendMessage("Cleared temp area", Color.Yellow);
+						args.Player.SendInfoMessage("Cleared temp area");
 						args.Player.AwaitingTempPoint = 0;
 						break;
 					}
@@ -2434,18 +2420,18 @@ namespace TShockAPI
 							{
 								if (TShock.Regions.AddNewUser(regionName, playerName))
 								{
-									args.Player.SendMessage("Added user " + playerName + " to " + regionName, Color.Yellow);
+									args.Player.SendSuccessMessage("Added user " + playerName + " to " + regionName);
 								}
 								else
-									args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+									args.Player.SendErrorMessage("Region " + regionName + " not found");
 							}
 							else
 							{
-								args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+								args.Player.SendErrorMessage("Player " + playerName + " not found");
 							}
 						}
 						else
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region allow [name] [region]");
 						break;
 					}
 				case "remove":
@@ -2469,18 +2455,18 @@ namespace TShockAPI
 						{
 							if (TShock.Regions.RemoveUser(regionName, playerName))
 							{
-								args.Player.SendMessage("Removed user " + playerName + " from " + regionName, Color.Yellow);
+								args.Player.SendSuccessMessage("Removed user " + playerName + " from " + regionName);
 							}
 							else
-								args.Player.SendMessage("Region " + regionName + " not found", Color.Red);
+								args.Player.SendErrorMessage("Region " + regionName + " not found");
 						}
 						else
 						{
-							args.Player.SendMessage("Player " + playerName + " not found", Color.Red);
+							args.Player.SendErrorMessage("Player " + playerName + " not found");
 						}
 					}
 					else
-						args.Player.SendMessage("Invalid syntax! Proper syntax: /region remove [name] [region]", Color.Red);
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region remove [name] [region]");
 					break;
 				case "allowg":
 					{

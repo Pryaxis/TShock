@@ -407,7 +407,7 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
-        public virtual void SendInformationalMessage(string msg)
+        public virtual void SendInfoMessage(string msg)
         {
             SendMessage(msg, Color.Indigo);
         }
