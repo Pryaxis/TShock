@@ -148,12 +148,8 @@ namespace TShockAPI
 			add(Permissions.tp, Spawn, "spawn");
 			add(Permissions.tp, TP, "tp");
 			add(Permissions.tphere, TPHere, "tphere");
-			add(Permissions.tphere, SendWarp, "sendwarp", "sw");
 			add(Permissions.tpallow, TPAllow, "tpallow");
-			add(Permissions.warp, UseWarp, "warp");
-			//add(Permissions.managewarp, SetWarp, "setwarp");
-			//add(Permissions.managewarp, DeleteWarp, "delwarp");
-			//add(Permissions.managewarp, HideWarp, "hidewarp");
+			add(Permissions.warp, Warp, "warp", "setwarp", "delwarp", "sendwarp", "sw");
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
@@ -1735,43 +1731,7 @@ namespace TShockAPI
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
 
-		private static void SendWarp(CommandArgs args)
-		{
-			if (args.Parameters.Count < 2)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /sendwarp [player] [warpname]", Color.Red);
-				return;
-			}
-
-			var foundplr = TShock.Utils.FindPlayer(args.Parameters[0]);
-			if (foundplr.Count == 0)
-			{
-				args.Player.SendMessage("Invalid player!", Color.Red);
-				return;
-			}
-			else if (foundplr.Count > 1)
-			{
-				args.Player.SendMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count), Color.Red);
-				return;
-			}
-			string warpName = String.Join(" ", args.Parameters[1]);
-			var warp = TShock.Warps.FindWarp(warpName);
-			var plr = foundplr[0];
-			if (warp.WarpPos != Vector2.Zero)
-			{
-				if (plr.Teleport((int) warp.WarpPos.X, (int) warp.WarpPos.Y + 3))
-				{
-					plr.SendMessage(string.Format("{0} Warped you to {1}", args.Player.Name, warpName), Color.Yellow);
-					args.Player.SendMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName), Color.Yellow);
-				}
-			}
-			else
-			{
-				args.Player.SendMessage("Specified warp not found", Color.Red);
-			}
-		}
-
-		private static void UseWarp(CommandArgs args)
+		private static void Warp(CommandArgs args)
 		{
 		    bool hasManageWarpPermission = args.Player.Group.HasPermission(Permissions.managewarp);
             if (args.Parameters.Count < 1)
@@ -1779,22 +1739,27 @@ namespace TShockAPI
                 if (hasManageWarpPermission)
                 {
                     args.Player.SendMessage("All warp commands were merged into one in TShock 4.0.", Color.Yellow);
+                    args.Player.SendMessage("Previous warps with spaces should be wrapped in single quotes.", Color.Red);
                     args.Player.SendMessage("Invalid syntax. Syntax: /warp [command] [arguments]", Color.Green);
-                    args.Player.SendMessage("Commands: add, del, hide, list, [warpname]", Color.Green);
-                    args.Player.SendMessage("Arguments: add [warp name], del [warp name], hide [warp name] [Enable(true/false)], list [page]", Color.Green);
+                    args.Player.SendMessage("Commands: add, del, hide, list, send, [warpname]", Color.Green);
+                    args.Player.SendMessage("Arguments: add [warp name], del [warp name], list [page]", Color.Green);
+                    args.Player.SendMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]", Color.Green);
                     args.Player.SendMessage("Examples: /warp add foobar, /warp hide foobar true, /warp foobar", Color.Green);
                     return;
                 }
                 else
                 {
                     args.Player.SendMessage("Invalid syntax. Syntax: /warp [name] or /warp list <page>", Color.Red);
+                    args.Player.SendMessage("Previous warps with spaces should be wrapped in single quotes.", Color.Red);
+
                     return;
                 }
             }
 
 			if (args.Parameters[0].Equals("list"))
-			{
-				//How many warps per page
+            {
+                #region
+                //How many warps per page
 				const int pagelimit = 15;
 				//How many warps per line
 				const int perline = 5;
@@ -1842,10 +1807,12 @@ namespace TShockAPI
 				if (page < pagecount)
 				{
 					args.Player.SendMessage(string.Format("Type /warp list {0} for more warps.", (page + 2)), Color.Yellow);
-				}
+                }
+                #endregion
             }
             else if (args.Parameters[0].ToLower() == "add" && hasManageWarpPermission)
             {
+                #region Add warp
                 if (args.Parameters.Count == 2)
                 {
                     string warpName = args.Parameters[1];
@@ -1864,9 +1831,12 @@ namespace TShockAPI
                 }
                 else
                     args.Player.SendMessage("Invalid syntax! Proper syntax: /warp add [name]", Color.Red);
+                #endregion
+
             }
             else if (args.Parameters[0].ToLower() == "del" && hasManageWarpPermission)
             {
+                #region Del warp
                 if (args.Parameters.Count == 2)
                 {
                     string warpName = args.Parameters[1];
@@ -1877,9 +1847,12 @@ namespace TShockAPI
                 }
                 else
                     args.Player.SendMessage("Invalid syntax! Proper syntax: /warp del [name]", Color.Red);
+                #endregion
+
             }
             else if (args.Parameters[0].ToLower() == "hide" && hasManageWarpPermission)
             {
+                #region Hide warp
                 if (args.Parameters.Count == 3)
                 {
                     string warpName = args.Parameters[1];
@@ -1901,6 +1874,45 @@ namespace TShockAPI
                 }
                 else
                     args.Player.SendMessage("Invalid syntax! Proper syntax: /warp hide [name] <true/false>", Color.Red);
+                #endregion
+            }
+            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tphere))
+            {
+                #region Warp send
+                if (args.Parameters.Count < 3)
+                {
+                    args.Player.SendMessage("Invalid syntax! Proper syntax: /warp send [player] [warpname]", Color.Red);
+                    return;
+                }
+
+                var foundplr = TShock.Utils.FindPlayer(args.Parameters[1]);
+                if (foundplr.Count == 0)
+                {
+                    args.Player.SendMessage("Invalid player!", Color.Red);
+                    return;
+                }
+                else if (foundplr.Count > 1)
+                {
+                    args.Player.SendMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count), Color.Red);
+                    return;
+                }
+                string warpName = args.Parameters[2];
+                var warp = TShock.Warps.FindWarp(warpName);
+                var plr = foundplr[0];
+                if (warp.WarpPos != Vector2.Zero)
+                {
+                    if (plr.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                    {
+                        plr.SendMessage(string.Format("{0} Warped you to {1}", args.Player.Name, warpName), Color.Yellow);
+                        args.Player.SendMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName), Color.Yellow);
+                    }
+                }
+                else
+                {
+                    args.Player.SendMessage("Specified warp not found.", Color.Red);
+                }
+                #endregion
+
             }
             else
             {
