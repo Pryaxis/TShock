@@ -183,11 +183,13 @@ namespace TShockAPI
 		/// Broadcasts a message to all players
 		/// </summary>
 		/// <param name="msg">string message</param>
+		[Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
 		public void Broadcast(string msg)
 		{
 			Broadcast(msg, Color.Green);
 		}
 
+        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
@@ -195,6 +197,7 @@ namespace TShockAPI
 			Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
+        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
 		public void Broadcast(string msg, Color color)
 		{
 			Broadcast(msg, color.R, color.G, color.B);
@@ -208,6 +211,7 @@ namespace TShockAPI
         /// <param name="red">r</param>
         /// <param name="green">g</param>
         /// <param name="blue">b</param>
+        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
         public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
         {
             TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
