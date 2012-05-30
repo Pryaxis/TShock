@@ -3035,7 +3035,7 @@ namespace TShockAPI
 
             if (page < pagecount)
             {
-                args.Player.SendMessage(string.Format("Type /who {0} for more warps.", (page + 2)), Color.Yellow);
+                args.Player.SendMessage(string.Format("Type /who {0} for more players.", (page + 2)), Color.Yellow);
             }
         }
 
