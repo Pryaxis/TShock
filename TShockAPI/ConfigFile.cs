@@ -239,6 +239,8 @@ namespace TShockAPI
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
 
+	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

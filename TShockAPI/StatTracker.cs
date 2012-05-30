@@ -86,7 +86,8 @@ namespace TShockAPI
 							                      Environment.OSVersion + "&mono=" + Main.runningMono + "&port=" + Netplay.serverPort +
 							                      "&plcount=" + TShock.Utils.ActivePlayers());
 					}
-					Log.ConsoleInfo("Stat Tracker: " + response);
+                    if (!TShock.Config.HideStatTrackerDebugMessages)
+					    Log.ConsoleInfo("Stat Tracker: " + response);
 				}
 				catch (Exception e)
 				{
