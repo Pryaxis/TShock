@@ -427,6 +427,7 @@ namespace TShockAPI
             SendMessage(msg, Color.Red);
         }
 
+        [Obsolete("Use SendErrorMessage, SendInfoMessage, or SendWarningMessage, or a custom color instead.")]
 		public virtual void SendMessage(string msg)
 		{
 			SendMessage(msg, 0, 255, 0);
