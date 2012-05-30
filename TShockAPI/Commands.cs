@@ -216,14 +216,14 @@ namespace TShockAPI
 
 			if (cmd == null)
 			{
-				player.SendMessage("Invalid Command Entered. Type /help for a list of valid Commands.", Color.Red);
+				player.SendErrorMessage("Invalid Command Entered. Type /help for a list of valid Commands.");
 				return true;
 			}
 
 			if (!cmd.CanRun(player))
 			{
 				TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}", player.Name, cmd.Name), Color.Red);
-				player.SendMessage("You do not have access to that command.", Color.Red);
+				player.SendErrorMessage("You do not have access to that command.");
 			}
 			else
 			{

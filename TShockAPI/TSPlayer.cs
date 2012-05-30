@@ -409,7 +409,7 @@ namespace TShockAPI
 
         public virtual void SendInfoMessage(string msg)
         {
-            SendMessage(msg, Color.Indigo);
+            SendMessage(msg, Color.Yellow);
         }
 
         public virtual void SendSuccessMessage(string msg)
@@ -419,7 +419,7 @@ namespace TShockAPI
 
         public virtual void SendWarningMessage(string msg)
         {
-            SendMessage(msg, Color.Yellow);
+            SendMessage(msg, Color.OrangeRed);
         }
 
         public virtual void SendErrorMessage(string msg)
