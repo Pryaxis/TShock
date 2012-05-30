@@ -407,6 +407,26 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
+        public virtual void SendInformationalMessage(string msg)
+        {
+            SendMessage(msg, Color.Indigo);
+        }
+
+        public virtual void SendSuccessMessage(string msg)
+        {
+            SendMessage(msg, Color.Green);
+        }
+
+        public virtual void SendWarningMessage(string msg)
+        {
+            SendMessage(msg, Color.Yellow);
+        }
+
+        public virtual void SendErrorMessage(string msg)
+        {
+            SendMessage(msg, Color.Red);
+        }
+
 		public virtual void SendMessage(string msg)
 		{
 			SendMessage(msg, 0, 255, 0);
