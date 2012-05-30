@@ -1590,6 +1590,8 @@ namespace TShockAPI
 			RconHandler.ListenPort = file.RconPort;
 
 			Utils.HashAlgo = file.HashAlgorithm;
+
+            file.ServerName = file.ServerNickname;
 		}
 	}
 }

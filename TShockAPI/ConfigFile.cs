@@ -132,6 +132,8 @@ namespace TShockAPI
 		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
 			EnableTokenEndpointAuthentication;
 
+        [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
+
 		[Description("Enable/Disable the rest api.")] public bool RestApiEnabled;
 
 		[Description("This is the port which the rest api will listen on.")] public int RestApiPort = 7878;
