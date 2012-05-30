@@ -213,7 +213,7 @@ namespace TShockAPI
 			if (args.Count < 1)
 				return false;
 
-			string cmdName = args[0];
+			string cmdName = args[0].ToLower();
 			args.RemoveAt(0);
 
 			Command cmd = ChatCommands.FirstOrDefault(c => c.HasAlias(cmdName));
