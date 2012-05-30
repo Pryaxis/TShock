@@ -37,14 +37,14 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 11)]
+	[APIVersion(1, 12)]
 	public class TShock : TerrariaPlugin
 	{
 		private const string LogFormatDefault = "yyyyMMddHHmmss";
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Squashing bugs, and adding suggestions";
+		public static readonly string VersionCodename = "4.x & 50,000th download milestone";
 
 		public static string SavePath = "tshock";
 
@@ -76,7 +76,6 @@ namespace TShockAPI
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
 		public static event Action Initialized;
-
 
 		public override Version Version
 		{
@@ -131,6 +130,12 @@ namespace TShockAPI
 			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            if (Version.Major >= 4)
+            {
+                getTShockAscii();                
+            }
+
 
 			try
 			{
@@ -199,7 +204,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("TerrariaShock Version {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
 
 				GameHooks.PostInitialize += OnPostInit;
 				GameHooks.Update += OnUpdate;
@@ -243,7 +248,26 @@ namespace TShockAPI
 			}
 		}
 
-		private RestObject RestApi_Verify(string username, string password)
+	    private static void getTShockAscii()
+	    {
+// ReSharper disable LocalizableElement
+	        Console.Write("              ___          ___          ___          ___          ___ \n" +
+	                      "     ___     /  /\\        /__/\\        /  /\\        /  /\\        /__/|    \n" +
+	                      "    /  /\\   /  /:/_       \\  \\:\\      /  /::\\      /  /:/       |  |:|    \n" +
+	                      "   /  /:/  /  /:/ /\\       \\__\\:\\    /  /:/\\:\\    /  /:/        |  |:|    \n" +
+	                      "  /  /:/  /  /:/ /::\\  ___ /  /::\\  /  /:/  \\:\\  /  /:/  ___  __|  |:|    \n" +
+	                      " /  /::\\ /__/:/ /:/\\:\\/__/\\  /:/\\:\\/__/:/ \\__\\:\\/__/:/  /  /\\/__/\\_|:|____\n" +
+	                      "/__/:/\\:\\\\  \\:\\/:/~/:/\\  \\:\\/:/__\\/\\  \\:\\ /  /:/\\  \\:\\ /  /:/\\  \\:\\/:::::/\n" +
+	                      "\\__\\/  \\:\\\\  \\::/ /:/  \\  \\::/      \\  \\:\\  /:/  \\  \\:\\  /:/  \\  \\::/~~~~ \n" +
+	                      "     \\  \\:\\\\__\\/ /:/    \\  \\:\\       \\  \\:\\/:/    \\  \\:\\/:/    \\  \\:\\     \n" +
+	                      "      \\__\\/  /__/:/      \\  \\:\\       \\  \\::/      \\  \\::/      \\  \\:\\    \n" +
+	                      "             \\__\\/        \\__\\/        \\__\\/        \\__\\/        \\__\\/    \n" +
+	                      "");
+            Console.WriteLine("TShock for Terraria is open & free software. If you paid, you were scammed.");
+// ReSharper restore LocalizableElement
+	    }
+
+	    private RestObject RestApi_Verify(string username, string password)
 		{
 			var userAccount = Users.GetUserByName(username);
 			if (userAccount == null)
@@ -624,7 +648,7 @@ namespace TShockAPI
 		private void SetConsoleTitle()
 		{
 			Console.Title = string.Format("{0} - {1}/{2} @ {3}:{4} (TerrariaShock v{5})", Config.ServerName, Utils.ActivePlayers(),
-								  Config.MaxSlots, Netplay.serverListenIP, Config.ServerPort, Version);
+								  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
         private void OnHardUpdate( HardUpdateEventArgs args )
@@ -671,7 +695,7 @@ namespace TShockAPI
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
 			{
-				Utils.ForceKick(player, Config.ServerFullNoReservedReason);
+				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
 				handler.Handled = true;
 				return;
 			}
@@ -683,14 +707,14 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
 				handler.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, Config.WhitelistKickReason);
+				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
 				handler.Handled = true;
 				return;
 			}
@@ -703,13 +727,13 @@ namespace TShockAPI
 				{
 					if (Config.KickProxyUsers)
 					{
-						Utils.ForceKick(player, "Proxies are not allowed");
+						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
 						handler.Handled = true;
 						return;
 					}
 				}
 			}
-			Players[ply] = player;
+		    Players[ply] = player;
 		}
 
 		private void OnJoin(int ply, HandledEventArgs handler)
@@ -736,10 +760,10 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason));
+				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
 				handler.Handled = true;
 				return;
-			}
+			}            
 		}
 
 		private void OnLeave(int ply)
@@ -750,11 +774,14 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				if (!tsplr.SilentKickInProgress)
+				if (!tsplr.SilentKickInProgress || tsplr.State > 1)
 				{
-					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
+					if (tsplr.State >= 2)
+					{
+                        Utils.Broadcast(tsplr.Name + " left", Color.Yellow);    
+					}
 				}
-				Log.Info(string.Format("{0} left.", tsplr.Name));
+				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan)
 				{
@@ -799,12 +826,16 @@ namespace TShockAPI
 					Log.Error(ex.ToString());
 				}
 			}
-			else if (!tsplr.mute)
+			else if (!tsplr.mute && !TShock.Config.EnableChatAboveHeads)
 			{
 				Utils.Broadcast(
 					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
 					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 				e.Handled = true;
+			} else if (!tsplr.mute && TShock.Config.EnableChatAboveHeads)
+			{
+			    Utils.Broadcast(ply, String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+			    e.Handled = true;
 			}
 			else if (tsplr.mute)
 			{
@@ -892,7 +923,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38 && (int) type != 5 && (int) type != 21)
+				(int) type != 38 && (int) type != 21)
 			{
 				e.Handled = true;
 				return;
@@ -1067,6 +1098,43 @@ namespace TShockAPI
 				}
 				e.Handled = true;
 			}
+            if (e.MsgID == PacketTypes.WorldInfo)
+            {
+                if (e.remoteClient == -1) return;
+                var player = Players[e.remoteClient];
+                if (player == null) return;
+                if (Config.UseServerName)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        var msg = new WorldInfoMsg
+                        {
+                            Time = (int)Main.time,
+                            DayTime = Main.dayTime,
+                            MoonPhase = (byte)Main.moonPhase,
+                            BloodMoon = Main.bloodMoon,
+                            MaxTilesX = Main.maxTilesX,
+                            MaxTilesY = Main.maxTilesY,
+                            SpawnX = Main.spawnTileX,
+                            SpawnY = Main.spawnTileY,
+                            WorldSurface = (int)Main.worldSurface,
+                            RockLayer = (int)Main.rockLayer,
+                            WorldID = Main.worldID,
+                            WorldFlags =
+                                (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
+                                (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
+                                (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
+                                (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
+                                (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
+                                (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
+                            WorldName = Config.ServerName
+                        };
+                        msg.PackFull(ms);
+                        player.SendRawData(ms.ToArray());
+                    }
+                    e.Handled = true;
+                }
+            }
 		}
 
 		private void OnStartHardMode(HandledEventArgs e)

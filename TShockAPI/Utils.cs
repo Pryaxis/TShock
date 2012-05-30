@@ -27,11 +27,22 @@ using Terraria;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Utilities and other TShock core calls that don't fit anywhere else
+	/// </summary>
 	public class Utils
 	{
-		private readonly static int firstItemPrefix = 1;
-		private readonly static int lastItemPrefix = 83;
-		// Utils is a Singleton
+	    /// <summary>
+	    /// Document me
+	    /// </summary>
+	    private const int FirstItemPrefix = 1;
+
+	    /// <summary>
+	    /// Document me
+	    /// </summary>
+	    private const int LastItemPrefix = 83;
+
+	    // Utils is a Singleton
 		private static readonly Utils instance = new Utils();
 		private Utils() {}
 		public static Utils Instance { get { return instance; } }
@@ -53,6 +64,7 @@ namespace TShockAPI
 		/// Used for some places where a list of players might be used.
 		/// </summary>
 		/// <returns>String of players seperated by commas.</returns>
+        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
 		public string GetPlayers()
 		{
 			var sb = new StringBuilder();
@@ -71,9 +83,37 @@ namespace TShockAPI
 		}
 
         /// <summary>
+        /// Returns a list of current players on the server
+        /// </summary>
+        /// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
+        /// <returns>List of strings with names</returns>
+        public List<string> GetPlayers(bool includeIDs)
+        {
+            var players = new List<string>();
+
+            foreach (TSPlayer ply in TShock.Players)
+            {
+                if (ply != null && ply.Active)
+                {
+                    if (includeIDs)
+                    {
+                        players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
+                    }
+                    else
+                    {
+                        players.Add(ply.Name);
+                    }
+                }
+            }
+
+            return players;
+        }
+
+        /// <summary>
         /// Used for some places where a list of players might be used.
         /// </summary>
         /// <returns>String of players and their id seperated by commas.</returns>
+        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
         public string GetPlayersWithIds()
         {
             var sb = new StringBuilder();
@@ -96,7 +136,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Finds a player and gets IP as string
 		/// </summary>
-		/// <param name="msg">Player name</param>
+		/// <param name="playername">string playername</param>
 		public string GetPlayerIP(string playername)
 		{
 			foreach (TSPlayer player in TShock.Players)
@@ -160,6 +200,21 @@ namespace TShockAPI
 			Broadcast(msg, color.R, color.G, color.B);
 		}
 
+        /// <summary>
+        /// Broadcasts a message from a player, not TShock
+        /// </summary>
+        /// <param name="ply">TSPlayer ply - the player that will send the packet</param>
+        /// <param name="msg">string msg - the message</param>
+        /// <param name="red">r</param>
+        /// <param name="green">g</param>
+        /// <param name="blue">b</param>
+        public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
+        {
+            TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
+            TSPlayer.Server.SendMessage(msg, red, green, blue);
+            Log.Info(string.Format("Broadcast: {0}", msg));
+        }
+
 		/// <summary>
 		/// Sends message to all users with 'logs' permission.
 		/// </summary>
@@ -210,7 +265,9 @@ namespace TShockAPI
                         return new List<TSPlayer> { player };
                     }
                 }
+// ReSharper disable EmptyGeneralCatchClause
                 catch (Exception e)
+// ReSharper restore EmptyGeneralCatchClause
                 {
                     // Conversion failed
                 }
@@ -458,7 +515,7 @@ namespace TShockAPI
 			item.SetDefaults(0);
 			string lowerName = name.ToLower();
 			var found = new List<int>();
-			for (int i = firstItemPrefix; i <= lastItemPrefix; i++)
+			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
 				try
 				{
@@ -489,8 +546,8 @@ namespace TShockAPI
 			}
 			return found;
 		}
-
-		/// <summary>
+        
+        /// <summary>
 		/// Gets a prefix by ID or name
 		/// </summary>
 		/// <param name="idOrName">ID or name</param>
@@ -498,7 +555,7 @@ namespace TShockAPI
 		public List<int> GetPrefixByIdOrName(string idOrName)
 		{
 			int type = -1;
-			if (int.TryParse(idOrName, out type) && type >= firstItemPrefix && type <= lastItemPrefix)
+			if (int.TryParse(idOrName, out type) && type >= FirstItemPrefix && type <= LastItemPrefix)
 			{
 				return new List<int> {type};
 			}
@@ -516,7 +573,7 @@ namespace TShockAPI
 			{
 				if (player != null && player.Active)
 				{
-					ForceKick(player, reason);
+					ForceKick(player, reason, false, true);
 				}
 			}
 		}
@@ -555,9 +612,9 @@ namespace TShockAPI
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		public void ForceKick(TSPlayer player, string reason, bool silent = false)
+		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
-			Kick(player, reason, true, silent);
+			Kick(player, reason, true, silent, null, saveSSI);
 		}
 
 #if COMPAT_SIGS
@@ -568,14 +625,15 @@ namespace TShockAPI
 		}
 #endif
 		/// <summary>
-		/// Kicks a player from the server.
+		/// Kicks a player from the server..
 		/// </summary>
 		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
-		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null)
+		/// <param name="adminUserName">string adminUserName (default: null)</param>
+		/// <param name="saveSSI">bool saveSSI (default: false)</param>
+		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
 		{
 			if (!player.ConnectionAlive)
 				return true;
@@ -583,15 +641,18 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-                if( player.IsLoggedIn )
-                    TShock.InventoryDB.InsertPlayerData(player);
+                if (player.IsLoggedIn && saveSSI)
+                    player.SaveServerInventory();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
-				else
-					Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                if (!silent)
+                {
+                    if (string.IsNullOrWhiteSpace(adminUserName))
+                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
+                    else
+                        Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+                }
 				return true;
 			}
 			return false;

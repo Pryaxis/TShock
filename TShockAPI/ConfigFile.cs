@@ -83,7 +83,8 @@ namespace TShockAPI
 		[Description("Not implemented")] public string RconPassword = "";
 		[Description("Not implemented")] public int RconPort = 7777;
 
-		[Description("Used when replying to a rest /status request.")] public string ServerName = "";
+		[Description("Used when replying to a rest /status request or sent to the client when UseServerName is true.")] public string ServerName = "";
+	    [Description("Sends ServerName in place of the world name to clients.")] public bool UseServerName = false;
 		[Description("Not implemented")] public string MasterServer = "127.0.0.1";
 
 		[Description("Valid types are \"sqlite\" and \"mysql\"")] public string StorageType = "sqlite";
@@ -167,6 +168,8 @@ namespace TShockAPI
 			"Change ingame chat format, {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message"
 			)] public string ChatFormat = "{1}{2}{3}: {4}";
 
+	    [Description("Change the chat format when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat.")] public string ChatAboveHeadsFormat = "{4}";
+
 		[Description("Force the world time to be normal, day, or night")] public string ForceTime = "normal";
 
 		[Description("Disable/Revert a player if they exceed this number of tile kills within 1 second.")] public int
@@ -228,6 +231,19 @@ namespace TShockAPI
 
 	    [Description("Prevent banned items from being /i or /give")] public bool PreventBannedItemSpawn = false;
 
+	    [Description("Prevent banks on SSI")] public bool DisablePiggybanksOnSSI = false;
+
+	    [Description("Prevent players from interacting with the world if dead")] public bool PreventDeadModification =
+	        false;
+
+	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
+	        bool EnableChatAboveHeads = false;
+
+        /// <summary>
+        /// Reads a configuration file from a given path
+        /// </summary>
+        /// <param name="path">string path</param>
+        /// <returns>ConfigFile object</returns>
         public static ConfigFile Read(string path)
 		{
 			if (!File.Exists(path))
@@ -238,6 +254,11 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Reads the configuration file from a stream
+        /// </summary>
+        /// <param name="stream">stream</param>
+        /// <returns>ConfigFile object</returns>
 		public static ConfigFile Read(Stream stream)
 		{
 			using (var sr = new StreamReader(stream))
@@ -249,6 +270,10 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Writes the configuration to a given path
+        /// </summary>
+        /// <param name="path">string path - Location to put the config file</param>
 		public void Write(string path)
 		{
 			using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -257,6 +282,10 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Writes the configuration to a stream
+        /// </summary>
+        /// <param name="stream">stream</param>
 		public void Write(Stream stream)
 		{
 			var str = JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -266,9 +295,14 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// On config read hook
+        /// </summary>
 		public static Action<ConfigFile> ConfigRead;
 
-
+        /// <summary>
+        /// Dumps all configuration options to a text file in Markdown format
+        /// </summary>
 		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();

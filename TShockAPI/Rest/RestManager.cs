@@ -127,7 +127,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"name", TShock.Config.ServerNickname},
-				{"port", Convert.ToString(TShock.Config.ServerPort)},
+				{"port", Convert.ToString(Netplay.serverPort)},
 				{"playercount", Convert.ToString(activeplayers.Count())},
 				{"players", string.Join(", ", activeplayers.Select(p => p.name))},
 			};
@@ -525,7 +525,7 @@ namespace TShockAPI
 				return ret;
 
 			TSPlayer player = (TSPlayer)ret;
-			TShock.Utils.ForceKick(player, null == parameters["reason"] ? "Kicked via web" : parameters["reason"]);
+			TShock.Utils.ForceKick(player, null == parameters["reason"] ? "Kicked via web" : parameters["reason"], false, true);
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
@@ -538,7 +538,7 @@ namespace TShockAPI
 			TSPlayer player = (TSPlayer)ret;
 			var reason = null == parameters["reason"] ? "Banned via web" : parameters["reason"];
 			TShock.Bans.AddBan(player.IP, player.Name, reason);
-			TShock.Utils.ForceKick(player, reason);
+			TShock.Utils.ForceKick(player, reason, false, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 

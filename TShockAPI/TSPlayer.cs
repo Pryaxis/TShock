@@ -119,6 +119,29 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Saves the player's inventory to SSI
+        /// </summary>
+        /// <returns>bool - True/false if it saved successfully</returns>
+        public bool SaveServerInventory()
+        {
+            if (!TShock.Config.ServerSideInventory)
+            {
+                return false;
+            }
+            try
+            {
+                PlayerData.CopyInventory(this);
+                TShock.InventoryDB.InsertPlayerData(this);
+                return true;
+            } catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
+
+        }
+
 		/// <summary>
 		/// Terraria Player
 		/// </summary>
@@ -215,7 +238,7 @@ namespace TShockAPI
 		}
 
 
-		private void SendWorldInfo(int tilex, int tiley, bool fakeid)
+		public void SendWorldInfo(int tilex, int tiley, bool fakeid)
 		{
 			using (var ms = new MemoryStream())
 			{
@@ -240,7 +263,7 @@ namespace TShockAPI
 											 (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
 											 (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
 											 (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
-								WorldName = Main.worldName
+								WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
@@ -359,11 +382,19 @@ namespace TShockAPI
             return false;
         }
 
-	    public virtual bool GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
-		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+        public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
+        {
             if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
                 return false;
+
+            GiveItem(type,name,width,height,stack,prefix);
+            return true;
+        }
+
+	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
+		{
+			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+
 			// This is for special pickaxe/hammers/swords etc
 			Main.item[itemid].SetDefaults(name);
 			// The set default overrides the wet and stack set by NewItem
@@ -374,7 +405,6 @@ namespace TShockAPI
 			Main.item[itemid].prefix = (byte) prefix;
 			NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
 			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
-	        return true;
 		}
 
 		public virtual void SendMessage(string msg)
@@ -391,6 +421,11 @@ namespace TShockAPI
 		{
 			SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
 		}
+
+        public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
+        {
+            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
+        }
 
 		public virtual void DamagePlayer(int damage)
 		{
@@ -450,6 +485,14 @@ namespace TShockAPI
 
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
+
+        public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
+        {
+            if (RealPlayer && !ConnectionAlive)
+                return;
+
+            NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
+        }
 
 		public virtual bool SendRawData(byte[] data)
 		{

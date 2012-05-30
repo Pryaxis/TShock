@@ -2,9 +2,9 @@
 
 # TShock Downloaded Documentation
 
-*Created for TShock version: 3.5.x.x*
+*Created for TShock version: 3.9.x.x*
 
-*Last updated: 2/25/2012*
+*Last updated: 5/26/2012*
 
 ----
 

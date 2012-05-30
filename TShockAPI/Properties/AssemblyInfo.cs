@@ -22,12 +22,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("TShockAPI")]
+[assembly: AssemblyTitle("TShock for Terraria")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nyx Team")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Nyx Team 2011")]
+[assembly: AssemblyCopyright("Copyright © Nyx Team 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -48,5 +48,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      MMdd of the build
 
-[assembly: AssemblyVersion("3.8.0.0304")]
-[assembly: AssemblyFileVersion("3.8.0.0304")]
+[assembly: AssemblyVersion("3.9.1.0526")]
+[assembly: AssemblyFileVersion("3.9.1.0526")]
