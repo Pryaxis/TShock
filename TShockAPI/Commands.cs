@@ -1398,13 +1398,13 @@ namespace TShockAPI
             if (!TShock.Config.DisableHardmode)
                 WorldGen.StartHardmode();
             else
-                args.Player.SendMessage("Hardmode is disabled via config", Color.Red);
+                args.Player.SendMessage("Hardmode is disabled via config.", Color.Red);
         }
 
         private static void DisableHardMode(CommandArgs args)
         {
             Main.hardMode = false;
-            args.Player.SendMessage("Hardmode is now disabled", Color.Green);
+            args.Player.SendMessage("Hardmode is now disabled.", Color.Green);
         }
 
 		private static void ConvertCorruption(CommandArgs args)
