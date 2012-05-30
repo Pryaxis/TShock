@@ -310,13 +310,14 @@ namespace TShockAPI
 		{
 			var ip = parameters["ip"];
 			var name = parameters["name"];
+			var admin = parameters["admin"];
 
-			if (string.IsNullOrWhiteSpace(ip) && string.IsNullOrWhiteSpace(name))
-				return RestMissingParam("ip", "name");
+			if (string.IsNullOrWhiteSpace(ip) && string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(admin))
+				return RestMissingParam("ip", "name", "admin");
 
 			try
 			{
-				TShock.Bans.AddBan(ip, name, parameters["reason"], true);
+				TShock.Bans.AddBan(ip, name, parameters["reason"], admin, true);
 			}
 			catch (Exception e)
 			{
@@ -368,6 +369,7 @@ namespace TShockAPI
 				{"name", null == ban.Name ? "" : ban.Name},
 				{"ip", null == ban.IP ? "" : ban.IP},
 				{"reason", null == ban.Reason ? "" : ban.Reason},
+				{"admin", null == ban.Admin ? "" : ban.Admin},
 			};
 		}
 
@@ -382,6 +384,7 @@ namespace TShockAPI
 						{"name", null == ban.Name ? "" : ban.Name},
 						{"ip", null == ban.IP ? "" : ban.IP},
 						{"reason", null == ban.Reason ? "" : ban.Reason},
+						{"admin", null == ban.Admin ? "" : ban.Admin},
 					}
 				);
 			}

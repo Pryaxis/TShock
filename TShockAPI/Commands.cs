@@ -949,11 +949,12 @@ namespace TShockAPI
 				else if (args.Parameters[0].ToLower() == "addip")
 				{
 					#region Add ip ban
+                    string admin = args.Player.Name;
 					string ip = args.Parameters[1];
 					string reason = args.Parameters.Count > 2
 										? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 										: "Manually added IP address ban.";
-					TShock.Bans.AddBan(ip, "", reason);
+					TShock.Bans.AddBan(ip, "", reason, admin);
 					args.Player.SendMessage(ip + " banned.", Color.Green);
 					return;
 					#endregion Add ip ban
