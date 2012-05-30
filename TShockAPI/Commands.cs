@@ -134,15 +134,8 @@ namespace TShockAPI
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
-			add(Permissions.spawnboss, Eater, "eater");
-			add(Permissions.spawnboss, Eye, "eye");
-			add(Permissions.spawnboss, King, "king");
-			add(Permissions.spawnboss, Skeletron, "skeletron");
-			add(Permissions.spawnboss, WoF, "wof", "wallofflesh");
-			add(Permissions.spawnboss, Twins, "twins");
-			add(Permissions.spawnboss, Destroyer, "destroyer");
-			add(Permissions.spawnboss, SkeletronPrime, "skeletronp", "prime");
-			add(Permissions.spawnboss, Hardcore, "hardcore");
+		    add(Permissions.spawnboss, SpawnBoss, "boss", "eater", "king", "eye", "skeletron", "wof", "wallofflesh", "twins",
+		        "destroyer", "prime", "skeletronp", "hardcore");
 			add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
 			add(Permissions.tp, Home, "home");
 			add(Permissions.tp, Spawn, "spawn");
@@ -1240,260 +1233,179 @@ namespace TShockAPI
 			}
 		}
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Eater(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /eater [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /eater [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC eater = TShock.Utils.GetNPCById(13);
-			TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
-		}
+        private static void SpawnBoss(CommandArgs args)
+        {
+            if (args.Parameters.Count == 0)
+            {
+                args.Player.SendMessage("As of TShock 4.0, all boss specific spawning commands are now in /boss.", Color.Yellow);
+                args.Player.SendMessage("Invalid syntax. Syntax: /boss [name] [count]", Color.Green);
+                args.Player.SendMessage("Bosses: eow, king, eye, skeletron, wof, twins, destroyer, prime, *", Color.Green);
+                return;
+            }
+            int numberOfEnemies = 0;
+            string boss = args.Parameters[0];
+            int.TryParse(args.Parameters[1], out numberOfEnemies);
+            numberOfEnemies = Math.Min(numberOfEnemies, Main.maxNPCs);
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Eye(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /eye [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /eye [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC eye = TShock.Utils.GetNPCById(4);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "eow" || boss.ToLower() == "eater")
+            {
+                NPC eater = TShock.Utils.GetNPCById(13);
+                TSPlayer.Server.SpawnNPC(eater.type, eater.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned the eater of worlds {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void King(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /king [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /king [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC king = TShock.Utils.GetNPCById(50);
-			TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "eye")
+            {
+                NPC eye = TShock.Utils.GetNPCById(4);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(eye.type, eye.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned the eye of cthulhu {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Skeletron(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /skeletron [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /skeletron [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC skeletron = TShock.Utils.GetNPCById(35);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "king")
+            {
+                NPC king = TShock.Utils.GetNPCById(50);
+                TSPlayer.Server.SpawnNPC(king.type, king.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned the king of slimes {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void WoF(CommandArgs args)
-		{
-			if (Main.wof >= 0 || (args.Player.Y/16f < (Main.maxTilesY - 205)))
-			{
-				args.Player.SendMessage("Can't spawn Wall of Flesh!", Color.Red);
-				return;
-			}
-			NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
-			TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
-		}
+            if (boss.ToLower() == "skeleton")
+            {
+                NPC skeletron = TShock.Utils.GetNPCById(35);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Twins(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /twins [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /twins [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC retinazer = TShock.Utils.GetNPCById(125);
-			NPC spaz = TShock.Utils.GetNPCById(126);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "wof" || boss.ToLower() == "flesh")
+            {
+                if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
+                {
+                    args.Player.SendMessage("Can't spawn a Wall of Flesh!", Color.Red);
+                    return;
+                }
+                NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
+                TShock.Utils.Broadcast(string.Format("{0} has spawned a Wall of Flesh!", args.Player.Name));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Destroyer(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /destroyer [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /destroyer [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC destroyer = TShock.Utils.GetNPCById(134);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "twins")
+            {
+                NPC retinazer = TShock.Utils.GetNPCById(125);
+                NPC spaz = TShock.Utils.GetNPCById(126);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void SkeletronPrime(CommandArgs args)
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /prime [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /prime [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs);
-			NPC prime = TShock.Utils.GetNPCById(127);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(prime.type, prime.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "destroyer")
+            {
+                NPC destroyer = TShock.Utils.GetNPCById(134);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		[Obsolete("This specific command for spawning mobs will replaced soon.")]
-		private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
-		{
-			if (args.Parameters.Count > 1)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /hardcore [amount]", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 1 && !int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /hardcore [amount]", Color.Red);
-				return;
-			}
-			amount = Math.Min(amount, Main.maxNPCs/4);
-			NPC retinazer = TShock.Utils.GetNPCById(125);
-			NPC spaz = TShock.Utils.GetNPCById(126);
-			NPC destroyer = TShock.Utils.GetNPCById(134);
-			NPC prime = TShock.Utils.GetNPCById(127);
-			NPC eater = TShock.Utils.GetNPCById(13);
-			NPC eye = TShock.Utils.GetNPCById(4);
-			NPC king = TShock.Utils.GetNPCById(50);
-			NPC skeletron = TShock.Utils.GetNPCById(35);
-			TSPlayer.Server.SetTime(false, 0.0);
-			TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(prime.type, prime.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(eater.type, eater.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(eye.type, eye.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(king.type, king.name, amount, args.Player.TileX, args.Player.TileY);
-			TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, amount, args.Player.TileX, args.Player.TileY);
-			TShock.Utils.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
-		}
+            if (boss.ToLower() == "prime")
+            {
+                NPC prime = TShock.Utils.GetNPCById(127);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(prime.type, prime.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
 
-		private static void SpawnMob(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
-				return;
-			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendMessage("Missing mob name/id", Color.Red);
-				return;
-			}
-			int amount = 1;
-			if (args.Parameters.Count == 2 && !int.TryParse(args.Parameters[1], out amount))
-			{
-				args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
-				return;
-			}
+            if (boss == "*")
+            {
+                NPC retinazer = TShock.Utils.GetNPCById(125);
+                NPC spaz = TShock.Utils.GetNPCById(126);
+                NPC destroyer = TShock.Utils.GetNPCById(134);
+                NPC prime = TShock.Utils.GetNPCById(127);
+                NPC eater = TShock.Utils.GetNPCById(13);
+                NPC eye = TShock.Utils.GetNPCById(4);
+                NPC king = TShock.Utils.GetNPCById(50);
+                NPC skeletron = TShock.Utils.GetNPCById(35);
+                TSPlayer.Server.SetTime(false, 0.0);
+                TSPlayer.Server.SpawnNPC(retinazer.type, retinazer.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(spaz.type, spaz.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(destroyer.type, destroyer.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(prime.type, prime.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(eater.type, eater.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(eye.type, eye.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(king.type, king.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TSPlayer.Server.SpawnNPC(skeletron.type, skeletron.name, numberOfEnemies, args.Player.TileX, args.Player.TileY);
+                TShock.Utils.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, numberOfEnemies));
+                return;
+            }
+        }
 
-			amount = Math.Min(amount, Main.maxNPCs);
+        private static void SpawnMob(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
+                return;
+            }
+            if (args.Parameters[0].Length == 0)
+            {
+                args.Player.SendMessage("Missing mob name/id", Color.Red);
+                return;
+            }
+            int amount = 1;
+            if (args.Parameters.Count == 2 && !int.TryParse(args.Parameters[1], out amount))
+            {
+                args.Player.SendMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]", Color.Red);
+                return;
+            }
 
-			var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
-			if (npcs.Count == 0)
-			{
-				args.Player.SendMessage("Invalid mob type!", Color.Red);
-			}
-			else if (npcs.Count > 1)
-			{
-				args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
-			}
-			else
-			{
-				var npc = npcs[0];
-				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
-					//Do not allow WoF to spawn, in certain conditions may cause loops in client
-				{
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
-					TShock.Utils.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
-				}
-				else if (npc.type == 113)
-					args.Player.SendMessage("Sorry, you can't spawn Wall of Flesh! Try /wof instead.");
-						// Maybe perhaps do something with WorldGen.SpawnWoF?
-				else
-					args.Player.SendMessage("Invalid mob type!", Color.Red);
-			}
-		}
+            amount = Math.Min(amount, Main.maxNPCs);
 
-			private static void StartHardMode(CommandArgs args)
-			{
-				if (!TShock.Config.DisableHardmode)
-						WorldGen.StartHardmode();
-					else
-						args.Player.SendMessage("Hardmode is disabled via config", Color.Red);
-			}
+            var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+            if (npcs.Count == 0)
+            {
+                args.Player.SendMessage("Invalid mob type!", Color.Red);
+            }
+            else if (npcs.Count > 1)
+            {
+                args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
+            }
+            else
+            {
+                var npc = npcs[0];
+                if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
+                //Do not allow WoF to spawn, in certain conditions may cause loops in client
+                {
+                    TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
+                    TShock.Utils.Broadcast(string.Format("{0} was spawned {1} time(s).", npc.name, amount));
+                }
+                else if (npc.type == 113)
+                    args.Player.SendMessage("Sorry, you can't spawn Wall of Flesh! Try /wof instead.");
+                // Maybe perhaps do something with WorldGen.SpawnWoF?
+                else
+                    args.Player.SendMessage("Invalid mob type!", Color.Red);
+            }
+        }
 
-			private static void DisableHardMode(CommandArgs args)
-			{
-					Main.hardMode = false;
-					args.Player.SendMessage("Hardmode is now disabled", Color.Green);
-			}
+        private static void StartHardMode(CommandArgs args)
+        {
+            if (!TShock.Config.DisableHardmode)
+                WorldGen.StartHardmode();
+            else
+                args.Player.SendMessage("Hardmode is disabled via config", Color.Red);
+        }
+
+        private static void DisableHardMode(CommandArgs args)
+        {
+            Main.hardMode = false;
+            args.Player.SendMessage("Hardmode is now disabled", Color.Green);
+        }
 
 		private static void ConvertCorruption(CommandArgs args)
 		{
