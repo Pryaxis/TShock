@@ -4,7 +4,7 @@ __Continuous Integration__: http://ci.tshock.co/
 
 __Support Forums__: http://tshock.co/
 
-__Wiki__: http://ci.tshock.co:8080/
+__Wiki__: https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home
 
 ----
 
