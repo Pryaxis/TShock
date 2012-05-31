@@ -522,6 +522,8 @@ namespace TShockAPI
 
 			StatTracker.CheckIn();
 			FixChestStacks();
+
+            
 		}
 
 		private void FixChestStacks()
@@ -1318,17 +1320,7 @@ namespace TShockAPI
 				return true;
 
             }
-            //todo: Replace with calls to the new region plugin.
-            /*if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
-                Regions.InArea(tileX, tileY))
-            {
-                if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
-                    player.SendMessage("Region protected from changes.", Color.Red);
-			        player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                }
-
-                return true;
-            }*/
+            
             if (Config.DisableBuild)
             {
                 if (!player.Group.HasPermission(Permissions.editspawn))
@@ -1370,19 +1362,7 @@ namespace TShockAPI
 					}
 				return true;
 			}
-            //todo: Replace with calls to the new region plugin.
-			/*if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
-			{
 
-
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
-                        player.SendMessage("Region protected from changes.", Color.Red);
-						player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-						}
-				return true;
-			}*/
-			
 			if (Config.DisableBuild)
 			{
 				if (!player.Group.HasPermission(Permissions.editspawn))

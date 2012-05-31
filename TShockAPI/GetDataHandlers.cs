@@ -1646,24 +1646,6 @@ namespace TShockAPI
             if (args.Player.Dead && TShock.Config.PreventDeadModification)
                 return true;
 
-			if (args.Player.AwaitingName)
-			{
-                //todo: We need to replace this call to the region manage plugins call
-				/*var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
-				if (protectedregions.Count == 0)
-				{
-					args.Player.SendMessage("Region is not protected", Color.Yellow);
-				}
-				else
-				{
-					string regionlist = string.Join(",", protectedregions.ToArray());
-					args.Player.SendMessage("Region Name(s): " + regionlist, Color.Yellow);
-				}*/
-				args.Player.SendTileSquare(tileX, tileY);
-				args.Player.AwaitingName = false;
-				return true;
-			}
-
 			if (args.Player.AwaitingTempPoint > 0)
 			{
 				args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
