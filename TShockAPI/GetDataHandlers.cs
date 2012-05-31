@@ -1648,7 +1648,8 @@ namespace TShockAPI
 
 			if (args.Player.AwaitingName)
 			{
-				var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
+                //todo: We need to replace this call to the region manage plugins call
+				/*var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
 				if (protectedregions.Count == 0)
 				{
 					args.Player.SendMessage("Region is not protected", Color.Yellow);
@@ -1657,7 +1658,7 @@ namespace TShockAPI
 				{
 					string regionlist = string.Join(",", protectedregions.ToArray());
 					args.Player.SendMessage("Region Name(s): " + regionlist, Color.Yellow);
-				}
+				}*/
 				args.Player.SendTileSquare(tileX, tileY);
 				args.Player.AwaitingName = false;
 				return true;

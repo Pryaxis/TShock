@@ -51,7 +51,6 @@ namespace TShockAPI
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
 		public static WarpManager Warps;
-		public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
@@ -190,7 +189,6 @@ namespace TShockAPI
 				Warps = new WarpManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
-				Regions = new RegionManager(DB);
 				Itembans = new ItemManager(DB);
 				RememberedPos = new RemeberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
@@ -521,7 +519,6 @@ namespace TShockAPI
 			{
 				AuthToken = 0;
 			}
-			Regions.ReloadAllRegions();
 
 			StatTracker.CheckIn();
 			FixChestStacks();
@@ -1321,16 +1318,17 @@ namespace TShockAPI
 				return true;
 
             }
-            if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+            //todo: Replace with calls to the new region plugin.
+            /*if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
                 Regions.InArea(tileX, tileY))
             {
-                		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
-                        player.SendMessage("Region protected from changes.", Color.Red);
-			player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
+                    player.SendMessage("Region protected from changes.", Color.Red);
+			        player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                }
 
-}
                 return true;
-            }
+            }*/
             if (Config.DisableBuild)
             {
                 if (!player.Group.HasPermission(Permissions.editspawn))
@@ -1372,8 +1370,8 @@ namespace TShockAPI
 					}
 				return true;
 			}
-			
-			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+            //todo: Replace with calls to the new region plugin.
+			/*if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 
@@ -1383,7 +1381,7 @@ namespace TShockAPI
 						player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 				return true;
-			}
+			}*/
 			
 			if (Config.DisableBuild)
 			{
