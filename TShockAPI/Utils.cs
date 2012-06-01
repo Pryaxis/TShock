@@ -33,12 +33,12 @@ namespace TShockAPI
 	public class Utils
 	{
 	    /// <summary>
-	    /// Document me
+	    /// The lowest id for a prefix.
 	    /// </summary>
 	    private const int FirstItemPrefix = 1;
 
 	    /// <summary>
-	    /// Document me
+	    /// The highest id for a prefix.
 	    /// </summary>
 	    private const int LastItemPrefix = 83;
 
@@ -189,7 +189,6 @@ namespace TShockAPI
 			Broadcast(msg, Color.Green);
 		}
 
-        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
@@ -197,7 +196,6 @@ namespace TShockAPI
 			Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
-        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
 		public void Broadcast(string msg, Color color)
 		{
 			Broadcast(msg, color.R, color.G, color.B);
@@ -211,7 +209,6 @@ namespace TShockAPI
         /// <param name="red">r</param>
         /// <param name="green">g</param>
         /// <param name="blue">b</param>
-        [Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
         public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
         {
             TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
@@ -325,7 +322,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Clears a tile
+		/// Checks to see if the tile is clear.
 		/// </summary>
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
@@ -774,8 +771,14 @@ namespace TShockAPI
 			return "";
 		}
 
+        /// <summary>
+        /// Default hashing algorithm.
+        /// </summary>
         public string HashAlgo = "sha512";
 
+        /// <summary>
+        /// A dictionary of hashing algortihms and an implementation object.
+        /// </summary>
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
 		                                                                    	{
 		                                                                    		{"sha512", () => new SHA512Managed()},

@@ -695,6 +695,11 @@ namespace TShockAPI
 			return TShock.SendBytes(Netplay.serverSock[Index], data);
 		}
 
+        /// <summary>
+        /// Adds a command callback to a specified command string.
+        /// </summary>
+        /// <param name="name">The string representing the command i.e "yes" == /yes</param>
+        /// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
         public void AddResponse( string name, Action<object> callback)
         {
             if( AwaitingResponse.ContainsKey(name))

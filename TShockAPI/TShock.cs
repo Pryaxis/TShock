@@ -873,7 +873,7 @@ namespace TShockAPI
 			}
 			else if (tsplr.mute)
 			{
-				tsplr.SendMessage("You are muted!");
+				tsplr.SendErrorMessage("You are muted!");
 				e.Handled = true;
 			}
 		}
