@@ -129,7 +129,7 @@ namespace TShockAPI
 
 		[Description("User can change the homes of NPCs.")] public static readonly string movenpc;
 
-		[Description("Users can stop people from TPing to them")] public static readonly string tpallow;
+		[Description("Users can stop people from teleporting to them")] public static readonly string tpallow;
 
 		[Description("Users can tp to anyone")] public static readonly string tpall;
 
@@ -149,9 +149,9 @@ namespace TShockAPI
 
 		[Description("User can talk in third person")] public static readonly string cantalkinthird;
 
-		[Description("Bypass Server Side Inventory checks")] public static readonly string bypassinventorychecks;
+		[Description("Bypass server side inventory checks")] public static readonly string bypassinventorychecks;
 
-		[Description("Allow unrestricted Send Tile Square usage, for client side world editing")] public static readonly
+		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")] public static readonly
 			string allowclientsideworldedit;
 
         [Description("User can summon bosses using items")]
