@@ -195,6 +195,7 @@ namespace TShockAPI
 			add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
+		    add(null, TestCallbackCommand, "test");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -212,6 +213,13 @@ namespace TShockAPI
 
 			if (cmd == null)
 			{
+                if( player.AwaitingResponse.ContainsKey(cmdName))
+                {
+                    Action<CommandArgs> call = player.AwaitingResponse[cmdName];
+                    player.AwaitingResponse.Remove(cmdName);
+                    call( new CommandArgs(cmdText, player, args));
+                    return true;
+                }
 				player.SendErrorMessage("Invalid command entered. Type /help for a list of valid commands.");
 				return true;
 			}
@@ -311,6 +319,13 @@ namespace TShockAPI
 		{
 			return c == ' ' || c == '\t' || c == '\n';
 		}
+
+        private static void TestCallbackCommand(CommandArgs args)
+        {
+            Action<CommandArgs> a = (s) => args.Player.Spawn();
+            args.Player.AddResponse( "yes", a);
+            args.Player.SendInfoMessage( "Type yes to spawn." );
+        }
 
 		#region Account commands
 

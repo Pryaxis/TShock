@@ -43,6 +43,7 @@ namespace TShockAPI
 		public DateTime LastPvpChange;
 		public Point[] TempPoints = new Point[2];
 		public int AwaitingTempPoint { get; set; }
+	    public Dictionary<string, Action<CommandArgs>> AwaitingResponse;  
 		public bool AwaitingName { get; set; }
 		public DateTime LastThreat { get; set; }
 		public DateTime LastTileChangeNotify { get; set; }
@@ -212,6 +213,7 @@ namespace TShockAPI
 			Index = index;
 			Group = new Group(TShock.Config.DefaultGuestGroupName);
 			IceTiles = new List<Point>();
+            AwaitingResponse = new Dictionary<string, Action<CommandArgs>>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -522,6 +524,16 @@ namespace TShockAPI
 
 			return TShock.SendBytes(Netplay.serverSock[Index], data);
 		}
+
+        public void AddResponse( string name, Action<CommandArgs> callback)
+        {
+            if( AwaitingResponse.ContainsKey(name))
+            {
+                AwaitingResponse.Remove(name);
+            }
+
+            AwaitingResponse.Add(name, callback);
+        }
 	}
 
 	public class TSRestPlayer : TSServerPlayer
