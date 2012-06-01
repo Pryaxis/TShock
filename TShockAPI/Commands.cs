@@ -322,9 +322,9 @@ namespace TShockAPI
 
         private static void TestCallbackCommand(CommandArgs args)
         {
-            Action<CommandArgs> a = (s) => args.Player.Spawn();
+            Action<object> a = (s) => { ((CommandArgs)s).Player.SendSuccessMessage("This is your callack"); };
             args.Player.AddResponse( "yes", a);
-            args.Player.SendInfoMessage( "Type yes to spawn." );
+            args.Player.SendInfoMessage( "Type /yes to get called back." );
         }
 
 		#region Account commands

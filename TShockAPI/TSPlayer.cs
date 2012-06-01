@@ -27,62 +27,232 @@ namespace TShockAPI
 {
 	public class TSPlayer
 	{
+        /// <summary>
+        /// This represents the server as a player.
+        /// </summary>
 		public static readonly TSServerPlayer Server = new TSServerPlayer();
+
+        /// <summary>
+        /// This player represents all the players.
+        /// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
+
+        /// <summary>
+        /// The amount of tiles that the player has killed in the last second.
+        /// </summary>
 		public int TileKillThreshold { get; set; }
-		public int TilePlaceThreshold { get; set; }
+		
+        /// <summary>
+        /// The amount of tiles the player has placed in the last second.
+        /// </summary>
+        public int TilePlaceThreshold { get; set; }
+
+        /// <summary>
+        /// The amount of liquid( in tiles ) that the player has placed in the last second.
+        /// </summary>
 		public int TileLiquidThreshold { get; set; }
+
+        /// <summary>
+        /// The number of projectiles created by the player in the last second.
+        /// </summary>
 		public int ProjectileThreshold { get; set; }
+
+        /// <summary>
+        /// A queue of tiles destroyed by the player for reverting.
+        /// </summary>
 		public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+
+        /// <summary>
+        /// A queue of tiles placed by the player for reverting.
+        /// </summary>
 		public Dictionary<Vector2, TileData> TilesCreated { get; protected set; }
+
 		public int FirstMaxHP { get; set; }
+
 		public int FirstMaxMP { get; set; }
+
+        /// <summary>
+        /// The player's group.
+        /// </summary>
 		public Group Group { get; set; }
+
 		public bool ReceivedInfo { get; set; }
+
+        /// <summary>
+        /// The players index in the player array( Main.players[] ).
+        /// </summary>
 		public int Index { get; protected set; }
+
+        /// <summary>
+        /// The last time the player changed their team or pvp status.  
+        /// </summary>
 		public DateTime LastPvpChange;
+
+        /// <summary>
+        /// Temp points for use in regions and other plugins.
+        /// </summary>
 		public Point[] TempPoints = new Point[2];
+
+        /// <summary>
+        /// Whether the player is waiting to place/break a tile to set as a temp point.
+        /// </summary>
 		public int AwaitingTempPoint { get; set; }
-	    public Dictionary<string, Action<CommandArgs>> AwaitingResponse;  
+
+        /// <summary>
+        /// A list of command callbacks indexed by the command they need to do.
+        /// </summary>
+	    public Dictionary<string, Action<object>> AwaitingResponse;  
+
 		public bool AwaitingName { get; set; }
+
+        /// <summary>
+        /// The last time a player broke a grief check.
+        /// </summary>
 		public DateTime LastThreat { get; set; }
+
+        /// <summary>
+        /// Not used, can be removed.
+        /// </summary>
 		public DateTime LastTileChangeNotify { get; set; }
+
 		public bool InitSpawn;
+
+        /// <summary>
+        /// Whether the player should see logs.
+        /// </summary>
 		public bool DisplayLogs = true;
+
 		public Vector2 oldSpawn = Vector2.Zero;
+
+        /// <summary>
+        /// The last player that the player whispered with( to or from ).
+        /// </summary>
 		public TSPlayer LastWhisper;
+
+        /// <summary>
+        /// The number of unsuccessful login attempts.
+        /// </summary>
 		public int LoginAttempts { get; set; }
+
 		public Vector2 TeleportCoords = new Vector2(-1, -1);
+
 		public Vector2 LastNetPosition = Vector2.Zero;
+
+        /// <summary>
+        /// The player's login name.
+        /// </summary>
 		public string UserAccountName { get; set; }
+
+        /// <summary>
+        /// Unused can be removed.
+        /// </summary>
 		public bool HasBeenSpammedWithBuildMessage;
+
+        /// <summary>
+        /// Whether the player is logged in or not.
+        /// </summary>
 		public bool IsLoggedIn;
+
+        /// <summary>
+        /// The player's user id( from the db ).
+        /// </summary>
 		public int UserID = -1;
+
+        /// <summary>
+        /// Whether the player has been nagged about logging in.
+        /// </summary>
 		public bool HasBeenNaggedAboutLoggingIn;
-		public bool TPAllow = true;
+
+        public bool TPAllow = true;
+
+        /// <summary>
+        /// Whether the player is muted or not.
+        /// </summary>
 		public bool mute;
+
 		public bool TpLock;
+
 		private Player FakePlayer;
+
 		public bool RequestedSection;
+
+        /// <summary>
+        /// The last time the player died.
+        /// </summary>
 		public DateTime LastDeath { get; set; }
+
+        /// <summary>
+        /// Whether the player is dead or not.
+        /// </summary>
 		public bool Dead;
+
 		public string Country = "??";
+
+        /// <summary>
+        /// The players difficulty( normal[softcore], mediumcore, hardcore ).
+        /// </summary>
 		public int Difficulty;
+
 		private string CacheIP;
+
 		public string IgnoreActionsForInventory = "none";
+
 		public string IgnoreActionsForCheating = "none";
+
 		public string IgnoreActionsForDisabledArmor = "none";
+
 		public bool IgnoreActionsForClearingTrashCan;
+
+        /// <summary>
+        /// The player's server side inventory data.
+        /// </summary>
 		public PlayerData PlayerData;
+
+        /// <summary>
+        /// Whether the player needs to specify a password upon connection( either server or user account ).
+        /// </summary>
 		public bool RequiresPassword;
+
 		public bool SilentKickInProgress;
+
+        /// <summary>
+        /// A list of points where ice tiles have been placed.
+        /// </summary>
 		public List<Point> IceTiles;
-	        public long RPm = 1;
-        	public long WPm = 1;
-        	public long SPm = 1;
-        	public long BPm = 1;
+
+        /// <summary>
+        /// Unused, can be removed.
+        /// </summary>
+	    public long RPm = 1;
+
+        /// <summary>
+        /// World protection message cool down.
+        /// </summary>
+    	public long WPm = 1;
+
+        /// <summary>
+        /// Spawn protection message cool down.
+        /// </summary>
+    	public long SPm = 1;
+       	
+        /// <summary>
+        /// Permission to build message cool down.
+        /// </summary>
+        public long BPm = 1;
+
+        /// <summary>
+        /// The time in ms when the player has logged in.  
+        /// </summary>
 		public long LoginMS;
+
+        /// <summary>
+        /// Whether the player has been harrassed about logging in due to server side inventory or forced login.
+        /// </summary>
 		public bool LoginHarassed = false;
+
+        /// <summary>
+        /// Whether the player is a real, human, player on the server.
+        /// </summary>
 		public bool RealPlayer
 		{
 			get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
@@ -213,7 +383,7 @@ namespace TShockAPI
 			Index = index;
 			Group = new Group(TShock.Config.DefaultGuestGroupName);
 			IceTiles = new List<Point>();
-            AwaitingResponse = new Dictionary<string, Action<CommandArgs>>();
+            AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -525,7 +695,7 @@ namespace TShockAPI
 			return TShock.SendBytes(Netplay.serverSock[Index], data);
 		}
 
-        public void AddResponse( string name, Action<CommandArgs> callback)
+        public void AddResponse( string name, Action<object> callback)
         {
             if( AwaitingResponse.ContainsKey(name))
             {
