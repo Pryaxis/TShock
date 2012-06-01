@@ -195,7 +195,7 @@ namespace TShockAPI
 			add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
-		    add(null, TestCallbackCommand, "test");
+		    //add(null, TestCallbackCommand, "test");
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -320,12 +320,12 @@ namespace TShockAPI
 			return c == ' ' || c == '\t' || c == '\n';
 		}
 
-        private static void TestCallbackCommand(CommandArgs args)
-        {
-            Action<object> a = (s) => { ((CommandArgs)s).Player.SendSuccessMessage("This is your callack"); };
-            args.Player.AddResponse( "yes", a);
-            args.Player.SendInfoMessage( "Type /yes to get called back." );
-        }
+        //private static void TestCallbackCommand(CommandArgs args)
+        //{
+        //    Action<object> a = (s) => { ((CommandArgs)s).Player.SendSuccessMessage("This is your callack"); };
+        //    args.Player.AddResponse( "yes", a);
+        //    args.Player.SendInfoMessage( "Type /yes to get called back." );
+        //}
 
 		#region Account commands
 
