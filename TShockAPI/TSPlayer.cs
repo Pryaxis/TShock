@@ -749,6 +749,34 @@ namespace TShockAPI
 			Group = new SuperAdminGroup();
 		}
 
+        public override void SendErrorMessage(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(msg);
+            Console.ResetColor();
+        }
+
+        public override void SendInfoMessage(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(msg);
+            Console.ResetColor();
+        }
+
+        public override void SendSuccessMessage(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(msg);
+            Console.ResetColor();
+        }
+
+        public override void SendWarningMessage(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(msg);
+            Console.ResetColor();
+        }
+
 		public override void SendMessage(string msg)
 		{
 			SendMessage(msg, 0, 255, 0);
