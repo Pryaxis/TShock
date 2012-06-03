@@ -393,6 +393,7 @@ namespace TShockAPI
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
 			Group = new Group(TShock.Config.DefaultGuestGroupName);
+            AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public virtual void Disconnect(string reason)
@@ -718,6 +719,7 @@ namespace TShockAPI
 		public TSRestPlayer()
 		{
 			Group = new SuperAdminGroup();
+            AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public override void SendMessage(string msg)
