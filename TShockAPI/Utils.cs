@@ -686,9 +686,9 @@ namespace TShockAPI
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}banned for {1}", playerName, verb, reason.ToLower()));
+					Broadcast(string.Format("{0} was {1}banned for {2}", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} {1}banned {1} for {2}", adminUserName, verb, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
