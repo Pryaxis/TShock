@@ -64,6 +64,7 @@ namespace TShockAPI
 		}
 
 		public List<string> Names { get; protected set; }
+        public bool AllowServer { get; set; }
 		public bool DoLog { get; set; }
 		public string Permission { get; protected set; }
 		private CommandDelegate command;
@@ -81,6 +82,7 @@ namespace TShockAPI
 			Permission = null;
 			Names = new List<string>(names);
 			command = cmd;
+            AllowServer = true;
 			DoLog = true;
 		}
 
@@ -122,10 +124,19 @@ namespace TShockAPI
 		public static void InitCommands()
 		{
 			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
-            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
+            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
             ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { DoLog = false });
+            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
+            ChatCommands.Add(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tp, Home, "home") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tp, Spawn, "spawn") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tp, TPHere, "tphere") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
 			add(Permissions.ban, Ban, "ban", "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.whitelist, Whitelist, "whitelist");
@@ -138,11 +149,6 @@ namespace TShockAPI
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
-			add(Permissions.tp, Home, "home");
-			add(Permissions.tp, Spawn, "spawn");
-			add(Permissions.tp, TP, "tp");
-			add(Permissions.tphere, TPHere, "tphere");
-			add(Permissions.tpallow, TPAllow, "tpallow");
 			add(Permissions.warp, Warp, "warp", "setwarp", "delwarp", "sendwarp", "sw");
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
@@ -152,8 +158,7 @@ namespace TShockAPI
 			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
 			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
 			add(Permissions.manageitem, AddItemGroup, "additemgroup");
-			add(Permissions.manageitem, DeleteItemGroup, "delitemgroup");			
-			add(Permissions.cfg, SetSpawn, "setspawn");
+			add(Permissions.manageitem, DeleteItemGroup, "delitemgroup");
 			add(Permissions.cfg, Reload, "reload");
 			add(Permissions.cfg, ServerPassword, "serverpassword");
 			add(Permissions.cfg, Save, "save");
@@ -182,13 +187,10 @@ namespace TShockAPI
 			add(Permissions.annoy, Annoy, "annoy");
 			add(Permissions.kill, Kill, "kill");
 			add(Permissions.butcher, Butcher, "butcher");
-			add(Permissions.item, Item, "item", "i");
 			add(Permissions.item, Give, "give", "g");
 			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
 			add(Permissions.heal, Heal, "heal");
-			add(Permissions.buff, Buff, "buff");
 			add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
-			add(Permissions.grow, Grow, "grow");
 			add(Permissions.hardmode, StartHardMode, "hardmode");
 			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
 			add(Permissions.cfg, ServerInfo, "stats");
@@ -229,12 +231,16 @@ namespace TShockAPI
 				TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
 				player.SendErrorMessage("You do not have access to that command.");
 			}
-			else
-			{
-				if (cmd.DoLog)
-					TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
-				cmd.Run(cmdText, player, args);
-			}
+            else if (!cmd.AllowServer && !player.RealPlayer)
+            {
+                player.SendErrorMessage("You must use this command in-game.");
+            }
+            else
+            {
+                if (cmd.DoLog)
+                    TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
+                cmd.Run(cmdText, player, args);
+            }
 			return true;
 		}
 
