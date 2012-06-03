@@ -81,13 +81,18 @@ namespace TShockAPI
 			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
 			/// </summary>
 			public byte EditType { get; set; }
+
+            /// <summary>
+            /// Did the tile get destroyed successfully.
+            /// </summary>
+            public bool Fail { get; set; }
 		} 
 
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType, bool fail)
 		{
 			if (TileEdit == null)
 				return false;
@@ -98,7 +103,8 @@ namespace TShockAPI
 				X = x,
 				Y = y,
 				Type = type,
-				EditType = editType
+				EditType = editType,
+                Fail = fail
 			};
 			TileEdit.Invoke(null, args);
 			return args.Handled;
@@ -1638,7 +1644,8 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
 			var tiletype = args.Data.ReadInt8();
-			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type))
+		    var fail = args.Data.ReadBoolean();
+			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail))
 				return true;
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
