@@ -97,7 +97,7 @@ namespace TShockAPI
 			}
 			catch (Exception e)
 			{
-				ply.SendMessage("Command failed, check logs for more details.");
+				ply.SendErrorMessage("Command failed, check logs for more details.");
 				Log.Error(e.ToString());
 			}
 
@@ -1263,36 +1263,18 @@ namespace TShockAPI
 
 		private static void Home(CommandArgs args)
 		{
-			if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You cannot use teleport commands!");
-				return;
-			}
-
 			args.Player.Spawn();
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You cannot use teleport commands!");
-				return;
-			}
-
 			if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 
 		private static void TP(CommandArgs args)
 		{
-			if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You cannot use teleport commands!");
-				return;
-			}
-
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player> ");
@@ -1325,12 +1307,6 @@ namespace TShockAPI
 
 		private static void TPHere(CommandArgs args)
 		{
-			if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You cannot use teleport commands!");
-				return;
-			}
-
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player> ");
@@ -1347,7 +1323,7 @@ namespace TShockAPI
 					if (Main.player[i].active && (Main.player[i] != args.TPlayer))
 					{
 						if (TShock.Players[i].Teleport(args.Player.TileX, args.Player.TileY + 3))
-							TShock.Players[i].SendMessage(string.Format("You were teleported to {0}.", args.Player.Name) + ".");
+							TShock.Players[i].SendSuccessMessage(string.Format("You were teleported to {0}.", args.Player.Name) + ".");
 					}
 				}
 				return;
@@ -1376,9 +1352,9 @@ namespace TShockAPI
 		private static void TPAllow(CommandArgs args)
 		{
 			if (!args.Player.TPAllow)
-				args.Player.SendMessage("You have removed your teleportation protection.");
+				args.Player.SendSuccessMessage("You have removed your teleportation protection.");
 			if (args.Player.TPAllow)
-				args.Player.SendMessage("You have enabled teleportation protection.");
+                args.Player.SendSuccessMessage("You have enabled teleportation protection.");
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
 
@@ -2842,7 +2818,7 @@ namespace TShockAPI
 														  TShock.Utils.GetBuffDescription(id), (time)));
 				}
 				else
-					args.Player.SendMessage("Invalid buff ID!");
+					args.Player.SendErrorMessage("Invalid buff ID!");
 			}
 		}
 
