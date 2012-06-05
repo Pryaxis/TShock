@@ -106,7 +106,7 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw new GroupExistsException(name);
-				return "Error: Group already exists.  Use /modGroup to change permissions.";
+				return "Error: Group already exists. Use /modgroup to change permissions.";
 			}
 
 			var group = new Group(name, null, chatcolor);
@@ -134,7 +134,7 @@ namespace TShockAPI.DB
 				return "Group " + name + " has been created successfully.";
 			}
 			else if (exceptions)
-				throw new GroupManagerException("Failed to add group '" + name + "'");
+				throw new GroupManagerException("Failed to add group '" + name + ".'");
 
 			return "";
 		}
@@ -200,7 +200,7 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw new GroupNotExistException(name);
-				return "Error: Group doesn't exists.";
+				return "Error: Group doesn't exist.";
 			}
 
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
@@ -209,7 +209,7 @@ namespace TShockAPI.DB
 				return "Group " + name + " has been deleted successfully.";
 			}
 			else if (exceptions)
-				throw new GroupManagerException("Failed to delete group '" + name + "'");
+				throw new GroupManagerException("Failed to delete group '" + name + ".'");
 
 			return "";
 		}
@@ -217,7 +217,7 @@ namespace TShockAPI.DB
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exists.";
+				return "Error: Group doesn't exist.";
 
 			var group = TShock.Utils.GetGroup(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
@@ -234,7 +234,7 @@ namespace TShockAPI.DB
 		public String DeletePermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exists.";
+				return "Error: Group doesn't exist.";
 
 			var group = TShock.Utils.GetGroup(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error

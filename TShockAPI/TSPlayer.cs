@@ -640,13 +640,13 @@ namespace TShockAPI
 			SetBuff(32, 330, true); //Slow
 			SetBuff(23, 330, true); //Cursed
 			if (!string.IsNullOrEmpty(reason))
-				Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}", Name, reason));
+				Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));
 
 			var trace = new StackTrace();
 			StackFrame frame = null;
 			frame = trace.GetFrame(1);
 			if (frame != null && frame.GetMethod().DeclaringType != null)
-				Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable()");
+				Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
 		}
 
 		public virtual void Whoopie(object time)

@@ -1101,11 +1101,11 @@ namespace TShockAPI
 			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
 			if( players.Count < 1 )
 			{
-				args.Player.SendErrorMessage("No players match " + args.Parameters[0]);
+				args.Player.SendErrorMessage("No players match " + args.Parameters[0] + "!");
 			}
 			else if( players.Count > 1 )
 			{
-				args.Player.SendErrorMessage( players.Count + " players matched " + args.Parameters[0]);
+				args.Player.SendErrorMessage( players.Count + " players matched " + args.Parameters[0] + "!");
 			}
 			else if (TShock.Config.ServerSideInventory)
 			{

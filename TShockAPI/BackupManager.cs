@@ -60,22 +60,22 @@ namespace TShockAPI
 				if (worldpath != null && !Directory.Exists(worldpath))
 					Directory.CreateDirectory(worldpath);
 
-				TShock.Utils.Broadcast("Server map saving, potential lag spike");
+				TShock.Utils.Broadcast("Server map saving, potential lag spike..");
 				Console.WriteLine("Backing up world...");
 
 				SaveManager.Instance.SaveWorld();
-				Console.WriteLine("World backed up");
+				Console.WriteLine("World backed up.");
 				Console.ForegroundColor = ConsoleColor.Gray;
-				Log.Info(string.Format("World backed up ({0})", Main.worldPathName));
+				Log.Info(string.Format("World backed up ({0}).", Main.worldPathName));
 
 				Main.worldPathName = worldname;
 			}
 			catch (Exception ex)
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Backup failed");
+				Console.WriteLine("Backup failed!");
 				Console.ForegroundColor = ConsoleColor.Gray;
-				Log.Error("Backup failed");
+				Log.Error("Backup failed!");
 				Log.Error(ex.ToString());
 			}
 		}
