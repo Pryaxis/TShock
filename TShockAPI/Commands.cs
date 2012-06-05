@@ -1486,7 +1486,7 @@ namespace TShockAPI
                     bool state = false;
                     if (Boolean.TryParse(args.Parameters[2], out state))
                     {
-                        if (TShock.Warps.HideWarp(args.Parameters[0], state))
+                        if (TShock.Warps.HideWarp(args.Parameters[1], state))
                         {
                             if (state)
                                 args.Player.SendSuccessMessage("Warp " + warpName + " is now private.");
