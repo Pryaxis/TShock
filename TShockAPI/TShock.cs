@@ -596,7 +596,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable("Reached TileKill threshold");
+							player.Disable("Reached TileKill threshold.");
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -611,7 +611,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold");
+							player.Disable("Reached TilePlace threshold.");
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -622,7 +622,7 @@ namespace TShockAPI
 					}
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold");
+						player.Disable("Reached TileLiquid threshold.");
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -630,7 +630,7 @@ namespace TShockAPI
 					}
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable("Reached Projectile threshold");
+						player.Disable("Reached projectile threshold.");
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -646,7 +646,7 @@ namespace TShockAPI
 						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack &&
 							item.type != 0)
 						{
-							check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+							check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 						}
 					}
 					player.IgnoreActionsForCheating = check;
@@ -657,7 +657,7 @@ namespace TShockAPI
 						{
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
-							check = "Remove Armor/Accessory " + item.name;
+							check = "Remove armor/accessory " + item.name;
 						}
 					}
 					player.IgnoreActionsForDisabledArmor = check;
@@ -991,7 +991,7 @@ namespace TShockAPI
 
 			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
 			{
-				player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+				player.SendMessage("PvP is forced! Enable PvP else you can't do anything!", Color.Red);
 			}
 
 			if (!player.IsLoggedIn)
@@ -999,7 +999,7 @@ namespace TShockAPI
 				if (Config.ServerSideInventory)
 				{
 					player.SendMessage(
-						player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!",
+						player.IgnoreActionsForInventory = "Server side inventory is enabled! Please /register or /login to play!",
 						Color.Red);
 						player.LoginHarassed = true;
 				}
@@ -1326,7 +1326,7 @@ namespace TShockAPI
                 if (!player.Group.HasPermission(Permissions.editspawn))
                 {
  		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
-                        player.SendMessage("World protected from changes.", Color.Red);
+                        player.SendMessage("The world is protected from changes.", Color.Red);
 			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 }
@@ -1341,7 +1341,7 @@ namespace TShockAPI
                     if (flag)
                     {		
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000){
-                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        player.SendMessage("Spawn is protected from changes.", Color.Red);
 						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
                     return true;
@@ -1368,7 +1368,7 @@ namespace TShockAPI
 				if (!player.Group.HasPermission(Permissions.editspawn))
 				{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
-                        player.SendMessage("World protected from changes.", Color.Red);
+                        player.SendMessage("The world is protected from changes.", Color.Red);
 						player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 					return true;
@@ -1382,7 +1382,7 @@ namespace TShockAPI
 					if (flag)
 					{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000){
-                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        player.SendMessage("Spawn is protected from changes.", Color.Red);
 						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 						}
@@ -1471,7 +1471,7 @@ namespace TShockAPI
 
 			if (player.TPlayer.statLifeMax > playerData.maxHealth)
 			{
-				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server",
+				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server.",
 								   Color.Cyan);
 				check = false;
 			}
@@ -1511,7 +1511,7 @@ namespace TShockAPI
 							item.AffixName();
 							player.SendMessage(
 								player.IgnoreActionsForInventory =
-								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
 								playerData.inventory[i].stack + ").", Color.Cyan);
 							check = false;
 						}
@@ -1548,7 +1548,7 @@ namespace TShockAPI
 							item.AffixName();
 							player.SendMessage(
 								player.IgnoreActionsForInventory =
-								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
 								playerData.inventory[i].stack + ").", Color.Cyan);
 							check = false;
 						}

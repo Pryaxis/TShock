@@ -1383,7 +1383,7 @@ namespace TShockAPI
 				        TShock.InventoryDB.InsertPlayerData(args.Player);
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
-					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + args.Player.Name);
+					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					return true;
 				}
 				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
@@ -1399,11 +1399,11 @@ namespace TShockAPI
 					NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect Server Password", true);
+				TShock.Utils.ForceKick(args.Player, "Incorrect server password", true);
 				return true;
 			}
 
-			TShock.Utils.ForceKick(args.Player, "Bad Password Attempt", true);
+			TShock.Utils.ForceKick(args.Player, "Bad password attempt", true);
 			return true;
 		}
 
@@ -1414,7 +1414,7 @@ namespace TShockAPI
             args.Player.RequestedSection = true;
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
-				TShock.Utils.ForceKick(args.Player, "You have Hacked Health/Mana, Please use a different character.", true);
+				TShock.Utils.ForceKick(args.Player, "You have hacked health/mana, please use a different character.", true);
 			}
 
 			if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
@@ -1873,7 +1873,7 @@ namespace TShockAPI
 						}
 						else if (TShock.Config.PvPMode == "always" && !args.TPlayer.hostile)
 						{
-							args.Player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!",
+							args.Player.SendMessage("PvP is forced! Enable PvP or else you can't do anything!",
 													Color.Red);
 						}
 						int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
@@ -1899,7 +1899,7 @@ namespace TShockAPI
 					int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
 					if (!args.Player.Teleport(lastTileX, lastTileY + 3))
 					{
-						args.Player.SendMessage("You got stuck in a solid object, Sent to spawn point.");
+						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
 						args.Player.Spawn();
 					}
 					return true;
@@ -1995,7 +1995,7 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxProjDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
-				args.Player.Disable(String.Format("Projectile damage is higher than {0}", TShock.Config.MaxProjDamage));
+				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage));
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2022,7 +2022,7 @@ namespace TShockAPI
 
 			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
 			{
-				args.Player.Disable("Reached projectile update threshold");
+				args.Player.Disable("Reached projectile update threshold.");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2078,7 +2078,7 @@ namespace TShockAPI
 
             if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
-				args.Player.Disable("Does not have projectile permission to kill projectile");
+				args.Player.Disable("Does not have projectile permission to kill projectile.");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2142,7 +2142,7 @@ namespace TShockAPI
 
 			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
 			{
-				args.Player.Disable("Reached TileLiquid threshold");
+				args.Player.Disable("Reached TileLiquid threshold.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
@@ -2165,7 +2165,7 @@ namespace TShockAPI
 			if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 				TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 			{
-                args.Player.Disable("Using banned lava bucket without permissions");
+                args.Player.Disable("Using banned lava bucket without permissions.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
@@ -2173,7 +2173,7 @@ namespace TShockAPI
 			if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 				TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 			{
-                args.Player.Disable("Using banned water bucket without permissions");
+                args.Player.Disable("Using banned water bucket without permissions.");
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
@@ -2513,7 +2513,7 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
-                args.Player.Disable(String.Format("Player damage exceeded {0}", TShock.Config.MaxDamage ) );
+                args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
@@ -2566,7 +2566,7 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
-                args.Player.Disable(String.Format("NPC damage exceeded {0}", TShock.Config.MaxDamage ) );
+                args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage ) );
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
@@ -2579,7 +2579,7 @@ namespace TShockAPI
 
 			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.movenpc))
 			{
-                args.Player.SendMessage( "You don't have permission to move the NPC", Color.Yellow);
+                args.Player.SendMessage( "You don't have permission to move this NPC.", Color.Yellow);
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
