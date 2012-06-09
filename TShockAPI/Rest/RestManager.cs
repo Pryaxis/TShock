@@ -576,7 +576,7 @@ namespace TShockAPI
 			return new RestObject() {
 				{"name", group.Name},
 				{"parent", group.ParentName},
-				{"chatcolor", group.ChatColor},
+				{"chatcolor", string.Format("{0},{1},{2}", group.R, group.G, group.B)},
 				{"permissions", group.permissions},
 				{"negatedpermissions", group.negatedpermissions},
 				{"totalpermissions", group.TotalPermissions}
@@ -627,7 +627,7 @@ namespace TShockAPI
 
 			Group group = (Group)ret;
 			var parent = (null == parameters["parent"]) ? group.ParentName : parameters["parent"];
-			var chatcolor = (null == parameters["chatcolor"]) ? group.ChatColor : parameters["chatcolor"];
+			var chatcolor = (null == parameters["chatcolor"]) ? string.Format("{0}.{1}.{2}", group.R, group.G, group.B) : parameters["chatcolor"];
 			var permissions = (null == parameters["permissions"]) ? group.Permissions : parameters["permissions"];
 			try
 			{

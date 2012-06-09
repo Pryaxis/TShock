@@ -180,11 +180,13 @@ namespace TShockAPI.DB
 			// NOTE: we use newgroup.XYZ to ensure any validation is also persisted to the DB
 			var newgroup = new Group(name, parent, chatcolor, permissions);
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2 WHERE GroupName=@3";
-			if (database.Query(query, parentname, newgroup.Permissions, newgroup.ChatColor, name) != 1)
+			if (database.Query(query, parentname, newgroup.Permissions, string.Format("{0},{1},{2}", newgroup.R, newgroup.G, newgroup.B), name) != 1)
 				throw new GroupManagerException("Failed to update group '" + name + "'");
 
-			groups.Remove(TShock.Utils.GetGroup(name));
-			groups.Add(newgroup);
+            Group group = TShock.Utils.GetGroup(name);
+            group.ChatColor = chatcolor;
+            group.Permissions = permissions;
+            group.Parent = TShock.Utils.GetGroup(parentname);
 		}
 
 #if COMPAT_SIGS
