@@ -2126,11 +2126,6 @@ namespace TShockAPI
 
 			if (OnLiquidSet(tileX, tileY, liquid, lava))
 				return true;
-
-			//The liquid was picked up.
-			if (liquid == 0)
-				return false;
-
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
@@ -2151,32 +2146,34 @@ namespace TShockAPI
 			{
 				args.Player.TileLiquidThreshold++;
 			}
+            if (liquid != 0)
+            {
+                int bucket = 0;
+                if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
+                {
+                    bucket = 1;
+                }
+                else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
+                {
+                    bucket = 2;
+                }
 
-			int bucket = 0;
-			if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
-			{
-				bucket = 1;
-			}
-			else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
-			{
-				bucket = 2;
-			}
+                if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+                    TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+                {
+                    args.Player.Disable("Using banned lava bucket without permissions.");
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                }
 
-			if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-				TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-			{
-                args.Player.Disable("Using banned lava bucket without permissions.");
-				args.Player.SendTileSquare(tileX, tileY);
-				return true;
-			}
-
-			if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-				TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
-			{
-                args.Player.Disable("Using banned water bucket without permissions.");
-				args.Player.SendTileSquare(tileX, tileY);
-				return true;
-			}
+                if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+                    TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+                {
+                    args.Player.Disable("Using banned water bucket without permissions.");
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                }
+            }
 
 			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
 			{
