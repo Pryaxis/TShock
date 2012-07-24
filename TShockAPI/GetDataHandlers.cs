@@ -2448,6 +2448,11 @@ namespace TShockAPI
 			if (OnItemDrop(id, pos, vel, stacks, prefix, type))
 				return true;
 
+            // player is attempting to crash clients
+            if (type < 0 || type >= Main.maxItemTypes)
+            {
+                return true;
+            }
 			if (type == 0) //Item removed, let client do this to prevent item duplication client side
 			{
 				return false;
