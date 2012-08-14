@@ -1412,9 +1412,15 @@ namespace TShockAPI
 			if (args.Player.RequestedSection)
 				return true;
             args.Player.RequestedSection = true;
+            if (String.IsNullOrEmpty(args.Player.Name))
+            {
+                TShock.Utils.ForceKick(args.Player, "Blank name.", true);
+                return true;
+            }
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "You have hacked health/mana, please use a different character.", true);
+                return true;
 			}
 
 			if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
