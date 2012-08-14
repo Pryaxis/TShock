@@ -510,7 +510,7 @@ namespace TShockAPI
 				{"ip", player.IP},
 				{"group", player.Group.Name},
 				{"position", player.TileX + "," + player.TileY},
-				{"inventory", string.Join(", ", activeItems.Select(p => (p.name + ":" + p.stack)))},
+				{"inventory", string.Join(", ", activeItems.Select(p => (String.Format( "({0}){1}:{2}", p.prefix, p.name, p.stack))))},
 				{"buffs", string.Join(", ", player.TPlayer.buffType)}
 			};
 		}

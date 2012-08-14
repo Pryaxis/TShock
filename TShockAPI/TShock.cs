@@ -223,6 +223,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
+                NetHooks.NameCollision += NetHooks_NameCollision;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -322,6 +323,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+                NetHooks.NameCollision -= NetHooks_NameCollision;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -333,6 +335,37 @@ namespace TShockAPI
 			}
 			base.Dispose(disposing);
 		}
+
+        void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
+        {
+            string ip = TShock.Utils.GetRealIP(Netplay.serverSock[who].tcpClient.Client.RemoteEndPoint.ToString());
+            foreach (TSPlayer ply in TShock.Players)
+            {
+                if (ply == null)
+                {
+                    continue;
+                }
+                if (ply.Name == name && ply.Index != who)
+                {
+                    if (ply.IP == ip)
+                    {
+                        if (ply.State < 2)
+                        {
+                            Utils.ForceKick(ply, "Name collision and this client has no world data.", true, false);
+                            e.Handled = true;
+                            return;
+                        }
+                        else
+                        {
+                            e.Handled = false;
+                            return;
+                        }
+                    }
+                }
+            }
+            e.Handled = false;
+            return;
+        }
 
 		/// <summary>
 		/// Handles exceptions that we didn't catch or that Red fucked up

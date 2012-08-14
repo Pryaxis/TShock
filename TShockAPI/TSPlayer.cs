@@ -407,9 +407,9 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
-        public virtual void SendInformationalMessage(string msg)
+        public virtual void SendInfoMessage(string msg)
         {
-            SendMessage(msg, Color.Indigo);
+            SendMessage(msg, Color.Yellow);
         }
 
         public virtual void SendSuccessMessage(string msg)
@@ -419,7 +419,7 @@ namespace TShockAPI
 
         public virtual void SendWarningMessage(string msg)
         {
-            SendMessage(msg, Color.Yellow);
+            SendMessage(msg, Color.OrangeRed);
         }
 
         public virtual void SendErrorMessage(string msg)
@@ -427,6 +427,7 @@ namespace TShockAPI
             SendMessage(msg, Color.Red);
         }
 
+        [Obsolete("Use SendErrorMessage, SendInfoMessage, or SendWarningMessage, or a custom color instead.")]
 		public virtual void SendMessage(string msg)
 		{
 			SendMessage(msg, 0, 255, 0);
