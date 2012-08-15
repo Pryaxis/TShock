@@ -356,6 +356,11 @@ namespace TShockAPI
 			{
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
+                if (String.IsNullOrEmpty(args.Parameters[0]))
+                {
+                    args.Player.SendErrorMessage("Error while logging in.");
+                    return;
+                }
 			}
 			else
 			{
