@@ -1696,6 +1696,12 @@ namespace TShockAPI
                         args.Player.SendTileSquare(tileX, tileY);
                         return true;
                     }
+                    if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
+                        (TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
+                    {
+                        args.Player.SendTileSquare(tileX, tileY);
+                        return true;
+                    }
                 }
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
@@ -1704,12 +1710,6 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-                if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
-                    (TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
-                {
-                    args.Player.SendTileSquare(tileX, tileY);
-                    return true;
-                }
 			}
 
 			if (TShock.CheckIgnores(args.Player))
