@@ -821,6 +821,17 @@ namespace TShockAPI
 			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
 
+        /// <summary>
+        /// Checks if the given X and Y are in range for the world's tile array
+        /// </summary>
+        /// <param name="X">X</param>
+        /// <param name="Y">Y</param>
+        /// <returns>True if the X and Y are in range</returns>
+        public bool TileInRange(int X, int Y)
+        {
+            return X >= 0 && Y >= 0 && X < Main.maxTilesX - 1 && Y < Main.maxTilesY - 1;
+        }
+
 		/// <summary>
 		/// Checks if the string contains any unprintable characters
 		/// </summary>

@@ -1653,7 +1653,7 @@ namespace TShockAPI
 		    var fail = args.Data.ReadBoolean();
 			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail))
 				return true;
-			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
+			if (!TShock.Utils.TileInRange(tileX, tileY))
 				return false;
 
             if (args.Player.Dead && TShock.Config.PreventDeadModification)
@@ -1675,7 +1675,7 @@ namespace TShockAPI
 				{
 					return true;
 				}
-				if ((tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
+                if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
 					args.Player.SendMessage("You cannot place this tile, server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
@@ -1688,12 +1688,15 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (type == 1 && tiletype == 21 && TShock.Utils.MaxChests())
-				{
-					args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
-					args.Player.SendTileSquare(tileX, tileY);
-					return true;
-				}
+                if (type == 1 && tiletype == 21)
+                {
+                    if (TShock.Utils.MaxChests())
+                    {
+                        args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
+                        args.Player.SendTileSquare(tileX, tileY);
+                        return true;
+                    }
+                }
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
 				{
@@ -1701,6 +1704,12 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
+                if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
+                    (TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
+                {
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                }
 			}
 
 			if (TShock.CheckIgnores(args.Player))
