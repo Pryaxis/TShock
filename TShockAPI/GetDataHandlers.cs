@@ -2464,7 +2464,7 @@ namespace TShockAPI
 				return true;
 
             // player is attempting to crash clients
-            if (type < 0 || type >= Main.maxItemTypes)
+            if (type < -24 || type >= Main.maxItemTypes)
             {
                 return true;
             }
