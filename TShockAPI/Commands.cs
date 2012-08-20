@@ -2336,32 +2336,32 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> ");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
 				return;
 			}
 
-			string plStr = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(plStr);
+			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
 				args.Player.SendErrorMessage("More than one player matched!");
-			else if (players[0].mute && !players[0].Group.HasPermission(Permissions.mute))
-			{
-				var plr = players[0];
-				plr.mute = false;
-				plr.SendErrorMessage("You have been unmuted.");
-				TSPlayer.All.SendInfoMessage(plr.Name + " has been unmuted by " + args.Player.Name + ".");
-			}
-			else if (!players[0].Group.HasPermission(Permissions.mute))
-			{
-				var plr = players[0];
-				plr.mute = true;
-				plr.SendErrorMessage("You have been muted.");
-				TSPlayer.All.SendInfoMessage(plr.Name + " has been muted by " + args.Player.Name + ".");
-			}
-			else
-				args.Player.SendErrorMessage("You cannot mute this player.");
+            else if (players[0].Group.HasPermission(Permissions.mute))
+            {
+                args.Player.SendErrorMessage("You cannot mute this player.");
+            }
+            else if (players[0].mute)
+            {
+                var plr = players[0];
+                plr.mute = false;
+                TSPlayer.All.SendInfoMessage(String.Format("{0} has been unmuted by {1}.", plr.Name, args.Player.Name));
+            }
+            else
+            {
+                string reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
+                var plr = players[0];
+                plr.mute = true;
+                TSPlayer.All.SendInfoMessage(String.Format("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason));
+            }
 		}
 
 		private static void Motd(CommandArgs args)
