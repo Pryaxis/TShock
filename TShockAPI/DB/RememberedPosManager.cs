@@ -22,11 +22,11 @@ using Terraria;
 
 namespace TShockAPI.DB
 {
-	public class RemeberedPosManager
+	public class RememberedPosManager
 	{
 		public IDbConnection database;
 
-		public RemeberedPosManager(IDbConnection db)
+		public RememberedPosManager(IDbConnection db)
 		{
 			database = db;
 

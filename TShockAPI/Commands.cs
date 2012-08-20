@@ -339,12 +339,13 @@ namespace TShockAPI
 		{
 			if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
 			{
-				Log.Warn(args.Player.IP + "(" + args.Player.Name + ") had " + TShock.Config.MaximumLoginAttempts +
-						 " or more invalid login attempts and was kicked automatically.");
+				Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
+					args.Player.IP, args.Player.Name, TShock.Config.MaximumLoginAttempts));
 				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
+				return;
 			}
 
-			var user = TShock.Users.GetUserByName(args.Player.Name);
+			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string encrPass = "";
 
 			if (args.Parameters.Count == 1)
@@ -356,15 +357,15 @@ namespace TShockAPI
 			{
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
-                if (String.IsNullOrEmpty(args.Parameters[0]))
-                {
-                    args.Player.SendErrorMessage("Error while logging in.");
-                    return;
-                }
+				if (String.IsNullOrEmpty(args.Parameters[0]))
+				{
+					args.Player.SendErrorMessage("Bad login attempt.");
+					return;
+				}
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Syntax: /login [password]");
+				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} <password>", TShock.Config.AllowLoginAnyUsername ? " " : " [username]"));
 				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
@@ -414,16 +415,17 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
-					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos)){
-					if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
+					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos))
 					{
-					Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
+						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
+						{
+							Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
+							args.Player.Teleport((int)pos.X, (int)pos.Y + 3);
+						}
+						args.Player.LoginHarassed = false;
 
-					args.Player.Teleport((int) pos.X, (int) pos.Y + 3);
 					}
-					args.Player.LoginHarassed = false;
-				
-				}}
+				}
 				else
 				{
 					args.Player.SendErrorMessage("Incorrect password.");
@@ -1226,13 +1228,13 @@ namespace TShockAPI
 		private static void Fullmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetFullMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the full moon.", args.Player.Name));
+			TShock.Utils.Broadcast(string.Format("{0} turned on the full moon.", args.Player.Name), Color.Green);
 		}
 
 		private static void Bloodmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetBloodMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name));
+			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
 		}
 
 		private static void Invade(CommandArgs args)

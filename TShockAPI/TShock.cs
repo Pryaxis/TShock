@@ -55,7 +55,7 @@ namespace TShockAPI
 		public static GroupManager Groups;
 		public static UserManager Users;
 		public static ItemManager Itembans;
-		public static RemeberedPosManager RememberedPos;
+		public static RememberedPosManager RememberedPos;
 		public static InventoryManager InventoryDB;
 		public static ConfigFile Config { get; set; }
 		public static IDbConnection DB;
@@ -190,7 +190,7 @@ namespace TShockAPI
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
-				RememberedPos = new RemeberedPosManager(DB);
+				RememberedPos = new RememberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
 				RestApi.Verify += RestApi_Verify;
@@ -906,11 +906,11 @@ namespace TShockAPI
 					if (player != null && player.Active)
 					{
 						count++;
-						TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+						TSPlayer.Server.SendInfoMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
 																  player.Group.Name, player.UserAccountName));
 					}
 				}
-				TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
+				TSPlayer.Server.SendInfoMessage(string.Format("{0} players connected.", count));
 			}
 			else if (text == "autosave")
 			{
@@ -1216,22 +1216,22 @@ namespace TShockAPI
 				switch (random)
 				{
 					case 0:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 1:
-						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 2:
-						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
+						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount), Color.Green);
 						break;
 					case 3:
-						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
+						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount), Color.Green);
 						break;
 					case 4:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 5:
-						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
+						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount), Color.Green);
 						break;
 				}
 			}
