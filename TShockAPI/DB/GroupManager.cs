@@ -126,8 +126,8 @@ namespace TShockAPI.DB
 			}
 
 			string query = (TShock.Config.StorageType.ToLower() == "sqlite")
-			               	? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
-			               	: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
+							? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
+							: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
 			if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
 			{
 				groups.Add(group);
@@ -183,10 +183,10 @@ namespace TShockAPI.DB
 			if (database.Query(query, parentname, newgroup.Permissions, string.Format("{0},{1},{2}", newgroup.R, newgroup.G, newgroup.B), name) != 1)
 				throw new GroupManagerException("Failed to update group '" + name + "'");
 
-            Group group = TShock.Utils.GetGroup(name);
-            group.ChatColor = chatcolor;
-            group.Permissions = permissions;
-            group.Parent = TShock.Utils.GetGroup(parentname);
+			Group group = TShock.Utils.GetGroup(name);
+			group.ChatColor = chatcolor;
+			group.Permissions = permissions;
+			group.Parent = TShock.Utils.GetGroup(parentname);
 		}
 
 #if COMPAT_SIGS

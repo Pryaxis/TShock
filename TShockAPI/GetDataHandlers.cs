@@ -1412,15 +1412,15 @@ namespace TShockAPI
 			if (args.Player.RequestedSection)
 				return true;
             args.Player.RequestedSection = true;
-            if (String.IsNullOrEmpty(args.Player.Name))
-            {
-                TShock.Utils.ForceKick(args.Player, "Blank name.", true);
-                return true;
-            }
+			if (String.IsNullOrEmpty(args.Player.Name))
+			{
+				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
+				return true;
+			}
 			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "You have hacked health/mana, please use a different character.", true);
-                return true;
+				return true;
 			}
 
 			if (!args.Player.Group.HasPermission(Permissions.ignorestackhackdetection))
@@ -1675,7 +1675,7 @@ namespace TShockAPI
 				{
 					return true;
 				}
-                if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
+				if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
 					args.Player.SendMessage("You cannot place this tile, server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
@@ -1688,25 +1688,25 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-                if (type == 1 && tiletype == 21)
-                {
-                    if (TShock.Utils.MaxChests())
-                    {
-                        args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
-                        args.Player.SendTileSquare(tileX, tileY);
-                        return true;
-                    }
-                    if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
-                        (TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
-                    {
-                        args.Player.SendTileSquare(tileX, tileY);
-                        return true;
-                    }
-                }
+				if (type == 1 && tiletype == 21)
+				{
+					if (TShock.Utils.MaxChests())
+					{
+						args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
+						args.Player.SendTileSquare(tileX, tileY);
+						return true;
+					}
+					if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
+						(TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
+					{
+						args.Player.SendTileSquare(tileX, tileY);
+						return true;
+					}
+				}
 				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
 				{
-                    args.Player.Disable("Used banned explosives tile without permission.");
+					args.Player.Disable("Used banned explosives tile without permission.");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -1909,10 +1909,10 @@ namespace TShockAPI
 
 				if (!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) &&
 					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip
-                    && !args.TPlayer.tongued)
+					&& !args.TPlayer.tongued)
 				{
-					int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
-					int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
+					int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
+					int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
 					if (!args.Player.Teleport(lastTileX, lastTileY + 3))
 					{
 						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
@@ -2162,34 +2162,34 @@ namespace TShockAPI
 			{
 				args.Player.TileLiquidThreshold++;
 			}
-            if (liquid != 0)
-            {
-                int bucket = 0;
-                if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
-                {
-                    bucket = 1;
-                }
-                else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
-                {
-                    bucket = 2;
-                }
+			if (liquid != 0)
+			{
+				int bucket = 0;
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
+				{
+					bucket = 1;
+				}
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
+				{
+					bucket = 2;
+				}
 
-                if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-                    TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-                {
-                    args.Player.Disable("Using banned lava bucket without permissions.");
-                    args.Player.SendTileSquare(tileX, tileY);
-                    return true;
-                }
+				if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+					TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				{
+					args.Player.Disable("Using banned lava bucket without permissions.");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
 
-                if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-                    TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
-                {
-                    args.Player.Disable("Using banned water bucket without permissions.");
-                    args.Player.SendTileSquare(tileX, tileY);
-                    return true;
-                }
-            }
+				if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+					TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				{
+					args.Player.Disable("Using banned water bucket without permissions.");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+			}
 
 			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
 			{
@@ -2465,10 +2465,10 @@ namespace TShockAPI
 				return true;
 
             // player is attempting to crash clients
-            if (type < -24 || type >= Main.maxItemTypes)
-            {
-                return true;
-            }
+			if (type < -24 || type >= Main.maxItemTypes)
+			{
+				return true;
+			}
 			if (type == 0) //Item removed, let client do this to prevent item duplication client side
 			{
 				return false;
@@ -2529,9 +2529,9 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
-            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
-                args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage ) );
+				args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;

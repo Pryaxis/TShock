@@ -82,7 +82,7 @@ namespace TShockAPI
 			Permission = null;
 			Names = new List<string>(names);
 			command = cmd;
-            AllowServer = true;
+			AllowServer = true;
 			DoLog = true;
 		}
 
@@ -215,13 +215,13 @@ namespace TShockAPI
 
 			if (cmd == null)
 			{
-                if( player.AwaitingResponse.ContainsKey(cmdName))
-                {
-                    Action<CommandArgs> call = player.AwaitingResponse[cmdName];
-                    player.AwaitingResponse.Remove(cmdName);
-                    call( new CommandArgs(cmdText, player, args));
-                    return true;
-                }
+				if (player.AwaitingResponse.ContainsKey(cmdName))
+				{
+					Action<CommandArgs> call = player.AwaitingResponse[cmdName];
+					player.AwaitingResponse.Remove(cmdName);
+					call(new CommandArgs(cmdText, player, args));
+					return true;
+				}
 				player.SendErrorMessage("Invalid command entered. Type /help for a list of valid commands.");
 				return true;
 			}
@@ -231,16 +231,16 @@ namespace TShockAPI
 				TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
 				player.SendErrorMessage("You do not have access to that command.");
 			}
-            else if (!cmd.AllowServer && !player.RealPlayer)
-            {
-                player.SendErrorMessage("You must use this command in-game.");
-            }
-            else
-            {
-                if (cmd.DoLog)
-                    TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
-                cmd.Run(cmdText, player, args);
-            }
+			else if (!cmd.AllowServer && !player.RealPlayer)
+			{
+				player.SendErrorMessage("You must use this command in-game.");
+			}
+			else
+			{
+				if (cmd.DoLog)
+					TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
+				cmd.Run(cmdText, player, args);
+			}
 			return true;
 		}
 
@@ -1943,7 +1943,7 @@ namespace TShockAPI
 			{
 				tsply.SaveServerInventory();
 			}
-            args.Player.SendSuccessMessage("Save succeeded.");
+			args.Player.SendSuccessMessage("Save succeeded.");
 		}
 
 		private static void Settle(CommandArgs args)
@@ -2038,19 +2038,19 @@ namespace TShockAPI
 					break;
 				case "night":
 					TSPlayer.Server.SetTime(false, 0.0);
-                    TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to night.", args.Player.Name));
+					TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to night.", args.Player.Name));
 					break;
 				case "dusk":
 					TSPlayer.Server.SetTime(false, 0.0);
-                    TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to dusk.", args.Player.Name));
+					TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to dusk.", args.Player.Name));
 					break;
 				case "noon":
 					TSPlayer.Server.SetTime(true, 27000.0);
-                    TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to noon.", args.Player.Name));
+					TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to noon.", args.Player.Name));
 					break;
 				case "midnight":
 					TSPlayer.Server.SetTime(false, 16200.0);
-                    TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to midnight.", args.Player.Name));
+					TSPlayer.All.SendInfoMessage(string.Format("{0} set the time to midnight.", args.Player.Name));
 					break;
 				default:
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>");
@@ -2162,68 +2162,68 @@ namespace TShockAPI
 			}
 		}
 
-        private static void GetVersion(CommandArgs args)
-        {
-            args.Player.SendInfoMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
-                                                  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-        }
+		private static void GetVersion(CommandArgs args)
+		{
+			args.Player.SendInfoMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
+												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+		}
 
-        private static void ListConnectedPlayers(CommandArgs args)
-        {
-            //How many players per page
-            const int pagelimit = 15;
-            //How many players per line
-            const int perline = 5;
-            //Pages start at 0 but are displayed and parsed at 1
-            int page = 0;
+		private static void ListConnectedPlayers(CommandArgs args)
+		{
+			//How many players per page
+			const int pagelimit = 15;
+			//How many players per line
+			const int perline = 5;
+			//Pages start at 0 but are displayed and parsed at 1
+			int page = 0;
 
 
-            if (args.Parameters.Count > 0)
-            {
-                if (!int.TryParse(args.Parameters[0], out page) || page < 1)
-                {
-                    args.Player.SendErrorMessage(string.Format("Invalid page number ({0})", page));
-                    return;
-                }
-                page--; //Substract 1 as pages are parsed starting at 1 and not 0
-            }
+			if (args.Parameters.Count > 0)
+			{
+				if (!int.TryParse(args.Parameters[0], out page) || page < 1)
+				{
+					args.Player.SendErrorMessage(string.Format("Invalid page number ({0})", page));
+					return;
+				}
+				page--; //Substract 1 as pages are parsed starting at 1 and not 0
+			}
 
-            var playerList = args.Player.Group.HasPermission(Permissions.seeids)
-                                 ? TShock.Utils.GetPlayers(true)
-                                 : TShock.Utils.GetPlayers(false);
+			var playerList = args.Player.Group.HasPermission(Permissions.seeids)
+								 ? TShock.Utils.GetPlayers(true)
+								 : TShock.Utils.GetPlayers(false);
 
-            //Check if they are trying to access a page that doesn't exist.
-            int pagecount = playerList.Count / pagelimit;
-            if (page > pagecount)
-            {
-                args.Player.SendErrorMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1));
-                return;
-            }
+			//Check if they are trying to access a page that doesn't exist.
+			int pagecount = playerList.Count / pagelimit;
+			if (page > pagecount)
+			{
+				args.Player.SendErrorMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1));
+				return;
+			}
 
-            //Display the current page and the number of pages.
-            args.Player.SendSuccessMessage(string.Format("Players: {0}/{1}",
-                                                  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-            args.Player.SendSuccessMessage(string.Format("Current players page {0}/{1}:", page + 1, pagecount + 1));
+			//Display the current page and the number of pages.
+			args.Player.SendSuccessMessage(string.Format("Players: {0}/{1}",
+												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+			args.Player.SendSuccessMessage(string.Format("Current players page {0}/{1}:", page + 1, pagecount + 1));
 
-            //Add up to pagelimit names to a list
-            var nameslist = new List<string>();
-            for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < playerList.Count; i++)
-            {
-                nameslist.Add(playerList[i]);
-            }
+			//Add up to pagelimit names to a list
+			var nameslist = new List<string>();
+			for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < playerList.Count; i++)
+			{
+				nameslist.Add(playerList[i]);
+			}
 
-            //convert the list to an array for joining
-            var names = nameslist.ToArray();
-            for (int i = 0; i < names.Length; i += perline)
-            {
-                args.Player.SendInfoMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)));
-            }
+			//convert the list to an array for joining
+			var names = nameslist.ToArray();
+			for (int i = 0; i < names.Length; i += perline)
+			{
+				args.Player.SendInfoMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)));
+			}
 
-            if (page < pagecount)
-            {
-                args.Player.SendInfoMessage(string.Format("Type /who {0} for more players.", (page + 2)));
-            }
-        }
+			if (page < pagecount)
+			{
+				args.Player.SendInfoMessage(string.Format("Type /who {0} for more players.", (page + 2)));
+			}
+		}
 
 		private static void AuthToken(CommandArgs args)
 		{
@@ -2332,39 +2332,39 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("You are not in a party!");
 		}
 
-        private static void Mute(CommandArgs args)
-        {
-            if (args.Parameters.Count < 1)
-            {
-                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
-                return;
-            }
+		private static void Mute(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
+				return;
+			}
 
-            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
-            if (players.Count == 0)
-                args.Player.SendErrorMessage("Invalid player!");
-            else if (players.Count > 1)
-                args.Player.SendErrorMessage("More than one player matched!");
-            else if (players[0].Group.HasPermission(Permissions.mute))
-            {
-                args.Player.SendErrorMessage("You cannot mute this player.");
-            }
-            else if (players[0].mute)
-            {
-                var plr = players[0];
-                plr.mute = false;
-                TSPlayer.All.SendInfoMessage(String.Format("{0} has been unmuted by {1}.", plr.Name, args.Player.Name));
-            }
-            else
-            {
-                string reason = "misbehavior";
-                if (args.Parameters.Count > 1)
-                    reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-                var plr = players[0];
-                plr.mute = true;
-                TSPlayer.All.SendInfoMessage(String.Format("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason));
-            }
-        }
+			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			if (players.Count == 0)
+				args.Player.SendErrorMessage("Invalid player!");
+			else if (players.Count > 1)
+				args.Player.SendErrorMessage("More than one player matched!");
+			else if (players[0].Group.HasPermission(Permissions.mute))
+			{
+				args.Player.SendErrorMessage("You cannot mute this player.");
+			}
+			else if (players[0].mute)
+			{
+				var plr = players[0];
+				plr.mute = false;
+				TSPlayer.All.SendInfoMessage(String.Format("{0} has been unmuted by {1}.", plr.Name, args.Player.Name));
+			}
+			else
+			{
+				string reason = "misbehavior";
+				if (args.Parameters.Count > 1)
+					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
+				var plr = players[0];
+				plr.mute = true;
+				TSPlayer.All.SendInfoMessage(String.Format("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason));
+			}
+		}
 
 		private static void Motd(CommandArgs args)
 		{
