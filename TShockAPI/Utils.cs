@@ -243,41 +243,38 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Finds a TSPlayer based on name or id
+		/// Finds a TSPlayer based on name or ID
 		/// </summary>
-		/// <param name="ply">Player name</param>
+		/// <param name="plr">Player name or ID</param>
 		/// <returns></returns>
-		public List<TSPlayer> FindPlayer(string ply)
+		public List<TSPlayer> FindPlayer(string plr)
 		{
 			var found = new List<TSPlayer>();
 			// Avoid errors caused by null search
-			if (null == ply)
+			if (plr == null)
 				return found;
-			ply = ply.ToLower();
+
+			byte plrID;
+			if (byte.TryParse(plr, out plrID))
+			{
+				TSPlayer player = TShock.Players[plrID];
+				if (player.Active)
+				{
+					return new List<TSPlayer> { player };
+				}
+			}
+
+			string plrLower = plr.ToLower();
 			foreach (TSPlayer player in TShock.Players)
 			{
-				if (player == null)
-					continue;
-
-                try
-                {
-                    if (Convert.ToInt32(ply) == player.Index && player.Active)
-                    {
-                        return new List<TSPlayer> { player };
-                    }
-                }
-// ReSharper disable EmptyGeneralCatchClause
-                catch (Exception e)
-// ReSharper restore EmptyGeneralCatchClause
-                {
-                    // Conversion failed
-                }
-
-				string name = player.Name.ToLower();
-				if (name.Equals(ply))
-					return new List<TSPlayer> {player};
-				if (name.Contains(ply))
-					found.Add(player);
+				if (player != null)
+				{
+					// Must be an EXACT match
+					if (player.Name == plr)
+						return new List<TSPlayer> { player };
+					if (player.Name.ToLower().StartsWith(plrLower))
+						found.Add(player);
+				}
 			}
 			return found;
 		}
@@ -366,30 +363,16 @@ namespace TShockAPI
 		/// <returns>List of Items</returns>
 		public List<Item> GetItemByName(string name)
 		{
-			//Method #1 - must be exact match, allows support for different pickaxes/hammers/swords etc
-			for (int i = 1; i < Main.maxItemTypes; i++)
-			{
-				Item item = new Item();
-				item.SetDefaults(name);
-				if (item.name == name)
-					return new List<Item> {item};
-			}
-			//Method #2 - allows impartial matching
 			var found = new List<Item>();
+			Item item = new Item();
+			string nameLower = name.ToLower();
 			for (int i = -24; i < Main.maxItemTypes; i++)
 			{
-				try
-				{
-					Item item = new Item();
-					item.netDefaults(i);
-					if (item.name.ToLower() == name.ToLower())
-						return new List<Item> {item};
-					if (item.name.ToLower().StartsWith(name.ToLower()))
-						found.Add(item);
-				}
-				catch
-				{
-				}
+				item.netDefaults(i);
+				if (item.name.ToLower() == nameLower)
+					return new List<Item> {item};
+				if (item.name.ToLower().StartsWith(nameLower))
+					found.Add(item);
 			}
 			return found;
 		}
@@ -477,15 +460,16 @@ namespace TShockAPI
 		/// <returns>Matching list of buff ids</returns>
 		public List<int> GetBuffByName(string name)
 		{
+			string nameLower = name.ToLower();
 			for (int i = 1; i < Main.maxBuffs; i++)
 			{
-				if (Main.buffName[i].ToLower() == name)
+				if (Main.buffName[i].ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
 			for (int i = 1; i < Main.maxBuffs; i++)
 			{
-				if (Main.buffName[i].ToLower().StartsWith(name.ToLower()))
+				if (Main.buffName[i].ToLower().StartsWith(nameLower))
 					found.Add(i);
 			}
 			return found;
@@ -518,32 +502,12 @@ namespace TShockAPI
 			var found = new List<int>();
 			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
-				try
-				{
-					item.prefix = (byte)i;
-					string trimmed = item.AffixName().Trim();
-					if (trimmed == name)
-					{
-						// Exact match
-						found.Add(i);
-						return found;
-					}
-					else
-					{
-						string trimmedLower = trimmed.ToLower();
-						if (trimmedLower == lowerName)
-						{
-							// Exact match (caseinsensitive)
-							found.Add(i);
-							return found;
-						}
-						else if (trimmedLower.StartsWith(lowerName)) // Partial match
-							found.Add(i);
-					}
-				}
-				catch
-				{
-				}
+				item.prefix = (byte)i;
+				string prefixName = item.AffixName().Trim().ToLower();
+				if (prefixName == lowerName)
+					return new List<int>() { i };
+				else if (prefixName.StartsWith(lowerName)) // Partial match
+					found.Add(i);
 			}
 			return found;
 		}
@@ -650,9 +614,9 @@ namespace TShockAPI
                 if (!silent)
                 {
                     if (string.IsNullOrWhiteSpace(adminUserName))
-                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()));
+                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()), Color.Green);
                     else
-                        Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+						Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
                 }
 				return true;
 			}
