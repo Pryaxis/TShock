@@ -2332,19 +2332,19 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("You are not in a party!");
 		}
 
-		private static void Mute(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
-				return;
-			}
+        private static void Mute(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
+                return;
+            }
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
-			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
-			else if (players.Count > 1)
-				args.Player.SendErrorMessage("More than one player matched!");
+            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+            if (players.Count == 0)
+                args.Player.SendErrorMessage("Invalid player!");
+            else if (players.Count > 1)
+                args.Player.SendErrorMessage("More than one player matched!");
             else if (players[0].Group.HasPermission(Permissions.mute))
             {
                 args.Player.SendErrorMessage("You cannot mute this player.");
@@ -2357,12 +2357,14 @@ namespace TShockAPI
             }
             else
             {
-                string reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
+                string reason = "misbehavior";
+                if (args.Parameters.Count > 1)
+                    reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
                 var plr = players[0];
                 plr.mute = true;
                 TSPlayer.All.SendInfoMessage(String.Format("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason));
             }
-		}
+        }
 
 		private static void Motd(CommandArgs args)
 		{

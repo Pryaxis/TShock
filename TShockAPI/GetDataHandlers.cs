@@ -1908,7 +1908,8 @@ namespace TShockAPI
 				}
 
 				if (!args.Player.Group.HasPermission(Permissions.ignorenoclipdetection) &&
-					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip)
+					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip
+                    && !args.TPlayer.tongued)
 				{
 					int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
 					int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
