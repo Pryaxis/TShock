@@ -124,6 +124,7 @@ namespace TShockAPI
 		public static void InitCommands()
 		{
 			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
+            ChatCommands.Add(new Command(AuthToken, "auth") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
             ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
             ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
@@ -133,6 +134,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, Home, "home") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, Spawn, "spawn") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, TPHere, "tphere") { AllowServer = false });
@@ -171,12 +173,10 @@ namespace TShockAPI
 			add(Permissions.editspawn, ProtectSpawn, "protectspawn");
             add(Permissions.maintenance, GetVersion, "version");
 			add(null, ListConnectedPlayers, "playing", "online", "who");
-			add(null, AuthToken, "auth");
             add(null, Motd, "motd");
             add(null, Rules, "rules");
             add(null, Help, "help");
 			add(Permissions.cantalkinthird, ThirdPerson, "me");
-			add(Permissions.canpartychat, PartyChat, "p");
 			add(Permissions.mute, Mute, "mute", "unmute");
 			add(Permissions.logs, DisplayLogs, "displaylogs");
 			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
