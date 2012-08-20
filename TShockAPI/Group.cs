@@ -174,26 +174,39 @@ namespace TShockAPI
         /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
 		{
-			if (string.IsNullOrEmpty(permission))
-				return true;
-
-			var cur = this;
-			var traversed = new List<Group>();
-			while (cur != null)
-			{
-				if (cur.negatedpermissions.Contains(permission))
-					return false;
-				if (cur.permissions.Contains(permission))
-					return true;
-				if (traversed.Contains(cur))
-				{
-					throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
-				}
-				traversed.Add(cur);
-				cur = cur.Parent;
-			}
-			return false;
+            string[] nodes = permission.Split('.');
+            for (int i = nodes.Length - 1; i >= 0; i--)
+            {
+                if (RealHasPermission(String.Join(".", nodes)))
+                {
+                    return true;
+                }
+                nodes[i] = "*";
+            }
+            return false;
 		}
+        private bool RealHasPermission(string permission)
+        {
+            if (string.IsNullOrEmpty(permission))
+                return true;
+
+            var cur = this;
+            var traversed = new List<Group>();
+            while (cur != null)
+            {
+                if (cur.negatedpermissions.Contains(permission))
+                    return false;
+                if (cur.permissions.Contains(permission))
+                    return true;
+                if (traversed.Contains(cur))
+                {
+                    throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+                }
+                traversed.Add(cur);
+                cur = cur.Parent;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Adds a permission to the list of negated permissions.
