@@ -258,7 +258,7 @@ namespace TShockAPI
 			if (byte.TryParse(plr, out plrID))
 			{
 				TSPlayer player = TShock.Players[plrID];
-				if (player.Active)
+				if (player != null && player.Active)
 				{
 					return new List<TSPlayer> { player };
 				}
