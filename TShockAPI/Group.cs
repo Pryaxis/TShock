@@ -174,14 +174,18 @@ namespace TShockAPI
         /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
 		{
+            if (String.IsNullOrEmpty(permission) || RealHasPermission(permission))
+            {
+                return true;
+            }
             string[] nodes = permission.Split('.');
             for (int i = nodes.Length - 1; i >= 0; i--)
             {
-                if (RealHasPermission(String.Join(".", nodes)))
+                nodes[i] = "*";
+                if (RealHasPermission(String.Join(".", nodes, 0, i + 1)))
                 {
                     return true;
                 }
-                nodes[i] = "*";
             }
             return false;
 		}
