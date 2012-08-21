@@ -313,9 +313,9 @@ namespace TShockAPI
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
 		/// <returns>If the tile is valid</returns>
-		private bool TileValid(int tileX, int tileY)
+		public bool TileValid(int tileX, int tileY)
 		{
-			return tileX >= 0 && tileX <= Main.maxTilesX && tileY >= 0 && tileY <= Main.maxTilesY;
+			return tileX >= 0 && tileX < Main.maxTilesX && tileY >= 0 && tileY < Main.maxTilesY;
 		}
 
 		/// <summary>
@@ -784,17 +784,6 @@ namespace TShockAPI
 				return "non-existant password";
 			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
-
-        /// <summary>
-        /// Checks if the given X and Y are in range for the world's tile array
-        /// </summary>
-        /// <param name="X">X</param>
-        /// <param name="Y">Y</param>
-        /// <returns>True if the X and Y are in range</returns>
-        public bool TileInRange(int X, int Y)
-        {
-            return X >= 0 && Y >= 0 && X < Main.maxTilesX - 1 && Y < Main.maxTilesY - 1;
-        }
 
 		/// <summary>
 		/// Checks if the string contains any unprintable characters

@@ -1653,7 +1653,7 @@ namespace TShockAPI
 		    var fail = args.Data.ReadBoolean();
 			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail))
 				return true;
-			if (!TShock.Utils.TileInRange(tileX, tileY))
+			if (!TShock.Utils.TileValid(tileX, tileY))
 				return false;
 
             if (args.Player.Dead && TShock.Config.PreventDeadModification)
@@ -1696,8 +1696,8 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY);
 						return true;
 					}
-					if ((TShock.Utils.TileInRange(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
-						(TShock.Utils.TileInRange(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
+					if ((TShock.Utils.TileValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
+						(TShock.Utils.TileValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
 					{
 						args.Player.SendTileSquare(tileX, tileY);
 						return true;
