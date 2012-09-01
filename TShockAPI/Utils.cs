@@ -372,7 +372,7 @@ namespace TShockAPI
 				if (item.name.ToLower() == nameLower)
 					return new List<Item> {item};
 				if (item.name.ToLower().StartsWith(nameLower))
-					found.Add(item);
+					found.Add((Item)item.Clone());
 			}
 			return found;
 		}
