@@ -339,6 +339,8 @@ namespace TShockAPI
 			int type = -1;
 			if (int.TryParse(idOrName, out type))
 			{
+				if (type >= Main.maxItemTypes)
+					return new List<Item>();
 				return new List<Item> {GetItemById(type)};
 			}
 			return GetItemByName(idOrName);
@@ -387,7 +389,9 @@ namespace TShockAPI
 			int type = -1;
 			if (int.TryParse(idOrName, out type))
 			{
-				return new List<NPC> {GetNPCById(type)};
+				if (type >= Main.maxNPCTypes)
+					return new List<NPC>();
+				return new List<NPC> { GetNPCById(type) };
 			}
 			return GetNPCByName(idOrName);
 		}
@@ -411,24 +415,16 @@ namespace TShockAPI
 		/// <returns>List of matching NPCs</returns>
 		public List<NPC> GetNPCByName(string name)
 		{
-			//Method #1 - must be exact match, allows support for different coloured slimes
+			var found = new List<NPC>();
+			NPC npc = new NPC();
+			string nameLower = name.ToLower();
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
-				NPC npc = new NPC();
-				npc.SetDefaults(name);
-				if (npc.name == name)
-					return new List<NPC> {npc};
-			}
-			//Method #2 - allows impartial matching
-			var found = new List<NPC>();
-			for (int i = 1; i < Main.maxNPCTypes; i++)
-			{
-				NPC npc = new NPC();
 				npc.netDefaults(i);
-				if (npc.name.ToLower() == name.ToLower())
-					return new List<NPC> {npc};
-				if (npc.name.ToLower().StartsWith(name.ToLower()))
-					found.Add(npc);
+				if (npc.name.ToLower() == nameLower)
+					return new List<NPC> { npc };
+				if (npc.name.ToLower().StartsWith(nameLower))
+					found.Add((NPC)npc.Clone());
 			}
 			return found;
 		}
