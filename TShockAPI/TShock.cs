@@ -40,7 +40,7 @@ namespace TShockAPI
 	[APIVersion(1, 12)]
 	public class TShock : TerrariaPlugin
 	{
-		private const string LogFormatDefault = "yyyyMMddHHmmss";
+		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
