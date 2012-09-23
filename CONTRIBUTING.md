@@ -1,0 +1,36 @@
+### Issue Guidelines
+Please follow these simple requirements before posting an issue:
+
+1. TShock version number
+2. Any stack traces that may have happened when the issue occurred
+3. How to reproduce the issue
+
+### Pull Request Dev Guidelines
+
+These guidelines are for contributors. If you do not follow these guidelines your commits will be reverted.
+
+Required:
+- Follow the code style. We generally use microsofts except for m_ infront of private variables.
+- Do not push unfinished features to the master branch, instead create a remote branch and push to that.
+- Do not push untested code to the master branch, instead push to the test branch.
+- Document all compatibility issues in the COMPATIBILITY file. (IE file formats changing)
+- DO NOT MASS COMMIT. Commit changes as you go (without pushing). That way when you push we don't get a thousand changes with a 1-3 line commit message.
+
+Optional:
+- Build Version Increment (http://autobuildversion.codeplex.com/).
+
+----
+
+### Dev Team Guidelines
+
+These guidelines are to be followed by all developers with commit level access to this repository:
+
+- Do not, for any reason, submit code to the master branch before it hits the development branch first. If the development branch is far ahead, and a new bug fix is going out, branch master, then merge with master and remove your branch.
+ - If you are found to do this, you will be the person merging and rebasing your code to fit general-devel.
+- Prior to posting any version on the website, you must tick the version in AssemblyInfo.cs. This is the versioning formula:
+ - Major.Minor.Revision.BuildDate (tick Revision if you're fixing prior to an actual planned release)
+- Do not release any development builds on the forums without consulting another developer first.
+- __Document code prior to marking it done in JIRA__
+- Move any un-tested code to the "Needs Validation" section on JIRA prior to marking it as done.
+- Do not push changes to any branch without a proper issue being assigned in JIRA. If a feature isn't planned for this release, __it shouldn't be in the repo about to be released__.
+- Submit all pull requests to the general-devel branch prior to the master branch, or you will be ignored.
