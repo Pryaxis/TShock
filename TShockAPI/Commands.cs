@@ -437,6 +437,8 @@ namespace TShockAPI
 						args.Player.LoginHarassed = false;
 
 					}
+
+				    Hooks.PlayerLoginEvent.OnPlayerLogin(args.Player);
 				}
 				else
 				{
