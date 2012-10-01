@@ -223,9 +223,9 @@ namespace TShockAPI
 			string cmdName = args[0].ToLower();
 			args.RemoveAt(0);
 
-			Command cmd = ChatCommands.FirstOrDefault(c => c.HasAlias(cmdName));
+			IEnumerable<Command> cmds = ChatCommands.Where(c => c.HasAlias(cmdName));
 
-			if (cmd == null)
+			if (cmds.Count() == 0)
 			{
 				if (player.AwaitingResponse.ContainsKey(cmdName))
 				{
@@ -237,23 +237,25 @@ namespace TShockAPI
 				player.SendErrorMessage("Invalid command entered. Type /help for a list of valid commands.");
 				return true;
 			}
-
-			if (!cmd.CanRun(player))
-			{
-				TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
-				player.SendErrorMessage("You do not have access to that command.");
-			}
-			else if (!cmd.AllowServer && !player.RealPlayer)
-			{
-				player.SendErrorMessage("You must use this command in-game.");
-			}
-			else
-			{
-				if (cmd.DoLog)
-					TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
-				cmd.Run(cmdText, player, args);
-			}
-			return true;
+            foreach (Command cmd in cmds)
+            {
+                if (!cmd.CanRun(player))
+                {
+                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
+                    player.SendErrorMessage("You do not have access to that command.");
+                }
+                else if (!cmd.AllowServer && !player.RealPlayer)
+                {
+                    player.SendErrorMessage("You must use this command in-game.");
+                }
+                else
+                {
+                    if (cmd.DoLog)
+                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
+                    cmd.Run(cmdText, player, args);
+                }
+            }
+		    return true;
 		}
 
 		/// <summary>
