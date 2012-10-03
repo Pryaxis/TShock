@@ -189,7 +189,7 @@ namespace TShockAPI
 		{
 			if (Commands.ChatCommands.Count < 1)
 				Commands.InitCommands();
-			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
+			return Commands.ChatCommands.Where(c => c.Permissions.Contains(perm)).ToList();
 		}
 
         /// <summary>
