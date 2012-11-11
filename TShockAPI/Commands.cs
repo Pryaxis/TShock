@@ -209,6 +209,7 @@ namespace TShockAPI
 			add(Permissions.cfg, WorldInfo, "world");
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
+		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    //add(null, TestCallbackCommand, "test");
 		}
 
@@ -1139,6 +1140,38 @@ namespace TShockAPI
 				}
 			}
 		}
+
+        private static void ForceXmas(CommandArgs args)
+        {
+            if(args.Parameters.Count == 0)
+            {
+                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
+                args.Player.SendInfoMessage(
+                    String.Format("The server is currently {0} force Christmas mode.",
+                                (TShock.Config.ForceXmas ? "in" : "not in")));
+                return;
+            }
+
+            if(args.Parameters[0].ToLower() == "true")
+            {
+                TShock.Config.ForceXmas = true;
+                Main.checkXMas();
+            }
+            else if(args.Parameters[0].ToLower() == "false")
+            {
+                TShock.Config.ForceXmas = false;
+                Main.checkXMas();
+            }
+            else
+            {
+                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
+                return;
+            }
+
+            args.Player.SendInfoMessage(
+                    String.Format("The server is currently {0} force Christmas mode.",
+                                (TShock.Config.ForceXmas ? "in" : "not in")));
+        }
 
 		#endregion Player Management Commands
 
