@@ -2304,8 +2304,19 @@ namespace TShockAPI
 				return;
 			}
 
-			int amount = Convert.ToInt32(args.Parameters[0]);
-			int.TryParse(args.Parameters[0], out amount);
+			int amount = -1;
+			if (!int.TryParse(args.Parameters[0], out amount))
+			{
+				args.Player.SendWarningMessage(string.Format("Invalid spawnrate ({0})", args.Parameters[0]));
+				return;
+			}
+
+			if (amount < 0)
+			{
+				args.Player.SendWarningMessage("Spawnrate cannot be negative!");
+				return;
+			}
+
 			NPC.defaultSpawnRate = amount;
 			TShock.Config.DefaultSpawnRate = amount;
 			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to {1}.", args.Player.Name, amount));
