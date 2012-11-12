@@ -140,7 +140,8 @@ namespace TShockAPI
             ChatCommands.Add(new Command(Permissions.tp, TPHere, "tphere") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
-			add(Permissions.ban, Ban, "ban", "banip", "listbans", "unban", "unbanip", "clearbans");
+		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
+			add(Permissions.ban, Ban, "ban");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
 			add(Permissions.maintenance, Restart, "restart"); //Added restart command
@@ -161,7 +162,8 @@ namespace TShockAPI
             add(Permissions.spawnboss, SkeletronPrime, "skeletronp", "prime");
             add(Permissions.spawnboss, Hardcore, "hardcore");
             add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
-			add(Permissions.warp, Warp, "warp", "setwarp", "delwarp", "sendwarp", "sw");
+			add(Permissions.warp, Warp, "warp");
+		    add(null, DeprecateWarp, "setwarp", "sendwarp", "delwarp", "sw");
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
@@ -803,10 +805,19 @@ namespace TShockAPI
 			}
 		}
 
+        private static void DeprecateBans(CommandArgs args)
+        {
+            args.Player.SendInfoMessage("All ban commands were merged into one in TShock 4.0.");
+            args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
+            args.Player.SendInfoMessage("Options: list, listip, clear, add, addip, del, delip");
+            args.Player.SendInfoMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]");
+            args.Player.SendInfoMessage("In addition, a reason may be provided for all new bans after the arguments.");
+            return;
+        }
+
 		private static void Ban(CommandArgs args)
 		{
-
-			if (args.Parameters[0].ToLower() == "help")
+			if (args.Parameters.Count == 0 || args.Parameters[0].ToLower() == "help")
 			{
 				args.Player.SendInfoMessage("All ban commands were merged into one in TShock 4.0.");
 				args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
@@ -1655,6 +1666,25 @@ namespace TShockAPI
                 args.Player.SendSuccessMessage("You have enabled teleportation protection.");
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
+
+        private static void DeprecateWarp(CommandArgs args)
+        {
+            if (args.Player.Group.HasPermission(Permissions.managewarp))
+            {
+                args.Player.SendInfoMessage("All warp commands were merged into one in TShock 4.0.");
+                args.Player.SendInfoMessage("Previous warps with spaces should be wrapped in single quotes.");
+                args.Player.SendInfoMessage("Invalid syntax. Syntax: /warp [command] [arguments]");
+                args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
+                args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
+                args.Player.SendInfoMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]");
+                args.Player.SendInfoMessage("Examples: /warp add foobar, /warp hide foobar true, /warp foobar");
+            }
+            else
+            {
+                args.Player.SendErrorMessage("Invalid syntax. Syntax: /warp [name] or /warp list <page>");
+                args.Player.SendErrorMessage("Previous warps with spaces should be wrapped in single quotes.");
+            }
+        }
 
 		private static void Warp(CommandArgs args)
 		{
