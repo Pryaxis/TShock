@@ -40,11 +40,11 @@ namespace TShockAPI
 	[APIVersion(1, 12)]
 	public class TShock : TerrariaPlugin
 	{
-		private const string LogFormatDefault = "yyyyMMddHHmmss";
+		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
 		private static string LogFormat = LogFormatDefault;
 		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "4.x & 50,000th download milestone";
+		public static readonly string VersionCodename = "Welcome to the future.";
 
 		public static string SavePath = "tshock";
 
@@ -223,6 +223,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
+			    WorldHooks.ChristmasCheck += OnXmasCheck;
                 NetHooks.NameCollision += NetHooks_NameCollision;
 
 				GetDataHandlers.InitGetDataHandler();
@@ -323,6 +324,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+                WorldHooks.ChristmasCheck -= OnXmasCheck;
                 NetHooks.NameCollision -= NetHooks_NameCollision;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -367,6 +369,17 @@ namespace TShockAPI
             return;
         }
 
+        void OnXmasCheck(ChristmasCheckEventArgs args)
+        {
+            if (args.Handled)
+                return;
+
+            if(Config.ForceXmas)
+            {
+                args.Xmas = true;
+                args.Handled = true;
+            }
+        }
 		/// <summary>
 		/// Handles exceptions that we didn't catch or that Red fucked up
 		/// </summary>

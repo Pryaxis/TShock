@@ -243,6 +243,8 @@ namespace TShockAPI
 
 	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
 
+	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
