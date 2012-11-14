@@ -1384,6 +1384,7 @@ namespace TShockAPI
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+                    Hooks.PlayerLoginEvent.OnPlayerLogin(args.Player);
 					return true;
 				}
 				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);

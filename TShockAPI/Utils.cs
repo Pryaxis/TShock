@@ -212,8 +212,8 @@ namespace TShockAPI
         public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
         {
             TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
-            TSPlayer.Server.SendMessage(msg, red, green, blue);
-            Log.Info(string.Format("Broadcast: {0}", msg));
+            TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
+            Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
         }
 
 		/// <summary>

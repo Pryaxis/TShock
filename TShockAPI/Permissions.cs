@@ -169,6 +169,8 @@ namespace TShockAPI
         [Description("User can use rest api calls.")]
 	    public static readonly string restapi;
 
+	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
+
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
