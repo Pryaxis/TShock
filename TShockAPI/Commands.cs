@@ -137,7 +137,7 @@ namespace TShockAPI
             ChatCommands.Add(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, Spawn, "spawn") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, TPHere, "tphere") { AllowServer = false });
+            ChatCommands.Add(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
             ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
 		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
