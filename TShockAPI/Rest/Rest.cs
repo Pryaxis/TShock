@@ -125,6 +125,11 @@ namespace Rests
 				return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
+			var jsonp = e.Request.Parameters["jsonp"];
+			if (!string.IsNullOrWhiteSpace(jsonp))
+			{
+				str = string.Format("{0}({1});", jsonp, str);
+			}
 			e.Response.Connection.Type = ConnectionType.Close;
 			e.Response.ContentType = new ContentTypeHeader("application/json");
 			e.Response.Add(serverHeader);
