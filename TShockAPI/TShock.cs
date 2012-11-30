@@ -825,12 +825,9 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				if (!tsplr.SilentKickInProgress || tsplr.State > 1)
+				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 				{
-					if (tsplr.State >= 2)
-					{
-                        Utils.Broadcast(tsplr.Name + " left", Color.Yellow);    
-					}
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
