@@ -66,20 +66,26 @@ namespace TShockAPI
 		public List<string> Names { get; protected set; }
         public bool AllowServer { get; set; }
 		public bool DoLog { get; set; }
-		public string Permission { get; protected set; }
+		public List<string> Permissions { get; protected set; }
 		private CommandDelegate command;
+
+		public Command(List<string> permissionsneeded, CommandDelegate cmd, params string[] names)
+			: this(cmd, names)
+		{
+			Permissions = permissionsneeded;
+		}
 
 		public Command(string permissionneeded, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
 		{
-			Permission = permissionneeded;
+			Permissions = new List<string> { permissionneeded };
 		}
 
 		public Command(CommandDelegate cmd, params string[] names)
 		{
 			if (names == null || names.Length < 1)
 				throw new NotSupportedException();
-			Permission = null;
+			Permissions = null;
 			Names = new List<string>(names);
 			command = cmd;
 			AllowServer = true;
@@ -88,7 +94,7 @@ namespace TShockAPI
 
 		public bool Run(string msg, TSPlayer ply, List<string> parms)
 		{
-			if (!ply.Group.HasPermission(Permission))
+			if (!CanRun(ply))
 				return false;
 
 			try
@@ -111,7 +117,14 @@ namespace TShockAPI
 
 		public bool CanRun(TSPlayer ply)
 		{
-			return ply.Group.HasPermission(Permission);
+			if (Permissions == null)
+				return true;
+			foreach (var Permission in Permissions)
+			{
+				if (ply.Group.HasPermission(Permission))
+					return true;
+			}
+			return false;
 		}
 	}
 
