@@ -457,7 +457,7 @@ namespace TShockAPI
 
 					}
 
-				    Hooks.PlayerLoginEvent.OnPlayerLogin(args.Player);
+				    Hooks.PlayerHooks.OnPlayerLogin(args.Player);
 				}
 				else
 				{
