@@ -245,6 +245,8 @@ namespace TShockAPI
 
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
 
+        [Description("Allows groups on the banned item allowed list to spawn banned items.")] public bool AllowAllowedGroupsToSpawnBannedItems = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

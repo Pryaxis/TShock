@@ -557,7 +557,8 @@ namespace TShockAPI
 
         public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
         {
-            if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
+            if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+                (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
                 return false;
 
             GiveItem(type,name,width,height,stack,prefix);
