@@ -171,6 +171,11 @@ namespace TShockAPI
 
 	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
 
+        [Description("User can use /home.")] public static readonly string home;
+
+        [Description("User can use /spawn.")] public static readonly string spawn;
+
+
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
