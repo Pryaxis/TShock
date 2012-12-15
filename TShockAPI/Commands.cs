@@ -226,6 +226,7 @@ namespace TShockAPI
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
+		    add(Permissions.sudo, Sudo, "sudo");
 		    //add(null, TestCallbackCommand, "test");
 		}
 
@@ -433,6 +434,7 @@ namespace TShockAPI
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
 					args.Player.Group = group;
+				    args.Player.tempGroup = null;
 					args.Player.UserAccountName = user.Name;
 					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
 					args.Player.IsLoggedIn = true;
@@ -1196,6 +1198,42 @@ namespace TShockAPI
             args.Player.SendInfoMessage(
                     String.Format("The server is currently {0} force Christmas mode.",
                                 (TShock.Config.ForceXmas ? "in" : "not in")));
+        }
+
+        public static void Sudo(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendInfoMessage("Invalid usage");
+                args.Player.SendInfoMessage("Usage: /sudo <username> <new group>");
+                return;
+            }
+
+            List<TSPlayer> ply = TShock.Utils.FindPlayer(args.Parameters[0]);
+            if(ply.Count < 1)
+            {
+                args.Player.SendErrorMessage(string.Format("Could not find player {0}.", args.Parameters[0]));
+                return;
+            }
+
+            if (ply.Count > 1)
+            {
+                args.Player.SendErrorMessage(string.Format("Found more than one match for {0}.", args.Parameters[0]));
+                return;
+            }
+
+            if(!TShock.Groups.GroupExists(args.Parameters[1]))
+            {
+                args.Player.SendErrorMessage(string.Format("Could not find group {0}", args.Parameters[1]));
+                return;
+            }
+
+            Group g = TShock.Utils.GetGroup(args.Parameters[1]);
+
+            ply[0].tempGroup = g;
+
+            args.Player.SendSuccessMessage(string.Format("You have changed {0}'s group to {1}", ply[0].Name, g.Name));
+            ply[0].SendSuccessMessage(string.Format("Your group has temporarily been changed to {0}", g.Name));
         }
 
 		#endregion Player Management Commands

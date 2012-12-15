@@ -71,10 +71,26 @@ namespace TShockAPI
 
 		public int FirstMaxMP { get; set; }
 
-        /// <summary>
-        /// The player's group.
-        /// </summary>
-		public Group Group { get; set; }
+	    /// <summary>
+	    /// The player's group.
+	    /// </summary>
+	    public Group Group
+	    {
+	        get
+	        {
+	            if (tempGroup != null)
+	                return tempGroup;
+	            return group;
+	        }
+            set { group = value; }
+	    }
+
+	    /// <summary>
+	    /// The player's temporary group.  This overrides the user's actual group.
+	    /// </summary>
+	    public Group tempGroup = null;
+
+	    private Group group = null;
 
 		public bool ReceivedInfo { get; set; }
 

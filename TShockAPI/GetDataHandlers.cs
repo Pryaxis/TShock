@@ -1372,6 +1372,7 @@ namespace TShockAPI
 				        args.Player.IgnoreActionsForDisabledArmor = "none";
 
 				    args.Player.Group = group;
+				    args.Player.tempGroup = null;
 				    args.Player.UserAccountName = args.Player.Name;
 				    args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
 				    args.Player.IsLoggedIn = true;
