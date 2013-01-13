@@ -231,6 +231,8 @@ namespace TShockAPI
 
 		public bool SilentKickInProgress;
 
+		public bool SilentJoinInProgress;
+
         /// <summary>
         /// A list of points where ice tiles have been placed.
         /// </summary>
