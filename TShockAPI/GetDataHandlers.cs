@@ -1444,13 +1444,15 @@ namespace TShockAPI
 				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", args.Player.Name, args.Player.IP,
 									   args.Player.Group.Name, args.Player.Country, TShock.Utils.ActivePlayers(),
 									   TShock.Config.MaxSlots));
-				TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", args.Player.Name, args.Player.Country), Color.Yellow);
+				if (!args.Player.SilentJoinInProgress)
+					TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", args.Player.Name, args.Player.Country), Color.Yellow);
 			}
 			else
 			{
 				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", args.Player.Name, args.Player.IP,
 									   args.Player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-				TShock.Utils.Broadcast(args.Player.Name + " has joined.", Color.Yellow);
+				if (!args.Player.SilentJoinInProgress)
+					TShock.Utils.Broadcast(args.Player.Name + " has joined.", Color.Yellow);
 			}
 
 			if (TShock.Config.DisplayIPToAdmins)
