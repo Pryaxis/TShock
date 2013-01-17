@@ -2877,12 +2877,13 @@ namespace TShockAPI
                 case "help":
                 default:
                     {
-                        args.Player.SendMessage("Avialable region commands:", Color.Green);
+                        args.Player.SendMessage("Available region commands:", Color.Green);
                         args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]",
                                                 Color.Yellow);
                         args.Player.SendMessage("/region name (provides region name)", Color.Yellow);
                         args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
                         args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
+                        args.Player.SendMessage("/region remove [name] [regionname]", Color.Yellow);
                         args.Player.SendMessage("/region resize [regionname] [u/d/l/r] [amount]", Color.Yellow);
                         break;
                     }
