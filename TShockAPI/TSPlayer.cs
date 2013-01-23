@@ -738,7 +738,7 @@ namespace TShockAPI
 		public TSRestPlayer()
 		{
 			Group = new SuperAdminGroup();
-            AwaitingResponse = new Dictionary<string, Action<object>>();
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public override void SendMessage(string msg)
@@ -754,6 +754,26 @@ namespace TShockAPI
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
 			CommandReturn.Add(msg);
+		}
+
+		public override void SendInfoMessage(string msg)
+		{
+			SendMessage(msg, Color.Yellow);
+		}
+
+		public override void SendSuccessMessage(string msg)
+		{
+			SendMessage(msg, Color.Green);
+		}
+
+		public override void SendWarningMessage(string msg)
+		{
+			SendMessage(msg, Color.OrangeRed);
+		}
+
+		public override void SendErrorMessage(string msg)
+		{
+			SendMessage(msg, Color.Red);
 		}
 
 		public List<string> GetCommandOutput()
