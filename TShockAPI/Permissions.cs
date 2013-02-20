@@ -175,7 +175,7 @@ namespace TShockAPI
 
         [Description("User can use /spawn.")] public static readonly string spawn;
 
-	    [Description("User can elevate other users' groups temporarily.")] public static readonly string sudo;
+	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
