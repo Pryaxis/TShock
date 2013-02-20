@@ -226,7 +226,7 @@ namespace TShockAPI
 			add(Permissions.savessi, SaveSSI, "savessi");
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
-		    add(Permissions.sudo, Sudo, "sudo");
+		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 		    //add(null, TestCallbackCommand, "test");
 		}
 
@@ -1203,12 +1203,12 @@ namespace TShockAPI
                                 (TShock.Config.ForceXmas ? "in" : "not in")));
         }
 
-        public static void Sudo(CommandArgs args)
+        public static void TempGroup(CommandArgs args)
         {
             if (args.Parameters.Count < 2)
             {
                 args.Player.SendInfoMessage("Invalid usage");
-                args.Player.SendInfoMessage("Usage: /sudo <username> <new group>");
+                args.Player.SendInfoMessage("Usage: /tempgroup <username> <new group>");
                 return;
             }
 
