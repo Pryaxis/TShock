@@ -169,6 +169,13 @@ namespace TShockAPI
         [Description("User can use rest api calls.")]
 	    public static readonly string restapi;
 
+	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
+
+        [Description("User can use /home.")] public static readonly string home;
+
+        [Description("User can use /spawn.")] public static readonly string spawn;
+
+	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
@@ -189,7 +196,7 @@ namespace TShockAPI
 		{
 			if (Commands.ChatCommands.Count < 1)
 				Commands.InitCommands();
-			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
+			return Commands.ChatCommands.Where(c => c.Permissions.Contains(perm)).ToList();
 		}
 
         /// <summary>

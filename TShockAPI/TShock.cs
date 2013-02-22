@@ -223,6 +223,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
+			    WorldHooks.ChristmasCheck += OnXmasCheck;
                 NetHooks.NameCollision += NetHooks_NameCollision;
 
 				GetDataHandlers.InitGetDataHandler();
@@ -323,6 +324,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+                WorldHooks.ChristmasCheck -= OnXmasCheck;
                 NetHooks.NameCollision -= NetHooks_NameCollision;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -367,6 +369,17 @@ namespace TShockAPI
             return;
         }
 
+        void OnXmasCheck(ChristmasCheckEventArgs args)
+        {
+            if (args.Handled)
+                return;
+
+            if(Config.ForceXmas)
+            {
+                args.Xmas = true;
+                args.Handled = true;
+            }
+        }
 		/// <summary>
 		/// Handles exceptions that we didn't catch or that Red fucked up
 		/// </summary>
@@ -812,12 +825,9 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				if (!tsplr.SilentKickInProgress || tsplr.State > 1)
+				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 				{
-					if (tsplr.State >= 2)
-					{
-                        Utils.Broadcast(tsplr.Name + " left", Color.Yellow);    
-					}
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 

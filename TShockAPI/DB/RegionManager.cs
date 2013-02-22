@@ -238,25 +238,21 @@ namespace TShockAPI.DB
 				return false;
 			}
 		    Region top = null;
-			for (int i = 0; i < Regions.Count; i++)
-			{
-				if (Regions[i].InArea(x,y) )
-				{
-                    if (top == null)
-                        top = Regions[i];
-                    else
-                    {
-                        if (Regions[i].Z > top.Z)
-                            top = Regions[i];
-                    }
-				}
-			}
+
+            foreach (Region region in Regions.ToList())
+            {
+                if (region.InArea(x, y))
+                {
+                    if (top == null || region.Z > top.Z)
+                        top = region;    
+                }
+            }
             return top == null || top.HasPermissionToBuildInRegion(ply);
 		}
 
 		public bool InArea(int x, int y)
 		{
-			foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
 				    y >= region.Area.Top && y <= region.Area.Bottom &&
@@ -271,7 +267,7 @@ namespace TShockAPI.DB
         public List<string> InAreaRegionName(int x, int y)
         {
             List<string> regions = new List<string>() { };
-            foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
             {
                 if (x >= region.Area.Left && x <= region.Area.Right &&
                     y >= region.Area.Top && y <= region.Area.Bottom &&
@@ -286,7 +282,7 @@ namespace TShockAPI.DB
         public List<Region> InAreaRegion(int x, int y)
         {
             List<Region> regions = new List<Region>() { };
-            foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
             {
                 if (x >= region.Area.Left && x <= region.Area.Right &&
                     y >= region.Area.Top && y <= region.Area.Bottom &&

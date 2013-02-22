@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
     <Compile Include="DB\RegionManager.cs" />
+    <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
     <Compile Include="DB\InventoryManager.cs" />

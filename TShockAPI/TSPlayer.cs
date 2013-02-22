@@ -71,10 +71,26 @@ namespace TShockAPI
 
 		public int FirstMaxMP { get; set; }
 
-        /// <summary>
-        /// The player's group.
-        /// </summary>
-		public Group Group { get; set; }
+	    /// <summary>
+	    /// The player's group.
+	    /// </summary>
+	    public Group Group
+	    {
+	        get
+	        {
+	            if (tempGroup != null)
+	                return tempGroup;
+	            return group;
+	        }
+            set { group = value; }
+	    }
+
+	    /// <summary>
+	    /// The player's temporary group.  This overrides the user's actual group.
+	    /// </summary>
+	    public Group tempGroup = null;
+
+	    private Group group = null;
 
 		public bool ReceivedInfo { get; set; }
 
@@ -214,6 +230,8 @@ namespace TShockAPI
 		public bool RequiresPassword;
 
 		public bool SilentKickInProgress;
+
+		public bool SilentJoinInProgress;
 
         /// <summary>
         /// A list of points where ice tiles have been placed.
@@ -557,7 +575,8 @@ namespace TShockAPI
 
         public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
         {
-            if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
+            if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+                (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
                 return false;
 
             GiveItem(type,name,width,height,stack,prefix);
@@ -719,7 +738,7 @@ namespace TShockAPI
 		public TSRestPlayer()
 		{
 			Group = new SuperAdminGroup();
-            AwaitingResponse = new Dictionary<string, Action<object>>();
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public override void SendMessage(string msg)
@@ -735,6 +754,26 @@ namespace TShockAPI
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
 			CommandReturn.Add(msg);
+		}
+
+		public override void SendInfoMessage(string msg)
+		{
+			SendMessage(msg, Color.Yellow);
+		}
+
+		public override void SendSuccessMessage(string msg)
+		{
+			SendMessage(msg, Color.Green);
+		}
+
+		public override void SendWarningMessage(string msg)
+		{
+			SendMessage(msg, Color.OrangeRed);
+		}
+
+		public override void SendErrorMessage(string msg)
+		{
+			SendMessage(msg, Color.Red);
 		}
 
 		public List<string> GetCommandOutput()
