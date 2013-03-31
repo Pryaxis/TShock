@@ -247,6 +247,8 @@ namespace TShockAPI
 
         [Description("Allows groups on the banned item allowed list to spawn banned items.")] public bool AllowAllowedGroupsToSpawnBannedItems = false;
 
+	    [Description("Allows stacks in chests to be beyond the stack limit")] public bool IgnoreChestStacksOnLoad = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

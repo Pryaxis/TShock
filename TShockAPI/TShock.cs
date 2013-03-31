@@ -545,6 +545,9 @@ namespace TShockAPI
 
 		private void FixChestStacks()
 		{
+            if (Config.IgnoreChestStacksOnLoad)
+                return;
+
 			foreach (Chest chest in Main.chest)
 			{
 				if (chest != null)
