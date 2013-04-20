@@ -85,7 +85,7 @@ namespace TShockAPI
 		{
 			if (names == null || names.Length < 1)
 				throw new NotSupportedException();
-			Permissions = null;
+			Permissions = new List<string>();
 			Names = new List<string>(names);
 			command = cmd;
 			AllowServer = true;
