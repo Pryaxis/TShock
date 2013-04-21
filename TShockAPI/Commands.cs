@@ -2288,10 +2288,11 @@ namespace TShockAPI
 			FileTools.SetupConfig();
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
-			//todo: Create an event for reloads to propegate to plugins.
             TShock.Regions.ReloadAllRegions();
 			args.Player.SendSuccessMessage(
 				"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
+
+		    Hooks.GeneralHooks.OnReloadEvent(args.Player);
 		}
 
 		private static void ServerPassword(CommandArgs args)
