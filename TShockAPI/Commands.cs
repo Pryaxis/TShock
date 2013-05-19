@@ -24,6 +24,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using TShockAPI.PluginUpdater;
 using Terraria;
 using TShockAPI.DB;
 using System.Reflection;
@@ -160,6 +161,7 @@ namespace TShockAPI
 			add(Permissions.maintenance, Restart, "restart"); //Added restart command
 			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
+		    add(Permissions.updateplugins, UpdatePlugins, "updateplugins");
 			add(Permissions.causeevents, DropMeteor, "dropmeteor");
 			add(Permissions.causeevents, Star, "star");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
@@ -1311,6 +1313,13 @@ namespace TShockAPI
             args.Player.SendInfoMessage("An update check has been queued.");
 			ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
 		}
+
+        private static void UpdatePlugins(CommandArgs args)
+        {
+            args.Player.SendInfoMessage("Starting plugin update process:");
+            args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
+            new PluginUpdaterThread(args.Player);
+        }
 
 		#endregion Server Maintenence Commands
 

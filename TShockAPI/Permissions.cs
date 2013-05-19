@@ -176,6 +176,8 @@ namespace TShockAPI
         [Description("User can use /spawn.")] public static readonly string spawn;
 
 	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
+
+	    [Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
         static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())

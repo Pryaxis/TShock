@@ -97,6 +97,10 @@ namespace TShockAPI
 			get { return "The administration modification of the future."; }
 		}
 
+        public override string UpdateURL
+        {
+            get { return ""; }
+        }
 		public TShock(Main game)
 			: base(game)
 		{
