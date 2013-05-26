@@ -381,17 +381,22 @@ namespace TShockAPI
 				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
 				return;
 			}
-
+            
 			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string encrPass = "";
 
 			if (args.Parameters.Count == 1)
 			{
+                if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
+                    return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
 			}
 			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
 			{
+                if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
+                    return;
+
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
 				if (String.IsNullOrEmpty(args.Parameters[0]))
@@ -408,6 +413,7 @@ namespace TShockAPI
 			}
 			try
 			{
+                // TODO: Is this needed? It seems to be an unreachable case
 				if (user == null)
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
@@ -464,7 +470,7 @@ namespace TShockAPI
 
 					}
 
-				    Hooks.PlayerHooks.OnPlayerLogin(args.Player);
+				    Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 				}
 				else
 				{

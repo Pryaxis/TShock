@@ -1336,6 +1336,10 @@ namespace TShockAPI
 				return true;
 
 			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+
+            if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
+                return true;
+
 			var user = TShock.Users.GetUserByName(args.Player.Name);
             if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
@@ -1385,7 +1389,7 @@ namespace TShockAPI
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
-                    Hooks.PlayerHooks.OnPlayerLogin(args.Player);
+                    Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
 				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);

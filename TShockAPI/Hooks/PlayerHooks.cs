@@ -6,13 +6,20 @@ using System.Text;
 
 namespace TShockAPI.Hooks
 {
-    public class PlayerLoginEventArgs
+    public class PlayerPostLoginEventArgs
     {
         public TSPlayer Player { get; set; }
-        public PlayerLoginEventArgs(TSPlayer ply)
+        public PlayerPostLoginEventArgs(TSPlayer ply)
         {
             Player = ply;
         }
+    }
+
+    public class PlayerPreLoginEventArgs : HandledEventArgs
+    {
+        public TSPlayer Player { get; set; }
+        public string LoginName { get; set; }
+        public string Password { get; set; }
     }
 
     public class PlayerCommandEventArgs : HandledEventArgs
@@ -25,20 +32,24 @@ namespace TShockAPI.Hooks
 
     public static class PlayerHooks
     {
-        public delegate void PlayerLoginD(PlayerLoginEventArgs e);
-        public static event PlayerLoginD PlayerLogin;
+        public delegate void PlayerPostLoginD(PlayerPostLoginEventArgs e);
+        public static event PlayerPostLoginD PlayerPostLogin;
+
+        public delegate void PlayerPreLoginD(PlayerPreLoginEventArgs e);
+        public static event PlayerPreLoginD PlayerPreLogin;
+
         public delegate void PlayerCommandD(PlayerCommandEventArgs e);
         public static event PlayerCommandD PlayerCommand;
 
-        public static void OnPlayerLogin(TSPlayer ply)
+        public static void OnPlayerPostLogin(TSPlayer ply)
         {
-            if(PlayerLogin == null)
+            if(PlayerPostLogin == null)
             {
                 return;
             }
 
-            PlayerLoginEventArgs args = new PlayerLoginEventArgs(ply);
-            PlayerLogin(args);
+            PlayerPostLoginEventArgs args = new PlayerPostLoginEventArgs(ply);
+            PlayerPostLogin(args);
         }
 
         public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args)
@@ -57,6 +68,16 @@ namespace TShockAPI.Hooks
             };
             PlayerCommand(playerCommandEventArgs);
             return playerCommandEventArgs.Handled;
+        }
+
+        public static bool OnPlayerPreLogin(TSPlayer ply, string name, string pass)
+        {
+            if (PlayerPreLogin == null)
+                return false;
+
+            var args = new PlayerPreLoginEventArgs {Player = ply, LoginName = name, Password = pass};
+            PlayerPreLogin(args);
+            return args.Handled;
         }
     }
 }
