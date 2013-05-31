@@ -28,7 +28,7 @@ namespace TShockAPI
         /// <summary>
         /// Default chat color.
         /// </summary>
-		public const string defaultChatColor = "255.255.255";
+		public const string defaultChatColor = "255,255,255";
 
         /// <summary>
         /// List of permissions available to the group.
