@@ -118,7 +118,7 @@ namespace TShockAPI
 
 		public bool CanRun(TSPlayer ply)
 		{
-			if (Permissions == null)
+			if (Permissions == null || Permissions.Count < 1)
 				return true;
 			foreach (var Permission in Permissions)
 			{
