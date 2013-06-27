@@ -2839,7 +2839,7 @@ namespace TShockAPI
                             Region region = TShock.Regions.GetRegionByName(regionName);
                             if (region == null)
                             {
-                                args.Player.SendErrorMessage(string.Format("Region {0} does not exist.", regionName));
+                                args.Player.SendErrorMessage("Region {0} does not exist.", regionName);
                                 break;
                             }
 
@@ -2894,7 +2894,7 @@ namespace TShockAPI
                         }
                         else
                         {
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region info [name]", Color.Red);
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info [name]");
                         }
 
                         break;

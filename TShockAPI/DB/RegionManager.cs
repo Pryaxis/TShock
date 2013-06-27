@@ -485,7 +485,7 @@ namespace TShockAPI.DB
 			}
 
 			string[] groups = mergedGroups.Split(',');
-			// Is the user already allowed to the region?
+			// Is the group already allowed to the region?
 			if (groups.Contains(groupName))
 				return true;
 

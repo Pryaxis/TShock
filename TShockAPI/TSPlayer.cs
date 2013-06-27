@@ -604,9 +604,19 @@ namespace TShockAPI
             SendMessage(msg, Color.Yellow);
         }
 
+        public void SendInfoMessage(string format, params object[] args)
+        {
+            SendInfoMessage(string.Format(format, args));
+        }
+
         public virtual void SendSuccessMessage(string msg)
         {
             SendMessage(msg, Color.Green);
+        }
+
+        public void SendSuccessMessage(string format, params object[] args)
+        {
+            SendSuccessMessage(string.Format(format, args));
         }
 
         public virtual void SendWarningMessage(string msg)
@@ -614,9 +624,19 @@ namespace TShockAPI
             SendMessage(msg, Color.OrangeRed);
         }
 
+        public void SendWarningMessage(string format, params object[] args)
+        {
+            SendWarningMessage(string.Format(format, args));
+        }
+
         public virtual void SendErrorMessage(string msg)
         {
             SendMessage(msg, Color.Red);
+        }
+
+        public void SendErrorMessage(string format, params object[] args)
+        {
+            SendErrorMessage(string.Format(format, args));
         }
 
         [Obsolete("Use SendErrorMessage, SendInfoMessage, or SendWarningMessage, or a custom color instead.")]
