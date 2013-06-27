@@ -2835,22 +2835,62 @@ namespace TShockAPI
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-                            Region r = TShock.Regions.GetRegionByName(regionName);
-
-                            if (r == null)
+                            string regionName = args.Parameters[1];
+                            Region region = TShock.Regions.GetRegionByName(regionName);
+                            if (region == null)
                             {
-                                args.Player.SendMessage("Region {0} does not exist");
+                                args.Player.SendErrorMessage(string.Format("Region {0} does not exist.", regionName));
                                 break;
                             }
 
-                            args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " +
-                                                    r.Area.Width + " H: " + r.Area.Height);
-                            foreach (int s in r.AllowedIDs)
+                            int pageNumber;
+                            if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out pageNumber))
+                                break;
+
+                            List<string> lines = new List<string>
                             {
-                                var user = TShock.Users.GetUserByID(s);
-                                args.Player.SendMessage(r.Name + ": " + (user != null ? user.Name : "Unknown"));
+                                string.Format("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
+                                string.Concat("Owner: ", region.Owner),
+                                string.Concat("Protected: ", region.DisableBuild.ToString()),
+                            };
+
+                            if (region.AllowedIDs.Count > 0)
+                            {
+                                IEnumerable<string> sharedUsersSelector = region.AllowedIDs.Select(userId => 
+                                {
+                                    User user = TShock.Users.GetUserByID(userId);
+                                    if (user != null)
+                                        return user.Name;
+                                    else
+                                        return string.Concat("{ID: ", userId, "}");
+                                });
+                                List<string> extraLines = PaginationTools.BuildLinesFromTerms(sharedUsersSelector.Distinct());
+                                extraLines[0] = "Shared with: " + extraLines[0];
+                                lines.AddRange(extraLines);
                             }
+                            else
+                            {
+                                lines.Add("Region is not shared with any users.");
+                            }
+
+                            if (region.AllowedGroups.Count > 0)
+                            {
+                                List<string> extraLines = PaginationTools.BuildLinesFromTerms(region.AllowedGroups.Distinct());
+                                extraLines[0] = "Shared with groups: " + extraLines[0];
+                                lines.AddRange(extraLines);
+                            }
+                            else
+                            {
+                                lines.Add("Region is not shared with any groups.");
+                            }
+
+                            PaginationTools.SendPage(
+                                args.Player, pageNumber, lines, new PaginationTools.Settings
+                                {
+                                    HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
+                                    FooterFormat = "Type /region info {0} for more information."
+                                }
+                            );
                         }
                         else
                         {
