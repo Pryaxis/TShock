@@ -381,30 +381,36 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public bool AddNewUser(string regionName, String userName)
+		public bool AddNewUser(string regionName, string userName)
 		{
 			try
 			{
-				string MergedIDs = string.Empty;
+				string mergedIDs = string.Empty;
 				using (
-					var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
+					var reader = database.QueryReader("SELECT UserIds FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
 					                                  Main.worldID.ToString()))
 				{
 					if (reader.Read())
-						MergedIDs = reader.Get<string>("UserIds");
+						mergedIDs = reader.Get<string>("UserIds");
 				}
 
-				if (string.IsNullOrEmpty(MergedIDs))
-					MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
-				else
-					MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
+				string userIdToAdd = Convert.ToString(TShock.Users.GetUserID(userName));
+				string[] ids = mergedIDs.Split(',');
+				// Is the user already allowed to the region?
+				if (ids.Contains(userIdToAdd))
+					return true;
 
-				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", MergedIDs,
+				if (string.IsNullOrEmpty(mergedIDs))
+					mergedIDs = userIdToAdd;
+				else
+					mergedIDs = string.Concat(mergedIDs, ",", userIdToAdd);
+
+				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", mergedIDs,
 				                       regionName, Main.worldID.ToString());
 				foreach (var r in Regions)
 				{
 					if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
-						r.setAllowedIDs(MergedIDs);
+						r.setAllowedIDs(mergedIDs);
 				}
 				return q != 0;
 			}
@@ -467,27 +473,33 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public bool AllowGroup(string regionName, string groups)
+		public bool AllowGroup(string regionName, string groupName)
 		{
-			string groupsNew = "";
+			string mergedGroups = "";
 			using (
-				var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
+				var reader = database.QueryReader("SELECT Groups FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
 				                                  Main.worldID.ToString()))
 			{
 				if (reader.Read())
-					groupsNew = reader.Get<string>("Groups");
+					mergedGroups = reader.Get<string>("Groups");
 			}
-			if (groupsNew != "")
-				groupsNew += ",";
-			groupsNew += groups;
 
-			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groupsNew,
+			string[] groups = mergedGroups.Split(',');
+			// Is the group already allowed to the region?
+			if (groups.Contains(groupName))
+				return true;
+
+			if (mergedGroups != "")
+				mergedGroups += ",";
+			mergedGroups += groupName;
+
+			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", mergedGroups,
 			                       regionName, Main.worldID.ToString());
 
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				r.SetAllowedGroups(groupsNew);
+				r.SetAllowedGroups(mergedGroups);
 			}
 			else
 			{
