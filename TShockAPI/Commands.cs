@@ -2940,13 +2940,37 @@ namespace TShockAPI
                 case "help":
                 default:
                     {
-                        args.Player.SendMessage("Avialable region commands:", Color.Green);
-                        args.Player.SendMessage("/region set [1/2] /region define [name] /region protect [name] [true/false]",
-                                                Color.Yellow);
-                        args.Player.SendMessage("/region name (provides region name)", Color.Yellow);
-                        args.Player.SendMessage("/region delete [name] /region clear (temporary region)", Color.Yellow);
-                        args.Player.SendMessage("/region allow [name] [regionname]", Color.Yellow);
-                        args.Player.SendMessage("/region resize [regionname] [u/d/l/r] [amount]", Color.Yellow);
+                        int pageNumber;
+                        int pageParamIndex = 0;
+                        if (args.Parameters.Count > 1)
+                          pageParamIndex = 1;
+                        if (!PaginationTools.TryParsePageNumber(args.Parameters, pageParamIndex, args.Player, out pageNumber))
+                          return;
+                        
+                        PaginationTools.SendPage(
+                          args.Player, pageNumber, new[] 
+                          {
+                            "set [1/2] - Sets the temporary region points.",
+                            "clear - Clears the temporary region points.",
+                            "define [name] - Defines the region.",
+                            "delete [name] - Deletes the given region.",
+                            "name - Shows the name of the region at the given point.",
+                            "list - Lists all regions.",
+                            "resize [region] [u/d/l/r] [amount] - Resizes a region.",
+                            "allow [user] [region] - Allows a user to a region.",
+                            "remove [user] [region] - Removes a user from a region.",
+                            "allowg [group] [region] - Allows a user group to a region.",
+                            "removeg [group] [region] - Removes a user group from a region.",
+                            "info [region] - Displays several information about the given region.",
+                            "protect [name] [true/false] - Sets whether the tiles inside the region are protected or not.",
+                            "z [name] [#] - Sets the z-order of the region.",
+                          }, 
+                          new PaginationTools.Settings 
+                          {
+                            HeaderFormat = "Available Region Sub-Commands ({0}/{1}):",
+                            FooterFormat = "Type /region {0} for more sub-commands."
+                          }
+                        );
                         break;
                     }
             }
