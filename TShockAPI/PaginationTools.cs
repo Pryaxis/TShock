@@ -207,12 +207,14 @@ namespace TShockAPI {
         string termString;
         if (termFormatter != null)
         {
-          try {
+          try
+          {
             termString = termFormatter(term);
 
             if (termString == null)
               continue;
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             throw new ArgumentException(
               "The method represented by termFormatter has thrown an exception. See inner exception for details.", ex);
@@ -226,9 +228,8 @@ namespace TShockAPI {
         bool goesOnNextLine = (lineBuilder.Length + termString.Length > maxCharsPerLine);
         if (!goesOnNextLine)
         {
-          if (lineBuilder.Length > 0) {
+          if (lineBuilder.Length > 0)
             lineBuilder.Append(separator);
-          }
           lineBuilder.Append(termString);
         }
         else
