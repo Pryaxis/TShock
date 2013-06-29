@@ -40,13 +40,15 @@ namespace TShockAPI
 	[APIVersion(1, 13)]
 	public class TShock : TerrariaPlugin
 	{
-		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
-		private static string LogFormat = LogFormatDefault;
-		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		public static readonly string VersionCodename = "Welcome to the future.";
 
 		public static string SavePath = "tshock";
+		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
+		private static string LogFormat = LogFormatDefault;
+		private const string LogPathDefault = "tshock";
+		private static string LogPath = LogPathDefault;
+		private static bool LogClear = false;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
@@ -112,35 +114,57 @@ namespace TShockAPI
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
-			HandleCommandLine(Environment.GetCommandLineArgs());
-
-			if (!Directory.Exists(SavePath))
-				Directory.CreateDirectory(SavePath);
-
-			DateTime now = DateTime.Now;
-			string logFilename;
 			try
 			{
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormat)+".log");
-			}
-			catch(Exception)
-			{
-				// Problem with the log format use the default
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormatDefault) + ".log");
-			}
+				HandleCommandLine(Environment.GetCommandLineArgs());
+
+				if (Version.Major >= 4)
+					getTShockAscii();
+
+				if (!Directory.Exists(SavePath))
+					Directory.CreateDirectory(SavePath);
+
+				ConfigFile.ConfigRead += OnConfigRead;
+				FileTools.SetupConfig();
+
+				DateTime now = DateTime.Now;
+				string logFilename;
+				string logPathSetupWarning = null;
+				// Log path was not already set by the command line parameter?
+				if (LogPath == LogPathDefault)
+					LogPath = Config.LogPath;
+				try
+				{
+					logFilename = Path.Combine(LogPath, now.ToString(LogFormat)+".log");
+					if (!Directory.Exists(LogPath))
+						Directory.CreateDirectory(LogPath);
+				}
+				catch(Exception ex)
+				{
+					logPathSetupWarning = "Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine(logPathSetupWarning);
+					Console.ForegroundColor = ConsoleColor.Gray;
+					// Problem with the log path or format use the default
+					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
+				}
 #if DEBUG
-			Log.Initialize(logFilename, LogLevel.All, false);
+				Log.Initialize(logFilename, LogLevel.All, false);
 #else
-			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
+				Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				if (logPathSetupWarning != null)
+					Log.Warn(logPathSetupWarning);
 
-            if (Version.Major >= 4)
-            {
-                getTShockAscii();                
-            }
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			}
+			catch(Exception ex)
+			{
+				// Will be handled by the server api and written to its crashlog.txt.
+				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
+			}
 
-
+			// Further exceptions are written to TShock's log from now on.
 			try
 			{
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -150,9 +174,6 @@ namespace TShockAPI
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
-
-				ConfigFile.ConfigRead += OnConfigRead;
-				FileTools.SetupConfig();
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
@@ -446,9 +467,13 @@ namespace TShockAPI
 						}
 						break;
 
-					case "-dump":
-						ConfigFile.DumpDescriptions();
-						Permissions.DumpDescriptions();
+					case "-logpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							LogPath = path;
+							Log.ConsoleInfo("Log path has been set to " + path);
+						}
 						break;
 
 					case "-logformat":
@@ -457,6 +482,11 @@ namespace TShockAPI
 
 					case "-logclear":
 						bool.TryParse(parms[++i], out LogClear);
+						break;
+
+					case "-dump":
+						ConfigFile.DumpDescriptions();
+						Permissions.DumpDescriptions();
 						break;
 				}
 			}
