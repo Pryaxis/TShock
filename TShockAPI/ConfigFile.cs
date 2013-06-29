@@ -249,6 +249,8 @@ namespace TShockAPI
 
 	    [Description("Allows stacks in chests to be beyond the stack limit")] public bool IgnoreChestStacksOnLoad = false;
 
+		[Description("The path of the directory where logs should be written into.")] public string LogPath = "tshock";
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
