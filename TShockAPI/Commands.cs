@@ -3085,59 +3085,46 @@ namespace TShockAPI
 
 		private static void ListConnectedPlayers(CommandArgs args)
 		{
-			//How many players per page
-			const int pagelimit = 15;
-			//How many players per line
-			const int perline = 5;
-			//Pages start at 0 but are displayed and parsed at 1
-			int page = 0;
+			bool invalidUsage = (args.Parameters.Count > 2);
 
-
-			if (args.Parameters.Count > 0)
+			bool displayIdsRequested = false;
+			int pageNumber = 1;
+			if (!invalidUsage) 
 			{
-				if (!int.TryParse(args.Parameters[0], out page) || page < 1)
+				foreach (string parameter in args.Parameters)
 				{
-					args.Player.SendErrorMessage(string.Format("Invalid page number ({0})", page));
-					return;
+					if (parameter.Equals("-i", StringComparison.InvariantCultureIgnoreCase))
+					{
+						displayIdsRequested = true;
+						continue;
+					}
+
+					if (!int.TryParse(parameter, out pageNumber))
+					{
+						invalidUsage = true;
+						break;
+					}
 				}
-				page--; //Substract 1 as pages are parsed starting at 1 and not 0
 			}
-
-			var playerList = args.Player.Group.HasPermission(Permissions.seeids)
-								 ? TShock.Utils.GetPlayers(true)
-								 : TShock.Utils.GetPlayers(false);
-
-			//Check if they are trying to access a page that doesn't exist.
-			int pagecount = playerList.Count / pagelimit;
-			if (page > pagecount)
+			if (invalidUsage)
 			{
-				args.Player.SendErrorMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1));
+				args.Player.SendErrorMessage("Invalid usage, proper usage: /who [-i] [pagenumber]");
+				return;
+			}
+			if (displayIdsRequested && !args.Player.Group.HasPermission(Permissions.seeids))
+			{
+				args.Player.SendErrorMessage("You don't have the required permission to list player ids.");
 				return;
 			}
 
-			//Display the current page and the number of pages.
-			args.Player.SendSuccessMessage(string.Format("Players: {0}/{1}",
-												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-			args.Player.SendSuccessMessage(string.Format("Current players page {0}/{1}:", page + 1, pagecount + 1));
-
-			//Add up to pagelimit names to a list
-			var nameslist = new List<string>();
-			for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < playerList.Count; i++)
-			{
-				nameslist.Add(playerList[i]);
-			}
-
-			//convert the list to an array for joining
-			var names = nameslist.ToArray();
-			for (int i = 0; i < names.Length; i += perline)
-			{
-				args.Player.SendInfoMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)));
-			}
-
-			if (page < pagecount)
-			{
-				args.Player.SendInfoMessage(string.Format("Type /who {0} for more players.", (page + 2)));
-			}
+			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+			PaginationTools.SendPage(
+				args.Player, pageNumber, TShock.Utils.GetPlayers(displayIdsRequested), new PaginationTools.Settings 
+				{
+					IncludeHeader = false,
+					FooterFormat = string.Format("Type /who {0}{{0}} for more.", displayIdsRequested ? "-i " : string.Empty)
+				}
+			);
 		}
 
 		private static void AuthToken(CommandArgs args)
