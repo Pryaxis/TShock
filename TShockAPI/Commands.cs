@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -68,7 +69,19 @@ namespace TShockAPI
         public bool AllowServer { get; set; }
 		public bool DoLog { get; set; }
 		public List<string> Permissions { get; protected set; }
-		private CommandDelegate command;
+
+		private CommandDelegate commandDelegate;
+		public CommandDelegate CommandDelegate
+		{
+			get { return commandDelegate; }
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException();
+
+				commandDelegate = value;
+			}
+	 	}
 
 		public Command(List<string> permissionsneeded, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
@@ -84,11 +97,13 @@ namespace TShockAPI
 
 		public Command(CommandDelegate cmd, params string[] names)
 		{
+			if (cmd == null)
+				throw new ArgumentNullException("cmd");
 			if (names == null || names.Length < 1)
-				throw new NotSupportedException();
+				throw new ArgumentException("names");
 			Permissions = new List<string>();
 			Names = new List<string>(names);
-			command = cmd;
+			CommandDelegate = cmd;
 			AllowServer = true;
 			DoLog = true;
 		}
@@ -100,7 +115,7 @@ namespace TShockAPI
 
 			try
 			{
-				command(new CommandArgs(msg, ply, parms));
+				CommandDelegate(new CommandArgs(msg, ply, parms));
 			}
 			catch (Exception e)
 			{
@@ -132,27 +147,35 @@ namespace TShockAPI
 	public static class Commands
 	{
 		public static List<Command> ChatCommands = new List<Command>();
+		public static ReadOnlyCollection<Command> TShockCommands = new ReadOnlyCollection<Command>(new List<Command>());
 
 		private delegate void AddChatCommand(string permission, CommandDelegate command, params string[] names);
 
 		public static void InitCommands()
 		{
-			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
-            ChatCommands.Add(new Command(AuthToken, "auth") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.home, Home, "home") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.spawn, Spawn, "spawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
+			List<Command> tshockCommands = new List<Command>(100);
+			Action<Command> add2 = (cmd) => 
+			{
+				tshockCommands.Add(cmd);
+				ChatCommands.Add(cmd);
+			};
+			AddChatCommand add = (p, c, n) => add2(new Command(p, c, n));
+
+			add2(new Command(AuthToken, "auth") { AllowServer = false });
+			add2(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
+			add2(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
+			add2(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
+			add2(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
+			add2(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
+			add2(new Command(Permissions.home, Home, "home") { AllowServer = false });
+			add2(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
+			add2(new Command(Permissions.spawn, Spawn, "spawn") { AllowServer = false });
+			add2(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
+			add2(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
+			add2(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
 		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.ban, Ban, "ban");
@@ -230,6 +253,8 @@ namespace TShockAPI
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 		    //add(null, TestCallbackCommand, "test");
+
+			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
