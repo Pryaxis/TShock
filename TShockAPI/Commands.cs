@@ -407,7 +407,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} <password>", TShock.Config.AllowLoginAnyUsername ? " " : " [username]"));
+				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} <password>", TShock.Config.AllowLoginAnyUsername ? " [username]" : " "));
 				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
