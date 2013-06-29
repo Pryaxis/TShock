@@ -3046,10 +3046,14 @@ namespace TShockAPI
 			var cmdlist = new List<Command>();
 			for (int j = 0; j < ChatCommands.Count; j++)
 			{
-				if (ChatCommands[j].CanRun(args.Player))
-				{
-					cmdlist.Add(ChatCommands[j]);
-				}
+				Command chatCommand = ChatCommands[j];
+				if (!chatCommand.CanRun(args.Player))
+					continue;
+				// Don't list the /auth command if it's currently useless.
+				if (chatCommand.Name == "auth" && TShock.AuthToken == 0)
+					continue;
+
+				cmdlist.Add(ChatCommands[j]);
 			}
 			var sb = new StringBuilder();
 			if (cmdlist.Count > (15*(page - 1)))
