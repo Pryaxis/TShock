@@ -742,6 +742,7 @@ namespace TShockAPI
 		public static void WorldInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("World name: " + Main.worldName);
+			args.Player.SendInfoMessage("World size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
 			args.Player.SendInfoMessage("World ID: " + Main.worldID);
 		}
 
