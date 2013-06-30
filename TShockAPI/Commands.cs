@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -68,7 +69,19 @@ namespace TShockAPI
         public bool AllowServer { get; set; }
 		public bool DoLog { get; set; }
 		public List<string> Permissions { get; protected set; }
-		private CommandDelegate command;
+
+		private CommandDelegate commandDelegate;
+		public CommandDelegate CommandDelegate
+		{
+			get { return commandDelegate; }
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException();
+
+				commandDelegate = value;
+			}
+	 	}
 
 		public Command(List<string> permissionsneeded, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
@@ -84,11 +97,13 @@ namespace TShockAPI
 
 		public Command(CommandDelegate cmd, params string[] names)
 		{
+			if (cmd == null)
+				throw new ArgumentNullException("cmd");
 			if (names == null || names.Length < 1)
-				throw new NotSupportedException();
+				throw new ArgumentException("names");
 			Permissions = new List<string>();
 			Names = new List<string>(names);
-			command = cmd;
+			CommandDelegate = cmd;
 			AllowServer = true;
 			DoLog = true;
 		}
@@ -100,7 +115,7 @@ namespace TShockAPI
 
 			try
 			{
-				command(new CommandArgs(msg, ply, parms));
+				CommandDelegate(new CommandArgs(msg, ply, parms));
 			}
 			catch (Exception e)
 			{
@@ -132,27 +147,35 @@ namespace TShockAPI
 	public static class Commands
 	{
 		public static List<Command> ChatCommands = new List<Command>();
+		public static ReadOnlyCollection<Command> TShockCommands = new ReadOnlyCollection<Command>(new List<Command>());
 
 		private delegate void AddChatCommand(string permission, CommandDelegate command, params string[] names);
 
 		public static void InitCommands()
 		{
-			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
-            ChatCommands.Add(new Command(AuthToken, "auth") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.home, Home, "home") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.spawn, Spawn, "spawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
+			List<Command> tshockCommands = new List<Command>(100);
+			Action<Command> add2 = (cmd) => 
+			{
+				tshockCommands.Add(cmd);
+				ChatCommands.Add(cmd);
+			};
+			AddChatCommand add = (p, c, n) => add2(new Command(p, c, n));
+
+			add2(new Command(AuthToken, "auth") { AllowServer = false });
+			add2(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
+			add2(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
+			add2(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
+			add2(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
+			add2(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
+			add2(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
+			add2(new Command(Permissions.home, Home, "home") { AllowServer = false });
+			add2(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
+			add2(new Command(Permissions.spawn, Spawn, "spawn") { AllowServer = false });
+			add2(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
+			add2(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
+			add2(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
 		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.ban, Ban, "ban");
@@ -230,6 +253,8 @@ namespace TShockAPI
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 		    //add(null, TestCallbackCommand, "test");
+
+			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -3046,10 +3071,14 @@ namespace TShockAPI
 			var cmdlist = new List<Command>();
 			for (int j = 0; j < ChatCommands.Count; j++)
 			{
-				if (ChatCommands[j].CanRun(args.Player))
-				{
-					cmdlist.Add(ChatCommands[j]);
-				}
+				Command chatCommand = ChatCommands[j];
+				if (!chatCommand.CanRun(args.Player))
+					continue;
+				// Don't list the /auth command if it's currently useless.
+				if (chatCommand.Name == "auth" && TShock.AuthToken == 0)
+					continue;
+
+				cmdlist.Add(ChatCommands[j]);
 			}
 			var sb = new StringBuilder();
 			if (cmdlist.Count > (15*(page - 1)))
@@ -3085,59 +3114,46 @@ namespace TShockAPI
 
 		private static void ListConnectedPlayers(CommandArgs args)
 		{
-			//How many players per page
-			const int pagelimit = 15;
-			//How many players per line
-			const int perline = 5;
-			//Pages start at 0 but are displayed and parsed at 1
-			int page = 0;
+			bool invalidUsage = (args.Parameters.Count > 2);
 
-
-			if (args.Parameters.Count > 0)
+			bool displayIdsRequested = false;
+			int pageNumber = 1;
+			if (!invalidUsage) 
 			{
-				if (!int.TryParse(args.Parameters[0], out page) || page < 1)
+				foreach (string parameter in args.Parameters)
 				{
-					args.Player.SendErrorMessage(string.Format("Invalid page number ({0})", page));
-					return;
+					if (parameter.Equals("-i", StringComparison.InvariantCultureIgnoreCase))
+					{
+						displayIdsRequested = true;
+						continue;
+					}
+
+					if (!int.TryParse(parameter, out pageNumber))
+					{
+						invalidUsage = true;
+						break;
+					}
 				}
-				page--; //Substract 1 as pages are parsed starting at 1 and not 0
 			}
-
-			var playerList = args.Player.Group.HasPermission(Permissions.seeids)
-								 ? TShock.Utils.GetPlayers(true)
-								 : TShock.Utils.GetPlayers(false);
-
-			//Check if they are trying to access a page that doesn't exist.
-			int pagecount = playerList.Count / pagelimit;
-			if (page > pagecount)
+			if (invalidUsage)
 			{
-				args.Player.SendErrorMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1));
+				args.Player.SendErrorMessage("Invalid usage, proper usage: /who [-i] [pagenumber]");
+				return;
+			}
+			if (displayIdsRequested && !args.Player.Group.HasPermission(Permissions.seeids))
+			{
+				args.Player.SendErrorMessage("You don't have the required permission to list player ids.");
 				return;
 			}
 
-			//Display the current page and the number of pages.
-			args.Player.SendSuccessMessage(string.Format("Players: {0}/{1}",
-												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-			args.Player.SendSuccessMessage(string.Format("Current players page {0}/{1}:", page + 1, pagecount + 1));
-
-			//Add up to pagelimit names to a list
-			var nameslist = new List<string>();
-			for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < playerList.Count; i++)
-			{
-				nameslist.Add(playerList[i]);
-			}
-
-			//convert the list to an array for joining
-			var names = nameslist.ToArray();
-			for (int i = 0; i < names.Length; i += perline)
-			{
-				args.Player.SendInfoMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)));
-			}
-
-			if (page < pagecount)
-			{
-				args.Player.SendInfoMessage(string.Format("Type /who {0} for more players.", (page + 2)));
-			}
+			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+			PaginationTools.SendPage(
+				args.Player, pageNumber, TShock.Utils.GetPlayers(displayIdsRequested), new PaginationTools.Settings 
+				{
+					IncludeHeader = false,
+					FooterFormat = string.Format("Type /who {0}{{0}} for more.", displayIdsRequested ? "-i " : string.Empty)
+				}
+			);
 		}
 
 		private static void AuthToken(CommandArgs args)
