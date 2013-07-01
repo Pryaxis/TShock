@@ -18,10 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Streams;
 using System.Linq;
 using System.Text;
+using TShockAPI.DB;
 using Terraria;
 using TShockAPI.Net;
 
@@ -1685,18 +1687,63 @@ namespace TShockAPI
 
             if (args.Player.AwaitingName)
             {
-                var protectedregions = TShock.Regions.InAreaRegionName(tileX, tileY);
-                if (protectedregions.Count == 0)
+                Debug.Assert(args.Player.AwaitingNameParameters != null);
+
+                bool includeUnprotected = false;
+                bool includeZIndexes = false;
+                bool persistentMode = false;
+                foreach (string parameter in args.Player.AwaitingNameParameters)
                 {
-                    args.Player.SendMessage("Region is not protected", Color.Yellow);
+                    if (parameter.Equals("-u", StringComparison.InvariantCultureIgnoreCase))
+                        includeUnprotected = true;
+                    if (parameter.Equals("-z", StringComparison.InvariantCultureIgnoreCase))
+                        includeZIndexes = true;
+                    if (parameter.Equals("-p", StringComparison.InvariantCultureIgnoreCase))
+                        persistentMode = true;
+                }
+
+                List<string> outputRegions = new List<string>();
+                foreach (Region region in TShock.Regions.Regions.OrderBy(r => r.Z).Reverse())
+                {
+                    if (!includeUnprotected && !region.DisableBuild)
+                        continue;
+                    if (tileX < region.Area.Left || tileX > region.Area.Right)
+                        continue;
+                    if (tileY < region.Area.Top || tileY > region.Area.Bottom)
+                        continue;
+
+                    string format = "{1}";
+                    if (includeZIndexes)
+                        format = "{1} (z:{0})";
+
+                    outputRegions.Add(string.Format(format, region.Z, region.Name));
+                }
+                
+                if (outputRegions.Count == 0)
+                {
+                    if (includeUnprotected)
+                        args.Player.SendMessage("There are no regions at this point.", Color.Yellow);
+                    else
+                        args.Player.SendMessage("There are no regions at this point or they are not protected.", Color.Yellow);
                 }
                 else
                 {
-                    string regionlist = string.Join(",", protectedregions.ToArray());
-                    args.Player.SendMessage("Region Name(s): " + regionlist, Color.Yellow);
+                    if (includeUnprotected)
+                        args.Player.SendSuccessMessage("Regions at this point:");
+                    else
+                        args.Player.SendSuccessMessage("Protected regions at this point:");
+
+                    foreach (string line in PaginationTools.BuildLinesFromTerms(outputRegions))
+                        args.Player.SendMessage(line, Color.White);
                 }
+
+                if (!persistentMode)
+                {
+                  args.Player.AwaitingName = false;
+                  args.Player.AwaitingNameParameters = null;
+                }
+                
                 args.Player.SendTileSquare(tileX, tileY);
-                args.Player.AwaitingName = false;
                 return true;
             }
 

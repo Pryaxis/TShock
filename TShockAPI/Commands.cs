@@ -2577,6 +2577,7 @@ namespace TShockAPI
                         {
                             args.Player.SendMessage("Hit a block to get the name of the region", Color.Yellow);
                             args.Player.AwaitingName = true;
+                            args.Player.AwaitingNameParameters = args.Parameters.Skip(1).ToArray();
                         }
                         break;
                     }
@@ -3026,7 +3027,7 @@ namespace TShockAPI
                           "clear - Clears the temporary region points.",
                           "define [name] - Defines the region with the given name.",
                           "delete [name] - Deletes the given region.",
-                          "name - Shows the name of the region at the given point.",
+                          "name [-u][-z][-p] - Shows the name of the region at the given point.",
                           "list - Lists all regions.",
                           "resize [region] [u/d/l/r] [amount] - Resizes a region.",
                           "allow [user] [region] - Allows a user to a region.",

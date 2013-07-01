@@ -121,6 +121,8 @@ namespace TShockAPI
 
 		public bool AwaitingName { get; set; }
 
+		public string[] AwaitingNameParameters { get; set; }
+
         /// <summary>
         /// The last time a player broke a grief check.
         /// </summary>
