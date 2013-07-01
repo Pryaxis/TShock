@@ -2819,64 +2819,26 @@ namespace TShockAPI
                     break;
                 case "list":
                     {
-                        //How many regions per page
-                        const int pagelimit = 15;
-                        //How many regions per line
-                        const int perline = 5;
-                        //Pages start at 0 but are displayed and parsed at 1
-                        int page = 0;
+                      int pageNumber;
+                      if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+                        return;
 
+                      List<string> regionNames = new List<string>(TShock.Regions.Regions.Count);
+                      regionNames.AddRange(
+                        TShock.Regions.Regions.Where(r => r.WorldID == Main.worldID.ToString()).Select(r => r.Name)
+                      );
 
-                        if (args.Parameters.Count > 1)
+                      PaginationTools.SendPage(
+                        args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(regionNames), 
+                        new PaginationTools.Settings 
                         {
-                            if (!int.TryParse(args.Parameters[1], out page) || page < 1)
-                            {
-                                args.Player.SendMessage(string.Format("Invalid page number ({0})", page), Color.Red);
-                                return;
-                            }
-                            page--; //Substract 1 as pages are parsed starting at 1 and not 0
+                          HeaderFormat = "List of Regions ({0}/{1})",
+                          FooterFormat = "Type /region list {0} for more.",
+                          NothingToDisplayString = "There are currently no regions defined."
                         }
+                      );
 
-                        var regions = TShock.Regions.ListAllRegions(Main.worldID.ToString());
-
-                        // Are there even any regions to display?
-                        if (regions.Count == 0)
-                        {
-                            args.Player.SendMessage("There are currently no regions defined.", Color.Red);
-                            return;
-                        }
-
-                        //Check if they are trying to access a page that doesn't exist.
-                        int pagecount = regions.Count / pagelimit;
-                        if (page > pagecount)
-                        {
-                            args.Player.SendMessage(string.Format("Page number exceeds pages ({0}/{1})", page + 1, pagecount + 1), Color.Red);
-                            return;
-                        }
-
-                        //Display the current page and the number of pages.
-                        args.Player.SendMessage(string.Format("Current Regions ({0}/{1}):", page + 1, pagecount + 1), Color.Green);
-
-                        //Add up to pagelimit names to a list
-                        var nameslist = new List<string>();
-                        for (int i = (page * pagelimit); (i < ((page * pagelimit) + pagelimit)) && i < regions.Count; i++)
-                        {
-                            nameslist.Add(regions[i].Name);
-                        }
-
-                        //convert the list to an array for joining
-                        var names = nameslist.ToArray();
-                        for (int i = 0; i < names.Length; i += perline)
-                        {
-                            args.Player.SendMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)), Color.Yellow);
-                        }
-
-                        if (page < pagecount)
-                        {
-                            args.Player.SendMessage(string.Format("Type /region list {0} for more regions.", (page + 2)), Color.Yellow);
-                        }
-
-                        break;
+                      break;
                     }
                 case "info":
                     {
