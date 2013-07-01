@@ -2577,6 +2577,7 @@ namespace TShockAPI
                         {
                             args.Player.SendMessage("Hit a block to get the name of the region", Color.Yellow);
                             args.Player.AwaitingName = true;
+                            args.Player.AwaitingNameParameters = args.Parameters.Skip(1).ToArray();
                         }
                         break;
                     }
@@ -2592,7 +2593,7 @@ namespace TShockAPI
                         }
                         else
                         {
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region set [1/2]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region set <1/2>", Color.Red);
                         }
                         break;
                     }
@@ -2626,7 +2627,7 @@ namespace TShockAPI
                             }
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region define [name]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region define <name>", Color.Red);
                         break;
                     }
                 case "protect":
@@ -2649,10 +2650,10 @@ namespace TShockAPI
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect <name> <true/false>", Color.Red);
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect [name] [true/false]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region protect <name> <true/false>", Color.Red);
                         break;
                     }
                 case "delete":
@@ -2666,7 +2667,7 @@ namespace TShockAPI
                                 args.Player.SendMessage("Could not find specified region", Color.Red);
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete [name]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete <name>", Color.Red);
                         break;
                     }
                 case "clear":
@@ -2710,7 +2711,7 @@ namespace TShockAPI
                             }
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [name] [region]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow <name> <region>", Color.Red);
                         break;
                     }
                 case "remove":
@@ -2745,7 +2746,7 @@ namespace TShockAPI
                         }
                     }
                     else
-                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region remove [name] [region]", Color.Red);
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region remove <name> <region>", Color.Red);
                     break;
                 case "allowg":
                     {
@@ -2780,7 +2781,7 @@ namespace TShockAPI
                             }
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allow [group] [region]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region allowg <group> <region>", Color.Red);
                         break;
                     }
                 case "removeg":
@@ -2815,7 +2816,7 @@ namespace TShockAPI
                         }
                     }
                     else
-                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region removeg [group] [region]", Color.Red);
+                        args.Player.SendMessage("Invalid syntax! Proper syntax: /region removeg <group> <region>", Color.Red);
                     break;
                 case "list":
                     {
@@ -2844,16 +2845,27 @@ namespace TShockAPI
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            string regionName = args.Parameters[1];
-                            Region region = TShock.Regions.GetRegionByName(regionName);
-                            if (region == null)
+                            if (args.Parameters.Count > 4)
                             {
-                                args.Player.SendErrorMessage("Region {0} does not exist.", regionName);
+                                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info <region> [-d] [page]");
                                 break;
                             }
 
+                            string regionName = args.Parameters[1];
+                            bool displayBoundaries = args.Parameters.Skip(2).Any(
+                                p => p.Equals("-d", StringComparison.InvariantCultureIgnoreCase)
+                            );
+
+                            Region region = TShock.Regions.GetRegionByName(regionName);
+                            if (region == null)
+                            {
+                                args.Player.SendErrorMessage("Region \"{0}\" does not exist.", regionName);
+                                break;
+                            }
+
+                            int pageNumberIndex = displayBoundaries ? 3 : 2;
                             int pageNumber;
-                            if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out pageNumber))
+                            if (!PaginationTools.TryParsePageNumber(args.Parameters, pageNumberIndex, args.Player, out pageNumber))
                                 break;
 
                             List<string> lines = new List<string>
@@ -2900,10 +2912,42 @@ namespace TShockAPI
                                     FooterFormat = "Type /region info {0} for more information."
                                 }
                             );
+
+                            if (displayBoundaries)
+                            {
+                                Rectangle regionArea = region.Area;
+                                foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                                {
+                                    // Preferring dotted lines as those should easily be distinguishable from actual wires.
+                                    if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                    {
+                                        // Could be improved by sending raw tile data to the client instead but not really 
+                                        // worth the effort as chances are very low that overwriting the wire for a few 
+                                        // nanoseconds will cause much trouble.
+                                        Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+                                        bool oldWireState = tile.wire;
+                                        tile.wire = true;
+
+                                        try {
+                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+                                        } finally {
+                                            tile.wire = oldWireState;
+                                        }
+                                    }
+                                }
+                                
+                                new Timer((dummy) => {
+                                    foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                                        if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+                                    },
+                                    null, 5000, Timeout.Infinite
+                                );
+                            }
                         }
                         else
                         {
-                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info [name]");
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info <name>");
                         }
 
                         break;
@@ -2922,10 +2966,10 @@ namespace TShockAPI
                                     args.Player.SendMessage("Could not find specified region", Color.Red);
                             }
                             else
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region z <name> <#>", Color.Red);
                         }
                         else
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region z [name] [#]", Color.Red);
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region z <name> <#>", Color.Red);
                         break;
                     }
                 case "resize":
@@ -2975,13 +3019,13 @@ namespace TShockAPI
                             }
                             else
                             {
-                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]",
+                                args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>",
                                                         Color.Red);
                             }
                         }
                         else
                         {
-                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize [regionname] [u/d/l/r] [amount]1",
+                            args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>",
                                                     Color.Red);
                         }
                         break;
@@ -2995,7 +3039,7 @@ namespace TShockAPI
                         }
                         if (args.Parameters.Count <= 1)
                         {
-                          args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region tp [region].");
+                          args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region tp <region>.");
                           break;
                         }
 
@@ -3022,23 +3066,23 @@ namespace TShockAPI
                           return;
                         
                         List<string> lines = new List<string> {
-                          "set [1/2] - Sets the temporary region points.",
+                          "set <1/2> - Sets the temporary region points.",
                           "clear - Clears the temporary region points.",
-                          "define [name] - Defines the region with the given name.",
-                          "delete [name] - Deletes the given region.",
-                          "name - Shows the name of the region at the given point.",
+                          "define <name> - Defines the region with the given name.",
+                          "delete <name> - Deletes the given region.",
+                          "name [-u][-z][-p] - Shows the name of the region at the given point.",
                           "list - Lists all regions.",
-                          "resize [region] [u/d/l/r] [amount] - Resizes a region.",
-                          "allow [user] [region] - Allows a user to a region.",
-                          "remove [user] [region] - Removes a user from a region.",
-                          "allowg [group] [region] - Allows a user group to a region.",
-                          "removeg [group] [region] - Removes a user group from a region.",
-                          "info [region] - Displays several information about the given region.",
-                          "protect [name] [true/false] - Sets whether the tiles inside the region are protected or not.",
-                          "z [name] [#] - Sets the z-order of the region.",
+                          "resize <region> <u/d/l/r> <amount> - Resizes a region.",
+                          "allow <user> <region> - Allows a user to a region.",
+                          "remove <user> <region> - Removes a user from a region.",
+                          "allowg <group> <region> - Allows a user group to a region.",
+                          "removeg <group> <region> - Removes a user group from a region.",
+                          "info <region> [-d] - Displays several information about the given region.",
+                          "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not.",
+                          "z <name> <#> - Sets the z-order of the region.",
                         };
                         if (args.Player.Group.HasPermission(Permissions.tp))
-                          lines.Add("tp [region] - Teleports you to the given region's center.");
+                          lines.Add("tp <region> - Teleports you to the given region's center.");
 
                         PaginationTools.SendPage(
                           args.Player, pageNumber, lines, 

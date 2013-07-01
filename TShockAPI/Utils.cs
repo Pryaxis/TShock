@@ -23,6 +23,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using TShockAPI.DB;
 using Terraria;
 
 namespace TShockAPI
@@ -840,6 +841,26 @@ namespace TShockAPI
 					returnstr[i] = ' ';
 			}
 			return new string(returnstr);
+		}
+
+		/// <summary>
+		/// Enumerates boundary points of the given region's rectangle.
+		/// </summary>
+		/// <param name="regionArea">The region's area to enumerate through.</param>
+		/// <returns>The enumerated boundary points.</returns>
+		public IEnumerable<Point> EnumerateRegionBoundaries(Rectangle regionArea)
+		{
+			for (int x = 0; x < regionArea.Width + 1; x++)
+			{
+				yield return new Point(regionArea.Left + x, regionArea.Top);
+				yield return new Point(regionArea.Left + x, regionArea.Bottom);
+			}
+
+			for (int y = 1; y < regionArea.Height; y++)
+			{
+				yield return new Point(regionArea.Left, regionArea.Top + y);
+				yield return new Point(regionArea.Right, regionArea.Top + y);
+			}
 		}
 	}
 }
