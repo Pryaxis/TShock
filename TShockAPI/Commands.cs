@@ -3131,7 +3131,8 @@ namespace TShockAPI
 
 			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
 			PaginationTools.SendPage(
-				args.Player, pageNumber, TShock.Utils.GetPlayers(displayIdsRequested), new PaginationTools.Settings 
+				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(TShock.Utils.GetPlayers(displayIdsRequested)), 
+				new PaginationTools.Settings 
 				{
 					IncludeHeader = false,
 					FooterFormat = string.Format("Type /who {0}{{0}} for more.", displayIdsRequested ? "-i " : string.Empty)
