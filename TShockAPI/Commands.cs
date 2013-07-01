@@ -2845,16 +2845,27 @@ namespace TShockAPI
                     {
                         if (args.Parameters.Count > 1)
                         {
-                            string regionName = args.Parameters[1];
-                            Region region = TShock.Regions.GetRegionByName(regionName);
-                            if (region == null)
+                            if (args.Parameters.Count > 4)
                             {
-                                args.Player.SendErrorMessage("Region {0} does not exist.", regionName);
+                                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info [region] [-d] [page]");
                                 break;
                             }
 
+                            string regionName = args.Parameters[1];
+                            bool displayBoundaries = args.Parameters.Skip(2).Any(
+                                p => p.Equals("-d", StringComparison.InvariantCultureIgnoreCase)
+                            );
+
+                            Region region = TShock.Regions.GetRegionByName(regionName);
+                            if (region == null)
+                            {
+                                args.Player.SendErrorMessage("Region \"{0}\" does not exist.", regionName);
+                                break;
+                            }
+
+                            int pageNumberIndex = displayBoundaries ? 3 : 2;
                             int pageNumber;
-                            if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out pageNumber))
+                            if (!PaginationTools.TryParsePageNumber(args.Parameters, pageNumberIndex, args.Player, out pageNumber))
                                 break;
 
                             List<string> lines = new List<string>
@@ -2901,6 +2912,38 @@ namespace TShockAPI
                                     FooterFormat = "Type /region info {0} for more information."
                                 }
                             );
+
+                            if (displayBoundaries)
+                            {
+                                Rectangle regionArea = region.Area;
+                                foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                                {
+                                    // Preferring dotted lines as those should easily be distinguishable from actual wires.
+                                    if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                    {
+                                        // Could be improved by sending raw tile data to the client instead but not really 
+                                        // worth the effort as chances are very low that overwriting the wire for a few 
+                                        // nanoseconds will cause much trouble.
+                                        Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+                                        bool oldWireState = tile.wire;
+                                        tile.wire = true;
+
+                                        try {
+                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+                                        } finally {
+                                            tile.wire = oldWireState;
+                                        }
+                                    }
+                                }
+                                
+                                new Timer((dummy) => {
+                                    foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                                        if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+                                    },
+                                    null, 5000, Timeout.Infinite
+                                );
+                            }
                         }
                         else
                         {
@@ -3034,7 +3077,7 @@ namespace TShockAPI
                           "remove [user] [region] - Removes a user from a region.",
                           "allowg [group] [region] - Allows a user group to a region.",
                           "removeg [group] [region] - Removes a user group from a region.",
-                          "info [region] - Displays several information about the given region.",
+                          "info [region] [-d] - Displays several information about the given region.",
                           "protect [name] [true/false] - Sets whether the tiles inside the region are protected or not.",
                           "z [name] [#] - Sets the z-order of the region.",
                         };
