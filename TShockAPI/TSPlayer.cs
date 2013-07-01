@@ -160,14 +160,20 @@ namespace TShockAPI
 		public string UserAccountName { get; set; }
 
         /// <summary>
-        /// Unused can be removed.
+        /// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
+        /// from logging in because of SSI.
         /// </summary>
-		public bool HasBeenSpammedWithBuildMessage;
+		public bool LoginFailsBySsi { get; set; }
 
         /// <summary>
         /// Whether the player is logged in or not.
         /// </summary>
 		public bool IsLoggedIn;
+
+        /// <summary>
+        /// Whether the player has sent their whole inventory to the server while connecting.
+        /// </summary>
+		public bool HasSentInventory { get; set; }
 
         /// <summary>
         /// The player's user id( from the db ).

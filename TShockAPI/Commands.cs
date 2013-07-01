@@ -438,7 +438,6 @@ namespace TShockAPI
 			}
 			try
 			{
-                // TODO: Is this needed? It seems to be an unreachable case
 				if (user == null)
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
@@ -457,11 +456,13 @@ namespace TShockAPI
 						}
 						else if (!TShock.CheckInventory(args.Player))
 						{
+							args.Player.LoginFailsBySsi = true;
 							args.Player.SendErrorMessage("Login failed. Please fix the above errors then /login again.");
 							args.Player.IgnoreActionsForClearingTrashCan = true;
 							return;
 						}
 					}
+					args.Player.LoginFailsBySsi = false;
 
 					if (group.HasPermission(Permissions.ignorestackhackdetection))
 						args.Player.IgnoreActionsForCheating = "none";
@@ -1180,29 +1181,49 @@ namespace TShockAPI
 
 		public static void OverrideSSI( CommandArgs args )
 		{
+			if (!TShock.Config.ServerSideInventory)
+			{
+				args.Player.SendErrorMessage("Server Side Inventory is disabled.");
+				return;
+			}
 			if( args.Parameters.Count < 1 )
 			{
-				args.Player.SendErrorMessage("Correct usage: /overridessi(/ossi) <player name>");
+				args.Player.SendErrorMessage("Correct usage: /overridessi|/ossi <player name>");
 				return;
 			}
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
-			if( players.Count < 1 )
+			string playerNameToMatch = string.Join(" ", args.Parameters);
+			var matchedPlayers = TShock.Utils.FindPlayer(playerNameToMatch);
+			if( matchedPlayers.Count < 1 )
 			{
-				args.Player.SendErrorMessage("No players match " + args.Parameters[0] + "!");
+				args.Player.SendErrorMessage("No players matched \"{0}\".", playerNameToMatch);
+				return;
 			}
-			else if( players.Count > 1 )
+			else if( matchedPlayers.Count > 1 )
 			{
-				args.Player.SendErrorMessage( players.Count + " players matched " + args.Parameters[0] + "!");
+				args.Player.SendErrorMessage("{0} players matched \"{1}\".", matchedPlayers.Count, playerNameToMatch);
+				return;
 			}
-			else if (TShock.Config.ServerSideInventory)
+
+			TSPlayer matchedPlayer = matchedPlayers[0];
+			if (matchedPlayer.IsLoggedIn)
 			{
-				if( players[0] != null && players[0].IsLoggedIn && !players[0].IgnoreActionsForClearingTrashCan)
-				{
-					args.Player.SendSuccessMessage( players[0].Name + " has been exempted and updated.");
-					TShock.InventoryDB.InsertPlayerData(players[0]);
-				}
+				args.Player.SendErrorMessage("Player \"{0}\" is already logged in.", matchedPlayer.Name);
+				return;
 			}
+			if (!matchedPlayer.LoginFailsBySsi)
+			{
+				args.Player.SendErrorMessage("Player \"{0}\" has to perform a /login attempt first.", matchedPlayer.Name);
+				return;
+			}
+			if (matchedPlayer.IgnoreActionsForClearingTrashCan)
+			{
+				args.Player.SendErrorMessage("Player \"{0}\" has to reconnect first.", matchedPlayer.Name);
+				return;
+			}
+
+			TShock.InventoryDB.InsertPlayerData(matchedPlayer);
+			args.Player.SendSuccessMessage("SSI of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
         private static void ForceXmas(CommandArgs args)

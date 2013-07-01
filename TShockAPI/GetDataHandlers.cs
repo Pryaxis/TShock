@@ -1189,6 +1189,14 @@ namespace TShockAPI
 			byte prefix = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
 
+			// Players send a slot update packet for each inventory slot right after they've joined.
+			bool bypassTrashCanCheck = false;
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.maxNetInventory)
+			{
+				args.Player.HasSentInventory = true;
+				bypassTrashCanCheck = true;
+			}
+
 			if (OnPlayerSlot(plr, slot, stack, prefix, type))
 				return true;
 
@@ -1202,6 +1210,7 @@ namespace TShockAPI
 				return true;
 			}
 
+			// Garabage? Or will it cause some internal initialization or whatever?
 			var item = new Item();
 			item.netDefaults(type);
 			item.Prefix(prefix);
@@ -1209,6 +1218,13 @@ namespace TShockAPI
 			if (args.Player.IsLoggedIn)
 			{
 				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
+			}
+			else if (
+				TShock.Config.ServerSideInventory && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
+				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassinventorychecks)
+			) {
+				// The player might have moved an item to their trash can before they performed a single login attempt yet.
+				args.Player.IgnoreActionsForClearingTrashCan = true;
 			}
 
 			return false;
