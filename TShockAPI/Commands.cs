@@ -3492,58 +3492,86 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /item <item name/id> [item amount] [prefix id/name]");
 				return;
 			}
-			if (args.Parameters[0].Length == 0)
-			{
-				args.Player.SendErrorMessage("Missing an item name/id.");
-				return;
-			}
+
+			int amountParamIndex = -1;
 			int itemAmount = 0;
-			int prefix = 0;
-			if (args.Parameters.Count == 2)
-				int.TryParse(args.Parameters[1], out itemAmount);
-			else if (args.Parameters.Count == 3)
+			for (int i = 1; i < args.Parameters.Count; i++)
 			{
-				int.TryParse(args.Parameters[1], out itemAmount);
-				var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[2]);
-				if (found.Count == 1)
-					prefix = found[0];
+				if (int.TryParse(args.Parameters[i], out itemAmount))
+				{
+					amountParamIndex = i;
+					break;
+				}
 			}
-			var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
-			if (items.Count == 0)
+
+			string itemNameOrId;
+			if (amountParamIndex == -1)
+				itemNameOrId = string.Join(" ", args.Parameters);
+			else
+				itemNameOrId = string.Join(" ", args.Parameters.Take(amountParamIndex));
+
+			Item item;
+			List<Item> matchedItems = TShock.Utils.GetItemByIdOrName(itemNameOrId);
+			if (matchedItems.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid item type!");
+				return;
 			}
-			else if (items.Count > 1)
+			else if (matchedItems.Count > 1)
 			{
-				args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
+				args.Player.SendErrorMessage("More than one item matched:");
+				args.Player.SendErrorMessage(string.Join(", ", matchedItems.Select(i => i.name)));
+				return;
 			}
 			else
 			{
-				var item = items[0];
-				if (item.type >= 1 && item.type < Main.maxItemTypes)
+				item = matchedItems[0];
+			}
+			if (item.type < 1 && item.type >= Main.maxItemTypes)
+			{
+				args.Player.SendErrorMessage("The item type {0} is invalid.", itemNameOrId);
+				return;
+			}
+
+			int prefixId = 0;
+			if (amountParamIndex != -1 && args.Parameters.Count > amountParamIndex + 1)
+			{
+				string prefixidOrName = args.Parameters[amountParamIndex + 1];
+				List<int> matchedPrefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
+				if (matchedPrefixIds.Count > 1) 
 				{
-					if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
-					{
-						if (itemAmount == 0 || itemAmount > item.maxStack)
-							itemAmount = item.maxStack;
-						if (args.Player.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
-						{
-							args.Player.SendSuccessMessage(string.Format("Gave {0} {1}(s).", itemAmount, item.name));
-						}
-						else
-						{
-							args.Player.SendErrorMessage("The item is banned and the config prevents you from spawning banned items.");
-						}
-					}
-					else
-					{
-						args.Player.SendErrorMessage("You don't have free slots!");
-					}
+					args.Player.SendErrorMessage("More than one ({0}) prefixes matched \"{1}\".", matchedPrefixIds.Count, prefixidOrName);
+					return;
+				}
+				else if (matchedPrefixIds.Count == 0) 
+				{
+					args.Player.SendErrorMessage("No prefix matched \"{0}\".", prefixidOrName);
+					return;
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Invalid item type!");
+					prefixId = matchedPrefixIds[0];
 				}
+			}
+
+			if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
+			{
+				if (itemAmount == 0 || itemAmount > item.maxStack)
+					itemAmount = item.maxStack;
+
+				if (args.Player.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefixId))
+				{
+					item.prefix = (byte)prefixId;
+					args.Player.SendSuccessMessage("Gave {0} {1}(s).", itemAmount, item.AffixName());
+				}
+				else
+				{
+					args.Player.SendErrorMessage("The item is banned and the config prevents you from spawning banned items.");
+				}
+			}
+			else
+			{
+				args.Player.SendErrorMessage("Your inventory seems full.");
 			}
 		}
 
