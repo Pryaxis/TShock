@@ -1381,11 +1381,13 @@ namespace TShockAPI
 				        }
 				        else if (!TShock.CheckInventory(args.Player))
 				        {
+                    args.Player.LoginFailsBySsi = true;
 				            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
 				            args.Player.IgnoreActionsForClearingTrashCan = true;
 				            return true;
 				        }
 				    }
+            args.Player.LoginFailsBySsi = false;
 
 				    if (group.HasPermission(Permissions.ignorestackhackdetection))
 				        args.Player.IgnoreActionsForCheating = "none";
