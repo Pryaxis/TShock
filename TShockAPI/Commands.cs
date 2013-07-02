@@ -2843,111 +2843,110 @@ namespace TShockAPI
                     }
                 case "info":
                     {
-                        if (args.Parameters.Count > 1)
+                        if (args.Parameters.Count == 1 || args.Parameters.Count > 4)
                         {
-                            if (args.Parameters.Count > 4)
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info <region> [-d] [page]");
+                            break;
+                        }
+
+                        string regionName = args.Parameters[1];
+                        bool displayBoundaries = args.Parameters.Skip(2).Any(
+                            p => p.Equals("-d", StringComparison.InvariantCultureIgnoreCase)
+                        );
+
+                        Region region = TShock.Regions.GetRegionByName(regionName);
+                        if (region == null)
+                        {
+                            args.Player.SendErrorMessage("Region \"{0}\" does not exist.", regionName);
+                            break;
+                        }
+
+                        int pageNumberIndex = displayBoundaries ? 3 : 2;
+                        int pageNumber;
+                        if (!PaginationTools.TryParsePageNumber(args.Parameters, pageNumberIndex, args.Player, out pageNumber))
+                            break;
+
+                        List<string> lines = new List<string>
+                        {
+                            string.Format("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
+                            string.Concat("Owner: ", region.Owner),
+                            string.Concat("Protected: ", region.DisableBuild.ToString()),
+                        };
+
+                        if (region.AllowedIDs.Count > 0)
+                        {
+                            IEnumerable<string> sharedUsersSelector = region.AllowedIDs.Select(userId => 
                             {
-                                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info <region> [-d] [page]");
-                                break;
-                            }
-
-                            string regionName = args.Parameters[1];
-                            bool displayBoundaries = args.Parameters.Skip(2).Any(
-                                p => p.Equals("-d", StringComparison.InvariantCultureIgnoreCase)
-                            );
-
-                            Region region = TShock.Regions.GetRegionByName(regionName);
-                            if (region == null)
-                            {
-                                args.Player.SendErrorMessage("Region \"{0}\" does not exist.", regionName);
-                                break;
-                            }
-
-                            int pageNumberIndex = displayBoundaries ? 3 : 2;
-                            int pageNumber;
-                            if (!PaginationTools.TryParsePageNumber(args.Parameters, pageNumberIndex, args.Player, out pageNumber))
-                                break;
-
-                            List<string> lines = new List<string>
-                            {
-                                string.Format("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
-                                string.Concat("Owner: ", region.Owner),
-                                string.Concat("Protected: ", region.DisableBuild.ToString()),
-                            };
-
-                            if (region.AllowedIDs.Count > 0)
-                            {
-                                IEnumerable<string> sharedUsersSelector = region.AllowedIDs.Select(userId => 
-                                {
-                                    User user = TShock.Users.GetUserByID(userId);
-                                    if (user != null)
-                                        return user.Name;
-                                    else
-                                        return string.Concat("{ID: ", userId, "}");
-                                });
-                                List<string> extraLines = PaginationTools.BuildLinesFromTerms(sharedUsersSelector.Distinct());
-                                extraLines[0] = "Shared with: " + extraLines[0];
-                                lines.AddRange(extraLines);
-                            }
-                            else
-                            {
-                                lines.Add("Region is not shared with any users.");
-                            }
-
-                            if (region.AllowedGroups.Count > 0)
-                            {
-                                List<string> extraLines = PaginationTools.BuildLinesFromTerms(region.AllowedGroups.Distinct());
-                                extraLines[0] = "Shared with groups: " + extraLines[0];
-                                lines.AddRange(extraLines);
-                            }
-                            else
-                            {
-                                lines.Add("Region is not shared with any groups.");
-                            }
-
-                            PaginationTools.SendPage(
-                                args.Player, pageNumber, lines, new PaginationTools.Settings
-                                {
-                                    HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
-                                    FooterFormat = "Type /region info {0} for more information."
-                                }
-                            );
-
-                            if (displayBoundaries)
-                            {
-                                Rectangle regionArea = region.Area;
-                                foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
-                                {
-                                    // Preferring dotted lines as those should easily be distinguishable from actual wires.
-                                    if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
-                                    {
-                                        // Could be improved by sending raw tile data to the client instead but not really 
-                                        // worth the effort as chances are very low that overwriting the wire for a few 
-                                        // nanoseconds will cause much trouble.
-                                        Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
-                                        bool oldWireState = tile.wire;
-                                        tile.wire = true;
-
-                                        try {
-                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
-                                        } finally {
-                                            tile.wire = oldWireState;
-                                        }
-                                    }
-                                }
-                                
-                                new Timer((dummy) => {
-                                    foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
-                                        if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
-                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
-                                    },
-                                    null, 5000, Timeout.Infinite
-                                );
-                            }
+                                User user = TShock.Users.GetUserByID(userId);
+                                if (user != null)
+                                    return user.Name;
+                                else
+                                    return string.Concat("{ID: ", userId, "}");
+                            });
+                            List<string> extraLines = PaginationTools.BuildLinesFromTerms(sharedUsersSelector.Distinct());
+                            extraLines[0] = "Shared with: " + extraLines[0];
+                            lines.AddRange(extraLines);
                         }
                         else
                         {
-                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region info <name>");
+                            lines.Add("Region is not shared with any users.");
+                        }
+
+                        if (region.AllowedGroups.Count > 0)
+                        {
+                            List<string> extraLines = PaginationTools.BuildLinesFromTerms(region.AllowedGroups.Distinct());
+                            extraLines[0] = "Shared with groups: " + extraLines[0];
+                            lines.AddRange(extraLines);
+                        }
+                        else
+                        {
+                            lines.Add("Region is not shared with any groups.");
+                        }
+
+                        PaginationTools.SendPage(
+                            args.Player, pageNumber, lines, new PaginationTools.Settings
+                            {
+                                HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
+                                FooterFormat = "Type /region info {0} for more information."
+                            }
+                        );
+
+                        if (displayBoundaries)
+                        {
+                            Rectangle regionArea = region.Area;
+                            foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                            {
+                                // Preferring dotted lines as those should easily be distinguishable from actual wires.
+                                if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                {
+                                    // Could be improved by sending raw tile data to the client instead but not really 
+                                    // worth the effort as chances are very low that overwriting the wire for a few 
+                                    // nanoseconds will cause much trouble.
+                                    Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+                                    bool oldWireState = tile.wire;
+                                    tile.wire = true;
+
+                                    try {
+                                        args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+                                    } finally {
+                                        tile.wire = oldWireState;
+                                    }
+                                }
+                            }
+                                
+                            Timer boundaryHideTimer = null;
+                            boundaryHideTimer = new Timer((state) => {
+                                    foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
+                                        if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+                                            args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+
+                                    // ReSharper disable AccessToModifiedClosure
+                                    Debug.Assert(boundaryHideTimer != null);
+                                    boundaryHideTimer.Dispose();
+                                    // ReSharper restore AccessToModifiedClosure
+                                },
+                                null, 5000, Timeout.Infinite
+                            );
                         }
 
                         break;
