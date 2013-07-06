@@ -1807,6 +1807,15 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
+				if (type == 1 && TShock.Config.PreventInvalidPlaceStyle && ((tiletype == 4 && style > 8) ||
+					(tiletype == 13 && style > 4) || (tiletype == 15 && style > 1) || (tiletype == 21 && style > 6) ||
+					(tiletype == 82 && style > 5) || (tiletype == 91 && style > 3) || (tiletype == 105 && style > 42) ||
+					(tiletype == 135 && style > 3) || (tiletype == 139 && style > 12) || (tiletype == 144 && style > 2) ||
+					(tiletype == 149 && style > 2)))
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
 			}
 
 			if (TShock.CheckIgnores(args.Player))
