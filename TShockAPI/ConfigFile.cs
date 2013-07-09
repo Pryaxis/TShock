@@ -236,7 +236,7 @@ namespace TShockAPI
 	    [Description("Prevent banks on SSI.")] public bool DisablePiggybanksOnSSI = false;
 
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
-	        false;
+	        true;
 
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
