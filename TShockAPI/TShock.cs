@@ -571,6 +571,7 @@ namespace TShockAPI
 
             Regions.ReloadAllRegions();
 
+			Lighting.lightMode = 2;
 			StatTracker.CheckIn();
 			FixChestStacks();
 
