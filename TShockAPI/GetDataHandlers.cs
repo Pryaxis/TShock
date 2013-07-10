@@ -1759,22 +1759,54 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (type == 1 || type == 3)
+			byte[] rightClickKill = new byte[] { 4, 13, 33, 49, 50, 128};
+			Item selectedItem = args.TPlayer.inventory[args.TPlayer.selectedItem];
+			if (type == 0 && Main.tile[tileX, tileY].type != 127 && !Main.tileCut[Main.tile[tileX, tileY].type] && !rightClickKill.Contains(Main.tile[tileX, tileY].type))
 			{
-				if (tiletype >= ((type == 1) ? Main.maxTileSets : Main.maxWallTypes))
+				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
+				if (Main.tileAxe[Main.tile[tileX, tileY].type] && selectedItem.axe == 0)
 				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+				// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
+				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && selectedItem.hammer == 0)
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+				// If the tile is a pickaxe tile and they aren't selecting an pickaxe, they're hacking.
+				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && selectedItem.pick == 0)
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+			}
+			else if (type == 2)
+			{
+				// If they aren't selecting an hammer, they're hacking.
+				if (selectedItem.hammer == 0)
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+			}
+			else if (type == 1 || type == 3)
+			{
+				// If they aren't selecting the item which creates the tile or wall, they're hacking.
+				if (tiletype != 127 && tiletype != (type == 1 ? selectedItem.createTile : selectedItem.createWall))
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || tiletype >= (type == 1 ? Main.maxTileSets : Main.maxWallTypes))
+				{
+					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
-					args.Player.SendMessage("You cannot place this tile, server side inventory is enabled.", Color.Red);
-					args.Player.SendTileSquare(tileX, tileY);
-					return true;
-				}
-				if (tiletype == 48 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					TShock.Itembans.ItemIsBanned("Spike", args.Player))
-				{
-					args.Player.Disable("Used banned spikes without permission.");
+					args.Player.SendMessage("You cannot place this tile because server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -1782,7 +1814,7 @@ namespace TShockAPI
 				{
 					if (TShock.Utils.MaxChests())
 					{
-						args.Player.SendMessage("Reached the world's max chest limit, unable to place more.", Color.Red);
+						args.Player.SendMessage("The world's chest limit has been reached - unable to place more.", Color.Red);
 						args.Player.SendTileSquare(tileX, tileY);
 						return true;
 					}
@@ -1793,10 +1825,21 @@ namespace TShockAPI
 						return true;
 					}
 				}
-				if (tiletype == 141 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					TShock.Itembans.ItemIsBanned("Explosives", args.Player))
+			}
+			else if (type == 5)
+			{
+				// If they aren't selecting the wrench, they're hacking.
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 509)
 				{
-					args.Player.Disable("Used banned explosives tile without permission.");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+			}
+			else if (type == 6)
+			{
+				// If they aren't selecting the wire cutter, they're hacking.
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
+				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -2112,17 +2155,18 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!TShock.Config.IgnoreProjUpdate && TShock.CheckProjectilePermission(args.Player, index, type))
+			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
+			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-			if (type == 100)
-					{	//fix for skele prime
-						Log.Debug("Skeletron Prime's death laser ignored for cheat detection..");
-					}
-					else
-					{
-						args.Player.Disable("Does not have projectile permission to update projectile.");
-						args.Player.RemoveProjectile(ident, owner);
-					}
+				if (type == 100)
+				{	//fix for skele prime
+					Log.Debug("Skeletron Prime's death laser ignored for cheat detection..");
+				}
+				else
+				{
+					args.Player.Disable("Does not have projectile permission to update projectile.");
+					args.Player.RemoveProjectile(ident, owner);
+				}
 				return true;
 			}
 
@@ -2141,14 +2185,22 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if ((type ==90) && (TShock.Config.ProjIgnoreShrapnel))// ignore shrapnel
-					{
-						Log.Debug("Ignoring shrapnel per config..");
-					}
-					else
-					{
-						args.Player.ProjectileThreshold++;
-					}
+				if ((type == 90) && (TShock.Config.ProjIgnoreShrapnel))// ignore shrapnel
+				{
+					Log.Debug("Ignoring shrapnel per config..");
+				}
+				else
+				{
+					args.Player.ProjectileThreshold++;
+				}
+			}
+
+			// force all explosives server-side.
+			if (hasPermission && (type == 28 || type == 29 || type == 37))
+			{
+				args.Player.RemoveProjectile(ident, owner);
+				Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
+				return true;
 			}
 
 			return false;
