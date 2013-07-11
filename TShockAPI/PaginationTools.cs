@@ -21,251 +21,296 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TShockAPI {
-  public static class PaginationTools {
-    public delegate Tuple<string, Color> LineFormatterDelegate(object lineData, int lineIndex, int pageNumber);
+namespace TShockAPI
+{
+	public static class PaginationTools
+	{
+		public delegate Tuple<string, Color> LineFormatterDelegate(object lineData, int lineIndex, int pageNumber);
 
-    #region [Nested: Settings Class]
-    public class Settings {
-      public bool IncludeHeader { get; set; }
+		#region [Nested: Settings Class]
+		public class Settings
+		{
+			public bool IncludeHeader { get; set; }
 
-      private string headerFormat;
-      public string HeaderFormat
-      {
-        get { return this.headerFormat; }
-        set
-        {
-          if (value == null)
-            throw new ArgumentNullException();
+			private string headerFormat;
+			public string HeaderFormat
+			{
+				get { return this.headerFormat; }
+				set
+				{
+					if (value == null)
+						throw new ArgumentNullException();
 
-          this.headerFormat = value;
-        }
-      }
+					this.headerFormat = value;
+				}
+			}
 
-      public Color HeaderTextColor { get; set; }
-      public bool IncludeFooter { get; set; }
+			public Color HeaderTextColor { get; set; }
+			public bool IncludeFooter { get; set; }
 
-      private string footerFormat;
-      public string FooterFormat
-      {
-        get { return this.footerFormat; }
-        set
-        {
-          if (value == null)
-            throw new ArgumentNullException();
+			private string footerFormat;
+			public string FooterFormat
+			{
+				get { return this.footerFormat; }
+				set
+				{
+					if (value == null)
+						throw new ArgumentNullException();
 
-          this.footerFormat = value;
-        }
-      }
+					this.footerFormat = value;
+				}
+			}
 
-      public Color FooterTextColor { get; set; }
-      public string NothingToDisplayString { get; set; }
-      public LineFormatterDelegate LineFormatter { get; set; }
-      public Color LineTextColor { get; set; }
+			public Color FooterTextColor { get; set; }
+			public string NothingToDisplayString { get; set; }
+			public LineFormatterDelegate LineFormatter { get; set; }
+			public Color LineTextColor { get; set; }
 
-      private int maxLinesPerPage;
+			private int maxLinesPerPage;
 
-      public int MaxLinesPerPage
-      {
-        get { return this.maxLinesPerPage; }
-        set
-        {
-          if (value <= 0)
-            throw new ArgumentException("The value has to be greater than zero.");
+			public int MaxLinesPerPage
+			{
+				get { return this.maxLinesPerPage; }
+				set
+				{
+					if (value <= 0)
+						throw new ArgumentException("The value has to be greater than zero.");
 
-          this.maxLinesPerPage = value;
-        }
-      }
+					this.maxLinesPerPage = value;
+				}
+			}
 
-      private int pageLimit;
+			private int pageLimit;
 
-      public int PageLimit
-      {
-        get { return this.pageLimit; }
-        set
-        {
-          if (value < 0)
-            throw new ArgumentException("The value has to be greater than or equal to zero.");
+			public int PageLimit
+			{
+				get { return this.pageLimit; }
+				set
+				{
+					if (value < 0)
+						throw new ArgumentException("The value has to be greater than or equal to zero.");
 
-          this.pageLimit = value;
-        }
-      }
+					this.pageLimit = value;
+				}
+			}
 
 
-      public Settings()
-      {
-        this.IncludeHeader = true;
-        this.headerFormat = "Page {0} of {1}";
-        this.HeaderTextColor = Color.Green;
-        this.IncludeFooter = true;
-        this.footerFormat = "Type /<command> {0} for more.";
-        this.FooterTextColor = Color.Yellow;
-        this.NothingToDisplayString = null;
-        this.LineFormatter = null;
-        this.LineTextColor = Color.White;
-        this.maxLinesPerPage = 4;
-        this.pageLimit = 0;
-      }
-    }
-    #endregion
+			public Settings()
+			{
+				this.IncludeHeader = true;
+				this.headerFormat = "Page {0} of {1}";
+				this.HeaderTextColor = Color.Green;
+				this.IncludeFooter = true;
+				this.footerFormat = "Type /<command> {0} for more.";
+				this.FooterTextColor = Color.Yellow;
+				this.NothingToDisplayString = null;
+				this.LineFormatter = null;
+				this.LineTextColor = Color.White;
+				this.maxLinesPerPage = 4;
+				this.pageLimit = 0;
+			}
+		}
+		#endregion
 
-    public static void SendPage(
-      TSPlayer player, int pageNumber, IEnumerable dataToPaginate, int dataToPaginateCount, Settings settings = null)
-    {
-      if (settings == null)
-        settings = new Settings();
+		public static void SendPage(
+		  TSPlayer player, int pageNumber, IEnumerable dataToPaginate, int dataToPaginateCount, Settings settings = null)
+		{
+			if (settings == null)
+				settings = new Settings();
 
-      if (dataToPaginateCount == 0)
-      {
-        if (settings.NothingToDisplayString != null)
-          player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+			if (dataToPaginateCount == 0)
+			{
+				if (settings.NothingToDisplayString != null)
+				{
+					if (player is TSServerPlayer)
+					{
+						player.SendSuccessMessage(settings.NothingToDisplayString);
+					}
+					else
+					{
+						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+					}
+				}
+				return;
+			}
 
-        return;
-      }
+			int pageCount = ((dataToPaginateCount - 1) / settings.MaxLinesPerPage) + 1;
+			if (settings.PageLimit > 0 && pageCount > settings.PageLimit)
+				pageCount = settings.PageLimit;
+			if (pageNumber > pageCount)
+				pageNumber = pageCount;
 
-      int pageCount = ((dataToPaginateCount - 1) / settings.MaxLinesPerPage) + 1;
-      if (settings.PageLimit > 0 && pageCount > settings.PageLimit)
-        pageCount = settings.PageLimit;
-      if (pageNumber > pageCount)
-        pageNumber = pageCount;
+			if (settings.IncludeHeader)
+			{
+				if (player is TSServerPlayer)
+				{
+					player.SendSuccessMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount));
+				}
+				else
+				{
+					player.SendMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount), settings.HeaderTextColor);
+				}
+			}
 
-      if (settings.IncludeHeader)
-        player.SendMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount), settings.HeaderTextColor);
+			int listOffset = (pageNumber - 1) * settings.MaxLinesPerPage;
+			int offsetCounter = 0;
+			int lineCounter = 0;
+			foreach (object lineData in dataToPaginate)
+			{
+				if (lineData == null)
+					continue;
+				if (offsetCounter++ < listOffset)
+					continue;
+				if (lineCounter++ == settings.MaxLinesPerPage)
+					break;
 
-      int listOffset = (pageNumber - 1) * settings.MaxLinesPerPage;
-      int offsetCounter = 0;
-      int lineCounter = 0;
-      foreach (object lineData in dataToPaginate)
-      {
-        if (lineData == null)
-          continue;
-        if (offsetCounter++ < listOffset)
-          continue;
-        if (lineCounter++ == settings.MaxLinesPerPage)
-          break;
+				string lineMessage;
+				Color lineColor = settings.LineTextColor;
+				if (lineData is Tuple<string, Color>)
+				{
+					var lineFormat = (Tuple<string, Color>)lineData;
+					lineMessage = lineFormat.Item1;
+					lineColor = lineFormat.Item2;
+				}
+				else if (settings.LineFormatter != null)
+				{
+					try
+					{
+						Tuple<string, Color> lineFormat = settings.LineFormatter(lineData, offsetCounter, pageNumber);
+						if (lineFormat == null)
+							continue;
 
-        string lineMessage;
-        Color lineColor = settings.LineTextColor;
-        if (lineData is Tuple<string, Color>)
-        {
-          var lineFormat = (Tuple<string, Color>)lineData;
-          lineMessage = lineFormat.Item1;
-          lineColor = lineFormat.Item2;
-        }
-        else if (settings.LineFormatter != null)
-        {
-          try
-          {
-            Tuple<string, Color> lineFormat = settings.LineFormatter(lineData, offsetCounter, pageNumber);
-            if (lineFormat == null)
-              continue;
+						lineMessage = lineFormat.Item1;
+						lineColor = lineFormat.Item2;
+					}
+					catch (Exception ex)
+					{
+						throw new InvalidOperationException(
+						  "The method referenced by LineFormatter has thrown an exception. See inner exception for details.", ex);
+					}
+				}
+				else
+				{
+					lineMessage = lineData.ToString();
+				}
 
-            lineMessage = lineFormat.Item1;
-            lineColor = lineFormat.Item2;
-          }
-          catch (Exception ex)
-          {
-            throw new InvalidOperationException(
-              "The method referenced by LineFormatter has thrown an exception. See inner exception for details.", ex);
-          }
-        }
-        else
-        {
-          lineMessage = lineData.ToString();
-        }
+				if (lineMessage != null)
+				{
+					if (player is TSServerPlayer)
+					{
+						Console.WriteLine(lineMessage);
+					}
+					else
+					{
+						player.SendMessage(lineMessage, lineColor);
+					}
+				}
+			}
 
-        if (lineMessage != null)
-          player.SendMessage(lineMessage, lineColor);
-      }
+			if (lineCounter == 0)
+			{
+				if (settings.NothingToDisplayString != null)
+				{
+					if (player is TSServerPlayer)
+					{
+						player.SendSuccessMessage(settings.NothingToDisplayString);
+					}
+					else
+					{
+						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+					}
+				}
+			}
+			else if (settings.IncludeFooter && pageNumber + 1 <= pageCount)
+			{
+				if (player is TSServerPlayer)
+				{
+					player.SendInfoMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount));
+				}
+				else
+				{
+					player.SendMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount), settings.FooterTextColor);
+				}
+			}
+		}
 
-      if (lineCounter == 0)
-      {
-        if (settings.NothingToDisplayString != null)
-          player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
-      }
-      else if (settings.IncludeFooter && pageNumber + 1 <= pageCount)
-      {
-        player.SendMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount), settings.FooterTextColor);
-      }
-    }
+		public static void SendPage(TSPlayer player, int pageNumber, IList dataToPaginate, Settings settings = null)
+		{
+			PaginationTools.SendPage(player, pageNumber, dataToPaginate, dataToPaginate.Count, settings);
+		}
 
-    public static void SendPage(TSPlayer player, int pageNumber, IList dataToPaginate, Settings settings = null)
-    {
-      PaginationTools.SendPage(player, pageNumber, dataToPaginate, dataToPaginate.Count, settings);
-    }
+		public static List<string> BuildLinesFromTerms(
+		  IEnumerable terms, Func<object, string> termFormatter = null, string separator = ", ", int maxCharsPerLine = 80)
+		{
+			List<string> lines = new List<string>();
+			StringBuilder lineBuilder = new StringBuilder();
+			foreach (object term in terms)
+			{
+				if (term == null && termFormatter == null)
+					continue;
 
-    public static List<string> BuildLinesFromTerms(
-      IEnumerable terms, Func<object, string> termFormatter = null, string separator = ", ", int maxCharsPerLine = 80)
-    {
-      List<string> lines = new List<string>();
-      StringBuilder lineBuilder = new StringBuilder();
-      foreach (object term in terms)
-      {
-        if (term == null && termFormatter == null)
-          continue;
+				string termString;
+				if (termFormatter != null)
+				{
+					try
+					{
+						termString = termFormatter(term);
 
-        string termString;
-        if (termFormatter != null)
-        {
-          try
-          {
-            termString = termFormatter(term);
+						if (termString == null)
+							continue;
+					}
+					catch (Exception ex)
+					{
+						throw new ArgumentException(
+						  "The method represented by termFormatter has thrown an exception. See inner exception for details.", ex);
+					}
+				}
+				else
+				{
+					termString = term.ToString();
+				}
 
-            if (termString == null)
-              continue;
-          }
-          catch (Exception ex)
-          {
-            throw new ArgumentException(
-              "The method represented by termFormatter has thrown an exception. See inner exception for details.", ex);
-          }
-        }
-        else
-        {
-          termString = term.ToString();
-        }
+				bool goesOnNextLine = (lineBuilder.Length + termString.Length > maxCharsPerLine);
+				if (!goesOnNextLine)
+				{
+					if (lineBuilder.Length > 0)
+						lineBuilder.Append(separator);
+					lineBuilder.Append(termString);
+				}
+				else
+				{
+					// A separator should always be at the end of a line as we know it is followed by another line.
+					lineBuilder.Append(separator);
+					lines.Add(lineBuilder.ToString());
+					lineBuilder.Clear();
 
-        bool goesOnNextLine = (lineBuilder.Length + termString.Length > maxCharsPerLine);
-        if (!goesOnNextLine)
-        {
-          if (lineBuilder.Length > 0)
-            lineBuilder.Append(separator);
-          lineBuilder.Append(termString);
-        }
-        else
-        {
-          // A separator should always be at the end of a line as we know it is followed by another line.
-          lineBuilder.Append(separator);
-          lines.Add(lineBuilder.ToString());
-          lineBuilder.Clear();
+					lineBuilder.Append(termString);
+				}
+			}
+			if (lineBuilder.Length > 0)
+				lines.Add(lineBuilder.ToString());
 
-          lineBuilder.Append(termString);
-        }
-      }
-      if (lineBuilder.Length > 0)
-        lines.Add(lineBuilder.ToString());
+			return lines;
+		}
 
-      return lines;
-    }
+		public static bool TryParsePageNumber(
+		  List<string> commandParameters, int expectedParamterIndex, TSPlayer errorMessageReceiver, out int pageNumber)
+		{
+			pageNumber = 1;
+			if (commandParameters.Count <= expectedParamterIndex)
+				return true;
 
-    public static bool TryParsePageNumber(
-      List<string> commandParameters, int expectedParamterIndex, TSPlayer errorMessageReceiver, out int pageNumber)
-    {
-      pageNumber = 1;
-      if (commandParameters.Count <= expectedParamterIndex)
-        return true;
+			string pageNumberRaw = commandParameters[expectedParamterIndex];
+			if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1)
+			{
+				if (errorMessageReceiver != null)
+					errorMessageReceiver.SendErrorMessage(string.Format("\"{0}\" is not a valid page number.", pageNumberRaw));
 
-      string pageNumberRaw = commandParameters[expectedParamterIndex];
-      if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1)
-      {
-        if (errorMessageReceiver != null)
-          errorMessageReceiver.SendErrorMessage(string.Format("\"{0}\" is not a valid page number.", pageNumberRaw));
+				pageNumber = 1;
+				return false;
+			}
 
-        pageNumber = 1;
-        return false;
-      }
-
-      return true;
-    }
-  }
+			return true;
+		}
+	}
 }
