@@ -177,7 +177,6 @@ namespace TShockAPI
 			add2(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
 			add2(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
 			add(Permissions.kick, Kick, "kick");
-		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
 			add(Permissions.ban, Ban, "ban");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
@@ -201,8 +200,6 @@ namespace TShockAPI
             add(Permissions.spawnboss, Hardcore, "hardcore");
             add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
 			add(Permissions.warp, Warp, "warp");
-		    add(Permissions.managewarp, DeprecateWarp, "setwarp", "delwarp", "hidewarp");
-            add(Permissions.tphere, DeprecateWarp, "sendwarp", "sw");
 			add(Permissions.managegroup, AddGroup, "addgroup");
 			add(Permissions.managegroup, DeleteGroup, "delgroup");
 			add(Permissions.managegroup, ModifyGroup, "modgroup");
@@ -859,21 +856,10 @@ namespace TShockAPI
 			}
 		}
 
-        private static void DeprecateBans(CommandArgs args)
-        {
-            args.Player.SendInfoMessage("All ban commands were merged into one in TShock 4.0.");
-            args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
-            args.Player.SendInfoMessage("Options: list, listip, clear, add, addip, del, delip");
-            args.Player.SendInfoMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]");
-            args.Player.SendInfoMessage("In addition, a reason may be provided for all new bans after the arguments.");
-            return;
-        }
-
 		private static void Ban(CommandArgs args)
 		{
 			if (args.Parameters.Count == 0 || args.Parameters[0].ToLower() == "help")
 			{
-				args.Player.SendInfoMessage("All ban commands were merged into one in TShock 4.0.");
 				args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
 				args.Player.SendInfoMessage("Options: list, listip, clear, add, addip, del, delip");
 				args.Player.SendInfoMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]");
@@ -1784,17 +1770,6 @@ namespace TShockAPI
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
 
-        private static void DeprecateWarp(CommandArgs args)
-        {
-                args.Player.SendInfoMessage("All warp commands were merged into one in TShock 4.0.");
-                args.Player.SendInfoMessage("Previous warps with spaces should be wrapped in single quotes.");
-                args.Player.SendInfoMessage("Invalid syntax. Syntax: /warp [command] [arguments]");
-                args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
-                args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
-                args.Player.SendInfoMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]");
-                args.Player.SendInfoMessage("Examples: /warp add foobar, /warp hide foobar true, /warp foobar");
-        }
-
 		private static void Warp(CommandArgs args)
 		{
 		    bool hasManageWarpPermission = args.Player.Group.HasPermission(Permissions.managewarp);
@@ -1802,8 +1777,6 @@ namespace TShockAPI
             {
                 if (hasManageWarpPermission)
                 {
-                    args.Player.SendInfoMessage("All warp commands were merged into one in TShock 4.0.");
-                    args.Player.SendInfoMessage("Previous warps with spaces should be wrapped in single quotes.");
                     args.Player.SendInfoMessage("Invalid syntax. Syntax: /warp [command] [arguments]");
                     args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
                     args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
@@ -1814,8 +1787,6 @@ namespace TShockAPI
                 else
                 {
                     args.Player.SendErrorMessage("Invalid syntax. Syntax: /warp [name] or /warp list <page>");
-                    args.Player.SendErrorMessage("Previous warps with spaces should be wrapped in single quotes.");
-
                     return;
                 }
             }
@@ -1896,7 +1867,6 @@ namespace TShockAPI
                 else
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp add [name]");
                 #endregion
-
             }
             else if (args.Parameters[0].ToLower() == "del" && hasManageWarpPermission)
             {
@@ -1912,7 +1882,6 @@ namespace TShockAPI
                 else
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp del [name]");
                 #endregion
-
             }
             else if (args.Parameters[0].ToLower() == "hide" && hasManageWarpPermission)
             {
@@ -1976,7 +1945,6 @@ namespace TShockAPI
                     args.Player.SendErrorMessage("Specified warp not found.");
                 }
                 #endregion
-
             }
             else
             {
