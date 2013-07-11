@@ -245,6 +245,8 @@ namespace TShockAPI
 
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
 
+	    [Description("Allow automatic re-saving of the json config file.")] public bool AutoConfigSave = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
