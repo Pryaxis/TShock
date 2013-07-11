@@ -390,7 +390,7 @@ namespace TShockAPI
 
 		#region Account commands
 
-		public static void AttemptLogin(CommandArgs args)
+		private static void AttemptLogin(CommandArgs args)
 		{
 			if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
 			{
@@ -528,7 +528,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Not logged in or invalid syntax! Syntax: /password <oldpassword> <newpassword>");
+					args.Player.SendErrorMessage("Not logged in or invalid syntax! Proper syntax: /password <oldpassword> <newpassword>");
 				}
 			}
 			catch (UserManagerException ex)
@@ -748,7 +748,7 @@ namespace TShockAPI
 
 		#region Stupid commands
 
-		public static void ServerInfo(CommandArgs args)
+		private static void ServerInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("Memory usage: " + Process.GetCurrentProcess().WorkingSet64);
 			args.Player.SendInfoMessage("Allocated memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
@@ -758,7 +758,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Machine name: " + Environment.MachineName);
 		}
 
-		public static void WorldInfo(CommandArgs args)
+		private static void WorldInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("World name: " + Main.worldName);
 			args.Player.SendInfoMessage("World size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
@@ -1128,7 +1128,7 @@ namespace TShockAPI
 
 		private static int ClearBansCode = -1;
 
-		public static void Whitelist(CommandArgs args)
+		private static void Whitelist(CommandArgs args)
 		{
 			if (args.Parameters.Count == 1)
 			{
@@ -1140,13 +1140,13 @@ namespace TShockAPI
 			}
 		}
 
-		public static void DisplayLogs(CommandArgs args)
+		private static void DisplayLogs(CommandArgs args)
 		{
 			args.Player.DisplayLogs = (!args.Player.DisplayLogs);
 			args.Player.SendSuccessMessage("You will " + (args.Player.DisplayLogs ? "now" : "no longer") + " receive logs.");
 		}
 
-		public static void SaveSSI(CommandArgs args )
+		private static void SaveSSI(CommandArgs args)
 		{
 			if (TShock.Config.ServerSideInventory)
 			{
@@ -1161,7 +1161,7 @@ namespace TShockAPI
 			}
 		}
 
-		public static void OverrideSSI( CommandArgs args )
+		private static void OverrideSSI(CommandArgs args)
 		{
 			if (!TShock.Config.ServerSideInventory)
 			{
@@ -1240,7 +1240,7 @@ namespace TShockAPI
                                 (TShock.Config.ForceXmas ? "in" : "not in")));
         }
 
-        public static void TempGroup(CommandArgs args)
+		private static void TempGroup(CommandArgs args)
         {
             if (args.Parameters.Count < 2)
             {
@@ -1773,7 +1773,7 @@ namespace TShockAPI
             {
                 if (hasManageWarpPermission)
                 {
-                    args.Player.SendInfoMessage("Invalid syntax. Syntax: /warp [command] [arguments]");
+                    args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /warp [command] [arguments]");
                     args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
                     args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
                     args.Player.SendInfoMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]");
@@ -1782,7 +1782,7 @@ namespace TShockAPI
                 }
                 else
                 {
-                    args.Player.SendErrorMessage("Invalid syntax. Syntax: /warp [name] or /warp list <page>");
+                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp [name] or /warp list <page>");
                     return;
                 }
             }
@@ -1934,7 +1934,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendInfoMessage("Invalid syntax. Syntax: /group <command> [arguments]");
+				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /group <command> [arguments]");
 				args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
 				args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
 				args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
@@ -1948,7 +1948,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count < 2)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group add <group name> [permissions]");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group add <group name> [permissions]");
 							return;
 						}
 
@@ -1976,7 +1976,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count < 3)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group addperm <group name> <permissions...>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group addperm <group name> <permissions...>");
 							return;
 						}
 
@@ -2012,7 +2012,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count != 2)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group del <group name>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group del <group name>");
 							return;
 						}
 
@@ -2036,7 +2036,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count < 3)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group delperm <group name> <permissions...>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group delperm <group name> <permissions...>");
 							return;
 						}
 
@@ -2095,7 +2095,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count == 1)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group listperm <group name> [page]");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group listperm <group name> [page]");
 							return;
 						}
 						int pageNumber;
@@ -2135,7 +2135,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendInfoMessage("Invalid syntax. Syntax: /itemban <command> [arguments]");
+				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /itemban <command> [arguments]");
 				args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
 				args.Player.SendInfoMessage("Arguments: add <item name>, allow <item name> <group name>");
 				args.Player.SendInfoMessage("Arguments: del <item name>, disallow <item name> <group name>, list [page]");
@@ -2149,7 +2149,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count != 2)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban add <item name>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /itemban add <item name>");
 							return;
 						}
 
@@ -2175,7 +2175,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count != 3)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban allow <item name> <group name>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /itemban allow <item name> <group name>");
 							return;
 						}
 
@@ -2220,7 +2220,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count != 2)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban del <item name>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /itemban del <item name>");
 							return;
 						}
 
@@ -2246,7 +2246,7 @@ namespace TShockAPI
 					{
 						if (args.Parameters.Count != 3)
 						{
-							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban disallow <item name> <group name>");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /itemban disallow <item name> <group name>");
 							return;
 						}
 
@@ -3606,7 +3606,7 @@ namespace TShockAPI
 			}
 		}
 
-		public static void ClearItems(CommandArgs args)
+		private static void ClearItems(CommandArgs args)
 		{
 			int radius = 50;
 			if (args.Parameters.Count > 0)
