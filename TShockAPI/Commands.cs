@@ -200,10 +200,8 @@ namespace TShockAPI
             add(Permissions.spawnboss, Hardcore, "hardcore");
             add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
 			add(Permissions.warp, Warp, "warp");
-			add(Permissions.managegroup, AddGroup, "addgroup");
-			add(Permissions.managegroup, DeleteGroup, "delgroup");
-			add(Permissions.managegroup, ModifyGroup, "modgroup");
-			add(Permissions.managegroup, ViewGroups, "group");
+			add(Permissions.managegroup, Group, "group");
+			add(Permissions.managegroup, GroupDeprecated, "addgroup", "delgroup", "modgroup");
 			add(Permissions.manageitem, AddItem, "additem", "banitem");
 			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
 			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
@@ -1929,168 +1927,202 @@ namespace TShockAPI
 
 		#region Group Management
 
-		private static void AddGroup(CommandArgs args)
+		private static void GroupDeprecated(CommandArgs args)
 		{
-			if (args.Parameters.Count > 0)
-			{
-				String groupname = args.Parameters[0];
-				args.Parameters.RemoveAt(0);
-				String permissions = String.Join(",", args.Parameters);
-
-				String response = TShock.Groups.AddGroup(groupname, permissions);
-				if (response.Length > 0)
-					args.Player.SendSuccessMessage(response);
-			}
-			else
-			{
-				args.Player.SendErrorMessage("Incorrect format: /addgroup <group name> [optional permissions]");
-			}
+			args.Player.SendInfoMessage("The group commands were merged into /group in TShock 4.1; check /group help.");
 		}
 
-		private static void DeleteGroup(CommandArgs args)
+		private static void Group(CommandArgs args)
 		{
-			if (args.Parameters.Count > 0)
+			if (args.Parameters.Count == 0)
 			{
-				String groupname = args.Parameters[0];
-
-				String response = TShock.Groups.DeleteGroup(groupname);
-				if (response.Length > 0)
-					args.Player.SendSuccessMessage(response);
+				args.Player.SendInfoMessage("Invalid syntax. Syntax: /group <command> [arguments]");
+				args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
+				args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
+				args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
+				return;
 			}
-			else
+			switch (args.Parameters[0].ToLower())
 			{
-				args.Player.SendErrorMessage("Incorrect format: /delgroup <group name>");
-			}
-		}
-
-		private static void ModifyGroup(CommandArgs args)
-		{
-			if (args.Parameters.Count > 2)
-			{
-				String com = args.Parameters[0];
-				args.Parameters.RemoveAt(0);
-
-				String groupname = args.Parameters[0];
-				args.Parameters.RemoveAt(0);
-
-				string response = "";
-				if (com.Equals("add"))
-				{
-					if( groupname == "*" )
+				case "add":
+					#region Add group
 					{
-						int count = 0;
-						foreach( Group g in TShock.Groups )
+						if (args.Parameters.Count < 2)
 						{
-							response = TShock.Groups.AddPermissions(g.Name, args.Parameters);
-							if (!response.StartsWith("Error:"))
-								count++;
-						}
-						args.Player.SendSuccessMessage(String.Format("{0} groups were modified.", count ));
-						return;
-					}
-					response = TShock.Groups.AddPermissions(groupname, args.Parameters);
-					if (response.Length > 0)
-						args.Player.SendSuccessMessage(response);
-					return;
-				}
-				
-				if (com.Equals("del") || com.Equals("delete"))
-				{
-					if (groupname == "*")
-					{
-						int count = 0;
-						foreach (Group g in TShock.Groups)
-						{
-							response = TShock.Groups.DeletePermissions(g.Name, args.Parameters);
-							if (!response.StartsWith("Error:"))
-								count++;
-						}
-						args.Player.SendSuccessMessage(String.Format("{0} groups were modified.", count));
-						return;
-					}
-					response = TShock.Groups.DeletePermissions(groupname, args.Parameters);
-					if (response.Length > 0)
-						args.Player.SendSuccessMessage(response);
-					return;
-				}
-			}
-			args.Player.SendErrorMessage("Incorrect format: /modgroup add|del <group name> <permission to add or remove>");
-		}
-
-		private static void ViewGroups(CommandArgs args)
-		{
-			if (args.Parameters.Count > 0)
-			{
-				String com = args.Parameters[0];
-
-				if( com == "list" )
-				{
-					string ret = "Groups: ";
-					foreach( Group g in TShock.Groups.groups )
-					{
-						if (ret.Length > 50)
-						{
-							args.Player.SendSuccessMessage(ret);
-							ret = "";
-						}
-
-						if( ret != "" )
-						{
-							ret += ", ";
-						}
-						
-						ret += g.Name;
-					}
-
-					if (ret.Length > 0)
-					{
-						args.Player.SendSuccessMessage(ret);
-					}
-					return;
-				}
-				else if( com == "perm")
-				{
-					if (args.Parameters.Count > 1)
-					{
-						String groupname = args.Parameters[1];
-
-						if( TShock.Groups.GroupExists( groupname ) )
-						{
-							string ret = String.Format("Permissions for {0}: ", groupname);
-							foreach (string p in TShock.Utils.GetGroup( groupname ).permissions)
-							{
-								if (ret.Length > 50)
-								{
-									args.Player.SendSuccessMessage(ret);
-									ret = "";
-								}
-
-								if (ret != "")
-								{
-									ret += ", ";
-								}
-
-								ret += p;
-							}
-							if (ret.Length > 0)
-							{
-								args.Player.SendSuccessMessage(ret);
-							}
-
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group add <group name> [permissions]");
 							return;
 						}
-						else
+
+						string groupName = args.Parameters[1];
+						args.Parameters.RemoveRange(0, 2);
+						string permissions = String.Join(",", args.Parameters);
+
+						try
 						{
-							args.Player.SendErrorMessage("Group does not exist.");
-							return;
+							string response = TShock.Groups.AddGroup(groupName, permissions);
+							if (response.Length > 0)
+							{
+								args.Player.SendSuccessMessage(response);
+							}
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.ToString());
 						}
 					}
-				}
-			}
-			args.Player.SendErrorMessage("Incorrect format: /group list");
-			args.Player.SendErrorMessage("                  /group perm <group name>");
-		}
+					#endregion
+					return;
+				case "addperm":
+					#region Add permissions
+					{
+						if (args.Parameters.Count < 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group addperm <group name> <permissions...>");
+							return;
+						}
 
+						string groupName = args.Parameters[1];
+						args.Parameters.RemoveRange(0, 2);
+						if (groupName == "*")
+						{
+							foreach (Group g in TShock.Groups)
+							{
+								TShock.Groups.AddPermissions(g.Name, args.Parameters);
+							}
+							args.Player.SendSuccessMessage("Modified all groups.");
+							return;
+						}
+						try
+						{
+							string response = TShock.Groups.AddPermissions(groupName, args.Parameters);
+							if (response.Length > 0)
+							{
+								args.Player.SendSuccessMessage(response);
+							}
+							return;
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.ToString());
+						}
+					}
+					#endregion
+					return;
+				case "del":
+					#region Delete group
+					{
+						if (args.Parameters.Count != 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group del <group name>");
+							return;
+						}
+
+						try
+						{
+							string response = TShock.Groups.DeleteGroup(args.Parameters[1]);
+							if (response.Length > 0)
+							{
+								args.Player.SendSuccessMessage(response);
+							}
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.ToString());
+						}
+					}
+					#endregion
+					return;
+				case "delperm":
+					#region Delete permissions
+					{
+						if (args.Parameters.Count < 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group delperm <group name> <permissions...>");
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						args.Parameters.RemoveRange(0, 2);
+						if (groupName == "*")
+						{
+							foreach (Group g in TShock.Groups)
+							{
+								TShock.Groups.DeletePermissions(g.Name, args.Parameters);
+							}
+							args.Player.SendSuccessMessage("Modified all groups.");
+							return;
+						}
+						try
+						{
+							string response = TShock.Groups.DeletePermissions(groupName, args.Parameters);
+							if (response.Length > 0)
+							{
+								args.Player.SendSuccessMessage(response);
+							}
+							return;
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.ToString());
+						}
+					}
+					#endregion
+					return;
+				case "help":
+					args.Player.SendInfoMessage("Invalid syntax. Syntax: /group <command> [arguments]");
+					args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
+					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
+					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
+					return;
+				case "list":
+					#region List groups
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+						IEnumerable<string> groupNames = from grp in TShock.Groups.groups
+														 select grp.Name;
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(groupNames),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Groups ({0}/{1}):",
+								FooterFormat = "Type /group list {0} for more."
+							});
+					}
+					#endregion
+					return;
+				case "listperm":
+					#region List permissions
+					{
+						if (args.Parameters.Count == 1)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /group listperm <group name> [page]");
+							return;
+						}
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out pageNumber))
+							return;
+
+						if (!TShock.Groups.GroupExists(args.Parameters[1]))
+						{
+							args.Player.SendErrorMessage("Invalid group.");
+							return;
+						}
+						Group grp = TShock.Utils.GetGroup(args.Parameters[1]);
+						List<string> permissions = grp.TotalPermissions;
+
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(permissions),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Permissions for " + grp.Name + " ({0}/{1}):",
+								FooterFormat = "Type /group permlist " + grp.Name + " {0} for more.",
+								NothingToDisplayString = "There are currently no permissions for " + grp.Name + "."
+							});
+					}
+					#endregion
+					return;
+			}
+		}
 		#endregion Group Management
 
 		#region Item Management
