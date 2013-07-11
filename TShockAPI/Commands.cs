@@ -181,6 +181,7 @@ namespace TShockAPI
 			add(Permissions.cfg, Settle, "settle");
 			add(Permissions.cfg, MaxSpawns, "maxspawns");
 			add(Permissions.cfg, SpawnRate, "spawnrate");
+			add(Permissions.cfg, DisableAutoConfSave, "configautosave", "confautosave", "confauto");
 			add(Permissions.time, Time, "time");
 			add(Permissions.pvpfun, Slap, "slap");
 			add(Permissions.editspawn, ToggleAntiBuild, "antibuild");
@@ -2256,6 +2257,7 @@ namespace TShockAPI
 			}
 			string passwd = args.Parameters[0];
 			TShock.Config.ServerPassword = passwd;
+			FileTools.UpdateConfig();
 			args.Player.SendSuccessMessage(string.Format("Server password has been changed to: {0}.", passwd));
 		}
 
@@ -2268,7 +2270,23 @@ namespace TShockAPI
 			}
 			args.Player.SendSuccessMessage("Save succeeded.");
 		}
-
+		private static void DisableAutoConfSave(CommandArgs args)
+        {
+            if (TShock.Config.AutoConfigSave == true)
+            {
+                TShock.Config.AutoConfigSave = false;
+                Console.WriteLine("Disabling automatic configuration save...");
+                TShock.Config.Write(FileTools.ConfigPath);
+                args.Player.SendSuccessMessage("Automatic config save enabled.");
+            }
+            else
+            {
+                TShock.Config.AutoConfigSave = true;
+                Console.WriteLine("Enabling automatic configuration save...");
+                FileTools.UpdateConfig();
+                args.Player.SendSuccessMessage("Automatic config save enabled.");
+            }
+        }
 		private static void Settle(CommandArgs args)
 		{
 			if (Liquid.panicMode)
@@ -2299,6 +2317,7 @@ namespace TShockAPI
 			if(args.Parameters[0]=="default"){
 				TShock.Config.DefaultMaximumSpawns = 5;
 				NPC.defaultMaxSpawns = 5;
+				FileTools.UpdateConfig();
 				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to 5.", args.Player.Name));
 				return;
 			}
@@ -2307,6 +2326,7 @@ namespace TShockAPI
 			int.TryParse(args.Parameters[0], out amount);
 			NPC.defaultMaxSpawns = amount;
 			TShock.Config.DefaultMaximumSpawns = amount;
+			FileTools.UpdateConfig();
 			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to {1}.", args.Player.Name, amount));
 		}
 
@@ -2330,6 +2350,7 @@ namespace TShockAPI
 			{
 				TShock.Config.DefaultSpawnRate = 600;
 				NPC.defaultSpawnRate = 600;
+				FileTools.UpdateConfig();
 				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to 600.", args.Player.Name));
 				return;
 			}
@@ -2349,6 +2370,7 @@ namespace TShockAPI
 
 			NPC.defaultSpawnRate = amount;
 			TShock.Config.DefaultSpawnRate = amount;
+			FileTools.UpdateConfig();
 			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to {1}.", args.Player.Name, amount));
 		}
 

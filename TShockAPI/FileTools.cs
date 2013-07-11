@@ -100,6 +100,18 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+        /// Updates the config.json file with new changes.
+        /// </summary>
+        public static void UpdateConfig()
+        {
+            if (TShock.Config.AutoConfigSave == true)
+            {
+                Console.WriteLine("Saving updated config file...");
+                TShock.Config.Write(ConfigPath);
+            }
+        }
+
+		/// <summary>
 		/// Tells if a user is on the whitelist
 		/// </summary>
 		/// <param name="ip">string ip of the user</param>
