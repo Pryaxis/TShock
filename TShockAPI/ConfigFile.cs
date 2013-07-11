@@ -251,6 +251,8 @@ namespace TShockAPI
 
 		[Description("The path of the directory where logs should be written into.")] public string LogPath = "tshock";
 
+		[Description("Prevents players from placing tiles with an invalid style.")] public bool PreventInvalidPlaceStyle = true;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

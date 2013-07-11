@@ -88,13 +88,18 @@ namespace TShockAPI
             /// Did the tile get destroyed successfully.
             /// </summary>
             public bool Fail { get; set; }
+
+			/// <summary>
+			/// Used when a tile is placed to denote a subtype of tile. (e.g. for tile id 21: Chest = 0, Gold Chest = 1)
+			/// </summary>
+			public byte Style { get; set; }
 		} 
 
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType, bool fail)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType, bool fail, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -106,7 +111,8 @@ namespace TShockAPI
 				Y = y,
 				Type = type,
 				EditType = editType,
-                Fail = fail
+                Fail = fail,
+				Style = style
 			};
 			TileEdit.Invoke(null, args);
 			return args.Handled;
@@ -1678,8 +1684,9 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
 			var tiletype = args.Data.ReadInt8();
-		    var fail = args.Data.ReadBoolean();
-			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail))
+			var fail = tiletype == 1;
+			var style = args.Data.ReadInt8();
+			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail, style))
 				return true;
 			if (!TShock.Utils.TileValid(tileX, tileY))
 				return false;
@@ -1839,6 +1846,15 @@ namespace TShockAPI
 			{
 				// If they aren't selecting the wire cutter, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
+				{
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+				if (type == 1 && TShock.Config.PreventInvalidPlaceStyle && ((tiletype == 4 && style > 8) ||
+					(tiletype == 13 && style > 4) || (tiletype == 15 && style > 1) || (tiletype == 21 && style > 6) ||
+					(tiletype == 82 && style > 5) || (tiletype == 91 && style > 3) || (tiletype == 105 && style > 42) ||
+					(tiletype == 135 && style > 3) || (tiletype == 139 && style > 12) || (tiletype == 144 && style > 2) ||
+					(tiletype == 149 && style > 2)))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
