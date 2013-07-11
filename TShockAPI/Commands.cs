@@ -1793,56 +1793,19 @@ namespace TShockAPI
 
 			if (args.Parameters[0].Equals("list"))
             {
-                #region
-                //How many warps per page
-				const int pagelimit = 15;
-				//How many warps per line
-				const int perline = 5;
-				//Pages start at 0 but are displayed and parsed at 1
-				int page = 0;
-
-
-				if (args.Parameters.Count > 1)
-				{
-					if (!int.TryParse(args.Parameters[1], out page) || page < 1)
-					{
-						args.Player.SendErrorMessage(string.Format("Invalid page number ({0})", page));
-						return;
-					}
-					page--; //Substract 1 as pages are parsed starting at 1 and not 0
-				}
-
-				var warps = TShock.Warps.ListAllPublicWarps(Main.worldID.ToString());
-
-				//Check if they are trying to access a page that doesn't exist.
-				int pagecount = warps.Count/pagelimit;
-				if (page > pagecount)
-				{
-					args.Player.SendErrorMessage(string.Format("Page number exceeds pages ({0}/{1}).", page + 1, pagecount + 1));
+                #region List warps
+				int pageNumber;
+				if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 					return;
-				}
-
-				//Display the current page and the number of pages.
-				args.Player.SendSuccessMessage(string.Format("Current warps ({0}/{1}):", page + 1, pagecount + 1));
-
-				//Add up to pagelimit names to a list
-				var nameslist = new List<string>();
-				for (int i = (page*pagelimit); (i < ((page*pagelimit) + pagelimit)) && i < warps.Count; i++)
-				{
-					nameslist.Add(warps[i].WarpName);
-				}
-
-				//convert the list to an array for joining
-				var names = nameslist.ToArray();
-				for (int i = 0; i < names.Length; i += perline)
-				{
-					args.Player.SendInfoMessage(string.Join(", ", names, i, Math.Min(names.Length - i, perline)));
-				}
-
-				if (page < pagecount)
-				{
-					args.Player.SendInfoMessage(string.Format("Type /warp list {0} for more warps.", (page + 2)));
-                }
+				IEnumerable<string> warpNames = from warp in TShock.Warps.ListAllPublicWarps(Main.worldID.ToString())
+												select warp.WarpName;
+				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(warpNames),
+					new PaginationTools.Settings
+					{
+						HeaderFormat = "Warps ({0}/{1}):",
+						FooterFormat = "Type /warp list {0} for more.",
+						NothingToDisplayString = "There are currently no warps defined."
+					});
                 #endregion
             }
             else if (args.Parameters[0].ToLower() == "add" && hasManageWarpPermission)
@@ -2786,29 +2749,24 @@ namespace TShockAPI
                     else
                         args.Player.SendMessage("Invalid syntax! Proper syntax: /region removeg <group> <region>", Color.Red);
                     break;
-                case "list":
-                    {
-                      int pageNumber;
-                      if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-                        return;
+				case "list":
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
 
-                      List<string> regionNames = new List<string>(TShock.Regions.Regions.Count);
-                      regionNames.AddRange(
-                        TShock.Regions.Regions.Where(r => r.WorldID == Main.worldID.ToString()).Select(r => r.Name)
-                      );
-
-                      PaginationTools.SendPage(
-                        args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(regionNames), 
-                        new PaginationTools.Settings 
-                        {
-                          HeaderFormat = "List of Regions ({0}/{1})",
-                          FooterFormat = "Type /region list {0} for more.",
-                          NothingToDisplayString = "There are currently no regions defined."
-                        }
-                      );
-
-                      break;
-                    }
+						IEnumerable<string> regionNames = from region in TShock.Regions.Regions
+														  where region.WorldID == Main.worldID.ToString()
+														  select region.Name;
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(regionNames),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Regions ({0}/{1}):",
+								FooterFormat = "Type /region list {0} for more.",
+								NothingToDisplayString = "There are currently no regions defined."
+							});
+						break;
+					}
                 case "info":
                     {
                         if (args.Parameters.Count == 1 || args.Parameters.Count > 4)
@@ -3086,46 +3044,18 @@ namespace TShockAPI
 
 		private static void Help(CommandArgs args)
 		{
-			args.Player.SendInfoMessage("TShock Commands:");
-			int page = 1;
-			if (args.Parameters.Count > 0)
-				int.TryParse(args.Parameters[0], out page);
-			var cmdlist = new List<Command>();
-			for (int j = 0; j < ChatCommands.Count; j++)
-			{
-				Command chatCommand = ChatCommands[j];
-				if (!chatCommand.CanRun(args.Player))
-					continue;
-				// Don't list the /auth command if it's currently useless.
-				if (chatCommand.Name == "auth" && TShock.AuthToken == 0)
-					continue;
-
-				cmdlist.Add(ChatCommands[j]);
-			}
-			var sb = new StringBuilder();
-			if (cmdlist.Count > (15*(page - 1)))
-			{
-				for (int j = (15*(page - 1)); j < (15*page); j++)
+			int pageNumber;
+			if (!PaginationTools.TryParsePageNumber(args.Parameters, 0, args.Player, out pageNumber))
+				return;
+			IEnumerable<string> cmdNames = from cmd in ChatCommands
+										   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.AuthToken != 0)
+										   select cmd.Name;
+			PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
+				new PaginationTools.Settings
 				{
-					if (sb.Length != 0)
-						sb.Append(", ");
-					sb.Append("/").Append(cmdlist[j].Name);
-					if (j == cmdlist.Count - 1)
-					{
-						args.Player.SendInfoMessage(sb.ToString());
-						break;
-					}
-					if ((j + 1)%5 == 0)
-					{
-						args.Player.SendInfoMessage(sb.ToString());
-						sb.Clear();
-					}
-				}
-			}
-			if (cmdlist.Count > (15*page))
-			{
-				args.Player.SendInfoMessage(string.Format("Type /help {0} for more commands.", (page + 1)));
-			}
+					HeaderFormat = "Commands ({0}/{1}):",
+					FooterFormat = "Type /help {0} for more."
+				});
 		}
 
 		private static void GetVersion(CommandArgs args)
