@@ -3095,7 +3095,7 @@ namespace TShockAPI
 				return;
 			IEnumerable<string> cmdNames = from cmd in ChatCommands
 										   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.AuthToken != 0)
-										   select cmd.Name;
+										   select "/" + cmd.Name;
 			PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
 				new PaginationTools.Settings
 				{
