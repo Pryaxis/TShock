@@ -202,11 +202,9 @@ namespace TShockAPI
 			add(Permissions.warp, Warp, "warp");
 			add(Permissions.managegroup, Group, "group");
 			add(Permissions.managegroup, GroupDeprecated, "addgroup", "delgroup", "modgroup");
-			add(Permissions.manageitem, AddItem, "additem", "banitem");
-			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
-			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
-			add(Permissions.manageitem, AddItemGroup, "additemgroup");
-			add(Permissions.manageitem, DeleteItemGroup, "delitemgroup");
+			add(Permissions.manageitem, ItemBan, "itemban");
+			add(Permissions.manageitem, ItemBanDeprecated,
+				"additem", "additemgroup", "banitem", "delitem", "delitemgroup", "listitems", "listbanneditems", "unbanitem");
             add(Permissions.manageregion, Region, "region");
             add(Permissions.manageregion, DebugRegions, "debugreg");
 			add(Permissions.cfg, Reload, "reload");
@@ -1942,6 +1940,7 @@ namespace TShockAPI
 				args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
 				return;
 			}
+
 			switch (args.Parameters[0].ToLower())
 			{
 				case "add":
@@ -2069,7 +2068,7 @@ namespace TShockAPI
 					#endregion
 					return;
 				case "help":
-					args.Player.SendInfoMessage("Invalid syntax. Syntax: /group <command> [arguments]");
+					args.Player.SendInfoMessage("Syntax: /group <command> [arguments]");
 					args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
 					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
 					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
@@ -2127,175 +2126,190 @@ namespace TShockAPI
 
 		#region Item Management
 
-		private static void AddItem(CommandArgs args)
+		private static void ItemBanDeprecated(CommandArgs args)
 		{
-			if (args.Parameters.Count == 1)
-			{
-				var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
-				if (items.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid item type!");
-				}
-				else if (items.Count > 1)
-				{
-					args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
-				}
-				else
-				{
-					var item = items[0];
-					if (item.type >= 1)
-					{
-						TShock.Itembans.AddNewBan(item.name);
-						args.Player.SendErrorMessage(item.name + " has been banned.");
-					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid item type!");
-					}
-				}
-			}
-			else
-			{
-				args.Player.SendErrorMessage("Invalid use: /additem \"item name\" or /additem ##.");
-			}
+			args.Player.SendInfoMessage("The item ban commands were merged into /itemban in TShock 4.1; check /itemban help.");
 		}
 
-		private static void DeleteItem(CommandArgs args)
+		private static void ItemBan(CommandArgs args)
 		{
-			if (args.Parameters.Count == 1)
+			if (args.Parameters.Count == 0)
 			{
-				var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
-				if (items.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid item type!");
-				}
-				else if (items.Count > 1)
-				{
-					args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
-				}
-				else
-				{
-					var item = items[0];
-					if (item.type >= 1)
-					{
-						TShock.Itembans.RemoveBan(item.name);
-						args.Player.SendSuccessMessage(item.name + " has been unbanned.");
-					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid item type!");
-					}
-				}
+				args.Player.SendInfoMessage("Invalid syntax. Syntax: /itemban <command> [arguments]");
+				args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
+				args.Player.SendInfoMessage("Arguments: add <item name>, allow <item name> <group name>");
+				args.Player.SendInfoMessage("Arguments: del <item name>, disallow <item name> <group name>, list [page]");
+				return;
 			}
-			else
+
+			switch (args.Parameters[0].ToLower())
 			{
-				args.Player.SendErrorMessage("Invalid use: /delitem \"item name\" or /delitem ##");
-			}
-		}
-		
-		private static void ListItems(CommandArgs args)
-		{
-			args.Player.SendInfoMessage("The banned items are: " + String.Join(",", TShock.Itembans.ItemBans) + ".");
-		}
-		
-		private static void AddItemGroup(CommandArgs args)
-		{
-			if (args.Parameters.Count == 2)
-			{
-				var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
-				if (items.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid item type!");
-				}
-				else if (items.Count > 1)
-				{
-					args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
-				}
-				else
-				{
-					var item = items[0];
-					if (item.type >= 1)
+				case "add":
+					#region Add item
 					{
-						if(TShock.Groups.GroupExists(args.Parameters[1]))
+						if (args.Parameters.Count != 2)
 						{
-							ItemBan ban = TShock.Itembans.GetItemBanByName(item.name);
-							
-							if(!ban.AllowedGroups.Contains(args.Parameters[1]))
-							{
-								TShock.Itembans.AllowGroup(item.name, args.Parameters[1]);
-								args.Player.SendSuccessMessage("Banned item " + item.name + " has been allowed for group " + args.Parameters[1] + ".");
-							}
-							else
-							{
-								args.Player.SendWarningMessage("Banned item " + item.name + " is already allowed for group " + args.Parameters[1] + "!");	
-							}
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban add <item name>");
+							return;
+						}
+
+						List<Item> items = TShock.Utils.GetItemByIdOrName(args.Parameters[1]);
+						if (items.Count == 0)
+						{
+							args.Player.SendErrorMessage("Invalid item.");
+						}
+						else if (items.Count > 1)
+						{
+							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
 						}
 						else
 						{
-							args.Player.SendErrorMessage("Group " + args.Parameters[1] + " not found!");
+							TShock.Itembans.AddNewBan(items[0].name);
+							args.Player.SendSuccessMessage("Banned " + items[0].name + ".");
 						}
 					}
-					else
+					#endregion
+					return;
+				case "allow":
+					#region Allow group to item
 					{
-						args.Player.SendErrorMessage("Invalid item type!");
-					}
-				}
-			}
-			else
-			{
-				args.Player.SendErrorMessage("Invalid use: /additemgroup \"item name\" \"group name\"");
-			}
-		}		
-
-		private static void DeleteItemGroup(CommandArgs args)
-		{
-			if (args.Parameters.Count == 2)
-			{
-				var items = TShock.Utils.GetItemByIdOrName(args.Parameters[0]);
-				if (items.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid item type!");
-				}
-				else if (items.Count > 1)
-				{
-					args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
-				}
-				else
-				{
-					var item = items[0];
-					if (item.type >= 1)
-					{
-						if(TShock.Groups.GroupExists(args.Parameters[1]))
+						if (args.Parameters.Count != 3)
 						{
-							ItemBan ban = TShock.Itembans.GetItemBanByName(item.name);
-							
-							if(ban.AllowedGroups.Contains(args.Parameters[1]))
-							{
-								TShock.Itembans.RemoveGroup(item.name, args.Parameters[1]);
-								args.Player.SendSuccessMessage("Removed access for group " + args.Parameters[1] + " to banned item " + item.name + ".");
-							}
-							else
-							{
-								args.Player.SendWarningMessage("Group " + args.Parameters[1] + " did not have access to banned item " + item.name + "!");	
-							}
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban allow <item name> <group name>");
+							return;
+						}
+
+						List<Item> items = TShock.Utils.GetItemByIdOrName(args.Parameters[1]);
+						if (items.Count == 0)
+						{
+							args.Player.SendErrorMessage("Invalid item.");
+						}
+						else if (items.Count > 1)
+						{
+							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
 						}
 						else
 						{
-							args.Player.SendErrorMessage("Group " + args.Parameters[1] + " not found!");
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage(items[0].name + " is not banned.");
+								return;
+							}
+							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.Itembans.AllowGroup(items[0].name, args.Parameters[2]);
+								args.Player.SendSuccessMessage(String.Format("{0} has been allowed to use {1}.", args.Parameters[2], items[0].name));
+							}
+							else
+							{
+								args.Player.SendWarningMessage(String.Format("{0} is already allowed to use {1}.", args.Parameters[2], items[0].name));
+							}
 						}
 					}
-					else
+					#endregion
+					return;
+				case "del":
+					#region Delete item
 					{
-						args.Player.SendErrorMessage("Invalid item type!");
+						if (args.Parameters.Count != 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban del <item name>");
+							return;
+						}
+
+						List<Item> items = TShock.Utils.GetItemByIdOrName(args.Parameters[1]);
+						if (items.Count == 0)
+						{
+							args.Player.SendErrorMessage("Invalid item.");
+						}
+						else if (items.Count > 1)
+						{
+							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+						}
+						else
+						{
+							TShock.Itembans.RemoveBan(items[0].name);
+							args.Player.SendSuccessMessage("Unbanned " + items[0].name + ".");
+						}
 					}
-				}
-			}
-			else
-			{
-				args.Player.SendErrorMessage("Invalid use: /delitemgroup \"item name\" \"group name\"");
+					#endregion
+					return;
+				case "disallow":
+					#region Allow group to item
+					{
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax. Syntax: /itemban disallow <item name> <group name>");
+							return;
+						}
+
+						List<Item> items = TShock.Utils.GetItemByIdOrName(args.Parameters[1]);
+						if (items.Count == 0)
+						{
+							args.Player.SendErrorMessage("Invalid item.");
+						}
+						else if (items.Count > 1)
+						{
+							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+						}
+						else
+						{
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage(items[0].name + " is not banned.");
+								return;
+							}
+							if (ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.Itembans.RemoveGroup(items[0].name, args.Parameters[2]);
+								args.Player.SendSuccessMessage(String.Format("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].name));
+							}
+							else
+							{
+								args.Player.SendWarningMessage(String.Format("{0} is already disallowed to use {1}.", args.Parameters[2], items[0].name));
+							}
+						}
+					}
+					#endregion
+					return;
+				case "help":
+					args.Player.SendInfoMessage("Syntax: /itemban <command> [arguments]");
+					args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
+					args.Player.SendInfoMessage("Arguments: add <item name>, allow <item name> <group name>");
+					args.Player.SendInfoMessage("Arguments: del <item name>, disallow <item name> <group name>, list [page]");
+					return;
+				case "list":
+					#region List items
+					int pageNumber;
+					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						return;
+					IEnumerable<string> itemNames = from itemBan in TShock.Itembans.ItemBans
+													select itemBan.Name;
+					PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(itemNames),
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Item bans ({0}/{1}):",
+							FooterFormat = "Type /itemban list {0} for more.",
+							NothingToDisplayString = "There are currently no banned items."
+						});
+					#endregion
+					return;
 			}
 		}
-		
 		#endregion Item Management
 
 		#region Server Config Commands
