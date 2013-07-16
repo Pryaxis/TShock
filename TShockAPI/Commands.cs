@@ -56,7 +56,7 @@ namespace TShockAPI
 		}
 	}
 
-	public class Command
+    public class Command
 	{
 		public string Name
 		{
@@ -121,98 +121,56 @@ namespace TShockAPI
 
 		private delegate void AddChatCommand(string permission, CommandDelegate command, params string[] names);
 
+        internal static void LoadAssemblyCommands(Assembly assemble)
+        {
+            try
+            {
+                var types = assemble.GetTypes();
+
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (types[i].BaseType == typeof(TerrariaPlugin))
+                    {
+                        LoadAssemblyCommands(types[i]);
+                    }
+                }
+            }
+            catch 
+            {
+                Console.WriteLine("Unable to load commands from " + assemble.GetName().Name + ".");
+            }
+        }
+
+        internal static void LoadAssemblyCommands(string path)
+        {
+            LoadAssemblyCommands(Assembly.Load(path));
+        }
+
+        internal static void LoadAssemblyCommands(Type type)
+        {
+            var methods = type.GetMethods();
+
+            for (int m = 0; m < methods.Length; m++)
+            {
+                var attributes = methods[m].GetCustomAttributes(typeof(CommandAttribute), false);
+
+                if (attributes.Length != 1) continue;
+
+                var info = attributes[0] as CommandAttribute;
+
+                var del = Delegate.CreateDelegate(typeof(CommandDelegate), methods[m]) as CommandDelegate;
+
+                if (del != null && info != null && info.Names.Length > 0)
+                {
+                    ChatCommands.Add(new Command(info.Perm, del, info.Names) { AllowServer = info.AllowServer, DoLog = info.DoLog });
+                }
+            }
+        }
+
 		public static void InitCommands()
 		{
-			AddChatCommand add = (p, c, n) => ChatCommands.Add(new Command(p, c, n));
-            ChatCommands.Add(new Command(AuthToken, "auth") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
-            ChatCommands.Add(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
-            ChatCommands.Add(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.cfg, SetSpawn, "setspawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, Home, "home") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, Spawn, "spawn") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tp, TPHere, "tphere") { AllowServer = false });
-            ChatCommands.Add(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
-			add(Permissions.kick, Kick, "kick");
-		    add(Permissions.ban, DeprecateBans, "banip", "listbans", "unban", "unbanip", "clearbans");
-			add(Permissions.ban, Ban, "ban");
-			add(Permissions.whitelist, Whitelist, "whitelist");
-			add(Permissions.maintenance, Off, "off", "exit");
-			add(Permissions.maintenance, Restart, "restart"); //Added restart command
-			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
-			add(Permissions.maintenance, CheckUpdates, "checkupdates");
-			add(Permissions.causeevents, DropMeteor, "dropmeteor");
-			add(Permissions.causeevents, Star, "star");
-			add(Permissions.causeevents, Fullmoon, "fullmoon");
-			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
-			add(Permissions.causeevents, Invade, "invade");
-            add(Permissions.spawnboss, Eater, "eater");
-            add(Permissions.spawnboss, Eye, "eye");
-            add(Permissions.spawnboss, King, "king");
-            add(Permissions.spawnboss, Skeletron, "skeletron");
-            add(Permissions.spawnboss, WoF, "wof", "wallofflesh");
-            add(Permissions.spawnboss, Twins, "twins");
-            add(Permissions.spawnboss, Destroyer, "destroyer");
-            add(Permissions.spawnboss, SkeletronPrime, "skeletronp", "prime");
-            add(Permissions.spawnboss, Hardcore, "hardcore");
-            add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
-			add(Permissions.warp, Warp, "warp");
-		    add(null, DeprecateWarp, "setwarp", "sendwarp", "delwarp", "sw");
-			add(Permissions.managegroup, AddGroup, "addgroup");
-			add(Permissions.managegroup, DeleteGroup, "delgroup");
-			add(Permissions.managegroup, ModifyGroup, "modgroup");
-			add(Permissions.managegroup, ViewGroups, "group");
-			add(Permissions.manageitem, AddItem, "additem", "banitem");
-			add(Permissions.manageitem, DeleteItem, "delitem", "unbanitem");
-			add(Permissions.manageitem, ListItems, "listitems", "listbanneditems");
-			add(Permissions.manageitem, AddItemGroup, "additemgroup");
-			add(Permissions.manageitem, DeleteItemGroup, "delitemgroup");
-            add(Permissions.manageregion, Region, "region");
-            add(Permissions.manageregion, DebugRegions, "debugreg");
-			add(Permissions.cfg, Reload, "reload");
-			add(Permissions.cfg, ServerPassword, "serverpassword");
-			add(Permissions.cfg, Save, "save");
-			add(Permissions.cfg, Settle, "settle");
-			add(Permissions.cfg, MaxSpawns, "maxspawns");
-			add(Permissions.cfg, SpawnRate, "spawnrate");
-			add(Permissions.time, Time, "time");
-			add(Permissions.pvpfun, Slap, "slap");
-			add(Permissions.editspawn, ToggleAntiBuild, "antibuild");
-			add(Permissions.editspawn, ProtectSpawn, "protectspawn");
-            add(Permissions.maintenance, GetVersion, "version");
-			add(null, ListConnectedPlayers, "playing", "online", "who");
-            add(null, Motd, "motd");
-            add(null, Rules, "rules");
-            add(null, Help, "help");
-			add(Permissions.cantalkinthird, ThirdPerson, "me");
-			add(Permissions.mute, Mute, "mute", "unmute");
-			add(Permissions.logs, DisplayLogs, "displaylogs");
-			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
-			add(Permissions.rootonly, AuthVerify, "auth-verify");
-			add(Permissions.cfg, Broadcast, "broadcast", "bc", "say");
-			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
-			add(Permissions.whisper, Reply, "reply", "r");
-			add(Permissions.annoy, Annoy, "annoy");
-			add(Permissions.kill, Kill, "kill");
-			add(Permissions.butcher, Butcher, "butcher");
-			add(Permissions.item, Give, "give", "g");
-			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
-			add(Permissions.heal, Heal, "heal");
-			add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
-			add(Permissions.hardmode, StartHardMode, "hardmode");
-			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
-			add(Permissions.cfg, ServerInfo, "stats");
-			add(Permissions.cfg, WorldInfo, "world");
-			add(Permissions.savessi, SaveSSI, "savessi");
-			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
-		    add(Permissions.xmas, ForceXmas, "forcexmas");
-		    //add(null, TestCallbackCommand, "test");
+            // This makes it easier.
+            LoadAssemblyCommands(typeof(Commands));
 		}
 
 		public static bool HandleCommand(TSPlayer player, string text)
@@ -266,7 +224,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str"></param>
 		/// <returns></returns>
-		private static List<String> ParseParameters(string str)
+		public static List<String> ParseParameters(string str)
 		{
 			var ret = new List<string>();
 			var sb = new StringBuilder();
@@ -352,6 +310,7 @@ namespace TShockAPI
 
 		#region Account commands
 
+        [Command(Permissions.canlogin,"login", AllowServer=false, DoLog=false)]
 		public static void AttemptLogin(CommandArgs args)
 		{
 			if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
@@ -459,7 +418,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void PasswordUser(CommandArgs args)
+        [Command(Permissions.canchangepassword,"password", AllowServer=false, DoLog=false)]
+		public static void PasswordUser(CommandArgs args)
 		{
 			try
 			{
@@ -492,7 +452,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void RegisterUser(CommandArgs args)
+        [Command(Permissions.canregister, "register", AllowServer=false, DoLog=false)]
+		public static void RegisterUser(CommandArgs args)
 		{
 			try
 			{
@@ -536,7 +497,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ManageUsers(CommandArgs args)
+        [Command(Permissions.rootonly, "user", DoLog=false)]
+		public static void ManageUsers(CommandArgs args)
 		{
 			// This guy needs to be here so that people don't get exceptions when they type /user
 			if (args.Parameters.Count < 1)
@@ -702,6 +664,7 @@ namespace TShockAPI
 
 		#region Stupid commands
 
+        [Command(Permissions.cfg, "stats")]
 		public static void ServerInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("Memory usage: " + Process.GetCurrentProcess().WorkingSet64);
@@ -712,6 +675,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Machine name: " + Environment.MachineName);
 		}
 
+        [Command(Permissions.cfg, "world")]
 		public static void WorldInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("World name: " + Main.worldName);
@@ -722,7 +686,8 @@ namespace TShockAPI
 
 		#region Player Management Commands
 
-		private static void GrabUserUserInfo(CommandArgs args)
+        [Command(Permissions.userinfo, "userinfo", "ui")]
+		public static void GrabUserUserInfo(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -758,7 +723,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Kick(CommandArgs args)
+        [Command(Permissions.kick, "kick")]
+		public static void Kick(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -805,7 +771,8 @@ namespace TShockAPI
 			}
 		}
 
-        private static void DeprecateBans(CommandArgs args)
+        [Command(Permissions.ban, "banip", "listbans", "unban", "unbanip", "clearbans")]
+        public static void DeprecateBans(CommandArgs args)
         {
             args.Player.SendInfoMessage("All ban commands were merged into one in TShock 4.0.");
             args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
@@ -815,7 +782,8 @@ namespace TShockAPI
             return;
         }
 
-		private static void Ban(CommandArgs args)
+        [Command(Permissions.ban, "ban")]
+		public static void Ban(CommandArgs args)
 		{
 			if (args.Parameters.Count == 0 || args.Parameters[0].ToLower() == "help")
 			{
@@ -1092,6 +1060,7 @@ namespace TShockAPI
 
 		private static int ClearBansCode = -1;
 
+        [Command(Permissions.whitelist, "whitelist")]
 		public static void Whitelist(CommandArgs args)
 		{
 			if (args.Parameters.Count == 1)
@@ -1104,12 +1073,14 @@ namespace TShockAPI
 			}
 		}
 
+        [Command(Permissions.logs, "displaylogs",AllowServer=false)]
 		public static void DisplayLogs(CommandArgs args)
 		{
 			args.Player.DisplayLogs = (!args.Player.DisplayLogs);
 			args.Player.SendSuccessMessage("You will " + (args.Player.DisplayLogs ? "now" : "no longer") + " receive logs.");
 		}
 
+        [Command(Permissions.savessi, "savessi")]
 		public static void SaveSSI(CommandArgs args )
 		{
 			if (TShock.Config.ServerSideInventory)
@@ -1125,6 +1096,7 @@ namespace TShockAPI
 			}
 		}
 
+        [Command(Permissions.savessi, "overridessi", "ossi")]
 		public static void OverrideSSI( CommandArgs args )
 		{
 			if( args.Parameters.Count < 1 )
@@ -1152,7 +1124,8 @@ namespace TShockAPI
 			}
 		}
 
-        private static void ForceXmas(CommandArgs args)
+        [Command(Permissions.xmas, "forcexmas")]
+        public static void ForceXmas(CommandArgs args)
         {
             if(args.Parameters.Count == 0)
             {
@@ -1188,7 +1161,8 @@ namespace TShockAPI
 
 		#region Server Maintenence Commands
 
-		private static void Broadcast(CommandArgs args)
+        [Command(Permissions.cfg, "broadcast", "say", "bc")]
+		public static void Broadcast(CommandArgs args)
 		{
 			string message = "";
 
@@ -1201,7 +1175,8 @@ namespace TShockAPI
 			return;
 		}
 
-		private static void Off(CommandArgs args)
+        [Command(Permissions.maintenance, "off", "exit")]
+		public static void Off(CommandArgs args)
 		{
 
 			if (TShock.Config.ServerSideInventory)
@@ -1218,8 +1193,9 @@ namespace TShockAPI
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
 		}
-		//Added restart command
-		private static void Restart(CommandArgs args)
+		
+        [Command(Permissions.maintenance, "restart")]
+		public static void Restart(CommandArgs args)
 		{
 			if (Main.runningMono)
 			{
@@ -1245,13 +1221,15 @@ namespace TShockAPI
 			}
 		}
 
-		private static void OffNoSave(CommandArgs args)
+        [Command(Permissions.maintenance, "off-nosave", "exit-nosave")]
+		public static void OffNoSave(CommandArgs args)
 		{
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(false, reason);
 		}
 
-		private static void CheckUpdates(CommandArgs args)
+        [Command(Permissions.maintenance, "checkupdates")]
+		public static void CheckUpdates(CommandArgs args)
 		{
             args.Player.SendInfoMessage("An update check has been queued.");
 			ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
@@ -1261,14 +1239,16 @@ namespace TShockAPI
 
         #region Cause Events and Spawn Monsters Commands
 
-        private static void DropMeteor(CommandArgs args)
+        [Command(Permissions.causeevents, "dropmeteor")]
+        public static void DropMeteor(CommandArgs args)
 		{
 			WorldGen.spawnMeteor = false;
 			WorldGen.dropMeteor();
             args.Player.SendInfoMessage("A meteor has been triggered.");
 		}
 
-		private static void Star(CommandArgs args)
+        [Command(Permissions.causeevents, "star")]
+		public static void Star(CommandArgs args)
 		{
 			int penis56 = 12;
 			int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
@@ -1285,19 +1265,22 @@ namespace TShockAPI
             args.Player.SendInfoMessage("An attempt has been made to spawn a star.");
 		}
 
-		private static void Fullmoon(CommandArgs args)
+        [Command(Permissions.causeevents, "fullmoon")]
+		public static void Fullmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetFullMoon(true);
 			TShock.Utils.Broadcast(string.Format("{0} turned on the full moon.", args.Player.Name), Color.Green);
 		}
 
-		private static void Bloodmoon(CommandArgs args)
+        [Command(Permissions.causeevents, "bloodmoon")]
+		public static void Bloodmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetBloodMoon(true);
 			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
 		}
 
-		private static void Invade(CommandArgs args)
+        [Command(Permissions.causeevents, "invade")]
+		public static void Invade(CommandArgs args)
 		{
 			if (Main.invasionSize <= 0)
 			{
@@ -1311,7 +1294,8 @@ namespace TShockAPI
 			}
 		}
 
-        private static void StartHardMode(CommandArgs args)
+        [Command(Permissions.hardmode, "starthardmode")]
+        public static void StartHardMode(CommandArgs args)
         {
             if (!TShock.Config.DisableHardmode)
                 WorldGen.StartHardmode();
@@ -1319,14 +1303,16 @@ namespace TShockAPI
                 args.Player.SendMessage("Hardmode is disabled via config.", Color.Red);
         }
 
-        private static void DisableHardMode(CommandArgs args)
+        [Command(Permissions.hardmode, "stophardmode", "disablehardmode")]
+        public static void DisableHardMode(CommandArgs args)
         {
             Main.hardMode = false;
             args.Player.SendMessage("Hardmode is now disabled.", Color.Green);
         }
 
+        [Command(Permissions.spawnboss, "eater")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Eater(CommandArgs args)
+        public static void Eater(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1345,8 +1331,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned eater of worlds {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "eye")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Eye(CommandArgs args)
+        public static void Eye(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1366,8 +1353,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned eye {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "king")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void King(CommandArgs args)
+        public static void King(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1386,8 +1374,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned king slime {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "skeletron")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Skeletron(CommandArgs args)
+        public static void Skeletron(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1407,8 +1396,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "wof", "wallofflesh")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void WoF(CommandArgs args)
+        public static void WoF(CommandArgs args)
         {
             if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
             {
@@ -1419,8 +1409,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned Wall of Flesh!", args.Player.Name));
         }
 
+        [Command(Permissions.spawnboss, "twins")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Twins(CommandArgs args)
+        public static void Twins(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1442,8 +1433,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned the twins {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "destroyer")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Destroyer(CommandArgs args)
+        public static void Destroyer(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1463,8 +1455,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned the destroyer {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "prime", "skeletronp")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void SkeletronPrime(CommandArgs args)
+        public static void SkeletronPrime(CommandArgs args)
         {
             if (args.Parameters.Count > 1)
             {
@@ -1484,8 +1477,9 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned skeletron prime {1} times!", args.Player.Name, amount));
         }
 
+        [Command(Permissions.spawnboss, "hardcore")]
         [Obsolete("This specific command for spawning mobs will replaced soon.")]
-        private static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
+        public static void Hardcore(CommandArgs args) // TODO: Add all 8 bosses
         {
             if (args.Parameters.Count > 1)
             {
@@ -1519,7 +1513,8 @@ namespace TShockAPI
             TShock.Utils.Broadcast(string.Format("{0} has spawned all bosses {1} times!", args.Player.Name, amount));
         }
 
-        private static void SpawnMob(CommandArgs args)
+        [Command(Permissions.spawnmob, "spawnmob", "sm")]
+        public static void SpawnMob(CommandArgs args)
         {
             if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
             {
@@ -1569,20 +1564,24 @@ namespace TShockAPI
 		#endregion Cause Events and Spawn Monsters Commands
 
 		#region Teleport Commands
+        // I may be using the wrong permissions here, dunno if they were updated or anything.
 
-		private static void Home(CommandArgs args)
+        [Command(Permissions.tp, "home", AllowServer=false)]
+		public static void Home(CommandArgs args)
 		{
 			args.Player.Spawn();
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
 
-		private static void Spawn(CommandArgs args)
+        [Command(Permissions.tp, "spawn", AllowServer=false)]
+		public static void Spawn(CommandArgs args)
 		{
 			if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 
-		private static void TP(CommandArgs args)
+        [Command(Permissions.tp, "tp", AllowServer=false)]
+		public static void TP(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -1614,7 +1613,38 @@ namespace TShockAPI
 			}
 		}
 
-		private static void TPHere(CommandArgs args)
+        [Command(Permissions.tp, "sendtp", "stp", AllowServer=false)]
+        public static void STP(CommandArgs com)
+        {
+            if (com.Parameters.Count < 2)
+            {
+                com.Player.SendInfoMessage("Usage: /stp <player> <target> - teleports the player to the target player.");
+            }
+            else
+            {
+                var player = TShock.Utils.FindPlayer(com.Parameters[0]);
+                if (player.Count != 1)
+                {
+                    com.Player.SendMessage(player.Count + " players matched (player)!", Color.Red); return;
+                }
+                var target = TShock.Utils.FindPlayer(string.Join(" ", com.Parameters.GetRange(1, com.Parameters.Count -1)));
+                if (target.Count != 1)
+                {
+                    com.Player.SendMessage(player.Count + " players matched (target)!", Color.Red); return;
+                }
+
+                if (player[0].Teleport(target[0].TileX, target[0].TileY))
+                {
+                    player[0].SendInfoMessage(com.Player.Name + " teleported you to " + target[0].Name + ".");
+                    target[0].SendInfoMessage(com.Player.Name + " teleported " + player[0].Name + " to you.");
+                    com.Player.SendSuccessMessage("Teleported " + player[0].Name + " to " + target[0].Name + ".");
+                }
+                else com.Player.SendErrorMessage("Failed to teleport " + player[0].Name + " to " + target[0].Name + ".");
+            }
+        }
+
+        [Command(Permissions.tphere, "tphere", AllowServer=false)]
+		public static void TPHere(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -1658,7 +1688,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void TPAllow(CommandArgs args)
+        [Command(Permissions.tpallow, "tpallow", AllowServer=false)]
+		public static void TPAllow(CommandArgs args)
 		{
 			if (!args.Player.TPAllow)
 				args.Player.SendSuccessMessage("You have removed your teleportation protection.");
@@ -1667,7 +1698,8 @@ namespace TShockAPI
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
 
-        private static void DeprecateWarp(CommandArgs args)
+        [Command(null, "setwarp", "sendwarp", "delwarp", "sw")]
+        public static void DeprecateWarp(CommandArgs args)
         {
             if (args.Player.Group.HasPermission(Permissions.managewarp))
             {
@@ -1686,7 +1718,8 @@ namespace TShockAPI
             }
         }
 
-		private static void Warp(CommandArgs args)
+        [Command(Permissions.warp, "warp")]
+		public static void Warp(CommandArgs args)
 		{
 		    bool hasManageWarpPermission = args.Player.Group.HasPermission(Permissions.managewarp);
             if (args.Parameters.Count < 1)
@@ -1889,7 +1922,8 @@ namespace TShockAPI
 
 		#region Group Management
 
-		private static void AddGroup(CommandArgs args)
+        [Command(Permissions.managegroup, "addgroup")]
+		public static void AddGroup(CommandArgs args)
 		{
 			if (args.Parameters.Count > 0)
 			{
@@ -1907,7 +1941,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void DeleteGroup(CommandArgs args)
+        [Command(Permissions.managegroup, "delgroup")]
+		public static void DeleteGroup(CommandArgs args)
 		{
 			if (args.Parameters.Count > 0)
 			{
@@ -1923,7 +1958,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ModifyGroup(CommandArgs args)
+        [Command(Permissions.managegroup, "modgroup")]
+        public static void ModifyGroup(CommandArgs args)
 		{
 			if (args.Parameters.Count > 2)
 			{
@@ -1977,7 +2013,8 @@ namespace TShockAPI
 			args.Player.SendErrorMessage("Incorrect format: /modgroup add|del <group name> <permission to add or remove>");
 		}
 
-		private static void ViewGroups(CommandArgs args)
+        [Command(Permissions.managegroup, "group")]
+        public static void ViewGroups(CommandArgs args)
 		{
 			if (args.Parameters.Count > 0)
 			{
@@ -2055,7 +2092,8 @@ namespace TShockAPI
 
 		#region Item Management
 
-		private static void AddItem(CommandArgs args)
+        [Command(Permissions.manageitem, "banitem", "additem")]
+        public static void AddItem(CommandArgs args)
 		{
 			if (args.Parameters.Count == 1)
 			{
@@ -2088,7 +2126,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void DeleteItem(CommandArgs args)
+        [Command(Permissions.manageitem, "unbanitem", "delitem")]
+        public static void DeleteItem(CommandArgs args)
 		{
 			if (args.Parameters.Count == 1)
 			{
@@ -2120,13 +2159,15 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid use: /delitem \"item name\" or /delitem ##");
 			}
 		}
-		
-		private static void ListItems(CommandArgs args)
+
+        [Command(Permissions.manageitem, "listitem", "listbanneditems")]
+        public static void ListItems(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("The banned items are: " + String.Join(",", TShock.Itembans.ItemBans) + ".");
 		}
-		
-		private static void AddItemGroup(CommandArgs args)
+
+        [Command(Permissions.manageitem, "additemgroup", "banitemgroup")]
+        public static void AddItemGroup(CommandArgs args)
 		{
 			if (args.Parameters.Count == 2)
 			{
@@ -2173,9 +2214,10 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage("Invalid use: /additemgroup \"item name\" \"group name\"");
 			}
-		}		
+		}
 
-		private static void DeleteItemGroup(CommandArgs args)
+        [Command(Permissions.manageitem, "delitemgroup", "banitemgroup")]
+        public static void DeleteItemGroup(CommandArgs args)
 		{
 			if (args.Parameters.Count == 2)
 			{
@@ -2228,7 +2270,8 @@ namespace TShockAPI
 
 		#region Server Config Commands
 
-		private static void SetSpawn(CommandArgs args)
+        [Command(Permissions.cfg, "setspawn", AllowServer=false)]
+		public static void SetSpawn(CommandArgs args)
 		{
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
@@ -2236,7 +2279,8 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("Spawn has now been set at your location.");
 		}
 
-		private static void Reload(CommandArgs args)
+        [Command(Permissions.cfg, "reload")]
+		public static void Reload(CommandArgs args)
 		{
 			FileTools.SetupConfig();
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
@@ -2247,7 +2291,8 @@ namespace TShockAPI
 				"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
 
-		private static void ServerPassword(CommandArgs args)
+        [Command(Permissions.cfg, "serverpassword", "serverpass")]
+		public static void ServerPassword(CommandArgs args)
 		{
 			if (args.Parameters.Count != 1)
 			{
@@ -2259,7 +2304,8 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage(string.Format("Server password has been changed to: {0}.", passwd));
 		}
 
-		private static void Save(CommandArgs args)
+        [Command(Permissions.cfg, "save")]
+		public static void Save(CommandArgs args)
 		{
 			SaveManager.Instance.SaveWorld(false);
 			foreach (TSPlayer tsply in TShock.Players.Where(tsply => tsply != null))
@@ -2269,7 +2315,8 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("Save succeeded.");
 		}
 
-		private static void Settle(CommandArgs args)
+        [Command(Permissions.cfg, "settle")]
+		public static void Settle(CommandArgs args)
 		{
 			if (Liquid.panicMode)
 			{
@@ -2280,7 +2327,8 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Settling liquids.");
 		}
 
-		private static void MaxSpawns(CommandArgs args)
+        [Command(Permissions.cfg, "maxspawns")]
+		public static void MaxSpawns(CommandArgs args)
 		{
 			if (args.Parameters.Count != 1)
 			{
@@ -2310,7 +2358,8 @@ namespace TShockAPI
 			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to {1}.", args.Player.Name, amount));
 		}
 
-		private static void SpawnRate(CommandArgs args)
+        [Command(Permissions.cfg, "spawnrate")]
+		public static void SpawnRate(CommandArgs args)
 		{
 			if (args.Parameters.Count != 1)
 			{
@@ -2356,7 +2405,8 @@ namespace TShockAPI
 
 		#region Time/PvpFun Commands
 
-		private static void Time(CommandArgs args)
+        [Command(Permissions.cfg, "time")]
+		public static void Time(CommandArgs args)
 		{
 			if (args.Parameters.Count != 1)
 			{
@@ -2394,7 +2444,8 @@ namespace TShockAPI
 
         //TODO: Come back here
 
-		private static void Slap(CommandArgs args)
+        [Command(Permissions.pvpfun, "slap")]
+		public static void Slap(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
@@ -2440,20 +2491,22 @@ namespace TShockAPI
 
         #region Region Commands
 
-        private static void DebugRegions(CommandArgs args)
+        [Command(Permissions.manageregion, "debugreg")]
+        public static void DebugRegions(CommandArgs args)
         {
             foreach (Region r in TShock.Regions.Regions)
             {
-                args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " +
+                args.Player.SendSuccessMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " +
                                         r.Area.Width + " H: " + r.Area.Height);
                 foreach (int s in r.AllowedIDs)
                 {
-                    args.Player.SendMessage(r.Name + ": " + s);
+                    args.Player.SendInfoMessage(r.Name + ": " + s);
                 }
             }
         }
 
-        private static void Region(CommandArgs args)
+        [Command(Permissions.manageregion, "region")]
+        public static void Region(CommandArgs args)
         {
             string cmd = "help";
             if (args.Parameters.Count > 0)
@@ -2893,13 +2946,15 @@ namespace TShockAPI
 
         #region World Protection Commands
 
-        private static void ToggleAntiBuild(CommandArgs args)
+        [Command(Permissions.editspawn, "antibuild")]
+        public static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
 			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
 		}
 
-		private static void ProtectSpawn(CommandArgs args)
+        [Command(Permissions.editspawn, "protectspawn")]
+		public static void ProtectSpawn(CommandArgs args)
 		{
 			TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
 			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
@@ -2909,7 +2964,8 @@ namespace TShockAPI
 
 		#region General Commands
 
-		private static void Help(CommandArgs args)
+        [Command(null, "help")]
+        public static void Help(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("TShock Commands:");
 			int page = 1;
@@ -2949,13 +3005,15 @@ namespace TShockAPI
 			}
 		}
 
-		private static void GetVersion(CommandArgs args)
+        [Command(Permissions.maintenance, "getversion")]
+        public static void GetVersion(CommandArgs args)
 		{
 			args.Player.SendInfoMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
 												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
 		}
 
-		private static void ListConnectedPlayers(CommandArgs args)
+        [Command(null, "playing", "players", "online", "who")]
+        public static void ListConnectedPlayers(CommandArgs args)
 		{
 			//How many players per page
 			const int pagelimit = 15;
@@ -3012,7 +3070,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void AuthToken(CommandArgs args)
+        [Command(null, "auth", AllowServer=false)]
+        public static void AuthToken(CommandArgs args)
 		{
 			if (TShock.AuthToken == 0)
 			{
@@ -3056,7 +3115,8 @@ namespace TShockAPI
 			Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
 		}
 
-		private static void AuthVerify(CommandArgs args)
+        [Command(Permissions.rootonly, "auth-verify")]
+        public static void AuthVerify(CommandArgs args)
 		{
 			if (TShock.AuthToken == 0)
 			{
@@ -3082,7 +3142,8 @@ namespace TShockAPI
 			TShock.AuthToken = 0;
 		}
 
-		private static void ThirdPerson(CommandArgs args)
+        [Command(Permissions.cantalkinthird, "me")]
+        public static void ThirdPerson(CommandArgs args)
 		{
 			if (args.Parameters.Count == 0)
 			{
@@ -3095,7 +3156,8 @@ namespace TShockAPI
 				TSPlayer.All.SendMessage(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
 		}
 
-		private static void PartyChat(CommandArgs args)
+        [Command(Permissions.canpartychat, "p", AllowServer=false)]
+        public static void PartyChat(CommandArgs args)
 		{
 			if (args.Parameters.Count == 0)
 			{
@@ -3119,7 +3181,8 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("You are not in a party!");
 		}
 
-		private static void Mute(CommandArgs args)
+        [Command(Permissions.mute, "mute", "unmute")]
+        public static void Mute(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -3153,17 +3216,20 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Motd(CommandArgs args)
+        [Command(null, "motd")]
+        public static void Motd(CommandArgs args)
 		{
 			TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
 		}
 
-		private static void Rules(CommandArgs args)
+        [Command(null, "rules")]
+        public static void Rules(CommandArgs args)
 		{
 			TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
 		}
 
-		private static void Whisper(CommandArgs args)
+        [Command(Permissions.whisper, "whisper", "w", "tell")]
+        public static void Whisper(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
 			{
@@ -3193,7 +3259,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Reply(CommandArgs args)
+        [Command(Permissions.whisper, "reply", "r")]
+        public static void Reply(CommandArgs args)
 		{
 			if (args.Player.mute)
 				args.Player.SendErrorMessage("You are muted.");
@@ -3208,7 +3275,8 @@ namespace TShockAPI
 					"You haven't previously received any whispers. Please use /whisper to whisper to other people.");
 		}
 
-		private static void Annoy(CommandArgs args)
+        [Command(Permissions.annoy, "annoy")]
+        public static void Annoy(CommandArgs args)
 		{
 			if (args.Parameters.Count != 2)
 			{
@@ -3235,7 +3303,8 @@ namespace TShockAPI
 
 		#region Cheat Commands
 
-		private static void Kill(CommandArgs args)
+        [Command(Permissions.kill, "kill")]
+        public static void Kill(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -3262,7 +3331,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Butcher(CommandArgs args)
+        [Command(Permissions.butcher, "butcher", "killnpcs")]
+        public static void Butcher(CommandArgs args)
 		{
 			if (args.Parameters.Count > 1)
 			{
@@ -3285,8 +3355,9 @@ namespace TShockAPI
 			}
 			TSPlayer.All.SendSuccessMessage(string.Format("Killed {0} NPCs.", killcount));
 		}
-		
-		private static void Item(CommandArgs args)
+
+        [Command(Permissions.item, "item", "i", AllowServer=false)]
+        public static void Item(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
 			{
@@ -3348,7 +3419,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Give(CommandArgs args)
+        [Command(Permissions.item, "give", "g")]
+        public static void Give(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
 			{
@@ -3435,6 +3507,7 @@ namespace TShockAPI
 			}
 		}
 
+        [Command(Permissions.clearitems, "clear", "clearitems")]
 		public static void ClearItems(CommandArgs args)
 		{
 			int radius = 50;
@@ -3473,7 +3546,8 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("All " + count + " items within a radius of " + radius + " have been deleted.");
 		}
 
-		private static void Heal(CommandArgs args)
+        [Command(Permissions.heal, "heal", "h")]
+        public static void Heal(CommandArgs args)
 		{
 			TSPlayer playerToHeal;
 			if (args.Parameters.Count > 0)
@@ -3522,7 +3596,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Buff(CommandArgs args)
+        [Command(Permissions.buff, "buff", AllowServer=false)]
+        public static void Buff(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
@@ -3560,7 +3635,8 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid buff ID!");
 		}
 
-		private static void GBuff(CommandArgs args)
+        [Command(Permissions.buffplayer, "gbuff", "buffplayer")]
+        public static void GBuff(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 			{
@@ -3616,7 +3692,8 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Grow(CommandArgs args)
+        [Command(Permissions.grow, "grow", AllowServer=false)]
+        public static void Grow(CommandArgs args)
 		{
 			if (args.Parameters.Count != 1)
 			{
@@ -3685,4 +3762,31 @@ namespace TShockAPI
 
 		#endregion Cheat Comamnds
 	}
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class CommandAttribute : Attribute
+    {
+        /// <summary>
+        /// The command's permission.
+        /// </summary>
+        public string Perm = "*";
+        /// <summary>
+        /// The names of the command.
+        /// </summary>
+        public string[] Names { get; set; }
+        /// <summary>
+        /// Whether the server can run the command.
+        /// </summary>
+        public bool AllowServer = true;
+        /// <summary>
+        /// Whether the command is logged.
+        /// </summary>
+        public bool DoLog = true;
+
+        /// <summary>
+        /// Constructor takes names as a params string[], specify other properties with named parameters.
+        /// </summary>
+        public CommandAttribute(string perm, params string[] names)
+        { Perm = perm; Names = names; }
+    }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TShockAPI.Hooks
 {
-    class PlayerLoginEventArgs
+    public class PlayerLoginEventArgs
     {
         public TSPlayer Player { get; set; }
         public PlayerLoginEventArgs(TSPlayer ply)
@@ -14,7 +14,7 @@ namespace TShockAPI.Hooks
         }
     }
 
-    class PlayerLoginEvent
+    public class PlayerLoginEvent
     {
         public delegate void PlayerLoginD(PlayerLoginEventArgs e);
         public static event PlayerLoginD PlayerLogin;

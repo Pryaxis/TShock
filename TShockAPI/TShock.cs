@@ -228,7 +228,16 @@ namespace TShockAPI
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
-				//RconHandler.StartThread();
+
+                // Snirk Immington:
+                // Requires reference to a TerrariaServer.exe I have pushed to Deathmax/TerrariaAPI to compile.
+                // Available at my repository https://github.com/SnirkImmington/TerrariaAPI-Server for details on the PluginContainer additions.
+                var orderedPlugins = from x in ProgramServer.Plugins orderby x.Plugin.Order, x.Plugin.Name select x;
+
+                foreach (var plugin in orderedPlugins)
+                {
+                    Commands.LoadAssemblyCommands(plugin.AssemblyFilePath);
+                }
 
 				if (Config.RestApiEnabled)
 					RestApi.Start();
