@@ -899,6 +899,10 @@ namespace TShockAPI
 
 		public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
 		{
+			// Main.rand is thread static.
+			if (Main.rand == null)
+				Main.rand = new Random();
+
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
 			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}
