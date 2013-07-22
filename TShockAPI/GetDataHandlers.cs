@@ -2922,7 +2922,7 @@ namespace TShockAPI
                     break;
             }
 
-		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.Red);
+		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 		    return false;
 		}
 	}

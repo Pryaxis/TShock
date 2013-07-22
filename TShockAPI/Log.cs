@@ -73,12 +73,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes data to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Data(String format, params String[] args)
+		{
+			Data(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Error(String message)
 		{
 			Write(message, LogLevel.Error);
+		}
+
+		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Error(String format, params String[] args)
+		{
+			Error(String.Format(format, args));
 		}
 
 		/// <summary>
@@ -94,6 +114,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void ConsoleError(String format, params String[] args)
+		{
+			ConsoleError(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
@@ -103,12 +133,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes a warning to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Warn(String format, params String[] args)
+		{
+			Warn(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Info(String message)
 		{
 			Write(message, LogLevel.Info);
+		}
+
+		/// <summary>
+		/// Writes an informative string to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Info(String format, params String[] args)
+		{
+			Info(String.Format(format, args));
 		}
 
 		/// <summary>
@@ -124,12 +174,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes an informative string to the log file. Also outputs to the console.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void ConsoleInfo(String format, params String[] args)
+		{
+			ConsoleInfo(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Debug(String message)
 		{
 			Write(message, LogLevel.Debug);
+		}
+
+		/// <summary>
+		/// Writes a debug string to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Debug(String format, params String[] args)
+		{
+			Debug(String.Format(format, args));
 		}
 
 		/// <summary>
