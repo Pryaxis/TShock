@@ -245,6 +245,7 @@ namespace TShockAPI
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
+			add(null, Aliases, "aliases");
 		    //add(null, TestCallbackCommand, "test");
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -3373,6 +3374,41 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
 				(new Thread(ply.Whoopie)).Start(annoy);
 			}
+		}
+
+		private static void Aliases(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /aliases <command or alias>");
+				return;
+			}
+			
+			string givenCommandName = string.Join(" ", args.Parameters);
+			if (string.IsNullOrWhiteSpace(givenCommandName)) {
+				args.Player.SendErrorMessage("Please enter a proper command name or alias.");
+				return;
+			}
+
+			string commandName;
+			if (givenCommandName[0] == '/')
+				commandName = givenCommandName.Substring(1);
+			else
+				commandName = givenCommandName;
+
+			bool didMatch = false;
+			foreach (Command matchingCommand in ChatCommands.Where(cmd => cmd.Names.IndexOf(commandName) != -1)) {
+				if (matchingCommand.Names.Count > 1)
+					args.Player.SendInfoMessage(
+					    "Aliases of /{0}: /{1}", matchingCommand.Name, string.Join(", /", matchingCommand.Names.Skip(1)));
+				else
+					args.Player.SendInfoMessage("/{0} defines no aliases.", matchingCommand.Name);
+
+				didMatch = true;
+			}
+
+			if (!didMatch)
+				args.Player.SendErrorMessage("No command or command alias matching \"{0}\" found.", givenCommandName);
 		}
 
 		#endregion General Commands
