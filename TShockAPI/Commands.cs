@@ -1289,7 +1289,8 @@ namespace TShockAPI
 				message += " " + args.Parameters[i];
 			}
 
-			TShock.Utils.Broadcast("(Server Broadcast)" + message, Color.Red);
+			Color color = new Color(TShock.Config.BroadcastRGB[0], TShock.Config.BroadcastRGB[1], TShock.Config.BroadcastRGB[2]);
+			TShock.Utils.Broadcast("(Server Broadcast)" + message, color);
 			return;
 		}
 
