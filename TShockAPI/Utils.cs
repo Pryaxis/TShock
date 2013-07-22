@@ -218,18 +218,19 @@ namespace TShockAPI
         }
 
 		/// <summary>
-		/// Sends message to all users with 'logs' permission.
+		/// Sends message to all players with 'logs' permission.
 		/// </summary>
 		/// <param name="log">Message to send</param>
 		/// <param name="color">Color of the message</param>
-		public void SendLogs(string log, Color color)
+		/// <param name="excludedPlayer">The player to not send the message to.</param>
+		public void SendLogs(string log, Color color, TSPlayer excludedPlayer = null)
 		{
 			Log.Info(log);
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
-				if (player != null && player.Active && player.Group.HasPermission(Permissions.logs) && player.DisplayLogs &&
-				    TShock.Config.DisableSpewLogs == false)
+				if (player != null && player != excludedPlayer && player.Active && player.Group.HasPermission(Permissions.logs) && 
+				    player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
 					player.SendMessage(log, color);
 			}
 		}

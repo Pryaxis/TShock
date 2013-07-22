@@ -253,6 +253,9 @@ namespace TShockAPI
 
 		[Description("Prevents players from placing tiles with an invalid style.")] public bool PreventInvalidPlaceStyle = true;
 
+		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
+		    {127,255,212};
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

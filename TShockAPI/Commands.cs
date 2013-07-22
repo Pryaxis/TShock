@@ -245,6 +245,7 @@ namespace TShockAPI
 			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
+			add(null, Aliases, "aliases");
 		    //add(null, TestCallbackCommand, "test");
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -282,7 +283,7 @@ namespace TShockAPI
             {
                 if (!cmd.CanRun(player))
                 {
-                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
                     player.SendErrorMessage("You do not have access to that command.");
                 }
                 else if (!cmd.AllowServer && !player.RealPlayer)
@@ -292,7 +293,7 @@ namespace TShockAPI
                 else
                 {
                     if (cmd.DoLog)
-                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
+                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
                     cmd.Run(cmdText, player, args);
                 }
             }
@@ -1289,7 +1290,8 @@ namespace TShockAPI
 				message += " " + args.Parameters[i];
 			}
 
-			TShock.Utils.Broadcast("(Server Broadcast)" + message, Color.Red);
+			Color color = new Color(TShock.Config.BroadcastRGB[0], TShock.Config.BroadcastRGB[1], TShock.Config.BroadcastRGB[2]);
+			TShock.Utils.Broadcast("(Server Broadcast)" + message, color);
 			return;
 		}
 
@@ -2879,7 +2881,7 @@ namespace TShockAPI
                             args.Player, pageNumber, lines, new PaginationTools.Settings
                             {
                                 HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
-                                FooterFormat = "Type /region info {0} for more information."
+                                FooterFormat = string.Format("Type /region info {0} {{0}} for more information.", regionName)
                             }
                         );
 
@@ -3372,6 +3374,41 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
 				(new Thread(ply.Whoopie)).Start(annoy);
 			}
+		}
+
+		private static void Aliases(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /aliases <command or alias>");
+				return;
+			}
+			
+			string givenCommandName = string.Join(" ", args.Parameters);
+			if (string.IsNullOrWhiteSpace(givenCommandName)) {
+				args.Player.SendErrorMessage("Please enter a proper command name or alias.");
+				return;
+			}
+
+			string commandName;
+			if (givenCommandName[0] == '/')
+				commandName = givenCommandName.Substring(1);
+			else
+				commandName = givenCommandName;
+
+			bool didMatch = false;
+			foreach (Command matchingCommand in ChatCommands.Where(cmd => cmd.Names.IndexOf(commandName) != -1)) {
+				if (matchingCommand.Names.Count > 1)
+					args.Player.SendInfoMessage(
+					    "Aliases of /{0}: /{1}", matchingCommand.Name, string.Join(", /", matchingCommand.Names.Skip(1)));
+				else
+					args.Player.SendInfoMessage("/{0} defines no aliases.", matchingCommand.Name);
+
+				didMatch = true;
+			}
+
+			if (!didMatch)
+				args.Player.SendErrorMessage("No command or command alias matching \"{0}\" found.", givenCommandName);
 		}
 
 		#endregion General Commands
