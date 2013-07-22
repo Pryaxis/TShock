@@ -2879,7 +2879,7 @@ namespace TShockAPI
                             args.Player, pageNumber, lines, new PaginationTools.Settings
                             {
                                 HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
-                                FooterFormat = "Type /region info {0} for more information."
+                                FooterFormat = string.Format("Type /region info {0} {{0}} for more information.", regionName)
                             }
                         );
 
