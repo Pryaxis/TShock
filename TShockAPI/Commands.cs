@@ -282,7 +282,7 @@ namespace TShockAPI
             {
                 if (!cmd.CanRun(player))
                 {
-                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.Red);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
                     player.SendErrorMessage("You do not have access to that command.");
                 }
                 else if (!cmd.AllowServer && !player.RealPlayer)
@@ -292,7 +292,7 @@ namespace TShockAPI
                 else
                 {
                     if (cmd.DoLog)
-                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.Red);
+                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
                     cmd.Run(cmdText, player, args);
                 }
             }
