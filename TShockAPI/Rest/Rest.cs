@@ -38,6 +38,15 @@ namespace Rests
 	/// <returns>Response object or null to not handle request</returns>
 	public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
 
+	/// <summary>
+	/// Secure Rest command delegate including a token.
+	/// </summary>
+	/// <param name="parameters">Parameters in the url</param>
+	/// <param name="verbs">{x} in urltemplate</param>
+	/// <param name="tokenData">The data of stored for the provided token.</param>
+	/// <returns>Response object or null to not handle request</returns>
+	public delegate object SecureRestCommandD(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData);
+
 	public class Rest : IDisposable
 	{
 		private readonly List<RestCommand> commands = new List<RestCommand>();
@@ -182,7 +191,41 @@ namespace Rests
 
 		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
 		{
-			return cmd.Callback(verbs, parms);
+			object result = cmd.Execute(verbs, parms);
+			if (cmd.DoLog)
+				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+
+			return result;
+		}
+
+		protected virtual string BuildRequestUri(
+			RestCommand cmd, RestVerbs verbs, IParameterCollection parms, bool includeToken = true
+		) {
+			StringBuilder requestBuilder = new StringBuilder(cmd.UriTemplate);
+			if (parms.Count > 0)
+			{
+				bool isFirstParam = true;
+				foreach (IParameter paramImpl in parms)
+				{
+					Parameter param = (paramImpl as Parameter);
+					if (param == null || (!includeToken && param.Name.Equals("token", StringComparison.InvariantCultureIgnoreCase)))
+						continue;
+
+					if (!isFirstParam)
+						requestBuilder.Append('&');
+					else
+					{
+						requestBuilder.Append('?');
+						isFirstParam = false;
+					}
+
+					requestBuilder.Append(param.Name);
+					requestBuilder.Append('=');
+					requestBuilder.Append(param.Value);
+				}
+			}
+			
+			return requestBuilder.ToString();
 		}
 
 		#region Dispose

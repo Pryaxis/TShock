@@ -562,6 +562,36 @@ namespace TShockAPI
 			Netplay.disconnect = true;
 		}
 
+		/// <summary>
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to 
+		/// restart it.
+		/// </summary>
+		/// <param name="save">bool perform a world save before stop (default: true)</param>
+		/// <param name="reason">string reason (default: "Server shutting down!")</param>
+		public void RestartServer(bool save = true, string reason = "Server shutting down!")
+		{
+			if (TShock.Config.ServerSideInventory)
+				foreach (TSPlayer player in TShock.Players)
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+						TShock.InventoryDB.InsertPlayerData(player);
+
+			StopServer(true, reason);
+			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+			Environment.Exit(0);
+		}
+
+		/// <summary>
+		/// Reloads all configuration settings, groups, regions and raises the reload event.
+		/// </summary>
+		public void Reload(TSPlayer player)
+		{
+			FileTools.SetupConfig();
+			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
+			TShock.Groups.LoadPermisions();
+			TShock.Regions.ReloadAllRegions();
+			Hooks.GeneralHooks.OnReloadEvent(player);
+		}
+
 #if COMPAT_SIGS
 		[Obsolete("This method is for signature compatibility for external code only")]
 		public void ForceKick(TSPlayer player, string reason)

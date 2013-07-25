@@ -180,7 +180,7 @@ namespace TShockAPI
 			add(Permissions.ban, Ban, "ban");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
-			add(Permissions.maintenance, Restart, "restart"); //Added restart command
+			add(Permissions.maintenance, Restart, "restart");
 			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 		    add(Permissions.updateplugins, UpdatePlugins, "updateplugins");
@@ -1312,7 +1312,7 @@ namespace TShockAPI
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
 		}
-		//Added restart command
+		
 		private static void Restart(CommandArgs args)
 		{
 			if (Main.runningMono)
@@ -1321,21 +1321,8 @@ namespace TShockAPI
 			}
 			else
 			{
-				if (TShock.Config.ServerSideInventory)
-				{
-					foreach (TSPlayer player in TShock.Players)
-					{
-						if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-						{
-							TShock.InventoryDB.InsertPlayerData(player);
-						}
-					}
-				}
-
 				string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
-				TShock.Utils.StopServer(true, reason);
-				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-				Environment.Exit(0);
+				TShock.Utils.RestartServer(true, reason);
 			}
 		}
 
@@ -2326,14 +2313,10 @@ namespace TShockAPI
 
 		private static void Reload(CommandArgs args)
 		{
-			FileTools.SetupConfig();
-			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
-			TShock.Groups.LoadPermisions();
-            TShock.Regions.ReloadAllRegions();
+			TShock.Utils.Reload(args.Player);
+
 			args.Player.SendSuccessMessage(
 				"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
-
-		    Hooks.GeneralHooks.OnReloadEvent(args.Player);
 		}
 
 		private static void ServerPassword(CommandArgs args)
