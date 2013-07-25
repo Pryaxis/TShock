@@ -99,7 +99,7 @@ namespace Rests
 					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 
 			Group userGroup = TShock.Utils.GetGroup(userAccount.Group);
-			if (!userGroup.HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
+			if (!userGroup.HasPermission(RestPermissions.restapi) && userAccount.Group != "superadmin")
 				return new RestObject("403")
 					{ Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (restapi)" };
 			
