@@ -55,51 +55,51 @@ namespace TShockAPI
 			}
 
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
-			Rest.Register(new SecureRestCommand("/v2/server/reload", ServerReload, Permissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, Permissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/restart", ServerRestart, Permissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, Permissions.restrawcommand));
-			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, Permissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/v2/server/reload", ServerReload, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v2/server/restart", ServerRestart, RestPermissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, RestPermissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
 
 			// User Commands
-			Rest.Register(new SecureRestCommand("/v2/users/activelist", UserActiveListV2, Permissions.restviewusers));
-			Rest.Register(new SecureRestCommand("/v2/users/create", UserCreateV2, Permissions.restmanageusers) { DoLog = false });
-			Rest.Register(new SecureRestCommand("/v2/users/list", UserListV2, Permissions.restviewusers));
-			Rest.Register(new SecureRestCommand("/v2/users/read", UserInfoV2, Permissions.restviewusers));
-			Rest.Register(new SecureRestCommand("/v2/users/destroy", UserDestroyV2, Permissions.restmanageusers));
-			Rest.Register(new SecureRestCommand("/v2/users/update", UserUpdateV2, Permissions.restmanageusers) { DoLog = false });
+			Rest.Register(new SecureRestCommand("/v2/users/activelist", UserActiveListV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/create", UserCreateV2, RestPermissions.restmanageusers) { DoLog = false });
+			Rest.Register(new SecureRestCommand("/v2/users/list", UserListV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/read", UserInfoV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/destroy", UserDestroyV2, RestPermissions.restmanageusers));
+			Rest.Register(new SecureRestCommand("/v2/users/update", UserUpdateV2, RestPermissions.restmanageusers) { DoLog = false });
 
 			// Ban Commands
-			Rest.Register(new SecureRestCommand("/bans/create", BanCreate, Permissions.restmanagebans));
-			Rest.Register(new SecureRestCommand("/v2/bans/list", BanListV2, Permissions.restviewbans));
-			Rest.Register(new SecureRestCommand("/v2/bans/read", BanInfoV2, Permissions.restviewbans));
-			Rest.Register(new SecureRestCommand("/v2/bans/destroy", BanDestroyV2, Permissions.restmanagebans));
+			Rest.Register(new SecureRestCommand("/bans/create", BanCreate, RestPermissions.restmanagebans));
+			Rest.Register(new SecureRestCommand("/v2/bans/list", BanListV2, RestPermissions.restviewbans));
+			Rest.Register(new SecureRestCommand("/v2/bans/read", BanInfoV2, RestPermissions.restviewbans));
+			Rest.Register(new SecureRestCommand("/v2/bans/destroy", BanDestroyV2, RestPermissions.restmanagebans));
 
 			// World Commands
 			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
-			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, Permissions.restcauseevents));
-			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, Permissions.restcauseevents));
-			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, Permissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings, Permissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, Permissions.restbutcher));
+			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
 			Rest.Register(new SecureRestCommand("/lists/players", PlayerList));
 			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2));
-			Rest.Register(new SecureRestCommand("/v2/players/read", PlayerReadV2, Permissions.restuserinfo));
-			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, Permissions.restkick));
-			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, Permissions.restban, Permissions.restmanagebans));
-			Rest.Register(new SecureRestCommand("/v2/players/kill", PlayerKill, Permissions.restkill));
-			Rest.Register(new SecureRestCommand("/v2/players/mute", PlayerMute, Permissions.restmute));
-			Rest.Register(new SecureRestCommand("/v2/players/unmute", PlayerUnMute, Permissions.restmute));
+			Rest.Register(new SecureRestCommand("/v2/players/read", PlayerReadV2, RestPermissions.restuserinfo));
+			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, RestPermissions.restkick));
+			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, RestPermissions.restban, RestPermissions.restmanagebans));
+			Rest.Register(new SecureRestCommand("/v2/players/kill", PlayerKill, RestPermissions.restkill));
+			Rest.Register(new SecureRestCommand("/v2/players/mute", PlayerMute, RestPermissions.restmute));
+			Rest.Register(new SecureRestCommand("/v2/players/unmute", PlayerUnMute, RestPermissions.restmute));
 
 			// Group Commands
-			Rest.Register(new SecureRestCommand("/v2/groups/list", GroupList, Permissions.restviewgroups));
-			Rest.Register(new SecureRestCommand("/v2/groups/read", GroupInfo, Permissions.restviewgroups));
-			Rest.Register(new SecureRestCommand("/v2/groups/destroy", GroupDestroy, Permissions.restmanagegroups));
-			Rest.Register(new SecureRestCommand("/v2/groups/create", GroupCreate, Permissions.restmanagegroups));
-			Rest.Register(new SecureRestCommand("/v2/groups/update", GroupUpdate, Permissions.restmanagegroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/list", GroupList, RestPermissions.restviewgroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/read", GroupInfo, RestPermissions.restviewgroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/destroy", GroupDestroy, RestPermissions.restmanagegroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/create", GroupCreate, RestPermissions.restmanagegroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/update", GroupUpdate, RestPermissions.restmanagegroups));
 		}
 
 		#region RestServerMethods

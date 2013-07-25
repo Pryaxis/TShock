@@ -166,9 +166,6 @@ namespace TShockAPI
 	    [Description("User can save all the players SSI state.")] 
         public static readonly string savessi;
 
-        [Description("User can use rest api calls.")]
-	    public static readonly string restapi;
-
 	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
 
         [Description("User can use /home.")] public static readonly string home;
@@ -178,60 +175,6 @@ namespace TShockAPI
 	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
 
 		[Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
-
-		#region Rest Endpoint Permissions
-		[Description("Rest user can turn off / restart the server.")]
-		public static readonly string restmaintenance;
-
-		[Description("Rest user can reload configurations, save the world and set auto save settings.")]
-		public static readonly string restcfg;
-
-
-		[Description("Rest user can list and get detailed information about users.")]
-		public static readonly string restviewusers;
-
-		[Description("Rest user can alter users.")]
-		public static readonly string restmanageusers;
-
-		[Description("Rest user can list and get detailed information about bans.")]
-		public static readonly string restviewbans;
-
-		[Description("Rest user can alter bans.")]
-		public static readonly string restmanagebans;
-
-		[Description("Rest user can list and get detailed information about groups.")]
-		public static readonly string restviewgroups;
-
-		[Description("Rest user can alter groups.")]
-		public static readonly string restmanagegroups;
-
-
-		[Description("Rest user can get user information.")]
-		public static readonly string restuserinfo;
-
-		[Description("Rest user can kick players.")]
-		public static readonly string restkick;
-
-		[Description("Rest user can ban players.")]
-		public static readonly string restban;
-
-		[Description("Rest user can mute and unmute players.")]
-		public static readonly string restmute;
-
-		[Description("Rest user can kill players.")]
-		public static readonly string restkill;
-
-
-		[Description("Rest user can drop meteors or change bloodmoon.")]
-		public static readonly string restcauseevents;
-
-		[Description("Rest user can butcher npcs.")]
-		public static readonly string restbutcher;
-
-
-		[Description("Rest user can run raw TShock commands (the raw command permissions are also checked though).")]
-		public static readonly string restrawcommand;
-		#endregion
 
 		static Permissions()
 		{
