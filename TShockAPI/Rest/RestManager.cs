@@ -141,7 +141,7 @@ namespace TShockAPI
 				return RestInvalidParam("confirm");
 
 			// Inform players the server is shutting down
-			var reason = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is shutting down" : parameters["message"];
+			var reason = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is restarting" : parameters["message"];
 			TShock.Utils.RestartServer(!GetBool(parameters["nosave"], false), reason);
 
 			return RestResponse("The server is shutting down and will attempt to restart");
@@ -149,11 +149,7 @@ namespace TShockAPI
 
 		private object ServerReload(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			try {
-				TShock.Utils.Reload(new TSRestPlayer(tokenData.Username, tokenData.UserGroup));
-			} catch (Exception ex) {
-				return RestError("Exception was thrown during the reload: " + ex);
-			}
+			TShock.Utils.Reload(new TSRestPlayer(tokenData.Username, tokenData.UserGroup));
 			
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
@@ -228,7 +224,12 @@ namespace TShockAPI
 
 		private object ServerTokenTest(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			return RestResponse("Token is valid and was passed through correctly");
+			return new Dictionary<string,object>
+			{
+				{"status", "200"},
+				{"response", "Token is valid and was passed through correctly."},
+				{"associateduser", tokenData.Username}
+			};
 		}
 
 		#endregion
