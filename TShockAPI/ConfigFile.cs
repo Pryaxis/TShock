@@ -129,7 +129,7 @@ namespace TShockAPI
 
 		[Description("This will announce a player's location on join")] public bool EnableGeoIP;
 
-		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
+		[Description("This will turn on token requirement for the public REST API endpoints.")] public bool
 			EnableTokenEndpointAuthentication;
 
         [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";

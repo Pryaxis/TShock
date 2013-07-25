@@ -39,7 +39,7 @@ namespace Rests
 	public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
 
 	/// <summary>
-	/// Secure Rest command delegate including a token.
+	/// Secure Rest command delegate including token data.
 	/// </summary>
 	/// <param name="parameters">Parameters in the url</param>
 	/// <param name="verbs">{x} in urltemplate</param>

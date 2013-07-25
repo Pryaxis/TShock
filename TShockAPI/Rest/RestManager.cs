@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using HttpServer;
 using Rests;
@@ -38,24 +39,28 @@ namespace TShockAPI
 		public void RegisterRestfulCommands()
 		{
 			// Server Commands
-			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
-			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, Permissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/restart", ServerRestart, Permissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/reload", ServerReload, Permissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, Permissions.restrawcommand));
-			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, Permissions.restrawcommand));
-			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
-
 			if (TShock.Config.EnableTokenEndpointAuthentication)
 			{
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
 				Rest.Register(new SecureRestCommand("/status", ServerStatus));
+				Rest.Register(new SecureRestCommand("/v2/server/motd", ServerMotd));
+				Rest.Register(new SecureRestCommand("/v2/server/rules", ServerRules));
 			}
 			else
 			{
 				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v2/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v2/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
 			}
+
+			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
+			Rest.Register(new SecureRestCommand("/v2/server/reload", ServerReload, Permissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, Permissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v2/server/restart", ServerRestart, Permissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, Permissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, Permissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
 
 			// User Commands
 			Rest.Register(new SecureRestCommand("/v2/users/activelist", UserActiveListV2, Permissions.restviewusers));
@@ -116,9 +121,8 @@ namespace TShockAPI
 
 			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, tokenData.UserGroup);
 			Commands.HandleCommand(tr, parameters["cmd"]);
-			return new Dictionary<string,object>
+			return new RestObject()
 			{
-				{"status", "200"},
 				{"response", tr.GetCommandOutput()}
 			};
 		}
@@ -161,6 +165,30 @@ namespace TShockAPI
 				return RestMissingParam("msg");
 			TShock.Utils.Broadcast(msg);
 			return RestResponse("The message was broadcasted successfully");
+		}
+
+		private object ServerMotd(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
+			if (!File.Exists(motdFilePath))
+				return this.RestError("The motd.txt was not found.", "500");
+
+			return new RestObject()
+			{
+				{"motd", File.ReadAllLines(motdFilePath)}
+			};
+		}
+
+		private object ServerRules(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
+			if (!File.Exists(rulesFilePath))
+				return this.RestError("The rules.txt was not found.", "500");
+
+			return new RestObject()
+			{
+				{"rules", File.ReadAllLines(rulesFilePath)}
+			};
 		}
 
 		private object ServerStatus(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
