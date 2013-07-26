@@ -64,7 +64,8 @@ namespace TShockAPI
 
 		[Description(
 			"Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")] public int BackupInterval;
-
+		[Description(
+			"Where Backups are stored.")] public string BackupPath = "tshock/backups";
 		[Description("How long backups are kept in minutes. 2880 = 2 days.")] public int BackupKeepFor = 60;
 
 		[Description(
