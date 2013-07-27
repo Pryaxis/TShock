@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MySql.Data.MySqlClient;
@@ -114,7 +115,7 @@ namespace TShockAPI.DB
 			if (!string.IsNullOrWhiteSpace(parentname))
 			{
 				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
-				if (parent == null)
+				if (parent == null || name == parentname)
 				{
 					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
 					if (exceptions)
@@ -166,27 +167,40 @@ namespace TShockAPI.DB
 		/// <param name="chatcolor">chatcolor</param>
 		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor)
 		{
-			if (!GroupExists(name))
+			Group group = GetGroupByName(name);
+			if (group == null)
 				throw new GroupNotExistException(name);
 
 			Group parent = null;
 			if (!string.IsNullOrWhiteSpace(parentname))
 			{
-				parent = groups.FirstOrDefault(gp => gp.Name == parentname);
-				if (null == parent)
-					throw new GroupManagerException("Invalid parent {0} for group {1}".SFormat(parentname, name));
+				parent = GetGroupByName(parentname);
+				if (parent == null || parent == group)
+					throw new GroupManagerException("Invalid parent \"{0}\" for group \"{1}\".".SFormat(parentname, name));
+
+				// Check if the new parent would cause loops.
+				List<Group> groupChain = new List<Group> { group, parent };
+				Group checkingGroup = parent.Parent;
+				while (checkingGroup != null)
+				{
+					if (groupChain.Contains(checkingGroup))
+						throw new GroupManagerException(
+							string.Format("Invalid parent \"{0}\" for group \"{1}\" would cause loops in the parent chain.", parentname, name));
+
+					groupChain.Add(checkingGroup);
+					checkingGroup = checkingGroup.Parent;
+				}
 			}
 
-			// NOTE: we use newgroup.XYZ to ensure any validation is also persisted to the DB
-			var newgroup = new Group(name, parent, chatcolor, permissions);
+			// Ensure any group validation is also persisted to the DB.
+			var newGroup = new Group(name, parent, chatcolor, permissions);
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2 WHERE GroupName=@3";
-			if (database.Query(query, parentname, newgroup.Permissions, string.Format("{0},{1},{2}", newgroup.R, newgroup.G, newgroup.B), name) != 1)
-				throw new GroupManagerException("Failed to update group '" + name + "'");
+			if (database.Query(query, parentname, newGroup.Permissions, string.Format("{0},{1},{2}", newGroup.R, newGroup.G, newGroup.B), name) != 1)
+				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
 
-			Group group = TShock.Utils.GetGroup(name);
 			group.ChatColor = chatcolor;
 			group.Permissions = permissions;
-			group.Parent = TShock.Utils.GetGroup(parentname);
+			group.Parent = parent;
 		}
 
 #if COMPAT_SIGS
@@ -252,53 +266,106 @@ namespace TShockAPI.DB
 
 		public void LoadPermisions()
 		{
-			// Create a temporary list so if there is an error it doesn't override the currently loaded groups with broken groups.
-			var tempgroups = new List<Group>();
-			tempgroups.Add(new SuperAdminGroup());
-
-			if (groups == null || groups.Count < 2)
-			{
-				groups.Clear();
-				groups.AddRange(tempgroups);
-			}
-
 			try
 			{
-				var groupsparents = new List<Tuple<Group, string>>();
+				List<Group> newGroups = new List<Group>(groups.Count);
+				Dictionary<string,string> newGroupParents = new Dictionary<string, string>(groups.Count);
 				using (var reader = database.QueryReader("SELECT * FROM GroupList"))
 				{
 					while (reader.Read())
 					{
-						var group = new Group(reader.Get<String>("GroupName"), null, reader.Get<String>("ChatColor"), reader.Get<String>("Commands"));
-						group.Prefix = reader.Get<String>("Prefix");
-						group.Suffix = reader.Get<String>("Suffix");
-						groupsparents.Add(Tuple.Create(group, reader.Get<string>("Parent")));
-					}
-				}
-
-				foreach (var t in groupsparents)
-				{
-					var group = t.Item1;
-					var parentname = t.Item2;
-					if (!string.IsNullOrWhiteSpace(parentname))
-					{
-						var parent = groupsparents.FirstOrDefault(gp => gp.Item1.Name == parentname);
-						if (parent == null)
+						string groupName = reader.Get<string>("GroupName");
+						if (groupName == "superadmin")
 						{
-							Log.ConsoleError("Invalid parent {0} for group {1}".SFormat(parentname, group.Name));
+							Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
+							continue;
+						}
+
+						newGroups.Add(new Group(groupName, null, reader.Get<string>("ChatColor"), reader.Get<string>("Commands")) {
+							Prefix = reader.Get<string>("Prefix"),
+							Suffix = reader.Get<string>("Suffix"),
+						});
+
+						try
+						{
+							newGroupParents.Add(groupName, reader.Get<string>("Parent"));
+						}
+						catch (ArgumentException)
+						{
+							// Just in case somebody messed with the unique primary key.
+							Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
 							return;
 						}
-						group.Parent = parent.Item1;
 					}
-					tempgroups.Add(group);
 				}
 
-				groups.Clear();
-				groups.AddRange(tempgroups);
+				try
+				{
+					// Get rid of deleted groups.
+					for (int i = 0; i < groups.Count; i++)
+						if (newGroups.All(g => g.Name != groups[i].Name))
+							groups.RemoveAt(i--);
+
+					// Apply changed group settings while keeping the current instances and add new groups.
+					foreach (Group newGroup in newGroups)
+					{
+						Group currentGroup = groups.FirstOrDefault(g => g.Name == newGroup.Name);
+						if (currentGroup != null)
+							newGroup.AssignTo(currentGroup);
+						else
+							groups.Add(newGroup);
+					}
+
+					// Resolve parent groups.
+					Debug.Assert(newGroups.Count == newGroupParents.Count);
+					for (int i = 0; i < groups.Count; i++)
+					{
+						Group group = groups[i];
+						string parentGroupName;
+						if (!newGroupParents.TryGetValue(group.Name, out parentGroupName) || string.IsNullOrEmpty(parentGroupName))
+							continue;
+
+						group.Parent = groups.FirstOrDefault(g => g.Name == parentGroupName);
+						if (group.Parent == null)
+						{
+							Log.ConsoleError(
+								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.", 
+								group.Name, parentGroupName);
+						}
+						else
+						{
+							if (group.Parent == group)
+								Log.ConsoleInfo(
+									"WARNING: Group \"{0}\" is referencing itself as parent group, parent reference was removed.", group.Name);
+
+							List<Group> groupChain = new List<Group> { group };
+							Group checkingGroup = group;
+							while (checkingGroup.Parent != null)
+							{
+								if (groupChain.Contains(checkingGroup.Parent))
+								{
+									Log.ConsoleError(
+										"ERROR: Group \"{0}\" is referencing parent group \"{1}\" which is already part of the parent chain. Parent reference removed.",
+										checkingGroup.Name, checkingGroup.Parent.Name);
+
+									checkingGroup.Parent = null;
+									break;
+								}
+								groupChain.Add(checkingGroup);
+								checkingGroup = checkingGroup.Parent;
+							}
+						}
+					}
+				}
+				finally
+				{
+					if (!groups.Any(g => g is SuperAdminGroup))
+						groups.Add(new SuperAdminGroup());
+				}
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				Log.ConsoleError("Error on reloading groups: " + ex);
 			}
 		}
 	}
