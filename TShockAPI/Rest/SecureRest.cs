@@ -33,7 +33,7 @@ namespace Rests
 			public static readonly TokenData None = default(TokenData);
 
 			public string Username { get; set; }
-			public Group UserGroup { get; set; }
+			public string UserGroupName { get; set; }
 		}
 
 		public Dictionary<string,TokenData> Tokens { get; protected set; }
@@ -112,7 +112,7 @@ namespace Rests
 				tokenHash = randbytes.Aggregate("", (s, b) => s + b.ToString("X2"));
 			} while (Tokens.ContainsKey(tokenHash));
 
-			Tokens.Add(tokenHash, new TokenData { Username = userAccount.Name, UserGroup = userGroup });
+			Tokens.Add(tokenHash, new TokenData { Username = userAccount.Name, UserGroupName = userGroup.Name });
 
 			RestObject response = new RestObject("200") { Response = "Successful login" };
 			response["token"] = tokenHash;
@@ -141,7 +141,22 @@ namespace Rests
 					}
 				};
 
-			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !tokenData.UserGroup.HasPermission(perm)))
+			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			if (userGroup == null)
+			{
+				Tokens.Remove(token);
+
+				return new Dictionary<string, string>
+				{
+					{"status", "403"},
+					{
+						"error",
+						"Not authorized. The provided token became invalid due to group changes, please create a new token."
+					}
+				};
+			}
+
+			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
 			{
 				return new Dictionary<string, string>
 				{

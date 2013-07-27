@@ -479,7 +479,7 @@ namespace TShockAPI
 						break;
 					case "-rest-token":
 						string token = Convert.ToString(parms[++i]);
-						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroup = new SuperAdminGroup() });
+						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroupName = "superadmin" });
 						Console.WriteLine("Startup parameter overrode REST token.");
 						break;
 					case "-rest-enabled":

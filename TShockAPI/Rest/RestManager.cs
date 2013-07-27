@@ -109,7 +109,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, tokenData.UserGroup);
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName));
 			Commands.HandleCommand(tr, parameters["cmd"]);
 			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
 		}
@@ -119,7 +119,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, tokenData.UserGroup);
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName));
 			Commands.HandleCommand(tr, parameters["cmd"]);
 			return new RestObject()
 			{
@@ -153,7 +153,7 @@ namespace TShockAPI
 
 		private object ServerReload(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			TShock.Utils.Reload(new TSRestPlayer(tokenData.Username, tokenData.UserGroup));
+			TShock.Utils.Reload(new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName)));
 			
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
