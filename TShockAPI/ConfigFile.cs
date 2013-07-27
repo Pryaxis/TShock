@@ -63,10 +63,10 @@ namespace TShockAPI
 		[Description("Super admin group chat suffix")] public string SuperAdminChatSuffix = "";
 
 		[Description(
-			"Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")] public int BackupInterval;
+			"Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the BackupPath option.")] public int BackupInterval;
 
 		[Description("How long backups are kept in minutes. 2880 = 2 days.")] public int BackupKeepFor = 60;
-
+        [Description("Where backup files are stored.")] public string BackupPath = "tshock/backups";
 		[Description(
 			"Remembers where a player left off. It works by remembering the IP, NOT the character.  \neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location. Note: Won't save after server restarts."
 			)] public bool RememberLeavePos;
