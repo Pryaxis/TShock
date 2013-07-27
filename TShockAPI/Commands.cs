@@ -246,6 +246,7 @@ namespace TShockAPI
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 			add(null, Aliases, "aliases");
+			add(Rests.RestPermissions.restmanage, ManageRest, "rest");
 		    //add(null, TestCallbackCommand, "test");
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -1344,6 +1345,57 @@ namespace TShockAPI
             args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
             new PluginUpdaterThread(args.Player);
         }
+
+		private static void ManageRest(CommandArgs args)
+		{
+			string subCommand = "help";
+			if (args.Parameters.Count > 0)
+				subCommand = args.Parameters[0];
+
+			switch(subCommand.ToLower())
+			{
+				case "listusers":
+				{
+					int pageNumber;
+					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						return;
+
+					Dictionary<string,int> restUsersTokens = new Dictionary<string,int>();
+					foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
+					{
+						if (restUsersTokens.ContainsKey(tokenData.Username))
+							restUsersTokens[tokenData.Username]++;
+						else
+							restUsersTokens.Add(tokenData.Username, 1);
+					}
+
+					List<string> restUsers = new List<string>(
+						restUsersTokens.Select(ut => string.Format("{0} ({1} tokens)", ut.Key, ut.Value)));
+
+					PaginationTools.SendPage(
+						args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings {
+							NothingToDisplayString = "There are currently no active REST users.",
+							HeaderFormat = "Active REST Users ({0}/{1}):",
+							FooterFormat = "Type /rest listusers {0} for more."
+						}
+					);
+
+					break;
+				}
+				case "destroytokens":
+				{
+					TShock.RestApi.Tokens.Clear();
+					args.Player.SendSuccessMessage("All REST tokens have been destroyed.");
+					break;
+				}
+				default:
+				{
+					args.Player.SendInfoMessage("Available REST Sub-Commands:");
+					args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
+					break;
+				}
+			}
+		}
 
 		#endregion Server Maintenence Commands
 

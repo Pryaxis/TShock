@@ -26,6 +26,9 @@ namespace Rests
 		[Description("User can create REST tokens.")]
 		public static readonly string restapi;
 
+		[Description("User or REST user can destroy all REST tokens.")]
+		public static readonly string restmanage;
+
 
 		[Description("REST user can turn off / restart the server.")]
 		public static readonly string restmaintenance;
