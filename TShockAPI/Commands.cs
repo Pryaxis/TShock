@@ -2048,6 +2048,57 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+
+				case "parent":
+					#region Parent
+					{
+						if (args.Parameters.Count < 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group parent <group name> [new parent group name]");
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						Group group = TShock.Groups.GetGroupByName(groupName);
+						if (group == null)
+						{
+							args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+							return;
+						}
+
+						if (args.Parameters.Count > 2)
+						{
+							string newParentGroupName = string.Join(" ", args.Parameters.Skip(2));
+							if (!string.IsNullOrWhiteSpace(newParentGroupName) && !TShock.Groups.GroupExists(newParentGroupName))
+							{
+								args.Player.SendErrorMessage("No such group \"{0}\".", newParentGroupName);
+								return;
+							}
+
+							try
+							{
+								TShock.Groups.UpdateGroup(groupName, newParentGroupName, group.Permissions, group.ChatColor);
+
+								if (!string.IsNullOrWhiteSpace(newParentGroupName))
+									args.Player.SendSuccessMessage("Parent of group \"{0}\" set to \"{1}\".", groupName, newParentGroupName);
+								else
+									args.Player.SendSuccessMessage("Removed parent of group \"{0}\".", groupName);
+							}
+							catch (GroupManagerException ex)
+							{
+								args.Player.SendErrorMessage(ex.Message);
+							}
+						}
+						else
+						{
+							if (group.Parent != null)
+								args.Player.SendSuccessMessage("Parent of \"{0}\" is \"{1}\".", group.Name, group.Parent.Name);
+							else
+								args.Player.SendSuccessMessage("Group \"{0}\" has no parent.", group.Name);
+						}
+					}
+					#endregion
+					return;
 				case "del":
 					#region Delete group
 					{
@@ -2108,12 +2159,6 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
-				case "help":
-					args.Player.SendInfoMessage("Syntax: /group <command> [arguments]");
-					args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
-					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
-					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
-					return;
 				case "list":
 					#region List groups
 					{
@@ -2160,6 +2205,12 @@ namespace TShockAPI
 							});
 					}
 					#endregion
+					return;
+				case "help":
+					args.Player.SendInfoMessage("Syntax: /group <command> [arguments]");
+					args.Player.SendInfoMessage("Commands: add, addperm, parent, del, delperm, list, listperm");
+					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
+					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
 					return;
 			}
 		}
