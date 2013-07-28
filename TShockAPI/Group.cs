@@ -204,7 +204,7 @@ namespace TShockAPI
                     return true;
                 if (traversed.Contains(cur))
                 {
-                    throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+                    throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
                 }
                 traversed.Add(cur);
                 cur = cur.Parent;
@@ -270,6 +270,26 @@ namespace TShockAPI
 				return;
 			}
 			permissions.Remove(permission);
+		}
+
+		/// <summary>
+    /// Assigns all fields of this instance to another.
+    /// </summary>
+    /// <param name="otherGroup">The other instance.</param>
+		public void AssignTo(Group otherGroup)
+		{
+			otherGroup.Name = Name;
+			otherGroup.Parent = Parent;
+			otherGroup.Prefix = Prefix;
+			otherGroup.Suffix = Suffix;
+			otherGroup.R = R;
+			otherGroup.G = G;
+			otherGroup.B = B;
+			otherGroup.Permissions = Permissions;
+		}
+
+		public override string ToString() {
+			return this.Name;
 		}
 	}
 
