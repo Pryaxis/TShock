@@ -1391,6 +1391,7 @@ namespace TShockAPI
 				default:
 				{
 					args.Player.SendInfoMessage("Available REST Sub-Commands:");
+					args.Player.SendMessage("listusers - Lists all REST users and their current active tokens.", Color.White);
 					args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
 					break;
 				}
