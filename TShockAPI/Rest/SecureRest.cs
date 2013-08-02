@@ -63,19 +63,19 @@ namespace Rests
 			}
 			catch (Exception)
 			{
-				return new Dictionary<string, string>
-				       	{{"status", "400"}, {"error", "The specified token queued for destruction failed to be deleted."}};
+				return new RestObject("400")
+				       	{ Error = "The specified token queued for destruction failed to be deleted." };
 			}
-			return new Dictionary<string, string>
-			       	{{"status", "200"}, {"response", "Requested token was successfully destroyed."}};
+			return new RestObject()
+			       	{ Response = "Requested token was successfully destroyed." };
 		}
 
 		private object DestroyAllTokens(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			Tokens.Clear();
 
-			return new Dictionary<string, string>
-			       	{{"status", "200"}, {"response", "All tokens were successfully destroyed."}};
+			return new RestObject()
+			       	{ Response = "All tokens were successfully destroyed." };
 		}
 
 		private object NewTokenV2(RestVerbs verbs, IParameterCollection parameters)
@@ -123,7 +123,7 @@ namespace Rests
 
 			Tokens.Add(tokenHash, new TokenData { Username = userAccount.Name, UserGroupName = userGroup.Name });
 
-			RestObject response = new RestObject("200") { Response = "Successful login" };
+			RestObject response = new RestObject() { Response = "Successful login" };
 			response["token"] = tokenHash;
 			return response;
 		}
@@ -135,46 +135,28 @@ namespace Rests
 			
 			var token = parms["token"];
 			if (token == null)
-				return new Dictionary<string, string>
-					{{"status", "401"}, {"error", "Not authorized. The specified API endpoint requires a token."}};
+				return new RestObject("401")
+					{ Error = "Not authorized. The specified API endpoint requires a token." };
 
 			SecureRestCommand secureCmd = (SecureRestCommand)cmd;
 			TokenData tokenData;
 			if (!Tokens.TryGetValue(token, out tokenData))
-				return new Dictionary<string, string>
-				{
-					{"status", "403"},
-					{
-						"error",
-						"Not authorized. The specified API endpoint requires a token, but the provided token was not valid."
-					}
-				};
+				return new RestObject("403")
+				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
 			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
 			if (userGroup == null)
 			{
 				Tokens.Remove(token);
 
-				return new Dictionary<string, string>
-				{
-					{"status", "403"},
-					{
-						"error",
-						"Not authorized. The provided token became invalid due to group changes, please create a new token."
-					}
-				};
+				return new RestObject("403")
+				{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
 			}
 
 			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
 			{
-				return new Dictionary<string, string>
-				{
-					{"status", "403"},
-					{
-						"error",
-						string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username)
-					}
-				};
+				return new RestObject("403")
+				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
 			}
 			
 			object result = secureCmd.Execute(verbs, parms, tokenData);

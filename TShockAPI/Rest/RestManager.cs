@@ -252,9 +252,8 @@ namespace TShockAPI
 
 		private object ServerTokenTest(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			return new Dictionary<string,object>
+			return new RestObject()
 			{
-				{"status", "200"},
 				{"response", "Token is valid and was passed through correctly."},
 				{"associateduser", tokenData.Username}
 			};

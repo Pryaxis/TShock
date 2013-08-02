@@ -174,17 +174,15 @@ namespace Rests
 			}
 			catch (Exception exception)
 			{
-				return new Dictionary<string, string>
+				return new RestObject("500")
 				       	{
-				       		{"status", "500"},
 				       		{"error", "Internal server error."},
 				       		{"errormsg", exception.Message},
 				       		{"stacktrace", exception.StackTrace},
 				       	};
 			}
-			return new Dictionary<string, string>
+			return new RestObject("404")
 			       	{
-			       		{"status", "404"},
 			       		{"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."}
 			       	};
 		}
