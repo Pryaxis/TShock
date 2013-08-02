@@ -52,6 +52,29 @@ namespace Rests
 			{
 				Tokens.Add(t.Key, t.Value);
 			}
+
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (!TShock.Config.RestUseNewPermissionModel)
+			{
+				string warningMessage = string.Concat(
+					"You're using the old REST permission model which is highly vulnerable in matter of security. ",
+					"The old model will be removed with the next maintenance release of TShock. In order to switch to the new model, ",
+					"change the config setting \"RestUseNewPermissionModel\" to true."
+				);
+				Log.Warn(warningMessage);
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine(warningMessage);
+				Console.ForegroundColor = ConsoleColor.Gray;
+			}
+			else
+			{
+				string warningMessage = string.Concat(
+					"You're using the new more secure REST permission model which can lead to compatibility problems ",
+					"with existing REST services. If compatibility problems occur, you can switch back to the unsecure permission ",
+					"model by changing the config setting \"RestUseNewPermissionModel\" to false, which is not recommended."
+				);
+				Log.ConsoleInfo(warningMessage);
+			}
 		}
 
 		private object DestroyToken(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
@@ -144,21 +167,24 @@ namespace Rests
 				return new RestObject("403")
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
-			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
-			if (userGroup == null)
-			{
-				Tokens.Remove(token);
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (TShock.Config.RestUseNewPermissionModel) {
+				Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+				if (userGroup == null)
+				{
+					Tokens.Remove(token);
 
-				return new RestObject("403")
-				{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+					return new RestObject("403")
+					{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+				}
+
+				if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
+				{
+					return new RestObject("403")
+					{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
+				}
 			}
 
-			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
-			{
-				return new RestObject("403")
-				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
-			}
-			
 			object result = secureCmd.Execute(verbs, parms, tokenData);
 			if (cmd.DoLog)
 				TShock.Utils.SendLogs(string.Format(

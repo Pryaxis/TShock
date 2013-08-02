@@ -109,7 +109,14 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName));
+			Group restPlayerGroup;
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (TShock.Config.RestUseNewPermissionModel)
+				restPlayerGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			else
+				restPlayerGroup = new SuperAdminGroup();
+
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, parameters["cmd"]);
 			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
 		}
@@ -119,7 +126,14 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName));
+			Group restPlayerGroup;
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (TShock.Config.RestUseNewPermissionModel)
+				restPlayerGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			else
+				restPlayerGroup = new SuperAdminGroup();
+
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, parameters["cmd"]);
 			return new RestObject()
 			{

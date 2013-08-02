@@ -256,6 +256,11 @@ namespace TShockAPI
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
 		    {127,255,212};
 
+		// TODO: Get rid of this when the old REST permission model is removed.
+		[Description(
+			"Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future."
+			)] public bool RestUseNewPermissionModel = true;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
