@@ -43,21 +43,21 @@ namespace TShockAPI
 			{
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
 				Rest.Register(new SecureRestCommand("/status", ServerStatus));
-				Rest.Register(new SecureRestCommand("/v2/server/motd", ServerMotd));
-				Rest.Register(new SecureRestCommand("/v2/server/rules", ServerRules));
+				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
+				Rest.Register(new SecureRestCommand("/v3/server/rules", ServerRules));
 			}
 			else
 			{
 				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
-				Rest.Register(new RestCommand("/v2/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
-				Rest.Register(new RestCommand("/v2/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v3/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v3/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
 			}
 
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
-			Rest.Register(new SecureRestCommand("/v2/server/reload", ServerReload, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/restart", ServerRestart, RestPermissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v3/server/restart", ServerRestart, RestPermissions.restmaintenance));
 			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));

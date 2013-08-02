@@ -46,7 +46,7 @@ namespace Rests
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
 			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { DoLog = false });
 			Register(new SecureRestCommand("/token/destroy/{token}", DestroyToken));
-			Register(new SecureRestCommand("/v2/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
+			Register(new SecureRestCommand("/v3/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
 
 			foreach (KeyValuePair<string, TokenData> t in TShockAPI.TShock.RESTStartupTokens)
 			{
