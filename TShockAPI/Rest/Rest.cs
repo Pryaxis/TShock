@@ -200,27 +200,18 @@ namespace Rests
 			RestCommand cmd, RestVerbs verbs, IParameterCollection parms, bool includeToken = true
 		) {
 			StringBuilder requestBuilder = new StringBuilder(cmd.UriTemplate);
-			if (parms.Count > 0)
+			char separator = '?';
+			foreach (IParameter paramImpl in parms)
 			{
-				bool isFirstParam = true;
-				foreach (IParameter paramImpl in parms)
-				{
-					Parameter param = (paramImpl as Parameter);
-					if (param == null || (!includeToken && param.Name.Equals("token", StringComparison.InvariantCultureIgnoreCase)))
-						continue;
+				Parameter param = (paramImpl as Parameter);
+				if (param == null || (!includeToken && param.Name.Equals("token", StringComparison.InvariantCultureIgnoreCase)))
+					continue;
 
-					if (!isFirstParam)
-						requestBuilder.Append('&');
-					else
-					{
-						requestBuilder.Append('?');
-						isFirstParam = false;
-					}
-
-					requestBuilder.Append(param.Name);
-					requestBuilder.Append('=');
-					requestBuilder.Append(param.Value);
-				}
+				requestBuilder.Append(separator);
+				requestBuilder.Append(param.Name);
+				requestBuilder.Append('=');
+				requestBuilder.Append(param.Value);
+				separator = '&';
 			}
 			
 			return requestBuilder.ToString();
