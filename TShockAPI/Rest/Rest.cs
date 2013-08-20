@@ -38,6 +38,15 @@ namespace Rests
 	/// <returns>Response object or null to not handle request</returns>
 	public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
 
+	/// <summary>
+	/// Secure Rest command delegate including token data.
+	/// </summary>
+	/// <param name="parameters">Parameters in the url</param>
+	/// <param name="verbs">{x} in urltemplate</param>
+	/// <param name="tokenData">The data of stored for the provided token.</param>
+	/// <returns>Response object or null to not handle request</returns>
+	public delegate object SecureRestCommandD(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData);
+
 	public class Rest : IDisposable
 	{
 		private readonly List<RestCommand> commands = new List<RestCommand>();
@@ -165,24 +174,47 @@ namespace Rests
 			}
 			catch (Exception exception)
 			{
-				return new Dictionary<string, string>
+				return new RestObject("500")
 				       	{
-				       		{"status", "500"},
 				       		{"error", "Internal server error."},
 				       		{"errormsg", exception.Message},
 				       		{"stacktrace", exception.StackTrace},
 				       	};
 			}
-			return new Dictionary<string, string>
+			return new RestObject("404")
 			       	{
-			       		{"status", "404"},
 			       		{"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."}
 			       	};
 		}
 
 		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
 		{
-			return cmd.Callback(verbs, parms);
+			object result = cmd.Execute(verbs, parms);
+			if (cmd.DoLog)
+				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+
+			return result;
+		}
+
+		protected virtual string BuildRequestUri(
+			RestCommand cmd, RestVerbs verbs, IParameterCollection parms, bool includeToken = true
+		) {
+			StringBuilder requestBuilder = new StringBuilder(cmd.UriTemplate);
+			char separator = '?';
+			foreach (IParameter paramImpl in parms)
+			{
+				Parameter param = (paramImpl as Parameter);
+				if (param == null || (!includeToken && param.Name.Equals("token", StringComparison.InvariantCultureIgnoreCase)))
+					continue;
+
+				requestBuilder.Append(separator);
+				requestBuilder.Append(param.Name);
+				requestBuilder.Append('=');
+				requestBuilder.Append(param.Value);
+				separator = '&';
+			}
+			
+			return requestBuilder.ToString();
 		}
 
 		#region Dispose

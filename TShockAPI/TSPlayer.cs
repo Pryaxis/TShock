@@ -759,13 +759,13 @@ namespace TShockAPI
         }
 	}
 
-	public class TSRestPlayer : TSServerPlayer
+	public class TSRestPlayer : TSPlayer
 	{
-		internal List<string> CommandReturn = new List<string>();
+		internal List<string> CommandOutput = new List<string>();
 
-		public TSRestPlayer()
+		public TSRestPlayer(string playerName, Group playerGroup): base(playerName)
 		{
-			Group = new SuperAdminGroup();
+			Group = playerGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
@@ -781,7 +781,7 @@ namespace TShockAPI
 
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
-			CommandReturn.Add(msg);
+			this.CommandOutput.Add(msg);
 		}
 
 		public override void SendInfoMessage(string msg)
@@ -806,7 +806,7 @@ namespace TShockAPI
 
 		public List<string> GetCommandOutput()
 		{
-			return CommandReturn;
+			return this.CommandOutput;
 		}
 	}
 

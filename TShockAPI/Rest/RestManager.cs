@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using HttpServer;
 using Rests;
@@ -38,78 +39,140 @@ namespace TShockAPI
 		public void RegisterRestfulCommands()
 		{
 			// Server Commands
-			Rest.Register(new RestCommand("/v2/server/broadcast", ServerBroadcast));
-			Rest.Register(new RestCommand("/v2/server/off", ServerOff));
-			Rest.Register(new RestCommand("/v2/server/rawcmd", ServerCommand));
-			Rest.Register(new RestCommand("/v2/server/status", ServerStatusV2) { RequiresToken = false });
-			Rest.Register(new RestCommand("/tokentest", ServerTokenTest));
-			Rest.Register(new RestCommand("/status", ServerStatus) { RequiresToken = false });
+			if (TShock.Config.EnableTokenEndpointAuthentication)
+			{
+				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
+				Rest.Register(new SecureRestCommand("/status", ServerStatus));
+				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
+				Rest.Register(new SecureRestCommand("/v3/server/rules", ServerRules));
+			}
+			else
+			{
+				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v3/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/v3/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
+			}
+
+			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
+			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v3/server/restart", ServerRestart, RestPermissions.restmaintenance));
+			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, RestPermissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
+			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
 
 			// User Commands
-			Rest.Register(new RestCommand("/v2/users/activelist", UserActiveListV2));
-			Rest.Register(new RestCommand("/v2/users/create", UserCreateV2));
-			Rest.Register(new RestCommand("/v2/users/list", UserListV2));
-			Rest.Register(new RestCommand("/v2/users/read", UserInfoV2));
-			Rest.Register(new RestCommand("/v2/users/destroy", UserDestroyV2));
-			Rest.Register(new RestCommand("/v2/users/update", UserUpdateV2));
+			Rest.Register(new SecureRestCommand("/v2/users/activelist", UserActiveListV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/create", UserCreateV2, RestPermissions.restmanageusers) { DoLog = false });
+			Rest.Register(new SecureRestCommand("/v2/users/list", UserListV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/read", UserInfoV2, RestPermissions.restviewusers));
+			Rest.Register(new SecureRestCommand("/v2/users/destroy", UserDestroyV2, RestPermissions.restmanageusers));
+			Rest.Register(new SecureRestCommand("/v2/users/update", UserUpdateV2, RestPermissions.restmanageusers) { DoLog = false });
 
 			// Ban Commands
-			Rest.Register(new RestCommand("/bans/create", BanCreate));
-			Rest.Register(new RestCommand("/v2/bans/list", BanListV2));
-			Rest.Register(new RestCommand("/v2/bans/read", BanInfoV2));
-			Rest.Register(new RestCommand("/v2/bans/destroy", BanDestroyV2));
+			Rest.Register(new SecureRestCommand("/bans/create", BanCreate, RestPermissions.restmanagebans));
+			Rest.Register(new SecureRestCommand("/v2/bans/list", BanListV2, RestPermissions.restviewbans));
+			Rest.Register(new SecureRestCommand("/v2/bans/read", BanInfoV2, RestPermissions.restviewbans));
+			Rest.Register(new SecureRestCommand("/v2/bans/destroy", BanDestroyV2, RestPermissions.restmanagebans));
 
 			// World Commands
-			Rest.Register(new RestCommand("/world/read", WorldRead));
-			Rest.Register(new RestCommand("/world/meteor", WorldMeteor));
-			Rest.Register(new RestCommand("/world/bloodmoon/{bool}", WorldBloodmoon));
-			Rest.Register(new RestCommand("/v2/world/save", WorldSave));
-			Rest.Register(new RestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings));
-			Rest.Register(new RestCommand("/v2/world/butcher", WorldButcher));
+			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
+			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
-			Rest.Register(new RestCommand("/lists/players", PlayerList));
-			Rest.Register(new RestCommand("/v2/players/list", PlayerListV2));
-			Rest.Register(new RestCommand("/v2/players/read", PlayerReadV2));
-			Rest.Register(new RestCommand("/v2/players/kick", PlayerKickV2));
-			Rest.Register(new RestCommand("/v2/players/ban", PlayerBanV2));
-			Rest.Register(new RestCommand("/v2/players/kill", PlayerKill));
-			Rest.Register(new RestCommand("/v2/players/mute", PlayerMute));
-			Rest.Register(new RestCommand("/v2/players/unmute", PlayerUnMute));
+			Rest.Register(new SecureRestCommand("/lists/players", PlayerList));
+			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2));
+			Rest.Register(new SecureRestCommand("/v2/players/read", PlayerReadV2, RestPermissions.restuserinfo));
+			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, RestPermissions.restkick));
+			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, RestPermissions.restban, RestPermissions.restmanagebans));
+			Rest.Register(new SecureRestCommand("/v2/players/kill", PlayerKill, RestPermissions.restkill));
+			Rest.Register(new SecureRestCommand("/v2/players/mute", PlayerMute, RestPermissions.restmute));
+			Rest.Register(new SecureRestCommand("/v2/players/unmute", PlayerUnMute, RestPermissions.restmute));
 
 			// Group Commands
-			Rest.Register(new RestCommand("/v2/groups/list", GroupList));
-			Rest.Register(new RestCommand("/v2/groups/read", GroupInfo));
-			Rest.Register(new RestCommand("/v2/groups/destroy", GroupDestroy));
-			Rest.Register(new RestCommand("/v2/groups/create", GroupCreate));
-			Rest.Register(new RestCommand("/v2/groups/update", GroupUpdate));
+			Rest.Register(new SecureRestCommand("/v2/groups/list", GroupList, RestPermissions.restviewgroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/read", GroupInfo, RestPermissions.restviewgroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/destroy", GroupDestroy, RestPermissions.restmanagegroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/create", GroupCreate, RestPermissions.restmanagegroups));
+			Rest.Register(new SecureRestCommand("/v2/groups/update", GroupUpdate, RestPermissions.restmanagegroups));
 		}
 
 		#region RestServerMethods
 
-		private object ServerCommand(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerCommand(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			TSRestPlayer tr = new TSRestPlayer();
+			Group restPlayerGroup;
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (TShock.Config.RestUseNewPermissionModel)
+				restPlayerGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			else
+				restPlayerGroup = new SuperAdminGroup();
+
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, parameters["cmd"]);
 			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
 		}
 
-		private object ServerOff(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerCommandV3(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			if (string.IsNullOrWhiteSpace(parameters["cmd"]))
+				return RestMissingParam("cmd");
+
+			Group restPlayerGroup;
+			// TODO: Get rid of this when the old REST permission model is removed.
+			if (TShock.Config.RestUseNewPermissionModel)
+				restPlayerGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			else
+				restPlayerGroup = new SuperAdminGroup();
+
+			TSRestPlayer tr = new TSRestPlayer(tokenData.Username, restPlayerGroup);
+			Commands.HandleCommand(tr, parameters["cmd"]);
+			return new RestObject()
+			{
+				{"response", tr.GetCommandOutput()}
+			};
+		}
+
+		private object ServerOff(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			if (!GetBool(parameters["confirm"], false))
 				return RestInvalidParam("confirm");
 
 			// Inform players the server is shutting down
-			var msg = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is shutting down" : parameters["message"];
-			TShock.Utils.StopServer(!GetBool(parameters["nosave"], false), msg);
+			var reason = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is shutting down" : parameters["message"];
+			TShock.Utils.StopServer(!GetBool(parameters["nosave"], false), reason);
 
 			return RestResponse("The server is shutting down");
 		}
 
-		private object ServerBroadcast(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerRestart(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			if (!GetBool(parameters["confirm"], false))
+				return RestInvalidParam("confirm");
+
+			// Inform players the server is shutting down
+			var reason = string.IsNullOrWhiteSpace(parameters["message"]) ? "Server is restarting" : parameters["message"];
+			TShock.Utils.RestartServer(!GetBool(parameters["nosave"], false), reason);
+
+			return RestResponse("The server is shutting down and will attempt to restart");
+		}
+
+		private object ServerReload(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			TShock.Utils.Reload(new TSRestPlayer(tokenData.Username, TShock.Groups.GetGroupByName(tokenData.UserGroupName)));
+			
+			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
+		}
+
+		private object ServerBroadcast(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var msg = parameters["msg"];
 			if (string.IsNullOrWhiteSpace(msg))
@@ -118,11 +181,32 @@ namespace TShockAPI
 			return RestResponse("The message was broadcasted successfully");
 		}
 
-		private object ServerStatus(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerMotd(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			if (TShock.Config.EnableTokenEndpointAuthentication)
-				return RestError("Server settings require a token for this API call");
+			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
+			if (!File.Exists(motdFilePath))
+				return this.RestError("The motd.txt was not found.", "500");
 
+			return new RestObject()
+			{
+				{"motd", File.ReadAllLines(motdFilePath)}
+			};
+		}
+
+		private object ServerRules(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
+			if (!File.Exists(rulesFilePath))
+				return this.RestError("The rules.txt was not found.", "500");
+
+			return new RestObject()
+			{
+				{"rules", File.ReadAllLines(rulesFilePath)}
+			};
+		}
+
+		private object ServerStatus(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
 			return new RestObject()
 			{
@@ -133,18 +217,17 @@ namespace TShockAPI
 			};
 		}
 
-		private object ServerStatusV2(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerStatusV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			if (TShock.Config.EnableTokenEndpointAuthentication)
-				return RestError("Server settings require a token for this API call");
-
 			var ret = new RestObject()
 			{
 				{"name", TShock.Config.ServerName},
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},
-				{"world", Main.worldName}
+				{"world", Main.worldName},
+				{"uptime", (DateTime.Now - System.Diagnostics.Process.GetCurrentProcess().StartTime).ToString(@"d'.'hh':'mm':'ss")},
+				{"serverpassword", !string.IsNullOrEmpty(TShock.Config.ServerPassword)}
 			};
 
 			if (GetBool(parameters["players"], false))
@@ -174,27 +257,32 @@ namespace TShockAPI
 				rules.Add("PvPMode", TShock.Config.PvPMode);
 				rules.Add("SpawnProtection", TShock.Config.SpawnProtection);
 				rules.Add("SpawnProtectionRadius", TShock.Config.SpawnProtectionRadius);
+				rules.Add("ServerSideInventory", TShock.Config.ServerSideInventory);
 
 				ret.Add("rules", rules);
 			}
 			return ret;
 		}
 
-		private object ServerTokenTest(RestVerbs verbs, IParameterCollection parameters)
+		private object ServerTokenTest(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
-			return RestResponse("Token is valid and was passed through correctly");
+			return new RestObject()
+			{
+				{"response", "Token is valid and was passed through correctly."},
+				{"associateduser", tokenData.Username}
+			};
 		}
 
 		#endregion
 
 		#region RestUserMethods
 
-		private object UserActiveListV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserActiveListV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.UserAccountName && p.Active).Select(p => p.UserAccountName)) } };
 		}
 
-		private object UserListV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserListV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			return new RestObject() { { "users", TShock.Users.GetUsers().Select(p => new Dictionary<string,object>(){
 				{"name", p.Name},
@@ -204,7 +292,7 @@ namespace TShockAPI
 			}) } };
 		}
 
-		private object UserCreateV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserCreateV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var username = parameters["user"];
 			if (string.IsNullOrWhiteSpace(username))
@@ -232,7 +320,7 @@ namespace TShockAPI
 			return RestResponse("User was successfully created");
 		}
 
-		private object UserUpdateV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserUpdateV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = UserFind(parameters);
 			if (ret is RestObject)
@@ -274,7 +362,7 @@ namespace TShockAPI
 			return response;
 		}
 
-		private object UserDestroyV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserDestroyV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = UserFind(parameters);
 			if (ret is RestObject)
@@ -292,7 +380,7 @@ namespace TShockAPI
 			return RestResponse("User deleted successfully");
 		}
 
-		private object UserInfoV2(RestVerbs verbs, IParameterCollection parameters)
+		private object UserInfoV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = UserFind(parameters);
 			if (ret is RestObject)
@@ -306,7 +394,7 @@ namespace TShockAPI
 
 		#region RestBanMethods
 
-		private object BanCreate(RestVerbs verbs, IParameterCollection parameters)
+		private object BanCreate(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ip = parameters["ip"];
 			var name = parameters["name"];
@@ -325,7 +413,7 @@ namespace TShockAPI
 			return RestResponse("Ban created successfully");
 		}
 
-		private object BanDestroyV2(RestVerbs verbs, IParameterCollection parameters)
+		private object BanDestroyV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = BanFind(parameters);
 			if (ret is RestObject)
@@ -357,7 +445,7 @@ namespace TShockAPI
 			return RestResponse("Ban deleted successfully");
 		}
 
-		private object BanInfoV2(RestVerbs verbs, IParameterCollection parameters)
+		private object BanInfoV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = BanFind(parameters);
 			if (ret is RestObject)
@@ -371,7 +459,7 @@ namespace TShockAPI
 			};
 		}
 
-		private object BanListV2(RestVerbs verbs, IParameterCollection parameters)
+		private object BanListV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var banList = new ArrayList();
 			foreach (var ban in TShock.Bans.GetBans())
@@ -393,7 +481,7 @@ namespace TShockAPI
 
 		#region RestWorldMethods
 
-		private object WorldChangeSaveSettings(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldChangeSaveSettings(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			bool autoSave;
 			if (!bool.TryParse(verbs["bool"], out autoSave))
@@ -403,14 +491,14 @@ namespace TShockAPI
 			return RestResponse("AutoSave has been set to " + autoSave);
 		}
 
-		private object WorldSave(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldSave(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			SaveManager.Instance.SaveWorld();
 
 			return RestResponse("World saved");
 		}
 
-		private object WorldButcher(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldButcher(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			bool killFriendly;
 			if (!bool.TryParse(parameters["killfriendly"], out killFriendly))
@@ -432,7 +520,7 @@ namespace TShockAPI
 			return RestResponse(killcount + " NPCs have been killed");
 		}
 
-		private object WorldRead(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldRead(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			return new RestObject()
 			{
@@ -445,7 +533,7 @@ namespace TShockAPI
 			};
 		}
 
-		private object WorldMeteor(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldMeteor(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			if (null == WorldGen.genRand)
 				WorldGen.genRand = new Random();
@@ -453,7 +541,7 @@ namespace TShockAPI
 			return RestResponse("Meteor has been spawned");
 		}
 
-		private object WorldBloodmoon(RestVerbs verbs, IParameterCollection parameters)
+		private object WorldBloodmoon(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			bool bloodmoon;
 			if (!bool.TryParse(verbs["bool"], out bloodmoon))
@@ -467,23 +555,23 @@ namespace TShockAPI
 
 		#region RestPlayerMethods
 
-		private object PlayerUnMute(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerUnMute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			return PlayerSetMute(parameters, false);
 		}
 
-		private object PlayerMute(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerMute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			return PlayerSetMute(parameters, true);
 		}
 
-		private object PlayerList(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerList(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
 			return new RestObject() { { "players", string.Join(", ", activeplayers.Select(p => p.name)) } };
 		}
 
-		private object PlayerListV2(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerListV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var playerList = new ArrayList();
 			foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
@@ -495,7 +583,7 @@ namespace TShockAPI
 			return new RestObject() { { "players", playerList } };
 		}
 
-		private object PlayerReadV2(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerReadV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = PlayerFind(parameters);
 			if (ret is RestObject)
@@ -515,7 +603,7 @@ namespace TShockAPI
 			};
 		}
 
-		private object PlayerKickV2(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerKickV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = PlayerFind(parameters);
 			if (ret is RestObject)
@@ -526,7 +614,7 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
-		private object PlayerBanV2(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerBanV2(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = PlayerFind(parameters);
 			if (ret is RestObject)
@@ -539,7 +627,7 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 
-		private object PlayerKill(RestVerbs verbs, IParameterCollection parameters)
+		private object PlayerKill(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = PlayerFind(parameters);
 			if (ret is RestObject)
@@ -556,7 +644,7 @@ namespace TShockAPI
 
 		#region RestGroupMethods
 
-		private object GroupList(RestVerbs verbs, IParameterCollection parameters)
+		private object GroupList(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var groups = new ArrayList();
 			foreach (Group group in TShock.Groups)
@@ -566,7 +654,7 @@ namespace TShockAPI
 			return new RestObject() { { "groups", groups } };
 		}
 
-		private object GroupInfo(RestVerbs verbs, IParameterCollection parameters)
+		private object GroupInfo(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = GroupFind(parameters);
 			if (ret is RestObject)
@@ -583,7 +671,7 @@ namespace TShockAPI
 			};
 		}
 
-		private object GroupDestroy(RestVerbs verbs, IParameterCollection parameters)
+		private object GroupDestroy(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = GroupFind(parameters);
 			if (ret is RestObject)
@@ -602,7 +690,7 @@ namespace TShockAPI
 			return RestResponse("Group '" + group.Name + "' deleted successfully");
 		}
 
-		private object GroupCreate(RestVerbs verbs, IParameterCollection parameters)
+		private object GroupCreate(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var name = parameters["group"];
 			if (string.IsNullOrWhiteSpace(name))
@@ -619,7 +707,7 @@ namespace TShockAPI
 			return RestResponse("Group '" + name + "' created successfully");
 		}
 
-		private object GroupUpdate(RestVerbs verbs, IParameterCollection parameters)
+		private object GroupUpdate(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			var ret = GroupFind(parameters);
 			if (ret is RestObject)
