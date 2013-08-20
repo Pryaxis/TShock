@@ -1283,16 +1283,12 @@ namespace TShockAPI
 
 		private static void Broadcast(CommandArgs args)
 		{
-			string message = "";
+			string message = string.Join(" ", args.Parameters);
 
-			for (int i = 0; i < args.Parameters.Count; i++)
-			{
-				message += " " + args.Parameters[i];
-			}
-
-			Color color = new Color(TShock.Config.BroadcastRGB[0], TShock.Config.BroadcastRGB[1], TShock.Config.BroadcastRGB[2]);
-			TShock.Utils.Broadcast("(Server Broadcast)" + message, color);
-			return;
+			TShock.Utils.Broadcast(
+				"(Server Broadcast) " + message, 
+				Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]), 
+				Convert.ToByte(TShock.Config.BroadcastRGB[2]));
 		}
 
 		private static void Off(CommandArgs args)
