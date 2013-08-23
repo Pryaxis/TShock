@@ -159,8 +159,6 @@ namespace TShockAPI
 
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")] public int LogonDiscardThreshold=250;
 		
-		[Description("Disables reporting of playercount to the stat system.")] public bool DisablePlayerCountReporting;
-
 		[Description("Disables clown bomb projectiles from spawning.")] public bool DisableClownBombs;
 
 		[Description("Disables snow ball projectiles from spawning.")] public bool DisableSnowBalls;
@@ -241,8 +239,6 @@ namespace TShockAPI
 
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
-
-	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
 
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
 
