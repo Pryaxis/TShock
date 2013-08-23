@@ -803,10 +803,6 @@ namespace TShockAPI
 					case "id":
 						user = TShock.Users.GetUserByID(Convert.ToInt32(name));
 						break;
-					case "ip":
-						user = TShock.Users.GetUserByIP(name);
-
-						break;
 					default:
 						return RestError("Invalid Type: '" + type + "'");
 				}
