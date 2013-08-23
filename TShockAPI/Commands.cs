@@ -180,7 +180,7 @@ namespace TShockAPI
 			add(Permissions.ban, Ban, "ban");
 			add(Permissions.whitelist, Whitelist, "whitelist");
 			add(Permissions.maintenance, Off, "off", "exit");
-			add(Permissions.maintenance, Restart, "restart"); //Added restart command
+			add(Permissions.maintenance, Restart, "restart");
 			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
 			add(Permissions.maintenance, CheckUpdates, "checkupdates");
 		    add(Permissions.updateplugins, UpdatePlugins, "updateplugins");
@@ -246,6 +246,7 @@ namespace TShockAPI
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 			add(null, Aliases, "aliases");
+			add(Rests.RestPermissions.restmanage, ManageRest, "rest");
 		    //add(null, TestCallbackCommand, "test");
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -1308,7 +1309,7 @@ namespace TShockAPI
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
 		}
-		//Added restart command
+		
 		private static void Restart(CommandArgs args)
 		{
 			if (Main.runningMono)
@@ -1317,21 +1318,8 @@ namespace TShockAPI
 			}
 			else
 			{
-				if (TShock.Config.ServerSideInventory)
-				{
-					foreach (TSPlayer player in TShock.Players)
-					{
-						if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-						{
-							TShock.InventoryDB.InsertPlayerData(player);
-						}
-					}
-				}
-
 				string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
-				TShock.Utils.StopServer(true, reason);
-				System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-				Environment.Exit(0);
+				TShock.Utils.RestartServer(true, reason);
 			}
 		}
 
@@ -1353,6 +1341,58 @@ namespace TShockAPI
             args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
             new PluginUpdaterThread(args.Player);
         }
+
+		private static void ManageRest(CommandArgs args)
+		{
+			string subCommand = "help";
+			if (args.Parameters.Count > 0)
+				subCommand = args.Parameters[0];
+
+			switch(subCommand.ToLower())
+			{
+				case "listusers":
+				{
+					int pageNumber;
+					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						return;
+
+					Dictionary<string,int> restUsersTokens = new Dictionary<string,int>();
+					foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
+					{
+						if (restUsersTokens.ContainsKey(tokenData.Username))
+							restUsersTokens[tokenData.Username]++;
+						else
+							restUsersTokens.Add(tokenData.Username, 1);
+					}
+
+					List<string> restUsers = new List<string>(
+						restUsersTokens.Select(ut => string.Format("{0} ({1} tokens)", ut.Key, ut.Value)));
+
+					PaginationTools.SendPage(
+						args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings {
+							NothingToDisplayString = "There are currently no active REST users.",
+							HeaderFormat = "Active REST Users ({0}/{1}):",
+							FooterFormat = "Type /rest listusers {0} for more."
+						}
+					);
+
+					break;
+				}
+				case "destroytokens":
+				{
+					TShock.RestApi.Tokens.Clear();
+					args.Player.SendSuccessMessage("All REST tokens have been destroyed.");
+					break;
+				}
+				default:
+				{
+					args.Player.SendInfoMessage("Available REST Sub-Commands:");
+					args.Player.SendMessage("listusers - Lists all REST users and their current active tokens.", Color.White);
+					args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
+					break;
+				}
+			}
+		}
 
 		#endregion Server Maintenence Commands
 
@@ -2373,14 +2413,10 @@ namespace TShockAPI
 
 		private static void Reload(CommandArgs args)
 		{
-			FileTools.SetupConfig();
-			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
-			TShock.Groups.LoadPermisions();
-            TShock.Regions.ReloadAllRegions();
+			TShock.Utils.Reload(args.Player);
+
 			args.Player.SendSuccessMessage(
 				"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
-
-		    Hooks.GeneralHooks.OnReloadEvent(args.Player);
 		}
 
 		private static void ServerPassword(CommandArgs args)

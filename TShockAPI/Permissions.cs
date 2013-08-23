@@ -73,7 +73,7 @@ namespace TShockAPI
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max")] public static readonly string
 			reservedslot;
 
-		[Description("User is notified when an update is available")] public static readonly string maintenance;
+		[Description("User is notified when an update is available, user can turn off / restart the server.")] public static readonly string maintenance;
 
 		[Description("User can kick others")] public static readonly string kick;
 
@@ -166,9 +166,6 @@ namespace TShockAPI
 	    [Description("User can save all the players SSI state.")] 
         public static readonly string savessi;
 
-        [Description("User can use rest api calls.")]
-	    public static readonly string restapi;
-
 	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
 
         [Description("User can use /home.")] public static readonly string home;
@@ -177,16 +174,14 @@ namespace TShockAPI
 
 	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
 
-	    [Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
-        static Permissions()
+		[Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
+
+		static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
 				field.SetValue(null, field.Name);
 			}
-
-            //Backwards compatability.
-            restapi = "api";
 		}
 
         /// <summary>

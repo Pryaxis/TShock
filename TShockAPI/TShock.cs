@@ -72,7 +72,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
-		public static Dictionary<string, string> RESTStartupTokens = new Dictionary<string, string>();
+		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -220,7 +220,6 @@ namespace TShockAPI
 				RememberedPos = new RememberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
-				RestApi.Verify += RestApi_Verify;
 				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
@@ -293,33 +292,6 @@ namespace TShockAPI
             Console.WriteLine("TShock for Terraria is open & free software. If you paid, you were scammed.");
 // ReSharper restore LocalizableElement
 	    }
-
-	    private RestObject RestApi_Verify(string username, string password)
-		{
-			var userAccount = Users.GetUserByName(username);
-			if (userAccount == null)
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (!Utils.GetGroup(userAccount.Group).HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
-			{
-				return new RestObject("403")
-						{
-							Error =
-								"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
-						};
-			}
-
-			return new RestObject("200") {Response = "Successful login"}; //Maybe return some user info too?
-		}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -507,7 +479,7 @@ namespace TShockAPI
 						break;
 					case "-rest-token":
 						string token = Convert.ToString(parms[++i]);
-						RESTStartupTokens.Add(token, "null");
+						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroupName = "superadmin" });
 						Console.WriteLine("Startup parameter overrode REST token.");
 						break;
 					case "-rest-enabled":

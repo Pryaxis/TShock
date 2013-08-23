@@ -129,7 +129,7 @@ namespace TShockAPI
 
 		[Description("This will announce a player's location on join")] public bool EnableGeoIP;
 
-		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
+		[Description("This will turn on token requirement for the public REST API endpoints.")] public bool
 			EnableTokenEndpointAuthentication;
 
         [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
@@ -255,6 +255,11 @@ namespace TShockAPI
 
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
 		    {127,255,212};
+
+		// TODO: Get rid of this when the old REST permission model is removed.
+		[Description(
+			"Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future."
+			)] public bool RestUseNewPermissionModel = true;
 
         /// <summary>
         /// Reads a configuration file from a given path
