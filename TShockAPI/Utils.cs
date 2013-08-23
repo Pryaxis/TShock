@@ -576,8 +576,12 @@ namespace TShockAPI
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 						TShock.InventoryDB.InsertPlayerData(player);
 
+		    String startupParameters = "";
+		    foreach (String s in Environment.GetCommandLineArgs())
+		        startupParameters += " " + s;
+
 			StopServer(true, reason);
-			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase, startupParameters);
 			Environment.Exit(0);
 		}
 
