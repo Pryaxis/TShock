@@ -242,8 +242,6 @@ namespace TShockAPI
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
 
-	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
-
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
 
         [Description("Allows groups on the banned item allowed list to spawn banned items.")] public bool AllowAllowedGroupsToSpawnBannedItems = false;
