@@ -2333,18 +2333,36 @@ namespace TShockAPI
 					bucket = 2;
 				}
 
-				if (lava && bucket != 2 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-				{
-					args.Player.Disable("Using banned lava bucket without permissions.");
-					args.Player.SendTileSquare(tileX, tileY);
-					return true;
-				}
+                if(lava && bucket != 2)
+                {
+                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
+                    args.Player.Disable("Spreading lava without holding a lava bucket");
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                } 
+                
+                if(lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
+                            TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player)))
+                {
+                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
+                    args.Player.Disable("Using banned lava bucket without permissions");
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                }
 
-				if (!lava && bucket != 1 && !args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+                if (!lava && bucket != 1)
+                {
+                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
+                    args.Player.Disable("Spreading water without holding a water bucket");
+                    args.Player.SendTileSquare(tileX, tileY);
+                    return true;
+                } 
+
+				if (!lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+					          TShock.Itembans.ItemIsBanned("Water Bucket", args.Player)))
 				{
-					args.Player.Disable("Using banned water bucket without permissions.");
+                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Using banned water bucket without permissions");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
