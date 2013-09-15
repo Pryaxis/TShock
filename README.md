@@ -1,25 +1,27 @@
-TShock is a server modification for Terraria.
+# TShock
 
-__Continuous Integration__: http://ci.tshock.co/
+TShock is a server modification for Terraria, written in C#, and based upon the [Terraria Server API](https://github.com/Deathmax/TerrariaAPI-Server). It uses JSON for configuration management, and offers several features not present in the Terraria Server normally.
 
-__Support Forums__: http://tshock.co/
+## Features
 
-__Wiki__: https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home
+* MySQL support
+* Permissions
+* Multiple administrators
+* Anti-cheat
+* User registration
+* Reserved slots
+* User punishment (kicking, banning, muting)
 
-----
+## Community
 
-### Teamspeak
+Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
-We communicate on the ShankShock Temspeak server whilst programming.
+* [Website & Forums](http://tshock.co/xf/)
+* [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
+* [IRC: #tshock @ irc.rizon.net](http://tshock.co/xf/index.php?ezirc/)
 
-__IP__: ts3.shankshock.com
+## Download
 
-__Port__: 9987
-
-### IRC
-
-We love IRC (although a little less than Teamspeak). If you need support, or just want to hang around, feel free to join.
-
-__IP__: irc.shankshock.com
-
-__Channel__: #terraria
+* [Github Releases](https://github.com/TShock/TShock/releases)
+* [Download Archive](https://github.com/TShock/TShock/downloads)
+* [Latest Version (4.0.5)](https://s3.amazonaws.com/tshock/TShock+4.0.5.zip)
