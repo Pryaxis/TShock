@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -238,25 +239,21 @@ namespace TShockAPI.DB
 				return false;
 			}
 		    Region top = null;
-			for (int i = 0; i < Regions.Count; i++)
-			{
-				if (Regions[i].InArea(x,y) )
-				{
-                    if (top == null)
-                        top = Regions[i];
-                    else
-                    {
-                        if (Regions[i].Z > top.Z)
-                            top = Regions[i];
-                    }
-				}
-			}
+
+            foreach (Region region in Regions.ToList())
+            {
+                if (region.InArea(x, y))
+                {
+                    if (top == null || region.Z > top.Z)
+                        top = region;    
+                }
+            }
             return top == null || top.HasPermissionToBuildInRegion(ply);
 		}
 
 		public bool InArea(int x, int y)
 		{
-			foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
 				    y >= region.Area.Top && y <= region.Area.Bottom &&
@@ -271,7 +268,7 @@ namespace TShockAPI.DB
         public List<string> InAreaRegionName(int x, int y)
         {
             List<string> regions = new List<string>() { };
-            foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
             {
                 if (x >= region.Area.Left && x <= region.Area.Right &&
                     y >= region.Area.Top && y <= region.Area.Bottom &&
@@ -286,7 +283,7 @@ namespace TShockAPI.DB
         public List<Region> InAreaRegion(int x, int y)
         {
             List<Region> regions = new List<Region>() { };
-            foreach (Region region in Regions)
+            foreach (Region region in Regions.ToList())
             {
                 if (x >= region.Area.Left && x <= region.Area.Right &&
                     y >= region.Area.Top && y <= region.Area.Bottom &&
@@ -385,30 +382,36 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public bool AddNewUser(string regionName, String userName)
+		public bool AddNewUser(string regionName, string userName)
 		{
 			try
 			{
-				string MergedIDs = string.Empty;
+				string mergedIDs = string.Empty;
 				using (
-					var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
+					var reader = database.QueryReader("SELECT UserIds FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
 					                                  Main.worldID.ToString()))
 				{
 					if (reader.Read())
-						MergedIDs = reader.Get<string>("UserIds");
+						mergedIDs = reader.Get<string>("UserIds");
 				}
 
-				if (string.IsNullOrEmpty(MergedIDs))
-					MergedIDs = Convert.ToString(TShock.Users.GetUserID(userName));
-				else
-					MergedIDs = MergedIDs + "," + Convert.ToString(TShock.Users.GetUserID(userName));
+				string userIdToAdd = Convert.ToString(TShock.Users.GetUserID(userName));
+				string[] ids = mergedIDs.Split(',');
+				// Is the user already allowed to the region?
+				if (ids.Contains(userIdToAdd))
+					return true;
 
-				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", MergedIDs,
+				if (string.IsNullOrEmpty(mergedIDs))
+					mergedIDs = userIdToAdd;
+				else
+					mergedIDs = string.Concat(mergedIDs, ",", userIdToAdd);
+
+				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", mergedIDs,
 				                       regionName, Main.worldID.ToString());
 				foreach (var r in Regions)
 				{
 					if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
-						r.setAllowedIDs(MergedIDs);
+						r.setAllowedIDs(mergedIDs);
 				}
 				return q != 0;
 			}
@@ -471,27 +474,33 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public bool AllowGroup(string regionName, string groups)
+		public bool AllowGroup(string regionName, string groupName)
 		{
-			string groupsNew = "";
+			string mergedGroups = "";
 			using (
-				var reader = database.QueryReader("SELECT * FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
+				var reader = database.QueryReader("SELECT Groups FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
 				                                  Main.worldID.ToString()))
 			{
 				if (reader.Read())
-					groupsNew = reader.Get<string>("Groups");
+					mergedGroups = reader.Get<string>("Groups");
 			}
-			if (groupsNew != "")
-				groupsNew += ",";
-			groupsNew += groups;
 
-			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groupsNew,
+			string[] groups = mergedGroups.Split(',');
+			// Is the group already allowed to the region?
+			if (groups.Contains(groupName))
+				return true;
+
+			if (mergedGroups != "")
+				mergedGroups += ",";
+			mergedGroups += groupName;
+
+			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", mergedGroups,
 			                       regionName, Main.worldID.ToString());
 
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				r.SetAllowedGroups(groupsNew);
+				r.SetAllowedGroups(mergedGroups);
 			}
 			else
 			{

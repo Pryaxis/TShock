@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -27,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nyx Team")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Nyx Team 2012")]
+[assembly: AssemblyCopyright("Copyright © Nyx Team 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -48,5 +49,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      MMdd of the build
 
-[assembly: AssemblyVersion("3.9.1.0526")]
-[assembly: AssemblyFileVersion("3.9.1.0526")]
+[assembly: AssemblyVersion("4.1.0.0419")]
+[assembly: AssemblyFileVersion("4.1.0.0419")]

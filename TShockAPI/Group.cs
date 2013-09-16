@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -25,16 +26,52 @@ namespace TShockAPI
 	{
 		// NOTE: Using a const still suffers from needing to recompile to change the default
 		// ideally we would use a static but this means it can't be used for the default parameter :(
-		public const string defaultChatColor = "255.255.255";
+        /// <summary>
+        /// Default chat color.
+        /// </summary>
+		public const string defaultChatColor = "255,255,255";
+
+        /// <summary>
+        /// List of permissions available to the group.
+        /// </summary>
 		public readonly List<string> permissions = new List<string>();
+
+        /// <summary>
+        /// List of permissions that the group is explicitly barred from.
+        /// </summary>
 		public readonly List<string> negatedpermissions = new List<string>();
 
+        /// <summary>
+        /// The group's name.
+        /// </summary>
 		public string Name { get; set; }
+
+        /// <summary>
+        /// The group that this group inherits permissions from.
+        /// </summary>
 		public Group Parent { get; set; }
-		public int Order { get; set; }
+
+        /// <summary>
+        /// The chat prefix for this group.
+        /// </summary>
 		public string Prefix { get; set; }
+
+        /// <summary>
+        /// The chat suffix for this group.
+        /// </summary>
 		public string Suffix { get; set; }
+
+        /// <summary>
+        /// The name of the parent, not particularly sure why this is here.
+        /// We can use group.Parent.Name and not have this second reference. 
+        /// This was added for rest, so a discussion with Shank is necessary.
+        /// </summary>
 		public string ParentName { get { return (null == Parent) ? "" : Parent.Name; } }
+
+        /// <summary>
+        /// The chat color of the group.
+        /// Returns "255255255", sets "255,255,255"
+        /// </summary>
 		public string ChatColor
 		{
 			get { return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2")); }
@@ -58,6 +95,9 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// The permissions of the user in string form.
+        /// </summary>
 		public string Permissions
 		{
 			get
@@ -75,6 +115,9 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// The permissions of this group and all that it inherits from.
+        /// </summary>
 		public List<string> TotalPermissions
 		{
 			get
@@ -125,29 +168,55 @@ namespace TShockAPI
 			Permissions = permissions;
 		}
 
+        /// <summary>
+        /// Checks to see if a group has a specified permission.
+        /// </summary>
+        /// <param name="permission">The permission to check.</param>
+        /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
 		{
-			if (string.IsNullOrEmpty(permission))
-				return true;
-
-			var cur = this;
-			var traversed = new List<Group>();
-			while (cur != null)
+			if (String.IsNullOrEmpty(permission) || RealHasPermission(permission))
 			{
-				if (cur.negatedpermissions.Contains(permission))
-					return false;
-				if (cur.permissions.Contains(permission))
-					return true;
-				if (traversed.Contains(cur))
+				return true;
+			}
+			string[] nodes = permission.Split('.');
+			for (int i = nodes.Length - 1; i >= 0; i--)
+			{
+				nodes[i] = "*";
+				if (RealHasPermission(String.Join(".", nodes, 0, i + 1)))
 				{
-					throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+					return true;
 				}
-				traversed.Add(cur);
-				cur = cur.Parent;
 			}
 			return false;
 		}
+        private bool RealHasPermission(string permission)
+        {
+            if (string.IsNullOrEmpty(permission))
+                return true;
 
+            var cur = this;
+            var traversed = new List<Group>();
+            while (cur != null)
+            {
+                if (cur.negatedpermissions.Contains(permission))
+                    return false;
+                if (cur.permissions.Contains(permission))
+                    return true;
+                if (traversed.Contains(cur))
+                {
+                    throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
+                }
+                traversed.Add(cur);
+                cur = cur.Parent;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Adds a permission to the list of negated permissions.
+        /// </summary>
+        /// <param name="permission">The permission to negate.</param>
 		public void NegatePermission(string permission)
 		{
 			// Avoid duplicates
@@ -158,6 +227,10 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Adds a permission to the list of permissions.
+        /// </summary>
+        /// <param name="permission">The permission to add.</param>
 		public void AddPermission(string permission)
 		{
 			if (permission.StartsWith("!"))
@@ -173,6 +246,11 @@ namespace TShockAPI
 			}
 		}
 
+        /// <summary>
+        /// Clears the permission list and sets it to the list provided, 
+        /// will parse "!permssion" and add it to the negated permissions.
+        /// </summary>
+        /// <param name="permission"></param>
 		public void SetPermission(List<string> permission)
 		{
 			permissions.Clear();
@@ -180,6 +258,11 @@ namespace TShockAPI
 			permission.ForEach(p => AddPermission(p));
 		}
 
+        /// <summary>
+        /// Will remove a permission from the respective list,
+        /// where "!permission" will remove a negated permission.
+        /// </summary>
+        /// <param name="permission"></param>
 		public void RemovePermission(string permission)
 		{
 			if (permission.StartsWith("!"))
@@ -189,8 +272,31 @@ namespace TShockAPI
 			}
 			permissions.Remove(permission);
 		}
+
+		/// <summary>
+    /// Assigns all fields of this instance to another.
+    /// </summary>
+    /// <param name="otherGroup">The other instance.</param>
+		public void AssignTo(Group otherGroup)
+		{
+			otherGroup.Name = Name;
+			otherGroup.Parent = Parent;
+			otherGroup.Prefix = Prefix;
+			otherGroup.Suffix = Suffix;
+			otherGroup.R = R;
+			otherGroup.G = G;
+			otherGroup.B = B;
+			otherGroup.Permissions = Permissions;
+		}
+
+		public override string ToString() {
+			return this.Name;
+		}
 	}
 
+    /// <summary>
+    /// This class is the SuperAdminGroup, which has access to everything.
+    /// </summary>
 	public class SuperAdminGroup : Group
 	{
 		public SuperAdminGroup()
@@ -203,6 +309,11 @@ namespace TShockAPI
 			Suffix = TShock.Config.SuperAdminChatSuffix;
 		}
 
+        /// <summary>
+        /// Override to allow access to everything.
+        /// </summary>
+        /// <param name="permission">The permission</param>
+        /// <returns>True</returns>
 		public override bool HasPermission(string permission)
 		{
 			return true;

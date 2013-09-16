@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.IO;
 
@@ -22,36 +23,52 @@ namespace TShockAPI
 {
 	public class FileTools
 	{
+        /// <summary>
+        /// Path to the file containing the rules.
+        /// </summary>
 		internal static string RulesPath
 		{
 			get { return Path.Combine(TShock.SavePath, "rules.txt"); }
 		}
 
+        /// <summary>
+        /// Path to the file containing the message of the day.
+        /// </summary>
 		internal static string MotdPath
 		{
 			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
 		}
 
+        /// <summary>
+        /// Path to the file containing the whitelist.
+        /// </summary>
 		internal static string WhitelistPath
 		{
 			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
 		}
 
-		internal static string RememberedPosPath
-		{
-			get { return Path.Combine(TShock.SavePath, "oldpos.xml"); }
-		}
-
+        /// <summary>
+        /// Path to the file containing the config.
+        /// </summary>
 		internal static string ConfigPath
 		{
 			get { return Path.Combine(TShock.SavePath, "config.json"); }
 		}
 
+        /// <summary>
+        /// Creates an empty file at the given path.
+        /// </summary>
+        /// <param name="file">The path to the file.</param>
 		public static void CreateFile(string file)
 		{
 			File.Create(file).Close();
 		}
 
+        /// <summary>
+        /// Creates a file if the files doesn't already exist.
+        /// </summary>
+        /// <param name="file">The path to the files</param>
+        /// <param name="data">The data to write to the file.</param>
 		public static void CreateIfNot(string file, string data = "")
 		{
 			if (!File.Exists(file))

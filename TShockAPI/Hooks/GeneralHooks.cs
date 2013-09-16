@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,25 +17,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace TShockDBEditor
+namespace TShockAPI.Hooks
 {
-    public class Group
+    public class ReloadEventArgs
     {
-        public readonly List<string> permissions = new List<string>();
-        private readonly List<string> negatedpermissions = new List<string>();
-
-        public int ID { get; protected set; }
-        public string Name { get; set; }
-        public Group Parent { get; set; }
-        public int Order { get; set; }
-
-        public Group(int id, string groupname, int order, Group parentgroup = null)
+        public TSPlayer Player { get; set; }
+        public ReloadEventArgs(TSPlayer ply)
         {
-            Order = order;
-            ID = id;
-            Name = groupname;
-            Parent = parentgroup;
+            Player = ply;
+        }
+    }
+
+    public class GeneralHooks
+    {
+        public delegate void ReloadEventD(ReloadEventArgs e);
+        public static event ReloadEventD ReloadEvent;
+
+        public static void OnReloadEvent(TSPlayer ply)
+        {
+            if(ReloadEvent == null)
+                return;
+
+            ReloadEvent(new ReloadEventArgs(ply));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,26 +38,28 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 12)]
+	[APIVersion(1, 13)]
 	public class TShock : TerrariaPlugin
 	{
-		private const string LogFormatDefault = "yyyyMMddHHmmss";
-		private static string LogFormat = LogFormatDefault;
-		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "4.x & 50,000th download milestone";
+		public static readonly string VersionCodename = "Welcome to the future.";
 
 		public static string SavePath = "tshock";
+		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
+		private static string LogFormat = LogFormatDefault;
+		private const string LogPathDefault = "tshock";
+		private static string LogPath = LogPathDefault;
+		private static bool LogClear = false;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
 		public static WarpManager Warps;
-		public static RegionManager Regions;
+        public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
 		public static ItemManager Itembans;
-		public static RemeberedPosManager RememberedPos;
+		public static RememberedPosManager RememberedPos;
 		public static InventoryManager InventoryDB;
 		public static ConfigFile Config { get; set; }
 		public static IDbConnection DB;
@@ -66,11 +69,10 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
-		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
-		public static Dictionary<string, string> RESTStartupTokens = new Dictionary<string, string>();
+		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -97,6 +99,10 @@ namespace TShockAPI
 			get { return "The administration modification of the future."; }
 		}
 
+        public override string UpdateURL
+        {
+            get { return ""; }
+        }
 		public TShock(Main game)
 			: base(game)
 		{
@@ -108,35 +114,57 @@ namespace TShockAPI
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
-			HandleCommandLine(Environment.GetCommandLineArgs());
-
-			if (!Directory.Exists(SavePath))
-				Directory.CreateDirectory(SavePath);
-
-			DateTime now = DateTime.Now;
-			string logFilename;
 			try
 			{
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormat)+".log");
-			}
-			catch(Exception)
-			{
-				// Problem with the log format use the default
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormatDefault) + ".log");
-			}
+				HandleCommandLine(Environment.GetCommandLineArgs());
+
+				if (Version.Major >= 4)
+					getTShockAscii();
+
+				if (!Directory.Exists(SavePath))
+					Directory.CreateDirectory(SavePath);
+
+				ConfigFile.ConfigRead += OnConfigRead;
+				FileTools.SetupConfig();
+
+				DateTime now = DateTime.Now;
+				string logFilename;
+				string logPathSetupWarning = null;
+				// Log path was not already set by the command line parameter?
+				if (LogPath == LogPathDefault)
+					LogPath = Config.LogPath;
+				try
+				{
+					logFilename = Path.Combine(LogPath, now.ToString(LogFormat)+".log");
+					if (!Directory.Exists(LogPath))
+						Directory.CreateDirectory(LogPath);
+				}
+				catch(Exception ex)
+				{
+					logPathSetupWarning = "Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine(logPathSetupWarning);
+					Console.ForegroundColor = ConsoleColor.Gray;
+					// Problem with the log path or format use the default
+					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
+				}
 #if DEBUG
-			Log.Initialize(logFilename, LogLevel.All, false);
+				Log.Initialize(logFilename, LogLevel.All, false);
 #else
-			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
+				Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				if (logPathSetupWarning != null)
+					Log.Warn(logPathSetupWarning);
 
-            if (Version.Major >= 4)
-            {
-                getTShockAscii();                
-            }
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			}
+			catch(Exception ex)
+			{
+				// Will be handled by the server api and written to its crashlog.txt.
+				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
+			}
 
-
+			// Further exceptions are written to TShock's log from now on.
 			try
 			{
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -146,9 +174,6 @@ namespace TShockAPI
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
-
-				ConfigFile.ConfigRead += OnConfigRead;
-				FileTools.SetupConfig();
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
@@ -188,14 +213,13 @@ namespace TShockAPI
 				Backups.Interval = Config.BackupInterval;
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
+                Regions = new RegionManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
-				Regions = new RegionManager(DB);
 				Itembans = new ItemManager(DB);
-				RememberedPos = new RemeberedPosManager(DB);
+				RememberedPos = new RememberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
-				RestApi.Verify += RestApi_Verify;
 				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
@@ -223,6 +247,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
 				WorldHooks.StartHardMode += OnStartHardMode;
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
+			    WorldHooks.ChristmasCheck += OnXmasCheck;
                 NetHooks.NameCollision += NetHooks_NameCollision;
 
 				GetDataHandlers.InitGetDataHandler();
@@ -268,33 +293,6 @@ namespace TShockAPI
 // ReSharper restore LocalizableElement
 	    }
 
-	    private RestObject RestApi_Verify(string username, string password)
-		{
-			var userAccount = Users.GetUserByName(username);
-			if (userAccount == null)
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (!Utils.GetGroup(userAccount.Group).HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
-			{
-				return new RestObject("403")
-						{
-							Error =
-								"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
-						};
-			}
-
-			return new RestObject("200") {Response = "Successful login"}; //Maybe return some user info too?
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -323,6 +321,7 @@ namespace TShockAPI
 				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
                 WorldHooks.StartHardMode -= OnStartHardMode;
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
+                WorldHooks.ChristmasCheck -= OnXmasCheck;
                 NetHooks.NameCollision -= NetHooks_NameCollision;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -367,6 +366,17 @@ namespace TShockAPI
             return;
         }
 
+        void OnXmasCheck(ChristmasCheckEventArgs args)
+        {
+            if (args.Handled)
+                return;
+
+            if(Config.ForceXmas)
+            {
+                args.Xmas = true;
+                args.Handled = true;
+            }
+        }
 		/// <summary>
 		/// Handles exceptions that we didn't catch or that Red fucked up
 		/// </summary>
@@ -429,9 +439,13 @@ namespace TShockAPI
 						}
 						break;
 
-					case "-dump":
-						ConfigFile.DumpDescriptions();
-						Permissions.DumpDescriptions();
+					case "-logpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							LogPath = path;
+							Log.ConsoleInfo("Log path has been set to " + path);
+						}
 						break;
 
 					case "-logformat":
@@ -440,6 +454,11 @@ namespace TShockAPI
 
 					case "-logclear":
 						bool.TryParse(parms[++i], out LogClear);
+						break;
+
+					case "-dump":
+						ConfigFile.DumpDescriptions();
+						Permissions.DumpDescriptions();
 						break;
 				}
 			}
@@ -460,7 +479,7 @@ namespace TShockAPI
 						break;
 					case "-rest-token":
 						string token = Convert.ToString(parms[++i]);
-						RESTStartupTokens.Add(token, "null");
+						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroupName = "superadmin" });
 						Console.WriteLine("Startup parameter overrode REST token.");
 						break;
 					case "-rest-enabled":
@@ -521,14 +540,20 @@ namespace TShockAPI
 			{
 				AuthToken = 0;
 			}
-			Regions.ReloadAllRegions();
 
-			StatTracker.CheckIn();
+            Regions.ReloadAllRegions();
+
+			Lighting.lightMode = 2;
 			FixChestStacks();
+
+            
 		}
 
 		private void FixChestStacks()
 		{
+            if (Config.IgnoreChestStacksOnLoad)
+                return;
+
 			foreach (Chest chest in Main.chest)
 			{
 				if (chest != null)
@@ -548,7 +573,6 @@ namespace TShockAPI
 		private void OnUpdate()
 		{
 			UpdateManager.UpdateProcedureCheck();
-			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update
@@ -597,7 +621,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable("Reached TileKill threshold");
+							player.Disable("Reached TileKill threshold.");
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -612,7 +636,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold");
+							player.Disable("Reached TilePlace threshold.");
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -623,7 +647,7 @@ namespace TShockAPI
 					}
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold");
+						player.Disable("Reached TileLiquid threshold.");
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -631,7 +655,7 @@ namespace TShockAPI
 					}
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable("Reached Projectile threshold");
+						player.Disable("Reached projectile threshold.");
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -647,7 +671,7 @@ namespace TShockAPI
 						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack &&
 							item.type != 0)
 						{
-							check = "Remove Item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+							check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 						}
 					}
 					player.IgnoreActionsForCheating = check;
@@ -658,7 +682,7 @@ namespace TShockAPI
 						{
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
-							check = "Remove Armor/Accessory " + item.name;
+							check = "Remove armor/accessory " + item.name;
 						}
 					}
 					player.IgnoreActionsForDisabledArmor = check;
@@ -809,12 +833,9 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				if (!tsplr.SilentKickInProgress || tsplr.State > 1)
+				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 				{
-					if (tsplr.State >= 2)
-					{
-                        Utils.Broadcast(tsplr.Name + " left", Color.Yellow);    
-					}
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
@@ -874,7 +895,7 @@ namespace TShockAPI
 			}
 			else if (tsplr.mute)
 			{
-				tsplr.SendMessage("You are muted!");
+				tsplr.SendErrorMessage("You are muted!");
 				e.Handled = true;
 			}
 		}
@@ -907,11 +928,11 @@ namespace TShockAPI
 					if (player != null && player.Active)
 					{
 						count++;
-						TSPlayer.Server.SendMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+						TSPlayer.Server.SendInfoMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
 																  player.Group.Name, player.UserAccountName));
 					}
 				}
-				TSPlayer.Server.SendMessage(string.Format("{0} players connected.", count));
+				TSPlayer.Server.SendInfoMessage(string.Format("{0} players connected.", count));
 			}
 			else if (text == "autosave")
 			{
@@ -992,7 +1013,7 @@ namespace TShockAPI
 
 			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
 			{
-				player.SendMessage("PvP is forced! Enable PvP else you can't move or do anything!", Color.Red);
+				player.SendMessage("PvP is forced! Enable PvP else you can't do anything!", Color.Red);
 			}
 
 			if (!player.IsLoggedIn)
@@ -1000,7 +1021,7 @@ namespace TShockAPI
 				if (Config.ServerSideInventory)
 				{
 					player.SendMessage(
-						player.IgnoreActionsForInventory = "Server Side Inventory is enabled! Please /register or /login to play!",
+						player.IgnoreActionsForInventory = "Server side inventory is enabled! Please /register or /login to play!",
 						Color.Red);
 						player.LoginHarassed = true;
 				}
@@ -1217,22 +1238,22 @@ namespace TShockAPI
 				switch (random)
 				{
 					case 0:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 1:
-						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 2:
-						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount));
+						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount), Color.Green);
 						break;
 					case 3:
-						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount));
+						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount), Color.Green);
 						break;
 					case 4:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount));
+						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
 						break;
 					case 5:
-						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount));
+						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount), Color.Green);
 						break;
 				}
 			}
@@ -1289,6 +1310,7 @@ namespace TShockAPI
             {
 				if (TShock.Config.AllowIce && actionType != 1)
 				{
+
 					foreach (Point p in player.IceTiles)
 					{
 						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
@@ -1297,11 +1319,12 @@ namespace TShockAPI
 							return false;
 						}
 					}
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
-					player.SendMessage("You do not have permission to build!", Color.Red);
-			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-}
+    		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+					    player.SendMessage("You do not have permission to build!", Color.Red);
+			            player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    }
+
 					return true;
 				}
 
@@ -1311,30 +1334,33 @@ namespace TShockAPI
 					return false;
 				}
 				
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
+		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
 					player.SendMessage("You do not have permission to build!", Color.Red);
-			player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			        player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                }   
 
-}
 				return true;
 
             }
+
             if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
                 Regions.InArea(tileX, tileY))
             {
-                		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
-                        player.SendMessage("Region protected from changes.", Color.Red);
-			player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
+                {
+                    player.SendMessage("This region is protected from changes.", Color.Red);
+                    player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-}
+                }
                 return true;
             }
+
             if (Config.DisableBuild)
             {
                 if (!player.Group.HasPermission(Permissions.editspawn))
                 {
  		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
-                        player.SendMessage("World protected from changes.", Color.Red);
+                        player.SendMessage("The world is protected from changes.", Color.Red);
 			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 }
@@ -1349,7 +1375,7 @@ namespace TShockAPI
                     if (flag)
                     {		
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000){
-                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        player.SendMessage("Spawn is protected from changes.", Color.Red);
 						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
                     return true;
@@ -1370,25 +1396,26 @@ namespace TShockAPI
 					}
 				return true;
 			}
-			
-			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
-			{
+
+            if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+                    Regions.InArea(tileX, tileY))
+            {
 
 
-		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000){
-                        player.SendMessage("Region protected from changes.", Color.Red);
-						player.RPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-						}
-				return true;
-			}
-			
+                if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
+                {
+                    player.SendMessage("This region is protected from changes.", Color.Red);
+                    player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                }
+                return true;
+            }
+
 			if (Config.DisableBuild)
 			{
 				if (!player.Group.HasPermission(Permissions.editspawn))
 				{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
-                        player.SendMessage("World protected from changes.", Color.Red);
+                        player.SendMessage("The world is protected from changes.", Color.Red);
 						player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 					return true;
@@ -1402,7 +1429,7 @@ namespace TShockAPI
 					if (flag)
 					{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000){
-                        player.SendMessage("Spawn protected from changes.", Color.Red);
+                        player.SendMessage("Spawn is protected from changes.", Color.Red);
 						player.SPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 						}
@@ -1491,7 +1518,7 @@ namespace TShockAPI
 
 			if (player.TPlayer.statLifeMax > playerData.maxHealth)
 			{
-				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server",
+				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server.",
 								   Color.Cyan);
 				check = false;
 			}
@@ -1531,7 +1558,7 @@ namespace TShockAPI
 							item.AffixName();
 							player.SendMessage(
 								player.IgnoreActionsForInventory =
-								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
 								playerData.inventory[i].stack + ").", Color.Cyan);
 							check = false;
 						}
@@ -1568,7 +1595,7 @@ namespace TShockAPI
 							item.AffixName();
 							player.SendMessage(
 								player.IgnoreActionsForInventory =
-								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have it's stack decreased to (" +
+								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
 								playerData.inventory[i].stack + ").", Color.Cyan);
 							check = false;
 						}
