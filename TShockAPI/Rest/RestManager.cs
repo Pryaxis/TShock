@@ -300,8 +300,8 @@ namespace TShockAPI
 				return RestMissingParam("user");
 
 			var group = parameters["group"];
-			if (string.IsNullOrWhiteSpace(group))
-				return RestMissingParam("group");
+		    if (string.IsNullOrWhiteSpace(group))
+		        group = TShock.Config.DefaultRegistrationGroupName;
 
 			var password = parameters["password"];
 			if (string.IsNullOrWhiteSpace(password))
