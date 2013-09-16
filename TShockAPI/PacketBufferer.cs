@@ -124,25 +124,29 @@ namespace TShockAPI
 		{
 			try
 			{
-				if (socket == null || !socket.active)
-					return false;
+			    if (socket == null || !socket.active)
+			        return false;
 
-				if (buffers[socket.whoAmI].Count < 1)
-					return false;
+			    if (buffers[socket.whoAmI].Count < 1)
+			        return false;
 
-				byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
-				if (buff == null)
-					return false;
+			    byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
+			    if (buff == null)
+			        return false;
 
-				if (SendBytes(socket, buff))
-				{
-					buffers[socket.whoAmI].Pop(buff.Length);
-					return true;
-				}
+			    if (SendBytes(socket, buff))
+			    {
+			        buffers[socket.whoAmI].Pop(buff.Length);
+			        return true;
+			    }
+			}
+			catch (SocketException e)
+			{
+			    
 			}
 			catch (Exception e)
 			{
-				Log.ConsoleError(e.ToString());
+                Log.ConsoleError(e.ToString());
 			}
 			return false;
 		}
