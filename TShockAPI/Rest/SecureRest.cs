@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using HttpServer;
 using TShockAPI;
 using TShockAPI.DB;
@@ -55,7 +54,7 @@ namespace Rests
 			}
 
 			// TODO: Get rid of this when the old REST permission model is removed.
-			if (!TShock.Config.RestUseNewPermissionModel)
+			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
 			{
 				string warningMessage = string.Concat(
 					"You're using the old REST permission model which is highly vulnerable in matter of security. ",
@@ -67,7 +66,7 @@ namespace Rests
 				Console.WriteLine(warningMessage);
 				Console.ForegroundColor = ConsoleColor.Gray;
 			}
-			else
+			else if (TShock.Config.RestApiEnabled)
 			{
 				string warningMessage = string.Concat(
 					"You're using the new more secure REST permission model which can lead to compatibility problems ",
