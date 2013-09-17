@@ -37,11 +37,13 @@ namespace Rests
 		}
 
 		public Dictionary<string,TokenData> Tokens { get; protected set; }
+        public Dictionary<string, TokenData> AppTokens { get; protected set; }
 
 		public SecureRest(IPAddress ip, int port)
 			: base(ip, port)
 		{
 			Tokens = new Dictionary<string, TokenData>();
+            AppTokens = new Dictionary<string, TokenData>();
 
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
 			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { DoLog = false });
@@ -50,8 +52,13 @@ namespace Rests
 
 			foreach (KeyValuePair<string, TokenData> t in TShockAPI.TShock.RESTStartupTokens)
 			{
-				Tokens.Add(t.Key, t.Value);
+				AppTokens.Add(t.Key, t.Value);
 			}
+
+            foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
+            {
+                AppTokens.Add(t.Key, t.Value);
+            }
 
 			// TODO: Get rid of this when the old REST permission model is removed.
 			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
@@ -163,7 +170,7 @@ namespace Rests
 
 			SecureRestCommand secureCmd = (SecureRestCommand)cmd;
 			TokenData tokenData;
-			if (!Tokens.TryGetValue(token, out tokenData))
+            if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
 				return new RestObject("403")
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
