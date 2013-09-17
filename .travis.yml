@@ -5,3 +5,6 @@ install:
  
 script:
   - xbuild ./TShockAPI/TShockAPI.csproj
+
+notifications:
+  irc: "irc.rizon.net#tshock"
