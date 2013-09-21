@@ -140,17 +140,6 @@ namespace TShockAPI
 		            return true;
 		        }
 		    }
-		    catch (SocketException e)
-		    {
-		        switch ((uint)e.ErrorCode)
-		        {
-		            case 0x80004005:
-		                break;
-                    default:
-                        Log.ConsoleError(e.ToString());
-		                break;
-		        }
-		    }
 			catch (Exception e)
 			{
 				Log.ConsoleError(e.ToString());
@@ -212,7 +201,14 @@ namespace TShockAPI
 			}
 			catch (SocketException e)
 			{
-                Log.Warn(e.ToString());
+                switch ((uint)e.ErrorCode)
+                {
+                    case 0x80004005:
+                        break;
+                    default:
+                        Log.Warn(e.ToString());
+                        break;
+                }
 			}
 			catch (IOException e)
 			{
