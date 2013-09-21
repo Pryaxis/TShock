@@ -26,7 +26,6 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Threading;
 using Hooks;
 using MaxMind;
 using Mono.Data.Sqlite;
@@ -1456,12 +1455,12 @@ namespace TShockAPI
 			return (float) Math.Sqrt(num3);
 		}
 
-		public static bool HackedHealth(TSPlayer player)
+		public static bool HackedStats(TSPlayer player)
 		{
-			return (player.TPlayer.statManaMax > 400) ||
-				   (player.TPlayer.statMana > 400) ||
-				   (player.TPlayer.statLifeMax > 400) ||
-				   (player.TPlayer.statLife > 400);
+            return (player.TPlayer.statManaMax > TShock.Config.MaxMana) ||
+                   (player.TPlayer.statMana > TShock.Config.MaxMana) ||
+                   (player.TPlayer.statLifeMax > TShock.Config.MaxHealth) ||
+                   (player.TPlayer.statLife > TShock.Config.MaxHealth);
 		}
 
 		public static bool HackedInventory(TSPlayer player)

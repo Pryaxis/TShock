@@ -17,11 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Rests;
 
 namespace TShockAPI
 {
@@ -257,6 +259,13 @@ namespace TShockAPI
 		[Description(
 			"Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future."
 			)] public bool RestUseNewPermissionModel = true;
+
+        [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
+            public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
+
+	    [Description("The maximum value that a character may have for health.")] public int MaxHealth = 400;
+
+	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 400;
 
         /// <summary>
         /// Reads a configuration file from a given path
