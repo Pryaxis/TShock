@@ -306,7 +306,7 @@ namespace TShockAPI
 				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
 				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
 				j++;
-			} while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
+			} while (TilePlacementValid(tileX, tileY) && !TileClear(tileX, tileY));
 		}
 
 		/// <summary>
@@ -315,7 +315,7 @@ namespace TShockAPI
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
 		/// <returns>If the tile is valid</returns>
-		public bool TileValid(int tileX, int tileY)
+		public bool TilePlacementValid(int tileX, int tileY)
 		{
 			return tileX >= 0 && tileX < Main.maxTilesX && tileY >= 0 && tileY < Main.maxTilesY;
 		}

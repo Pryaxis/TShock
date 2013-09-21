@@ -742,14 +742,6 @@ namespace TShockAPI
 		private void OnConnect(int ply, HandledEventArgs handler)
 		{
 			var player = new TSPlayer(ply);
-			if (Config.EnableDNSHostResolution)
-			{
-				player.Group = Users.GetGroupForIPExpensive(player.IP);
-			}
-			else
-			{
-				player.Group = Users.GetGroupForIP(player.IP);
-			}
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
 			{

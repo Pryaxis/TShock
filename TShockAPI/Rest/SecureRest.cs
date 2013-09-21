@@ -129,9 +129,8 @@ namespace Rests
 		private RestObject NewTokenInternal(string username, string password)
 		{
 			User userAccount = TShock.Users.GetUserByName(username);
-			if (userAccount == null || !string.IsNullOrWhiteSpace(userAccount.Address))
-				return new RestObject("401")
-					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+            if (userAccount == null)
+                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 			
 			if (!TShock.Utils.HashPassword(password).Equals(userAccount.Password, StringComparison.InvariantCultureIgnoreCase))
 				return new RestObject("401")
