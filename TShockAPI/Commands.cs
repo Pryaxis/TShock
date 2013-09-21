@@ -596,38 +596,18 @@ namespace TShockAPI
 			// Add requires a username:password pair/ip address and a group specified.
 			if (subcmd == "add")
 			{
-				var namepass = args.Parameters[1].Split(':');
 				var user = new User();
 
 				try
 				{
-					if (args.Parameters.Count > 2)
+					if (args.Parameters.Count == 4)
 					{
-						if (namepass.Length == 2)
-						{
-							user.Name = namepass[0];
-							user.Password = namepass[1];
-							user.Group = args.Parameters[2];
-						}
-						else if (namepass.Length == 1)
-						{
-							user.Address = namepass[0];
-							user.Group = args.Parameters[2];
-							user.Name = user.Address;
-						}
-						if (!string.IsNullOrEmpty(user.Address))
-						{
-							args.Player.SendSuccessMessage("IP address admin added. If they're logged in, tell them to rejoin.");
-							args.Player.SendSuccessMessage("WARNING: This is insecure! It would be better to use a user account instead.");
-							TShock.Users.AddUser(user);
-							Log.ConsoleInfo(args.Player.Name + " added IP " + user.Address + " to group " + user.Group);
-						}
-						else
-						{
-							args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
-							TShock.Users.AddUser(user);
-							Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
-						}
+					    user.Name = args.Parameters[1];
+					    user.Password = args.Parameters[2];
+					    user.Group = args.Parameters[3];
+                        args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
+                        TShock.Users.AddUser(user);
+                        Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
 					else
 					{
@@ -3251,9 +3231,8 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.AddUser(new User(args.Player.IP, "", "", "superadmin"));
 					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("This IP address is now superadmin. Please perform the following command:");
+					args.Player.SendInfoMessage("Your are now temporarily a superadmin. Please create an account using the command below.");
 					args.Player.SendInfoMessage("/user add <username>:<password> superadmin");
 					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
 					args.Player.SendInfoMessage("Please use /login <username> <password> to login from now on.");

@@ -37,8 +37,7 @@ namespace TShockAPI.DB
 			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
 			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
 			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
-			                         new SqlColumn("Usergroup", MySqlDbType.Text),
-			                         new SqlColumn("IP", MySqlDbType.VarChar, 16)
+			                         new SqlColumn("Usergroup", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -59,8 +58,8 @@ namespace TShockAPI.DB
 			int ret;
 			try
 			{
-				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.Group, user.Address);
+				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup) VALUES (@0, @1, @2);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.Group);
 			}
 			catch (Exception ex)
 			{
@@ -169,53 +168,6 @@ namespace TShockAPI.DB
 			return -1;
 		}
 
-		/// <summary>
-		/// Returns a Group for a ip from the database
-		/// </summary>
-		/// <param name="ply">string ip</param>
-		public Group GetGroupForIP(string ip)
-		{
-			try
-			{
-				using (var reader = database.QueryReader("SELECT * FROM Users WHERE IP=@0", ip))
-				{
-					if (reader.Read())
-					{
-						string group = reader.Get<string>("UserGroup");
-						return TShock.Utils.GetGroup(group);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
-			}
-			return TShock.Utils.GetGroup(TShock.Config.DefaultGuestGroupName);
-		}
-
-		public Group GetGroupForIPExpensive(string ip)
-		{
-			try
-			{
-				using (var reader = database.QueryReader("SELECT IP, UserGroup FROM Users"))
-				{
-					while (reader.Read())
-					{
-						if (TShock.Utils.GetIPv4Address(reader.Get<string>("IP")) == ip)
-						{
-							return TShock.Utils.GetGroup(reader.Get<string>("UserGroup"));
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
-			}
-			return TShock.Utils.GetGroup(TShock.Config.DefaultGuestGroupName);
-		}
-
-
 		public User GetUserByName(string name)
 		{
 			try
@@ -233,18 +185,6 @@ namespace TShockAPI.DB
 			try
 			{
 				return GetUser(new User {ID = id});
-			}
-			catch (UserManagerException)
-			{
-				return null;
-			}
-		}
-
-		public User GetUserByIP(string ip)
-		{
-			try
-			{
-				return GetUser(new User {Address = ip});
 			}
 			catch (UserManagerException)
 			{
