@@ -1251,7 +1251,7 @@ namespace TShockAPI
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
 
-			if (max > 400 && max > args.Player.FirstMaxHP)
+			if (max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP)
 			{
 				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
@@ -1277,7 +1277,7 @@ namespace TShockAPI
 			if (args.Player.FirstMaxMP == 0)
 				args.Player.FirstMaxMP = max;
 
-			if (max > 400 && max > args.Player.FirstMaxMP)
+            if (max > TShock.Config.MaxMana && max > args.Player.FirstMaxMP)
 			{
 				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
@@ -1450,7 +1450,7 @@ namespace TShockAPI
 				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
 				return true;
 			}
-			if (TShock.HackedHealth(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
+			if (TShock.HackedStats(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "You have hacked health/mana, please use a different character.", true);
 				return true;

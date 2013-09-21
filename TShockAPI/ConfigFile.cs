@@ -263,6 +263,10 @@ namespace TShockAPI
         [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
             public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
+	    [Description("The maximum value that a character may have for health.")] public int MaxHealth = 400;
+
+	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 400;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
