@@ -61,30 +61,27 @@
       <HintPath>..\SqlBins\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Web, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SqlBins\MySql.Web.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="TerrariaServer, Version=1.0.4.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="TerrariaServer, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\TerrariaServerBins\TerrariaServer.exe</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
+    <Compile Include="DB\RegionManager.cs" />
+    <Compile Include="Hooks\GeneralHooks.cs" />
+    <Compile Include="Hooks\PlayerHooks.cs" />
+    <Compile Include="PaginationTools.cs" />
+    <Compile Include="PluginUpdater\PluginUpdaterThread.cs" />
+    <Compile Include="PluginUpdater\PluginVersionCheck.cs" />
+    <Compile Include="PluginUpdater\VersionInfo.cs" />
+    <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
     <Compile Include="DB\InventoryManager.cs" />
@@ -114,11 +111,10 @@
     <Compile Include="Net\ProjectileRemoveMsg.cs" />
     <Compile Include="Net\SpawnMsg.cs" />
     <Compile Include="Net\WorldInfoMsg.cs" />
-    <Compile Include="DB\RegionManager.cs" />
     <Compile Include="PacketBufferer.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="RconHandler.cs" />
-    <Compile Include="DB\RememberPosManager.cs" />
+    <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -130,7 +126,6 @@
     <Compile Include="Rest\RestObject.cs" />
     <Compile Include="Rest\RestVerbs.cs" />
     <Compile Include="Rest\SecureRest.cs" />
-    <Compile Include="StatTracker.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="TShock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -184,7 +179,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)postbuild.bat"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

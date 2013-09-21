@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,7 +74,7 @@ namespace TShockAPI
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max")] public static readonly string
 			reservedslot;
 
-		[Description("User is notified when an update is available")] public static readonly string maintenance;
+		[Description("User is notified when an update is available, user can turn off / restart the server.")] public static readonly string maintenance;
 
 		[Description("User can kick others")] public static readonly string kick;
 
@@ -129,7 +130,7 @@ namespace TShockAPI
 
 		[Description("User can change the homes of NPCs.")] public static readonly string movenpc;
 
-		[Description("Users can stop people from TPing to them")] public static readonly string tpallow;
+		[Description("Users can stop people from teleporting to them")] public static readonly string tpallow;
 
 		[Description("Users can tp to anyone")] public static readonly string tpall;
 
@@ -149,9 +150,9 @@ namespace TShockAPI
 
 		[Description("User can talk in third person")] public static readonly string cantalkinthird;
 
-		[Description("Bypass Server Side Inventory checks")] public static readonly string bypassinventorychecks;
+		[Description("Bypass server side inventory checks")] public static readonly string bypassinventorychecks;
 
-		[Description("Allow unrestricted Send Tile Square usage, for client side world editing")] public static readonly
+		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")] public static readonly
 			string allowclientsideworldedit;
 
         [Description("User can summon bosses using items")]
@@ -166,18 +167,22 @@ namespace TShockAPI
 	    [Description("User can save all the players SSI state.")] 
         public static readonly string savessi;
 
-        [Description("User can use rest api calls.")]
-	    public static readonly string restapi;
+	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
 
-        static Permissions()
+        [Description("User can use /home.")] public static readonly string home;
+
+        [Description("User can use /spawn.")] public static readonly string spawn;
+
+	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
+
+		[Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
+
+		static Permissions()
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
 				field.SetValue(null, field.Name);
 			}
-
-            //Backwards compatability.
-            restapi = "api";
 		}
 
         /// <summary>
@@ -189,7 +194,7 @@ namespace TShockAPI
 		{
 			if (Commands.ChatCommands.Count < 1)
 				Commands.InitCommands();
-			return Commands.ChatCommands.Where(c => c.Permission == perm).ToList();
+			return Commands.ChatCommands.Where(c => c.Permissions.Contains(perm)).ToList();
 		}
 
         /// <summary>
