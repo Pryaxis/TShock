@@ -122,24 +122,35 @@ namespace TShockAPI
 
 		public bool Flush(ServerSock socket)
 		{
-			try
-			{
-				if (socket == null || !socket.active)
-					return false;
+		    try
+		    {
+		        if (socket == null || !socket.active)
+		            return false;
 
-				if (buffers[socket.whoAmI].Count < 1)
-					return false;
+		        if (buffers[socket.whoAmI].Count < 1)
+		            return false;
 
-				byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
-				if (buff == null)
-					return false;
+		        byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
+		        if (buff == null)
+		            return false;
 
-				if (SendBytes(socket, buff))
-				{
-					buffers[socket.whoAmI].Pop(buff.Length);
-					return true;
-				}
-			}
+		        if (SendBytes(socket, buff))
+		        {
+		            buffers[socket.whoAmI].Pop(buff.Length);
+		            return true;
+		        }
+		    }
+		    catch (SocketException e)
+		    {
+		        switch ((uint)e.ErrorCode)
+		        {
+		            case 0x80004005:
+		                break;
+                    default:
+                        Log.ConsoleError(e.ToString());
+		                break;
+		        }
+		    }
 			catch (Exception e)
 			{
 				Log.ConsoleError(e.ToString());
