@@ -113,7 +113,7 @@ namespace TShockAPI.DB
 				try
 				{
 					if ((X != 0) && ( Y !=0)) //invalid pos!
-					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2 WHERE Name = @3 AND WorldID = @4;", X, Y, IP, name, Main.worldID.ToString());
+					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2 WHERE Name = @3;", X, Y, IP, name);
 				}
 				catch (Exception ex)
 				{
