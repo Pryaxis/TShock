@@ -1687,9 +1687,10 @@ namespace TShockAPI
 			var tiletype = args.Data.ReadInt8();
 			var fail = tiletype == 1;
 			var style = args.Data.ReadInt8();
+
 			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail, style))
 				return true;
-			if (!TShock.Utils.TileValid(tileX, tileY))
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				return false;
 
             if (args.Player.Dead && TShock.Config.PreventDeadModification)
@@ -1835,8 +1836,8 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY);
 						return true;
 					}
-					if ((TShock.Utils.TileValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
-						(TShock.Utils.TileValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
+					if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
+						(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
 					{
 						args.Player.SendTileSquare(tileX, tileY);
 						return true;

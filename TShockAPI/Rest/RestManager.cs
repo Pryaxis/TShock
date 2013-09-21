@@ -289,7 +289,6 @@ namespace TShockAPI
 				{"name", p.Name},
 				{"id", p.ID},
 				{"group", p.Group},
-				{"ip", p.Address},
 			}) } };
 		}
 
@@ -308,7 +307,7 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(parameters["ip"], username, password, group);
+			User user = new User(username, password, group);
 			try
 			{
 				TShock.Users.AddUser(user);
@@ -802,10 +801,6 @@ namespace TShockAPI
 						break;
 					case "id":
 						user = TShock.Users.GetUserByID(Convert.ToInt32(name));
-						break;
-					case "ip":
-						user = TShock.Users.GetUserByIP(name);
-
 						break;
 					default:
 						return RestError("Invalid Type: '" + type + "'");

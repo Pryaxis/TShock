@@ -593,41 +593,22 @@ namespace TShockAPI
 
 			string subcmd = args.Parameters[0];
 
-			// Add requires a username:password pair/ip address and a group specified.
+			// Add requires a username, password, and a group specified.
 			if (subcmd == "add")
 			{
-				var namepass = args.Parameters[1].Split(':');
 				var user = new User();
 
 				try
 				{
-					if (args.Parameters.Count > 2)
+					if (args.Parameters.Count == 4)
 					{
-						if (namepass.Length == 2)
-						{
-							user.Name = namepass[0];
-							user.Password = namepass[1];
-							user.Group = args.Parameters[2];
-						}
-						else if (namepass.Length == 1)
-						{
-							user.Address = namepass[0];
-							user.Group = args.Parameters[2];
-							user.Name = user.Address;
-						}
-						if (!string.IsNullOrEmpty(user.Address))
-						{
-							args.Player.SendSuccessMessage("IP address admin added. If they're logged in, tell them to rejoin.");
-							args.Player.SendSuccessMessage("WARNING: This is insecure! It would be better to use a user account instead.");
-							TShock.Users.AddUser(user);
-							Log.ConsoleInfo(args.Player.Name + " added IP " + user.Address + " to group " + user.Group);
-						}
-						else
-						{
-							args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
-							TShock.Users.AddUser(user);
-							Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
-						}
+						user.Name = args.Parameters[1];
+						user.Password = args.Parameters[2];
+						user.Group = args.Parameters[3];
+							
+                        args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
+						TShock.Users.AddUser(user);
+						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
 					else
 					{
@@ -644,13 +625,7 @@ namespace TShockAPI
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
 				var user = new User();
-				if (args.Parameters[1].Split('.').Count() ==4)
-
-					//              changed to support dot character in usernames
-					//				if (args.Parameters[1].Contains("."))
-					user.Address = args.Parameters[1];
-				else
-					user.Name = args.Parameters[1];
+				user.Name = args.Parameters[1];
 
 				try
 				{
@@ -692,32 +667,16 @@ namespace TShockAPI
 				// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group")
 			{
-				var user = new User();
-				if (args.Parameters[1].Split('.').Count()==4)
-
-				//changed to support dot character in usernames
-				//if (args.Parameters[1].Contains("."))
-
-					user.Address = args.Parameters[1];
-				else
-					user.Name = args.Parameters[1];
+                var user = new User();
+                user.Name = args.Parameters[1];
 
 				try
 				{
 					if (args.Parameters.Count == 3)
 					{
-						if (!string.IsNullOrEmpty(user.Address))
-						{
-							args.Player.SendSuccessMessage("IP address " + user.Address + " has been changed to group " + args.Parameters[2] + "!");
-							TShock.Users.SetUserGroup(user, args.Parameters[2]);
-							Log.ConsoleInfo(args.Player.Name + " changed IP address " + user.Address + " to group " + args.Parameters[2] + ".");
-						}
-						else
-						{
-							args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
-							TShock.Users.SetUserGroup(user, args.Parameters[2]);
-							Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
-						}
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
+						TShock.Users.SetUserGroup(user, args.Parameters[2]);
+						Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 					}
 					else
 					{
@@ -733,7 +692,7 @@ namespace TShockAPI
 			else if (subcmd == "help")
 			{
 				args.Player.SendInfoMessage("Use command help:");
-				args.Player.SendInfoMessage("/user add username:password group   -- Adds a specified user");
+				args.Player.SendInfoMessage("/user add username password group   -- Adds a specified user");
 				args.Player.SendInfoMessage("/user del username                  -- Removes a specified user");
 				args.Player.SendInfoMessage("/user password username newpassword -- Changes a user's password");
 				args.Player.SendInfoMessage("/user group username newgroup       -- Changes a user's group");
@@ -3251,7 +3210,7 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.AddUser(new User(args.Player.IP, "", "", "superadmin"));
+					TShock.Users.AddUser(new User("", "", "superadmin"));
 					args.Player.Group = TShock.Utils.GetGroup("superadmin");
 					args.Player.SendInfoMessage("This IP address is now superadmin. Please perform the following command:");
 					args.Player.SendInfoMessage("/user add <username>:<password> superadmin");

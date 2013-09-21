@@ -37,8 +37,7 @@ namespace TShockAPI.DB
 			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
 			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
 			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
-			                         new SqlColumn("Usergroup", MySqlDbType.Text),
-			                         new SqlColumn("IP", MySqlDbType.VarChar, 16)
+			                         new SqlColumn("Usergroup", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -59,8 +58,8 @@ namespace TShockAPI.DB
 			int ret;
 			try
 			{
-				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, IP) VALUES (@0, @1, @2, @3);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.Group, user.Address);
+				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup) VALUES (@0, @1, @2);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.Group);
 			}
 			catch (Exception ex)
 			{
@@ -82,18 +81,10 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				int affected = -1;
-				if (!string.IsNullOrEmpty(user.Address))
-				{
-					affected = database.Query("DELETE FROM Users WHERE IP=@0", user.Address);
-				}
-				else
-				{
-					affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
-				}
+				int affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
 
 				if (affected < 1)
-					throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+					throw new UserNotExistException(user.Name);
 			}
 			catch (Exception ex)
 			{
@@ -169,53 +160,6 @@ namespace TShockAPI.DB
 			return -1;
 		}
 
-		/// <summary>
-		/// Returns a Group for a ip from the database
-		/// </summary>
-		/// <param name="ply">string ip</param>
-		public Group GetGroupForIP(string ip)
-		{
-			try
-			{
-				using (var reader = database.QueryReader("SELECT * FROM Users WHERE IP=@0", ip))
-				{
-					if (reader.Read())
-					{
-						string group = reader.Get<string>("UserGroup");
-						return TShock.Utils.GetGroup(group);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
-			}
-			return TShock.Utils.GetGroup(TShock.Config.DefaultGuestGroupName);
-		}
-
-		public Group GetGroupForIPExpensive(string ip)
-		{
-			try
-			{
-				using (var reader = database.QueryReader("SELECT IP, UserGroup FROM Users"))
-				{
-					while (reader.Read())
-					{
-						if (TShock.Utils.GetIPv4Address(reader.Get<string>("IP")) == ip)
-						{
-							return TShock.Utils.GetGroup(reader.Get<string>("UserGroup"));
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.ConsoleError("GetGroupForIP SQL returned an error: " + ex);
-			}
-			return TShock.Utils.GetGroup(TShock.Config.DefaultGuestGroupName);
-		}
-
-
 		public User GetUserByName(string name)
 		{
 			try
@@ -240,18 +184,6 @@ namespace TShockAPI.DB
 			}
 		}
 
-		public User GetUserByIP(string ip)
-		{
-			try
-			{
-				return GetUser(new User {Address = ip});
-			}
-			catch (UserManagerException)
-			{
-				return null;
-			}
-		}
-
 		public User GetUser(User user)
 		{
 			bool multiple = false;
@@ -264,17 +196,11 @@ namespace TShockAPI.DB
 				arg = user.ID;
 				type = "id";
 			}
-			else if (string.IsNullOrEmpty(user.Address))
+			else
 			{
 				query = "SELECT * FROM Users WHERE Username=@0";
 				arg = user.Name;
 				type = "name";
-			}
-			else
-			{
-				query = "SELECT * FROM Users WHERE IP=@0";
-				arg = user.Address;
-				type = "ip";
 			}
 
 			try
@@ -298,7 +224,7 @@ namespace TShockAPI.DB
 			if (multiple)
 				throw new UserManagerException(String.Format("Multiple users found for {0} '{1}'", type, arg));
 
-			throw new UserNotExistException(string.IsNullOrEmpty(user.Address) ? user.Name : user.Address);
+			throw new UserNotExistException(user.Name);
 		}
 
 		public List<User> GetUsers()
@@ -328,7 +254,6 @@ namespace TShockAPI.DB
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
 			user.Name = result.Get<string>("Username");
-			user.Address = result.Get<string>("IP");
 			return user;
 		}
 	}
@@ -339,11 +264,9 @@ namespace TShockAPI.DB
 		public string Name { get; set; }
 		public string Password { get; set; }
 		public string Group { get; set; }
-		public string Address { get; set; }
 
-		public User(string ip, string name, string pass, string group)
+		public User(string name, string pass, string group)
 		{
-			Address = ip;
 			Name = name;
 			Password = pass;
 			Group = group;
@@ -351,7 +274,6 @@ namespace TShockAPI.DB
 
 		public User()
 		{
-			Address = "";
 			Name = "";
 			Password = "";
 			Group = "";
