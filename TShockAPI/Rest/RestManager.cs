@@ -307,7 +307,7 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, group);
+			User user = new User(username, password, group, "", "");
 			try
 			{
 				TShock.Users.AddUser(user);

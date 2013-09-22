@@ -53,13 +53,15 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			// Add default groups if they don't exist
-			AddDefaultGroup("guest", "", "canbuild,canregister,canlogin,canpartychat,cantalkinthird");
-			AddDefaultGroup("default", "guest", "warp,canchangepassword");
+            AddDefaultGroup(TShock.Config.DefaultGuestGroupName, "", "canbuild,canregister,canlogin,canpartychat,cantalkinthird");
+            AddDefaultGroup("default", TShock.Config.DefaultGuestGroupName, "warp,canchangepassword");
 			AddDefaultGroup("newadmin", "default", "kick,editspawn,reservedslot");
 			AddDefaultGroup("admin", "newadmin",
 			         "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
 			AddDefaultGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
 			AddDefaultGroup("vip", "default", "reservedslot");
+
+		    Group.DefaultGroup = GetGroupByName(TShock.Config.DefaultGuestGroupName);
 		}
 
 		private void AddDefaultGroup(string name, string parent, string permissions)

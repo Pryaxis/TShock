@@ -152,6 +152,7 @@ namespace TShockAPI
 		public byte G = 255;
 		public byte B = 255;
 
+	    public static Group DefaultGroup = null;
 #if COMPAT_SIGS
 		[Obsolete("This constructor is for signature compatibility for external code only")]
 		public Group(string groupname, Group parentgroup, string chatcolor)
