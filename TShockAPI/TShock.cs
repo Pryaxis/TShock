@@ -24,12 +24,14 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using Hooks;
 using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Rests;
 using Terraria;
 using TShockAPI.DB;
@@ -248,6 +250,7 @@ namespace TShockAPI
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
 			    WorldHooks.ChristmasCheck += OnXmasCheck;
                 NetHooks.NameCollision += NetHooks_NameCollision;
+			    TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -322,6 +325,7 @@ namespace TShockAPI
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
                 WorldHooks.ChristmasCheck -= OnXmasCheck;
                 NetHooks.NameCollision -= NetHooks_NameCollision;
+                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -334,7 +338,31 @@ namespace TShockAPI
 			base.Dispose(disposing);
 		}
 
-        void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
+	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
+	    {
+	        User u = Users.GetUserByName(args.Player.UserAccountName);
+            List<String> KnownIps = new List<string>();
+	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
+	        {
+                KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
+	        }
+
+	        bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
+	        if (!found)
+	        {
+	            if (KnownIps.Count == 100)
+	            {
+	                KnownIps.RemoveAt(0);
+	            }
+
+                KnownIps.Add(args.Player.IP);
+	        }
+
+            u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+	        Users.UpdateLogin(u);
+	    }
+
+        private void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
         {
             string ip = TShock.Utils.GetRealIP(Netplay.serverSock[who].tcpClient.Client.RemoteEndPoint.ToString());
             foreach (TSPlayer ply in TShock.Players)
@@ -365,7 +393,7 @@ namespace TShockAPI
             return;
         }
 
-        void OnXmasCheck(ChristmasCheckEventArgs args)
+        private void OnXmasCheck(ChristmasCheckEventArgs args)
         {
             if (args.Handled)
                 return;

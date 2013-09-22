@@ -741,7 +741,7 @@ namespace TShockAPI
 					return TShock.Groups.groups[i];
 				}
 			}
-			return new Group(TShock.Config.DefaultGuestGroupName);
+		    return Group.DefaultGroup;
 		}
 
 		/// <summary>

@@ -37,7 +37,9 @@ namespace TShockAPI.DB
 			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
 			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
 			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
-			                         new SqlColumn("Usergroup", MySqlDbType.Text)
+			                         new SqlColumn("Usergroup", MySqlDbType.Text),
+                                     new SqlColumn("LastAccessed", MySqlDbType.Text),
+                                     new SqlColumn("KnownIPs", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -92,7 +94,6 @@ namespace TShockAPI.DB
 			}
 		}
 
-
 		/// <summary>
 		/// Sets the Hashed Password for a given username
 		/// </summary>
@@ -140,6 +141,19 @@ namespace TShockAPI.DB
 				throw new UserManagerException("SetUserGroup SQL returned an error", ex);
 			}
 		}
+
+	    public void UpdateLogin(User user)
+	    {
+            try
+            {
+                if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.Now.ToString("G"), user.KnownIps, user.Name) == 0)
+                    throw new UserNotExistException(user.Name);
+            }
+            catch (Exception ex)
+            {
+                throw new UserManagerException("UpdateLogin SQL returned an error", ex);
+            }
+	    }
 
 		public int GetUserID(string username)
 		{
@@ -254,6 +268,8 @@ namespace TShockAPI.DB
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
 			user.Name = result.Get<string>("Username");
+            user.LastAccessed = result.Get<string>("LastAccessed");
+            user.KnownIps = result.Get<string>("KnownIps");
 			return user;
 		}
 	}
@@ -264,12 +280,16 @@ namespace TShockAPI.DB
 		public string Name { get; set; }
 		public string Password { get; set; }
 		public string Group { get; set; }
+        public string LastAccessed { get; set; }
+        public string KnownIps { get; set; }
 
-		public User(string name, string pass, string group)
+		public User(string name, string pass, string group, string last, string known)
 		{
 			Name = name;
 			Password = pass;
 			Group = group;
+		    LastAccessed = last;
+		    KnownIps = known;
 		}
 
 		public User()
@@ -277,6 +297,8 @@ namespace TShockAPI.DB
 			Name = "";
 			Password = "";
 			Group = "";
+            LastAccessed = "";
+            KnownIps = "";
 		}
 	}
 
