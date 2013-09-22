@@ -24,4 +24,3 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
 * [Download Archive](https://github.com/TShock/TShock/downloads)
-* [Latest Version (4.0.5)](https://s3.amazonaws.com/tshock/TShock+4.0.5.zip)
