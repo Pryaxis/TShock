@@ -408,7 +408,7 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, TileData>();
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = index;
-			Group = new Group(TShock.Config.DefaultGuestGroupName);
+            Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
             AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
@@ -419,7 +419,7 @@ namespace TShockAPI
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
-			Group = new Group(TShock.Config.DefaultGuestGroupName);
+		    Group = Group.DefaultGroup;
             AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 

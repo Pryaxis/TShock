@@ -3210,10 +3210,9 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.AddUser(new User("", "", "superadmin"));
 					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("This IP address is now superadmin. Please perform the following command:");
-					args.Player.SendInfoMessage("/user add <username>:<password> superadmin");
+					args.Player.SendInfoMessage("You are now superadmin, please do the following to finish your install:");
+					args.Player.SendInfoMessage("/user add <username> <password> superadmin");
 					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
 					args.Player.SendInfoMessage("Please use /login <username> <password> to login from now on.");
 					args.Player.SendInfoMessage("If you understand, please /login <username> <password> now, and type /auth-verify.");
@@ -3229,9 +3228,7 @@ namespace TShockAPI
 			if (args.Player.Group.Name == "superadmin")
 			{
 				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. http://tshock.co/");
-				args.Player.SendInfoMessage("This IP address is now superadmin. Please perform the following command:");
-				args.Player.SendInfoMessage("/user add <username>:<password> superadmin");
-				args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
 				args.Player.SendInfoMessage("Please use /login <username> <password> to login from now on.");
 				args.Player.SendInfoMessage("If you understand, please /login <username> <password> now, and type /auth-verify.");
 				return;
@@ -3247,15 +3244,6 @@ namespace TShockAPI
 			{
 				args.Player.SendWarningMessage("It appears that you have already turned off the auth token.");
 				args.Player.SendWarningMessage("If this is a mistake, delete auth.lck.");
-				return;
-			}
-
-			if (!args.Player.IsLoggedIn)
-			{
-				args.Player.SendWarningMessage("You must be logged in to disable the auth system.");
-				args.Player.SendWarningMessage("This is a security measure designed to prevent insecure administration setups.");
-				args.Player.SendWarningMessage("Please re-run /auth and read the instructions!");
-				args.Player.SendWarningMessage("If you're still confused, consult the forums: http://tshock.co/");
 				return;
 			}
 
