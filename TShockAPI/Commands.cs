@@ -562,7 +562,7 @@ namespace TShockAPI
 
 				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
 
-				if (TShock.Users.GetUserByName(user.Name) == null) // Cheap way of checking for existance of a user
+                if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
 				{
 					args.Player.SendSuccessMessage("Account " + user.Name + " has been registered.");
 					args.Player.SendSuccessMessage("Your password is " + user.Password);
@@ -979,7 +979,7 @@ namespace TShockAPI
 						string reason = args.Parameters.Count > 2
 											? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 											: "Misbehavior.";
-						if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.Name))
+						if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
 						{
 							args.Player.SendErrorMessage("You can't ban another admin!");
 						}
@@ -994,7 +994,7 @@ namespace TShockAPI
 					string reason = args.Parameters.Count > 2
 										? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 										: "Manually added IP address ban.";
-					TShock.Bans.AddBan(ip, "", reason);
+					TShock.Bans.AddBan(ip, "", reason, false, args.Player.UserAccountName);
 					args.Player.SendSuccessMessage(ip + " banned.");
 					return;
 					#endregion Add ip ban

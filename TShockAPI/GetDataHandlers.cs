@@ -1309,8 +1309,13 @@ namespace TShockAPI
 			var ban = TShock.Bans.GetBanByName(name);
 			if (ban != null)
 			{
-				TShock.Utils.ForceKick(args.Player, string.Format("You are banned: {0}", ban.Reason), true);
-				return true;
+			    if (!TShock.Utils.HasBanExpired(ban, true))
+			    {
+			        DateTime exp;
+			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
+			        TShock.Utils.ForceKick(args.Player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+			        return true;
+			    }
 			}
 			if (args.Player.ReceivedInfo)
 			{
@@ -2446,7 +2451,7 @@ namespace TShockAPI
 					{
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
-							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason))
+							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
 								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
 						}
 						else

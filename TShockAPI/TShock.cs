@@ -785,9 +785,14 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
-				handler.Handled = true;
-				return;
+				if (!Utils.HasBanExpired(ban))
+			    {
+			        DateTime exp;
+			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
+			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+			        handler.Handled = true;
+			        return;
+			    }
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
@@ -838,9 +843,13 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
-				handler.Handled = true;
-				return;
+			    if (!Utils.HasBanExpired(ban))
+			    {
+			        DateTime exp;
+			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
+			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+			        handler.Handled = true;
+			    }
 			}            
 		}
 
