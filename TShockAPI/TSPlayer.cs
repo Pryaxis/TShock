@@ -813,10 +813,12 @@ namespace TShockAPI
 
 	public class TSServerPlayer : TSPlayer
 	{
+        public static string AccountName = "ServerConsole";
 		public TSServerPlayer()
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
+		    UserAccountName = AccountName;
 		}
 
         public override void SendErrorMessage(string msg)

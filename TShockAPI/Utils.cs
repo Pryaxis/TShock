@@ -25,6 +25,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -673,7 +674,7 @@ namespace TShockAPI
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, reason);
+				TShock.Bans.AddBan(ip, playerName, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
@@ -685,6 +686,29 @@ namespace TShockAPI
 			}
 			return false;
 		}
+
+	    public bool HasBanExpired(Ban ban, bool byName = false)
+	    {
+            DateTime exp;
+            bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
+
+            if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) &&
+                (DateTime.Now >= exp))
+            {
+                if (byName)
+                {
+                    TShock.Bans.RemoveBan(ban.Name, true, true, false);
+                }
+                else
+                {
+                    TShock.Bans.RemoveBan(ban.IP, false, false, false);
+                }
+                
+                return true;
+            }
+
+	        return false;
+	    }
 
 		/// <summary>
 		/// Shows a file to the user.

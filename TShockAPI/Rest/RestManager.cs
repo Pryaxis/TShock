@@ -404,7 +404,7 @@ namespace TShockAPI
 
 			try
 			{
-				TShock.Bans.AddBan(ip, name, parameters["reason"], true);
+				TShock.Bans.AddBan(ip, name, parameters["reason"], true, tokenData.Username);
 			}
 			catch (Exception e)
 			{
