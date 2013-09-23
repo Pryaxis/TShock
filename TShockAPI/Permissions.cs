@@ -181,7 +181,7 @@ namespace TShockAPI
 		{
 			foreach (var field in typeof (Permissions).GetFields())
 			{
-				field.SetValue(null, field.Name);
+				field.SetValue(null, String.Format("tshock.{0}", field.Name));
 			}
 		}
 
