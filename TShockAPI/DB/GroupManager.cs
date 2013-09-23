@@ -53,15 +53,29 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			// Add default groups if they don't exist
-            AddDefaultGroup(TShock.Config.DefaultGuestGroupName, "", "canbuild,canregister,canlogin,canpartychat,cantalkinthird");
-            AddDefaultGroup("default", TShock.Config.DefaultGuestGroupName, "warp,canchangepassword");
-			AddDefaultGroup("newadmin", "default", "kick,editspawn,reservedslot");
-			AddDefaultGroup("admin", "newadmin",
-			         "ban,unban,whitelist,causeevents,spawnboss,spawnmob,managewarp,time,tp,pvpfun,kill,logs,immunetokick,tphere");
-			AddDefaultGroup("trustedadmin", "admin", "maintenance,cfg,butcher,item,heal,immunetoban,usebanneditem,manageusers");
-			AddDefaultGroup("vip", "default", "reservedslot");
+			AddDefaultGroup(TShock.Config.DefaultGuestGroupName, "",
+				string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
+					Permissions.cantalkinthird));
 
-		    Group.DefaultGroup = GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			AddDefaultGroup("default", TShock.Config.DefaultGuestGroupName,
+				string.Join(",", Permissions.warp, Permissions.canchangepassword));
+
+			AddDefaultGroup("newadmin", "default",
+				string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
+
+			AddDefaultGroup("admin", "newadmin",
+				string.Join(",", Permissions.ban, Permissions.whitelist, Permissions.causeevents, Permissions.spawnboss,
+					Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.pvpfun,
+					Permissions.kill, Permissions.logs,
+					Permissions.immunetokick, Permissions.tphere));
+
+			AddDefaultGroup("trustedadmin", "admin",
+				string.Join(",", Permissions.maintenance, Permissions.cfg, Permissions.butcher, Permissions.item,
+					Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
+
+			AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
+
+			Group.DefaultGroup = GetGroupByName(TShock.Config.DefaultGuestGroupName);
 		}
 
 		private void AddDefaultGroup(string name, string parent, string permissions)

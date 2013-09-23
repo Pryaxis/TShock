@@ -771,7 +771,7 @@ namespace TShockAPI
 		{
 			var player = new TSPlayer(ply);
 
-			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
+			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
 				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
 				handler.Handled = true;

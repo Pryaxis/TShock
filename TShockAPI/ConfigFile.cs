@@ -267,6 +267,7 @@ namespace TShockAPI
 
 	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 400;
 
+        [Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
