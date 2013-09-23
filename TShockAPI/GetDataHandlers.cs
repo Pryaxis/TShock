@@ -1306,17 +1306,6 @@ namespace TShockAPI
 				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
 				return true;
 			}
-			var ban = TShock.Bans.GetBanByName(name);
-			if (ban != null)
-			{
-			    if (!TShock.Utils.HasBanExpired(ban, true))
-			    {
-			        DateTime exp;
-			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
-			        TShock.Utils.ForceKick(args.Player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
-			        return true;
-			    }
-			}
 			if (args.Player.ReceivedInfo)
 			{
 				return true;
