@@ -179,7 +179,7 @@ namespace TShockAPI
 		// tshock.tp nodes
 
 		[Description("User can teleport to others.")]
-		public static readonly string tp = "tshock.tp.to";
+		public static readonly string tp = "tshock.tp.self";
 
 		[Description("User can teleport people to them.")]
 		public static readonly string tphere = "tshock.tp.others";
@@ -255,7 +255,7 @@ namespace TShockAPI
 		public static readonly string slap = "tshock.slap";
 
 		[Description("Meant for super admins only.")]
-		public static readonly string rootonly = "tshock.rootonly";
+		public static readonly string rootonly = "tshock.superadmin";
 
 		[Description("User can whisper to others.")]
 		public static readonly string whisper = "tshock.whisper";
