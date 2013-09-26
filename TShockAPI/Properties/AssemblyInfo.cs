@@ -26,9 +26,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TShock for Terraria")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nyx Team")]
+[assembly: AssemblyCompany("Nyx Studios & TShock Contributors")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Nyx Team 2013")]
+[assembly: AssemblyCopyright("Copyright © Nyx Studios 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -49,5 +49,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      MMdd of the build
 
-[assembly: AssemblyVersion("4.1.0.0419")]
-[assembly: AssemblyFileVersion("4.1.0.0419")]
+[assembly: AssemblyVersion("4.1.0.0926")]
+[assembly: AssemblyFileVersion("4.1.0.0926")]
