@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace TShockAPI
         /// <summary>
         /// Default chat color.
         /// </summary>
-		public const string defaultChatColor = "255.255.255";
+		public const string defaultChatColor = "255,255,255";
 
         /// <summary>
         /// List of permissions available to the group.
@@ -151,6 +152,7 @@ namespace TShockAPI
 		public byte G = 255;
 		public byte B = 255;
 
+	    public static Group DefaultGroup = null;
 #if COMPAT_SIGS
 		[Obsolete("This constructor is for signature compatibility for external code only")]
 		public Group(string groupname, Group parentgroup, string chatcolor)
@@ -204,7 +206,7 @@ namespace TShockAPI
                     return true;
                 if (traversed.Contains(cur))
                 {
-                    throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+                    throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
                 }
                 traversed.Add(cur);
                 cur = cur.Parent;
@@ -270,6 +272,26 @@ namespace TShockAPI
 				return;
 			}
 			permissions.Remove(permission);
+		}
+
+		/// <summary>
+    /// Assigns all fields of this instance to another.
+    /// </summary>
+    /// <param name="otherGroup">The other instance.</param>
+		public void AssignTo(Group otherGroup)
+		{
+			otherGroup.Name = Name;
+			otherGroup.Parent = Parent;
+			otherGroup.Prefix = Prefix;
+			otherGroup.Suffix = Suffix;
+			otherGroup.R = R;
+			otherGroup.G = G;
+			otherGroup.B = B;
+			otherGroup.Permissions = Permissions;
+		}
+
+		public override string ToString() {
+			return this.Name;
 		}
 	}
 

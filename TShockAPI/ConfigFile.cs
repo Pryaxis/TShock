@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,12 +15,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Rests;
 
 namespace TShockAPI
 {
@@ -129,7 +132,7 @@ namespace TShockAPI
 
 		[Description("This will announce a player's location on join")] public bool EnableGeoIP;
 
-		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
+		[Description("This will turn on token requirement for the public REST API endpoints.")] public bool
 			EnableTokenEndpointAuthentication;
 
         [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
@@ -158,8 +161,6 @@ namespace TShockAPI
 
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")] public int LogonDiscardThreshold=250;
 		
-		[Description("Disables reporting of playercount to the stat system.")] public bool DisablePlayerCountReporting;
-
 		[Description("Disables clown bomb projectiles from spawning.")] public bool DisableClownBombs;
 
 		[Description("Disables snow ball projectiles from spawning.")] public bool DisableSnowBalls;
@@ -236,15 +237,37 @@ namespace TShockAPI
 	    [Description("Prevent banks on SSI.")] public bool DisablePiggybanksOnSSI = false;
 
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
-	        false;
+	        true;
 
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
 
-	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
-
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
 
+        [Description("Allows groups on the banned item allowed list to spawn banned items.")] public bool AllowAllowedGroupsToSpawnBannedItems = false;
+
+	    [Description("Allows stacks in chests to be beyond the stack limit")] public bool IgnoreChestStacksOnLoad = false;
+
+		[Description("The path of the directory where logs should be written into.")] public string LogPath = "tshock";
+
+		[Description("Prevents players from placing tiles with an invalid style.")] public bool PreventInvalidPlaceStyle = true;
+
+		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
+		    {127,255,212};
+
+		// TODO: Get rid of this when the old REST permission model is removed.
+		[Description(
+			"Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future."
+			)] public bool RestUseNewPermissionModel = true;
+
+        [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
+            public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
+
+	    [Description("The maximum value that a character may have for health.")] public int MaxHealth = 400;
+
+	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 400;
+
+        [Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

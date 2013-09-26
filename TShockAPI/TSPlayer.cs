@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,10 +72,26 @@ namespace TShockAPI
 
 		public int FirstMaxMP { get; set; }
 
-        /// <summary>
-        /// The player's group.
-        /// </summary>
-		public Group Group { get; set; }
+	    /// <summary>
+	    /// The player's group.
+	    /// </summary>
+	    public Group Group
+	    {
+	        get
+	        {
+	            if (tempGroup != null)
+	                return tempGroup;
+	            return group;
+	        }
+            set { group = value; }
+	    }
+
+	    /// <summary>
+	    /// The player's temporary group.  This overrides the user's actual group.
+	    /// </summary>
+	    public Group tempGroup = null;
+
+	    private Group group = null;
 
 		public bool ReceivedInfo { get; set; }
 
@@ -104,6 +121,8 @@ namespace TShockAPI
 	    public Dictionary<string, Action<object>> AwaitingResponse;  
 
 		public bool AwaitingName { get; set; }
+
+		public string[] AwaitingNameParameters { get; set; }
 
         /// <summary>
         /// The last time a player broke a grief check.
@@ -144,14 +163,20 @@ namespace TShockAPI
 		public string UserAccountName { get; set; }
 
         /// <summary>
-        /// Unused can be removed.
+        /// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
+        /// from logging in because of SSI.
         /// </summary>
-		public bool HasBeenSpammedWithBuildMessage;
+		public bool LoginFailsBySsi { get; set; }
 
         /// <summary>
         /// Whether the player is logged in or not.
         /// </summary>
 		public bool IsLoggedIn;
+
+        /// <summary>
+        /// Whether the player has sent their whole inventory to the server while connecting.
+        /// </summary>
+		public bool HasSentInventory { get; set; }
 
         /// <summary>
         /// The player's user id( from the db ).
@@ -214,6 +239,8 @@ namespace TShockAPI
 		public bool RequiresPassword;
 
 		public bool SilentKickInProgress;
+
+		public bool SilentJoinInProgress;
 
         /// <summary>
         /// A list of points where ice tiles have been placed.
@@ -381,7 +408,7 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, TileData>();
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = index;
-			Group = new Group(TShock.Config.DefaultGuestGroupName);
+            Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
             AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
@@ -392,7 +419,7 @@ namespace TShockAPI
 			TilesCreated = new Dictionary<Vector2, TileData>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
-			Group = new Group(TShock.Config.DefaultGuestGroupName);
+		    Group = Group.DefaultGroup;
             AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
@@ -557,7 +584,8 @@ namespace TShockAPI
 
         public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
         {
-            if (TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn)
+            if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+                (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
                 return false;
 
             GiveItem(type,name,width,height,stack,prefix);
@@ -585,9 +613,19 @@ namespace TShockAPI
             SendMessage(msg, Color.Yellow);
         }
 
+        public void SendInfoMessage(string format, params object[] args)
+        {
+            SendInfoMessage(string.Format(format, args));
+        }
+
         public virtual void SendSuccessMessage(string msg)
         {
             SendMessage(msg, Color.Green);
+        }
+
+        public void SendSuccessMessage(string format, params object[] args)
+        {
+            SendSuccessMessage(string.Format(format, args));
         }
 
         public virtual void SendWarningMessage(string msg)
@@ -595,9 +633,19 @@ namespace TShockAPI
             SendMessage(msg, Color.OrangeRed);
         }
 
+        public void SendWarningMessage(string format, params object[] args)
+        {
+            SendWarningMessage(string.Format(format, args));
+        }
+
         public virtual void SendErrorMessage(string msg)
         {
             SendMessage(msg, Color.Red);
+        }
+
+        public void SendErrorMessage(string format, params object[] args)
+        {
+            SendErrorMessage(string.Format(format, args));
         }
 
         [Obsolete("Use SendErrorMessage, SendInfoMessage, or SendWarningMessage, or a custom color instead.")]
@@ -712,14 +760,14 @@ namespace TShockAPI
         }
 	}
 
-	public class TSRestPlayer : TSServerPlayer
+	public class TSRestPlayer : TSPlayer
 	{
-		internal List<string> CommandReturn = new List<string>();
+		internal List<string> CommandOutput = new List<string>();
 
-		public TSRestPlayer()
+		public TSRestPlayer(string playerName, Group playerGroup): base(playerName)
 		{
-			Group = new SuperAdminGroup();
-            AwaitingResponse = new Dictionary<string, Action<object>>();
+			Group = playerGroup;
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public override void SendMessage(string msg)
@@ -734,21 +782,43 @@ namespace TShockAPI
 
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
-			CommandReturn.Add(msg);
+			this.CommandOutput.Add(msg);
+		}
+
+		public override void SendInfoMessage(string msg)
+		{
+			SendMessage(msg, Color.Yellow);
+		}
+
+		public override void SendSuccessMessage(string msg)
+		{
+			SendMessage(msg, Color.Green);
+		}
+
+		public override void SendWarningMessage(string msg)
+		{
+			SendMessage(msg, Color.OrangeRed);
+		}
+
+		public override void SendErrorMessage(string msg)
+		{
+			SendMessage(msg, Color.Red);
 		}
 
 		public List<string> GetCommandOutput()
 		{
-			return CommandReturn;
+			return this.CommandOutput;
 		}
 	}
 
 	public class TSServerPlayer : TSPlayer
 	{
+        public static string AccountName = "ServerConsole";
 		public TSServerPlayer()
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
+		    UserAccountName = AccountName;
 		}
 
         public override void SendErrorMessage(string msg)
@@ -832,6 +902,10 @@ namespace TShockAPI
 
 		public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
 		{
+			// Main.rand is thread static.
+			if (Main.rand == null)
+				Main.rand = new Random();
+
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
 			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}

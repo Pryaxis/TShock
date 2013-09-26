@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -73,12 +74,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes data to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Data(String format, params String[] args)
+		{
+			Data(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Error(String message)
 		{
 			Write(message, LogLevel.Error);
+		}
+
+		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Error(String format, params String[] args)
+		{
+			Error(String.Format(format, args));
 		}
 
 		/// <summary>
@@ -94,6 +115,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void ConsoleError(String format, params String[] args)
+		{
+			ConsoleError(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
@@ -103,12 +134,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes a warning to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Warn(String format, params String[] args)
+		{
+			Warn(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Info(String message)
 		{
 			Write(message, LogLevel.Info);
+		}
+
+		/// <summary>
+		/// Writes an informative string to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Info(String format, params String[] args)
+		{
+			Info(String.Format(format, args));
 		}
 
 		/// <summary>
@@ -124,12 +175,32 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes an informative string to the log file. Also outputs to the console.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void ConsoleInfo(String format, params String[] args)
+		{
+			ConsoleInfo(String.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public static void Debug(String message)
 		{
 			Write(message, LogLevel.Debug);
+		}
+
+		/// <summary>
+		/// Writes a debug string to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public static void Debug(String format, params String[] args)
+		{
+			Debug(String.Format(format, args));
 		}
 
 		/// <summary>

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
@@ -217,18 +219,19 @@ namespace TShockAPI
         }
 
 		/// <summary>
-		/// Sends message to all users with 'logs' permission.
+		/// Sends message to all players with 'logs' permission.
 		/// </summary>
 		/// <param name="log">Message to send</param>
 		/// <param name="color">Color of the message</param>
-		public void SendLogs(string log, Color color)
+		/// <param name="excludedPlayer">The player to not send the message to.</param>
+		public void SendLogs(string log, Color color, TSPlayer excludedPlayer = null)
 		{
 			Log.Info(log);
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
-				if (player != null && player.Active && player.Group.HasPermission(Permissions.logs) && player.DisplayLogs &&
-				    TShock.Config.DisableSpewLogs == false)
+				if (player != null && player != excludedPlayer && player.Active && player.Group.HasPermission(Permissions.logs) && 
+				    player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
 					player.SendMessage(log, color);
 			}
 		}
@@ -304,7 +307,7 @@ namespace TShockAPI
 				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
 				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
 				j++;
-			} while (TileValid(tileX, tileY) && !TileClear(tileX, tileY));
+			} while (TilePlacementValid(tileX, tileY) && !TileClear(tileX, tileY));
 		}
 
 		/// <summary>
@@ -313,7 +316,7 @@ namespace TShockAPI
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
 		/// <returns>If the tile is valid</returns>
-		public bool TileValid(int tileX, int tileY)
+		public bool TilePlacementValid(int tileX, int tileY)
 		{
 			return tileX >= 0 && tileX < Main.maxTilesX && tileY >= 0 && tileY < Main.maxTilesY;
 		}
@@ -560,6 +563,36 @@ namespace TShockAPI
 			Netplay.disconnect = true;
 		}
 
+		/// <summary>
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to 
+		/// restart it.
+		/// </summary>
+		/// <param name="save">bool perform a world save before stop (default: true)</param>
+		/// <param name="reason">string reason (default: "Server shutting down!")</param>
+		public void RestartServer(bool save = true, string reason = "Server shutting down!")
+		{
+			if (TShock.Config.ServerSideInventory)
+				foreach (TSPlayer player in TShock.Players)
+					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+						TShock.InventoryDB.InsertPlayerData(player);
+
+			StopServer(true, reason);
+			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+			Environment.Exit(0);
+		}
+
+		/// <summary>
+		/// Reloads all configuration settings, groups, regions and raises the reload event.
+		/// </summary>
+		public void Reload(TSPlayer player)
+		{
+			FileTools.SetupConfig();
+			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
+			TShock.Groups.LoadPermisions();
+			TShock.Regions.ReloadAllRegions();
+			Hooks.GeneralHooks.OnReloadEvent(player);
+		}
+
 #if COMPAT_SIGS
 		[Obsolete("This method is for signature compatibility for external code only")]
 		public void ForceKick(TSPlayer player, string reason)
@@ -641,7 +674,7 @@ namespace TShockAPI
 			{
 				string ip = player.IP;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, reason);
+				TShock.Bans.AddBan(ip, playerName, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
@@ -653,6 +686,29 @@ namespace TShockAPI
 			}
 			return false;
 		}
+
+	    public bool HasBanExpired(Ban ban, bool byName = false)
+	    {
+            DateTime exp;
+            bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
+
+            if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) &&
+                (DateTime.Now >= exp))
+            {
+                if (byName)
+                {
+                    TShock.Bans.RemoveBan(ban.Name, true, true, false);
+                }
+                else
+                {
+                    TShock.Bans.RemoveBan(ban.IP, false, false, false);
+                }
+                
+                return true;
+            }
+
+	        return false;
+	    }
 
 		/// <summary>
 		/// Shows a file to the user.
@@ -709,7 +765,7 @@ namespace TShockAPI
 					return TShock.Groups.groups[i];
 				}
 			}
-			return new Group(TShock.Config.DefaultGuestGroupName);
+		    return Group.DefaultGroup;
 		}
 
 		/// <summary>
@@ -840,6 +896,26 @@ namespace TShockAPI
 					returnstr[i] = ' ';
 			}
 			return new string(returnstr);
+		}
+
+		/// <summary>
+		/// Enumerates boundary points of the given region's rectangle.
+		/// </summary>
+		/// <param name="regionArea">The region's area to enumerate through.</param>
+		/// <returns>The enumerated boundary points.</returns>
+		public IEnumerable<Point> EnumerateRegionBoundaries(Rectangle regionArea)
+		{
+			for (int x = 0; x < regionArea.Width + 1; x++)
+			{
+				yield return new Point(regionArea.Left + x, regionArea.Top);
+				yield return new Point(regionArea.Left + x, regionArea.Bottom);
+			}
+
+			for (int y = 1; y < regionArea.Height; y++)
+			{
+				yield return new Point(regionArea.Left, regionArea.Top + y);
+				yield return new Point(regionArea.Right, regionArea.Top + y);
+			}
 		}
 	}
 }
