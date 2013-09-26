@@ -162,7 +162,7 @@ namespace TShockAPI
 			add2(new Command(AuthToken, "auth") { AllowServer = false });
 			add2(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
 			add2(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
-			add2(new Command(Permissions.rootonly, ManageUsers, "user") { DoLog = false });
+			add2(new Command(Permissions.user, ManageUsers, "user") { DoLog = false });
 			add2(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
 			add2(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
 			add2(new Command(Permissions.worldspawn, SetSpawn, "setspawn") { AllowServer = false });
@@ -224,7 +224,7 @@ namespace TShockAPI
 			add(Permissions.mute, Mute, "mute", "unmute");
 			add(Permissions.logs, DisplayLogs, "displaylogs");
 			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
-			add(Permissions.rootonly, AuthVerify, "auth-verify");
+			add(Permissions.authverify, AuthVerify, "auth-verify");
 			add(Permissions.broadcast, Broadcast, "broadcast", "bc", "say");
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");

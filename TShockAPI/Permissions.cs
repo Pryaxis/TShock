@@ -176,6 +176,14 @@ namespace TShockAPI
 		[Description("User can start invasions (Goblin/Snow Legion) using items")]
 		public static readonly string startinvasion = "tshock.npc.startinvasion";
 
+		// tshock.superadmin nodes
+
+		[Description("Meant for super admins only.")]
+		public static readonly string authverify = "tshock.superadmin.authverify";
+
+		[Description("Meant for super admins only.")]
+		public static readonly string user = "tshock.superadmin.user";
+
 		// tshock.tp nodes
 
 		[Description("User can teleport to others.")]
@@ -253,9 +261,6 @@ namespace TShockAPI
 
 		[Description("User can slap others.")]
 		public static readonly string slap = "tshock.slap";
-
-		[Description("Meant for super admins only.")]
-		public static readonly string rootonly = "tshock.superadmin";
 
 		[Description("User can whisper to others.")]
 		public static readonly string whisper = "tshock.whisper";
