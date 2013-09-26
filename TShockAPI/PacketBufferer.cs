@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -121,24 +122,24 @@ namespace TShockAPI
 
 		public bool Flush(ServerSock socket)
 		{
-			try
-			{
-				if (socket == null || !socket.active)
-					return false;
+		    try
+		    {
+		        if (socket == null || !socket.active)
+		            return false;
 
-				if (buffers[socket.whoAmI].Count < 1)
-					return false;
+		        if (buffers[socket.whoAmI].Count < 1)
+		            return false;
 
-				byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
-				if (buff == null)
-					return false;
+		        byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
+		        if (buff == null)
+		            return false;
 
-				if (SendBytes(socket, buff))
-				{
-					buffers[socket.whoAmI].Pop(buff.Length);
-					return true;
-				}
-			}
+		        if (SendBytes(socket, buff))
+		        {
+		            buffers[socket.whoAmI].Pop(buff.Length);
+		            return true;
+		        }
+		    }
 			catch (Exception e)
 			{
 				Log.ConsoleError(e.ToString());
@@ -200,7 +201,14 @@ namespace TShockAPI
 			}
 			catch (SocketException e)
 			{
-                Log.Warn(e.ToString());
+                switch ((uint)e.ErrorCode)
+                {
+                    case 0x80004005:
+                        break;
+                    default:
+                        Log.Warn(e.ToString());
+                        break;
+                }
 			}
 			catch (IOException e)
 			{

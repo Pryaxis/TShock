@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,13 +24,14 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading;
 using Hooks;
 using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Rests;
 using Terraria;
 using TShockAPI.DB;
@@ -37,16 +39,18 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 12)]
+	[APIVersion(1, 13)]
 	public class TShock : TerrariaPlugin
 	{
-		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
-		private static string LogFormat = LogFormatDefault;
-		private static bool LogClear = false;
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "Welcome to the future.";
+		public static readonly string VersionCodename = "And the great beast rose from its slumber, ready to take on the world again.";
 
 		public static string SavePath = "tshock";
+		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
+		private static string LogFormat = LogFormatDefault;
+		private const string LogPathDefault = "tshock";
+		private static string LogPath = LogPathDefault;
+		private static bool LogClear = false;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
@@ -66,11 +70,10 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
-		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
-		public static Dictionary<string, string> RESTStartupTokens = new Dictionary<string, string>();
+		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -97,6 +100,10 @@ namespace TShockAPI
 			get { return "The administration modification of the future."; }
 		}
 
+        public override string UpdateURL
+        {
+            get { return ""; }
+        }
 		public TShock(Main game)
 			: base(game)
 		{
@@ -108,35 +115,57 @@ namespace TShockAPI
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
-			HandleCommandLine(Environment.GetCommandLineArgs());
-
-			if (!Directory.Exists(SavePath))
-				Directory.CreateDirectory(SavePath);
-
-			DateTime now = DateTime.Now;
-			string logFilename;
 			try
 			{
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormat)+".log");
-			}
-			catch(Exception)
-			{
-				// Problem with the log format use the default
-				logFilename = Path.Combine(SavePath, now.ToString(LogFormatDefault) + ".log");
-			}
+				HandleCommandLine(Environment.GetCommandLineArgs());
+
+				if (Version.Major >= 4)
+					getTShockAscii();
+
+				if (!Directory.Exists(SavePath))
+					Directory.CreateDirectory(SavePath);
+
+				ConfigFile.ConfigRead += OnConfigRead;
+				FileTools.SetupConfig();
+
+				DateTime now = DateTime.Now;
+				string logFilename;
+				string logPathSetupWarning = null;
+				// Log path was not already set by the command line parameter?
+				if (LogPath == LogPathDefault)
+					LogPath = Config.LogPath;
+				try
+				{
+					logFilename = Path.Combine(LogPath, now.ToString(LogFormat)+".log");
+					if (!Directory.Exists(LogPath))
+						Directory.CreateDirectory(LogPath);
+				}
+				catch(Exception ex)
+				{
+					logPathSetupWarning = "Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine(logPathSetupWarning);
+					Console.ForegroundColor = ConsoleColor.Gray;
+					// Problem with the log path or format use the default
+					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
+				}
 #if DEBUG
-			Log.Initialize(logFilename, LogLevel.All, false);
+				Log.Initialize(logFilename, LogLevel.All, false);
 #else
-			Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
+				Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
 #endif
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				if (logPathSetupWarning != null)
+					Log.Warn(logPathSetupWarning);
 
-            if (Version.Major >= 4)
-            {
-                getTShockAscii();                
-            }
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			}
+			catch(Exception ex)
+			{
+				// Will be handled by the server api and written to its crashlog.txt.
+				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
+			}
 
-
+			// Further exceptions are written to TShock's log from now on.
 			try
 			{
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -146,9 +175,6 @@ namespace TShockAPI
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
-
-				ConfigFile.ConfigRead += OnConfigRead;
-				FileTools.SetupConfig();
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
@@ -195,7 +221,6 @@ namespace TShockAPI
 				RememberedPos = new RememberedPosManager(DB);
 				InventoryDB = new InventoryManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
-				RestApi.Verify += RestApi_Verify;
 				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
@@ -225,6 +250,7 @@ namespace TShockAPI
 				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
 			    WorldHooks.ChristmasCheck += OnXmasCheck;
                 NetHooks.NameCollision += NetHooks_NameCollision;
+			    TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -269,33 +295,6 @@ namespace TShockAPI
 // ReSharper restore LocalizableElement
 	    }
 
-	    private RestObject RestApi_Verify(string username, string password)
-		{
-			var userAccount = Users.GetUserByName(username);
-			if (userAccount == null)
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (Utils.HashPassword(password).ToUpper() != userAccount.Password.ToUpper())
-			{
-				return new RestObject("401")
-						{Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair."};
-			}
-
-			if (!Utils.GetGroup(userAccount.Group).HasPermission(Permissions.restapi) && userAccount.Group != "superadmin")
-			{
-				return new RestObject("403")
-						{
-							Error =
-								"Although your account was successfully found and identified, your account lacks the permission required to use the API. (api)"
-						};
-			}
-
-			return new RestObject("200") {Response = "Successful login"}; //Maybe return some user info too?
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -326,6 +325,7 @@ namespace TShockAPI
 				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
                 WorldHooks.ChristmasCheck -= OnXmasCheck;
                 NetHooks.NameCollision -= NetHooks_NameCollision;
+                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -338,7 +338,31 @@ namespace TShockAPI
 			base.Dispose(disposing);
 		}
 
-        void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
+	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
+	    {
+	        User u = Users.GetUserByName(args.Player.UserAccountName);
+            List<String> KnownIps = new List<string>();
+	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
+	        {
+                KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
+	        }
+
+	        bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
+	        if (!found)
+	        {
+	            if (KnownIps.Count == 100)
+	            {
+	                KnownIps.RemoveAt(0);
+	            }
+
+                KnownIps.Add(args.Player.IP);
+	        }
+
+            u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+	        Users.UpdateLogin(u);
+	    }
+
+        private void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
         {
             string ip = TShock.Utils.GetRealIP(Netplay.serverSock[who].tcpClient.Client.RemoteEndPoint.ToString());
             foreach (TSPlayer ply in TShock.Players)
@@ -369,7 +393,7 @@ namespace TShockAPI
             return;
         }
 
-        void OnXmasCheck(ChristmasCheckEventArgs args)
+        private void OnXmasCheck(ChristmasCheckEventArgs args)
         {
             if (args.Handled)
                 return;
@@ -442,9 +466,13 @@ namespace TShockAPI
 						}
 						break;
 
-					case "-dump":
-						ConfigFile.DumpDescriptions();
-						Permissions.DumpDescriptions();
+					case "-logpath":
+						path = parms[++i];
+						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+						{
+							LogPath = path;
+							Log.ConsoleInfo("Log path has been set to " + path);
+						}
 						break;
 
 					case "-logformat":
@@ -453,6 +481,11 @@ namespace TShockAPI
 
 					case "-logclear":
 						bool.TryParse(parms[++i], out LogClear);
+						break;
+
+					case "-dump":
+						ConfigFile.DumpDescriptions();
+						Permissions.DumpDescriptions();
 						break;
 				}
 			}
@@ -473,7 +506,7 @@ namespace TShockAPI
 						break;
 					case "-rest-token":
 						string token = Convert.ToString(parms[++i]);
-						RESTStartupTokens.Add(token, "null");
+						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroupName = "superadmin" });
 						Console.WriteLine("Startup parameter overrode REST token.");
 						break;
 					case "-rest-enabled":
@@ -537,7 +570,7 @@ namespace TShockAPI
 
             Regions.ReloadAllRegions();
 
-			StatTracker.CheckIn();
+			Lighting.lightMode = 2;
 			FixChestStacks();
 
             
@@ -545,6 +578,9 @@ namespace TShockAPI
 
 		private void FixChestStacks()
 		{
+            if (Config.IgnoreChestStacksOnLoad)
+                return;
+
 			foreach (Chest chest in Main.chest)
 			{
 				if (chest != null)
@@ -564,7 +600,6 @@ namespace TShockAPI
 		private void OnUpdate()
 		{
 			UpdateManager.UpdateProcedureCheck();
-			StatTracker.CheckIn();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update
@@ -735,16 +770,8 @@ namespace TShockAPI
 		private void OnConnect(int ply, HandledEventArgs handler)
 		{
 			var player = new TSPlayer(ply);
-			if (Config.EnableDNSHostResolution)
-			{
-				player.Group = Users.GetGroupForIPExpensive(player.IP);
-			}
-			else
-			{
-				player.Group = Users.GetGroupForIP(player.IP);
-			}
 
-			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + 20)
+			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
 				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
 				handler.Handled = true;
@@ -758,9 +785,14 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
-				handler.Handled = true;
-				return;
+				if (!Utils.HasBanExpired(ban))
+			    {
+			        DateTime exp;
+			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
+			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+			        handler.Handled = true;
+			        return;
+			    }
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
@@ -811,9 +843,13 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				Utils.ForceKick(player, string.Format("You are banned: {0}", ban.Reason), true, false);
-				handler.Handled = true;
-				return;
+			    if (!Utils.HasBanExpired(ban))
+			    {
+			        DateTime exp;
+			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
+			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+			        handler.Handled = true;
+			    }
 			}            
 		}
 
@@ -825,12 +861,9 @@ namespace TShockAPI
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
-				if (!tsplr.SilentKickInProgress || tsplr.State > 1)
+				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 				{
-					if (tsplr.State >= 2)
-					{
-                        Utils.Broadcast(tsplr.Name + " left", Color.Yellow);    
-					}
+					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
@@ -1451,12 +1484,12 @@ namespace TShockAPI
 			return (float) Math.Sqrt(num3);
 		}
 
-		public static bool HackedHealth(TSPlayer player)
+		public static bool HackedStats(TSPlayer player)
 		{
-			return (player.TPlayer.statManaMax > 400) ||
-				   (player.TPlayer.statMana > 400) ||
-				   (player.TPlayer.statLifeMax > 400) ||
-				   (player.TPlayer.statLife > 400);
+            return (player.TPlayer.statManaMax > TShock.Config.MaxMana) ||
+                   (player.TPlayer.statMana > TShock.Config.MaxMana) ||
+                   (player.TPlayer.statLifeMax > TShock.Config.MaxHealth) ||
+                   (player.TPlayer.statLife > TShock.Config.MaxHealth);
 		}
 
 		public static bool HackedInventory(TSPlayer player)

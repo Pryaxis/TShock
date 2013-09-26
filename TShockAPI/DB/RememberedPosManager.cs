@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2012 The TShock Team
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Data;
 using MySql.Data.MySqlClient;
@@ -112,7 +113,7 @@ namespace TShockAPI.DB
 				try
 				{
 					if ((X != 0) && ( Y !=0)) //invalid pos!
-					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2 WHERE Name = @3 AND WorldID = @4;", X, Y, IP, name, Main.worldID.ToString());
+					database.Query("UPDATE RememberedPos SET X = @0, Y = @1, IP = @2, WorldID = @3 WHERE Name = @4;", X, Y, IP, Main.worldID.ToString(), name);
 				}
 				catch (Exception ex)
 				{
