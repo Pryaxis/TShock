@@ -27,163 +27,258 @@ namespace TShockAPI
 {
 	public static class Permissions
 	{
-		//Permissions with blank descriptions basically means its described by the commands it gives access to.
+		// tshock.account nodes
 
-        [Description("Allows player to get user info")] public static readonly string userinfo;
+		[Description("User can register account in game")]
+		public static readonly string canregister = "tshock.account.register";
 
-		[Description("")] public static readonly string causeevents;
+		[Description("User can login in game")]
+		public static readonly string canlogin = "tshock.account.login";
 
-		[Description("Required to be able to build (modify tiles and liquid)")] public static readonly string canbuild;
+		[Description("User can change password in game")]
+		public static readonly string canchangepassword = "tshock.account.changepassword";
 
-		[Description("")] public static readonly string kill;
+		// tshock.admin nodes
 
-		[Description("Allows you to use banned items")] public static readonly string usebanneditem;
+		[Description("Prevents you from being kicked.")]
+		public static readonly string immunetokick = "tshock.admin.nokick";
 
-		[Description("Allows you to edit the spawn")] public static readonly string editspawn;
+		[Description("Prevents you from being banned.")]
+		public static readonly string immunetoban = "tshock.admin.noban";
 
-		[Description("Prevents you from being kicked")] public static readonly string immunetokick;
+		[Description("Specific log messages are sent to users with this permission.")]
+		public static readonly string logs = "tshock.admin.viewlogs";
 
-		[Description("Prevents you from being banned")] public static readonly string immunetoban;
+		[Description("User can kick others.")]
+		public static readonly string kick = "tshock.admin.kick";
 
-		[Description("Prevents you from being reverted by kill tile abuse detection")] public static readonly string
-			ignorekilltiledetection;
+		[Description("User can ban others.")]
+		public static readonly string ban = "tshock.admin.ban";
 
-		[Description("Prevents you from being reverted by place tile abuse detection")] public static readonly string
-			ignoreplacetiledetection;
+		[Description("User can manage warps.")]
+		public static readonly string managewarp = "tshock.admin.warp";
 
-		[Description("Prevents you from being disabled by liquid set abuse detection")] public static readonly string
-			ignoreliquidsetdetection;
+		[Description("User can manage item bans.")]
+		public static readonly string manageitem = "tshock.admin.itemban";
 
-		[Description("Prevents you from being disabled by liquid set abuse detection")] public static readonly string
-			ignoreprojectiledetection;
+		[Description("User can manage groups.")]
+		public static readonly string managegroup = "tshock.admin.group";
 
-		[Description("Prevents you from being reverted by no clip detection")] public static readonly string
-			ignorenoclipdetection;
+		[Description("User can manage regions.")]
+		public static readonly string manageregion = "tshock.admin.region";
 
-		[Description("Prevents you from being disabled by stack hack detection")] public static readonly string
-			ignorestackhackdetection;
+		[Description("User can mute and unmute users")]
+		public static readonly string mute = "tshock.admin.mute";
 
-		[Description("Prevents you from being kicked by hacked health detection")] public static readonly string
-			ignorestathackdetection;
+		[Description("User can see the id of players with /who")]
+		public static readonly string seeids = "tshock.admin.seeplayerids";
 
-	    [Description("Prevents your actions from being ignored if damage is too high")] public static readonly string
-	        ignoredamagecap;
+		[Description("User can save all the players SSI state.")]
+		public static readonly string savessi = "tshock.admin.savessi";
 
-		[Description("Specific log messages are sent to users with this permission")] public static readonly string logs;
+		[Description("User can elevate other users' groups temporarily.")]
+		public static readonly string settempgroup = "tshock.admin.tempgroup";
 
-		[Description("Allows you to bypass the max slots for up to 5 slots above your max")] public static readonly string
-			reservedslot;
+		[Description("User can broadcast messages.")]
+		public static readonly string broadcast = "tshock.admin.broadcast";
 
-		[Description("User is notified when an update is available, user can turn off / restart the server.")] public static readonly string maintenance;
+		[Description("User can get other users' info.")]
+		public static readonly string userinfo = "tshock.admin.userinfo";
 
-		[Description("User can kick others")] public static readonly string kick;
+		// tshock.buff nodes
 
-		[Description("User can ban others")] public static readonly string ban;
+		[Description("User can buff self.")]
+		public static readonly string buff = "tshock.buff.self";
 
-		[Description("User can modify the whitelist")] public static readonly string whitelist;
+		[Description("User can buff other players.")]
+		public static readonly string buffplayer = "tshock.buff.others";
 
-		[Description("User can spawn bosses")] public static readonly string spawnboss;
+		// tshock.cfg nodes
 
-		[Description("User can spawn npcs")] public static readonly string spawnmob;
+		[Description("User is notified when an update is available, user can turn off / restart the server.")]
+		public static readonly string maintenance = "tshock.cfg.maintenance";
 
-		[Description("User can teleport")] public static readonly string tp;
+		[Description("User can modify the whitelist.")]
+		public static readonly string whitelist = "tshock.cfg.whitelist";
 
-		[Description("User can teleport people to them")] public static readonly string tphere;
+		[Description("User can edit the server password.")]
+		public static readonly string cfgpassword = "tshock.cfg.password";
 
-		[Description("User can use warps")] public static readonly string warp;
+		[Description("User can reload the configurations file.")]
+		public static readonly string cfgreload = "tshock.cfg.reload";
 
-		[Description("User can manage warps")] public static readonly string managewarp;
+		[Description("User can edit the max spawns.")]
+		public static readonly string cfgmaxspawns = "tshock.cfg.maxspawns";
 
-		[Description("User can manage item bans")] public static readonly string manageitem;
+		[Description("User can edit the spawnrate.")]
+		public static readonly string cfgspawnrate = "tshock.cfg.spawnrate";
 
-		[Description("User can manage groups")] public static readonly string managegroup;
+		[Description("User can download updates to plugins that are currently running.")]
+		public static readonly string updateplugins = "tshock.cfg.updateplugins";
 
-		[Description("User can edit sevrer configurations")] public static readonly string cfg;
+		// tshock.ignore nodes
 
-		[Description("")] public static readonly string time;
+		[Description("Prevents you from being reverted by kill tile abuse detection.")]
+		public static readonly string ignorekilltiledetection = "tshock.ignore.removetile";
 
-		[Description("")] public static readonly string pvpfun;
+		[Description("Prevents you from being reverted by place tile abuse detection.")]
+		public static readonly string ignoreplacetiledetection = "tshock.ignore.placetile";
 
-		[Description("User can edit regions")] public static readonly string manageregion;
+		[Description("Prevents you from being disabled by liquid set abuse detection.")]
+		public static readonly string ignoreliquidsetdetection = "tshock.ignore.liquid";
 
-		[Description("Meant for super admins only")] public static readonly string rootonly;
+		[Description("Prevents you from being disabled by projectile abuse detection.")]
+		public static readonly string ignoreprojectiledetection = "tshock.ignore.projectile";
 
-		[Description("User can whisper to others")] public static readonly string whisper;
+		[Description("Prevents you from being reverted by no clip detection.")]
+		public static readonly string ignorenoclipdetection = "tshock.ignore.noclip";
 
-		[Description("")] public static readonly string annoy;
+		[Description("Prevents you from being disabled by stack hack detection.")]
+		public static readonly string ignorestackhackdetection = "tshock.ignore.itemstack";
 
-		[Description("User can kill all enemy npcs")] public static readonly string butcher;
+		[Description("Prevents you from being kicked by hacked health detection.")]
+		public static readonly string ignorestathackdetection = "tshock.ignore.stats";
 
-		[Description("User can spawn items")] public static readonly string item;
+		[Description("Prevents your actions from being ignored if damage is too high.")]
+		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 
-		[Description("User can clear item drops.")] public static readonly string clearitems;
+		[Description("Bypass server side inventory checks")]
+		public static readonly string bypassinventorychecks = "tshock.ignore.ssi";
 
-		[Description("")] public static readonly string heal;
+		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")]
+		public static readonly string allowclientsideworldedit = "tshock.ignore.sendtilesquare";
 
-		[Description("User can buff self")] public static readonly string buff;
+		// tshock.item nodes
 
-		[Description("User can buff other players")] public static readonly string buffplayer;
+		[Description("User can spawn items.")]
+		public static readonly string item = "tshock.item.spawn";
 
-		[Description("")] public static readonly string grow;
+		[Description("User can clear items.")]
+		public static readonly string clearitems = "tshock.item.clear";
 
-		[Description("User can change hardmode state.")] public static readonly string hardmode;
+		[Description("Allows you to use banned items.")]
+		public static readonly string usebanneditem = "tshock.item.usebanned";
 
-		[Description("User can change the homes of NPCs.")] public static readonly string movenpc;
+		// tshock.npc nodes
 
-		[Description("Users can stop people from teleporting to them")] public static readonly string tpallow;
+		[Description("User can spawn bosses.")]
+		public static readonly string spawnboss = "tshock.npc.spawnboss";
 
-		[Description("Users can tp to anyone")] public static readonly string tpall;
+		[Description("User can spawn npcs.")]
+		public static readonly string spawnmob = "tshock.npc.spawnmob";
 
-		[Description("Users can tp to people without showing a notice")] public static readonly string tphide;
+		[Description("User can kill all enemy npcs.")]
+		public static readonly string butcher = "tshock.npc.butcher";
 
-		[Description("User can convert hallow into corruption and vice-versa")] public static readonly string converthardmode;
+		[Description("User can summon bosses using items")]
+		public static readonly string summonboss = "tshock.npc.summonboss";
 
-		[Description("User can mute and unmute users")] public static readonly string mute;
+		[Description("User can start invasions (Goblin/Snow Legion) using items")]
+		public static readonly string startinvasion = "tshock.npc.startinvasion";
 
-		[Description("User can register account in game")] public static readonly string canregister;
+		// tshock.superadmin nodes
 
-		[Description("User can login in game")] public static readonly string canlogin;
+		[Description("Meant for super admins only.")]
+		public static readonly string authverify = "tshock.superadmin.authverify";
 
-		[Description("User can change password in game")] public static readonly string canchangepassword;
+		[Description("Meant for super admins only.")]
+		public static readonly string user = "tshock.superadmin.user";
 
-		[Description("User can use party chat in game")] public static readonly string canpartychat;
+		// tshock.tp nodes
 
-		[Description("User can talk in third person")] public static readonly string cantalkinthird;
+		[Description("User can teleport to others.")]
+		public static readonly string tp = "tshock.tp.self";
 
-		[Description("Bypass server side inventory checks")] public static readonly string bypassinventorychecks;
+		[Description("User can teleport people to them.")]
+		public static readonly string tphere = "tshock.tp.others";
 
-		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")] public static readonly
-			string allowclientsideworldedit;
+		[Description("Users can stop people from teleporting to them")]
+		public static readonly string tpallow = "tshock.tp.block";
 
-        [Description("User can summon bosses using items")]
-	    public static readonly string summonboss;
+		[Description("Users can tp to anyone")]
+		public static readonly string tpall = "tshock.tp.toall";
 
-        [Description("User can start invasions (Goblin/Snow Legion) using items")]
-        public static readonly string startinvasion;
+		[Description("Users can tp to people without showing a notice")]
+		public static readonly string tphide = "tshock.tp.silent";
 
-        [Description("User can see the id of players with /who")]
-        public static readonly string seeids;
+		[Description("User can use /home.")]
+		public static readonly string home = "tshock.tp.home";
 
-	    [Description("User can save all the players SSI state.")] 
-        public static readonly string savessi;
+		[Description("User can use /spawn.")]
+		public static readonly string spawn = "tshock.tp.spawn";
 
-	    [Description("User can force the server to Christmas mode.")] public static readonly string xmas;
+		// tshock.world nodes
 
-        [Description("User can use /home.")] public static readonly string home;
+		[Description("Allows you to edit the spawn.")]
+		public static readonly string editspawn = "tshock.world.editspawn";
 
-        [Description("User can use /spawn.")] public static readonly string spawn;
+		[Description("User can set the time.")]
+		public static readonly string time = "tshock.world.settime";
 
-	    [Description("User can elevate other users' groups temporarily.")] public static readonly string settempgroup;
+		[Description("User can grow plants.")]
+		public static readonly string grow = "tshock.world.grow";
 
-		[Description("User can download updates to plugins that are currently running.")] public static readonly string updateplugins;
+		[Description("User can change hardmode state.")]
+		public static readonly string hardmode = "tshock.world.hardmode";
 
-		static Permissions()
-		{
-			foreach (var field in typeof (Permissions).GetFields())
-			{
-				field.SetValue(null, String.Format("tshock.{0}", field.Name));
-			}
-		}
+		[Description("User can change the homes of NPCs.")]
+		public static readonly string movenpc = "tshock.world.movenpc";
+
+		[Description("User can convert hallow into corruption and vice-versa")]
+		public static readonly string converthardmode = "tshock.world.converthardmode";
+
+		[Description("User can force the server to Christmas mode.")]
+		public static readonly string xmas = "tshock.world.setxmas";
+
+		[Description("User can save the world.")]
+		public static readonly string worldsave = "tshock.world.save";
+
+		[Description("User can settle liquids.")]
+		public static readonly string worldsettle = "tshock.world.settleliquids";
+
+		[Description("User can get the world info.")]
+		public static readonly string worldinfo = "tshock.world.info";
+
+		[Description("User can set the world spawn.")]
+		public static readonly string worldspawn = "tshock.world.setspawn";
+
+		[Description("User can cause some events.")]
+		public static readonly string causeevents = "tshock.world.causeevents";
+
+		[Description("User can modify the world.")]
+		public static readonly string canbuild = "tshock.world.modify";
+
+		// Non-grouped
+
+		[Description("User can kill others.")]
+		public static readonly string kill = "tshock.kill";
+
+		[Description("Allows you to bypass the max slots for up to 5 slots above your max.")]
+		public static readonly string reservedslot = "tshock.reservedslot";
+
+		[Description("User can use warps.")]
+		public static readonly string warp = "tshock.warp";
+
+		[Description("User can slap others.")]
+		public static readonly string slap = "tshock.slap";
+
+		[Description("User can whisper to others.")]
+		public static readonly string whisper = "tshock.whisper";
+
+		[Description("User can annoy others.")]
+		public static readonly string annoy = "tshock.annoy";
+
+		[Description("User can heal players.")]
+		public static readonly string heal = "tshock.heal";
+
+		[Description("User can use party chat in game")]
+		public static readonly string canpartychat = "tshock.partychat";
+
+		[Description("User can talk in third person")]
+		public static readonly string cantalkinthird = "tshock.thirdperson";
+
+		[Description("User can get the server info.")]
+		public static readonly string serverinfo = "tshock.info";
 
         /// <summary>
         /// Lists all commands associated with a given permission
