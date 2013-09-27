@@ -739,19 +739,7 @@ namespace TShockAPI
 			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
 			if (players.Count > 1)
 			{
-				var plrMatches = "";
-				foreach (TSPlayer plr in players)
-				{
-					if (plrMatches.Length != 0)
-					{
-						plrMatches += ", " + plr.Name;
-					}
-					else
-					{
-						plrMatches += plr.Name;
-					}
-				}
-				args.Player.SendErrorMessage("More than one player matched! Matches: " + plrMatches);
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 				return;
 			}
 			try
@@ -785,19 +773,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				var plrMatches = "";
-				foreach (TSPlayer plr in players)
-				{
-					if (plrMatches.Length != 0)
-					{
-						plrMatches += ", " + plr.Name;
-					}
-					else
-					{
-						plrMatches += plr.Name;
-					}
-				}
-				args.Player.SendErrorMessage("More than one player matched! Matches: " + plrMatches);
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
 			else
 			{
@@ -960,19 +936,7 @@ namespace TShockAPI
 					}
 					else if (players.Count > 1)
 					{
-						var plrMatches = "";
-						foreach (TSPlayer plr in players)
-						{
-							if (plrMatches.Length != 0)
-							{
-								plrMatches += ", " + plr.Name;
-							}
-							else
-							{
-								plrMatches += plr.Name;
-							}
-						}
-						args.Player.SendErrorMessage("More than one player matched! Matches: " + plrMatches);
+						TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 					}
 					else
 					{
@@ -1142,7 +1106,7 @@ namespace TShockAPI
 			}
 			else if( matchedPlayers.Count > 1 )
 			{
-				args.Player.SendErrorMessage("{0} players matched \"{1}\".", matchedPlayers.Count, playerNameToMatch);
+				TShock.Utils.SendMultipleMatchError(args.Player, matchedPlayers.Select(p => p.Name));
 				return;
 			}
 
@@ -1217,8 +1181,7 @@ namespace TShockAPI
 
             if (ply.Count > 1)
             {
-                args.Player.SendErrorMessage(string.Format("Found more than one match for {0}.", args.Parameters[0]));
-                return;
+				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.UserAccountName));
             }
 
             if(!TShock.Groups.GroupExists(args.Parameters[1]))
@@ -1641,7 +1604,7 @@ namespace TShockAPI
             }
             else if (npcs.Count > 1)
             {
-                args.Player.SendMessage(string.Format("More than one ({0}) mob matched!", npcs.Count), Color.Red);
+				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
             }
             else
             {
@@ -1689,7 +1652,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
 			{
 				var plr = players[0];
@@ -1739,7 +1702,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
 			else
 			{
@@ -1880,7 +1843,7 @@ namespace TShockAPI
                 }
                 else if (foundplr.Count > 1)
                 {
-                    args.Player.SendErrorMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count));
+					TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
                     return;
                 }
                 string warpName = args.Parameters[2];
@@ -2206,7 +2169,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
 						}
 						else
 						{
@@ -2232,7 +2195,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
 						}
 						else
 						{
@@ -2277,7 +2240,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
 						}
 						else
 						{
@@ -2303,7 +2266,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched.", items.Count));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
 						}
 						else
 						{
@@ -2544,7 +2507,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
 			else
 			{
@@ -3304,7 +3267,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			else if (players[0].Group.HasPermission(Permissions.mute))
 			{
 				args.Player.SendErrorMessage("You cannot mute this player.");
@@ -3351,7 +3314,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
 			else if (args.Player.mute)
 				args.Player.SendErrorMessage("You are muted.");
@@ -3395,7 +3358,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
@@ -3459,7 +3422,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				args.Player.SendErrorMessage("More than one player matched!");
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
 			else
 			{
@@ -3528,8 +3491,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				args.Player.SendErrorMessage("More than one item matched:");
-				args.Player.SendErrorMessage(string.Join(", ", matchedItems.Select(i => i.name)));
+				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => i.name));
 				return;
 			}
 			else
@@ -3546,10 +3508,10 @@ namespace TShockAPI
 			if (amountParamIndex != -1 && args.Parameters.Count > amountParamIndex + 1)
 			{
 				string prefixidOrName = args.Parameters[amountParamIndex + 1];
-				List<int> matchedPrefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
+				var matchedPrefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
 				if (matchedPrefixIds.Count > 1) 
 				{
-					args.Player.SendErrorMessage("More than one ({0}) prefixes matched \"{1}\".", matchedPrefixIds.Count, prefixidOrName);
+					TShock.Utils.SendMultipleMatchError(args.Player, matchedPrefixIds.Select(p => p.ToString()));
 					return;
 				}
 				else if (matchedPrefixIds.Count == 0) 
@@ -3624,7 +3586,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				args.Player.SendErrorMessage(string.Format("More than one ({0}) item matched!", items.Count));
+				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
 			}
 			else
 			{
@@ -3638,7 +3600,7 @@ namespace TShockAPI
 					}
 					else if (players.Count > 1)
 					{
-						args.Player.SendErrorMessage("More than one player matched!");
+						TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 					}
 					else
 					{
@@ -3723,7 +3685,7 @@ namespace TShockAPI
 				}
 				else if (players.Count > 1)
 				{
-					args.Player.SendErrorMessage("More than one player matched!");
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 					return;
 				}
 				else
@@ -3777,7 +3739,7 @@ namespace TShockAPI
 				}
 				else if (found.Count > 1)
 				{
-					args.Player.SendErrorMessage(string.Format("More than one ({0}) buff matched!", found.Count));
+					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Main.buffName[f]));
 					return;
 				}
 				id = found[0];
@@ -3813,7 +3775,7 @@ namespace TShockAPI
 			}
 			else if (foundplr.Count > 1)
 			{
-				args.Player.SendErrorMessage(string.Format("More than one ({0}) player matched!", args.Parameters.Count));
+				TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
 				return;
 			}
 			else
@@ -3828,7 +3790,7 @@ namespace TShockAPI
 					}
 					else if (found.Count > 1)
 					{
-						args.Player.SendErrorMessage(string.Format("More than one ({0}) buff matched!", found.Count));
+						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Main.buffName[b]));
 						return;
 					}
 					id = found[0];
