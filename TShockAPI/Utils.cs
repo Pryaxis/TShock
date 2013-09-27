@@ -787,6 +787,18 @@ namespace TShockAPI
 			return "";
 		}
 
+		/// <summary>
+		/// Sends the player an error message stating that more than one match was found
+		/// appending a csv list of the matches.
+		/// </summary>
+		/// <param name="ply">Player to send the message to</param>
+		/// <param name="matches">An enumerable list with the matches</param>
+		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
+		{
+			ply.SendErrorMessage("More than one match found: {0}", string.Join(",", matches));
+			ply.SendErrorMessage("Use \"my query\" for items with spaces");
+		}
+
         /// <summary>
         /// Default hashing algorithm.
         /// </summary>
