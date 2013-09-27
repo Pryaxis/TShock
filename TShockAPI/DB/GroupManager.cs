@@ -53,7 +53,7 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			// Add default groups if they don't exist
-			AddDefaultGroup("guest, "",
+			AddDefaultGroup("guest", "",
 				string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
 					Permissions.cantalkinthird));
 
