@@ -25,7 +25,8 @@ namespace TShockAPI.Net
 	{
 		public override PacketTypes ID
 		{
-			get { return PacketTypes.ProjectileNew; }
+			get{ return 0; }
+			//PacketTypes.ProjectileNew; }
 		}
 
 		public short Index { get; set; }

@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TShockAPI.PluginUpdater;
 using Terraria;
 using TShockAPI.DB;
 
@@ -1259,7 +1258,6 @@ namespace TShockAPI
         {
             args.Player.SendInfoMessage("Starting plugin update process:");
             args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
-            new PluginUpdaterThread(args.Player);
         }
 
 		private static void ManageRest(CommandArgs args)
@@ -2900,13 +2898,13 @@ namespace TShockAPI
                                     // worth the effort as chances are very low that overwriting the wire for a few 
                                     // nanoseconds will cause much trouble.
                                     Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
-                                    bool oldWireState = tile.wire;
-                                    tile.wire = true;
+                                    bool oldWireState = tile.wire();
+	                                tile.wire(true);
 
                                     try {
                                         args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
                                     } finally {
-                                        tile.wire = oldWireState;
+                                        tile.wire(oldWireState);
                                     }
                                 }
                             }
@@ -3829,7 +3827,7 @@ namespace TShockAPI
 				case "tree":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
@@ -3840,20 +3838,20 @@ namespace TShockAPI
 				case "epictree":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
 					Main.tile[x, y - 1].liquid = 0;
-					Main.tile[x, y - 1].active = true;
+					Main.tile[x, y - 1].active(true);
 					WorldGen.GrowEpicTree(x, y);
 					name = "Epic Tree";
 					break;
 				case "mushroom":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 70;
 						Main.tile[i, y].wall = 0;
 					}
@@ -3867,7 +3865,7 @@ namespace TShockAPI
 					name = "Cactus";
 					break;
 				case "herb":
-					Main.tile[x, y].active = true;
+					Main.tile[x, y].active(true);
 					Main.tile[x, y].frameX = 36;
 					Main.tile[x, y].type = 83;
 					WorldGen.GrowAlch(x, y);

@@ -61,12 +61,12 @@ namespace TShockAPI
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
         /// </summary>
-		public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+		public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
 
         /// <summary>
         /// A queue of tiles placed by the player for reverting.
         /// </summary>
-		public Dictionary<Vector2, TileData> TilesCreated { get; protected set; }
+		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
 
 		public int FirstMaxHP { get; set; }
 
@@ -405,8 +405,8 @@ namespace TShockAPI
 
 		public TSPlayer(int index)
 		{
-			TilesDestroyed = new Dictionary<Vector2, TileData>();
-			TilesCreated = new Dictionary<Vector2, TileData>();
+			TilesDestroyed = new Dictionary<Vector2, Tile>();
+			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = index;
             Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
@@ -415,8 +415,8 @@ namespace TShockAPI
 
 		protected TSPlayer(String playerName)
 		{
-			TilesDestroyed = new Dictionary<Vector2, TileData>();
-			TilesCreated = new Dictionary<Vector2, TileData>();
+			TilesDestroyed = new Dictionary<Vector2, Tile>();
+			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
 		    Group = Group.DefaultGroup;
@@ -567,7 +567,7 @@ namespace TShockAPI
 		   m_y=Main.maxTilesY - size;
 		   }
 
-                SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
+                //SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
                 return true;
             }
             catch (IndexOutOfRangeException)
@@ -604,8 +604,8 @@ namespace TShockAPI
 			Main.item[itemid].stack = stack;
 			Main.item[itemid].owner = Index;
 			Main.item[itemid].prefix = (byte) prefix;
-			NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
+			//NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
+			//NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
         public virtual void SendInfoMessage(string msg)
@@ -671,14 +671,14 @@ namespace TShockAPI
 
 		public virtual void DamagePlayer(int damage)
 		{
-			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
-								(float) 0);
+			//NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
+			//					(float) 0);
 		}
 
 		public virtual void SetTeam(int team)
 		{
 			Main.player[Index].team = team;
-			SendData(PacketTypes.PlayerTeam, "", Index);
+			//SendData(PacketTypes.PlayerTeam, "", Index);
 		}
 
 		public virtual void Disable(string reason = "")
@@ -705,7 +705,7 @@ namespace TShockAPI
 			SendMessage("You are now being annoyed.", Color.Red);
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
-				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
+				//SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
 				Thread.Sleep(50);
 			}
 		}
@@ -715,7 +715,7 @@ namespace TShockAPI
 			if ((DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000 && !bypass)
 				return;
 
-			SendData(PacketTypes.PlayerAddBuff, number: Index, number2: type, number3: time);
+			//SendData(PacketTypes.PlayerAddBuff, number: Index, number2: type, number3: time);
 		}
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
@@ -881,7 +881,7 @@ namespace TShockAPI
 		{
 			Main.dayTime = dayTime;
 			Main.time = time;
-			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+			//NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
 			NetMessage.syncPlayers();
 		}
 
@@ -907,15 +907,15 @@ namespace TShockAPI
 				Main.rand = new Random();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
+			//NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}
 
-		public void RevertTiles(Dictionary<Vector2, TileData> tiles)
+		public void RevertTiles(Dictionary<Vector2, Tile> tiles)
 		{
 			// Update Main.Tile first so that when tile sqaure is sent it is correct
-			foreach (KeyValuePair<Vector2, TileData> entry in tiles)
+			foreach (KeyValuePair<Vector2, Tile> entry in tiles)
 			{
-				Main.tile[(int) entry.Key.X, (int) entry.Key.Y].Data = entry.Value;
+				Main.tile[(int) entry.Key.X, (int) entry.Key.Y] = entry.Value;
 			}
 			// Send all players updated tile sqaures
 			foreach (Vector2 coords in tiles.Keys)

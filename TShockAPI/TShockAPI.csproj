@@ -79,9 +79,6 @@
     <Compile Include="Hooks\GeneralHooks.cs" />
     <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="PaginationTools.cs" />
-    <Compile Include="PluginUpdater\PluginUpdaterThread.cs" />
-    <Compile Include="PluginUpdater\PluginVersionCheck.cs" />
-    <Compile Include="PluginUpdater\VersionInfo.cs" />
     <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />

@@ -329,7 +329,7 @@ namespace TShockAPI
 		/// <returns>The state of the tile</returns>
 		private bool TileClear(int tileX, int tileY)
 		{
-			return !Main.tile[tileX, tileY].active;
+			return !Main.tile[tileX, tileY].active();
 		}
 
 		/// <summary>

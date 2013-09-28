@@ -27,19 +27,19 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using Hooks;
 using MaxMind;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
 using Terraria;
+using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	[APIVersion(1, 13)]
+	[ApiVersion(1, 14)]
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
@@ -231,25 +231,25 @@ namespace TShockAPI
 
 				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
 
-				GameHooks.PostInitialize += OnPostInit;
-				GameHooks.Update += OnUpdate;
-                GameHooks.HardUpdate += OnHardUpdate;
-                GameHooks.StatueSpawn += OnStatueSpawn;
-				ServerHooks.Connect += OnConnect;
-				ServerHooks.Join += OnJoin;
-				ServerHooks.Leave += OnLeave;
-				ServerHooks.Chat += OnChat;
-				ServerHooks.Command += ServerHooks_OnCommand;
-				NetHooks.GetData += OnGetData;
-				NetHooks.SendData += NetHooks_SendData;
-				NetHooks.GreetPlayer += OnGreetPlayer;
-				NpcHooks.StrikeNpc += NpcHooks_OnStrikeNpc;
-			    NpcHooks.SetDefaultsInt += OnNpcSetDefaults;
-				ProjectileHooks.SetDefaults += OnProjectileSetDefaults;
-				WorldHooks.StartHardMode += OnStartHardMode;
-				WorldHooks.SaveWorld += SaveManager.Instance.OnSaveWorld;
-			    WorldHooks.ChristmasCheck += OnXmasCheck;
-                NetHooks.NameCollision += NetHooks_NameCollision;
+				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
+				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
+				ServerApi.Hooks.GameHardmodeTileUpdate.Register(this, OnHardUpdate);
+				ServerApi.Hooks.GameStatueSpawn.Register(this, OnStatueSpawn);
+				ServerApi.Hooks.ServerConnect.Register(this, OnConnect);
+				ServerApi.Hooks.ServerJoin.Register(this, OnJoin);
+				ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
+				ServerApi.Hooks.ServerChat.Register(this, OnChat);
+				ServerApi.Hooks.ServerCommand.Register(this, ServerHooks_OnCommand);
+				ServerApi.Hooks.NetGetData.Register(this, OnGetData);
+				ServerApi.Hooks.NetSendData.Register(this, NetHooks_SendData);
+				ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreetPlayer);
+				ServerApi.Hooks.NpcStrike.Register(this, NpcHooks_OnStrikeNpc);
+				ServerApi.Hooks.NpcSetDefaultsInt.Register(this, OnNpcSetDefaults);
+				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
+				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
+				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
+			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 			    TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 
 				GetDataHandlers.InitGetDataHandler();
@@ -260,7 +260,7 @@ namespace TShockAPI
 					RestApi.Start();
 
 				if (Config.BufferPackets)
-					PacketBuffer = new PacketBufferer();
+					PacketBuffer = new PacketBufferer(this);
 
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -306,25 +306,26 @@ namespace TShockAPI
 				}
 				SaveManager.Instance.Dispose();
 
-				GameHooks.PostInitialize -= OnPostInit;
-				GameHooks.Update -= OnUpdate;
-			    GameHooks.HardUpdate -= OnHardUpdate;
-			    GameHooks.StatueSpawn -= OnStatueSpawn;
-                ServerHooks.Connect -= OnConnect;
-				ServerHooks.Join -= OnJoin;
-				ServerHooks.Leave -= OnLeave;
-				ServerHooks.Chat -= OnChat;
-				ServerHooks.Command -= ServerHooks_OnCommand;
-				NetHooks.GetData -= OnGetData;
-				NetHooks.SendData -= NetHooks_SendData;
-				NetHooks.GreetPlayer -= OnGreetPlayer;
-				NpcHooks.StrikeNpc -= NpcHooks_OnStrikeNpc;
-                NpcHooks.SetDefaultsInt -= OnNpcSetDefaults;
-				ProjectileHooks.SetDefaults -= OnProjectileSetDefaults;
-                WorldHooks.StartHardMode -= OnStartHardMode;
-				WorldHooks.SaveWorld -= SaveManager.Instance.OnSaveWorld;
-                WorldHooks.ChristmasCheck -= OnXmasCheck;
-                NetHooks.NameCollision -= NetHooks_NameCollision;
+
+				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
+				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
+				ServerApi.Hooks.GameHardmodeTileUpdate.Deregister(this, OnHardUpdate);
+				ServerApi.Hooks.GameStatueSpawn.Deregister(this, OnStatueSpawn);
+				ServerApi.Hooks.ServerConnect.Deregister(this, OnConnect);
+				ServerApi.Hooks.ServerJoin.Deregister(this, OnJoin);
+				ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
+				ServerApi.Hooks.ServerChat.Deregister(this, OnChat);
+				ServerApi.Hooks.ServerCommand.Deregister(this, ServerHooks_OnCommand);
+				ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
+				ServerApi.Hooks.NetSendData.Deregister(this, NetHooks_SendData);
+				ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnGreetPlayer);
+				ServerApi.Hooks.NpcStrike.Deregister(this, NpcHooks_OnStrikeNpc);
+				ServerApi.Hooks.NpcSetDefaultsInt.Deregister(this, OnNpcSetDefaults);
+				ServerApi.Hooks.ProjectileSetDefaults.Deregister(this, OnProjectileSetDefaults);
+				ServerApi.Hooks.WorldStartHardMode.Deregister(this, OnStartHardMode);
+				ServerApi.Hooks.WorldSave.Deregister(this, SaveManager.Instance.OnSaveWorld);
+				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
+				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
                 TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -362,34 +363,34 @@ namespace TShockAPI
 	        Users.UpdateLogin(u);
 	    }
 
-        private void NetHooks_NameCollision(int who, string name, HandledEventArgs e)
+        private void NetHooks_NameCollision(NameCollisionEventArgs args)
         {
-            string ip = TShock.Utils.GetRealIP(Netplay.serverSock[who].tcpClient.Client.RemoteEndPoint.ToString());
+            string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
             foreach (TSPlayer ply in TShock.Players)
             {
                 if (ply == null)
                 {
                     continue;
                 }
-                if (ply.Name == name && ply.Index != who)
+                if (ply.Name == args.Name && ply.Index != args.Who)
                 {
                     if (ply.IP == ip)
                     {
                         if (ply.State < 2)
                         {
                             Utils.ForceKick(ply, "Name collision and this client has no world data.", true, false);
-                            e.Handled = true;
+                            args.Handled = true;
                             return;
                         }
                         else
                         {
-                            e.Handled = false;
+							args.Handled = false;
                             return;
                         }
                     }
                 }
             }
-            e.Handled = false;
+			args.Handled = false;
             return;
         }
 
@@ -533,7 +534,7 @@ namespace TShockAPI
 
 		public static int AuthToken = -1;
 
-		private void OnPostInit()
+		private void OnPostInit(EventArgs args)
 		{
 			SetConsoleTitle();
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
@@ -597,7 +598,7 @@ namespace TShockAPI
 		private DateTime LastCheck = DateTime.UtcNow;
 		private DateTime LastSave = DateTime.UtcNow;
 
-		private void OnUpdate()
+		private void OnUpdate(EventArgs args)
 		{
 			UpdateManager.UpdateProcedureCheck();
 			if (Backups.IsBackupTime)
@@ -737,7 +738,7 @@ namespace TShockAPI
 		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
-        private void OnHardUpdate( HardUpdateEventArgs args )
+        private void OnHardUpdate(HardmodeTileUpdateEventArgs args)
         {
             if (args.Handled)
                 return;
@@ -767,14 +768,14 @@ namespace TShockAPI
             }
         }
 
-		private void OnConnect(int ply, HandledEventArgs handler)
+		private void OnConnect(ConnectEventArgs args)
 		{
-			var player = new TSPlayer(ply);
+			var player = new TSPlayer(args.Who);
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
 				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
-				handler.Handled = true;
+				args.Handled = true;
 				return;
 			}
 
@@ -790,7 +791,7 @@ namespace TShockAPI
 			        DateTime exp;
 			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
 			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
-			        handler.Handled = true;
+					args.Handled = true;
 			        return;
 			    }
 			}
@@ -798,7 +799,7 @@ namespace TShockAPI
 			if (!FileTools.OnWhitelist(player.IP))
 			{
 				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
-				handler.Handled = true;
+				args.Handled = true;
 				return;
 			}
 
@@ -811,20 +812,20 @@ namespace TShockAPI
 					if (Config.KickProxyUsers)
 					{
 						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
-						handler.Handled = true;
+						args.Handled = true;
 						return;
 					}
 				}
 			}
-		    Players[ply] = player;
+			Players[args.Who] = player;
 		}
 
-		private void OnJoin(int ply, HandledEventArgs handler)
+		private void OnJoin(JoinEventArgs args)
 		{
-			var player = Players[ply];
+			var player = Players[args.Who];
 			if (player == null)
 			{
-				handler.Handled = true;
+				args.Handled = true;
 				return;
 			}
 
@@ -848,16 +849,16 @@ namespace TShockAPI
 			        DateTime exp;
 			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
 			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
-			        handler.Handled = true;
+					args.Handled = true;
 			    }
 			}            
 		}
 
-		private void OnLeave(int ply)
+		private void OnLeave(LeaveEventArgs args)
 		{
 
-			var tsplr = Players[ply];
-			Players[ply] = null;
+			var tsplr = Players[args.Who];
+			Players[args.Who] = null;
 
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
@@ -880,15 +881,15 @@ namespace TShockAPI
 			}
 		}
 
-		private void OnChat(messageBuffer msg, int ply, string text, HandledEventArgs e)
+		private void OnChat(ServerChatEventArgs args)
 		{
-			if (e.Handled)
+			if (args.Handled)
 				return;
 
-			var tsplr = Players[msg.whoAmI];
+			var tsplr = Players[args.Who];
 			if (tsplr == null)
 			{
-				e.Handled = true;
+				args.Handled = true;
 				return;
 			}
 
@@ -898,11 +899,11 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (text.StartsWith("/"))
+			if (args.Text.StartsWith("/"))
 			{
 				try
 				{
-					e.Handled = Commands.HandleCommand(tsplr, text);
+					args.Handled = Commands.HandleCommand(tsplr, args.Text);
 				}
 				catch (Exception ex)
 				{
@@ -913,18 +914,18 @@ namespace TShockAPI
 			else if (!tsplr.mute && !TShock.Config.EnableChatAboveHeads)
 			{
 				Utils.Broadcast(
-					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text),
+					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text),
 					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-				e.Handled = true;
+				args.Handled = true;
 			} else if (!tsplr.mute && TShock.Config.EnableChatAboveHeads)
 			{
-			    Utils.Broadcast(ply, String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-			    e.Handled = true;
+				Utils.Broadcast(args.Who, String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+				args.Handled = true;
 			}
 			else if (tsplr.mute)
 			{
 				tsplr.SendErrorMessage("You are muted!");
-				e.Handled = true;
+				args.Handled = true;
 			}
 		}
 
@@ -933,9 +934,9 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <param name="e"></param>
-		private void ServerHooks_OnCommand(string text, HandledEventArgs e)
+		private void ServerHooks_OnCommand(CommandEventArgs args)
 		{
-			if (e.Handled)
+			if (args.Handled)
 				return;
 
 			// Damn you ThreadStatic and Redigit
@@ -948,7 +949,7 @@ namespace TShockAPI
 				WorldGen.genRand = new Random();
 			}
 
-			if (text.StartsWith("playing") || text.StartsWith("/playing"))
+			if (args.Command.StartsWith("playing") || args.Command.StartsWith("/playing"))
 			{
 				int count = 0;
 				foreach (TSPlayer player in Players)
@@ -962,20 +963,20 @@ namespace TShockAPI
 				}
 				TSPlayer.Server.SendInfoMessage(string.Format("{0} players connected.", count));
 			}
-			else if (text == "autosave")
+			else if (args.Command == "autosave")
 			{
 				Main.autoSave = Config.AutoSave = !Config.AutoSave;
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 			}
-			else if (text.StartsWith("/"))
+			else if (args.Command.StartsWith("/"))
 			{
-				Commands.HandleCommand(TSPlayer.Server, text);
+				Commands.HandleCommand(TSPlayer.Server, args.Command);
 			}
 			else
 			{
-				Commands.HandleCommand(TSPlayer.Server, "/" + text);
+				Commands.HandleCommand(TSPlayer.Server, "/" + args.Command);
 			}
-			e.Handled = true;
+			args.Handled = true;
 		}
 
 		private void OnGetData(GetDataEventArgs e)
@@ -1000,7 +1001,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (player.RequiresPassword && type != PacketTypes.PasswordSend)
+			if (player.RequiresPassword/* && type != PacketTypes.PasswordSend*/)
 			{
 				e.Handled = true;
 				return;
@@ -1027,12 +1028,12 @@ namespace TShockAPI
 			}
 		}
 
-		private void OnGreetPlayer(int who, HandledEventArgs e)
+		private void OnGreetPlayer(GreetPlayerEventArgs args)
 		{
-			var player = Players[who];
+			var player = Players[args.Who];
 			if (player == null)
 			{
-				e.Handled = true;
+				args.Handled = true;
 				return;
 			}
 			player.LoginMS= DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -1075,7 +1076,7 @@ namespace TShockAPI
 				player.Teleport((int) pos.X, (int) pos.Y + 3);
 			}}
 
-			e.Handled = true;
+			args.Handled = true;
 		}
 
 		private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
@@ -1152,7 +1153,7 @@ namespace TShockAPI
 
 		private void NetHooks_SendData(SendDataEventArgs e)
 		{
-			if (e.MsgID == PacketTypes.Disconnect)
+			if (e.MsgId == PacketTypes.Disconnect)
 			{
 				Action<ServerSock, string> senddisconnect = (sock, str) =>
 																{
@@ -1182,7 +1183,7 @@ namespace TShockAPI
 				}
 				e.Handled = true;
 			}
-            if (e.MsgID == PacketTypes.WorldInfo)
+            if (e.MsgId == PacketTypes.WorldInfo)
             {
                 if (e.remoteClient == -1) return;
                 var player = Players[e.remoteClient];
