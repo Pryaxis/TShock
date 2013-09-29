@@ -467,10 +467,10 @@ namespace TShockAPI
 		}
 		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
 		{
-			int num = (int)(Position.X / 16f) - 1;
-			int num2 = (int)((Position.X + (float)Width) / 16f) + 2;
-			int num3 = (int)(Position.Y / 16f) - 1;
-			int num4 = (int)((Position.Y + (float)Height) / 16f) + 2;
+			int num = (int)(Position.X / 16f);
+			int num2 = (int)((Position.X + (float)Width) / 16f);
+			int num3 = (int)(Position.Y / 16f);
+			int num4 = (int)((Position.Y + (float)Height) / 16f);
 			if (num < 0)
 			{
 				num = 0;
@@ -499,7 +499,7 @@ namespace TShockAPI
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava() && ((Main.tile[i,j].tileHeader2 & 16) != 16) && ((Main.tile[i,j].tileHeader2 & 32) != 32) && ((Main.tile[i,j].tileHeader & 32) != 32) && !Main.tile[i,j].honey() &&  Main.tileSolid[(int)Main.tile[i+1, j].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j].type] &&  Main.tileSolid[(int)Main.tile[i, j +1 ].type] &&  Main.tileSolid[(int)Main.tile[i, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j +1].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j -1 ].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j + 1].type])
+					if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava() && ((Main.tile[i,j].tileHeader2 & 16) != 16) && ((Main.tile[i,j].tileHeader2 & 32) != 32) && ((Main.tile[i,j].tileHeader & 32) != 32) && !Main.tile[i,j].honey() &&  Main.tileSolid[(int)Main.tile[i+1, j].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j].type] &&  Main.tileSolid[(int)Main.tile[i, j +1 ].type] &&  Main.tileSolid[(int)Main.tile[i, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j +1].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j -1 ].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j + 1].type] && !Main.tileSand[(int)Main.tile[i, j].type] )
 					{
 						Vector2 vector;
 						vector.X = (float)(i * 16);
