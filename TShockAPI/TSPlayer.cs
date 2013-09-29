@@ -505,38 +505,10 @@ namespace TShockAPI
 			}
 		}
 
-		public bool Teleport(int tilex, int tiley)
+		public bool Teleport(float x, float y)
 		{
-			InitSpawn = false;
-
-			SendWorldInfo(tilex, tiley, true);
-
-			//150 Should avoid all client crash errors
-			//The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
-			//Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-			//Should we properly send sections so that clients don't get tiles twice?
-			SendTileSquare(tilex, tiley, 150);
-
-/*	//We shouldn't need this section anymore -it can prevent otherwise acceptable teleportation under some circumstances. 
-		
-			if (!SendTileSquare(tilex, tiley, 150))
-			{
-				InitSpawn = true;
-				SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
-				return false;
-			}
-
-*/
-			Spawn(-1, -1);
-
-			SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
-
-			TPlayer.position.X = (float)(tilex * 16 + 8 - TPlayer.width /2);
-			TPlayer.position.Y = (float)(tiley * 16 - TPlayer.height);
-			//We need to send the tile data again to prevent clients from thinking they *really* destroyed blocks just now.
-
-			SendTileSquare(tilex, tiley, 10);
-
+			TPlayer.Teleport(new Vector2(x, y), 1);
+			NetMessage.SendData(65, -1, -1, "", 0, (float)TPlayer.whoAmi, x, y, 1);
 			return true;
 		}
 

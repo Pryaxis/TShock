@@ -2037,8 +2037,8 @@ namespace TShockAPI
 							args.Player.SendMessage("PvP is forced! Enable PvP or else you can't do anything!",
 													Color.Red);
 						}
-						int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
-						int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
+						var lastTileX = args.Player.LastNetPosition.X;
+						var lastTileY = args.Player.LastNetPosition.Y;
 						if (!args.Player.Teleport(lastTileX, lastTileY))
 						{
 							args.Player.Spawn();
@@ -2057,9 +2057,9 @@ namespace TShockAPI
 					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip
 					&& !args.TPlayer.tongued)
 				{
-					int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
-					int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
-					if (!args.Player.Teleport(lastTileX, lastTileY + 3))
+					var lastTileX = args.Player.LastNetPosition.X;
+					var lastTileY = args.Player.LastNetPosition.Y;
+					if (!args.Player.Teleport(lastTileX, lastTileY + 48))
 					{
 						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
 						args.Player.Spawn();
