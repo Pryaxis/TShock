@@ -1368,11 +1368,11 @@ namespace TShockAPI
 			return false;
 		}
 
-        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType, byte actionType )
+        public static bool CheckTilePermission( TSPlayer player, int tileX, int tileY, byte tileType, GetDataHandlers.EditAction actionType )
         {
             if (!player.Group.HasPermission(Permissions.canbuild))
             {
-				if (TShock.Config.AllowIce && actionType != 1)
+				if (TShock.Config.AllowIce && actionType != GetDataHandlers.EditAction.PlaceTile)
 				{
 
 					foreach (Point p in player.IceTiles)
@@ -1392,7 +1392,7 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (TShock.Config.AllowIce && actionType == 1 && tileType == 127)
+				if (TShock.Config.AllowIce && actionType == GetDataHandlers.EditAction.PlaceTile && tileType == 127)
 				{
 					player.IceTiles.Add(new Point(tileX, tileY));
 					return false;
@@ -1423,12 +1423,12 @@ namespace TShockAPI
             {
                 if (!player.Group.HasPermission(Permissions.editspawn))
                 {
- 		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000){
-                        player.SendMessage("The world is protected from changes.", Color.Red);
-			player.WPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-}
-                    return true;
+	                if (((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
+	                {
+		                player.SendMessage("The world is protected from changes.", Color.Red);
+		                player.WPm = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+	                }
+	                return true;
                 }
             }
             if (Config.SpawnProtection)

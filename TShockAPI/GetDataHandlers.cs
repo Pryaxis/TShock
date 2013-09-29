@@ -78,17 +78,17 @@ namespace TShockAPI
 			/// <summary>
 			/// The Tile ID being edited.
 			/// </summary>
-			public byte Type { get; set; }
+			public byte EditData { get; set; }
 			/// <summary>
 			/// The EditType.
 			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
 			/// </summary>
-			public byte EditType { get; set; }
+			public EditAction Action { get; set; }
 
             /// <summary>
             /// Did the tile get destroyed successfully.
             /// </summary>
-            public bool Fail { get; set; }
+            public EditType editDetail { get; set; }
 
 			/// <summary>
 			/// Used when a tile is placed to denote a subtype of tile. (e.g. for tile id 21: Chest = 0, Gold Chest = 1)
@@ -100,7 +100,7 @@ namespace TShockAPI
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType, bool fail, byte style)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, byte editData, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -110,9 +110,9 @@ namespace TShockAPI
                 Player = ply,
 				X = x,
 				Y = y,
-				Type = type,
-				EditType = editType,
-                Fail = fail,
+				Action = action,
+				EditData = editData,
+                editDetail = editDetail,
 				Style = style
 			};
 			TileEdit.Invoke(null, args);
@@ -1679,16 +1679,39 @@ namespace TShockAPI
 			return true;
 		}
 
+		public enum EditAction
+		{
+			KillTile = 0,
+			PlaceTile,
+			KillWall,
+			PlaceWall,
+			KillTileNoItem,
+			PlaceWire,
+			KillWire,
+			PoundTile
+		}
+		public enum EditType
+		{
+			Fail = 0,
+			Type,
+			Slope,
+		}
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
-			var type = args.Data.ReadInt8();
+			EditAction action = (EditAction)args.Data.ReadInt8();
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
-			var tiletype = args.Data.ReadInt8();
-			var fail = tiletype == 1;
+			var editData = args.Data.ReadInt8();
+			EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
+			                 action == EditAction.KillTileNoItem)
+							? EditType.Fail
+							: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+								? EditType.Type
+								: EditType.Slope;
+
 			var style = args.Data.ReadInt8();
 
-			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail, style))
+			if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 				return true;
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				return false;
@@ -1791,7 +1814,7 @@ namespace TShockAPI
 					return true;
 				}
 			}
-			else if (type == 2)
+			else if (action == EditAction.KillWall)
 			{
 				// If they aren't selecting an hammer, they're hacking.
 				if (selectedItem.hammer == 0)
@@ -1800,35 +1823,35 @@ namespace TShockAPI
 					return true;
 				}
 			}
-			else if (type == 1 || type == 3)
+			else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 			{
-				if (type == 1 && TShock.Config.PreventInvalidPlaceStyle && ((tiletype == 4 && style > 8) ||
-					(tiletype == 13 && style > 4) || (tiletype == 15 && style > 1) || (tiletype == 21 && style > 6) ||
-					(tiletype == 82 && style > 5) || (tiletype == 91 && style > 3) || (tiletype == 105 && style > 42) ||
-					(tiletype == 135 && style > 3) || (tiletype == 139 && style > 12) || (tiletype == 144 && style > 2) ||
-					(tiletype == 149 && style > 2)))
+				if (action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle && ((editData == 4 && style > 8) ||
+					(editData == 13 && style > 4) || (editData == 15 && style > 1) || (editData == 21 && style > 6) ||
+					(editData == 82 && style > 5) || (editData == 91 && style > 3) || (editData == 105 && style > 42) ||
+					(editData == 135 && style > 3) || (editData == 139 && style > 12) || (editData == 144 && style > 2) ||
+					(editData == 149 && style > 2)))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If they aren't selecting the item which creates the tile or wall, they're hacking.
-				if (tiletype != 127 && tiletype != (type == 1 ? selectedItem.createTile : selectedItem.createWall))
+				if (editData != 127 && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || tiletype >= (type == 1 ? Main.maxTileSets : Main.maxWallTypes))
+				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
+				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
 					args.Player.SendMessage("You cannot place this tile because server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (type == 1 && tiletype == 21)
+				if (action == EditAction.PlaceTile && editData == 21)
 				{
 					if (TShock.Utils.MaxChests())
 					{
@@ -1844,7 +1867,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			else if (type == 5)
+			else if (action == EditAction.PlaceWire)
 			{
 				// If they aren't selecting the wrench, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 509)
@@ -1853,7 +1876,7 @@ namespace TShockAPI
 					return true;
 				}
 			}
-			else if (type == 6)
+			else if (action == EditAction.KillWire)
 			{
 				// If they aren't selecting the wire cutter, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
@@ -1869,13 +1892,13 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY, tiletype, type))
+			if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
 			{
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
 
-			if ((tiletype == 127 || Main.tileCut[tiletype]) && (type == 0 || type == 4))
+			if ((editData == 127 || Main.tileCut[editData]) && (action ==EditAction.KillTile || action == EditAction.KillTileNoItem))
 			{
 				return false;
 			}
@@ -1906,7 +1929,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ( ( type == 1 || type == 3 ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+			if ( ( action == EditAction.PlaceTile || action == EditAction.PlaceWall ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(tileX, tileY);
@@ -1914,7 +1937,7 @@ namespace TShockAPI
 					args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 			}
 
-			if ((type == 0 || type == 4 || type == 2) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+			if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
 				!args.Player.Group.HasPermission(Permissions.ignorekilltiledetection))
 			{
 				args.Player.TileKillThreshold++;
