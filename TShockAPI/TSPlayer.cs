@@ -888,7 +888,7 @@ namespace TShockAPI
 		{
 			Main.dayTime = dayTime;
 			Main.time = time;
-			//NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
 			NetMessage.syncPlayers();
 		}
 
@@ -914,7 +914,7 @@ namespace TShockAPI
 				Main.rand = new Random();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-			//NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
+			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}
 
 		public void RevertTiles(Dictionary<Vector2, Tile> tiles)
