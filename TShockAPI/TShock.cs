@@ -1000,7 +1000,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (player.RequiresPassword/* && type != PacketTypes.PasswordSend*/)
+			if (player.RequiresPassword && type != PacketTypes.PasswordSend)
 			{
 				e.Handled = true;
 				return;
