@@ -609,7 +609,7 @@ namespace TShockAPI
 				OnSecondUpdate();
 				LastCheck = DateTime.UtcNow;
 			}
-
+			
 			if ((DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideInventorySave)
 			{
 				foreach (TSPlayer player in Players)

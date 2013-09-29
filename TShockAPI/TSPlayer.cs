@@ -594,7 +594,7 @@ namespace TShockAPI
 
 	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
 
 			// This is for special pickaxe/hammers/swords etc
 			Main.item[itemid].SetDefaults(name);
@@ -604,8 +604,8 @@ namespace TShockAPI
 			Main.item[itemid].stack = stack;
 			Main.item[itemid].owner = Index;
 			Main.item[itemid].prefix = (byte) prefix;
-			//NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
-			//NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
         public virtual void SendInfoMessage(string msg)

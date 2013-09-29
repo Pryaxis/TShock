@@ -1143,33 +1143,33 @@ namespace TShockAPI
 											{PacketTypes.PlayerInfo, HandlePlayerInfo},
 											{PacketTypes.PlayerUpdate, HandlePlayerUpdate},
 											{PacketTypes.Tile, HandleTile},
-											/*{PacketTypes.TileSendSquare, HandleSendTileSquare},
+											{PacketTypes.TileSendSquare, HandleSendTileSquare},
 											{PacketTypes.ProjectileNew, HandleProjectileNew},
 											{PacketTypes.TogglePvp, HandleTogglePvp},
                                             {PacketTypes.PlayerTeam, HandlePlayerTeam},
 											{PacketTypes.TileKill, HandleTileKill},
 											{PacketTypes.PlayerKillMe, HandlePlayerKillMe},
-											{PacketTypes.LiquidSet, HandleLiquidSet},*/
+											{PacketTypes.LiquidSet, HandleLiquidSet},
 											{PacketTypes.PlayerSpawn, HandleSpawn},
-											/*{PacketTypes.ChestGetContents, HandleChestOpen},
+											{PacketTypes.ChestGetContents, HandleChestOpen},
 											{PacketTypes.ChestItem, HandleChestItem},
-											{PacketTypes.SignNew, HandleSign},*/
+											{PacketTypes.SignNew, HandleSign},
 											{PacketTypes.PlayerSlot, HandlePlayerSlot},
 											{PacketTypes.TileGetSection, HandleGetSection},
-											/*{PacketTypes.UpdateNPCHome, UpdateNPCHome},
+											{PacketTypes.UpdateNPCHome, UpdateNPCHome},
 											{PacketTypes.PlayerAddBuff, HandlePlayerBuff},
-											{PacketTypes.ItemDrop, HandleItemDrop},*/
+											{PacketTypes.ItemDrop, HandleItemDrop},
 											{PacketTypes.PlayerHp, HandlePlayerHp},
-											/*{PacketTypes.PlayerMana, HandlePlayerMana},
+											{PacketTypes.PlayerMana, HandlePlayerMana},
 											{PacketTypes.PlayerDamage, HandlePlayerDamage},
 											{PacketTypes.NpcStrike, HandleNpcStrike},
 											{PacketTypes.NpcSpecial, HandleSpecial},
 											{PacketTypes.PlayerAnimation, HandlePlayerAnimation},
 											{PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
-											{PacketTypes.PasswordSend, HandlePassword},*/
+											{PacketTypes.PasswordSend, HandlePassword},
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
-											/*{PacketTypes.ProjectileDestroy, HandleProjectileKill},
-                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss}*/
+											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
+                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss}
 										};
 		}
 
@@ -1330,16 +1330,17 @@ namespace TShockAPI
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
 			var user = TShock.Users.GetUserByName(args.Player.Name);
+
 			if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				args.Player.RequiresPassword = true;
-				//NetMessage.SendData((int) PacketTypes.PasswordRequired, args.Player.Index);
+				NetMessage.SendData((int) PacketTypes.PasswordRequired, args.Player.Index);
 				return true;
 			}
 			else if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
 			{
 				args.Player.RequiresPassword = true;
-				//NetMessage.SendData((int) PacketTypes.PasswordRequired, args.Player.Index);
+				NetMessage.SendData((int) PacketTypes.PasswordRequired, args.Player.Index);
 				return true;
 			}
 
@@ -1462,7 +1463,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			//NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
 
 			if (TShock.Config.EnableGeoIP && TShock.Geo != null)
 			{
@@ -1543,10 +1544,10 @@ namespace TShockAPI
 						continue;
 					}
                     // Server now has a range check built in
-					/*if (TShock.CheckRangePermission(args.Player, realx, realy))
+					if (TShock.CheckRangePermission(args.Player, realx, realy))
 					{
 						continue;
-					}*/
+					}
 					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105) || (tile.type == 139 && newtile.Type == 139))
 					{
 						if (TShock.Config.EnableInsecureTileFixes)
@@ -1920,7 +1921,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		/*private static bool HandleTogglePvp(GetDataHandlerArgs args)
+		private static bool HandleTogglePvp(GetDataHandlerArgs args)
 		{
 			byte id = args.Data.ReadInt8();
 			bool pvp = args.Data.ReadBoolean();
@@ -1959,7 +1960,7 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
 
 			return true;
-		}*/
+		}
 
         private static bool HandlePlayerTeam(GetDataHandlerArgs args)
         {
@@ -1975,7 +1976,7 @@ namespace TShockAPI
 
             args.TPlayer.team = team;
 
-            //NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, "", args.Player.Index);
+            NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, "", args.Player.Index);
 
             return true;
         }
@@ -2502,7 +2503,7 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				//args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
+				args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
 				return true;
 			}
 
@@ -2537,19 +2538,19 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-				//args.Player.SendData(PacketTypes.SignNew, "", id);
+				args.Player.SendData(PacketTypes.SignNew, "", id);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
-				//args.Player.SendData(PacketTypes.SignNew, "", id);
+				args.Player.SendData(PacketTypes.SignNew, "", id);
 				return true;
 			}
 			return false;
 		}
 
-		/*private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		private static bool UpdateNPCHome(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt16();
@@ -2581,11 +2582,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
-			}*//*
+			}*/
 			return false;
-		}*/
+		}
 
-		/*private static bool HandlePlayerBuff(GetDataHandlerArgs args)
+		private static bool HandlePlayerBuff(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
@@ -2622,9 +2623,9 @@ namespace TShockAPI
 
 			args.Player.SendData(PacketTypes.PlayerBuff, "", id);
 			return true;
-		}*/
+		}
 
-		/*private static bool HandleItemDrop(GetDataHandlerArgs args)
+		private static bool HandleItemDrop(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
@@ -2674,7 +2675,7 @@ namespace TShockAPI
 			}
 
 			return false;
-		}*/
+		}
 
 		private static bool HandlePlayerDamage(GetDataHandlerArgs args)
 		{
@@ -2757,20 +2758,20 @@ namespace TShockAPI
             if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
                 args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage ) );
-				//args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				//args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
 
 			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.movenpc))
 			{
                 args.Player.SendMessage( "You don't have permission to move this NPC.", Color.Yellow);
-				//args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
 
@@ -2778,13 +2779,13 @@ namespace TShockAPI
 				TShock.CheckRangePermission(args.Player, (int) (Main.npc[id].position.X/16f), (int) (Main.npc[id].position.Y/16f),
 											128))
 			{
-				//args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				//args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
 
@@ -2817,13 +2818,13 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				//args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				//args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
 				return true;
 			}
 
@@ -2860,7 +2861,7 @@ namespace TShockAPI
 					args.TPlayer.buffTime[i] = 0;
 				}
 			}
-			//NetMessage.SendData((int) PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
+			NetMessage.SendData((int) PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
 			return true;
 		}
 
