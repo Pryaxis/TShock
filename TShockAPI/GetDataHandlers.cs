@@ -499,7 +499,7 @@ namespace TShockAPI
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava())
+					if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava() && ((Main.tile[i,j].tileHeader2 & 16) != 16) && ((Main.tile[i,j].tileHeader2 & 32) != 32) && ((Main.tile[i,j].tileHeader & 32) != 32) && !Main.tile[i,j].honey() &&  Main.tileSolid[(int)Main.tile[i+1, j].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j].type] &&  Main.tileSolid[(int)Main.tile[i, j +1 ].type] &&  Main.tileSolid[(int)Main.tile[i, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j - 1].type] &&  Main.tileSolid[(int)Main.tile[i - 1, j +1].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j -1 ].type] &&  Main.tileSolid[(int)Main.tile[i + 1, j +2].type])
 					{
 						Vector2 vector;
 						vector.X = (float)(i * 16);
