@@ -443,13 +443,15 @@ namespace TShockAPI
 			/// Velocity of the player
 			/// </summary>
 			public Vector2 Velocity { get; set; }
+
+			public byte Pulley { get; set; }
 		}
 		/// <summary>
 		/// PlayerUpdate - When the player sends it's updated information to the server
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
 
-		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity)
+		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
 		{
 			if (PlayerUpdate == null)
 				return false;
@@ -461,6 +463,7 @@ namespace TShockAPI
 				Item = item,
 				Position = position,
 				Velocity = velocity,
+				Pulley = pulley
 			};
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
@@ -1251,7 +1254,7 @@ namespace TShockAPI
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
 
-			if (max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP)
+			if ((max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
@@ -1988,9 +1991,15 @@ namespace TShockAPI
 			var item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			if (OnPlayerUpdate(plr, control, item, pos, vel))
+			byte pulley = args.Data.ReadInt8();
+			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
 				return true;
 			if (item < 0 || item >= args.TPlayer.inventory.Length)
+			{
+				return true;
+			}
+
+			if (pulley > 2)
 			{
 				return true;
 			}
@@ -2093,6 +2102,8 @@ namespace TShockAPI
 			args.TPlayer.controlRight = false;
 			args.TPlayer.controlJump = false;
 			args.TPlayer.controlUseItem = false;
+			args.TPlayer.pulley = pulley != 0;
+			args.TPlayer.pulleyDir = pulley;
 			args.TPlayer.direction = -1;
 			if ((control & 1) == 1)
 			{
