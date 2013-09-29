@@ -639,12 +639,11 @@ namespace TShockAPI
 						break;
 				}
 			}
-			int count = 0;
+			
 			foreach (TSPlayer player in Players)
 			{
 				if (player != null && player.Active)
 				{
-					count++;
 					if (player.TilesDestroyed != null)
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
@@ -1073,7 +1072,7 @@ namespace TShockAPI
 			if (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero){
 				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
 
-				player.Teleport((int) pos.X, (int) pos.Y + 3);
+				player.Teleport(pos.X*16, pos.Y*16 + 48);
 			}}
 
 			args.Handled = true;
