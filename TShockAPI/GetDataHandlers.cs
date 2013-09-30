@@ -2408,8 +2408,12 @@ namespace TShockAPI
 			}
 			if (amount != 0)
 			{
-				int bucket = 0;
-				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
+				int bucket = -1;
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 205)
+				{
+					bucket = 0;
+				} 
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
 				{
 					bucket = 1;
 				}
@@ -2417,12 +2421,12 @@ namespace TShockAPI
 				{
 					bucket = 2;
 				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 1128)
 				{
 					bucket = 3;
 				}
 
-                if(type == 1 && bucket != 2)
+				if (type == 1 && !(bucket == 2 || bucket == 0))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading lava without holding a lava bucket");
@@ -2439,7 +2443,7 @@ namespace TShockAPI
                     return true;
                 }
 
-                if (type == 0 && bucket != 1)
+                if (type == 0 && !(bucket == 1 || bucket == 0))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading water without holding a water bucket");
@@ -2456,10 +2460,10 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (type == 2 && bucket != 3)
+				if (type == 2 &&!(bucket == 3 || bucket == 0))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading water without holding a water bucket");
+					args.Player.Disable("Spreading honey without holding a honey bucket");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}

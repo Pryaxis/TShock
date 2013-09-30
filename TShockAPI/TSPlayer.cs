@@ -395,7 +395,7 @@ namespace TShockAPI
 				bool flag = false;
 				if (RealPlayer)
 				{
-					for (int i = 0; i < 50; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
+					for (int i = 0; i < 50; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
 					{
 						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
 						{
