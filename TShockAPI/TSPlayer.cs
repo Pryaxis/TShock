@@ -574,7 +574,7 @@ namespace TShockAPI
 		   m_y=Main.maxTilesY - size;
 		   }
 
-                //SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
+                SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
                 return true;
             }
             catch (IndexOutOfRangeException)
@@ -678,14 +678,14 @@ namespace TShockAPI
 
 		public virtual void DamagePlayer(int damage)
 		{
-			//NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
-			//					(float) 0);
+			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
+								(float) 0);
 		}
 
 		public virtual void SetTeam(int team)
 		{
 			Main.player[Index].team = team;
-			//SendData(PacketTypes.PlayerTeam, "", Index);
+			SendData(PacketTypes.PlayerTeam, "", Index);
 		}
 
 		public virtual void Disable(string reason = "")
@@ -712,7 +712,7 @@ namespace TShockAPI
 			SendMessage("You are now being annoyed.", Color.Red);
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
-				//SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
+				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
 				Thread.Sleep(50);
 			}
 		}
@@ -722,7 +722,7 @@ namespace TShockAPI
 			if ((DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000 && !bypass)
 				return;
 
-			//SendData(PacketTypes.PlayerAddBuff, number: Index, number2: type, number3: time);
+			SendData(PacketTypes.PlayerAddBuff, number: Index, number2: type, number3: time);
 		}
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
