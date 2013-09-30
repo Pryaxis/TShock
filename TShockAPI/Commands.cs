@@ -1641,16 +1641,49 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player> ");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
+				args.Player.SendErrorMessage("                               /tp <x> <y>");
 				return;
 			}
 
-			if (args.Parameters.Count < 2)
+			if(args.Parameters.Count == 2)
+			{
+				float x, y;
+				if (float.TryParse(args.Parameters[0], out x) && float.TryParse(args.Parameters[1], out y))
+				{
+
+
+					if (x < 500)
+					{
+						x = 500;
+					}
+					if (y < 500)
+					{
+						y = 500;
+					}
+					if (x > Main.rightWorld - 500)
+					{
+						x = Main.rightWorld - 500;
+					}
+					if (y > Main.bottomWorld - 500)
+					{
+						y = Main.bottomWorld - 500;
+					}
+					args.Player.Teleport(x, y);
+					args.Player.SendSuccessMessage("Teleported!");
+				}
+			}
+			else
 			{
 				string plStr = String.Join(" ", args.Parameters);
 				var players = TShock.Utils.FindPlayer(plStr);
 				if (players.Count == 0)
-					args.Player.SendErrorMessage("Invalid player!");
+				{
+					args.Player.SendErrorMessage("Invalid user name.");
+					args.Player.SendErrorMessage("Proper syntax: /tp <player>");
+					args.Player.SendErrorMessage("               /tp <x> <y>");
+				}
+
 				else if (players.Count > 1)
 					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 				else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
@@ -1662,7 +1695,7 @@ namespace TShockAPI
 				else
 				{
 					var plr = players[0];
-					if (args.Player.Teleport(plr.TileX*16, plr.TileY*16 + 48))
+					if (args.Player.Teleport(plr.TileX * 16, plr.TileY * 16 + 48))
 					{
 						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
 						if (!args.Player.Group.HasPermission(Permissions.tphide))
@@ -1670,13 +1703,8 @@ namespace TShockAPI
 					}
 				}
 			}
-			else
-			{
-				float x = float.Parse(args.Parameters[0]);
-				float y = float.Parse(args.Parameters[1]);
-				args.Player.Teleport(x, y);
-				args.Player.SendSuccessMessage("Teleported!");
-			}
+
+
 	}
 
 		private static void TPHere(CommandArgs args)

@@ -1130,6 +1130,53 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use with a NPCStrike event
+		/// </summary>
+		public class TeleportEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// ???
+			/// </summary>
+			public Int16 ID { get; set; }
+			/// <summary>
+			/// Flag is a bit field
+			///   if the first bit is set -> 0 = player, 1 = NPC
+			///	  if the second bit is set, ignore this packet
+			///   if the third bit is set, style +1
+			///   if the fourth bit is set, style +1
+			/// </summary>
+			public byte Flag { get; set; }
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public float X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public float Y { get; set; }
+		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
+		public static HandlerList<TeleportEventArgs> Teleport;
+
+		private static bool OnTeleport(Int16 id, byte f, float x, float y)
+		{
+			if (Teleport == null)
+				return false;
+
+			var args = new TeleportEventArgs
+			{
+				ID = id,
+				Flag = f,
+				X = x,
+				Y = y
+			};
+			Teleport.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1174,7 +1221,8 @@ namespace TShockAPI
 											{PacketTypes.PasswordSend, HandlePassword},
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
 											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
-                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss}
+                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss},
+											{PacketTypes.Teleport, HandleTeleport}
 										};
 		}
 
@@ -2979,6 +3027,77 @@ namespace TShockAPI
 
 		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 		    return false;
+		}
+
+		private static bool HandleTeleport(GetDataHandlerArgs args)
+		{
+			var flag = args.Data.ReadInt8();
+			var id = args.Data.ReadInt16();
+			var x = args.Data.ReadSingle();
+			var y = args.Data.ReadSingle();
+
+			if (OnTeleport(id, flag, x, y))
+				return true;
+
+			var style = 0;
+			var isNPC = false;
+			if ((flag & 1) == 1)
+			{
+				isNPC = true;
+			}
+
+			if ((flag & 2) != 2)
+			{
+				if ((flag & 4) == 4)
+				{
+					style++;
+				}
+
+				if ((flag & 8) == 8)
+				{
+					style++;
+				}
+
+				if (id > (isNPC ? 200 : 255))
+				{
+					return true;
+				}
+
+				if (x > Main.rightWorld - 500)
+				{
+					x = Main.rightWorld - 500;
+				}
+				if (x < 500)
+				{
+					x = 500;
+				}
+				if (y > Main.bottomWorld - 500)
+				{
+					y = Main.bottomWorld - 500;
+				}
+				if (y < 500)
+				{
+					y = 500;
+				}
+
+				if (Main.player[id] == null || TShock.Players[id] == null)
+				{
+					return true;
+				}
+
+				if (!args.Player.Group.HasPermission(Permissions.tp))
+				{
+					args.Player.SendErrorMessage("You do not have permission to teleport.");
+					Main.player[id].Teleport(new Vector2(Main.player[id].position.X, Main.player[id].position.Y), style);
+					NetMessage.SendData(65, -1, -1, "", 0, (float)id, Main.player[id].position.X, Main.player[id].position.Y, style);
+					return true;
+				}
+
+				Main.player[id].Teleport(new Vector2(x, y), style);
+				NetMessage.SendData(65, -1, -1, "", 0, (float)id, x, y, style);
+			}
+
+			return true;
 		}
 	}
 }
