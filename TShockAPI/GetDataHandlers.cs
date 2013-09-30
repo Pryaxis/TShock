@@ -1796,32 +1796,34 @@ namespace TShockAPI
 			if (type == 0 && Main.tile[tileX, tileY].type != 127 && !Main.tileCut[Main.tile[tileX, tileY].type] && !rightClickKill.Contains(Main.tile[tileX, tileY].type))
 			{
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-				if (Main.tileAxe[Main.tile[tileX, tileY].type] && selectedItem.axe == 0)
+				if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
-				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && selectedItem.hammer == 0)
+				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If the tile is a pickaxe tile and they aren't selecting an pickaxe, they're hacking.
-				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && selectedItem.pick == 0)
+				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && (selectedItem.pick == 0 && selectedItem.explosive == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
+
 					return true;
 				}
 			}
 			else if (action == EditAction.KillWall)
 			{
 				// If they aren't selecting an hammer, they're hacking.
-				if (selectedItem.hammer == 0)
+				if (selectedItem.hammer == 0 && selectedItem.explosive == 0)
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
+
 			}
 			else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 			{
