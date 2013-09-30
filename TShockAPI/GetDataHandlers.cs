@@ -924,6 +924,10 @@ namespace TShockAPI
 			/// </summary>
 			public byte Prefix { get; set; }
 			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
 			/// Item type
 			/// </summary>
 			public short Type { get; set; }
@@ -933,7 +937,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
-		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, short type)
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, bool noDelay, short type)
 		{
 			if (ItemDrop == null)
 				return false;
@@ -945,6 +949,7 @@ namespace TShockAPI
 				Velocity = vel,
 				Stacks = stacks,
 				Prefix = prefix,
+				NoDelay = noDelay,
 				Type = type,
 			};
 			ItemDrop.Invoke(null, args);
@@ -2746,13 +2751,14 @@ namespace TShockAPI
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var stacks = args.Data.ReadInt8();
 			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadBoolean();
 			var type = args.Data.ReadInt16();
 
-			if (OnItemDrop(id, pos, vel, stacks, prefix, type))
+			if (OnItemDrop(id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
 
             // player is attempting to crash clients
-			if (type < -24 || type >= Main.maxItemTypes)
+			if (type < -48 || type >= Main.maxItemTypes)
 			{
 				return true;
 			}
@@ -3065,7 +3071,7 @@ namespace TShockAPI
 			if (OnTeleport(id, flag, x, y))
 				return true;
 
-			var style = 0;
+			byte style = 0;
 			var isNPC = false;
 			if ((flag & 1) == 1)
 			{
@@ -3089,29 +3095,12 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (x > Main.rightWorld - 500)
-				{
-					x = Main.rightWorld - 500;
-				}
-				if (x < 500)
-				{
-					x = 500;
-				}
-				if (y > Main.bottomWorld - 500)
-				{
-					y = Main.bottomWorld - 500;
-				}
-				if (y < 500)
-				{
-					y = 500;
-				}
-
 				if (Main.player[id] == null || TShock.Players[id] == null)
 				{
 					return true;
 				}
 
-				if (!args.Player.Group.HasPermission(Permissions.tp))
+				if (!isNPC && !args.Player.Group.HasPermission(Permissions.tp))
 				{
 					args.Player.SendErrorMessage("You do not have permission to teleport.");
 					Main.player[id].Teleport(new Vector2(Main.player[id].position.X, Main.player[id].position.Y), style);
@@ -3119,8 +3108,10 @@ namespace TShockAPI
 					return true;
 				}
 
-				Main.player[id].Teleport(new Vector2(x, y), style);
-				NetMessage.SendData(65, -1, -1, "", 0, (float)id, x, y, style);
+				if (!isNPC)
+				{
+					TShock.Players[id].Teleport(x, y, style);
+				}
 			}
 
 			return true;

@@ -371,7 +371,7 @@ namespace TShockAPI
 			var found = new List<Item>();
 			Item item = new Item();
 			string nameLower = name.ToLower();
-			for (int i = -24; i < Main.maxItemTypes; i++)
+			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
 				if (item.name.ToLower() == nameLower)

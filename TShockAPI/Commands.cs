@@ -1651,24 +1651,6 @@ namespace TShockAPI
 				float x, y;
 				if (float.TryParse(args.Parameters[0], out x) && float.TryParse(args.Parameters[1], out y))
 				{
-
-
-					if (x < 500)
-					{
-						x = 500;
-					}
-					if (y < 500)
-					{
-						y = 500;
-					}
-					if (x > Main.rightWorld - 500)
-					{
-						x = Main.rightWorld - 500;
-					}
-					if (y > Main.bottomWorld - 500)
-					{
-						y = Main.bottomWorld - 500;
-					}
 					args.Player.Teleport(x, y);
 					args.Player.SendSuccessMessage("Teleported!");
 				}

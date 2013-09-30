@@ -510,10 +510,27 @@ namespace TShockAPI
 			}
 		}
 
-		public bool Teleport(float x, float y)
+		public bool Teleport(float x, float y, byte style = 1)
 		{
-			TPlayer.Teleport(new Vector2(x, y), 1);
-			NetMessage.SendData(65, -1, -1, "", 0, (float)TPlayer.whoAmi, x, y, 1);
+			if (x > Main.rightWorld - 500)
+			{
+				x = Main.rightWorld - 500;
+			}
+			if (x < 500)
+			{
+				x = 500;
+			}
+			if (y > Main.bottomWorld - 500)
+			{
+				y = Main.bottomWorld - 500;
+			}
+			if (y < 500)
+			{
+				y = 500;
+			}
+
+			TPlayer.Teleport(new Vector2(x, y), style);
+			NetMessage.SendData(65, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
 			return true;
 		}
 
