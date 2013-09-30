@@ -1079,6 +1079,9 @@ namespace TShockAPI
 				player.Teleport(pos.X*16, pos.Y*16 + 48);
 			}}
 
+			Item i = new Item();
+			i.SetDefaults("Confetti Gun");
+			player.GiveItem(i.type, i.name, i.width, i.headSlot, 10);
 			args.Handled = true;
 		}
 
