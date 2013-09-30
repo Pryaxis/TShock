@@ -57,6 +57,11 @@ namespace TShockAPI
         /// The number of projectiles created by the player in the last second.
         /// </summary>
 		public int ProjectileThreshold { get; set; }
+		
+		/// <summary>
+		/// A timer to keep track of whether or not the player has recently thrown an explosive
+		//  </summary>
+		public int RecentFuse = 0;
 
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.

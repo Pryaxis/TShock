@@ -672,6 +672,10 @@ namespace TShockAPI
 					{
 						player.TilePlaceThreshold = 0;
 					}
+					
+					if (player.RecentFuse >0)
+						player.RecentFuse--;
+					
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
 						player.Disable("Reached TileLiquid threshold.");
