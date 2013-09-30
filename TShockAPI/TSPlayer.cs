@@ -395,7 +395,7 @@ namespace TShockAPI
 				bool flag = false;
 				if (RealPlayer)
 				{
-					for (int i = 0; i < 40; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
+					for (int i = 0; i < 50; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
 					{
 						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
 						{
@@ -989,9 +989,10 @@ namespace TShockAPI
 			this.maxHealth = player.TPlayer.statLifeMax;
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
+			Item[] dye = player.TPlayer.dye;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
-				if (i < 49)
+				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
 				{
 					if (player.TPlayer.inventory[i] != null)
 					{
@@ -1013,11 +1014,12 @@ namespace TShockAPI
 						this.inventory[i].prefix = 0;
 					}
 				}
-				else
+				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
 				{
-					if (player.TPlayer.armor[i - 48] != null)
+					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
+					if (player.TPlayer.armor[index] != null)
 					{
-						this.inventory[i].netID = armor[i - 48].netID;
+						this.inventory[i].netID = armor[index].netID;
 					}
 					else
 					{
@@ -1026,8 +1028,31 @@ namespace TShockAPI
 
 					if (this.inventory[i].netID != 0)
 					{
-						this.inventory[i].stack = armor[i - 48].stack;
-						this.inventory[i].prefix = armor[i - 48].prefix;
+						this.inventory[i].stack = armor[index].stack;
+						this.inventory[i].prefix = armor[index].prefix;
+					}
+					else
+					{
+						this.inventory[i].stack = 0;
+						this.inventory[i].prefix = 0;
+					}
+				}
+				else
+				{
+					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
+					if (player.TPlayer.dye[index] != null)
+					{
+						this.inventory[i].netID = armor[index].netID;
+					}
+					else
+					{
+						this.inventory[i].netID = 0;
+					}
+
+					if (this.inventory[i].netID != 0)
+					{
+						this.inventory[i].stack = armor[index].stack;
+						this.inventory[i].prefix = armor[index].prefix;
 					}
 					else
 					{
@@ -1041,11 +1066,13 @@ namespace TShockAPI
 
 	public class NetItem
 	{
-		public static int maxNetInventory = 59;
+		public static readonly int maxNetInventory = 73;
+		public static readonly int armorSlots = 11;
+		public static readonly int dyeSlots = 3;
 		public int netID;
 		public int stack;
 		public int prefix;
-
+		
 		public static string ToString(NetItem[] inventory)
 		{
 			string inventoryString = "";

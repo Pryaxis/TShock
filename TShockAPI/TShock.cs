@@ -1593,9 +1593,10 @@ namespace TShockAPI
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
+			Item[] dye = player.TPlayer.dye;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
-				if (i < 49)
+				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
 				{
 					Item item = new Item();
 					Item serverItem = new Item();
@@ -1632,38 +1633,77 @@ namespace TShockAPI
 						}
 					}
 				}
-				else
+				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
 				{
 					Item item = new Item();
 					Item serverItem = new Item();
-					if (armor[i - 48] != null && armor[i - 48].netID != 0)
+					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
+					if (armor[index] != null && armor[index].netID != 0)
 					{
-						if (playerData.inventory[i].netID != armor[i - 48].netID)
+						if (playerData.inventory[i].netID != armor[index].netID)
 						{
-							item.netDefaults(armor[i - 48].netID);
-							item.Prefix(armor[i - 48].prefix);
+							item.netDefaults(armor[index].netID);
+							item.Prefix(armor[index].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
 											   Color.Cyan);
 							check = false;
 						}
-						else if (playerData.inventory[i].prefix != armor[i - 48].prefix)
+						else if (playerData.inventory[i].prefix != armor[index].prefix)
 						{
-							item.netDefaults(armor[i - 48].netID);
-							item.Prefix(armor[i - 48].prefix);
+							item.netDefaults(armor[index].netID);
+							item.Prefix(armor[index].prefix);
 							item.AffixName();
 							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
 											   Color.Cyan);
 							check = false;
 						}
-						else if (armor[i - 48].stack > playerData.inventory[i].stack)
+						else if (armor[index].stack > playerData.inventory[i].stack)
 						{
-							item.netDefaults(armor[i - 48].netID);
-							item.Prefix(armor[i - 48].prefix);
+							item.netDefaults(armor[index].netID);
+							item.Prefix(armor[index].prefix);
 							item.AffixName();
 							player.SendMessage(
 								player.IgnoreActionsForInventory =
 								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
+								playerData.inventory[i].stack + ").", Color.Cyan);
+							check = false;
+						}
+					}
+				}
+				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
+				{
+					Item item = new Item();
+					Item serverItem = new Item();
+					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
+					if (dye[index] != null && dye[index].netID != 0)
+					{
+						if (playerData.inventory[i].netID != dye[index].netID)
+						{
+							item.netDefaults(dye[index].netID);
+							item.Prefix(dye[index].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your dye (" + item.name + ") needs to be deleted.",
+											   Color.Cyan);
+							check = false;
+						}
+						else if (playerData.inventory[i].prefix != dye[index].prefix)
+						{
+							item.netDefaults(dye[index].netID);
+							item.Prefix(dye[index].prefix);
+							item.AffixName();
+							player.SendMessage(player.IgnoreActionsForInventory = "Your dye (" + item.name + ") needs to be deleted.",
+											   Color.Cyan);
+							check = false;
+						}
+						else if (dye[index].stack > playerData.inventory[i].stack)
+						{
+							item.netDefaults(dye[index].netID);
+							item.Prefix(dye[index].prefix);
+							item.AffixName();
+							player.SendMessage(
+								player.IgnoreActionsForInventory =
+								"Your dye (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
 								playerData.inventory[i].stack + ").", Color.Cyan);
 							check = false;
 						}
@@ -1676,20 +1716,7 @@ namespace TShockAPI
 
 		public static bool CheckIgnores(TSPlayer player)
 		{
-			bool check = false;
-			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
-				check = true;
-			if (player.IgnoreActionsForInventory != "none")
-				check = true;
-			if (player.IgnoreActionsForCheating != "none")
-				check = true;
-			if (player.IgnoreActionsForDisabledArmor != "none")
-				check = true;
-			if (player.IgnoreActionsForClearingTrashCan)
-				check = true;
-			if (!player.IsLoggedIn && Config.RequireLogin)
-				check = true;
-			return check;
+			return Config.PvPMode == "always" && !player.TPlayer.hostile || player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;;
 		}
 
 		public void OnConfigRead(ConfigFile file)

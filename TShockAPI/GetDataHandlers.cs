@@ -633,20 +633,20 @@ namespace TShockAPI
 			/// </summary>
 			public int TileY { get; set; }
 			/// <summary>
-			/// ???
+			/// Amount of liquid
 			/// </summary>
-			public byte Liquid { get; set;}
+			public byte Amount { get; set;}
 			/// <summary>
-			/// True if lava
+			/// Type of Liquid: 0=water, 1=lave, 2=honey
 			/// </summary>
-			public bool Lava { get; set; }
+			public byte Type { get; set; }
 		}
 		/// <summary>
 		/// LiquidSet - When ever a liquid is set
 		/// </summary>
 		public static HandlerList<LiquidSetEventArgs> LiquidSet;
 
-		private static bool OnLiquidSet(int tilex, int tiley, byte liquid, bool lava)
+		private static bool OnLiquidSet(int tilex, int tiley, byte amount, byte type)
 		{
 			if (LiquidSet == null)
 				return false;
@@ -655,8 +655,8 @@ namespace TShockAPI
 			{
 				TileX = tilex,
 				TileY = tiley,
-				Liquid = liquid,
-				Lava = lava,
+				Amount = amount,
+				Type = type,
 			};
 			LiquidSet.Invoke(null, args);
 			return args.Handled;
@@ -2380,11 +2380,12 @@ namespace TShockAPI
 		{
 			int tileX = args.Data.ReadInt32();
 			int tileY = args.Data.ReadInt32();
-			byte liquid = args.Data.ReadInt8();
-			bool lava = args.Data.ReadBoolean();
+			byte amount = args.Data.ReadInt8();
+			byte type = args.Data.ReadInt8();
 
-			if (OnLiquidSet(tileX, tileY, liquid, lava))
+			if (OnLiquidSet(tileX, tileY, amount, type))
 				return true;
+
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
@@ -2403,9 +2404,9 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreliquidsetdetection))
 			{
-				args.Player.TileLiquidThreshold++;
+				args.Player.TileLiquidThreshold+=amount;
 			}
-			if (liquid != 0)
+			if (amount != 0)
 			{
 				int bucket = 0;
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
@@ -2416,8 +2417,12 @@ namespace TShockAPI
 				{
 					bucket = 2;
 				}
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
+				{
+					bucket = 3;
+				}
 
-                if(lava && bucket != 2)
+                if(type == 1 && bucket != 2)
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading lava without holding a lava bucket");
@@ -2425,7 +2430,7 @@ namespace TShockAPI
                     return true;
                 } 
                 
-                if(lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
+                if(type == 1 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
                             TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player)))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -2434,7 +2439,7 @@ namespace TShockAPI
                     return true;
                 }
 
-                if (!lava && bucket != 1)
+                if (type == 0 && bucket != 1)
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading water without holding a water bucket");
@@ -2442,11 +2447,28 @@ namespace TShockAPI
                     return true;
                 } 
 
-				if (!lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+				if (type == 0 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					          TShock.Itembans.ItemIsBanned("Water Bucket", args.Player)))
 				{
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned water bucket without permissions");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+
+				if (type == 2 && bucket != 3)
+				{
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Spreading water without holding a water bucket");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+
+				if (type == 2 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+							  TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player)))
+				{
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Using banned honey bucket without permissions");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
