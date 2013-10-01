@@ -907,6 +907,12 @@ namespace TShockAPI
 			Main.bloodMoon = bloodMoon;
 			SetTime(false, 0);
 		}
+		
+		public void SetEclipse(bool Eclipse)
+		{
+			Main.eclipse = Eclipse;
+			SetTime(true, 150);
+		}
 
 		public void SetTime(bool dayTime, double time)
 		{

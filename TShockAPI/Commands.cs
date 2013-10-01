@@ -185,6 +185,7 @@ namespace TShockAPI
 			add(Permissions.causeevents, Star, "star");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
+			add(Permissions.causeevents, Eclipse, "eclipse");
 			add(Permissions.causeevents, Invade, "invade");
 			add(Permissions.causeevents, Rain, "rain");
             add(Permissions.spawnboss, Eater, "eater");
@@ -1353,6 +1354,12 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
 		}
 
+		private static void Eclipse(CommandArgs args)
+		{
+			TSPlayer.Server.SetEclipse(true);
+			TShock.Utils.Broadcast(string.Format("{0} has forced an Eclipse!", args.Player.Name), Color.Green);
+		}
+		
 		private static void Invade(CommandArgs args)
 		{
 			if (Main.invasionSize <= 0)
