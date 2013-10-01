@@ -845,6 +845,11 @@ namespace TShockAPI
 				ban = Bans.GetBanByIp(player.IP);
 			}
 
+			if (Config.EnableUUIDBans && null == ban)
+			{
+				ban = Bans.GetBanByUUID(player.UUID);
+			}
+
 			if (ban != null)
 			{
 			    if (!Utils.HasBanExpired(ban))
