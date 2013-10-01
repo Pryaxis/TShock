@@ -918,7 +918,7 @@ namespace TShockAPI
 			/// <summary>
 			/// Stacks
 			/// </summary>
-			public byte Stacks { get; set; }
+			public Int16 Stacks { get; set; }
 			/// <summary>
 			/// Prefix of the item
 			/// </summary>
@@ -937,7 +937,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
-		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, bool noDelay, short type)
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, Int16 stacks, byte prefix, bool noDelay, short type)
 		{
 			if (ItemDrop == null)
 				return false;
@@ -2833,7 +2833,7 @@ namespace TShockAPI
 			var id = args.Data.ReadInt16();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var stacks = args.Data.ReadInt8();
+			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
 			var noDelay = args.Data.ReadBoolean();
 			var type = args.Data.ReadInt16();
