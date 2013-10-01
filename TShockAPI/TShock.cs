@@ -1541,9 +1541,10 @@ namespace TShockAPI
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
+			Item[] dye = player.TPlayer.dye;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
-				if (i < 49)
+				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
 				{
 					Item item = new Item();
 					if (inventory[i] != null && inventory[i].netID != 0)
@@ -1560,19 +1561,38 @@ namespace TShockAPI
 						}
 					}
 				}
-				else
+				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
 				{
 					Item item = new Item();
-					if (armor[i - 48] != null && armor[i - 48].netID != 0)
+					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
+					if (armor[index] != null && armor[index].netID != 0)
 					{
-						item.netDefaults(armor[i - 48].netID);
-						item.Prefix(armor[i - 48].prefix);
+						item.netDefaults(armor[index].netID);
+						item.Prefix(armor[index].prefix);
 						item.AffixName();
-						if (armor[i - 48].stack > item.maxStack)
+						if (armor[index].stack > item.maxStack)
 						{
 							check = true;
 							player.SendMessage(
 								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[i - 48].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else if (i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
+				{
+					Item item = new Item();
+					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
+					if (dye[index] != null && dye[index].netID != 0)
+					{
+						item.netDefaults(dye[index].netID);
+						item.Prefix(dye[index].prefix);
+						item.AffixName();
+						if (dye[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
 								Color.Cyan);
 						}
 					}
