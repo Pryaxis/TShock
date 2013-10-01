@@ -1322,6 +1322,11 @@ namespace TShockAPI
 				args.Player.PlayerData.maxHealth = max;
 			}
 
+			if (args.Player.Group.HasPermission(Permissions.godmode) && (cur < max))
+			{
+				args.Player.Heal(args.TPlayer.statLifeMax);
+			}
+
 			return false;
 		}
 
@@ -1449,7 +1454,7 @@ namespace TShockAPI
 				            return true;
 				        }
 				    }
-            args.Player.LoginFailsBySsi = false;
+					args.Player.LoginFailsBySsi = false;
 
 				    if (group.HasPermission(Permissions.ignorestackhackdetection))
 				        args.Player.IgnoreActionsForCheating = "none";
@@ -2935,6 +2940,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
+			}
+
+			if (args.Player.Group.HasPermission(Permissions.godmode))
+			{
+				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;

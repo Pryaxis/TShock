@@ -3749,12 +3749,7 @@ namespace TShockAPI
 				playerToHeal = args.Player;
 			}
 
-			Item heart = TShock.Utils.GetItemById(58);
-			Item star = TShock.Utils.GetItemById(184);
-			for (int i = 0; i < 20; i++)
-				playerToHeal.GiveItem(heart.type, heart.name, heart.width, heart.height, heart.maxStack);
-			for (int i = 0; i < 10; i++)
-				playerToHeal.GiveItem(star.type, star.name, star.width, star.height, star.maxStack);
+			playerToHeal.Heal();
 			if (playerToHeal == args.Player)
 			{
 				args.Player.SendSuccessMessage("You just got healed!");

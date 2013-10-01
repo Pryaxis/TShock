@@ -530,8 +530,13 @@ namespace TShockAPI
 			}
 
 			TPlayer.Teleport(new Vector2(x, y), style);
-			NetMessage.SendData(65, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
 			return true;
+		}
+
+		public void Heal(int damage = 400)
+		{
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, damage);
 		}
 
 		public void Spawn()

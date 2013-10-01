@@ -283,6 +283,9 @@ namespace TShockAPI
 		[Description("User can get the server info.")]
 		public static readonly string serverinfo = "tshock.info";
 
+		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
+		public static readonly string godmode = "tshock.godmode";
+
         /// <summary>
         /// Lists all commands associated with a given permission
         /// </summary>
