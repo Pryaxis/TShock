@@ -306,7 +306,7 @@ namespace TShockAPI
 			var sb = new StringBuilder();
 			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
 			{
-				var name = field.Name;
+				var name = (string)field.GetValue(null);
 
 				var descattr =
 					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;

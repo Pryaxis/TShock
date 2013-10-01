@@ -192,7 +192,7 @@ namespace Rests
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData);
-			if (cmd.DoLog)
+			if (cmd.DoLog && TShock.Config.LogRest)
 				TShock.Utils.SendLogs(string.Format(
 					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)), 
 					Color.PaleVioletRed);
