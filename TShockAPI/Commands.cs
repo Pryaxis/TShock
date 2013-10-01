@@ -484,7 +484,7 @@ namespace TShockAPI
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
 							Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
-							args.Player.Teleport((int)pos.X*16, (int)pos.Y *16 + 48);
+							args.Player.Teleport((int)pos.X*16, (int)pos.Y *16 );
 						}
 						args.Player.LoginHarassed = false;
 
@@ -1685,7 +1685,7 @@ namespace TShockAPI
 				else
 				{
 					var plr = players[0];
-					if (args.Player.Teleport(plr.TileX * 16, plr.TileY * 16 + 48))
+					if (args.Player.Teleport(plr.TileX * 16, plr.TileY * 16 ))
 					{
 						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
 						if (!args.Player.Group.HasPermission(Permissions.tphide))
@@ -1714,7 +1714,7 @@ namespace TShockAPI
 				{
 					if (Main.player[i].active && (Main.player[i] != args.TPlayer))
 					{
-						if (TShock.Players[i].Teleport(args.Player.TileX*16, args.Player.TileY*16 + 48))
+						if (TShock.Players[i].Teleport(args.Player.TileX*16, args.Player.TileY*16 ))
 							TShock.Players[i].SendSuccessMessage(string.Format("You were teleported to {0}.", args.Player.Name) + ".");
 					}
 				}
@@ -1733,7 +1733,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				if (plr.Teleport(args.Player.TileX*16, args.Player.TileY*16 + 48))
+				if (plr.Teleport(args.Player.TileX*16, args.Player.TileY*16 ))
 				{
 					plr.SendInfoMessage(string.Format("You were teleported to {0}.", args.Player.Name));
 					args.Player.SendSuccessMessage(string.Format("You brought {0} here.", plr.Name));
@@ -1877,7 +1877,7 @@ namespace TShockAPI
                 var plr = foundplr[0];
                 if (warp.WarpPos != Vector2.Zero)
                 {
-                    if (plr.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 + 48))
+                    if (plr.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 ))
                     {
                         plr.SendSuccessMessage(string.Format("{0} warped you to {1}.", args.Player.Name, warpName));
                         args.Player.SendSuccessMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName));
@@ -1895,7 +1895,7 @@ namespace TShockAPI
                 var warp = TShock.Warps.FindWarp(warpName);
                 if (warp.WarpPos != Vector2.Zero)
                 {
-                    if (args.Player.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 + 48))
+                    if (args.Player.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 ))
                         args.Player.SendSuccessMessage("Warped to " + warpName + ".");
                 }
                 else
@@ -3073,7 +3073,7 @@ namespace TShockAPI
                           break;
                         }
 
-                        args.Player.Teleport(region.Area.Center.X*16, region.Area.Center.Y*16 + 48);
+                        args.Player.Teleport(region.Area.Center.X*16, region.Area.Center.Y*16 );
 
                         break;
                       }

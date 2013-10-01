@@ -1076,7 +1076,7 @@ namespace TShockAPI
 			if (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero){
 				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
 
-				player.Teleport(pos.X*16, pos.Y*16 + 48);
+				player.Teleport(pos.X*16, pos.Y*16 );
 			}}
 
 			Item i = new Item();

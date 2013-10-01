@@ -2232,7 +2232,7 @@ namespace TShockAPI
 				{
 					var lastTileX = args.Player.LastNetPosition.X;
 					var lastTileY = args.Player.LastNetPosition.Y;
-					if (!args.Player.Teleport(lastTileX, lastTileY + 48))
+					if (!args.Player.Teleport(lastTileX, lastTileY ))
 					{
 						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
 						args.Player.Spawn();
