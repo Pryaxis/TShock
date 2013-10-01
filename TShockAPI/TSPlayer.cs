@@ -282,6 +282,11 @@ namespace TShockAPI
         /// </summary>
 		public bool LoginHarassed = false;
 
+		/// <summary>
+		/// Player cant die, unless onehit
+		/// </summary>
+		public bool GodMode = false;
+
         /// <summary>
         /// Whether the player is a real, human, player on the server.
         /// </summary>

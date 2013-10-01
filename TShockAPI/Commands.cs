@@ -231,6 +231,7 @@ namespace TShockAPI
 			add(Permissions.whisper, Reply, "reply", "r");
 			add(Permissions.annoy, Annoy, "annoy");
 			add(Permissions.kill, Kill, "kill");
+			add(Permissions.godmode, ToggleGodMode, "godmode");
 			add(Permissions.butcher, Butcher, "butcher");
 			add(Permissions.item, Give, "give", "g");
 			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
@@ -3920,6 +3921,41 @@ namespace TShockAPI
 			}
 			args.Player.SendTileSquare(x, y);
 			args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+		}
+
+		private static void ToggleGodMode(CommandArgs args)
+		{
+			TSPlayer playerToGod;
+			if (args.Parameters.Count > 0)
+			{
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TShock.Utils.FindPlayer(plStr);
+				if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage("Invalid player!");
+					return;
+				}
+				else if (players.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					return;
+				}
+				else
+				{
+					playerToGod = players[0];
+				}
+			}
+			else if (!args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You cant god mode a non player!");
+				return;
+			}
+			else
+			{
+				playerToGod = args.Player;
+			}
+
+			playerToGod.GodMode = !playerToGod.GodMode;
 		}
 
 		#endregion Cheat Comamnds

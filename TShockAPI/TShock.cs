@@ -914,21 +914,31 @@ namespace TShockAPI
 					Log.Error(ex.ToString());
 				}
 			}
-			else if (!tsplr.mute && !TShock.Config.EnableChatAboveHeads)
+			else
 			{
-				Utils.Broadcast(
-					String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text),
-					tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-				args.Handled = true;
-			} else if (!tsplr.mute && TShock.Config.EnableChatAboveHeads)
-			{
-				Utils.Broadcast(args.Who, String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-				args.Handled = true;
-			}
-			else if (tsplr.mute)
-			{
-				tsplr.SendErrorMessage("You are muted!");
-				args.Handled = true;
+				if (!tsplr.Group.HasPermission(Permissions.canchat))
+				{
+					args.Handled = true;
+				}
+				else if (tsplr.mute)
+				{
+					tsplr.SendErrorMessage("You are muted!");
+					args.Handled = true;
+				}
+				else if (!TShock.Config.EnableChatAboveHeads)
+				{
+					Utils.Broadcast(
+						String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text),
+						tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					args.Handled = true;
+				}
+				else
+				{
+					Utils.Broadcast(args.Who,
+						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+							args.Text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					args.Handled = true;
+				}
 			}
 		}
 

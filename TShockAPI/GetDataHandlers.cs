@@ -1322,7 +1322,7 @@ namespace TShockAPI
 				args.Player.PlayerData.maxHealth = max;
 			}
 
-			if (args.Player.Group.HasPermission(Permissions.godmode) && (cur < max))
+			if (args.Player.GodMode && (cur < max))
 			{
 				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
@@ -2937,7 +2937,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (args.Player.Group.HasPermission(Permissions.godmode))
+			if (args.Player.GodMode)
 			{
 				args.Player.Heal(args.TPlayer.statLifeMax);
 			}

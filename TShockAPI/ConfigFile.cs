@@ -270,6 +270,7 @@ namespace TShockAPI
 		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
 		
 		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public bool LogRest = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
