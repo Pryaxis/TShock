@@ -97,7 +97,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("UPDATE Inventory SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4 WHERE Account = @5;", playerData.health, playerData.maxHealth,
+					database.Query("UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4 WHERE Account = @5;", playerData.health, playerData.maxHealth,
 								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID);
 					return true;
 				}
