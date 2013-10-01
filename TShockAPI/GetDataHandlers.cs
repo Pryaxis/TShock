@@ -1227,7 +1227,9 @@ namespace TShockAPI
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
 											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
                                             {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss},
-											{PacketTypes.Teleport, HandleTeleport}
+											{PacketTypes.Teleport, HandleTeleport},
+											{PacketTypes.PaintTile, HandlePaintTile},
+											{PacketTypes.PaintWall, HandlePaintWall}
 										};
 		}
 
@@ -2002,6 +2004,83 @@ namespace TShockAPI
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// For use with a PaintTile event
+		/// </summary>
+		public class PaintTileEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
+		public static HandlerList<PaintTileEventArgs> PaintTile;
+
+		private static bool OnPaintTile(Int32 x, Int32 y, byte t)
+		{
+			if (PaintTile == null)
+				return false;
+
+			var args = new PaintTileEventArgs
+			{
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintTile.Invoke(null, args);
+			return args.Handled;
+		}
+
+		
+		/// <summary>
+		/// For use with a PaintWall event
+		/// </summary>
+		public class PaintWallEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// Called When a wall is painted
+		/// </summary>
+		public static HandlerList<PaintWallEventArgs> PaintWall;
+
+		private static bool OnPaintWall(Int32 x, Int32 y, byte t)
+		{
+			if (PaintWall == null)
+				return false;
+
+			var args = new PaintWallEventArgs
+			{
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintWall.Invoke(null, args);
+			return args.Handled;
 		}
 
 		private static bool HandleTogglePvp(GetDataHandlerArgs args)
@@ -3061,6 +3140,41 @@ namespace TShockAPI
 		    return false;
 		}
 
+		private static bool HandlePaintTile(GetDataHandlerArgs args)
+		{
+		var x = args.Data.ReadInt32();
+		var y = args.Data.ReadInt32();
+		var t = args.Data.ReadInt8();
+		
+		if (OnPaintTile(x, y, t))
+			return true;
+		
+		if (!args.Player.Group.HasPermission(Permissions.canpaint))
+		{
+			args.Player.SendTileSquare(x, y);
+			return true;
+		}
+			
+			return false;
+		}
+		
+		private static bool HandlePaintWall(GetDataHandlerArgs args)
+		{
+		var x = args.Data.ReadInt32();
+		var y = args.Data.ReadInt32();
+		var t = args.Data.ReadInt8();
+		
+		if (OnPaintTile(x, y, t))
+			return true;
+		
+		if (!args.Player.Group.HasPermission(Permissions.canpaint))
+		{
+			args.Player.SendTileSquare(x, y);
+			return true;
+		}
+			
+			return false;
+		}
 		private static bool HandleTeleport(GetDataHandlerArgs args)
 		{
 			var flag = args.Data.ReadInt8();

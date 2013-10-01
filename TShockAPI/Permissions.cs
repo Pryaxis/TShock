@@ -247,6 +247,9 @@ namespace TShockAPI
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
+		
+		[Description("User can paint tiles.")]
+		public static readonly string canpaint = "tshock.world.paint";
 
 		// Non-grouped
 
