@@ -286,6 +286,9 @@ namespace TShockAPI
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
 		public static readonly string godmode = "tshock.godmode";
 
+		[Description("Player can chat")] 
+		public static readonly string canchat = "tshock.canchat";
+
         /// <summary>
         /// Lists all commands associated with a given permission
         /// </summary>

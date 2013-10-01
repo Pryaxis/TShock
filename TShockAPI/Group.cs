@@ -175,24 +175,30 @@ namespace TShockAPI
         /// <param name="permission">The permission to check.</param>
         /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
-		{
-			if (String.IsNullOrEmpty(permission) || RealHasPermission(permission))
+        {
+	        bool negated = false;
+			if (String.IsNullOrEmpty(permission) || (RealHasPermission(permission, ref negated) && !negated))
 			{
 				return true;
 			}
+
+	        if (negated)
+		        return false;
+
 			string[] nodes = permission.Split('.');
 			for (int i = nodes.Length - 1; i >= 0; i--)
 			{
 				nodes[i] = "*";
-				if (RealHasPermission(String.Join(".", nodes, 0, i + 1)))
+				if (RealHasPermission(String.Join(".", nodes, 0, i + 1), ref negated))
 				{
-					return true;
+					return !negated;
 				}
 			}
 			return false;
 		}
-        private bool RealHasPermission(string permission)
+        private bool RealHasPermission(string permission, ref bool negated)
         {
+	        negated = false;
             if (string.IsNullOrEmpty(permission))
                 return true;
 
@@ -200,9 +206,12 @@ namespace TShockAPI
             var traversed = new List<Group>();
             while (cur != null)
             {
-                if (cur.negatedpermissions.Contains(permission))
-                    return false;
-                if (cur.permissions.Contains(permission))
+	            if (cur.negatedpermissions.Contains(permission))
+	            {
+		            negated = true;
+		            return false;
+	            }
+	            if (cur.permissions.Contains(permission))
                     return true;
                 if (traversed.Contains(cur))
                 {
