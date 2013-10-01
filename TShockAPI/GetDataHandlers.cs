@@ -3161,8 +3161,8 @@ namespace TShockAPI
                     boss = "a Goblin Invasion";
                     break;
                 default:
-		            boss = String.Format("the {0}", npc.name);
-		            break;
+					boss = String.Format("the {0}", npc.name);
+					break;
             }
 
 		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
@@ -3171,36 +3171,36 @@ namespace TShockAPI
 
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
 		{
-		var x = args.Data.ReadInt32();
-		var y = args.Data.ReadInt32();
-		var t = args.Data.ReadInt8();
-		
-		if (OnPaintTile(x, y, t))
-			return true;
-		
-		if (!args.Player.Group.HasPermission(Permissions.canpaint))
-		{
-			args.Player.SendTileSquare(x, y);
-			return true;
-		}
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var t = args.Data.ReadInt8();
+
+			if (OnPaintTile(x, y, t))
+				return true;
+
+			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+			{
+				args.Player.SendTileSquare(x, y);
+				return true;
+			}
 			
 			return false;
 		}
 		
 		private static bool HandlePaintWall(GetDataHandlerArgs args)
 		{
-		var x = args.Data.ReadInt32();
-		var y = args.Data.ReadInt32();
-		var t = args.Data.ReadInt8();
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var t = args.Data.ReadInt8();
 		
-		if (OnPaintTile(x, y, t))
-			return true;
+			if (OnPaintTile(x, y, t))
+				return true;
 		
-		if (!args.Player.Group.HasPermission(Permissions.canpaint))
-		{
-			args.Player.SendTileSquare(x, y);
-			return true;
-		}
+			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+			{
+				args.Player.SendTileSquare(x, y);
+				return true;
+			}
 			
 			return false;
 		}
@@ -3215,11 +3215,7 @@ namespace TShockAPI
 				return true;
 
 			byte style = 0;
-			var isNPC = false;
-			if ((flag & 1) == 1)
-			{
-				isNPC = true;
-			}
+			var isNPC = false || (flag & 1) == 1;
 
 			if ((flag & 2) != 2)
 			{
