@@ -677,6 +677,20 @@ namespace TShockAPI
 					
 					if (player.RecentFuse >0)
 						player.RecentFuse--;
+						
+					if (player.RPPending >0)
+					{
+						if (player.RPPending == 1)
+						{
+								var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
+								player.Teleport(pos.X*16, pos.Y*16 );
+								player.RPPending = 0;							
+						}
+						else
+						{
+							player.RPPending--;
+						}
+					}					
 					
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
@@ -1088,14 +1102,12 @@ namespace TShockAPI
 
 			player.LastNetPosition = new Vector2(Main.spawnTileX*16f, Main.spawnTileY*16f);
 
-			if (Config.RememberLeavePos)
+			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero))
 			{
-			if (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero){
-				var pos = RememberedPos.GetLeavePos(player.Name, player.IP);
-
-				player.Teleport(pos.X*16, pos.Y*16 );
-			}}
-
+			player.RPPending=3;
+			player.SendMessage("You will be teleported to your last known location...", Color.Red);
+			}
+			
 			args.Handled = true;
 		}
 

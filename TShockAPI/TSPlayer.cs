@@ -62,7 +62,13 @@ namespace TShockAPI
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		//  </summary>
 		public int RecentFuse = 0;
-
+		
+		/// <summary>
+		/// A system to delay Remembered Position Teleports a few seconds
+		/// </summary>
+		
+		public int RPPending = 0;
+		
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
         /// </summary>
