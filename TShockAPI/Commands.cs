@@ -3964,6 +3964,16 @@ namespace TShockAPI
 			}
 
 			playerToGod.GodMode = !playerToGod.GodMode;
+
+			if (playerToGod == args.Player)
+			{
+				args.Player.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
+			}
+			else
+			{
+				args.Player.SendSuccessMessage(string.Format("{0} is {1} in god mode.", playerToGod.Name, playerToGod.GodMode ? "now" : "no longer"));
+				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
+			}
 		}
 
 		#endregion Cheat Comamnds

@@ -2959,6 +2959,11 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
+			if (TShock.Players[id].GodMode)
+			{
+				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+			}
+
 			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
 				args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
@@ -2993,11 +2998,6 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
-			}
-
-			if (args.Player.GodMode)
-			{
-				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;
