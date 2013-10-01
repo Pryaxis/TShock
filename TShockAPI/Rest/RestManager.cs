@@ -307,7 +307,7 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, group, "", "", "");
+			User user = new User(username, password, "", group, "", "", "");
 			try
 			{
 				TShock.Users.AddUser(user);
@@ -404,7 +404,7 @@ namespace TShockAPI
 
 			try
 			{
-				TShock.Bans.AddBan(ip, name, parameters["reason"], true, tokenData.Username);
+				TShock.Bans.AddBan(ip, name, "", parameters["reason"], true, tokenData.Username);
 			}
 			catch (Exception e)
 			{
@@ -622,7 +622,7 @@ namespace TShockAPI
 
 			TSPlayer player = (TSPlayer)ret;
 			var reason = null == parameters["reason"] ? "Banned via web" : parameters["reason"];
-			TShock.Bans.AddBan(player.IP, player.Name, reason);
+			TShock.Bans.AddBan(player.IP, player.Name, "", reason);
 			TShock.Utils.ForceKick(player, reason, false, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}

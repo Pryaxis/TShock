@@ -1396,7 +1396,59 @@ namespace TShockAPI
 		{
 			var user = TShock.Users.GetUserByName(args.Player.Name);
 
-			if (user != null && !TShock.Config.DisableLoginBeforeJoin)
+			if (user != null && !TShock.Config.DisableUUIDLogin)
+			{
+				if(user.UUID == args.Player.UUID)
+				{
+					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+
+					if (args.Player.State == 1)
+						args.Player.State = 2;
+					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+
+					var group = TShock.Utils.GetGroup(user.Group);
+
+					if (TShock.Config.ServerSideInventory)
+					{
+						if (group.HasPermission(Permissions.bypassinventorychecks))
+						{
+							args.Player.IgnoreActionsForClearingTrashCan = false;
+						}
+						else if (!TShock.CheckInventory(args.Player))
+						{
+							args.Player.LoginFailsBySsi = true;
+							args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
+							args.Player.IgnoreActionsForClearingTrashCan = true;
+							return true;
+						}
+					}
+					args.Player.LoginFailsBySsi = false;
+
+					if (group.HasPermission(Permissions.ignorestackhackdetection))
+						args.Player.IgnoreActionsForCheating = "none";
+
+					if (group.HasPermission(Permissions.usebanneditem))
+						args.Player.IgnoreActionsForDisabledArmor = "none";
+
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.UserAccountName = args.Player.Name;
+					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+					args.Player.IsLoggedIn = true;
+					args.Player.IgnoreActionsForInventory = "none";
+
+					if (!args.Player.IgnoreActionsForClearingTrashCan)
+					{
+						args.Player.PlayerData.CopyInventory(args.Player);
+						TShock.InventoryDB.InsertPlayerData(args.Player);
+					}
+					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+					return true;
+				}
+			}
+			else if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				args.Player.RequiresPassword = true;
 				NetMessage.SendData((int) PacketTypes.PasswordRequired, args.Player.Index);
@@ -1476,6 +1528,7 @@ namespace TShockAPI
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					TShock.Users.SetUserUUID(user, args.Player.UUID);
                     Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
@@ -2159,6 +2212,11 @@ namespace TShockAPI
 			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
 				return true;
 			if (item < 0 || item >= args.TPlayer.inventory.Length)
+			{
+				return true;
+			}
+
+			if (pulley > 2)
 			{
 				return true;
 			}

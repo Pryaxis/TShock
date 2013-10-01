@@ -405,17 +405,23 @@ namespace TShockAPI
 			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string encrPass = "";
 
-			if (args.Parameters.Count == 1)
+			if (args.Parameters.Count == 0)
 			{
-                if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
-                    return;
+				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
+					return;
+				user = TShock.Users.GetUserByName(args.Player.Name);
+			}
+			else if (args.Parameters.Count == 1)
+			{
+				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
+					return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
 			}
 			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
 			{
-                if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
-                    return;
+				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
+					return;
 
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
 				encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
@@ -427,7 +433,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} <password>", TShock.Config.AllowLoginAnyUsername ? " [username]" : " "));
+				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} [password]", TShock.Config.AllowLoginAnyUsername ? " [username]" : " "));
 				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
@@ -437,7 +443,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
 				}
-				else if (user.Password.ToUpper() == encrPass.ToUpper())
+				else if (user.Password.ToUpper() == encrPass.ToUpper() || (user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin))
 				{
 					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
@@ -490,6 +496,7 @@ namespace TShockAPI
 						args.Player.LoginHarassed = false;
 
 					}
+					TShock.Users.SetUserUUID(user, args.Player.UUID);
 
 				    Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 				}
@@ -563,6 +570,7 @@ namespace TShockAPI
 				}
 
 				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
+				user.UUID = args.Player.UUID;
 
                 if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
 				{
@@ -960,7 +968,7 @@ namespace TShockAPI
 					string reason = args.Parameters.Count > 2
 										? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 										: "Manually added IP address ban.";
-					TShock.Bans.AddBan(ip, "", reason, false, args.Player.UserAccountName);
+					TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.UserAccountName);
 					args.Player.SendSuccessMessage(ip + " banned.");
 					return;
 					#endregion Add ip ban
@@ -1642,7 +1650,7 @@ namespace TShockAPI
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (args.Player.Teleport(Main.spawnTileX*16, Main.spawnTileY*16))
+			if (args.Player.Teleport(Main.spawnTileX*16, (Main.spawnTileY*16) -48))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 

@@ -54,7 +54,7 @@ namespace UnitTests
         [TestMethod]
         public void AddBanTest()
         {
-            Assert.IsTrue(Bans.AddBan("127.0.0.1", "BanTest", "Ban Testing"));
+            Assert.IsTrue(Bans.AddBan("127.0.0.1", "BanTest", "BanTest2", "Ban Testing"));
         }
 
         [TestMethod]
@@ -62,6 +62,7 @@ namespace UnitTests
         {
             Assert.IsNotNull(Bans.GetBanByIp("127.0.0.1"));
             Assert.IsNotNull(Bans.GetBanByName("BanTest"));
+			Assert.IsNotNull(Bans.GetBanByUUID("BanTest2"));
         }
     }
 }

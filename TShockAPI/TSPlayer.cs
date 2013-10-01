@@ -310,6 +310,15 @@ namespace TShockAPI
 			set { Netplay.serverSock[Index].state = value; }
 		}
 
+		public string UUID
+		{
+			get {
+				return RealPlayer
+					? Netplay.serverSock[Index].clientUUID 
+					: "";
+			}
+		}
+
 		public string IP
 		{
 			get
@@ -500,7 +509,8 @@ namespace TShockAPI
 											(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
 											(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
 											(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
-											(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None),	
+											(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
+											(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None),
 								BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
 											 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
 											 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |

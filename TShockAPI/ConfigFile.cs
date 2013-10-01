@@ -105,6 +105,8 @@ namespace TShockAPI
 
 		[Description("Enables kicking of banned users by matching their IP Address.")] public bool EnableIPBans = true;
 
+		[Description("Enables kicking of banned users by matching their client UUID.")] public bool EnableUUIDBans = true;
+
 		[Description("Enables kicking of banned users by matching their Character Name.")] public bool EnableBanOnUsernames;
 
 		[Description("Selects the default group name to place new registrants under.")] public string
@@ -205,6 +207,10 @@ namespace TShockAPI
 
 		[Description("Disable users from being able to login with account password when joining.")] public bool
 			DisableLoginBeforeJoin;
+
+		[Description("Disable users from being able to login with their client UUID.")]
+		public bool
+			DisableUUIDLogin;
 
 		[Description("Allows users to register any username with /register.")] public bool AllowRegisterAnyUsername;
 
