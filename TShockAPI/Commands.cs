@@ -186,6 +186,7 @@ namespace TShockAPI
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
 			add(Permissions.causeevents, Invade, "invade");
+			add(Permissions.causeevents, Rain, "rain");
             add(Permissions.spawnboss, Eater, "eater");
             add(Permissions.spawnboss, Eye, "eye");
             add(Permissions.spawnboss, King, "king");
@@ -2502,7 +2503,27 @@ namespace TShockAPI
 			}
 		}
 
-        //TODO: Come back here
+		private static void Rain(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /rain <stop/start>");
+				return;
+			}
+
+			switch (args.Parameters[0])
+			{
+				case "start":
+					Main.StartRain();
+					TSPlayer.All.SendInfoMessage(string.Format("{0} caused it to rain.", args.Player.Name));
+					break;
+				case "stop":
+					Main.StopRain();
+					TSPlayer.All.SendInfoMessage(string.Format("{0} ended the downpour.", args.Player.Name));
+					break;
+			}
+		}
+ 
 
 		private static void Slap(CommandArgs args)
 		{
