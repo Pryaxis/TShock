@@ -78,17 +78,17 @@ namespace TShockAPI
 			/// <summary>
 			/// The Tile ID being edited.
 			/// </summary>
-			public byte Type { get; set; }
+			public byte EditData { get; set; }
 			/// <summary>
 			/// The EditType.
 			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
 			/// </summary>
-			public byte EditType { get; set; }
+			public EditAction Action { get; set; }
 
             /// <summary>
             /// Did the tile get destroyed successfully.
             /// </summary>
-            public bool Fail { get; set; }
+            public EditType editDetail { get; set; }
 
 			/// <summary>
 			/// Used when a tile is placed to denote a subtype of tile. (e.g. for tile id 21: Chest = 0, Gold Chest = 1)
@@ -100,7 +100,7 @@ namespace TShockAPI
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, byte type, byte editType, bool fail, byte style)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, byte editData, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -110,9 +110,9 @@ namespace TShockAPI
                 Player = ply,
 				X = x,
 				Y = y,
-				Type = type,
-				EditType = editType,
-                Fail = fail,
+				Action = action,
+				EditData = editData,
+                editDetail = editDetail,
 				Style = style
 			};
 			TileEdit.Invoke(null, args);
@@ -443,13 +443,15 @@ namespace TShockAPI
 			/// Velocity of the player
 			/// </summary>
 			public Vector2 Velocity { get; set; }
+
+			public byte Pulley { get; set; }
 		}
 		/// <summary>
 		/// PlayerUpdate - When the player sends it's updated information to the server
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
 
-		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity)
+		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
 		{
 			if (PlayerUpdate == null)
 				return false;
@@ -461,16 +463,17 @@ namespace TShockAPI
 				Item = item,
 				Position = position,
 				Velocity = velocity,
+				Pulley = pulley
 			};
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
 		}
 		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
 		{
-			int num = (int)(Position.X / 16f) - 1;
-			int num2 = (int)((Position.X + (float)Width) / 16f) + 2;
-			int num3 = (int)(Position.Y / 16f) - 1;
-			int num4 = (int)((Position.Y + (float)Height) / 16f) + 2;
+			int num = (int)(Position.X / 16f);
+			int num2 = (int)((Position.X + (float)Width) / 16f);
+			int num3 = (int)(Position.Y / 16f);
+			int num4 = (int)((Position.Y + (float)Height) / 16f);
 			if (num < 0)
 			{
 				num = 0;
@@ -499,15 +502,17 @@ namespace TShockAPI
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] != null && Main.tile[i, j].active && Main.tileSolid[(int)Main.tile[i, j].type] && !Main.tileSolidTop[(int)Main.tile[i, j].type] &&(((int)Main.tile[i,j].type !=53) && ((int)Main.tile[i,j].type !=112) && ((int)Main.tile[i,j].type !=116) && ((int)Main.tile[i,j].type !=123)) && !Main.tile[i,j].lava)
+					if (Main.tile[i, j] == null || !Main.tile[i, j].active() || !Main.tileSolid[(int) Main.tile[i, j].type] || Main.tileSolidTop[(int) Main.tile[i, j].type] || (((int) Main.tile[i, j].type == 53) || ((int) Main.tile[i, j].type == 112) || ((int) Main.tile[i, j].type == 116) || ((int) Main.tile[i, j].type == 123)) || Main.tile[i, j].lava() || ((Main.tile[i, j].tileHeader2 & 16) == 16) || ((Main.tile[i, j].tileHeader2 & 32) == 32) || ((Main.tile[i, j].tileHeader & 32) == 32) || Main.tile[i, j].honey() || !Main.tileSolid[(int) Main.tile[i + 1, j].type] || !Main.tileSolid[(int) Main.tile[i - 1, j].type] || !Main.tileSolid[(int) Main.tile[i, j + 1].type] || !Main.tileSolid[(int) Main.tile[i, j - 1].type] || !Main.tileSolid[(int) Main.tile[i - 1, j - 1].type] || !Main.tileSolid[(int) Main.tile[i - 1, j + 1].type] || !Main.tileSolid[(int) Main.tile[i + 1, j - 1].type] || !Main.tileSolid[(int) Main.tile[i + 1, j + 1].type] || Main.tileSand[(int) Main.tile[i, j].type])
 					{
-						Vector2 vector;
-						vector.X = (float)(i * 16);
-						vector.Y = (float)(j * 16);
-						if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + 16f)
-						{
-							return true;
-						}
+						continue;
+					}
+
+					Vector2 vector;
+					vector.X = (float) (i*16);
+					vector.Y = (float) (j*16);
+					if (Position.X + (float) Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float) Height > vector.Y && Position.Y < vector.Y + 16f)
+					{
+						return true;
 					}
 				}
 			}
@@ -628,20 +633,20 @@ namespace TShockAPI
 			/// </summary>
 			public int TileY { get; set; }
 			/// <summary>
-			/// ???
+			/// Amount of liquid
 			/// </summary>
-			public byte Liquid { get; set;}
+			public byte Amount { get; set;}
 			/// <summary>
-			/// True if lava
+			/// Type of Liquid: 0=water, 1=lave, 2=honey
 			/// </summary>
-			public bool Lava { get; set; }
+			public byte Type { get; set; }
 		}
 		/// <summary>
 		/// LiquidSet - When ever a liquid is set
 		/// </summary>
 		public static HandlerList<LiquidSetEventArgs> LiquidSet;
 
-		private static bool OnLiquidSet(int tilex, int tiley, byte liquid, bool lava)
+		private static bool OnLiquidSet(int tilex, int tiley, byte amount, byte type)
 		{
 			if (LiquidSet == null)
 				return false;
@@ -650,8 +655,8 @@ namespace TShockAPI
 			{
 				TileX = tilex,
 				TileY = tiley,
-				Liquid = liquid,
-				Lava = lava,
+				Amount = amount,
+				Type = type,
 			};
 			LiquidSet.Invoke(null, args);
 			return args.Handled;
@@ -919,6 +924,10 @@ namespace TShockAPI
 			/// </summary>
 			public byte Prefix { get; set; }
 			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
 			/// Item type
 			/// </summary>
 			public short Type { get; set; }
@@ -928,7 +937,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
-		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, short type)
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, byte stacks, byte prefix, bool noDelay, short type)
 		{
 			if (ItemDrop == null)
 				return false;
@@ -940,6 +949,7 @@ namespace TShockAPI
 				Velocity = vel,
 				Stacks = stacks,
 				Prefix = prefix,
+				NoDelay = noDelay,
 				Type = type,
 			};
 			ItemDrop.Invoke(null, args);
@@ -1125,6 +1135,53 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use with a NPCStrike event
+		/// </summary>
+		public class TeleportEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// ???
+			/// </summary>
+			public Int16 ID { get; set; }
+			/// <summary>
+			/// Flag is a bit field
+			///   if the first bit is set -> 0 = player, 1 = NPC
+			///	  if the second bit is set, ignore this packet
+			///   if the third bit is set, style +1
+			///   if the fourth bit is set, style +1
+			/// </summary>
+			public byte Flag { get; set; }
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public float X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public float Y { get; set; }
+		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
+		public static HandlerList<TeleportEventArgs> Teleport;
+
+		private static bool OnTeleport(Int16 id, byte f, float x, float y)
+		{
+			if (Teleport == null)
+				return false;
+
+			var args = new TeleportEventArgs
+			{
+				ID = id,
+				Flag = f,
+				X = x,
+				Y = y
+			};
+			Teleport.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 		public static void InitGetDataHandler()
 		{
@@ -1169,7 +1226,10 @@ namespace TShockAPI
 											{PacketTypes.PasswordSend, HandlePassword},
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
 											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
-                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss}
+                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss},
+											{PacketTypes.Teleport, HandleTeleport},
+											{PacketTypes.PaintTile, HandlePaintTile},
+											{PacketTypes.PaintWall, HandlePaintWall}
 										};
 		}
 
@@ -1251,7 +1311,7 @@ namespace TShockAPI
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
 
-			if (max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP)
+			if ((max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
 			{
 				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
@@ -1260,6 +1320,11 @@ namespace TShockAPI
 			if (args.Player.IsLoggedIn)
 			{
 				args.Player.PlayerData.maxHealth = max;
+			}
+
+			if (args.Player.Group.HasPermission(Permissions.godmode) && (cur < max))
+			{
+				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;
@@ -1330,6 +1395,7 @@ namespace TShockAPI
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
 			var user = TShock.Users.GetUserByName(args.Player.Name);
+
 			if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				args.Player.RequiresPassword = true;
@@ -1388,7 +1454,7 @@ namespace TShockAPI
 				            return true;
 				        }
 				    }
-            args.Player.LoginFailsBySsi = false;
+					args.Player.LoginFailsBySsi = false;
 
 				    if (group.HasPermission(Permissions.ignorestackhackdetection))
 				        args.Player.IgnoreActionsForCheating = "none";
@@ -1543,10 +1609,10 @@ namespace TShockAPI
 						continue;
 					}
                     // Server now has a range check built in
-					/*if (TShock.CheckRangePermission(args.Player, realx, realy))
+					if (TShock.CheckRangePermission(args.Player, realx, realy))
 					{
 						continue;
-					}*/
+					}
 					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105) || (tile.type == 139 && newtile.Type == 139))
 					{
 						if (TShock.Config.EnableInsecureTileFixes)
@@ -1673,16 +1739,39 @@ namespace TShockAPI
 			return true;
 		}
 
+		public enum EditAction
+		{
+			KillTile = 0,
+			PlaceTile,
+			KillWall,
+			PlaceWall,
+			KillTileNoItem,
+			PlaceWire,
+			KillWire,
+			PoundTile
+		}
+		public enum EditType
+		{
+			Fail = 0,
+			Type,
+			Slope,
+		}
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
-			var type = args.Data.ReadInt8();
+			EditAction action = (EditAction)args.Data.ReadInt8();
 			var tileX = args.Data.ReadInt32();
 			var tileY = args.Data.ReadInt32();
-			var tiletype = args.Data.ReadInt8();
-			var fail = tiletype == 1;
+			var editData = args.Data.ReadInt8();
+			EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
+			                 action == EditAction.KillTileNoItem)
+							? EditType.Fail
+							: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+								? EditType.Type
+								: EditType.Slope;
+
 			var style = args.Data.ReadInt8();
 
-			if (OnTileEdit(args.Player, tileX, tileY, tiletype, type, fail, style))
+			if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 				return true;
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				return false;
@@ -1767,62 +1856,64 @@ namespace TShockAPI
 			if (type == 0 && Main.tile[tileX, tileY].type != 127 && !Main.tileCut[Main.tile[tileX, tileY].type] && !rightClickKill.Contains(Main.tile[tileX, tileY].type))
 			{
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-				if (Main.tileAxe[Main.tile[tileX, tileY].type] && selectedItem.axe == 0)
+				if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
-				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && selectedItem.hammer == 0)
+				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If the tile is a pickaxe tile and they aren't selecting an pickaxe, they're hacking.
-				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && selectedItem.pick == 0)
+				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
+
 					return true;
 				}
 			}
-			else if (type == 2)
+			else if (action == EditAction.KillWall)
 			{
 				// If they aren't selecting an hammer, they're hacking.
-				if (selectedItem.hammer == 0)
+				if (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0)
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
+
 			}
-			else if (type == 1 || type == 3)
+			else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 			{
-				if (type == 1 && TShock.Config.PreventInvalidPlaceStyle && ((tiletype == 4 && style > 8) ||
-					(tiletype == 13 && style > 4) || (tiletype == 15 && style > 1) || (tiletype == 21 && style > 6) ||
-					(tiletype == 82 && style > 5) || (tiletype == 91 && style > 3) || (tiletype == 105 && style > 42) ||
-					(tiletype == 135 && style > 3) || (tiletype == 139 && style > 12) || (tiletype == 144 && style > 2) ||
-					(tiletype == 149 && style > 2)))
+				if (action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle && ((editData == 4 && style > 11) ||
+					(editData == 13 && style > 4) || (editData == 15 && style > 17) || (editData == 21 && style > 22) ||
+					(editData == 82 && style > 5) || (editData == 91 && style > 21) || (editData == 105 && style > 49) ||
+					(editData == 135 && style > 6) || (editData == 139 && style > 27) || (editData == 144 && style > 2) ||
+					(editData == 149 && style > 2)))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
 				// If they aren't selecting the item which creates the tile or wall, they're hacking.
-				if (tiletype != 127 && tiletype != (type == 1 ? selectedItem.createTile : selectedItem.createWall))
+				if (editData != 127 && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || tiletype >= (type == 1 ? Main.maxTileSets : Main.maxWallTypes))
+				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (type == 1 && (tiletype == 29 || tiletype == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
+				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
 				{
 					args.Player.SendMessage("You cannot place this tile because server side inventory is enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (type == 1 && tiletype == 21)
+				if (action == EditAction.PlaceTile && editData == 21)
 				{
 					if (TShock.Utils.MaxChests())
 					{
@@ -1838,7 +1929,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			else if (type == 5)
+			else if (action == EditAction.PlaceWire)
 			{
 				// If they aren't selecting the wrench, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 509)
@@ -1847,7 +1938,7 @@ namespace TShockAPI
 					return true;
 				}
 			}
-			else if (type == 6)
+			else if (action == EditAction.KillWire)
 			{
 				// If they aren't selecting the wire cutter, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
@@ -1863,13 +1954,13 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY, tiletype, type))
+			if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
 			{
 				args.Player.SendTileSquare(tileX, tileY);
 				return true;
 			}
 
-			if ((tiletype == 127 || Main.tileCut[tiletype]) && (type == 0 || type == 4))
+			if ((editData == 127 || Main.tileCut[editData]) && (action ==EditAction.KillTile || action == EditAction.KillTileNoItem))
 			{
 				return false;
 			}
@@ -1900,24 +1991,101 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ( ( type == 1 || type == 3 ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+			if ( ( action == EditAction.PlaceTile || action == EditAction.PlaceWall ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(tileX, tileY);
 				if (!args.Player.TilesCreated.ContainsKey(coords))
-					args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY].Data);
+					args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 			}
 
-			if ((type == 0 || type == 4 || type == 2) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+			if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
 				!args.Player.Group.HasPermission(Permissions.ignorekilltiledetection))
 			{
 				args.Player.TileKillThreshold++;
 				var coords = new Vector2(tileX, tileY);
 				if (!args.Player.TilesDestroyed.ContainsKey(coords))
-					args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY].Data);
+					args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// For use with a PaintTile event
+		/// </summary>
+		public class PaintTileEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
+		public static HandlerList<PaintTileEventArgs> PaintTile;
+
+		private static bool OnPaintTile(Int32 x, Int32 y, byte t)
+		{
+			if (PaintTile == null)
+				return false;
+
+			var args = new PaintTileEventArgs
+			{
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintTile.Invoke(null, args);
+			return args.Handled;
+		}
+
+		
+		/// <summary>
+		/// For use with a PaintWall event
+		/// </summary>
+		public class PaintWallEventArgs : HandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// Called When a wall is painted
+		/// </summary>
+		public static HandlerList<PaintWallEventArgs> PaintWall;
+
+		private static bool OnPaintWall(Int32 x, Int32 y, byte t)
+		{
+			if (PaintWall == null)
+				return false;
+
+			var args = new PaintWallEventArgs
+			{
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintWall.Invoke(null, args);
+			return args.Handled;
 		}
 
 		private static bool HandleTogglePvp(GetDataHandlerArgs args)
@@ -1987,9 +2155,15 @@ namespace TShockAPI
 			var item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			if (OnPlayerUpdate(plr, control, item, pos, vel))
+			byte pulley = args.Data.ReadInt8();
+			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
 				return true;
 			if (item < 0 || item >= args.TPlayer.inventory.Length)
+			{
+				return true;
+			}
+
+			if (pulley > 2)
 			{
 				return true;
 			}
@@ -2036,8 +2210,8 @@ namespace TShockAPI
 							args.Player.SendMessage("PvP is forced! Enable PvP or else you can't do anything!",
 													Color.Red);
 						}
-						int lastTileX = (int) (args.Player.LastNetPosition.X/16f);
-						int lastTileY = (int) (args.Player.LastNetPosition.Y/16f);
+						var lastTileX = args.Player.LastNetPosition.X;
+						var lastTileY = args.Player.LastNetPosition.Y;
 						if (!args.Player.Teleport(lastTileX, lastTileY))
 						{
 							args.Player.Spawn();
@@ -2056,9 +2230,9 @@ namespace TShockAPI
 					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height) && !TShock.Config.IgnoreNoClip
 					&& !args.TPlayer.tongued)
 				{
-					int lastTileX = (int)(args.Player.LastNetPosition.X / 16f);
-					int lastTileY = (int)(args.Player.LastNetPosition.Y / 16f);
-					if (!args.Player.Teleport(lastTileX, lastTileY + 3))
+					var lastTileX = args.Player.LastNetPosition.X;
+					var lastTileY = args.Player.LastNetPosition.Y;
+					if (!args.Player.Teleport(lastTileX, lastTileY + 48))
 					{
 						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
 						args.Player.Spawn();
@@ -2092,6 +2266,8 @@ namespace TShockAPI
 			args.TPlayer.controlRight = false;
 			args.TPlayer.controlJump = false;
 			args.TPlayer.controlUseItem = false;
+			args.TPlayer.pulley = pulley != 0;
+			args.TPlayer.pulleyDir = pulley;
 			args.TPlayer.direction = -1;
 			if ((control & 1) == 1)
 			{
@@ -2207,12 +2383,14 @@ namespace TShockAPI
 				}
 			}
 
-			// force all explosives server-side.
+			// force all explosives server-side.  -- DOES NOT WORK DUE TO LATENCY
 			if (hasPermission && (type == 28 || type == 29 || type == 37))
 			{
-				args.Player.RemoveProjectile(ident, owner);
-				Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
-				return true;
+			//  Denotes that the player has recently set a fuse - used for cheat detection.
+				args.Player.RecentFuse = 10;				
+			//	args.Player.RemoveProjectile(ident, owner);
+			//	Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
+			//	return true;
 			}
 
 			return false;
@@ -2291,11 +2469,12 @@ namespace TShockAPI
 		{
 			int tileX = args.Data.ReadInt32();
 			int tileY = args.Data.ReadInt32();
-			byte liquid = args.Data.ReadInt8();
-			bool lava = args.Data.ReadBoolean();
+			byte amount = args.Data.ReadInt8();
+			byte type = args.Data.ReadInt8();
 
-			if (OnLiquidSet(tileX, tileY, liquid, lava))
+			if (OnLiquidSet(tileX, tileY, amount, type))
 				return true;
+
 			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
 				return false;
 
@@ -2314,12 +2493,16 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreliquidsetdetection))
 			{
-				args.Player.TileLiquidThreshold++;
+				args.Player.TileLiquidThreshold+=amount;
 			}
-			if (liquid != 0)
+			if (amount != 0)
 			{
-				int bucket = 0;
-				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
+				int bucket = -1;
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 205)
+				{
+					bucket = 0;
+				} 
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
 				{
 					bucket = 1;
 				}
@@ -2327,8 +2510,12 @@ namespace TShockAPI
 				{
 					bucket = 2;
 				}
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 1128)
+				{
+					bucket = 3;
+				}
 
-                if(lava && bucket != 2)
+				if (type == 1 && !(bucket == 2 || bucket == 0))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading lava without holding a lava bucket");
@@ -2336,7 +2523,7 @@ namespace TShockAPI
                     return true;
                 } 
                 
-                if(lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
+                if(type == 1 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
                             TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player)))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -2345,7 +2532,7 @@ namespace TShockAPI
                     return true;
                 }
 
-                if (!lava && bucket != 1)
+                if (type == 0 && !(bucket == 1 || bucket == 0))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading water without holding a water bucket");
@@ -2353,11 +2540,28 @@ namespace TShockAPI
                     return true;
                 } 
 
-				if (!lava && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+				if (type == 0 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
 					          TShock.Itembans.ItemIsBanned("Water Bucket", args.Player)))
 				{
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned water bucket without permissions");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+
+				if (type == 2 &&!(bucket == 3 || bucket == 0))
+				{
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Spreading honey without holding a honey bucket");
+					args.Player.SendTileSquare(tileX, tileY);
+					return true;
+				}
+
+				if (type == 2 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
+							  TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player)))
+				{
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Using banned honey bucket without permissions");
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -2631,13 +2835,14 @@ namespace TShockAPI
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var stacks = args.Data.ReadInt8();
 			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadBoolean();
 			var type = args.Data.ReadInt16();
 
-			if (OnItemDrop(id, pos, vel, stacks, prefix, type))
+			if (OnItemDrop(id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
 
             // player is attempting to crash clients
-			if (type < -24 || type >= Main.maxItemTypes)
+			if (type < -48 || type >= Main.maxItemTypes)
 			{
 				return true;
 			}
@@ -2735,6 +2940,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
+			}
+
+			if (args.Player.Group.HasPermission(Permissions.godmode))
+			{
+				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;
@@ -2938,6 +3148,97 @@ namespace TShockAPI
 
 		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 		    return false;
+		}
+
+		private static bool HandlePaintTile(GetDataHandlerArgs args)
+		{
+		var x = args.Data.ReadInt32();
+		var y = args.Data.ReadInt32();
+		var t = args.Data.ReadInt8();
+		
+		if (OnPaintTile(x, y, t))
+			return true;
+		
+		if (!args.Player.Group.HasPermission(Permissions.canpaint))
+		{
+			args.Player.SendTileSquare(x, y);
+			return true;
+		}
+			
+			return false;
+		}
+		
+		private static bool HandlePaintWall(GetDataHandlerArgs args)
+		{
+		var x = args.Data.ReadInt32();
+		var y = args.Data.ReadInt32();
+		var t = args.Data.ReadInt8();
+		
+		if (OnPaintTile(x, y, t))
+			return true;
+		
+		if (!args.Player.Group.HasPermission(Permissions.canpaint))
+		{
+			args.Player.SendTileSquare(x, y);
+			return true;
+		}
+			
+			return false;
+		}
+		private static bool HandleTeleport(GetDataHandlerArgs args)
+		{
+			var flag = args.Data.ReadInt8();
+			var id = args.Data.ReadInt16();
+			var x = args.Data.ReadSingle();
+			var y = args.Data.ReadSingle();
+
+			if (OnTeleport(id, flag, x, y))
+				return true;
+
+			byte style = 0;
+			var isNPC = false;
+			if ((flag & 1) == 1)
+			{
+				isNPC = true;
+			}
+
+			if ((flag & 2) != 2)
+			{
+				if ((flag & 4) == 4)
+				{
+					style++;
+				}
+
+				if ((flag & 8) == 8)
+				{
+					style++;
+				}
+
+				if (id > (isNPC ? 200 : 255))
+				{
+					return true;
+				}
+
+				if (Main.player[id] == null || TShock.Players[id] == null)
+				{
+					return true;
+				}
+
+				if (!isNPC && !args.Player.Group.HasPermission(Permissions.tp))
+				{
+					args.Player.SendErrorMessage("You do not have permission to teleport.");
+					Main.player[id].Teleport(new Vector2(Main.player[id].position.X, Main.player[id].position.Y), style);
+					NetMessage.SendData(65, -1, -1, "", 0, (float)id, Main.player[id].position.X, Main.player[id].position.Y, style);
+					return true;
+				}
+
+				if (!isNPC)
+				{
+					TShock.Players[id].Teleport(x, y, style);
+				}
+			}
+
+			return true;
 		}
 	}
 }

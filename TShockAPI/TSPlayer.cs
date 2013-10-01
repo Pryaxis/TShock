@@ -57,16 +57,21 @@ namespace TShockAPI
         /// The number of projectiles created by the player in the last second.
         /// </summary>
 		public int ProjectileThreshold { get; set; }
+		
+		/// <summary>
+		/// A timer to keep track of whether or not the player has recently thrown an explosive
+		//  </summary>
+		public int RecentFuse = 0;
 
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
         /// </summary>
-		public Dictionary<Vector2, TileData> TilesDestroyed { get; protected set; }
+		public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
 
         /// <summary>
         /// A queue of tiles placed by the player for reverting.
         /// </summary>
-		public Dictionary<Vector2, TileData> TilesCreated { get; protected set; }
+		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
 
 		public int FirstMaxHP { get; set; }
 
@@ -390,7 +395,7 @@ namespace TShockAPI
 				bool flag = false;
 				if (RealPlayer)
 				{
-					for (int i = 0; i < 40; i++) //41 is trash can, 42-45 is coins, 46-49 is ammo
+					for (int i = 0; i < 50; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
 					{
 						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
 						{
@@ -405,8 +410,8 @@ namespace TShockAPI
 
 		public TSPlayer(int index)
 		{
-			TilesDestroyed = new Dictionary<Vector2, TileData>();
-			TilesCreated = new Dictionary<Vector2, TileData>();
+			TilesDestroyed = new Dictionary<Vector2, Tile>();
+			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = index;
             Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
@@ -415,8 +420,8 @@ namespace TShockAPI
 
 		protected TSPlayer(String playerName)
 		{
-			TilesDestroyed = new Dictionary<Vector2, TileData>();
-			TilesCreated = new Dictionary<Vector2, TileData>();
+			TilesDestroyed = new Dictionary<Vector2, Tile>();
+			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
 		    Group = Group.DefaultGroup;
@@ -457,12 +462,47 @@ namespace TShockAPI
 								//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
 								//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
 								WorldID = !fakeid ? Main.worldID : -1,
-								WorldFlags = (WorldGen.shadowOrbSmashed ? WorldInfoFlag.OrbSmashed : WorldInfoFlag.None) |
-											 (NPC.downedBoss1 ? WorldInfoFlag.DownedBoss1 : WorldInfoFlag.None) |
-											 (NPC.downedBoss2 ? WorldInfoFlag.DownedBoss2 : WorldInfoFlag.None) |
-											 (NPC.downedBoss3 ? WorldInfoFlag.DownedBoss3 : WorldInfoFlag.None) |
-											 (Main.hardMode ? WorldInfoFlag.HardMode : WorldInfoFlag.None) |
-											 (NPC.downedClown ? WorldInfoFlag.DownedClown : WorldInfoFlag.None),
+								MoonType = (byte)Main.moonType,
+								TreeX0 = Main.treeX[0],
+								TreeX1 = Main.treeX[1],
+								TreeX2 = Main.treeX[2],
+								TreeStyle0 = (byte)Main.treeStyle[0],
+								TreeStyle1 = (byte)Main.treeStyle[1],
+								TreeStyle2 = (byte)Main.treeStyle[2],
+								TreeStyle3 = (byte)Main.treeStyle[3],
+								CaveBackX0 = Main.caveBackX[0],
+								CaveBackX1 = Main.caveBackX[1],
+								CaveBackX2 = Main.caveBackX[2],
+								CaveBackStyle0 = (byte)Main.caveBackStyle[0],
+								CaveBackStyle1 = (byte)Main.caveBackStyle[1],
+								CaveBackStyle2 = (byte)Main.caveBackStyle[2],
+								CaveBackStyle3 = (byte)Main.caveBackStyle[3],
+								SetBG0 = (byte)WorldGen.treeBG,
+								SetBG1 = (byte)WorldGen.corruptBG,
+								SetBG2 = (byte)WorldGen.jungleBG,
+								SetBG3 = (byte)WorldGen.snowBG,
+								SetBG4 = (byte)WorldGen.hallowBG,
+								SetBG5 = (byte)WorldGen.crimsonBG,
+								SetBG6 = (byte)WorldGen.desertBG,
+								SetBG7 = (byte)WorldGen.oceanBG,
+								IceBackStyle = (byte)Main.iceBackStyle,
+								JungleBackStyle = (byte)Main.jungleBackStyle,
+								HellBackStyle = (byte)Main.hellBackStyle,
+								WindSpeed = Main.windSpeed,
+								NumberOfClouds = (byte)Main.numClouds,
+								BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
+											(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
+											(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
+											(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
+											(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
+											(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None),	
+								BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
+											 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
+											 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
+											 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
+											 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
+												(WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None),
+								Rain = Main.maxRaining,
 								WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 							};
 				msg.PackFull(ms);
@@ -470,39 +510,33 @@ namespace TShockAPI
 			}
 		}
 
-		public bool Teleport(int tilex, int tiley)
+		public bool Teleport(float x, float y, byte style = 1)
 		{
-			InitSpawn = false;
-
-			SendWorldInfo(tilex, tiley, true);
-
-			//150 Should avoid all client crash errors
-			//The error occurs when a tile trys to update which the client hasnt load yet, Clients only update tiles withen 150 blocks
-			//Try 300 if it does not work (Higher number - Longer load times - Less chance of error)
-			//Should we properly send sections so that clients don't get tiles twice?
-			SendTileSquare(tilex, tiley, 150);
-
-/*	//We shouldn't need this section anymore -it can prevent otherwise acceptable teleportation under some circumstances. 
-		
-			if (!SendTileSquare(tilex, tiley, 150))
+			if (x > Main.rightWorld - 992)
 			{
-				InitSpawn = true;
-				SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
-				return false;
+				x = Main.rightWorld - 992;
+			}
+			if (x < 992)
+			{
+				x = 992;
+			}
+			if (y > Main.bottomWorld - 992)
+			{
+				y = Main.bottomWorld - 992;
+			}
+			if (y < 992)
+			{
+				y = 992;
 			}
 
-*/
-			Spawn(-1, -1);
-
-			SendWorldInfo(Main.spawnTileX, Main.spawnTileY, false);
-
-			TPlayer.position.X = (float)(tilex * 16 + 8 - TPlayer.width /2);
-			TPlayer.position.Y = (float)(tiley * 16 - TPlayer.height);
-			//We need to send the tile data again to prevent clients from thinking they *really* destroyed blocks just now.
-
-			SendTileSquare(tilex, tiley, 10);
-
+			TPlayer.Teleport(new Vector2(x, y), style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
 			return true;
+		}
+
+		public void Heal(int damage = 400)
+		{
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, damage);
 		}
 
 		public void Spawn()
@@ -594,7 +628,7 @@ namespace TShockAPI
 
 	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix);
+			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
 
 			// This is for special pickaxe/hammers/swords etc
 			Main.item[itemid].SetDefaults(name);
@@ -604,8 +638,10 @@ namespace TShockAPI
 			Main.item[itemid].stack = stack;
 			Main.item[itemid].owner = Index;
 			Main.item[itemid].prefix = (byte) prefix;
-			NetMessage.SendData((int) PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int) PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
+			Main.item[itemid].noGrabDelay = 1;
+			Main.item[itemid].velocity = Main.player[this.Index].velocity;
+			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
         public virtual void SendInfoMessage(string msg)
@@ -876,6 +912,12 @@ namespace TShockAPI
 			Main.bloodMoon = bloodMoon;
 			SetTime(false, 0);
 		}
+		
+		public void SetEclipse(bool Eclipse)
+		{
+			Main.eclipse = Eclipse;
+			SetTime(true, 150);
+		}
 
 		public void SetTime(bool dayTime, double time)
 		{
@@ -910,12 +952,12 @@ namespace TShockAPI
 			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}
 
-		public void RevertTiles(Dictionary<Vector2, TileData> tiles)
+		public void RevertTiles(Dictionary<Vector2, Tile> tiles)
 		{
 			// Update Main.Tile first so that when tile sqaure is sent it is correct
-			foreach (KeyValuePair<Vector2, TileData> entry in tiles)
+			foreach (KeyValuePair<Vector2, Tile> entry in tiles)
 			{
-				Main.tile[(int) entry.Key.X, (int) entry.Key.Y].Data = entry.Value;
+				Main.tile[(int) entry.Key.X, (int) entry.Key.Y] = entry.Value;
 			}
 			// Send all players updated tile sqaures
 			foreach (Vector2 coords in tiles.Keys)
@@ -977,9 +1019,10 @@ namespace TShockAPI
 			this.maxHealth = player.TPlayer.statLifeMax;
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
+			Item[] dye = player.TPlayer.dye;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
-				if (i < 49)
+				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
 				{
 					if (player.TPlayer.inventory[i] != null)
 					{
@@ -1001,11 +1044,12 @@ namespace TShockAPI
 						this.inventory[i].prefix = 0;
 					}
 				}
-				else
+				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
 				{
-					if (player.TPlayer.armor[i - 48] != null)
+					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
+					if (player.TPlayer.armor[index] != null)
 					{
-						this.inventory[i].netID = armor[i - 48].netID;
+						this.inventory[i].netID = armor[index].netID;
 					}
 					else
 					{
@@ -1014,8 +1058,31 @@ namespace TShockAPI
 
 					if (this.inventory[i].netID != 0)
 					{
-						this.inventory[i].stack = armor[i - 48].stack;
-						this.inventory[i].prefix = armor[i - 48].prefix;
+						this.inventory[i].stack = armor[index].stack;
+						this.inventory[i].prefix = armor[index].prefix;
+					}
+					else
+					{
+						this.inventory[i].stack = 0;
+						this.inventory[i].prefix = 0;
+					}
+				}
+				else
+				{
+					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
+					if (player.TPlayer.dye[index] != null)
+					{
+						this.inventory[i].netID = armor[index].netID;
+					}
+					else
+					{
+						this.inventory[i].netID = 0;
+					}
+
+					if (this.inventory[i].netID != 0)
+					{
+						this.inventory[i].stack = armor[index].stack;
+						this.inventory[i].prefix = armor[index].prefix;
 					}
 					else
 					{
@@ -1029,11 +1096,13 @@ namespace TShockAPI
 
 	public class NetItem
 	{
-		public static int maxNetInventory = 59;
+		public static readonly int maxNetInventory = 73;
+		public static readonly int armorSlots = 11;
+		public static readonly int dyeSlots = 3;
 		public int netID;
 		public int stack;
 		public int prefix;
-
+		
 		public static string ToString(NetItem[] inventory)
 		{
 			string inventoryString = "";

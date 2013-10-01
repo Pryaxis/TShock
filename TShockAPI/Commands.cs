@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TShockAPI.PluginUpdater;
 using Terraria;
 using TShockAPI.DB;
 
@@ -186,7 +185,9 @@ namespace TShockAPI
 			add(Permissions.causeevents, Star, "star");
 			add(Permissions.causeevents, Fullmoon, "fullmoon");
 			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
+			add(Permissions.causeevents, Eclipse, "eclipse");
 			add(Permissions.causeevents, Invade, "invade");
+			add(Permissions.causeevents, Rain, "rain");
             add(Permissions.spawnboss, Eater, "eater");
             add(Permissions.spawnboss, Eye, "eye");
             add(Permissions.spawnboss, King, "king");
@@ -483,7 +484,7 @@ namespace TShockAPI
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
 							Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
-							args.Player.Teleport((int)pos.X, (int)pos.Y + 3);
+							args.Player.Teleport((int)pos.X*16, (int)pos.Y *16 + 48);
 						}
 						args.Player.LoginHarassed = false;
 
@@ -1259,7 +1260,6 @@ namespace TShockAPI
         {
             args.Player.SendInfoMessage("Starting plugin update process:");
             args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
-            new PluginUpdaterThread(args.Player);
         }
 
 		private static void ManageRest(CommandArgs args)
@@ -1354,6 +1354,12 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
 		}
 
+		private static void Eclipse(CommandArgs args)
+		{
+			TSPlayer.Server.SetEclipse(true);
+			TShock.Utils.Broadcast(string.Format("{0} has forced an Eclipse!", args.Player.Name), Color.Green);
+		}
+		
 		private static void Invade(CommandArgs args)
 		{
 			if (Main.invasionSize <= 0)
@@ -1635,7 +1641,7 @@ namespace TShockAPI
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (args.Player.Teleport(Main.spawnTileX, Main.spawnTileY))
+			if (args.Player.Teleport(Main.spawnTileX*16, Main.spawnTileY*16))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 
@@ -1643,33 +1649,53 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player> ");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
+				args.Player.SendErrorMessage("                               /tp <x> <y>");
 				return;
 			}
 
-			string plStr = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(plStr);
-			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
-			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-			else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+			if(args.Parameters.Count == 2)
 			{
-				var plr = players[0];
-				args.Player.SendErrorMessage(plr.Name + " has prevented users from teleporting to them.");
-				plr.SendInfoMessage(args.Player.Name + " attempted to teleport to you.");
+				float x, y;
+				if (float.TryParse(args.Parameters[0], out x) && float.TryParse(args.Parameters[1], out y))
+				{
+					args.Player.Teleport(x, y);
+					args.Player.SendSuccessMessage("Teleported!");
+				}
 			}
 			else
 			{
-				var plr = players[0];
-				if (args.Player.Teleport(plr.TileX, plr.TileY + 3))
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TShock.Utils.FindPlayer(plStr);
+				if (players.Count == 0)
 				{
-					args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
-					if (!args.Player.Group.HasPermission(Permissions.tphide))
-						plr.SendInfoMessage(args.Player.Name + " teleported to you.");
+					args.Player.SendErrorMessage("Invalid user name.");
+					args.Player.SendErrorMessage("Proper syntax: /tp <player>");
+					args.Player.SendErrorMessage("               /tp <x> <y>");
+				}
+
+				else if (players.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+				{
+					var plr = players[0];
+					args.Player.SendErrorMessage(plr.Name + " has prevented users from teleporting to them.");
+					plr.SendInfoMessage(args.Player.Name + " attempted to teleport to you.");
+				}
+				else
+				{
+					var plr = players[0];
+					if (args.Player.Teleport(plr.TileX * 16, plr.TileY * 16 + 48))
+					{
+						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
+						if (!args.Player.Group.HasPermission(Permissions.tphide))
+							plr.SendInfoMessage(args.Player.Name + " teleported to you.");
+					}
 				}
 			}
-		}
+
+
+	}
 
 		private static void TPHere(CommandArgs args)
 		{
@@ -1688,7 +1714,7 @@ namespace TShockAPI
 				{
 					if (Main.player[i].active && (Main.player[i] != args.TPlayer))
 					{
-						if (TShock.Players[i].Teleport(args.Player.TileX, args.Player.TileY + 3))
+						if (TShock.Players[i].Teleport(args.Player.TileX*16, args.Player.TileY*16 + 48))
 							TShock.Players[i].SendSuccessMessage(string.Format("You were teleported to {0}.", args.Player.Name) + ".");
 					}
 				}
@@ -1707,7 +1733,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				if (plr.Teleport(args.Player.TileX, args.Player.TileY + 3))
+				if (plr.Teleport(args.Player.TileX*16, args.Player.TileY*16 + 48))
 				{
 					plr.SendInfoMessage(string.Format("You were teleported to {0}.", args.Player.Name));
 					args.Player.SendSuccessMessage(string.Format("You brought {0} here.", plr.Name));
@@ -1851,7 +1877,7 @@ namespace TShockAPI
                 var plr = foundplr[0];
                 if (warp.WarpPos != Vector2.Zero)
                 {
-                    if (plr.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                    if (plr.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 + 48))
                     {
                         plr.SendSuccessMessage(string.Format("{0} warped you to {1}.", args.Player.Name, warpName));
                         args.Player.SendSuccessMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName));
@@ -1869,7 +1895,7 @@ namespace TShockAPI
                 var warp = TShock.Warps.FindWarp(warpName);
                 if (warp.WarpPos != Vector2.Zero)
                 {
-                    if (args.Player.Teleport((int)warp.WarpPos.X, (int)warp.WarpPos.Y + 3))
+                    if (args.Player.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 + 48))
                         args.Player.SendSuccessMessage("Warped to " + warpName + ".");
                 }
                 else
@@ -2484,7 +2510,27 @@ namespace TShockAPI
 			}
 		}
 
-        //TODO: Come back here
+		private static void Rain(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /rain <stop/start>");
+				return;
+			}
+
+			switch (args.Parameters[0])
+			{
+				case "start":
+					Main.StartRain();
+					TSPlayer.All.SendInfoMessage(string.Format("{0} caused it to rain.", args.Player.Name));
+					break;
+				case "stop":
+					Main.StopRain();
+					TSPlayer.All.SendInfoMessage(string.Format("{0} ended the downpour.", args.Player.Name));
+					break;
+			}
+		}
+ 
 
 		private static void Slap(CommandArgs args)
 		{
@@ -2900,13 +2946,13 @@ namespace TShockAPI
                                     // worth the effort as chances are very low that overwriting the wire for a few 
                                     // nanoseconds will cause much trouble.
                                     Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
-                                    bool oldWireState = tile.wire;
-                                    tile.wire = true;
+                                    bool oldWireState = tile.wire();
+	                                tile.wire(true);
 
                                     try {
                                         args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
                                     } finally {
-                                        tile.wire = oldWireState;
+                                        tile.wire(oldWireState);
                                     }
                                 }
                             }
@@ -3027,7 +3073,7 @@ namespace TShockAPI
                           break;
                         }
 
-                        args.Player.Teleport(region.Area.Center.X, region.Area.Center.Y + 3);
+                        args.Player.Teleport(region.Area.Center.X*16, region.Area.Center.Y*16 + 48);
 
                         break;
                       }
@@ -3703,12 +3749,7 @@ namespace TShockAPI
 				playerToHeal = args.Player;
 			}
 
-			Item heart = TShock.Utils.GetItemById(58);
-			Item star = TShock.Utils.GetItemById(184);
-			for (int i = 0; i < 20; i++)
-				playerToHeal.GiveItem(heart.type, heart.name, heart.width, heart.height, heart.maxStack);
-			for (int i = 0; i < 10; i++)
-				playerToHeal.GiveItem(star.type, star.name, star.width, star.height, star.maxStack);
+			playerToHeal.Heal();
 			if (playerToHeal == args.Player)
 			{
 				args.Player.SendSuccessMessage("You just got healed!");
@@ -3829,7 +3870,7 @@ namespace TShockAPI
 				case "tree":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
@@ -3840,20 +3881,20 @@ namespace TShockAPI
 				case "epictree":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
 					Main.tile[x, y - 1].liquid = 0;
-					Main.tile[x, y - 1].active = true;
+					Main.tile[x, y - 1].active(true);
 					WorldGen.GrowEpicTree(x, y);
 					name = "Epic Tree";
 					break;
 				case "mushroom":
 					for (int i = x - 1; i < x + 2; i++)
 					{
-						Main.tile[i, y].active = true;
+						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 70;
 						Main.tile[i, y].wall = 0;
 					}
@@ -3867,7 +3908,7 @@ namespace TShockAPI
 					name = "Cactus";
 					break;
 				case "herb":
-					Main.tile[x, y].active = true;
+					Main.tile[x, y].active(true);
 					Main.tile[x, y].frameX = 36;
 					Main.tile[x, y].type = 83;
 					WorldGen.GrowAlch(x, y);

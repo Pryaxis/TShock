@@ -247,6 +247,9 @@ namespace TShockAPI
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
+		
+		[Description("User can paint tiles.")]
+		public static readonly string canpaint = "tshock.world.paint";
 
 		// Non-grouped
 
@@ -279,6 +282,9 @@ namespace TShockAPI
 
 		[Description("User can get the server info.")]
 		public static readonly string serverinfo = "tshock.info";
+
+		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
+		public static readonly string godmode = "tshock.godmode";
 
         /// <summary>
         /// Lists all commands associated with a given permission

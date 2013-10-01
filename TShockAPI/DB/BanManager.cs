@@ -124,7 +124,7 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				return database.Query("INSERT INTO Bans (IP, Name, Reason, BanningUser, Date, Expiration) VALUES (@0, @1, @2, @3, @4, @5);", ip, name, reason, banner, DateTime.Now.ToString("G"), expiration) != 0;
+				return database.Query("INSERT INTO Bans (IP, Name, Reason, BanningUser, Date, Expiration) VALUES (@0, @1, @2, @3, @4, @5);", ip, name, reason, banner, DateTime.UtcNow.ToString("s"), expiration) != 0;
 			}
 			catch (Exception ex)
 			{
