@@ -3121,8 +3121,10 @@ namespace TShockAPI
 		    var invasion = -1;
 		    var plr = args.Data.ReadInt32();
 		    var Type = args.Data.ReadInt32();
-            spawnboss = (Type == 4 || Type == 13 || (Type == 50 || Type == 125) || (Type == 126 || Type == 134 || (Type == (int) sbyte.MaxValue || Type == 128)));
-            if (!spawnboss)
+			NPC npc = new NPC();
+			npc.SetDefaults(Type);
+			spawnboss = npc.boss;
+			if (!spawnboss)
             {
                 switch (Type)
                 {
@@ -3158,33 +3160,9 @@ namespace TShockAPI
                 case -1:
                     boss = "a Goblin Invasion";
                     break;
-                case 4:
-                    boss = "the Eye of Cthulhu";
-                    break;
-                case 13:
-                    boss = "the Eater of Worlds";
-                    break;
-                case 50:
-                    boss = "the King Slime";
-                    break;
-                case 125:
-                    boss = "Retinazer";
-                    break;
-                case 126:
-                    boss = "Spazmatism";
-                    break;
-                case 134:
-                    boss = "the Destroyer";
-                    break;
-                case sbyte.MaxValue:
-                    boss = "Skeleton Prime";
-                    break;
-                case 128:
-                    boss = "Skeleton Prime";
-                    break;
                 default:
-                    boss = "error";
-                    break;
+		            boss = String.Format("the {0}", npc.name);
+		            break;
             }
 
 		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
