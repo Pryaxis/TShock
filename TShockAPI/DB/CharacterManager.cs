@@ -30,7 +30,7 @@ namespace TShockAPI.DB
 		{
 			database = db;
 
-			var table = new SqlTable("Character",
+			var table = new SqlTable("tsCharacter",
 			                         new SqlColumn("Account", MySqlDbType.Int32) {Primary = true},
 									 new SqlColumn("Health", MySqlDbType.Int32),
 			                         new SqlColumn("MaxHealth", MySqlDbType.Int32),
@@ -51,7 +51,7 @@ namespace TShockAPI.DB
 
 			try
 			{
-				using (var reader = database.QueryReader("SELECT * FROM Character WHERE Account=@0", acctid))
+				using (var reader = database.QueryReader("SELECT * FROM tsCharacter WHERE Account=@0", acctid))
 				{
 					if (reader.Read())
 					{
@@ -84,7 +84,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("INSERT INTO Character (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", player.UserID,
+					database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", player.UserID,
 								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory));
 					return true;
 				}
