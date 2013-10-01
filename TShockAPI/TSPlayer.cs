@@ -1142,7 +1142,7 @@ namespace TShockAPI
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.mana;
 			player.TPlayer.statManaMax = this.maxMana;
-			player.TPlayer.name = player.UserAccountName;
+//			player.TPlayer.name = player.UserAccountName;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
 				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
@@ -1218,7 +1218,7 @@ namespace TShockAPI
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 70f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(4, -1, -1, Main.player[player.Index].name, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 
 			for (int k = 0; k < 59; k++)
 			{
@@ -1238,7 +1238,7 @@ namespace TShockAPI
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 70f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(4, -1, -1, Main.player[player.Index].name, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 		}
 	}
 
