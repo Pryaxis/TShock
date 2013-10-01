@@ -3117,112 +3117,90 @@ namespace TShockAPI
 
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
-		    var spawnboss = false;
-		    var invasion = -1;
-		    var plr = args.Data.ReadInt32();
-		    var Type = args.Data.ReadInt32();
-            spawnboss = (Type == 4 || Type == 13 || (Type == 50 || Type == 125) || (Type == 126 || Type == 134 || (Type == (int) sbyte.MaxValue || Type == 128)));
-            if (!spawnboss)
-            {
-                switch (Type)
-                {
-                    case -1:
-                        invasion = 1;
-                        break;
-                    case -2:
-                        invasion = 2;
-                        break;
-                }
-            }
-            if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
-            {
-                args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
-                return true;
-            }
-            if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
-            {
-                args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
-                return true;
-            }
-            if (!spawnboss && invasion == -1)
-                return true;
-            if (plr != args.Player.Index)
-                return true;
+			var spawnboss = false;
+			var invasion = -1;
+			var plr = args.Data.ReadInt32();
+			var Type = args.Data.ReadInt32();
+			NPC npc = new NPC();
+			npc.SetDefaults(Type);
+			spawnboss = npc.boss;
+			if (!spawnboss)
+			{
+				switch (Type)
+				{
+					case -1:
+						invasion = 1;
+						break;
+					case -2:
+						invasion = 2;
+						break;
+				}
+			}
+			if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
+			{
+				args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
+				return true;
+			}
+			if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
+			{
+				args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
+				return true;
+			}
+			if (!spawnboss && invasion == -1)
+				return true;
+			if (plr != args.Player.Index)
+				return true;
 
-		    string boss;
-            switch (Type)
-            {
-                case -2:
-                    boss = "the Snow Legion";
-                    break;
-                case -1:
-                    boss = "a Goblin Invasion";
-                    break;
-                case 4:
-                    boss = "the Eye of Cthulhu";
-                    break;
-                case 13:
-                    boss = "the Eater of Worlds";
-                    break;
-                case 50:
-                    boss = "the King Slime";
-                    break;
-                case 125:
-                    boss = "Retinazer";
-                    break;
-                case 126:
-                    boss = "Spazmatism";
-                    break;
-                case 134:
-                    boss = "the Destroyer";
-                    break;
-                case sbyte.MaxValue:
-                    boss = "Skeleton Prime";
-                    break;
-                case 128:
-                    boss = "Skeleton Prime";
-                    break;
-                default:
-                    boss = "error";
-                    break;
-            }
+			string boss;
+			switch (Type)
+			{
+				case -2:
+					boss = "the Snow Legion";
+					break;
+				case -1:
+					boss = "a Goblin Invasion";
+					break;
+				default:
+					boss = String.Format("the {0}", npc.name);
+					break;
+			}
 
-		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
-		    return false;
+			TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			return false;
 		}
 
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
 		{
-		var x = args.Data.ReadInt32();
-		var y = args.Data.ReadInt32();
-		var t = args.Data.ReadInt8();
-		
-		if (OnPaintTile(x, y, t))
-			return true;
-		
-		if (!args.Player.Group.HasPermission(Permissions.canpaint))
-		{
-			args.Player.SendTileSquare(x, y);
-			return true;
-		}
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var t = args.Data.ReadInt8();
+
+			if (OnPaintTile(x, y, t))
+				return true;
+
+			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+			{
+				args.Player.SendTileSquare(x, y);
+				return true;
+			}
 			
 			return false;
 		}
 		
 		private static bool HandlePaintWall(GetDataHandlerArgs args)
 		{
-		var x = args.Data.ReadInt32();
-		var y = args.Data.ReadInt32();
-		var t = args.Data.ReadInt8();
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var t = args.Data.ReadInt8();
 		
-		if (OnPaintTile(x, y, t))
-			return true;
+			if (OnPaintTile(x, y, t))
+				return true;
 		
-		if (!args.Player.Group.HasPermission(Permissions.canpaint))
-		{
-			args.Player.SendTileSquare(x, y);
-			return true;
-		}
+			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+			{
+				args.Player.SendTileSquare(x, y);
+				return true;
+			}
 			
 			return false;
 		}
@@ -3237,11 +3215,7 @@ namespace TShockAPI
 				return true;
 
 			byte style = 0;
-			var isNPC = false;
-			if ((flag & 1) == 1)
-			{
-				isNPC = true;
-			}
+			var isNPC = false || (flag & 1) == 1;
 
 			if ((flag & 2) != 2)
 			{
