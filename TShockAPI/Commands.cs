@@ -1641,7 +1641,7 @@ namespace TShockAPI
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (args.Player.Teleport(Main.spawnTileX*16, Main.spawnTileY*16))
+			if (args.Player.Teleport(Main.spawnTileX*16, (Main.spawnTileY*16) -48))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 
