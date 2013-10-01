@@ -135,7 +135,7 @@ namespace TShockAPI.DB
 		[Obsolete("This method is for signature compatibility for external code only")]
 		public bool AddBan(string ip, string name, string reason)
 		{
-			return AddBan(ip, name, reason, false, "", "");
+			return AddBan(ip, name, "", reason, false, "", "");
 		}
 #endif
 		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "",  string expiration = "")
