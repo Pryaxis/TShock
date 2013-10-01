@@ -32,7 +32,8 @@ namespace TShockAPI.Net
 		DownedBoss2 = 4,
 		DownedBoss3 = 8,
 		HardMode = 16,
-		DownedClown = 32
+		DownedClown = 32,
+		ServerSideCharacter = 64
 	}
 
 	[Flags]
@@ -141,7 +142,7 @@ namespace TShockAPI.Net
 			stream.WriteByte(HellBackStyle);
 			stream.WriteSingle(WindSpeed);
 			stream.WriteByte(NumberOfClouds);
-			stream.WriteInt8((byte) BossFlags);
+			stream.WriteInt8((byte)BossFlags);
 			stream.WriteInt8((byte)BossFlags2);
 			stream.WriteSingle(Rain);
 			stream.WriteBytes(Encoding.UTF8.GetBytes(WorldName));

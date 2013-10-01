@@ -38,6 +38,7 @@ namespace TShockAPI.DB
 			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
 			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
 			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
+                                     new SqlColumn("UUID", MySqlDbType.VarChar, 128),
 			                         new SqlColumn("Usergroup", MySqlDbType.Text),
 									 new SqlColumn("Registered", MySqlDbType.Text),
                                      new SqlColumn("LastAccessed", MySqlDbType.Text),
@@ -62,8 +63,8 @@ namespace TShockAPI.DB
 			int ret;
 			try
 			{
-				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, Registered) VALUES (@0, @1, @2, @3);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.Group, DateTime.UtcNow.ToString("s"));
+				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
@@ -113,6 +114,26 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				throw new UserManagerException("SetUserPassword SQL returned an error", ex);
+			}
+		}
+
+		/// <summary>
+		/// Sets the UUID for a given username
+		/// </summary>
+		/// <param name="user">User user</param>
+		/// <param name="group">string uuid</param>
+		public void SetUserUUID(User user, string uuid)
+		{
+			try
+			{
+				if (
+					database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
+								   user.Name) == 0)
+					throw new UserNotExistException(user.Name);
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("SetUserUUID SQL returned an error", ex);
 			}
 		}
 
@@ -269,6 +290,7 @@ namespace TShockAPI.DB
 			user.ID = result.Get<int>("ID");
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
+            user.UUID = result.Get<string>("UUID");
 			user.Name = result.Get<string>("Username");
 			user.Registered = result.Get<string>("Registered");
             user.LastAccessed = result.Get<string>("LastAccessed");
@@ -282,15 +304,17 @@ namespace TShockAPI.DB
 		public int ID { get; set; }
 		public string Name { get; set; }
 		public string Password { get; set; }
+        public string UUID { get; set; }
 		public string Group { get; set; }
 		public string Registered { get; set; }
         public string LastAccessed { get; set; }
         public string KnownIps { get; set; }
 
-		public User(string name, string pass, string group, string registered, string last, string known)
+		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
+            UUID = uuid;
 			Group = group;
 			Registered = registered;
 		    LastAccessed = last;
@@ -301,6 +325,7 @@ namespace TShockAPI.DB
 		{
 			Name = "";
 			Password = "";
+            UUID = "";
 			Group = "";
 			Registered = "";
             LastAccessed = "";
