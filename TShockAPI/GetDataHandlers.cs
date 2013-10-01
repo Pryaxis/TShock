@@ -1897,7 +1897,7 @@ namespace TShockAPI
 					return true;
 				}
 				// If they aren't selecting the item which creates the tile or wall, they're hacking.
-				if (editData != 127 && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
+				if ((editData != 127 && editData != 213) && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
