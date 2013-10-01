@@ -1116,7 +1116,8 @@ namespace TShockAPI
 
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
-			if (e.Info == 43)
+			//tombstone fix.
+			if (e.Info == 43 || (e.Info >= 201 && e.Info <= 205))
 				if (Config.DisableTombstones)
 					e.Object.SetDefaults(0);
 			if (e.Info == 75)
