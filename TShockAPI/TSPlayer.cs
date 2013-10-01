@@ -512,21 +512,21 @@ namespace TShockAPI
 
 		public bool Teleport(float x, float y, byte style = 1)
 		{
-			if (x > Main.rightWorld - 500)
+			if (x > Main.rightWorld - 992)
 			{
-				x = Main.rightWorld - 500;
+				x = Main.rightWorld - 992;
 			}
-			if (x < 500)
+			if (x < 992)
 			{
-				x = 500;
+				x = 992;
 			}
-			if (y > Main.bottomWorld - 500)
+			if (y > Main.bottomWorld - 992)
 			{
-				y = Main.bottomWorld - 500;
+				y = Main.bottomWorld - 992;
 			}
-			if (y < 500)
+			if (y < 992)
 			{
-				y = 500;
+				y = 992;
 			}
 
 			TPlayer.Teleport(new Vector2(x, y), style);
