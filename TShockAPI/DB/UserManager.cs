@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.CodeDom.Compiler;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace TShockAPI.DB
 			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
 			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
 			                         new SqlColumn("Usergroup", MySqlDbType.Text),
+									 new SqlColumn("Registered", MySqlDbType.Text),
                                      new SqlColumn("LastAccessed", MySqlDbType.Text),
                                      new SqlColumn("KnownIPs", MySqlDbType.Text)
 				);
@@ -60,8 +62,8 @@ namespace TShockAPI.DB
 			int ret;
 			try
 			{
-				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup) VALUES (@0, @1, @2);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.Group);
+				ret = database.Query("INSERT INTO Users (Username, Password, UserGroup, Registered) VALUES (@0, @1, @2, @3);", user.Name,
+								   TShock.Utils.HashPassword(user.Password), user.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
@@ -146,7 +148,7 @@ namespace TShockAPI.DB
 	    {
             try
             {
-                if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.Now.ToString("G"), user.KnownIps, user.Name) == 0)
+                if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
                     throw new UserNotExistException(user.Name);
             }
             catch (Exception ex)
@@ -268,6 +270,7 @@ namespace TShockAPI.DB
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
 			user.Name = result.Get<string>("Username");
+			user.Registered = result.Get<string>("Registered");
             user.LastAccessed = result.Get<string>("LastAccessed");
             user.KnownIps = result.Get<string>("KnownIps");
 			return user;
@@ -280,14 +283,16 @@ namespace TShockAPI.DB
 		public string Name { get; set; }
 		public string Password { get; set; }
 		public string Group { get; set; }
+		public string Registered { get; set; }
         public string LastAccessed { get; set; }
         public string KnownIps { get; set; }
 
-		public User(string name, string pass, string group, string last, string known)
+		public User(string name, string pass, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
 			Group = group;
+			Registered = registered;
 		    LastAccessed = last;
 		    KnownIps = known;
 		}
@@ -297,6 +302,7 @@ namespace TShockAPI.DB
 			Name = "";
 			Password = "";
 			Group = "";
+			Registered = "";
             LastAccessed = "";
             KnownIps = "";
 		}
