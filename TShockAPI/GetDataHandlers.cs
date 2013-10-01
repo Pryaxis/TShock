@@ -1868,7 +1868,7 @@ namespace TShockAPI
 					return true;
 				}
 				// If the tile is a pickaxe tile and they aren't selecting an pickaxe, they're hacking.
-				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && Main.tile[tileX, tileY].wall == 0 && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
 					args.Player.SendTileSquare(tileX, tileY);
 
