@@ -3117,56 +3117,56 @@ namespace TShockAPI
 
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
-		    var spawnboss = false;
-		    var invasion = -1;
-		    var plr = args.Data.ReadInt32();
-		    var Type = args.Data.ReadInt32();
+			var spawnboss = false;
+			var invasion = -1;
+			var plr = args.Data.ReadInt32();
+			var Type = args.Data.ReadInt32();
 			NPC npc = new NPC();
 			npc.SetDefaults(Type);
 			spawnboss = npc.boss;
 			if (!spawnboss)
-            {
-                switch (Type)
-                {
-                    case -1:
-                        invasion = 1;
-                        break;
-                    case -2:
-                        invasion = 2;
-                        break;
-                }
-            }
-            if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
-            {
-                args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
-                return true;
-            }
-            if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
-            {
-                args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
-                return true;
-            }
-            if (!spawnboss && invasion == -1)
-                return true;
-            if (plr != args.Player.Index)
-                return true;
+			{
+				switch (Type)
+				{
+					case -1:
+						invasion = 1;
+						break;
+					case -2:
+						invasion = 2;
+						break;
+				}
+			}
+			if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
+			{
+				args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
+				return true;
+			}
+			if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
+			{
+				args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
+				return true;
+			}
+			if (!spawnboss && invasion == -1)
+				return true;
+			if (plr != args.Player.Index)
+				return true;
 
-		    string boss;
-            switch (Type)
-            {
-                case -2:
-                    boss = "the Snow Legion";
-                    break;
-                case -1:
-                    boss = "a Goblin Invasion";
-                    break;
-                default:
+			string boss;
+			switch (Type)
+			{
+				case -2:
+					boss = "the Snow Legion";
+					break;
+				case -1:
+					boss = "a Goblin Invasion";
+					break;
+				default:
 					boss = String.Format("the {0}", npc.name);
 					break;
-            }
+			}
 
-		    TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
-		    return false;
+			TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			return false;
 		}
 
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
