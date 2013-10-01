@@ -2387,9 +2387,9 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-				if (type == 100)
-				{	//fix for skele prime
-					Log.Debug("Skeletron Prime's death laser ignored for cheat detection..");
+				if (type == 100 || type == 39 || type == 40 || type == 38)
+				{	
+					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
 				else
 				{
