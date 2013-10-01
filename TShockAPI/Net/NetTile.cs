@@ -31,9 +31,13 @@ namespace TShockAPI.Net
 		public short FrameY { get; set; }
 		public byte Wall { get; set; }
 		public byte Liquid { get; set; }
-		public bool Lava { get; set; }
+		public byte LiquidType { get; set; }
 		public bool Wire { get; set; }
-
+		public byte HalfBrick { get; set; }
+		public byte Actuator { get; set; }
+		public bool Inactive { get; set; }
+		public bool IsHalf { get; set; }
+		public bool IsActuator { get; set; }
 		public bool HasWall
 		{
 			get { return Wall > 0; }
@@ -57,8 +61,10 @@ namespace TShockAPI.Net
 			FrameY = -1;
 			Wall = 0;
 			Liquid = 0;
-			Lava = false;
 			Wire = false;
+			HalfBrick = 0;
+			Actuator = 0;
+			Inactive = false;
 		}
 
 		public NetTile(Stream stream)
@@ -71,7 +77,7 @@ namespace TShockAPI.Net
 		{
 			var flags = TileFlags.None;
 
-			if (Active)
+			if ((Active) && (!Inactive))
 				flags |= TileFlags.Active;
 
 			if (HasWall)
@@ -82,6 +88,17 @@ namespace TShockAPI.Net
 
 			if (Wire)
 				flags |= TileFlags.Wire;
+			
+			if (IsHalf)
+				flags |= TileFlags.HalfBrick;
+
+			if (IsActuator)
+				flags |= TileFlags.Actuator;
+
+			if (Inactive)
+			{
+				flags |= TileFlags.Inactive;
+			}
 
 			stream.WriteInt8((byte) flags);
 
@@ -101,7 +118,7 @@ namespace TShockAPI.Net
 			if (HasLiquid)
 			{
 				stream.WriteInt8(Liquid);
-				stream.WriteBoolean(Lava);
+				stream.WriteInt8(LiquidType);
 			}
 		}
 
@@ -128,11 +145,23 @@ namespace TShockAPI.Net
 			if (flags.HasFlag(TileFlags.Liquid))
 			{
 				Liquid = stream.ReadInt8();
-				Lava = stream.ReadBoolean();
+				LiquidType = stream.ReadInt8();
 			}
 
 			if (flags.HasFlag(TileFlags.Wire))
 				Wire = true;
+
+			if (flags.HasFlag(TileFlags.HalfBrick))
+				IsHalf = true;
+			
+			if (flags.HasFlag(TileFlags.Actuator))
+				IsActuator = true;
+
+			if (flags.HasFlag(TileFlags.Inactive))
+			{
+				Inactive = true;
+				Active = false;
+			}
 		}
 	}
 
@@ -144,6 +173,9 @@ namespace TShockAPI.Net
 		Lighted = 2,
 		Wall = 4,
 		Liquid = 8,
-		Wire = 16
+		Wire = 16,
+		HalfBrick = 32,
+		Actuator = 64,
+		Inactive = 128
 	}
 }

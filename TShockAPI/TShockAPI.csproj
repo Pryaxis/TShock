@@ -38,6 +38,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Debug\TShockAPI.XML</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -67,7 +68,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="TerrariaServer, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TerrariaServer, Version=1.14.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\TerrariaServerBins\TerrariaServer.exe</HintPath>
@@ -79,9 +80,6 @@
     <Compile Include="Hooks\GeneralHooks.cs" />
     <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="PaginationTools.cs" />
-    <Compile Include="PluginUpdater\PluginUpdaterThread.cs" />
-    <Compile Include="PluginUpdater\PluginVersionCheck.cs" />
-    <Compile Include="PluginUpdater\VersionInfo.cs" />
     <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
