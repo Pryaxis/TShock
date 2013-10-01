@@ -1289,7 +1289,7 @@ namespace TShockAPI
 				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
 			}
 			else if (
-				TShock.Config.ServerSideInventory && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
+				TShock.Config.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
 				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassinventorychecks)
 			) {
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
@@ -1400,7 +1400,7 @@ namespace TShockAPI
 			{
 				if(user.UUID == args.Player.UUID)
 				{
-					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
 
 					if (args.Player.State == 1)
 						args.Player.State = 2;
@@ -1408,19 +1408,13 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideInventory)
+					if (TShock.Config.ServerSideCharacter)
 					{
 						if (group.HasPermission(Permissions.bypassinventorychecks))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
-						else if (!TShock.CheckInventory(args.Player))
-						{
-							args.Player.LoginFailsBySsi = true;
-							args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
-							args.Player.IgnoreActionsForClearingTrashCan = true;
-							return true;
-						}
+						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
 					args.Player.LoginFailsBySsi = false;
 
@@ -1439,8 +1433,8 @@ namespace TShockAPI
 
 					if (!args.Player.IgnoreActionsForClearingTrashCan)
 					{
-						args.Player.PlayerData.CopyInventory(args.Player);
-						TShock.InventoryDB.InsertPlayerData(args.Player);
+						args.Player.PlayerData.CopyCharacter(args.Player);
+						TShock.CharacterDB.InsertPlayerData(args.Player);
 					}
 					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
@@ -1484,7 +1478,7 @@ namespace TShockAPI
 				if (user.Password.ToUpper() == encrPass.ToUpper())
 				{
 				    args.Player.RequiresPassword = false;
-				    args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+				    args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
 
 				    if (args.Player.State == 1)
 				        args.Player.State = 2;
@@ -1492,19 +1486,13 @@ namespace TShockAPI
 
 				    var group = TShock.Utils.GetGroup(user.Group);
 
-				    if (TShock.Config.ServerSideInventory)
+				    if (TShock.Config.ServerSideCharacter)
 				    {
 				        if (group.HasPermission(Permissions.bypassinventorychecks))
 				        {
 				            args.Player.IgnoreActionsForClearingTrashCan = false;
 				        }
-				        else if (!TShock.CheckInventory(args.Player))
-				        {
-                    args.Player.LoginFailsBySsi = true;
-				            args.Player.SendMessage("Login Failed, Please fix the above errors then /login again.", Color.Cyan);
-				            args.Player.IgnoreActionsForClearingTrashCan = true;
-				            return true;
-				        }
+						args.Player.PlayerData.RestoreCharacter(args.Player);
 				    }
 					args.Player.LoginFailsBySsi = false;
 
@@ -1523,8 +1511,8 @@ namespace TShockAPI
 
 				    if (!args.Player.IgnoreActionsForClearingTrashCan)
                     {
-				        args.Player.PlayerData.CopyInventory(args.Player);
-				        TShock.InventoryDB.InsertPlayerData(args.Player);
+				        args.Player.PlayerData.CopyCharacter(args.Player);
+				        TShock.CharacterDB.InsertPlayerData(args.Player);
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
@@ -1960,9 +1948,9 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
-				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideInventory && TShock.Config.DisablePiggybanksOnSSI)
+				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideCharacter && TShock.Config.DisablePiggybanksOnSSC)
 				{
-					args.Player.SendMessage("You cannot place this tile because server side inventory is enabled.", Color.Red);
+					args.Player.SendMessage("You cannot place this tile because server side characters are enabled.", Color.Red);
 					args.Player.SendTileSquare(tileX, tileY);
 					return true;
 				}
@@ -2917,7 +2905,7 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
-			if ((TShock.Config.ServerSideInventory) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.Config.LogonDiscardThreshold))
+			if ((TShock.Config.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.Config.LogonDiscardThreshold))
 			{
 			//Player is probably trying to sneak items onto the server in their hands!!!
 				Log.ConsoleInfo(string.Format("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name));

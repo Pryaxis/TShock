@@ -240,8 +240,8 @@ namespace TShockAPI
 			add(Permissions.hardmode, DisableHardMode, "stophardmode", "disablehardmode");
 			add(Permissions.serverinfo, ServerInfo, "stats");
 			add(Permissions.worldinfo, WorldInfo, "world");
-			add(Permissions.savessi, SaveSSI, "savessi");
-			add(Permissions.savessi, OverrideSSI, "overridessi", "ossi");
+			add(Permissions.savessi, SaveSSC, "savessc");
+			add(Permissions.savessi, OverrideSSC, "overridessc", "ossc");
 		    add(Permissions.xmas, ForceXmas, "forcexmas");
 		    add(Permissions.settempgroup, TempGroup, "tempgroup");
 			add(null, Aliases, "aliases");
@@ -444,23 +444,17 @@ namespace TShockAPI
 				}
 				else if (user.Password.ToUpper() == encrPass.ToUpper() || (user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin))
 				{
-					args.Player.PlayerData = TShock.InventoryDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideInventory)
+					if (TShock.Config.ServerSideCharacter)
 					{
 						if (group.HasPermission(Permissions.bypassinventorychecks))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
-						else if (!TShock.CheckInventory(args.Player))
-						{
-							args.Player.LoginFailsBySsi = true;
-							args.Player.SendErrorMessage("Login failed. Please fix the above errors then /login again.");
-							args.Player.IgnoreActionsForClearingTrashCan = true;
-							return;
-						}
+						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
 					args.Player.LoginFailsBySsi = false;
 
@@ -479,8 +473,8 @@ namespace TShockAPI
 
 					if (!args.Player.IgnoreActionsForClearingTrashCan)
 					{
-						args.Player.PlayerData.CopyInventory(args.Player);
-						TShock.InventoryDB.InsertPlayerData(args.Player);
+						args.Player.PlayerData.CopyCharacter(args.Player);
+						TShock.CharacterDB.InsertPlayerData(args.Player);
 					}
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
@@ -1078,31 +1072,31 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("You will " + (args.Player.DisplayLogs ? "now" : "no longer") + " receive logs.");
 		}
 
-		private static void SaveSSI(CommandArgs args)
+		private static void SaveSSC(CommandArgs args)
 		{
-			if (TShock.Config.ServerSideInventory)
+			if (TShock.Config.ServerSideCharacter)
 			{
-				args.Player.SendSuccessMessage("SSI has been saved.");
+				args.Player.SendSuccessMessage("SSC has been saved.");
 				foreach (TSPlayer player in TShock.Players)
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						TShock.InventoryDB.InsertPlayerData(player);
+						TShock.CharacterDB.InsertPlayerData(player);
 					}
 				}
 			}
 		}
 
-		private static void OverrideSSI(CommandArgs args)
+		private static void OverrideSSC(CommandArgs args)
 		{
-			if (!TShock.Config.ServerSideInventory)
+			if (!TShock.Config.ServerSideCharacter)
 			{
-				args.Player.SendErrorMessage("Server Side Inventory is disabled.");
+				args.Player.SendErrorMessage("Server Side Characters is disabled.");
 				return;
 			}
 			if( args.Parameters.Count < 1 )
 			{
-				args.Player.SendErrorMessage("Correct usage: /overridessi|/ossi <player name>");
+				args.Player.SendErrorMessage("Correct usage: /overridessc|/ossc <player name>");
 				return;
 			}
 
@@ -1136,8 +1130,8 @@ namespace TShockAPI
 				return;
 			}
 
-			TShock.InventoryDB.InsertPlayerData(matchedPlayer);
-			args.Player.SendSuccessMessage("SSI of player \"{0}\" has been overriden.", matchedPlayer.Name);
+			TShock.CharacterDB.InsertPlayerData(matchedPlayer);
+			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
         private static void ForceXmas(CommandArgs args)
@@ -1224,13 +1218,13 @@ namespace TShockAPI
 		private static void Off(CommandArgs args)
 		{
 
-			if (TShock.Config.ServerSideInventory)
+			if (TShock.Config.ServerSideCharacter)
 			{
 				foreach (TSPlayer player in TShock.Players)
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						player.SaveServerInventory();
+						player.SaveServerCharacter();
 					}
 				}
 			}
@@ -2390,7 +2384,7 @@ namespace TShockAPI
 			SaveManager.Instance.SaveWorld(false);
 			foreach (TSPlayer tsply in TShock.Players.Where(tsply => tsply != null))
 			{
-				tsply.SaveServerInventory();
+				tsply.SaveServerCharacter();
 			}
 			args.Player.SendSuccessMessage("Save succeeded.");
 		}

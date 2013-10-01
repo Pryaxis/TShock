@@ -83,7 +83,7 @@
     <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
-    <Compile Include="DB\InventoryManager.cs" />
+    <Compile Include="DB\CharacterManager.cs" />
     <Compile Include="DB\IQueryBuilder.cs" />
     <Compile Include="DB\ItemManager.cs" />
     <Compile Include="DB\SqlColumn.cs" />
@@ -183,7 +183,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
+      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

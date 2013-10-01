@@ -22,17 +22,19 @@ using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
-	public class InventoryManager
+	public class CharacterManager
 	{
 		public IDbConnection database;
 
-		public InventoryManager(IDbConnection db)
+		public CharacterManager(IDbConnection db)
 		{
 			database = db;
 
-			var table = new SqlTable("Inventory",
+			var table = new SqlTable("Character",
 			                         new SqlColumn("Account", MySqlDbType.Int32) {Primary = true},
+									 new SqlColumn("Health", MySqlDbType.Int32),
 			                         new SqlColumn("MaxHealth", MySqlDbType.Int32),
+									 new SqlColumn("Mana", MySqlDbType.Int32),
 			                         new SqlColumn("MaxMana", MySqlDbType.Int32),
 			                         new SqlColumn("Inventory", MySqlDbType.Text)
 				);
@@ -49,12 +51,15 @@ namespace TShockAPI.DB
 
 			try
 			{
-				using (var reader = database.QueryReader("SELECT * FROM Inventory WHERE Account=@0", acctid))
+				using (var reader = database.QueryReader("SELECT * FROM Character WHERE Account=@0", acctid))
 				{
 					if (reader.Read())
 					{
 						playerData.exists = true;
+						playerData.health = reader.Get<int>("Health");
 						playerData.maxHealth = reader.Get<int>("MaxHealth");
+						playerData.mana = reader.Get<int>("Mana");
+						playerData.maxMana = reader.Get<int>("MaxMana");
 						playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
 						return playerData;
 					}
@@ -79,8 +84,8 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("INSERT INTO Inventory (Account, MaxHealth, Inventory) VALUES (@0, @1, @2);", player.UserID,
-					               playerData.maxHealth, NetItem.ToString(playerData.inventory));
+					database.Query("INSERT INTO Character (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", player.UserID,
+								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory));
 					return true;
 				}
 				catch (Exception ex)
@@ -92,8 +97,8 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("UPDATE Inventory SET MaxHealth = @0, Inventory = @1 WHERE Account = @2;", playerData.maxHealth,
-					               NetItem.ToString(playerData.inventory), player.UserID);
+					database.Query("UPDATE Inventory SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4 WHERE Account = @5;", playerData.health, playerData.maxHealth,
+								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID);
 					return true;
 				}
 				catch (Exception ex)

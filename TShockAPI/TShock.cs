@@ -61,7 +61,7 @@ namespace TShockAPI
 		public static UserManager Users;
 		public static ItemManager Itembans;
 		public static RememberedPosManager RememberedPos;
-		public static InventoryManager InventoryDB;
+		public static CharacterManager CharacterDB;
 		public static ConfigFile Config { get; set; }
 		public static IDbConnection DB;
 		public static bool OverridePort;
@@ -127,6 +127,8 @@ namespace TShockAPI
 
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
+
+				Main.ServerSideCharacter = Config.ServerSideCharacter; //FYI, This cannot be disabled once flipped.
 
 				DateTime now = DateTime.Now;
 				string logFilename;
@@ -219,7 +221,7 @@ namespace TShockAPI
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
-				InventoryDB = new InventoryManager(DB);
+				CharacterDB = new CharacterManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
 				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
@@ -610,7 +612,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 			
-			if ((DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideInventorySave)
+			if ((DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -618,7 +620,7 @@ namespace TShockAPI
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
 
-						InventoryDB.InsertPlayerData(player);
+						CharacterDB.InsertPlayerData(player);
 					}
 				}
 				LastSave = DateTime.UtcNow;
@@ -878,8 +880,8 @@ namespace TShockAPI
 
 				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan)
 				{
-					tsplr.PlayerData.CopyInventory(tsplr);
-					InventoryDB.InsertPlayerData(tsplr);
+					tsplr.PlayerData.CopyCharacter(tsplr);
+					CharacterDB.InsertPlayerData(tsplr);
 				}
 
 				if ((Config.RememberLeavePos) &&(!tsplr.LoginHarassed))
@@ -1055,10 +1057,10 @@ namespace TShockAPI
 
 			if (!player.IsLoggedIn)
 			{
-				if (Config.ServerSideInventory)
+				if (Config.ServerSideCharacter)
 				{
 					player.SendMessage(
-						player.IgnoreActionsForInventory = "Server side inventory is enabled! Please /register or /login to play!",
+						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",
 						Color.Red);
 						player.LoginHarassed = true;
 				}
@@ -1599,141 +1601,6 @@ namespace TShockAPI
 							player.SendMessage(
 								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
 								Color.Cyan);
-						}
-					}
-				}
-			}
-
-			return check;
-		}
-
-		public static bool CheckInventory(TSPlayer player)
-		{
-			PlayerData playerData = player.PlayerData;
-			bool check = true;
-
-			if (player.TPlayer.statLifeMax > playerData.maxHealth)
-			{
-				player.SendMessage("Error: Your max health exceeded (" + playerData.maxHealth + ") which is stored on server.",
-								   Color.Cyan);
-				check = false;
-			}
-
-			Item[] inventory = player.TPlayer.inventory;
-			Item[] armor = player.TPlayer.armor;
-			Item[] dye = player.TPlayer.dye;
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
-			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
-				{
-					Item item = new Item();
-					Item serverItem = new Item();
-					if (inventory[i] != null && inventory[i].netID != 0)
-					{
-						if (playerData.inventory[i].netID != inventory[i].netID)
-						{
-							item.netDefaults(inventory[i].netID);
-							item.Prefix(inventory[i].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (playerData.inventory[i].prefix != inventory[i].prefix)
-						{
-							item.netDefaults(inventory[i].netID);
-							item.Prefix(inventory[i].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your item (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (inventory[i].stack > playerData.inventory[i].stack)
-						{
-							item.netDefaults(inventory[i].netID);
-							item.Prefix(inventory[i].prefix);
-							item.AffixName();
-							player.SendMessage(
-								player.IgnoreActionsForInventory =
-								"Your item (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
-								playerData.inventory[i].stack + ").", Color.Cyan);
-							check = false;
-						}
-					}
-				}
-				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
-				{
-					Item item = new Item();
-					Item serverItem = new Item();
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
-					if (armor[index] != null && armor[index].netID != 0)
-					{
-						if (playerData.inventory[i].netID != armor[index].netID)
-						{
-							item.netDefaults(armor[index].netID);
-							item.Prefix(armor[index].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (playerData.inventory[i].prefix != armor[index].prefix)
-						{
-							item.netDefaults(armor[index].netID);
-							item.Prefix(armor[index].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your armor (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (armor[index].stack > playerData.inventory[i].stack)
-						{
-							item.netDefaults(armor[index].netID);
-							item.Prefix(armor[index].prefix);
-							item.AffixName();
-							player.SendMessage(
-								player.IgnoreActionsForInventory =
-								"Your armor (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
-								playerData.inventory[i].stack + ").", Color.Cyan);
-							check = false;
-						}
-					}
-				}
-				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
-				{
-					Item item = new Item();
-					Item serverItem = new Item();
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
-					if (dye[index] != null && dye[index].netID != 0)
-					{
-						if (playerData.inventory[i].netID != dye[index].netID)
-						{
-							item.netDefaults(dye[index].netID);
-							item.Prefix(dye[index].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your dye (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (playerData.inventory[i].prefix != dye[index].prefix)
-						{
-							item.netDefaults(dye[index].netID);
-							item.Prefix(dye[index].prefix);
-							item.AffixName();
-							player.SendMessage(player.IgnoreActionsForInventory = "Your dye (" + item.name + ") needs to be deleted.",
-											   Color.Cyan);
-							check = false;
-						}
-						else if (dye[index].stack > playerData.inventory[i].stack)
-						{
-							item.netDefaults(dye[index].netID);
-							item.Prefix(dye[index].prefix);
-							item.AffixName();
-							player.SendMessage(
-								player.IgnoreActionsForInventory =
-								"Your dye (" + item.name + ") (" + inventory[i].stack + ") needs to have its stack size decreased to (" +
-								playerData.inventory[i].stack + ").", Color.Cyan);
-							check = false;
 						}
 					}
 				}

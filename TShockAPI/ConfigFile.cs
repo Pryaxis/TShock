@@ -157,9 +157,9 @@ namespace TShockAPI
 
 		[Description("Disables the dungeon guardian from being spawned by player packets, this will instead force a respawn.")] public bool DisableDungeonGuardian;
 
-		[Description("Enable server side inventory checks, EXPERIMENTAL")] public bool ServerSideInventory;
+		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")] public bool ServerSideCharacter;
 
-        [Description("How often SSI should save, in minutes.")] public int ServerSideInventorySave = 15;
+        [Description("How often SSC should save, in minutes.")] public int ServerSideCharacterSave = 5;
 
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")] public int LogonDiscardThreshold=250;
 		
@@ -240,7 +240,7 @@ namespace TShockAPI
 
 	    [Description("Prevent banned items from being /i or /give.")] public bool PreventBannedItemSpawn = false;
 
-	    [Description("Prevent banks on SSI.")] public bool DisablePiggybanksOnSSI = false;
+	    [Description("Prevent banks on SSC.")] public bool DisablePiggybanksOnSSC = true;
 
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
 	        true;

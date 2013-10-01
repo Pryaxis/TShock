@@ -571,10 +571,10 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void RestartServer(bool save = true, string reason = "Server shutting down!")
 		{
-			if (TShock.Config.ServerSideInventory)
+			if (TShock.Config.ServerSideCharacter)
 				foreach (TSPlayer player in TShock.Players)
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-						TShock.InventoryDB.InsertPlayerData(player);
+						TShock.CharacterDB.InsertPlayerData(player);
 
 			StopServer(true, reason);
 			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
@@ -636,7 +636,7 @@ namespace TShockAPI
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
                 if (player.IsLoggedIn && saveSSI)
-                    player.SaveServerInventory();
+                    player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
 				string verb = force ? "force " : "";
