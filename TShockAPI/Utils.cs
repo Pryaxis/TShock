@@ -638,14 +638,14 @@ namespace TShockAPI
                 if (player.IsLoggedIn && saveSSI)
                     player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
-				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
+				Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
                 if (!silent)
                 {
                     if (string.IsNullOrWhiteSpace(adminUserName))
-                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()), Color.Green);
+                        Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
                     else
-						Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
+						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
                 }
 				return true;
 			}
@@ -677,12 +677,12 @@ namespace TShockAPI
 				string playerName = player.Name;
 				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
-				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
+				Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}banned for {2}", playerName, verb, reason.ToLower()));
+					Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} {1}banned {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
