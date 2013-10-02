@@ -1146,7 +1146,7 @@ namespace TShockAPI
 		{
 			player.TPlayer.statLife = this.health;
 			player.TPlayer.statLifeMax = this.maxHealth;
-			player.TPlayer.statMana = this.mana;
+			player.TPlayer.statMana = this.maxMana;
 			player.TPlayer.statManaMax = this.maxMana;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{

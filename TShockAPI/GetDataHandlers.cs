@@ -1319,6 +1319,8 @@ namespace TShockAPI
 
 			if (args.Player.IsLoggedIn)
 			{
+				args.Player.TPlayer.statLife = cur;
+				args.Player.TPlayer.statLifeMax = max;
 				args.Player.PlayerData.maxHealth = max;
 			}
 
@@ -1346,6 +1348,13 @@ namespace TShockAPI
 			{
 				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
 				return false;
+			}
+
+			if (args.Player.IsLoggedIn)
+			{
+				args.Player.TPlayer.statMana = cur;
+				args.Player.TPlayer.statManaMax = max;
+				args.Player.PlayerData.maxMana = max;
 			}
 
 			return false;
@@ -2294,6 +2303,25 @@ namespace TShockAPI
 						string.Format("You cannot use {0} on this server. Your actions are being ignored.",
 									  args.TPlayer.inventory[item].name), Color.Red);
 				}
+
+				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.PlayerData.maxMana <= 180)
+				{
+					args.Player.TPlayer.statMana += 20;
+					args.Player.TPlayer.statManaMax += 20;
+					args.Player.PlayerData.maxMana += 20;
+				}
+				else if (args.TPlayer.inventory[item].name == "Life Crystal" && args.Player.PlayerData.maxHealth <= 380)
+				{
+					args.TPlayer.statLife += 20;
+					args.TPlayer.statLifeMax += 20;
+					args.Player.PlayerData.maxHealth += 20;
+				}
+				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.PlayerData.maxHealth >= 400)
+				{
+					args.TPlayer.statLife += 5;
+					args.TPlayer.statLifeMax += 5;
+					args.Player.PlayerData.maxHealth += 5;
+				}
 			}
 
 			args.TPlayer.selectedItem = item;
@@ -2947,11 +2975,6 @@ namespace TShockAPI
 			if (TShock.Players[id] == null)
 				return true;
 
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
-			}
-
 			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
 				args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
@@ -2986,6 +3009,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
+			}
+
+			if (TShock.Players[id].GodMode)
+			{
+				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;
