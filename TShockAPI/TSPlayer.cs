@@ -1148,7 +1148,6 @@ namespace TShockAPI
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.mana;
 			player.TPlayer.statManaMax = this.maxMana;
-//			player.TPlayer.name = player.UserAccountName;
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
 				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
