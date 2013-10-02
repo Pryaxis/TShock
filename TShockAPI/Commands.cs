@@ -3715,7 +3715,7 @@ namespace TShockAPI
 					count++;
 				}
 			}
-			args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}", count, radius);
+			args.Player.SendSuccessMessage("Deleted {0} item(s) within a radius of {1}.", count, radius);
 		}
 
 		private static void Heal(CommandArgs args)
@@ -3742,7 +3742,7 @@ namespace TShockAPI
 			}
 			else if (!args.Player.RealPlayer)
 			{
-				args.Player.SendErrorMessage("You cant heal yourself!");
+				args.Player.SendErrorMessage("You can't heal yourself!");
 				return;
 			}
 			else
@@ -3947,7 +3947,7 @@ namespace TShockAPI
 			}
 			else if (!args.Player.RealPlayer)
 			{
-				args.Player.SendErrorMessage("You cant god mode a non player!");
+				args.Player.SendErrorMessage("You can't god mode a non player!");
 				return;
 			}
 			else
