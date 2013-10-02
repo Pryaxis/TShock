@@ -1,2 +1,0 @@
-﻿#see https://github.com/TShock/TShock/wiki/Item-List for a list of item ids
-#List each banned item ID below this, with each on a new line
