@@ -719,7 +719,7 @@ namespace TShockAPI
 			var permissions = (null == parameters["permissions"]) ? group.Permissions : parameters["permissions"];
 			try
 			{
-				TShock.Groups.UpdateGroup(group.Name, parent, permissions, chatcolor);
+				TShock.Groups.UpdateGroup(group.Name, parent, permissions, chatcolor, group.Suffix, group.Prefix);
 			}
 			catch (Exception e)
 			{
