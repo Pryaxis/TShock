@@ -2025,7 +2025,7 @@ namespace TShockAPI
 
 							try
 							{
-								TShock.Groups.UpdateGroup(groupName, newParentGroupName, group.Permissions, group.ChatColor);
+								TShock.Groups.UpdateGroup(groupName, newParentGroupName, group.Permissions, group.ChatColor, group.Suffix, group.Prefix);
 
 								if (!string.IsNullOrWhiteSpace(newParentGroupName))
 									args.Player.SendSuccessMessage("Parent of group \"{0}\" set to \"{1}\".", groupName, newParentGroupName);
@@ -2043,6 +2043,146 @@ namespace TShockAPI
 								args.Player.SendSuccessMessage("Parent of \"{0}\" is \"{1}\".", group.Name, group.Parent.Name);
 							else
 								args.Player.SendSuccessMessage("Group \"{0}\" has no parent.", group.Name);
+						}
+					}
+					#endregion
+					return;
+				case "suffix":
+					#region Suffix
+					{
+						if (args.Parameters.Count < 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group suffix <group name> [new suffix]");
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						Group group = TShock.Groups.GetGroupByName(groupName);
+						if (group == null)
+						{
+							args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+							return;
+						}
+
+						if (args.Parameters.Count > 2)
+						{
+							string newSuffix = string.Join(" ", args.Parameters.Skip(2));
+
+							try
+							{
+								TShock.Groups.UpdateGroup(groupName, group.ParentName, group.Permissions, group.ChatColor, newSuffix, group.Prefix);
+
+								if (!string.IsNullOrWhiteSpace(newSuffix))
+									args.Player.SendSuccessMessage("Suffix of group \"{0}\" set to \"{1}\".", groupName, newSuffix);
+								else
+									args.Player.SendSuccessMessage("Removed suffix of group \"{0}\".", groupName);
+							}
+							catch (GroupManagerException ex)
+							{
+								args.Player.SendErrorMessage(ex.Message);
+							}
+						}
+						else
+						{
+							if (!string.IsNullOrWhiteSpace(group.Suffix))
+								args.Player.SendSuccessMessage("Suffix of \"{0}\" is \"{1}\".", group.Name, group.Suffix);
+							else
+								args.Player.SendSuccessMessage("Group \"{0}\" has no suffix.", group.Name);
+						}
+					}
+					#endregion
+					return;
+				case "prefix":
+					#region Suffix
+					{
+						if (args.Parameters.Count < 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group prefix <group name> [new prefix]");
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						Group group = TShock.Groups.GetGroupByName(groupName);
+						if (group == null)
+						{
+							args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+							return;
+						}
+
+						if (args.Parameters.Count > 2)
+						{
+							string newPrefix = string.Join(" ", args.Parameters.Skip(2));
+
+							try
+							{
+								TShock.Groups.UpdateGroup(groupName, group.ParentName, group.Permissions, group.ChatColor, group.Suffix, newPrefix);
+
+								if (!string.IsNullOrWhiteSpace(newPrefix))
+									args.Player.SendSuccessMessage("Prefix of group \"{0}\" set to \"{1}\".", groupName, newPrefix);
+								else
+									args.Player.SendSuccessMessage("Removed prefix of group \"{0}\".", groupName);
+							}
+							catch (GroupManagerException ex)
+							{
+								args.Player.SendErrorMessage(ex.Message);
+							}
+						}
+						else
+						{
+							if (!string.IsNullOrWhiteSpace(group.Prefix))
+								args.Player.SendSuccessMessage("Prefix of \"{0}\" is \"{1}\".", group.Name, group.Prefix);
+							else
+								args.Player.SendSuccessMessage("Group \"{0}\" has no prefix.", group.Name);
+						}
+					}
+					#endregion
+					return;
+				case "color":
+					#region Suffix
+					{
+						if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group color <group name> [new color(000,000,000)]");
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						Group group = TShock.Groups.GetGroupByName(groupName);
+						if (group == null)
+						{
+							args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+							return;
+						}
+
+						if (args.Parameters.Count == 3)
+						{
+							string newColor = args.Parameters[2];
+
+							String[] parts = newColor.Split(',');
+							byte r;
+							byte g;
+							byte b;
+							if (parts.Length == 3 && byte.TryParse(parts[0], out r) && byte.TryParse(parts[1], out g) && byte.TryParse(parts[2], out b))
+							{
+								try
+								{
+									TShock.Groups.UpdateGroup(groupName, group.ParentName, group.Permissions, newColor, group.Suffix, group.Prefix);
+
+									args.Player.SendSuccessMessage("Color of group \"{0}\" set to \"{1}\".", groupName, newColor);
+								}
+								catch (GroupManagerException ex)
+								{
+									args.Player.SendErrorMessage(ex.Message);
+								}
+							}
+							else
+							{
+								args.Player.SendErrorMessage("Invalid syntax for color, expected \"rrr,ggg,bbb\"");
+							}
+						}
+						else
+						{
+							args.Player.SendSuccessMessage("Color of \"{0}\" is \"{1}\".", group.Name, group.ChatColor);
 						}
 					}
 					#endregion

@@ -70,11 +70,11 @@ namespace TShockAPI
 
         /// <summary>
         /// The chat color of the group.
-        /// Returns "255255255", sets "255,255,255"
+        /// Returns "255,255,255", sets "255,255,255"
         /// </summary>
 		public string ChatColor
 		{
-			get { return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2")); }
+			get { return string.Format("{0},{1},{2}", R.ToString("D3"), G.ToString("D3"), B.ToString("D3")); }
 			set
 			{
 				if (null != value)
