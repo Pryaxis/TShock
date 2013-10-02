@@ -3695,31 +3695,27 @@ namespace TShockAPI
 				}
 				else
 				{
-					try
+					if (!int.TryParse(args.Parameters[0], out radius))
 					{
-						radius = Convert.ToInt32(args.Parameters[0]);
-					}
-					catch (Exception)
-					{
-						args.Player.SendErrorMessage(
-							"Please either enter the keyword \"all\", or the block radius you wish to delete all items from.");
+						args.Player.SendErrorMessage("Invalid block radius.");
 						return;
 					}
 				}
 			}
+
 			int count = 0;
-			for (int i = 0; i < 200; i++)
+			for (int i = 0; i < 400; i++)
 			{
-				if (
-					(Math.Sqrt(Math.Pow(Main.item[i].position.X - args.Player.X, 2) +
-							   Math.Pow(Main.item[i].position.Y - args.Player.Y, 2)) < radius*16) && (Main.item[i].active))
+				if ((Main.item[i].position.X - args.Player.X) * (Main.item[i].position.X - args.Player.X) +
+					(Main.item[i].position.Y - args.Player.Y) * (Main.item[i].position.Y - args.Player.Y) <= radius * radius * 256
+					&& (Main.item[i].active))
 				{
 					Main.item[i].active = false;
-					NetMessage.SendData(0x15, -1, -1, "", i, 0f, 0f, 0f, 0);
+					TSPlayer.All.SendData(PacketTypes.ItemDrop, "", i);
 					count++;
 				}
 			}
-			args.Player.SendSuccessMessage("All " + count + " items within a radius of " + radius + " have been deleted.");
+			args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}", count, radius);
 		}
 
 		private static void Heal(CommandArgs args)
