@@ -1225,6 +1225,8 @@ namespace TShockAPI
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
 			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 
 			for (int k = 0; k < 59; k++)
 			{
@@ -1244,7 +1246,9 @@ namespace TShockAPI
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 70f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
 			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 		}
 	}
 
