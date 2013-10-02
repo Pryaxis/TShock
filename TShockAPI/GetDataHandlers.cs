@@ -976,18 +976,18 @@ namespace TShockAPI
 			/// <summary>
 			/// If the player has PVP on
 			/// </summary>
-			public byte PVP { get; set; }
+			public bool PVP { get; set; }
 			/// <summary>
 			/// Is the damage critical?
 			/// </summary>
-			public byte Critical { get; set; }
+			public bool Critical { get; set; }
 		}
 		/// <summary>
 		/// PlayerDamage - Called when a player is damaged
 		/// </summary>
 		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
 
-		private static bool OnPlayerDamage(byte id, byte dir, short dmg, byte pvp, byte crit)
+		private static bool OnPlayerDamage(byte id, byte dir, short dmg, bool pvp, bool crit)
 		{
 			if (PlayerDamage == null)
 				return false;
@@ -2927,8 +2927,8 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var direction = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadInt8();
-			var crit = args.Data.ReadInt8();
+			var pvp = args.Data.ReadBoolean();
+			var crit = args.Data.ReadBoolean();
 
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;
@@ -2960,7 +2960,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!TShock.Players[id].TPlayer.hostile)
+			if (!TShock.Players[id].TPlayer.hostile && pvp)
 			{
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
