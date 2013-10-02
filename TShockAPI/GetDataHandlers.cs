@@ -2252,7 +2252,7 @@ namespace TShockAPI
 													Color.Red);
 						}
 						var lastTileX = args.Player.LastNetPosition.X;
-						var lastTileY = args.Player.LastNetPosition.Y;
+						var lastTileY = args.Player.LastNetPosition.Y - 48;
 						if (!args.Player.Teleport(lastTileX, lastTileY))
 						{
 							args.Player.Spawn();
