@@ -571,6 +571,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account " + user.Name + " has been registered.");
 					args.Player.SendSuccessMessage("Your password is " + user.Password);
 					TShock.Users.AddUser(user);
+					TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
 					Log.ConsoleInfo(args.Player.Name + " registered an account: " + user.Name + ".");
 				}
 				else
@@ -612,6 +613,7 @@ namespace TShockAPI
 							
                         args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						TShock.Users.AddUser(user);
+						TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
 						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
 					else

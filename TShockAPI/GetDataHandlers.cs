@@ -2534,7 +2534,7 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreliquidsetdetection))
 			{
-				args.Player.TileLiquidThreshold+=amount;
+				args.Player.TileLiquidThreshold++;
 			}
 			if (amount != 0)
 			{

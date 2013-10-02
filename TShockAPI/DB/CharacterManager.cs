@@ -73,6 +73,23 @@ namespace TShockAPI.DB
 			return playerData;
 		}
 
+		public bool SeedInitialData(User user)
+		{
+			string initialItems = "-15,1,0~-13,1,0~-16,1,45~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0";
+			try
+			{
+				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", user.ID,
+							   100, 100, 20, 20, initialItems);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+
+			return false;
+		}
+
 		public bool InsertPlayerData(TSPlayer player)
 		{
 			PlayerData playerData = player.PlayerData;
