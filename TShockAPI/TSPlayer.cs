@@ -1248,6 +1248,13 @@ namespace TShockAPI
 			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
+
+			for (int k = 0; k < 10; k++)
+			{
+				player.TPlayer.buffType[k] = 0;
+			}
+			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 		}
 	}
 
