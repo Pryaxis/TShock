@@ -2047,6 +2047,120 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+					
+		case "colour":
+                case "color":
+                    #region Recolour group chat
+                    {
+                        if (args.Parameters.Count < 4)
+                        {
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group colour <group name> [r,g,b]");
+                            return;
+                        }
+
+                        string groupName = args.Parameters[1];
+                        Group group = TShock.Groups.GetGroupByName(groupName);
+                        if (group == null)
+                        {
+                            args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+                            return;
+                        }
+                        if (args.Parameters.Count > 4)
+                        {
+                            try
+                            {
+                                byte r = Convert.ToByte(args.Parameters[2]);
+                                byte g = Convert.ToByte(args.Parameters[3]);
+                                byte b = Convert.ToByte(args.Parameters[4]);
+                                group.R = r;
+                                group.G = g;
+                                group.B = b;
+                                string color = r.ToString() + "," + g.ToString() + "," + b.ToString();
+                                string query = "UPDATE GroupList SET ChatColor=@0 WHERE GroupName=@1";
+                                if (TShock.DB.Query(query, color, group.Name) != 1)
+                                    throw new GroupManagerException("Failed to update group '" + group + "'");
+                                else
+                                    args.Player.SendSuccessMessage(string.Format("Changed group {0}'s chat colour to {1}", group.Name, color));
+                            }
+                            catch (Exception x)
+                            {
+                                args.Player.SendErrorMessage(string.Format("Error: {0}", x.Message));
+                            }
+                        }
+                    }
+                    #endregion
+                    return;
+
+                case "prefix":
+                    #region Change group prefix
+                    {
+                        if (args.Parameters.Count < 2)
+                        {
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group prefix <group name> [newPrefix]");
+                            return;
+                        }
+                        string groupName = args.Parameters[1];
+                        Group group = TShock.Groups.GetGroupByName(groupName);
+                        if (group == null)
+                        {
+                            args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+                            return;
+                        }
+
+                        try
+                        {
+                            string prefix = args.Parameters[2];
+                            group.Prefix = prefix;
+
+                            string query = "UPDATE GroupList SET Prefix=@0 WHERE GroupName=@1";
+                            if (TShock.DB.Query(query, prefix, group) != 1)
+                                throw new GroupManagerException("Failed to update group '" + group + "'");
+                            else
+                                args.Player.SendSuccessMessage(string.Format("Changed prefix of group {0} to {1}", group.Name, group.Prefix));
+                        }
+                        catch (Exception x)
+                        {
+                            args.Player.SendErrorMessage("[Error]: " + x.Message);
+                        }
+                    }
+                    #endregion
+                    return;
+
+                case "suffix":
+                    #region Change group suffix
+                    {
+                        if (args.Parameters.Count < 2)
+                        {
+                            args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /group suffix <group name> [newPrefix]");
+                            return;
+                        }
+                        string groupName = args.Parameters[1];
+                        Group group = TShock.Groups.GetGroupByName(groupName);
+                        if (group == null)
+                        {
+                            args.Player.SendErrorMessage("No such group \"{0}\".", groupName);
+                            return;
+                        }
+
+                        try
+                        {
+                            string suffix = args.Parameters[2];
+                            group.Suffix = suffix;
+
+                            string query = "UPDATE GroupList SET Prefix=@0 WHERE GroupName=@1";
+                            if (TShock.DB.Query(query, suffix, group) != 1)
+                                throw new GroupManagerException("Failed to update group '" + group + "'");
+                            else
+                                args.Player.SendSuccessMessage(string.Format("Changed prefix of group {0} to {1}", group.Name, group.Suffix));
+                        }
+                        catch (Exception x)
+                        {
+                            args.Player.SendErrorMessage("[Error]: " + x.Message);
+                        }
+                    }
+                    #endregion
+                    return;
+					
 				case "del":
 					#region Delete group
 					{
