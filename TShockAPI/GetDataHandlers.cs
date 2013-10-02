@@ -1901,9 +1901,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			byte[] rightClickKill = new byte[] { 4, 13, 33, 49, 50, 128};
+			byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 163};
 			Item selectedItem = args.TPlayer.inventory[args.TPlayer.selectedItem];
-			if (type == 0 && Main.tile[tileX, tileY].type != 127 && !Main.tileCut[Main.tile[tileX, tileY].type] && !rightClickKill.Contains(Main.tile[tileX, tileY].type))
+			if (type == 0 && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 			{
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 				if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
