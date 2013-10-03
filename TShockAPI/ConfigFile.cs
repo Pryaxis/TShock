@@ -277,6 +277,8 @@ namespace TShockAPI
 		
 		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public bool LogRest = false;
 
+		[Description("The number of seconds a player must wait before being respawned.")] public int RespawnSeconds = 3;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

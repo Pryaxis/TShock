@@ -715,7 +715,7 @@ namespace TShockAPI
 					{
 						player.ProjectileThreshold = 0;
 					}
-					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= 3 && player.Difficulty != 2)
+					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= Config.RespawnSeconds && player.Difficulty != 2)
 					{
 						player.Spawn();
 					}
