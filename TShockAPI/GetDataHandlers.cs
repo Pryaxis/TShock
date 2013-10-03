@@ -591,7 +591,7 @@ namespace TShockAPI
 			/// <summary>
 			/// Type of projectile
 			/// </summary>
-			public byte Type { get; set; }
+			public short Type { get; set; }
 			/// <summary>
 			/// ???
 			/// </summary>
@@ -602,7 +602,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile;
 
-		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, byte type, int index)
+		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -2317,7 +2317,7 @@ namespace TShockAPI
 			var knockback = args.Data.ReadSingle();
 			var dmg = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
-			var type = args.Data.ReadInt8();
+			var type = args.Data.ReadInt16();
 		    owner = (byte)args.Player.Index;
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
@@ -2353,7 +2353,7 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-				if (type == 100 || type == 39 || type == 40 || type == 38)
+				if (type == 100 || type == 294 || type == 295 || type == 296)
 				{	
 					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
