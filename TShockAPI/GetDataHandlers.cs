@@ -1774,6 +1774,30 @@ namespace TShockAPI
 						tile.type = 1;
 						changed = true;
 					}
+					// Purify crimson grass
+					else if (tile.type == 199 && newtile.Type == 2)
+					{
+						tile.type = 2;
+						changed = true;
+					}
+					// Purify crimstone
+					else if (tile.type == 203 && newtile.Type == 1)
+					{
+						tile.type = 1;
+						changed = true;
+					}
+					// Purify crimson grass vine -- might not be needed
+					else if (tile.type == 205 && newtile.Type == 52)
+					{
+						tile.type = 53;
+						changed = true;
+					}
+					// Purify crimsand
+					else if (tile.type == 234 && newtile.Type == 53)
+					{
+						tile.type = 53;
+						changed = true;
+					}
 				}
 			}
 
@@ -3175,6 +3199,7 @@ namespace TShockAPI
 			}
 			if (!spawnboss && !invasion)
 				return true;
+
 			if (plr != args.Player.Index)
 				return true;
 
@@ -3195,7 +3220,7 @@ namespace TShockAPI
 					break;
 			}
 
-			TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			TShock.Utils.SendLogs(string.Format("{0} summoned {1}.", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 			return false;
 		}
 
