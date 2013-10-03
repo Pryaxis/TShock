@@ -1674,131 +1674,42 @@ namespace TShockAPI
 						}
 					}
 
-					if (tile.type == 0x17 && newtile.Type == 0x2)
-					{
-						tile.type = 0x2;
-						changed = true;
-					}
-					else if (tile.type == 0x19 && newtile.Type == 0x1)
-					{
-						tile.type = 0x1;
-						changed = true;
-					}
-					else if ((tile.type == 0xF && newtile.Type == 0xF) ||
-							 (tile.type == 0x4F && newtile.Type == 0x4F))
+					// Chairs and beds
+					if ((tile.type == 15 && newtile.Type == 15) ||
+						(tile.type == 79 && newtile.Type == 79))
 					{
 						tile.frameX = newtile.FrameX;
 						tile.frameY = newtile.FrameY;
 						changed = true;
 					}
-					// Holy water/Unholy water
-					else if (tile.type == 1 && newtile.Type == 117)
+
+					// Grass <-> Grass
+					if (((tile.type == 2 || tile.type == 23 || tile.type == 60 || tile.type == 70 || tile.type == 109 || tile.type == 199) &&
+						(newtile.Type == 2 || newtile.Type == 23 || newtile.Type == 60 || newtile.Type == 70 || newtile.Type == 109 || newtile.Type == 199)) ||
+						// Dirt <-> Dirt
+						((tile.type == 0 || tile.type == 59) &&
+						(newtile.Type == 0 || newtile.Type == 59)) ||
+						// Ice <-> Ice
+						((tile.type == 161 || tile.type == 163 || tile.type == 164 || tile.type == 200) &&
+						(newtile.Type == 161 || newtile.Type == 163 || newtile.Type == 164 || newtile.Type == 200)) ||
+						// Stone <-> Stone
+						((tile.type == 1 || tile.type == 25 || tile.type == 117 || tile.type == 203 || Main.tileMoss[tile.type]) &&
+						(newtile.Type == 1 || newtile.Type == 25 || newtile.Type == 117 || newtile.Type == 203 || Main.tileMoss[newtile.Type])) ||
+						// Sand <-> Sand
+						((tile.type == 53 || tile.type == 112 || tile.type == 116 || tile.type == 234) &&
+						(newtile.Type == 53 || newtile.Type == 112 || newtile.Type == 116 || newtile.Type == 234)))
 					{
-						tile.type = 117;
+						tile.type = newtile.Type;
 						changed = true;
 					}
-					else if (tile.type == 1 && newtile.Type == 25)
+					// Stone wall <-> Stone wall
+					if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
+						(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
+						// Leaf wall <-> Leaf wall
+						(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
+						((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
 					{
-						tile.type = 25;
-						changed = true;
-					}
-					else if (tile.type == 117 && newtile.Type == 25)
-					{
-						tile.type = 25;
-						changed = true;
-					}
-					else if (tile.type == 25 && newtile.Type == 117)
-					{
-						tile.type = 117;
-						changed = true;
-					}
-					else if (tile.type == 2 && newtile.Type == 23)
-					{
-						tile.type = 23;
-						changed = true;
-					}
-					else if (tile.type == 2 && newtile.Type == 109)
-					{
-						tile.type = 109;
-						changed = true;
-					}
-					else if (tile.type == 23 && newtile.Type == 109)
-					{
-						tile.type = 109;
-						changed = true;
-					}
-					else if (tile.type == 109 && newtile.Type == 23)
-					{
-						tile.type = 23;
-						changed = true;
-					}
-					else if (tile.type == 23 && newtile.Type == 109)
-					{
-						tile.type = 109;
-						changed = true;
-					}
-					else if (tile.type == 53 && newtile.Type == 116)
-					{
-						tile.type = 116;
-						changed = true;
-					}
-					else if (tile.type == 53 && newtile.Type == 112)
-					{
-						tile.type = 112;
-						changed = true;
-					}
-					else if (tile.type == 112 && newtile.Type == 116)
-					{
-						tile.type = 116;
-						changed = true;
-					}
-					else if (tile.type == 116 && newtile.Type == 112)
-					{
-						tile.type = 112;
-						changed = true;
-					}
-					else if (tile.type == 112 && newtile.Type == 53)
-					{
-						tile.type = 53;
-						changed = true;
-					}
-					else if (tile.type == 109 && newtile.Type == 2)
-					{
-						tile.type = 2;
-						changed = true;
-					}
-					else if (tile.type == 116 && newtile.Type == 53)
-					{
-						tile.type = 53;
-						changed = true;
-					}
-					else if (tile.type == 117 && newtile.Type == 1)
-					{
-						tile.type = 1;
-						changed = true;
-					}
-					// Purify crimson grass
-					else if (tile.type == 199 && newtile.Type == 2)
-					{
-						tile.type = 2;
-						changed = true;
-					}
-					// Purify crimstone
-					else if (tile.type == 203 && newtile.Type == 1)
-					{
-						tile.type = 1;
-						changed = true;
-					}
-					// Purify crimson grass vine -- might not be needed
-					else if (tile.type == 205 && newtile.Type == 52)
-					{
-						tile.type = 52;
-						changed = true;
-					}
-					// Purify crimsand
-					else if (tile.type == 234 && newtile.Type == 53)
-					{
-						tile.type = 53;
+						tile.wall = newtile.Wall;
 						changed = true;
 					}
 				}
