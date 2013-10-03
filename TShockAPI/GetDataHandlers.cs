@@ -1925,7 +1925,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 163};
+			byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 162};
 			Item selectedItem = args.TPlayer.inventory[args.TPlayer.selectedItem];
 			if (type == 0 && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 			{
