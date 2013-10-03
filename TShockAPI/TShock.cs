@@ -252,7 +252,8 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
 			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
-			    TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				TShockAPI.Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
+				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -364,6 +365,12 @@ namespace TShockAPI
             u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 	        Users.UpdateLogin(u);
 	    }
+
+		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
+		{
+			if (args.Player.IsLoggedIn)
+				args.Player.SaveServerCharacter();
+		}
 
         private void NetHooks_NameCollision(NameCollisionEventArgs args)
         {
