@@ -307,11 +307,11 @@ namespace TShockAPI
 				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
 				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
 				j++;
-			} while (TilePlacementValid(tileX, tileY) && !TileClear(tileX, tileY));
+			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
 
 		/// <summary>
-		/// Determines if a tile is valid
+		/// Determines if a tile is valid.
 		/// </summary>
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
@@ -322,14 +322,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Checks to see if the tile is clear.
+		/// Checks if the tile is solid.
 		/// </summary>
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
-		/// <returns>The state of the tile</returns>
-		private bool TileClear(int tileX, int tileY)
+		/// <returns>The tile's solidity.</returns>
+		public bool TileSolid(int tileX, int tileY)
 		{
-			return !Main.tile[tileX, tileY].active();
+			return TilePlacementValid(tileX, tileY) && Main.tile[tileX, tileY] != null &&
+				Main.tile[tileX, tileY].active() && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+				!Main.tile[tileX, tileY].inActive() && !Main.tile[tileX, tileY].halfBrick() && Main.tile[tileX, tileY].slope() == 0;
 		}
 
 		/// <summary>

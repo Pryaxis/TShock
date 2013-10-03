@@ -490,19 +490,22 @@ namespace TShockAPI
 			{
 				num4 = Main.maxTilesY;
 			}
-                       for (int c = num; c < num2; c++)
-                       {
-                               for (int d = num3; d< num4; d++)
-                               {
-                                       if (Main.tile[c,d].liquid != 0)
-                                          return false;
-                               }
-                       }
+			for (int c = num; c < num2; c++)
+			{
+				for (int d = num3; d< num4; d++)
+				{
+					if (Main.tile[c,d].liquid != 0)
+						return false;
+				}
+			}
 			for (int i = num; i < num2; i++)
 			{
 				for (int j = num3; j < num4; j++)
 				{
-					if (Main.tile[i, j] == null || !Main.tile[i, j].active() || !Main.tileSolid[(int) Main.tile[i, j].type] || Main.tileSolidTop[(int) Main.tile[i, j].type] || (((int) Main.tile[i, j].type == 53) || ((int) Main.tile[i, j].type == 112) || ((int) Main.tile[i, j].type == 116) || ((int) Main.tile[i, j].type == 123)) || Main.tile[i, j].lava() || ((Main.tile[i, j].tileHeader2 & 16) == 16) || ((Main.tile[i, j].tileHeader2 & 32) == 32) || ((Main.tile[i, j].tileHeader & 32) == 32) || Main.tile[i, j].honey() || !Main.tileSolid[(int) Main.tile[i + 1, j].type] || !Main.tileSolid[(int) Main.tile[i - 1, j].type] || !Main.tileSolid[(int) Main.tile[i, j + 1].type] || !Main.tileSolid[(int) Main.tile[i, j - 1].type] || !Main.tileSolid[(int) Main.tile[i - 1, j - 1].type] || !Main.tileSolid[(int) Main.tile[i - 1, j + 1].type] || !Main.tileSolid[(int) Main.tile[i + 1, j - 1].type] || !Main.tileSolid[(int) Main.tile[i + 1, j + 1].type] || Main.tileSand[(int) Main.tile[i, j].type])
+					if (Main.tile[i, j] == null || Main.tileSand[Main.tile[i, j].type]
+						|| !TShock.Utils.TileSolid(i, j) || !TShock.Utils.TileSolid(i + 1, j) || !TShock.Utils.TileSolid(i - 1, j)
+						|| !TShock.Utils.TileSolid(i, j + 1) || !TShock.Utils.TileSolid(i + 1, j + 1) || !TShock.Utils.TileSolid(i - 1, j + 1)
+						|| !TShock.Utils.TileSolid(i, j - 1) || !TShock.Utils.TileSolid(i + 1, j - 1) || !TShock.Utils.TileSolid(i - 1, j - 1))
 					{
 						continue;
 					}
@@ -1688,7 +1691,7 @@ namespace TShockAPI
 						tile.frameY = newtile.FrameY;
 						changed = true;
 					}
-						// Holy water/Unholy water
+					// Holy water/Unholy water
 					else if (tile.type == 1 && newtile.Type == 117)
 					{
 						tile.type = 117;
@@ -1789,7 +1792,7 @@ namespace TShockAPI
 					// Purify crimson grass vine -- might not be needed
 					else if (tile.type == 205 && newtile.Type == 52)
 					{
-						tile.type = 53;
+						tile.type = 52;
 						changed = true;
 					}
 					// Purify crimsand
@@ -1830,6 +1833,12 @@ namespace TShockAPI
 			Type,
 			Slope,
 		}
+
+		/// <summary>
+		/// Tiles that can be broken without any tools.
+		/// </summary>
+		private static byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 162 };
+
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
 			EditAction action = (EditAction)args.Data.ReadInt8();
@@ -1890,9 +1899,9 @@ namespace TShockAPI
                 if (outputRegions.Count == 0)
                 {
                     if (includeUnprotected)
-                        args.Player.SendMessage("There are no regions at this point.", Color.Yellow);
+                        args.Player.SendInfoMessage("There are no regions at this point.");
                     else
-                        args.Player.SendMessage("There are no regions at this point or they are not protected.", Color.Yellow);
+                        args.Player.SendInfoMessage("There are no regions at this point or they are not protected.");
                 }
                 else
                 {
@@ -1919,13 +1928,12 @@ namespace TShockAPI
 			{
 				args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
 				args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].Y = tileY;
-				args.Player.SendMessage("Set Temp Point " + args.Player.AwaitingTempPoint, Color.Yellow);
+				args.Player.SendInfoMessage("Set temp point {0}.", args.Player.AwaitingTempPoint);
 				args.Player.SendTileSquare(tileX, tileY);
 				args.Player.AwaitingTempPoint = 0;
 				return true;
 			}
 
-			byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 162};
 			Item selectedItem = args.TPlayer.inventory[args.TPlayer.selectedItem];
 			if (type == 0 && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 			{
