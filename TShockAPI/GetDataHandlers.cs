@@ -2237,11 +2237,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (pulley > 2)
-			{
-				return true;
-			}
-
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
 				return true;
@@ -3170,7 +3165,7 @@ namespace TShockAPI
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
 			var spawnboss = false;
-			var invasion = -1;
+			var invasion = false;
 			var plr = args.Data.ReadInt32();
 			var Type = args.Data.ReadInt32();
 			NPC npc = new NPC();
@@ -3181,10 +3176,9 @@ namespace TShockAPI
 				switch (Type)
 				{
 					case -1:
-						invasion = 1;
-						break;
 					case -2:
-						invasion = 2;
+					case -3:
+						invasion = true;
 						break;
 				}
 			}
@@ -3193,19 +3187,23 @@ namespace TShockAPI
 				args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
 				return true;
 			}
-			if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
+			if (invasion && !args.Player.Group.HasPermission(Permissions.startinvasion))
 			{
 				args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
 				return true;
 			}
-			if (!spawnboss && invasion == -1)
+			if (!spawnboss && !invasion)
 				return true;
+
 			if (plr != args.Player.Index)
 				return true;
 
 			string boss;
 			switch (Type)
 			{
+				case -3:
+					boss = "the pirates";
+					break;
 				case -2:
 					boss = "the Snow Legion";
 					break;
@@ -3217,7 +3215,7 @@ namespace TShockAPI
 					break;
 			}
 
-			TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			TShock.Utils.SendLogs(string.Format("{0} summoned {1}.", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 			return false;
 		}
 
