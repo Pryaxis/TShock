@@ -2237,11 +2237,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (pulley > 2)
-			{
-				return true;
-			}
-
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
 				return true;
