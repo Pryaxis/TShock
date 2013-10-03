@@ -573,6 +573,7 @@ namespace TShockAPI
 				y = 992;
 			}
 
+			SendTileSquare((int) (x/16), (int) (y/16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
 			return true;
