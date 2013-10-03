@@ -585,6 +585,7 @@ namespace TShockAPI
 
 		public void Spawn()
 		{
+			TPlayer.FindSpawn();
 			Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
 		}
 
