@@ -3169,43 +3169,33 @@ namespace TShockAPI
 
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
-			var spawnboss = false;
-			var invasion = -1;
 			var plr = args.Data.ReadInt32();
 			var Type = args.Data.ReadInt32();
+			int invasion = -1 * Type;
 			NPC npc = new NPC();
 			npc.SetDefaults(Type);
-			spawnboss = npc.boss;
-			if (!spawnboss)
-			{
-				switch (Type)
-				{
-					case -1:
-						invasion = 1;
-						break;
-					case -2:
-						invasion = 2;
-						break;
-				}
-			}
-			if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
+			
+			if (invasion <= 0 && !args.Player.Group.HasPermission(Permissions.summonboss))
 			{
 				args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
 				return true;
 			}
-			if (invasion != -1 && !args.Player.Group.HasPermission(Permissions.startinvasion))
+			if (invasion > 0 && !args.Player.Group.HasPermission(Permissions.startinvasion))
 			{
 				args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
 				return true;
 			}
-			if (!spawnboss && invasion == -1)
+			if (!npc.boss || invasion > 3 || plr != args.Player.Index)
+			{
 				return true;
-			if (plr != args.Player.Index)
-				return true;
-
+			}
+			
 			string boss;
 			switch (Type)
 			{
+				case -3:
+					boss = "the pirates";
+					break;
 				case -2:
 					boss = "the Snow Legion";
 					break;
@@ -3217,7 +3207,7 @@ namespace TShockAPI
 					break;
 			}
 
-			TShock.Utils.SendLogs(string.Format("{0} summoned {1}", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			TShock.Utils.SendLogs(string.Format("{0} summoned {1}.", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
 			return false;
 		}
 
