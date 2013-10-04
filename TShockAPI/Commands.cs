@@ -3595,9 +3595,17 @@ namespace TShockAPI
 			else
 			{
 				var ply = players[0];
-				ply.TPlayer.velocity.Y = -50;
-				TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
-				args.Player.SendSuccessMessage("Rocketed {0}.", ply.Name);
+
+				if (ply.IsLoggedIn && TShock.Config.ServerSideCharacter)
+				{
+					ply.TPlayer.velocity.Y = -50;
+					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
+					args.Player.SendSuccessMessage("Rocketed {0}.", ply.Name);
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Failed to rocket player: Not logged in or not SSC mode.");
+				}
 			}
 		}
 
