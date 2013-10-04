@@ -1849,7 +1849,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			Item selectedItem = args.TPlayer.inventory[args.TPlayer.selectedItem];
+			Item selectedItem = args.Player.SelectedItem;
 			if (type == 0 && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 			{
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
@@ -1879,7 +1879,6 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
-
 			}
 			else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 			{
@@ -3192,6 +3191,13 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
+			// Not selecting paintbrush or paint scraper? Hacking.
+			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100)
+			{
+				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
+				return true;
+			}
+
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
@@ -3199,7 +3205,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
 				return true;
 			}
-			args.Player.PaintThreshold++;
+
+			if (!args.Player.Group.HasPermission(Permissions.ignorepaintdetection))
+			{
+				args.Player.PaintThreshold++;
+			}
 			return false;
 		}
 
@@ -3212,6 +3222,13 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
+			// Not selecting paint roller or paint scraper? Hacking.
+			if (args.Player.SelectedItem.type != 1072 && args.Player.SelectedItem.type != 1100)
+			{
+				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
+				return true;
+			}
+
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
@@ -3219,7 +3236,11 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
 				return true;
 			}
-			args.Player.PaintThreshold++;
+
+			if (!args.Player.Group.HasPermission(Permissions.ignorepaintdetection))
+			{
+				args.Player.PaintThreshold++;
+			}
 			return false;
 		}
 

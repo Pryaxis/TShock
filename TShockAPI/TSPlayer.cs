@@ -319,21 +319,31 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Gets the player's selected item.
+		/// </summary>
+		public Item SelectedItem
+		{
+			get { return TPlayer.inventory[TPlayer.selectedItem]; }
+		}
+
 		public int State
 		{
 			get { return Netplay.serverSock[Index].state; }
 			set { Netplay.serverSock[Index].state = value; }
 		}
 
+		/// <summary>
+		/// Gets the player's UUID.
+		/// </summary>
 		public string UUID
 		{
-			get {
-				return RealPlayer
-					? Netplay.serverSock[Index].clientUUID 
-					: "";
-			}
+			get { return RealPlayer ? Netplay.serverSock[Index].clientUUID : ""; }
 		}
 
+		/// <summary>
+		/// Gets the player's IP.
+		/// </summary>
 		public string IP
 		{
 			get

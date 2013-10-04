@@ -130,6 +130,9 @@ namespace TShockAPI
 		[Description("Prevents you from being disabled by projectile abuse detection.")]
 		public static readonly string ignoreprojectiledetection = "tshock.ignore.projectile";
 
+		[Description("Prevents you from being disabled by paint abuse detection.")]
+		public static readonly string ignorepaintdetection = "tshock.ignore.paint";
+
 		[Description("Prevents you from being reverted by no clip detection.")]
 		public static readonly string ignorenoclipdetection = "tshock.ignore.noclip";
 
