@@ -2706,9 +2706,8 @@ namespace TShockAPI
 
             if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
             {
-				if (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1))
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
-
             }
 			
 			args.Player.Dead = false;
