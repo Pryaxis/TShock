@@ -1771,7 +1771,7 @@ namespace TShockAPI
 
 			if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 				return true;
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
 				return false;
 
             if (args.Player.Dead && TShock.Config.PreventDeadModification)
@@ -1855,20 +1855,19 @@ namespace TShockAPI
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 				if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 				// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
 				else if (Main.tileHammer[Main.tile[tileX, tileY].type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
-				// If the tile is a pickaxe tile and they aren't selecting an pickaxe, they're hacking.
+				// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
 				else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && Main.tile[tileX, tileY].wall == 0 && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
-
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 			}
@@ -1877,7 +1876,7 @@ namespace TShockAPI
 				// If they aren't selecting an hammer, they're hacking.
 				if (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0)
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 
@@ -1888,40 +1887,40 @@ namespace TShockAPI
 					(editData == 13 && style > 4) || (editData == 15 && style > 17) || (editData == 21 && style > 22) ||
 					(editData == 82 && style > 5) || (editData == 91 && style > 21) || (editData == 105 && style > 49) ||
 					(editData == 135 && style > 6) || (editData == 139 && style > 27) || (editData == 144 && style > 2) ||
-					(editData == 149 && style > 2) || (editData == 147 && style > 4) || (editData == 79 && style > 8)))
+					(editData == 149 && style > 2) || (editData == 137 && style > 4) || (editData == 79 && style > 8)))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 				// If they aren't selecting the item which creates the tile or wall, they're hacking.
 				if ((editData != 127 && editData != 213) && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 				if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideCharacter && TShock.Config.DisablePiggybanksOnSSC)
 				{
-					args.Player.SendMessage("You cannot place this tile because server side characters are enabled.", Color.Red);
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
+					args.Player.SendTileSquare(tileX, tileY, 3);
 					return true;
 				}
 				if (action == EditAction.PlaceTile && editData == 21)
 				{
 					if (TShock.Utils.MaxChests())
 					{
-						args.Player.SendMessage("The world's chest limit has been reached - unable to place more.", Color.Red);
-						args.Player.SendTileSquare(tileX, tileY);
+						args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
+						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
 					if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == 138) ||
 						(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == 138))
 					{
-						args.Player.SendTileSquare(tileX, tileY);
+						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
 				}
@@ -1931,7 +1930,7 @@ namespace TShockAPI
 				// If they aren't selecting the wrench, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 509)
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 			}
@@ -1940,55 +1939,57 @@ namespace TShockAPI
 				// If they aren't selecting the wire cutter, they're hacking.
 				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
 				{
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 			}
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
 			if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
-			if ((editData == 127 || Main.tileCut[editData]) && (action ==EditAction.KillTile || action == EditAction.KillTileNoItem))
+			// Ignore ice rod break
+			if ((editData == 127 || Main.tileCut[editData]) && (action == EditAction.KillTile || action == EditAction.KillTileNoItem))
 			{
 				return false;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
+			// Ignore rope placement range
+			if ((editData != 213 || action != EditAction.PlaceTile) && TShock.CheckRangePermission(args.Player, tileX, tileY))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
 			if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
 			{
 				args.Player.Disable("Reached TileKill threshold.");
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
 			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
 			{
 				args.Player.Disable("Reached TilePlace threshold.");
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
 
-			if ( ( action == EditAction.PlaceTile || action == EditAction.PlaceWall ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+			if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall ) && !args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(tileX, tileY);
