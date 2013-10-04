@@ -3193,32 +3193,31 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
-			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+			if (TShock.CheckTilePermission(args.Player, x, y, true))
 			{
-				args.Player.SendTileSquare(x, y);
+				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
 				return true;
 			}
-			
 			return false;
 		}
-		
+
 		private static bool HandlePaintWall(GetDataHandlerArgs args)
 		{
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
 			var t = args.Data.ReadInt8();
-		
+
 			if (OnPaintTile(x, y, t))
 				return true;
-		
-			if (!args.Player.Group.HasPermission(Permissions.canpaint))
+
+			if (TShock.CheckTilePermission(args.Player, x, y, true))
 			{
-				args.Player.SendTileSquare(x, y);
+				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
 				return true;
 			}
-			
 			return false;
 		}
+
 		private static bool HandleTeleport(GetDataHandlerArgs args)
 		{
 			var flag = args.Data.ReadInt8();
