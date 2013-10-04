@@ -2288,7 +2288,7 @@ namespace TShockAPI
 							new PaginationTools.Settings
 							{
 								HeaderFormat = "Permissions for " + grp.Name + " ({0}/{1}):",
-								FooterFormat = "Type /group permlist " + grp.Name + " {0} for more.",
+								FooterFormat = "Type /group listperm " + grp.Name + " {0} for more.",
 								NothingToDisplayString = "There are currently no permissions for " + grp.Name + "."
 							});
 					}
