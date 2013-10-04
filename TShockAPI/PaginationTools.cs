@@ -270,7 +270,7 @@ namespace TShockAPI
 					termString = term.ToString();
 				}
 
-				bool goesOnNextLine = (lineBuilder.Length + termString.Length > maxCharsPerLine);
+				bool goesOnNextLine = (lineBuilder.Length + termString.Length + separator.Length > maxCharsPerLine);
 				if (!goesOnNextLine)
 				{
 					if (lineBuilder.Length > 0)
