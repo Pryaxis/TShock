@@ -2392,7 +2392,7 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-				if (type == 100 || type == 294 || type == 295 || type == 296)
+				if ((type == 100) || (type > 289 && type < 298))
 				{	
 					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
