@@ -36,7 +36,9 @@ namespace TShockAPI.DB
 			                         new SqlColumn("MaxHealth", MySqlDbType.Int32),
 									 new SqlColumn("Mana", MySqlDbType.Int32),
 			                         new SqlColumn("MaxMana", MySqlDbType.Int32),
-			                         new SqlColumn("Inventory", MySqlDbType.Text)
+			                         new SqlColumn("Inventory", MySqlDbType.Text),
+									 new SqlColumn("spawnX", MySqlDbType.Int32),
+									 new SqlColumn("spawnY", MySqlDbType.Int32)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -61,6 +63,8 @@ namespace TShockAPI.DB
 						playerData.mana = reader.Get<int>("Mana");
 						playerData.maxMana = reader.Get<int>("MaxMana");
 						playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
+						playerData.spawnX = reader.Get<int>("spawnX");
+						playerData.spawnY = reader.Get<int>("spawnY");
 						return playerData;
 					}
 				}
@@ -78,8 +82,8 @@ namespace TShockAPI.DB
 			string initialItems = "-15,1,0~-13,1,0~-16,1,45~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0";
 			try
 			{
-				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", user.ID,
-							   100, 100, 20, 20, initialItems);
+				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", user.ID,
+							   100, 100, 20, 20, initialItems, -1, -1);
 				return true;
 			}
 			catch (Exception ex)
@@ -93,16 +97,17 @@ namespace TShockAPI.DB
 		public bool InsertPlayerData(TSPlayer player)
 		{
 			PlayerData playerData = player.PlayerData;
-
+			
 			if (!player.IsLoggedIn)
 				return false;
-
+			
+			
 			if (!GetPlayerData(player, player.UserID).exists)
 			{
 				try
 				{
-					database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5);", player.UserID,
-								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory));
+					database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", player.UserID,
+								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.TPlayer.SpawnX, player.TPlayer.SpawnY);
 					return true;
 				}
 				catch (Exception ex)
@@ -114,8 +119,8 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4 WHERE Account = @5;", playerData.health, playerData.maxHealth,
-								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID);
+					database.Query("UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4, spawnX = @6, spawnY = @7 WHERE Account = @5;", playerData.health, playerData.maxHealth,
+								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID, player.TPlayer.SpawnX, player.TPlayer.SpawnY);
 					return true;
 				}
 				catch (Exception ex)

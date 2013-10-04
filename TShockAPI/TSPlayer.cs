@@ -69,6 +69,10 @@ namespace TShockAPI
 		
 		public int RPPending = 0;
 		
+		public int sX = -1;
+		public int sY = -1;
+		
+		
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
         /// </summary>
@@ -297,8 +301,8 @@ namespace TShockAPI
 		/// Players controls are inverted if using SSC
 		/// </summary>
 		public bool Confused = false;
-
-		/// <summary>
+		
+        /// <summary>
         /// Whether the player is a real, human, player on the server.
         /// </summary>
 		public bool RealPlayer
@@ -590,9 +594,16 @@ namespace TShockAPI
 		}
 
 		public void Spawn()
-		{
-			TPlayer.FindSpawn();
-			Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
+		{			
+//			TPlayer.FindSpawn();
+			if (this.sX > 0 && this.sY > 0)
+			{
+				Spawn(this.sX, this.sY);
+			}
+			else
+			{
+				Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
+			}
 		}
 
 		public void Spawn(int tilex, int tiley)
@@ -1026,6 +1037,9 @@ namespace TShockAPI
 		public int mana = 20;
 		public int maxMana = 20;
 		public bool exists;
+		public int spawnX= -1;
+		public int spawnY= -1;
+		
 
 		public PlayerData(TSPlayer player)
 		{
@@ -1045,6 +1059,7 @@ namespace TShockAPI
 			this.inventory[2].stack = 1;
 			if (player.TPlayer.inventory[2] != null && player.TPlayer.inventory[2].netID == -16)
 				this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
+			
 		}
 
 		public void StoreSlot(int slot, int netID, int prefix, int stack)
@@ -1073,6 +1088,16 @@ namespace TShockAPI
 			this.maxHealth = player.TPlayer.statLifeMax;
 			this.mana = player.TPlayer.statMana;
 			this.maxMana = player.TPlayer.statManaMax;
+			if (player.sX > 0 && player.sY > 0)
+			{
+				this.spawnX = player.sX;
+				this.spawnY = player.sY;
+			}
+			else
+			{
+				this.spawnX = player.TPlayer.SpawnX;
+				this.spawnY = player.TPlayer.SpawnY;
+			}
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
@@ -1155,6 +1180,11 @@ namespace TShockAPI
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.maxMana;
 			player.TPlayer.statManaMax = this.maxMana;
+			player.TPlayer.SpawnX = this.spawnX;
+			player.TPlayer.SpawnY = this.spawnY;
+			player.sX = this.spawnX;
+			player.sY = this.spawnY;
+			
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
 				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))

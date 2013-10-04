@@ -2704,6 +2704,11 @@ namespace TShockAPI
 			else
 				args.Player.InitSpawn = true;
 
+            if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
+            {
+				args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
+            }
+			
 			args.Player.Dead = false;
 			return false;
 		}
