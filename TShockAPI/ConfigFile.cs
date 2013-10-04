@@ -277,6 +277,8 @@ namespace TShockAPI
 
 		[Description("The number of seconds a player must wait before being respawned.")] public int RespawnSeconds = 3;
 
+		[Description("Disables a player if this number of tiles is painted within 1 second.")] public int TilePaintThreshold = 10;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

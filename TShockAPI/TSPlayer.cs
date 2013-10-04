@@ -49,9 +49,14 @@ namespace TShockAPI
         public int TilePlaceThreshold { get; set; }
 
         /// <summary>
-        /// The amount of liquid( in tiles ) that the player has placed in the last second.
+        /// The amount of liquid (in tiles) that the player has placed in the last second.
         /// </summary>
 		public int TileLiquidThreshold { get; set; }
+
+		/// <summary>
+		/// The amount of tiles that the player has painted in the last second.
+		/// </summary>
+		public int PaintThreshold { get; set; }
 
         /// <summary>
         /// The number of projectiles created by the player in the last second.
@@ -60,7 +65,7 @@ namespace TShockAPI
 		
 		/// <summary>
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
-		//  </summary>
+		/// </summary>
 		public int RecentFuse = 0;
 		
 		/// <summary>
@@ -144,11 +149,6 @@ namespace TShockAPI
         /// </summary>
 		public DateTime LastThreat { get; set; }
 
-        /// <summary>
-        /// Not used, can be removed.
-        /// </summary>
-		public DateTime LastTileChangeNotify { get; set; }
-
 		public bool InitSpawn;
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace TShockAPI
 		public Vector2 oldSpawn = Vector2.Zero;
 
         /// <summary>
-        /// The last player that the player whispered with( to or from ).
+        /// The last player that the player whispered with (to or from).
         /// </summary>
 		public TSPlayer LastWhisper;
 

@@ -668,11 +668,12 @@ namespace TShockAPI
 						//We don't want to revert the entire map in case of a disable.
 						player.TilesDestroyed.Clear();
 					}
+
 					if (player.TilesCreated != null)
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold.");
+							player.Disable("Reached TilePlace threshold");
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -684,12 +685,12 @@ namespace TShockAPI
 					
 					if (player.RecentFuse >0)
 						player.RecentFuse--;
-					
+
 					if ((TShock.Config.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0))
-						{
-						player.TPlayer.SpawnX=player.sX;
-						player.TPlayer.SpawnY=player.sY;
-						}
+					{
+						player.TPlayer.SpawnX = player.sX;
+						player.TPlayer.SpawnY = player.sY;
+					}
 
 					if (player.RPPending >0)
 					{
@@ -707,20 +708,31 @@ namespace TShockAPI
 					
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold.");
+						player.Disable("Reached TileLiquid threshold");
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
 						player.TileLiquidThreshold = 0;
 					}
+
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable("Reached projectile threshold.");
+						player.Disable("Reached projectile threshold");
 					}
 					if (player.ProjectileThreshold > 0)
 					{
 						player.ProjectileThreshold = 0;
 					}
+
+					if (player.PaintThreshold >= Config.TilePaintThreshold)
+					{
+						player.Disable("Reached paint threshold");
+					}
+					if (player.PaintThreshold > 0)
+					{
+						player.PaintThreshold = 0;
+					}
+
 					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= Config.RespawnSeconds && player.Difficulty != 2)
 					{
 						player.Spawn();

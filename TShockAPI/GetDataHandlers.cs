@@ -3192,11 +3192,14 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
-			if (TShock.CheckTilePermission(args.Player, x, y, true))
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
+				TShock.CheckTilePermission(args.Player, x, y, true) ||
+				TShock.CheckRangePermission(args.Player, x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
 				return true;
 			}
+			args.Player.PaintThreshold++;
 			return false;
 		}
 
@@ -3209,11 +3212,14 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
-			if (TShock.CheckTilePermission(args.Player, x, y, true))
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
+				TShock.CheckTilePermission(args.Player, x, y, true) ||
+				TShock.CheckRangePermission(args.Player, x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
 				return true;
 			}
+			args.Player.PaintThreshold++;
 			return false;
 		}
 
