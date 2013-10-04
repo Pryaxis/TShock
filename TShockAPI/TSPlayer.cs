@@ -293,7 +293,12 @@ namespace TShockAPI
 		/// </summary>
 		public bool GodMode = false;
 
-        /// <summary>
+		/// <summary>
+		/// Players controls are inverted if using SSC
+		/// </summary>
+		public bool Confused = false;
+
+		/// <summary>
         /// Whether the player is a real, human, player on the server.
         /// </summary>
 		public bool RealPlayer

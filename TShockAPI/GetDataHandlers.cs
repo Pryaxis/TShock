@@ -2309,8 +2309,42 @@ namespace TShockAPI
 			{
 				args.TPlayer.direction = 1;
 			}
-			NetMessage.SendData((int) PacketTypes.PlayerUpdate, -1, args.Player.Index, "", args.Player.Index);
+			
 
+
+			if (args.Player.Confused && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
+			{
+				if (args.TPlayer.controlUp)
+				{
+					args.TPlayer.controlDown = true;
+					args.TPlayer.controlUp = false;
+				}
+				else if (args.TPlayer.controlDown)
+				{
+					args.TPlayer.controlDown = false;
+					args.TPlayer.controlUp = true;
+				}
+
+				if (args.TPlayer.controlLeft)
+				{
+					args.TPlayer.controlRight = true;
+					args.TPlayer.controlLeft = false;
+				}
+				else if (args.TPlayer.controlRight)
+				{
+					args.TPlayer.controlRight = false;
+					args.TPlayer.controlLeft = true;
+				}
+
+
+				args.TPlayer.UpdatePlayer(args.TPlayer.whoAmi);
+				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, "", args.Player.Index);
+				return true;
+			}
+
+
+
+			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, "", args.Player.Index);
 			return true;
 		}
 

@@ -230,6 +230,8 @@ namespace TShockAPI
 			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
 			add(Permissions.whisper, Reply, "reply", "r");
 			add(Permissions.annoy, Annoy, "annoy");
+			add(Permissions.annoy, Confuse, "confuse");
+			add(Permissions.annoy, Rocket, "rocket");
 			add(Permissions.kill, Kill, "kill");
 			add(Permissions.godmode, ToggleGodMode, "godmode");
 			add(Permissions.butcher, Butcher, "butcher");
@@ -3555,6 +3557,47 @@ namespace TShockAPI
 				var ply = players[0];
 				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
 				(new Thread(ply.Whoopie)).Start(annoy);
+			}
+		}
+
+		private static void Confuse(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /confuse <player>");
+				return;
+			}
+			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			if (players.Count == 0)
+				args.Player.SendErrorMessage("Invalid player!");
+			else if (players.Count > 1)
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			else
+			{
+				var ply = players[0];
+				ply.Confused = !ply.Confused;
+				args.Player.SendSuccessMessage("{0} is {1} confused.", ply.Name, ply.Confused ? "now" : "no longer");
+			}
+		}
+
+		private static void Rocket(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /rocket <player>");
+				return;
+			}
+			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			if (players.Count == 0)
+				args.Player.SendErrorMessage("Invalid player!");
+			else if (players.Count > 1)
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			else
+			{
+				var ply = players[0];
+				ply.TPlayer.velocity.Y = -50;
+				TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
+				args.Player.SendSuccessMessage("Rocketed {0}.", ply.Name);
 			}
 		}
 
