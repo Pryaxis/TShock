@@ -1605,6 +1605,11 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>
+		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
+		/// </summary>
+		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 137 };
+
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
 			if (args.Player.Group.HasPermission(Permissions.allowclientsideworldedit))
@@ -1674,9 +1679,8 @@ namespace TShockAPI
 						}
 					}
 
-					// Chairs and beds
-					if ((tile.type == 15 && newtile.Type == 15) ||
-						(tile.type == 79 && newtile.Type == 79))
+					// Orientable tiles
+					if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
 					{
 						tile.frameX = newtile.FrameX;
 						tile.frameY = newtile.FrameY;
