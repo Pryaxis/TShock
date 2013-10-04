@@ -618,8 +618,8 @@ namespace TShockAPI
 				OnSecondUpdate();
 				LastCheck = DateTime.UtcNow;
 			}
-			
-			if ((DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideCharacterSave)
+
+			if (TShock.Config.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -903,7 +903,7 @@ namespace TShockAPI
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan)
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);

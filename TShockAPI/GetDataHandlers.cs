@@ -1443,7 +1443,7 @@ namespace TShockAPI
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
-					if (!args.Player.IgnoreActionsForClearingTrashCan)
+					if (!args.Player.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
 					{
 						args.Player.PlayerData.CopyCharacter(args.Player);
 						TShock.CharacterDB.InsertPlayerData(args.Player);
@@ -1521,7 +1521,7 @@ namespace TShockAPI
 				    args.Player.IsLoggedIn = true;
 				    args.Player.IgnoreActionsForInventory = "none";
 
-				    if (!args.Player.IgnoreActionsForClearingTrashCan)
+				    if (!args.Player.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
                     {
 				        args.Player.PlayerData.CopyCharacter(args.Player);
 				        TShock.CharacterDB.InsertPlayerData(args.Player);

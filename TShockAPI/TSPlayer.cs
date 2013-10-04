@@ -779,6 +779,7 @@ namespace TShockAPI
 			SendData(PacketTypes.PlayerTeam, "", Index);
 		}
 
+		private DateTime LastDisableNotification = DateTime.UtcNow;
 		public virtual void Disable(string reason = "")
 		{
 			LastThreat = DateTime.UtcNow;
@@ -786,8 +787,13 @@ namespace TShockAPI
 			SetBuff(32, 330, true); //Slow
 			SetBuff(23, 330, true); //Cursed
 			if (!string.IsNullOrEmpty(reason))
-				Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));
-
+			{
+				if ((DateTime.UtcNow - LastDisableNotification).TotalMilliseconds > 5000)
+				{
+					Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));
+					LastDisableNotification = DateTime.UtcNow;
+				}
+			}
 			var trace = new StackTrace();
 			StackFrame frame = null;
 			frame = trace.GetFrame(1);
