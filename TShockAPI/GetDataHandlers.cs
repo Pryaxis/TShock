@@ -3210,8 +3210,9 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
-			// Not selecting paintbrush or paint scraper? Hacking.
-			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100)
+			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
+			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
+				&& args.Player.SelectedItem.type != 1543 && args.Player.SelectedItem.type != 1545)
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
 				return true;
@@ -3241,8 +3242,9 @@ namespace TShockAPI
 			if (OnPaintTile(x, y, t))
 				return true;
 
-			// Not selecting paint roller or paint scraper? Hacking.
-			if (args.Player.SelectedItem.type != 1072 && args.Player.SelectedItem.type != 1100)
+			// Not selecting paint roller or paint scraper or the spectre versions? Hacking.
+			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
+				&& args.Player.SelectedItem.type != 1544 && args.Player.SelectedItem.type != 1545)
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
 				return true;
