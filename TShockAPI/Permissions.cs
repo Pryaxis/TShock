@@ -74,7 +74,7 @@ namespace TShockAPI
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
 		[Description("User can save all the players SSI state.")]
-		public static readonly string savessi = "tshock.admin.savessi";
+		public static readonly string savessc = "tshock.admin.savessi";
 
 		[Description("User can elevate other users' groups temporarily.")]
 		public static readonly string settempgroup = "tshock.admin.tempgroup";
@@ -155,9 +155,6 @@ namespace TShockAPI
 
 		[Description("User can spawn items.")]
 		public static readonly string item = "tshock.item.spawn";
-
-		[Description("User can clear items.")]
-		public static readonly string clearitems = "tshock.item.clear";
 
 		[Description("Allows you to use banned items.")]
 		public static readonly string usebanneditem = "tshock.item.usebanned";
@@ -255,6 +252,9 @@ namespace TShockAPI
 		public static readonly string canpaint = "tshock.world.paint";
 
 		// Non-grouped
+
+		[Description("User can clear items or projectiles.")]
+		public static readonly string clear = "tshock.clear";
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
