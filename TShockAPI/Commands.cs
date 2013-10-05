@@ -238,6 +238,7 @@ namespace TShockAPI
 			add(Permissions.butcher, Butcher, "butcher");
 			add(Permissions.item, Give, "give", "g");
 			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
+			add(Permissions.clearitems, KillProjectiles, "killprojectile");
 			add(Permissions.heal, Heal, "heal");
 			add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
 			add(Permissions.hardmode, StartHardMode, "hardmode");
@@ -3638,6 +3639,34 @@ namespace TShockAPI
 				int p = Projectile.NewProjectile(ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
 				Main.projectile[p].Kill();
 				args.Player.SendSuccessMessage("Launched Firework on {0}.", ply.Name);
+			}
+		}
+
+		private static void KillProjectiles(CommandArgs args)
+		{
+			if (args.Parameters.Count == 0)
+			{
+				foreach (Projectile p in Main.projectile)
+				{
+					if (p != null && p.active)
+					{
+						p.Kill();
+					}
+				}
+			}
+			else
+			{
+				int id;
+				if (int.TryParse(args.Parameters[0], out id))
+				{
+					foreach (Projectile p in Main.projectile)
+					{
+						if (p != null && p.active && p.type == id)
+						{
+							p.Kill();
+						}
+					}
+				}
 			}
 		}
 
