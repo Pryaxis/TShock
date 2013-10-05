@@ -3255,7 +3255,7 @@ namespace TShockAPI
 			}
 
 			// Not selecting paint roller or paint scraper or the spectre versions? Hacking.
-			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
+			if (args.Player.SelectedItem.type != 1072 && args.Player.SelectedItem.type != 1100 &&
 				args.Player.SelectedItem.type != 1544 && args.Player.SelectedItem.type != 1545)
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
