@@ -1608,7 +1608,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 137, 209 };
+		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 128, 137, 209 };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
