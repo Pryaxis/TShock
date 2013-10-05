@@ -74,7 +74,7 @@ namespace TShockAPI
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
 		[Description("User can save all the players SSI state.")]
-		public static readonly string savessi = "tshock.admin.savessi";
+		public static readonly string savessc = "tshock.admin.savessi";
 
 		[Description("User can elevate other users' groups temporarily.")]
 		public static readonly string settempgroup = "tshock.admin.tempgroup";

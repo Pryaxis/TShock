@@ -57,14 +57,29 @@ namespace TShockAPI
 
 	public class Command
 	{
-		public string Name
-		{
-			get { return Names[0]; }
-		}
-
-		public List<string> Names { get; protected set; }
-        public bool AllowServer { get; set; }
+		/// <summary>
+		/// Gets or sets whether to allow non-players to use this command.
+		/// </summary>
+		public bool AllowServer { get; set; }
+		/// <summary>
+		/// Gets or sets whether to do logging of this command.
+		/// </summary>
 		public bool DoLog { get; set; }
+		/// <summary>
+		/// Gets or sets the help text of this command.
+		/// </summary>
+		public string HelpText { get; set; }
+		/// <summary>
+		/// Gets the name of the command.
+		/// </summary>
+		public string Name { get { return Names[0]; } }
+		/// <summary>
+		/// Gets the names of the command.
+		/// </summary>
+		public List<string> Names { get; protected set; }
+		/// <summary>
+		/// Gets the permissions of the command.
+		/// </summary>
 		public List<string> Permissions { get; protected set; }
 
 		private CommandDelegate commandDelegate;
@@ -80,16 +95,16 @@ namespace TShockAPI
 			}
 	 	}
 
-		public Command(List<string> permissionsneeded, CommandDelegate cmd, params string[] names)
+		public Command(List<string> permissions, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
 		{
-			Permissions = permissionsneeded;
+			Permissions = permissions;
 		}
 
-		public Command(string permissionneeded, CommandDelegate cmd, params string[] names)
+		public Command(string permissions, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
 		{
-			Permissions = new List<string> { permissionneeded };
+			Permissions = new List<string> { permissions };
 		}
 
 		public Command(CommandDelegate cmd, params string[] names)
@@ -98,11 +113,13 @@ namespace TShockAPI
 				throw new ArgumentNullException("cmd");
 			if (names == null || names.Length < 1)
 				throw new ArgumentException("names");
-			Permissions = new List<string>();
-			Names = new List<string>(names);
-			CommandDelegate = cmd;
+
 			AllowServer = true;
+			CommandDelegate = cmd;
 			DoLog = true;
+			HelpText = "No help available.";
+			Names = new List<string>(names);
+			Permissions = new List<string>();
 		}
 
 		public bool Run(string msg, TSPlayer ply, List<string> parms)
@@ -151,94 +168,368 @@ namespace TShockAPI
 		public static void InitCommands()
 		{
 			List<Command> tshockCommands = new List<Command>(100);
-			Action<Command> add2 = (cmd) => 
+			Action<Command> add = (cmd) => 
 			{
 				tshockCommands.Add(cmd);
 				ChatCommands.Add(cmd);
 			};
-			AddChatCommand add = (p, c, n) => add2(new Command(p, c, n));
 
-			add2(new Command(AuthToken, "auth") { AllowServer = false });
-			add2(new Command(Permissions.canchangepassword, PasswordUser, "password") { AllowServer = false, DoLog = false });
-			add2(new Command(Permissions.canregister, RegisterUser, "register") { AllowServer = false, DoLog = false });
-			add2(new Command(Permissions.user, ManageUsers, "user") { DoLog = false });
-			add2(new Command(Permissions.canlogin, AttemptLogin, "login") { AllowServer = false, DoLog = false });
-			add2(new Command(Permissions.buff, Buff, "buff") { AllowServer = false });
-			add2(new Command(Permissions.worldspawn, SetSpawn, "setspawn") { AllowServer = false });
-			add2(new Command(Permissions.grow, Grow, "grow") { AllowServer = false });
-			add2(new Command(Permissions.item, Item, "item", "i") { AllowServer = false });
-			add2(new Command(Permissions.home, Home, "home") { AllowServer = false });
-			add2(new Command(Permissions.canpartychat, PartyChat, "p") { AllowServer = false });
-			add2(new Command(Permissions.spawn, Spawn, "spawn") { AllowServer = false });
-			add2(new Command(Permissions.tp, TP, "tp") { AllowServer = false });
-			add2(new Command(Permissions.tphere, TPHere, "tphere") { AllowServer = false });
-			add2(new Command(Permissions.tpallow, TPAllow, "tpallow") { AllowServer = false });
-			add(Permissions.kick, Kick, "kick");
-			add(Permissions.ban, Ban, "ban");
-			add(Permissions.whitelist, Whitelist, "whitelist");
-			add(Permissions.maintenance, Off, "off", "exit");
-			add(Permissions.maintenance, Restart, "restart");
-			add(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave");
-			add(Permissions.maintenance, CheckUpdates, "checkupdates");
-		    add(Permissions.updateplugins, UpdatePlugins, "updateplugins");
-			add(Permissions.causeevents, DropMeteor, "dropmeteor");
-			add(Permissions.causeevents, Star, "star");
-			add(Permissions.causeevents, Fullmoon, "fullmoon");
-			add(Permissions.causeevents, Bloodmoon, "bloodmoon");
-			add(Permissions.causeevents, Eclipse, "eclipse");
-			add(Permissions.causeevents, Invade, "invade");
-			add(Permissions.causeevents, Rain, "rain");
-            add(Permissions.spawnmob, SpawnMob, "spawnmob", "sm");
-			add(Permissions.warp, Warp, "warp");
-			add(Permissions.managegroup, Group, "group");
-			add(Permissions.manageitem, ItemBan, "itemban");
-            add(Permissions.manageregion, Region, "region");
-            add(Permissions.manageregion, DebugRegions, "debugreg");
-			add(Permissions.cfgreload, Reload, "reload");
-			add(Permissions.cfgpassword, ServerPassword, "serverpassword");
-			add(Permissions.worldsave, Save, "save");
-			add(Permissions.worldsettle, Settle, "settle");
-			add(Permissions.cfgmaxspawns, MaxSpawns, "maxspawns");
-			add(Permissions.cfgspawnrate, SpawnRate, "spawnrate");
-			add(Permissions.time, Time, "time");
-			add(Permissions.slap, Slap, "slap");
-			add(Permissions.editspawn, ToggleAntiBuild, "antibuild");
-			add(Permissions.editspawn, ProtectSpawn, "protectspawn");
-            add(Permissions.maintenance, GetVersion, "version");
-			add(null, ListConnectedPlayers, "playing", "online", "who");
-            add(null, Motd, "motd");
-            add(null, Rules, "rules");
-            add(null, Help, "help");
-			add(Permissions.cantalkinthird, ThirdPerson, "me");
-			add(Permissions.mute, Mute, "mute", "unmute");
-			add(Permissions.logs, DisplayLogs, "displaylogs");
-			add(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui");
-			add(Permissions.authverify, AuthVerify, "auth-verify");
-			add(Permissions.broadcast, Broadcast, "broadcast", "bc", "say");
-			add(Permissions.whisper, Whisper, "whisper", "w", "tell");
-			add(Permissions.whisper, Reply, "reply", "r");
-			add(Permissions.annoy, Annoy, "annoy");
-			add(Permissions.annoy, Confuse, "confuse");
-			add(Permissions.annoy, Rocket, "rocket");
-			add(Permissions.annoy, FireWork, "firework");
-			add(Permissions.kill, Kill, "kill");
-			add(Permissions.godmode, ToggleGodMode, "godmode");
-			add(Permissions.butcher, Butcher, "butcher");
-			add(Permissions.item, Give, "give", "g");
-			add(Permissions.clearitems, ClearItems, "clear", "clearitems");
-			add(Permissions.clearitems, KillProjectiles, "killprojectile");
-			add(Permissions.heal, Heal, "heal");
-			add(Permissions.buffplayer, GBuff, "gbuff", "buffplayer");
-			add(Permissions.hardmode, Hardmode, "hardmode");
-			add(Permissions.serverinfo, ServerInfo, "stats");
-			add(Permissions.worldinfo, WorldInfo, "world");
-			add(Permissions.savessi, SaveSSC, "savessc");
-			add(Permissions.savessi, OverrideSSC, "overridessc", "ossc");
-		    add(Permissions.xmas, ForceXmas, "forcexmas");
-		    add(Permissions.settempgroup, TempGroup, "tempgroup");
-			add(null, Aliases, "aliases");
-			add(Rests.RestPermissions.restmanage, ManageRest, "rest");
-		    //add(null, TestCallbackCommand, "test");
+			add(new Command(AuthToken, "auth")
+			{
+				AllowServer = false,
+				HelpText = "Used to authenticate as superadmin when first setting up TShock."
+			});
+			add(new Command(Permissions.authverify, AuthVerify, "auth-verify")
+			{
+				HelpText = "Used to verify that you have correctly set up TShock."
+			});
+			add(new Command(Permissions.user, ManageUsers, "user")
+			{
+				DoLog = false,
+				HelpText = "Manages user accounts."
+			});
+
+			#region Account Commands
+			add(new Command(Permissions.canlogin, AttemptLogin, "login")
+			{
+				AllowServer = false,
+				DoLog = false,
+				HelpText = "Logs you into an account."
+			});
+			add(new Command(Permissions.canchangepassword, PasswordUser, "password")
+			{
+				AllowServer = false,
+				DoLog = false,
+				HelpText = "Changes your account's password."
+			});
+			add(new Command(Permissions.canregister, RegisterUser, "register")
+			{
+				AllowServer = false,
+				DoLog = false,
+				HelpText = "Registers you an account."
+			});
+			#endregion
+			#region Admin Commands
+			add(new Command(Permissions.ban, Ban, "ban")
+			{
+				HelpText = "Manages player bans."
+			});
+			add(new Command(Permissions.broadcast, Broadcast, "broadcast", "bc", "say")
+			{
+				HelpText = "Broadcasts a message to everyone on the server."
+			});
+			add(new Command(Permissions.logs, DisplayLogs, "displaylogs")
+			{
+				HelpText = "Toggles whether you receive server logs."
+			});
+			add(new Command(Permissions.managegroup, Group, "group")
+			{
+				HelpText = "Manages groups."
+			});
+			add(new Command(Permissions.manageitem, ItemBan, "itemban")
+			{
+				HelpText = "Manages item bans."
+			});
+			add(new Command(Permissions.manageregion, Region, "region")
+			{
+				HelpText = "Manages regions."
+			});
+			add(new Command(Permissions.kick, Kick, "kick")
+			{
+				HelpText = "Removes a player from the server."
+			});
+			add(new Command(Permissions.mute, Mute, "mute", "unmute")
+			{
+				HelpText = "Prevents a player from talking."
+			});
+			add(new Command(Permissions.savessc, OverrideSSC, "overridessc", "ossc")
+			{
+				HelpText = "Overrides serverside characters for a player, temporarily."
+			});
+			add(new Command(Permissions.savessc, SaveSSC, "savessc")
+			{
+				HelpText = "Saves all serverside characters."
+			});
+			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
+			{
+				HelpText = "Temporarily sets another player's group."
+			});
+			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
+			{
+				HelpText = "Shows information about a user."
+			});
+			#endregion
+			#region Annoy Commands
+			add(new Command(Permissions.annoy, Annoy, "annoy")
+			{
+				HelpText = "Annoys a player for an amount of time."
+			});
+			add(new Command(Permissions.annoy, Confuse, "confuse")
+			{
+				HelpText = "Confuses a player for an amount of time."
+			});
+			add(new Command(Permissions.annoy, Rocket, "rocket")
+			{
+				HelpText = "Rockets a player upwards. Requires SSC."
+			});
+			add(new Command(Permissions.annoy, FireWork, "firework")
+			{
+				HelpText = "Spawns fireworks at a player."
+			});
+			#endregion
+			#region Configuration Commands
+			add(new Command(Permissions.maintenance, CheckUpdates, "checkupdates")
+			{
+				HelpText = "Checks for TShock updates."
+			});
+			add(new Command(Permissions.maintenance, Off, "off", "exit")
+			{
+				HelpText = "Shuts down the server while saving."
+			});
+			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave")
+			{
+				HelpText = "Shuts down the server without saving."
+			});
+			add(new Command(Permissions.maintenance, Reload, "reload")
+			{
+				HelpText = "Reloads the server configuration file."
+			});
+			add(new Command(Permissions.maintenance, Restart, "restart")
+			{
+				HelpText = "Restarts the server."
+			});
+			add(new Command(Permissions.cfgpassword, ServerPassword, "serverpassword")
+			{
+				HelpText = "Changes the server password."
+			});
+			add(new Command(Permissions.maintenance, GetVersion, "version")
+			{
+				HelpText = "Shows the TShock version."
+			});
+			/* Does nothing atm.
+			 * 
+			 * add(new Command(Permissions.updateplugins, UpdatePlugins, "updateplugins")
+			{
+			});*/
+			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
+			{
+				HelpText = "Manages the server whitelist."
+			});
+			#endregion
+			#region Item Commands
+			add(new Command(Permissions.clearitems, ClearItems, "clear", "clearitems")
+			{
+				HelpText = "Clears item drops within a radius around you."
+			});
+			add(new Command(Permissions.item, Give, "give", "g")
+			{
+				HelpText = "Gives another player an item."
+			});
+			add(new Command(Permissions.item, Item, "item", "i")
+			{
+				AllowServer = false,
+				HelpText = "Gives yourself an item."
+			});
+			#endregion
+			#region NPC Commands
+			add(new Command(Permissions.butcher, Butcher, "butcher")
+			{
+				HelpText = "Kills hostile NPCs or NPCs of a certain type."
+			});
+			add(new Command(Permissions.cfgmaxspawns, MaxSpawns, "maxspawns")
+			{
+				HelpText = "Sets the maximum number of NPCs."
+			});
+			add(new Command(Permissions.spawnmob, SpawnMob, "spawnmob", "sm")
+			{
+				AllowServer = false,
+				HelpText = "Spawns a number of mobs around you."
+			});
+			add(new Command(Permissions.cfgspawnrate, SpawnRate, "spawnrate")
+			{
+				HelpText = "Sets the spawn rate of NPCs."
+			});
+			#endregion
+			#region TP Commands
+			add(new Command(Permissions.home, Home, "home")
+			{
+				AllowServer = false,
+				HelpText = "Sends you to your spawn point."
+			});
+			add(new Command(Permissions.spawn, Spawn, "spawn")
+			{
+				AllowServer = false,
+				HelpText = "Sends you to the world's spawn point."
+			});
+			add(new Command(Permissions.tp, TP, "tp")
+			{
+				AllowServer = false,
+				HelpText = "Teleports you to another player or a coordinate."
+			});
+			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
+			{
+				AllowServer = false,
+				HelpText = "Toggles whether other people can teleport to you."
+			});
+			add(new Command(Permissions.tphere, TPHere, "tphere")
+			{
+				AllowServer = false,
+				HelpText = "Teleports another player to you."
+			});
+			#endregion
+			#region World Commands
+			add(new Command(Permissions.editspawn, ToggleAntiBuild, "antibuild")
+			{
+				HelpText = "Toggles build protection."
+			});
+			add(new Command(Permissions.causeevents, Bloodmoon, "bloodmoon")
+			{
+				HelpText = "Sets a blood moon."
+			});
+			add(new Command(Permissions.grow, Grow, "grow")
+			{
+				AllowServer = false,
+				HelpText = "Grows plants at your location."
+			});
+			add(new Command(Permissions.causeevents, DropMeteor, "dropmeteor")
+			{
+				HelpText = "Drops a meteor somewhere in the world."
+			});
+			add(new Command(Permissions.causeevents, Eclipse, "eclipse")
+			{
+				HelpText = "Sets an eclipse."
+			});
+			add(new Command(Permissions.xmas, ForceXmas, "forcexmas")
+			{
+				HelpText = "Toggles christmas mode (present spawning, santa, etc)."
+			});
+			add(new Command(Permissions.causeevents, Fullmoon, "fullmoon")
+			{
+				HelpText = "Sets a full moon."
+			});
+			add(new Command(Permissions.hardmode, Hardmode, "hardmode")
+			{
+				HelpText = "Toggles the world's hardmode status."
+			});
+			add(new Command(Permissions.causeevents, Invade, "invade")
+			{
+				HelpText = "Starts an NPC invasion."
+			});
+			add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn")
+			{
+				HelpText = "Toggles spawn protection."
+			});
+			add(new Command(Permissions.causeevents, Rain, "rain")
+			{
+				HelpText = "Toggles the rain."
+			});
+			add(new Command(Permissions.worldsave, Save, "save")
+			{
+				HelpText = "Saves the world file."
+			});
+			add(new Command(Permissions.worldspawn, SetSpawn, "setspawn")
+			{
+				AllowServer = false,
+				HelpText = "Sets the world's spawn point to your location."
+			});
+			add(new Command(Permissions.worldsettle, Settle, "settle")
+			{
+				HelpText = "Forces all liquids to update immediately."
+			});
+			add(new Command(Permissions.causeevents, Star, "star")
+			{
+				HelpText = "Spawns a falling star around you."
+			});
+			add(new Command(Permissions.time, Time, "time")
+			{
+				HelpText = "Sets the world time."
+			});
+			add(new Command(Permissions.worldinfo, WorldInfo, "world")
+			{
+				HelpText = "Shows information about the current world."
+			});
+			#endregion
+			#region Other Commands
+			add(new Command(Permissions.buff, Buff, "buff")
+			{
+				AllowServer = false,
+				HelpText = "Gives yourself a buff for an amount of time."
+			});
+			add(new Command(Permissions.buffplayer, GBuff, "gbuff", "buffplayer")
+			{
+				HelpText = "Gives another player a buff for an amount of time."
+			});
+			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
+			{
+				HelpText = "Toggles godmode on a player."
+			});
+			add(new Command(Permissions.heal, Heal, "heal")
+			{
+				HelpText = "Heals a player in HP and MP."
+			});
+			add(new Command(Permissions.kill, Kill, "kill")
+			{
+				HelpText = "Kills another player."
+			});
+			add(new Command(Permissions.clearitems, KillProjectiles, "killprojectile")
+			{
+				HelpText = "Kills all projectiles."
+			});
+			add(new Command(Permissions.cantalkinthird, ThirdPerson, "me")
+			{
+				HelpText = "Sends an action message to everyone."
+			});
+			add(new Command(Permissions.canpartychat, PartyChat, "party", "p")
+			{
+				AllowServer = false,
+				HelpText = "Sends a message to everyone on your team."
+			});
+			add(new Command(Permissions.whisper, Reply, "reply", "r")
+			{
+				HelpText = "Replies to a PM sent to you."
+			});
+			add(new Command(Rests.RestPermissions.restmanage, ManageRest, "rest")
+			{
+				HelpText = "Manages the REST API."
+			});
+			add(new Command(Permissions.slap, Slap, "slap")
+			{
+				HelpText = "Slaps a player, dealing damage."
+			});
+			add(new Command(Permissions.serverinfo, ServerInfo, "stats")
+			{
+				HelpText = "Shows the server information."
+			});
+			add(new Command(Permissions.warp, Warp, "warp")
+			{
+				HelpText = "Teleports you to a warp point or manages warps."
+			});
+			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell")
+			{
+				HelpText = "Sends a PM to a player."
+			});
+			#endregion
+
+			add(new Command(Aliases, "aliases")
+			{
+				HelpText = "Shows a command's aliases."
+			});
+			add(new Command(Help, "help")
+			{
+				HelpText = "Lists commands or gives help on them."
+			});
+			add(new Command(Motd, "motd")
+			{
+				HelpText = "Shows the message of the day."
+			});
+			add(new Command(ListConnectedPlayers, "playing", "online", "who")
+			{
+				HelpText = "Shows the currently connected players."
+			});
+			add(new Command(Rules, "rules")
+			{
+				HelpText = "Shows the server's rules."
+			});
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
 		}
@@ -2536,19 +2827,6 @@ namespace TShockAPI
 
         #region Region Commands
 
-        private static void DebugRegions(CommandArgs args)
-        {
-            foreach (Region r in TShock.Regions.Regions)
-            {
-                args.Player.SendMessage(r.Name + ": P: " + r.DisableBuild + " X: " + r.Area.X + " Y: " + r.Area.Y + " W: " +
-                                        r.Area.Width + " H: " + r.Area.Height);
-                foreach (int s in r.AllowedIDs)
-                {
-                    args.Player.SendMessage(r.Name + ": " + s);
-                }
-            }
-        }
-
         private static void Region(CommandArgs args)
         {
             string cmd = "help";
@@ -3099,18 +3377,43 @@ namespace TShockAPI
 
 		private static void Help(CommandArgs args)
 		{
-			int pageNumber;
-			if (!PaginationTools.TryParsePageNumber(args.Parameters, 0, args.Player, out pageNumber))
+			if (args.Parameters.Count > 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /help <command/page>");
 				return;
-			IEnumerable<string> cmdNames = from cmd in ChatCommands
-										   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.AuthToken != 0)
-										   select "/" + cmd.Name;
-			PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
-				new PaginationTools.Settings
+			}
+
+			int pageNumber;
+			if (args.Parameters.Count == 0 || int.TryParse(args.Parameters[0], out pageNumber))
+			{
+				if (!PaginationTools.TryParsePageNumber(args.Parameters, 0, args.Player, out pageNumber))
 				{
-					HeaderFormat = "Commands ({0}/{1}):",
-					FooterFormat = "Type /help {0} for more."
-				});
+					return;
+				}
+
+				IEnumerable<string> cmdNames = from cmd in ChatCommands
+											   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.AuthToken != 0)
+											   select "/" + cmd.Name;
+
+				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
+					new PaginationTools.Settings
+					{
+						HeaderFormat = "Commands ({0}/{1}):",
+						FooterFormat = "Type /help {0} for more."
+					});
+			}
+			else
+			{
+				Command command = ChatCommands.Find(c => c.Names.Contains(args.Parameters[0].ToLower()));
+				if (command == null)
+				{
+					args.Player.SendErrorMessage("Invalid command.");
+					return;
+				}
+
+				args.Player.SendSuccessMessage("/{0} help: ", args.Parameters[0].ToLower());
+				args.Player.SendInfoMessage(command.HelpText);
+			}
 		}
 
 		private static void GetVersion(CommandArgs args)
