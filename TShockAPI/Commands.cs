@@ -3388,7 +3388,13 @@ namespace TShockAPI
 			}
 			else
 			{
-				Command command = ChatCommands.Find(c => c.Names.Contains(args.Parameters[0].ToLower()));
+				string commandName = args.Parameters[0].ToLower();
+				if (commandName.StartsWith("/"))
+				{
+					commandName = commandName.Substring(1);
+				}
+
+				Command command = ChatCommands.Find(c => c.Names.Contains(commandName));
 				if (command == null)
 				{
 					args.Player.SendErrorMessage("Invalid command.");
@@ -3400,7 +3406,7 @@ namespace TShockAPI
 					return;
 				}
 
-				args.Player.SendSuccessMessage("/{0} help: ", args.Parameters[0].ToLower());
+				args.Player.SendSuccessMessage("/{0} help: ", command.Name);
 				args.Player.SendInfoMessage(command.HelpText);
 			}
 		}
