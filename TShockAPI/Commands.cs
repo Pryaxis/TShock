@@ -317,10 +317,6 @@ namespace TShockAPI
 			});
 			#endregion
 			#region Item Commands
-			add(new Command(Permissions.clearitems, ClearItems, "clear", "clearitems")
-			{
-				HelpText = "Clears item drops within a radius around you."
-			});
 			add(new Command(Permissions.item, Give, "give", "g")
 			{
 				HelpText = "Gives another player an item."
@@ -436,10 +432,6 @@ namespace TShockAPI
 			{
 				HelpText = "Forces all liquids to update immediately."
 			});
-			add(new Command(Permissions.causeevents, Star, "star")
-			{
-				HelpText = "Spawns a falling star around you."
-			});
 			add(new Command(Permissions.time, Time, "time")
 			{
 				HelpText = "Sets the world time."
@@ -454,6 +446,10 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Gives yourself a buff for an amount of time."
+			});
+			add(new Command(Permissions.clear, Clear, "clear")
+			{
+				HelpText = "Clears item drops or projectiles."
 			});
 			add(new Command(Permissions.buffplayer, GBuff, "gbuff", "buffplayer")
 			{
@@ -470,10 +466,6 @@ namespace TShockAPI
 			add(new Command(Permissions.kill, Kill, "kill")
 			{
 				HelpText = "Kills another player."
-			});
-			add(new Command(Permissions.clearitems, KillProjectiles, "killprojectile")
-			{
-				HelpText = "Kills all projectiles."
 			});
 			add(new Command(Permissions.cantalkinthird, ThirdPerson, "me")
 			{
@@ -664,13 +656,6 @@ namespace TShockAPI
 		{
 			return c == ' ' || c == '\t' || c == '\n';
 		}
-
-        //private static void TestCallbackCommand(CommandArgs args)
-        //{
-        //    Action<object> a = (s) => { ((CommandArgs)s).Player.SendSuccessMessage("This is your callack"); };
-        //    args.Player.AddResponse( "yes", a);
-        //    args.Player.SendInfoMessage( "Type /yes to get called back." );
-        //}
 
 		#region Account commands
 
@@ -1612,23 +1597,6 @@ namespace TShockAPI
             args.Player.SendInfoMessage("A meteor has been triggered.");
 		}
 
-		private static void Star(CommandArgs args)
-		{
-			int penis56 = 12;
-			int penis57 = Main.rand.Next(Main.maxTilesX - 50) + 100;
-			penis57 *= 0x10;
-			int penis58 = Main.rand.Next((int) (Main.maxTilesY*0.05))*0x10;
-			Vector2 vector = new Vector2(penis57, penis58);
-			float speedX = Main.rand.Next(-100, 0x65);
-			float speedY = Main.rand.Next(200) + 100;
-			float penis61 = (float) Math.Sqrt(((speedX*speedX) + (speedY*speedY)));
-			penis61 = (penis56)/penis61;
-			speedX *= penis61;
-			speedY *= penis61;
-			Projectile.NewProjectile(vector.X, vector.Y, speedX, speedY, 12, 0x3e8, 10f, Main.myPlayer);
-            args.Player.SendInfoMessage("An attempt has been made to spawn a star.");
-		}
-
 		private static void Fullmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetFullMoon(true);
@@ -1706,33 +1674,33 @@ namespace TShockAPI
 			}
         }
 
-        private static void SpawnMob(CommandArgs args)
-        {
-            if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
-            {
-                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]");
-                return;
-            }
-            if (args.Parameters[0].Length == 0)
-            {
-                args.Player.SendErrorMessage("Invalid mob type!");
-                return;
-            }
+		private static void SpawnMob(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnmob <mob type> [amount]");
+				return;
+			}
+			if (args.Parameters[0].Length == 0)
+			{
+				args.Player.SendErrorMessage("Invalid mob type!");
+				return;
+			}
 
-            int amount = 1;
-            if (args.Parameters.Count == 2 && !int.TryParse(args.Parameters[1], out amount))
-            {
-                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnmob <mob name/id> [amount]");
-                return;
-            }
+			int amount = 1;
+			if (args.Parameters.Count == 2 && !int.TryParse(args.Parameters[1], out amount))
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnmob <mob type> [amount]");
+				return;
+			}
 
-            amount = Math.Min(amount, Main.maxNPCs);
+			amount = Math.Min(amount, Main.maxNPCs);
 
-            var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
-            if (npcs.Count == 0)
-            {
-                args.Player.SendErrorMessage("Invalid mob type!");
-            }
+			var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+			if (npcs.Count == 0)
+			{
+				args.Player.SendErrorMessage("Invalid mob type!");
+			}
 			else if (npcs.Count > 1)
 			{
 				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
@@ -1760,7 +1728,7 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("Invalid mob type!");
 				}
 			}
-        }
+		}
 
 		#endregion Cause Events and Spawn Monsters Commands
 
@@ -2041,11 +2009,6 @@ namespace TShockAPI
 		#endregion Teleport Commands
 
 		#region Group Management
-
-		private static void GroupDeprecated(CommandArgs args)
-		{
-			args.Player.SendInfoMessage("The group commands were merged into /group in TShock 4.1; check /group help.");
-		}
 
 		private static void Group(CommandArgs args)
 		{
@@ -2433,11 +2396,6 @@ namespace TShockAPI
 		#endregion Group Management
 
 		#region Item Management
-
-		private static void ItemBanDeprecated(CommandArgs args)
-		{
-			args.Player.SendInfoMessage("The item ban commands were merged into /itemban in TShock 4.1; check /itemban help.");
-		}
 
 		private static void ItemBan(CommandArgs args)
 		{
@@ -3665,9 +3623,9 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				plr.SendMessage(String.Format("(Whisper From) <{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("(Whisper To) <{0}> {1}", plr.Name, msg), Color.MediumPurple);
+				var msg = string.Join(" ", args.Parameters.Take(1).ToArray());
+				plr.SendMessage(String.Format("<{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
+				args.Player.SendMessage(String.Format("<{0}> {1}", plr.Name, msg), Color.MediumPurple);
 				plr.LastWhisper = args.Player;
 				args.Player.LastWhisper = plr;
 			}
@@ -3682,8 +3640,8 @@ namespace TShockAPI
 			else if (args.Player.LastWhisper != null)
 			{
 				var msg = string.Join(" ", args.Parameters);
-				args.Player.LastWhisper.SendMessage(String.Format("(Whisper From) <{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("(Whisper To) <{0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+				args.Player.LastWhisper.SendMessage(String.Format("<{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
+				args.Player.SendMessage(String.Format("<{0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
 			}
 			else
 			{
@@ -3794,38 +3752,6 @@ namespace TShockAPI
 			}
 		}
 
-		private static void KillProjectiles(CommandArgs args)
-		{
-			if (args.Parameters.Count == 0)
-			{
-				for (int i = Main.projectile.Length - 1; i >= 0; i--)
-				{
-					Projectile p = Main.projectile[i];
-					if (p != null && p.active)
-					{
-						p.Kill();
-						TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", i);
-					}
-				}
-			}
-			else
-			{
-				int id;
-				if (int.TryParse(args.Parameters[0], out id))
-				{
-					for (int i = Main.projectile.Length-1; i >= 0; i--)
-					{
-						Projectile p = Main.projectile[i];
-						if (p != null && p.active && p.type == id)
-						{
-							p.Kill();
-							TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", i);
-						}
-					}
-				}
-			}
-		}
-
 		private static void Aliases(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
@@ -3865,6 +3791,69 @@ namespace TShockAPI
 
 		#region Cheat Commands
 
+		private static void Clear(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /clear <item/projectile> [radius]");
+				return;
+			}
+
+			int radius = 50;
+			if (args.Parameters.Count == 2)
+			{
+				if (!int.TryParse(args.Parameters[1], out radius) || radius <= 0)
+				{
+					args.Player.SendErrorMessage("Invalid radius.");
+					return;
+				}
+			}
+
+			switch (args.Parameters[0].ToLower())
+			{
+				case "item":
+				case "items":
+					{
+						int cleared = 0;
+						for (int i = 0; i < Main.maxItems; i++)
+						{
+							float dX = Main.item[i].position.X - args.Player.X;
+							float dY = Main.item[i].position.Y - args.Player.Y;
+
+							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							{
+								Main.item[i].active = false;
+								TSPlayer.All.SendData(PacketTypes.ItemDrop, "", i);
+								cleared++;
+							}
+						}
+						args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}.", cleared, radius);
+					}
+					break;
+				case "proj":
+				case "projectile":
+				case "projectiles":
+					{
+						int cleared = 0;
+						for (int i = 0; i < Main.maxProjectiles; i++)
+						{
+							float dX = Main.projectile[i].position.X - args.Player.X;
+							float dY = Main.projectile[i].position.Y - args.Player.Y;
+
+							if (Main.projectile[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							{
+								Main.projectile[i].active = false;
+								Main.projectile[i].type = 0;
+								TSPlayer.All.SendData(PacketTypes.ProjectileNew, "", i);
+								cleared++;
+							}
+						}
+						args.Player.SendSuccessMessage("Deleted {0} projectiles within a radius of {1}.", cleared, radius);
+					}
+					break;
+			}
+		}
+
 		private static void Kill(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
@@ -3896,24 +3885,41 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count > 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /butcher [killTownNPCs(true/false)]");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /butcher [mob type]");
 				return;
 			}
 
-			bool killTownNPCs = false;
-			if (args.Parameters.Count == 1)
-				bool.TryParse(args.Parameters[0], out killTownNPCs);
+			int npcId = 0;
 
-			int killcount = 0;
-			for (int i = 0; i < Main.npc.Length; i++)
+			if (args.Parameters.Count == 1)
 			{
-				if (Main.npc[i].active && Main.npc[i].type != 0 && (!Main.npc[i].townNPC || killTownNPCs))
+				List<NPC> npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+				if (npcs.Count == 0)
 				{
-					TSPlayer.Server.StrikeNPC(i, 99999, 90f, 1);
-					killcount++;
+					args.Player.SendErrorMessage("Invalid mob type!");
+					return;
+				}
+				else if (npcs.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
+					return;
+				}
+				else
+				{
+					npcId = npcs[0].netID;
 				}
 			}
-			TSPlayer.All.SendSuccessMessage(string.Format("Killed {0} NPCs.", killcount));
+
+			int kills = 0;
+			for (int i = 0; i < Main.npc.Length; i++)
+			{
+				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || Main.npc[i].netID == npcId))
+				{
+					TSPlayer.Server.StrikeNPC(i, 99999, 0, 0);
+					kills++;
+				}
+			}
+			TSPlayer.All.SendInfoMessage("{0} butchered {1} NPCs.", args.Player.Name, kills);
 		}
 		
 		private static void Item(CommandArgs args)
@@ -4092,40 +4098,6 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ClearItems(CommandArgs args)
-		{
-			int radius = 50;
-			if (args.Parameters.Count > 0)
-			{
-				if (args.Parameters[0].ToLower() == "all")
-				{
-					radius = Int32.MaxValue/16;
-				}
-				else
-				{
-					if (!int.TryParse(args.Parameters[0], out radius))
-					{
-						args.Player.SendErrorMessage("Invalid block radius.");
-						return;
-					}
-				}
-			}
-
-			int count = 0;
-			for (int i = 0; i < 400; i++)
-			{
-				if ((Main.item[i].position.X - args.Player.X) * (Main.item[i].position.X - args.Player.X) +
-					(Main.item[i].position.Y - args.Player.Y) * (Main.item[i].position.Y - args.Player.Y) <= radius * radius * 256
-					&& (Main.item[i].active))
-				{
-					Main.item[i].active = false;
-					TSPlayer.All.SendData(PacketTypes.ItemDrop, "", i);
-					count++;
-				}
-			}
-			args.Player.SendSuccessMessage("Deleted {0} item(s) within a radius of {1}.", count, radius);
-		}
-
 		private static void Heal(CommandArgs args)
 		{
 			TSPlayer playerToHeal;
@@ -4268,7 +4240,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /grow [tree/epictree/mushroom/cactus/herb]");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /grow <tree/epictree/mushroom/cactus/herb>");
 				return;
 			}
 			var name = "Fail";
