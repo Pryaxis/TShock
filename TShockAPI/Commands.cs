@@ -567,7 +567,7 @@ namespace TShockAPI
                 if (!cmd.CanRun(player))
                 {
                     TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
-                    player.SendErrorMessage("You do not have access to that command.");
+                    player.SendErrorMessage("You do not have access to this command.");
                 }
                 else if (!cmd.AllowServer && !player.RealPlayer)
                 {
@@ -1651,12 +1651,36 @@ namespace TShockAPI
 		{
 			if (Main.invasionSize <= 0)
 			{
-				TSPlayer.All.SendInfoMessage(string.Format("{0} has started a goblin army invasion.", args.Player.Name));
-				TShock.StartInvasion();
+				if (args.Parameters.Count != 1)
+				{
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /invade <invasion type>");
+					return;
+				}
+
+				switch (args.Parameters[0].ToLower())
+				{
+					case "goblin":
+					case "goblins":
+					case "goblin army":
+						TSPlayer.All.SendInfoMessage("{0} has started a goblin army invasion.", args.Player.Name);
+						TShock.StartInvasion(1);
+						break;
+					case "snowman":
+					case "snowmen":
+					case "snow legion":
+						TSPlayer.All.SendInfoMessage("{0} has started a snow legion invasion.", args.Player.Name);
+						TShock.StartInvasion(2);
+						break;
+					case "pirate":
+					case "pirates":
+						TSPlayer.All.SendInfoMessage("{0} has started a pirate invasion.", args.Player.Name);
+						TShock.StartInvasion(3);
+						break;
+				}
 			}
 			else
 			{
-                TSPlayer.All.SendInfoMessage(string.Format("{0} has ended a goblin army invasion.", args.Player.Name));
+                TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
 				Main.invasionSize = 0;
 			}
 		}
@@ -3412,6 +3436,11 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("Invalid command.");
 					return;
 				}
+				if (!command.CanRun(args.Player))
+				{
+					args.Player.SendErrorMessage("You do not have access to this command.");
+					return;
+				}
 
 				args.Player.SendSuccessMessage("/{0} help: ", args.Parameters[0].ToLower());
 				args.Player.SendInfoMessage(command.HelpText);
@@ -3654,7 +3683,7 @@ namespace TShockAPI
 			{
 				var msg = string.Join(" ", args.Parameters);
 				args.Player.LastWhisper.SendMessage(String.Format("(Whisper From) <{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("(Whisper To) <{0}> {1}", args.Player.LastWhisper.Name, msg) Color.MediumPurple);
+				args.Player.SendMessage(String.Format("(Whisper To) <{0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
 			}
 			else
 			{

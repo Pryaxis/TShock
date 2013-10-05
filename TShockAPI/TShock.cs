@@ -1121,11 +1121,6 @@ namespace TShockAPI
 				}
 			}
 
-			if (player.Group.HasPermission(Permissions.causeevents) && Config.InfiniteInvasion)
-			{
-				StartInvasion();
-			}
-
 			player.LastNetPosition = new Vector2(Main.spawnTileX*16f, Main.spawnTileY*16f);
 
 			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero))
@@ -1327,9 +1322,9 @@ namespace TShockAPI
 		 * Useful stuff:
 		 * */
 
-		public static void StartInvasion()
+		public static void StartInvasion(int type)
 		{
-			Main.invasionType = 1;
+			Main.invasionType = type;
 			if (Config.InfiniteInvasion)
 			{
 				Main.invasionSize = 20000000;
