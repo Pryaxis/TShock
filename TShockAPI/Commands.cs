@@ -3632,7 +3632,7 @@ namespace TShockAPI
 						type = 168;
 					else if (args.Parameters[1].ToLower() == "blue")
 						type = 169;
-					else if (args.Parameters[1].ToLower() == "yello")
+					else if (args.Parameters[1].ToLower() == "yellow")
 						type = 170;
 				}
 				var ply = players[0];
@@ -3646,12 +3646,13 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count == 0)
 			{
-				foreach (Projectile p in Main.projectile)
+				for (int i = Main.projectile.Length - 1; i >= 0; i--)
 				{
+					Projectile p = Main.projectile[i];
 					if (p != null && p.active)
 					{
 						p.Kill();
-						TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", p.whoAmI);
+						TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", i);
 					}
 				}
 			}
@@ -3660,12 +3661,13 @@ namespace TShockAPI
 				int id;
 				if (int.TryParse(args.Parameters[0], out id))
 				{
-					foreach (Projectile p in Main.projectile)
+					for (int i = Main.projectile.Length-1; i >= 0; i--)
 					{
+						Projectile p = Main.projectile[i];
 						if (p != null && p.active && p.type == id)
 						{
 							p.Kill();
-							TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", p.whoAmI);
+							TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", i);
 						}
 					}
 				}
