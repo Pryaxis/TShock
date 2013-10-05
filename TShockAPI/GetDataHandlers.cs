@@ -3143,6 +3143,21 @@ namespace TShockAPI
 					case -3:
 						invasion = true;
 						break;
+					case 4:
+					case 13:
+					case 35:
+					case 50:
+					case 113:
+					case 125:
+					case 126:
+					case 127:
+					case 134:
+					case 222:
+					case 245:
+					case 262:
+					case 266:
+						spawnboss = true;
+						break;
 				}
 			}
 			if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
