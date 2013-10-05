@@ -3651,6 +3651,7 @@ namespace TShockAPI
 					if (p != null && p.active)
 					{
 						p.Kill();
+						TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", p.whoAmI);
 					}
 				}
 			}
@@ -3664,6 +3665,7 @@ namespace TShockAPI
 						if (p != null && p.active && p.type == id)
 						{
 							p.Kill();
+							TSPlayer.All.SendData(PacketTypes.ProjectileDestroy, "", p.whoAmI);
 						}
 					}
 				}
