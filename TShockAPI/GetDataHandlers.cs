@@ -1333,6 +1333,9 @@ namespace TShockAPI
 				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
 
+			if (cur <= 0)
+				TSPlayer.All.SendData(PacketTypes.PlayerKillMe, "attempt at aboose", args.TPlayer.whoAmi);
+
 			return false;
 		}
 
