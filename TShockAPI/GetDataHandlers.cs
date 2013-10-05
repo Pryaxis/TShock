@@ -3207,14 +3207,20 @@ namespace TShockAPI
 			var y = args.Data.ReadInt32();
 			var t = args.Data.ReadInt8();
 
-			if (OnPaintTile(x, y, t))
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
+			{
 				return true;
+			}
+			if (OnPaintTile(x, y, t))
+			{
+				return true;
+			}
 
 			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
 				args.Player.SelectedItem.type != 1543 && args.Player.SelectedItem.type != 1545)
 			{
-				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
+				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
 			}
 
@@ -3222,7 +3228,7 @@ namespace TShockAPI
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
 			{
-				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
+				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
 			}
 
@@ -3239,14 +3245,20 @@ namespace TShockAPI
 			var y = args.Data.ReadInt32();
 			var t = args.Data.ReadInt8();
 
-			if (OnPaintTile(x, y, t))
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
+			{
 				return true;
+			}
+			if (OnPaintWall(x, y, t))
+			{
+				return true;
+			}
 
 			// Not selecting paint roller or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
 				args.Player.SelectedItem.type != 1544 && args.Player.SelectedItem.type != 1545)
 			{
-				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
+				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
 				return true;
 			}
 
@@ -3254,7 +3266,7 @@ namespace TShockAPI
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
 			{
-				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
+				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
 				return true;
 			}
 
