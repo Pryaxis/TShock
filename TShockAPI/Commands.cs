@@ -1836,8 +1836,8 @@ namespace TShockAPI
 				var plr = players[0];
 				if (plr.Teleport(args.Player.TileX*16, args.Player.TileY*16 ))
 				{
-					plr.SendInfoMessage(string.Format("You were teleported to {0}.", args.Player.Name));
-					args.Player.SendSuccessMessage(string.Format("You brought {0} here.", plr.Name));
+					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
+					args.Player.SendSuccessMessage("You teleported {0} here.", plr.Name);
 				}
 			}
 		}
@@ -3795,7 +3795,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /clear <item/projectile> [radius]");
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /clear <item/npc/projectile> [radius]");
 				return;
 			}
 
@@ -3830,6 +3830,26 @@ namespace TShockAPI
 						args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}.", cleared, radius);
 					}
 					break;
+				case "npc":
+				case "npcs":
+					{
+						int cleared = 0;
+						for (int i = 0; i < Main.maxNPCs; i++)
+						{
+							float dX = Main.npc[i].position.X - args.Player.X;
+							float dY = Main.npc[i].position.Y - args.Player.Y;
+
+							if (Main.npc[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							{
+								Main.npc[i].active = false;
+								Main.npc[i].type = 0;
+								TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+								cleared++;
+							}
+						}
+						args.Player.SendSuccessMessage("Deleted {0} NPCs within a radius of {1}.", cleared, radius);
+					}
+					break;
 				case "proj":
 				case "projectile":
 				case "projectiles":
@@ -3850,6 +3870,9 @@ namespace TShockAPI
 						}
 						args.Player.SendSuccessMessage("Deleted {0} projectiles within a radius of {1}.", cleared, radius);
 					}
+					break;
+				default:
+					args.Player.SendErrorMessage("Invalid clear option!");
 					break;
 			}
 		}
