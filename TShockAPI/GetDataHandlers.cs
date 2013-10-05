@@ -3214,7 +3214,7 @@ namespace TShockAPI
 			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
 				args.Player.SelectedItem.type != 1543 && args.Player.SelectedItem.type != 1545)
 			{
-				args.Player.SendData(PacketTypes.PaintWall, "", x, y, 0);
+				args.Player.SendData(PacketTypes.PaintTile, "", x, y, 0);
 				return true;
 			}
 
