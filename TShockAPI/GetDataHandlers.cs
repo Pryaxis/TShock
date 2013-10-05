@@ -505,7 +505,8 @@ namespace TShockAPI
 					if (Main.tile[i, j] == null || Main.tileSand[Main.tile[i, j].type]
 						|| !TShock.Utils.TileSolid(i, j) || !TShock.Utils.TileSolid(i + 1, j) || !TShock.Utils.TileSolid(i - 1, j)
 						|| !TShock.Utils.TileSolid(i, j + 1) || !TShock.Utils.TileSolid(i + 1, j + 1) || !TShock.Utils.TileSolid(i - 1, j + 1)
-						|| !TShock.Utils.TileSolid(i, j - 1) || !TShock.Utils.TileSolid(i + 1, j - 1) || !TShock.Utils.TileSolid(i - 1, j - 1))
+						|| !TShock.Utils.TileSolid(i, j - 1) || !TShock.Utils.TileSolid(i + 1, j - 1) || !TShock.Utils.TileSolid(i - 1, j - 1)
+						|| Main.tileSolidTop[(int) Main.tile[i, j].type])
 					{
 						continue;
 					}
