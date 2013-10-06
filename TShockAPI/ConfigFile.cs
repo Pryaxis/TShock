@@ -267,10 +267,6 @@ namespace TShockAPI
         [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
             public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
-	    [Description("The maximum value that a character may have for health.")] public int MaxHealth = 500;
-
-	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 500;
-
 		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
 		
 		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public bool LogRest = false;

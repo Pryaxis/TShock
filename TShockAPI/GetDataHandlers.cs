@@ -1315,9 +1315,9 @@ namespace TShockAPI
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
 
-			if ((max > TShock.Config.MaxHealth && max > args.Player.FirstMaxHP) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
+			if (cur < 0 || cur > 500 || max < 100 || max > 500) //Abnormal values have the potential to cause infinite loops in the server.
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
 				return false;
 			}
 
@@ -1332,9 +1332,6 @@ namespace TShockAPI
 			{
 				args.Player.Heal(args.TPlayer.statLifeMax);
 			}
-
-			if (cur <= 0)
-				TSPlayer.All.SendData(PacketTypes.PlayerKillMe, "attempt at aboose", args.TPlayer.whoAmi);
 
 			return false;
 		}
@@ -1351,9 +1348,9 @@ namespace TShockAPI
 			if (args.Player.FirstMaxMP == 0)
 				args.Player.FirstMaxMP = max;
 
-            if (max > TShock.Config.MaxMana && max > args.Player.FirstMaxMP)
+			if (cur < 0 || cur > 400 || max < 20 || max > 200) //Abnormal values have the potential to cause infinite loops in the server.
 			{
-				TShock.Utils.ForceKick(args.Player, "Hacked Client Detected.", true);
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
 				return false;
 			}
 
@@ -1565,11 +1562,6 @@ namespace TShockAPI
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
 				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
-				return true;
-			}
-			if (TShock.HackedStats(args.Player) && !args.Player.Group.HasPermission(Permissions.ignorestathackdetection))
-			{
-				TShock.Utils.ForceKick(args.Player, "You have hacked health/mana, please use a different character.", true);
 				return true;
 			}
 
@@ -2495,6 +2487,13 @@ namespace TShockAPI
 			var direction = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8() == 0;
+
+			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			{
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				return false;
+			}
+
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
@@ -2943,6 +2942,12 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadBoolean();
 			var crit = args.Data.ReadBoolean();
+
+			if (dmg > 10000) //Abnormal values have the potential to cause infinite loops in the server.
+			{
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				return false;
+			}
 
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;

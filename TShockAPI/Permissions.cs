@@ -139,9 +139,6 @@ namespace TShockAPI
 		[Description("Prevents you from being disabled by stack hack detection.")]
 		public static readonly string ignorestackhackdetection = "tshock.ignore.itemstack";
 
-		[Description("Prevents you from being kicked by hacked health detection.")]
-		public static readonly string ignorestathackdetection = "tshock.ignore.stats";
-
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 

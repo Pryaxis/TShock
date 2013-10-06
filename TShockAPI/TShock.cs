@@ -1572,14 +1572,6 @@ namespace TShockAPI
 			return (float) Math.Sqrt(num3);
 		}
 
-		public static bool HackedStats(TSPlayer player)
-		{
-            return (player.TPlayer.statManaMax > TShock.Config.MaxMana) ||
-                   (player.TPlayer.statMana > TShock.Config.MaxMana) ||
-                   (player.TPlayer.statLifeMax > TShock.Config.MaxHealth) ||
-                   (player.TPlayer.statLife > TShock.Config.MaxHealth);
-		}
-
 		public static bool HackedInventory(TSPlayer player)
 		{
 			bool check = false;

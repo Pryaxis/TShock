@@ -576,7 +576,10 @@ namespace TShockAPI
 			if (TShock.Config.ServerSideCharacter)
 				foreach (TSPlayer player in TShock.Players)
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					{
+						player.PlayerData.CopyCharacter(player);
 						TShock.CharacterDB.InsertPlayerData(player);
+					}
 
 			StopServer(true, reason);
 			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
