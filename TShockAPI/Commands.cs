@@ -4019,7 +4019,7 @@ namespace TShockAPI
 				}
 			}
 
-			if (args.Player.InventorySlotAvailable || item.name.Contains("Coin"))
+			if (args.Player.InventorySlotAvailable || (item.name.Contains("Coin") && item.type != 905) || item.type == 58 || item.type == 184)
 			{
 				if (itemAmount == 0 || itemAmount > item.maxStack)
 					itemAmount = item.maxStack;
@@ -4099,7 +4099,7 @@ namespace TShockAPI
 					else
 					{
 						var plr = players[0];
-						if (plr.InventorySlotAvailable || item.name.Contains("Coin"))
+						if (plr.InventorySlotAvailable || (item.name.Contains("Coin") && item.type != 905)  || item.type == 58 || item.type == 184)
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
