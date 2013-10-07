@@ -946,7 +946,7 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith("/"))
+			if (args.Text.StartsWith("/") & args.Text.Length > 1)
 			{
 				try
 				{
