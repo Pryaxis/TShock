@@ -2254,7 +2254,7 @@ namespace TShockAPI
 					args.TPlayer.statLifeMax += 20;
 					args.Player.PlayerData.maxHealth += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 480)
+				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
 				{
 					args.TPlayer.statLife += 5;
 					args.TPlayer.statLifeMax += 5;
