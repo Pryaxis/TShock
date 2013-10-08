@@ -2242,19 +2242,19 @@ namespace TShockAPI
 									  args.TPlayer.inventory[item].name), Color.Red);
 				}
 
-				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.PlayerData.maxMana <= 180)
+				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
 					args.Player.TPlayer.statManaMax += 20;
 					args.Player.PlayerData.maxMana += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Crystal" && args.Player.PlayerData.maxHealth <= 380)
+				else if (args.TPlayer.inventory[item].name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
 				{
 					args.TPlayer.statLife += 20;
 					args.TPlayer.statLifeMax += 20;
 					args.Player.PlayerData.maxHealth += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.PlayerData.maxHealth >= 400)
+				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 480)
 				{
 					args.TPlayer.statLife += 5;
 					args.TPlayer.statLifeMax += 5;

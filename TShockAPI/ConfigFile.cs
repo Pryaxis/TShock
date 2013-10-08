@@ -169,7 +169,7 @@ namespace TShockAPI
 			"Changes ingame chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message"
 			)] public string ChatFormat = "{1}{2}{3}: {4}";
 
-	    [Description("Change the player name when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat(minus the text).")] public string ChatAboveHeadsFormat = "{2}";
+	    [Description("Change the player name when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat(minus the text aka {4}).")] public string ChatAboveHeadsFormat = "{2}";
 
 		[Description("Force the world time to be normal, day, or night.")] public string ForceTime = "normal";
 
