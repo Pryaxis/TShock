@@ -198,7 +198,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The stack edited
 			/// </summary>
-			public byte Stack { get; set; }
+			public short Stack { get; set; }
 			/// <summary>
 			/// The item prefix
 			/// </summary>
@@ -212,7 +212,7 @@ namespace TShockAPI
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
-		private static bool OnPlayerSlot(byte _plr, byte _slot, byte _stack, byte _prefix, short _type)
+		private static bool OnPlayerSlot(byte _plr, byte _slot, short _stack, byte _prefix, short _type)
 		{
 			if (PlayerSlot == null)
 				return false;
@@ -751,7 +751,7 @@ namespace TShockAPI
 			/// <summary>
 			/// How many?
 			/// </summary>
-			public byte Stacks { get; set; }
+			public short Stacks { get; set; }
 			/// <summary>
 			/// Item prefix
 			/// </summary>
@@ -766,7 +766,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ChestItemEventArgs> ChestItemChange;
 
-		private static bool OnChestItemChange(short id, byte slot, byte stacks, byte prefix, short type)
+		private static bool OnChestItemChange(short id, byte slot, short stacks, byte prefix, short type)
 		{
 			if (ChestItemChange == null)
 				return false;
@@ -922,7 +922,7 @@ namespace TShockAPI
 			/// <summary>
 			/// Stacks
 			/// </summary>
-			public Int16 Stacks { get; set; }
+			public short Stacks { get; set; }
 			/// <summary>
 			/// Prefix of the item
 			/// </summary>
@@ -941,7 +941,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
-		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, Int16 stacks, byte prefix, bool noDelay, short type)
+		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
 		{
 			if (ItemDrop == null)
 				return false;
@@ -1258,7 +1258,7 @@ namespace TShockAPI
 		{
 			byte plr = args.Data.ReadInt8();
 			byte slot = args.Data.ReadInt8();
-			byte stack = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
 			byte prefix = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
 
@@ -2746,7 +2746,7 @@ namespace TShockAPI
 		{
 			var id = args.Data.ReadInt16();
 			var slot = args.Data.ReadInt8();
-			var stacks = args.Data.ReadInt8();
+			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
 
