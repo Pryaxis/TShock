@@ -1898,7 +1898,7 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
-				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideCharacter && TShock.Config.DisablePiggybanksOnSSC)
+				if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideCharacter)
 				{
 					args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
 					args.Player.SendTileSquare(tileX, tileY, 3);

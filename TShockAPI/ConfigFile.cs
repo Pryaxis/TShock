@@ -238,8 +238,6 @@ namespace TShockAPI
 
 	    [Description("Prevent banned items from being /i or /give.")] public bool PreventBannedItemSpawn = false;
 
-	    [Description("Prevent banks on SSC.")] public bool DisablePiggybanksOnSSC = true;
-
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
 	        true;
 
