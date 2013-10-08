@@ -42,6 +42,7 @@ An example configuration file is below.
 	  "KickOnMediumcoreDeath": false,
 	  "BanOnMediumcoreDeath": false,
 	  "AutoSave": true,
+	  "AnnounceSave": true,
 	  "MaximumLoginAttempts": 3,
 	  "RconPassword": "",
 	  "RconPort": 7777,
@@ -139,6 +140,11 @@ The following is the official documentation for the configuration file:
 ## AutoSave  
 **Type:** Boolean  
 **Description:** Enable/Disable Terrarias built in auto save  
+**Default:** "True"  
+
+## AnnounceSave  
+**Type:** Boolean  
+**Description:** Enable/Disable save announcements  
 **Default:** "True"  
 
 ## BackupInterval  

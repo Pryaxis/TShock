@@ -80,6 +80,7 @@ namespace TShockAPI
 		[Description("Bans a hardcore player on death.")] public bool BanOnMediumcoreDeath;
 
 		[Description("Enable/disable Terraria's built in auto save.")] public bool AutoSave = true;
+		[Description("Enable/disable save announcements.")] public bool AnnounceSave = true;
 
 		[Description("Number of failed login attempts before kicking the player.")] public int MaximumLoginAttempts = 3;
 
