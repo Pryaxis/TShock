@@ -1768,10 +1768,7 @@ namespace TShockAPI
 			if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 				return true;
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-				return false;
-
-            if (args.Player.Dead && TShock.Config.PreventDeadModification)
-                return true;
+				return true;
 
             if (args.Player.AwaitingName)
             {
