@@ -3629,9 +3629,9 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				var msg = string.Join(" ", args.Parameters.Take(1).ToArray());
-				plr.SendMessage(String.Format("<{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<{0}> {1}", plr.Name, msg), Color.MediumPurple);
+				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
+				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
+				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
 				plr.LastWhisper = args.Player;
 				args.Player.LastWhisper = plr;
 			}
@@ -3646,8 +3646,8 @@ namespace TShockAPI
 			else if (args.Player.LastWhisper != null)
 			{
 				var msg = string.Join(" ", args.Parameters);
-				args.Player.LastWhisper.SendMessage(String.Format("<{0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<{0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
+				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
 			}
 			else
 			{
