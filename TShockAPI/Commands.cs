@@ -336,6 +336,11 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the maximum number of NPCs."
 			});
+			add(new Command(Permissions.spawnboss, SpawnBoss, "spawnboss", "sb")
+			{
+				AllowServer = false,
+				HelpText = "Spawns a number of bosses around you."
+			});
 			add(new Command(Permissions.spawnmob, SpawnMob, "spawnmob", "sm")
 			{
 				AllowServer = false,
@@ -1673,6 +1678,116 @@ namespace TShockAPI
 				}
 			}
         }
+
+		private static void SpawnBoss(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnboss <boss type> [amount]");
+				return;
+			}
+
+			int amount = 1;
+			if (args.Parameters.Count == 2 && (!int.TryParse(args.Parameters[1], out amount) || amount <= 0))
+			{
+				args.Player.SendErrorMessage("Invalid boss amount!");
+				return;
+			}
+
+			NPC npc = new NPC();
+			switch (args.Parameters[0].ToLower())
+			{
+				case "brain":
+				case "brain of cthulhu":
+					npc.SetDefaults(266);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Brain of Cthulhu {1} time(s).", args.Player.Name, amount);
+					return;
+				case "destroyer":
+					npc.SetDefaults(134);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Destroyer {1} time(s).", args.Player.Name, amount);
+					return;
+				case "eater":
+				case "eater of worlds":
+					npc.SetDefaults(13);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eater of Worlds {1} time(s).", args.Player.Name, amount);
+					return;
+				case "eye":
+				case "eye of cthulhu":
+					npc.SetDefaults(4);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eye of Cthulhu {1} time(s).", args.Player.Name, amount);
+					return;
+				case "golem":
+					npc.SetDefaults(245);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Golem {1} time(s).", args.Player.Name, amount);
+					return;
+				case "king":
+				case "king slime":
+					npc.SetDefaults(50);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned King Slime {1} time(s).", args.Player.Name, amount);
+					return;
+				case "plantera":
+					npc.SetDefaults(262);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Plantera {1} time(s).", args.Player.Name, amount);
+					return;
+				case "prime":
+				case "skeletron prime":
+					npc.SetDefaults(127);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron Prime {1} time(s).", args.Player.Name, amount);
+					return;
+				case "queen":
+				case "queen bee":
+					npc.SetDefaults(222);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Bee {1} time(s).", args.Player.Name, amount);
+					return;
+				case "skeletron":
+					npc.SetDefaults(35);
+					TSPlayer.Server.SetTime(false, 0.0);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron {1} time(s).", args.Player.Name, amount);
+					return;
+				case "twins":
+					TSPlayer.Server.SetTime(false, 0.0);
+					npc.SetDefaults(125);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					npc.SetDefaults(126);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Twins {1} time(s).", args.Player.Name, amount);
+					return;
+				case "wof":
+				case "wall of flesh":
+					if (Main.wof >= 0)
+					{
+						args.Player.SendErrorMessage("There is already a Wall of Flesh!");
+						return;
+					}
+					if (args.Player.Y / 16f < Main.maxTilesY - 205)
+					{
+						args.Player.SendErrorMessage("You must spawn the Wall of Flesh in hell!");
+						return;
+					}
+					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Wall of Flesh.", args.Player.Name);
+					return;
+				default:
+					args.Player.SendErrorMessage("Invalid boss type!");
+					return;
+			}
+		}
 
 		private static void SpawnMob(CommandArgs args)
 		{
