@@ -870,6 +870,11 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+			
+			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
+			{
+				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client");
+			}
 
 			Ban ban = null;
 			if (Config.EnableBanOnUsernames)
@@ -884,7 +889,7 @@ namespace TShockAPI
 				ban = Bans.GetBanByIp(player.IP);
 			}
 
-			if (Config.EnableUUIDBans && null == ban)
+			if (Config.EnableUUIDBans && null == ban && !String.IsNullOrWhiteSpace(player.UUID))
 			{
 				ban = Bans.GetBanByUUID(player.UUID);
 			}

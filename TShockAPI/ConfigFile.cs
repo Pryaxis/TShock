@@ -207,10 +207,10 @@ namespace TShockAPI
 		[Description("Disable users from being able to login with account password when joining.")] public bool
 			DisableLoginBeforeJoin;
 
-		[Description("Disable users from being able to login with their client UUID.")]
-		public bool
-			DisableUUIDLogin;
+		[Description("Disable users from being able to login with their client UUID.")] public bool DisableUUIDLogin;
 
+		[Description("Kick clients that don't send a UUID to the server.")] public bool KickEmptyUUID;
+		
 		[Description("Allows users to register any username with /register.")] public bool AllowRegisterAnyUsername;
 
 		[Description("Allows users to login with any username with /login.")] public bool AllowLoginAnyUsername = true;
