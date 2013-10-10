@@ -2148,6 +2148,12 @@ namespace TShockAPI
 			byte pulley = args.Data.ReadInt8();
 			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
 				return true;
+
+			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
+			{
+				return true;
+			}
+
 			if (item < 0 || item >= args.TPlayer.inventory.Length)
 			{
 				return true;
