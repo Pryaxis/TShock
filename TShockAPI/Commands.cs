@@ -1770,9 +1770,14 @@ namespace TShockAPI
 					return;
 				case "wof":
 				case "wall of flesh":
-					if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
+					if (Main.wof >= 0)
 					{
-						args.Player.SendErrorMessage("Can't spawn the Wall of Flesh!");
+						args.Player.SendErrorMessage("There is already a Wall of Flesh!");
+						return;
+					}
+					if (args.Player.Y / 16f < Main.maxTilesY - 205)
+					{
+						args.Player.SendErrorMessage("You must spawn the Wall of Flesh in hell!");
 						return;
 					}
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
