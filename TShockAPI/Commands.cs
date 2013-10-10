@@ -710,7 +710,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
 				}
-				else if (user.Password.ToUpper() == encrPass.ToUpper() || (user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin))
+				else if (user.Password.ToUpper() == encrPass.ToUpper() || (user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin && !String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
