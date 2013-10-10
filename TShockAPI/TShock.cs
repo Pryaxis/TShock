@@ -986,8 +986,8 @@ namespace TShockAPI
 					string name = Main.player[args.Who].name;
 					Main.player[args.Who].name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, Main.player[args.Who].name, args.Who, 0, 0, 0, 0);
-					Main.player[args.Who].name = name;
 					Utils.Broadcast(args.Who, args.Text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					Main.player[args.Who].name = name;
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
 					args.Handled = true;
 				}
