@@ -2513,6 +2513,15 @@ namespace TShockAPI
 			args.Player.LastDeath = DateTime.Now;
 			args.Player.Dead = true;
 
+			if (args.TPlayer.difficulty == 2 && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
+			{
+				User user = TShock.Users.GetUserByName(args.Player.UserAccountName);
+				if (TShock.CharacterDB.RemovePlayer(user.ID))
+				{
+					TShock.CharacterDB.SeedInitialData(user);
+				}
+			}
+
 			return false;
 		}
 

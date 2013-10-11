@@ -920,7 +920,7 @@ namespace TShockAPI
 				}
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -990,9 +990,15 @@ namespace TShockAPI
 					ply.name = name;
 					NetMessage.SendData((int) PacketTypes.ChatText, -1, args.Who, args.Text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
-					tsplr.SendMessage(String.Format("<{0}> {1}",
+
+					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
-						args.Text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+						args.Text);
+
+					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+
+					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					Log.Info(string.Format("Broadcast: {0}", msg));
 					args.Handled = true;
 				}
 			}

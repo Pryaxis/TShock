@@ -130,5 +130,20 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
+
+		public bool RemovePlayer(int userid)
+		{
+			try
+			{
+				database.Query("DELETE FROM tsCharacter WHERE Account = @0;", userid);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+
+			return false;
+		}
 	}
 }
