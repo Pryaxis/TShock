@@ -203,20 +203,33 @@ namespace TShockAPI
 			Broadcast(msg, color.R, color.G, color.B);
 		}
 
-        /// <summary>
-        /// Broadcasts a message from a player, not TShock
-        /// </summary>
-        /// <param name="ply">TSPlayer ply - the player that will send the packet</param>
-        /// <param name="msg">string msg - the message</param>
-        /// <param name="red">r</param>
-        /// <param name="green">g</param>
-        /// <param name="blue">b</param>
-        public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
-        {
-            TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
-            TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
-            Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
-        }
+		/// <summary>
+		/// Broadcasts a message from a player, not TShock
+		/// </summary>
+		/// <param name="ply">TSPlayer ply - the player that will send the packet</param>
+		/// <param name="msg">string msg - the message</param>
+		/// <param name="red">r</param>
+		/// <param name="green">g</param>
+		/// <param name="blue">b</param>
+		public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
+		{
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null)
+				{
+					if (player == TShock.Players[ply])
+					{
+						player.SendMessage(string.Format("<{0}> {1}", TShock.Players[ply].Name, msg), red, green, blue);
+					}
+					else
+					{
+						player.SendMessageFromPlayer(msg, red, green, blue, ply);
+					}
+				}
+			}
+			TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
+			Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
+		}
 
 		/// <summary>
 		/// Sends message to all players with 'logs' permission.
