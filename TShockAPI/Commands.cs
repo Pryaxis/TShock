@@ -2299,7 +2299,7 @@ namespace TShockAPI
 					#endregion
 					return;
 				case "prefix":
-					#region Suffix
+					#region Prefix
 					{
 						if (args.Parameters.Count < 2)
 						{
@@ -2344,7 +2344,7 @@ namespace TShockAPI
 					#endregion
 					return;
 				case "color":
-					#region Suffix
+					#region Color
 					{
 						if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 						{

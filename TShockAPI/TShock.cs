@@ -983,12 +983,16 @@ namespace TShockAPI
 				}
 				else
 				{
-					string name = Main.player[args.Who].name;
-					Main.player[args.Who].name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
-					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, Main.player[args.Who].name, args.Who, 0, 0, 0, 0);
-					Main.player[args.Who].name = name;
-					Utils.Broadcast(args.Who, args.Text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					Player ply = Main.player[args.Who];
+					string name = ply.name;
+					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
+					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, ply.name, args.Who, 0, 0, 0, 0);
+					ply.name = name;
+					NetMessage.SendData((int) PacketTypes.ChatText, -1, args.Who, args.Text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
+					tsplr.SendMessage(String.Format("<{0}> {1}",
+						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
+						args.Text), tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					args.Handled = true;
 				}
 			}
