@@ -1,3 +1,6 @@
+# Hey there, this is used to compile TShock on the build server.
+# Don't change it. Thanks!
+
 import os
 import shutil
 import subprocess
