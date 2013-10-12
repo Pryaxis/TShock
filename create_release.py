@@ -90,8 +90,8 @@ def update_terraria_exe():
   os.remove(terraria_bin_name)
 
 def build_software():
-  subprocess.call(['/usr/local/bin/xbuild'], ['./TShockAPI/TShockAPI.csproj'], ['/p:Configuration=Release'])
-  subprocess.call(['/usr/local/bin/xbuild'], ['./TShockAPI/TShockAPI.csproj'], ['/p:Configuration=Debug'])
+  subprocess.call(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
+  subprocess.call(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
   
 if __name__ == '__main__':
   create_release_folder()
