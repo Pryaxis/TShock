@@ -11,7 +11,7 @@ sqlite_dep = "sqlite3.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
-tshock_symbols = "TShockAPI.pdb"
+tshock_symbols = "TShockAPI.dll.mdb"
 
 terraria_bin = os.path.join(cur_wd, "TerrariaServerBins", terraria_bin_name)
 sql_dep = os.path.join(cur_wd, "SqlBins")
