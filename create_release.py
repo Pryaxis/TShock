@@ -1,5 +1,7 @@
 import os
 import shutil
+import subprocess
+import urllib32
 import zipfile
 
 cur_wd = os.getcwd()
@@ -79,9 +81,23 @@ def delete_files():
   os.remove(http_bin_name)
   os.chdir(cur_wd)
 
+def update_terraria_exe():
+  url = urllib2.urlopen('http://direct.tshock.co:8085/browse/TERRA-TSAPI/latestSuccessful/artifact/JOB1/Server-Bin/TerrariaServer.exe')
+  localFile = open('TerrariaServer.exe', 'w')
+  localFile.write(url.read())
+  localFile.close()
+  shutil.copy(terraria_bin_name, terraria_bin)
+  os.remove(terraria_bin_name)
+
+def build_software():
+  subprocess.call(['/usr/local/bin/xbuild'], ['./TShockAPI/TShockAPI.csproj'], ['/p:Configuration=Release'])
+  subprocess.call(['/usr/local/bin/xbuild'], ['./TShockAPI/TShockAPI.csproj'], ['/p:Configuration=Debug'])
+  
 if __name__ == '__main__':
   create_release_folder()
+  update_terraria_exe()
   copy_dependencies()
+  build_software()
   package_release()
   package_debug()
   delete_files()
