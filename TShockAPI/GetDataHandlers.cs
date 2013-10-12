@@ -2955,8 +2955,8 @@ namespace TShockAPI
 			var pvp = args.Data.ReadBoolean();
 			var crit = args.Data.ReadBoolean();
 
-			if (dmg > 10000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
+			if (dmg > 12000) //Abnormal values have the potential to cause infinite loops in the server.
+			{				 //12000 because Skely Prime Head does 10339 or some bs during the day.
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
 				return false;
 			}

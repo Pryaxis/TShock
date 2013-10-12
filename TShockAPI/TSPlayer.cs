@@ -790,7 +790,7 @@ namespace TShockAPI
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
-		public virtual void Disable(string reason = "")
+		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{
 			LastThreat = DateTime.UtcNow;
 			SetBuff(33, 330, true); //Weak
@@ -800,7 +800,14 @@ namespace TShockAPI
 			{
 				if ((DateTime.UtcNow - LastDisableNotification).TotalMilliseconds > 5000)
 				{
-					Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));
+					if (displayConsole)
+					{
+						Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));	
+					}
+					else
+					{
+						Log.Info("Player {0} has been disabled for {1}.", Name, reason);
+					}
 					LastDisableNotification = DateTime.UtcNow;
 				}
 			}
