@@ -1,4 +1,0 @@
-#format
-#ip group
-#see groups.txt for a list of groups
-#127.0.0.1 superadmin

@@ -307,11 +307,11 @@ namespace TShockAPI
 				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
 				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
 				j++;
-			} while (TilePlacementValid(tileX, tileY) && !TileClear(tileX, tileY));
+			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
 
 		/// <summary>
-		/// Determines if a tile is valid
+		/// Determines if a tile is valid.
 		/// </summary>
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
@@ -322,14 +322,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Checks to see if the tile is clear.
+		/// Checks if the tile is solid.
 		/// </summary>
 		/// <param name="tileX">Location X</param>
 		/// <param name="tileY">Location Y</param>
-		/// <returns>The state of the tile</returns>
-		private bool TileClear(int tileX, int tileY)
+		/// <returns>The tile's solidity.</returns>
+		public bool TileSolid(int tileX, int tileY)
 		{
-			return !Main.tile[tileX, tileY].active;
+			return TilePlacementValid(tileX, tileY) && Main.tile[tileX, tileY] != null &&
+				Main.tile[tileX, tileY].active() && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+				!Main.tile[tileX, tileY].inActive() && !Main.tile[tileX, tileY].halfBrick() && Main.tile[tileX, tileY].slope() == 0;
 		}
 
 		/// <summary>
@@ -371,7 +373,7 @@ namespace TShockAPI
 			var found = new List<Item>();
 			Item item = new Item();
 			string nameLower = name.ToLower();
-			for (int i = -24; i < Main.maxItemTypes; i++)
+			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
 				if (item.name.ToLower() == nameLower)
@@ -571,10 +573,10 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void RestartServer(bool save = true, string reason = "Server shutting down!")
 		{
-			if (TShock.Config.ServerSideInventory)
+			if (TShock.Config.ServerSideCharacter)
 				foreach (TSPlayer player in TShock.Players)
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
-						TShock.InventoryDB.InsertPlayerData(player);
+						TShock.CharacterDB.InsertPlayerData(player);
 
 			StopServer(true, reason);
 			System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
@@ -636,16 +638,16 @@ namespace TShockAPI
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
                 if (player.IsLoggedIn && saveSSI)
-                    player.SaveServerInventory();
+                    player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
-				Log.ConsoleInfo(string.Format("Kicked {0} for : {1}", playerName, reason));
+				Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
                 if (!silent)
                 {
                     if (string.IsNullOrWhiteSpace(adminUserName))
-                        Broadcast(string.Format("{0} was {1}kicked for {2}", playerName, verb, reason.ToLower()), Color.Green);
+                        Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
                     else
-						Broadcast(string.Format("{0} {1}kicked {2} for {3}", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
+						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
                 }
 				return true;
 			}
@@ -673,15 +675,16 @@ namespace TShockAPI
 			if (force || !player.Group.HasPermission(Permissions.immunetoban))
 			{
 				string ip = player.IP;
+				string uuid = player.UUID;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, reason, false, adminUserName);
+				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
-				Log.ConsoleInfo(string.Format("Banned {0} for : {1}", playerName, reason));
+				Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}banned for {2}", playerName, verb, reason.ToLower()));
+					Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()));
 				else
-					Broadcast(string.Format("{0} {1}banned {2} for {3}", adminUserName, verb, playerName, reason.ToLower()));
+					Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()));
 				return true;
 			}
 			return false;
@@ -785,6 +788,18 @@ namespace TShockAPI
 			{
 			}
 			return "";
+		}
+
+		/// <summary>
+		/// Sends the player an error message stating that more than one match was found
+		/// appending a csv list of the matches.
+		/// </summary>
+		/// <param name="ply">Player to send the message to</param>
+		/// <param name="matches">An enumerable list with the matches</param>
+		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
+		{
+			ply.SendErrorMessage("More than one match found: {0}", string.Join(",", matches));
+			ply.SendErrorMessage("Use \"my query\" for items with spaces");
 		}
 
         /// <summary>

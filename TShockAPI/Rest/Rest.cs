@@ -196,8 +196,10 @@ namespace Rests
 		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
 		{
 			object result = cmd.Execute(verbs, parms);
-			if (cmd.DoLog)
+			if (cmd.DoLog && TShock.Config.LogRest)
+			{
 				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+			}
 
 			return result;
 		}

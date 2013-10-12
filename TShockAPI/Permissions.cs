@@ -74,7 +74,7 @@ namespace TShockAPI
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
 		[Description("User can save all the players SSI state.")]
-		public static readonly string savessi = "tshock.admin.savessi";
+		public static readonly string savessc = "tshock.admin.savessi";
 
 		[Description("User can elevate other users' groups temporarily.")]
 		public static readonly string settempgroup = "tshock.admin.tempgroup";
@@ -130,14 +130,14 @@ namespace TShockAPI
 		[Description("Prevents you from being disabled by projectile abuse detection.")]
 		public static readonly string ignoreprojectiledetection = "tshock.ignore.projectile";
 
+		[Description("Prevents you from being disabled by paint abuse detection.")]
+		public static readonly string ignorepaintdetection = "tshock.ignore.paint";
+
 		[Description("Prevents you from being reverted by no clip detection.")]
 		public static readonly string ignorenoclipdetection = "tshock.ignore.noclip";
 
 		[Description("Prevents you from being disabled by stack hack detection.")]
 		public static readonly string ignorestackhackdetection = "tshock.ignore.itemstack";
-
-		[Description("Prevents you from being kicked by hacked health detection.")]
-		public static readonly string ignorestathackdetection = "tshock.ignore.stats";
 
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
@@ -152,9 +152,6 @@ namespace TShockAPI
 
 		[Description("User can spawn items.")]
 		public static readonly string item = "tshock.item.spawn";
-
-		[Description("User can clear items.")]
-		public static readonly string clearitems = "tshock.item.clear";
 
 		[Description("Allows you to use banned items.")]
 		public static readonly string usebanneditem = "tshock.item.usebanned";
@@ -247,8 +244,14 @@ namespace TShockAPI
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
+		
+		[Description("User can paint tiles.")]
+		public static readonly string canpaint = "tshock.world.paint";
 
 		// Non-grouped
+
+		[Description("User can clear items or projectiles.")]
+		public static readonly string clear = "tshock.clear";
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
@@ -280,6 +283,12 @@ namespace TShockAPI
 		[Description("User can get the server info.")]
 		public static readonly string serverinfo = "tshock.info";
 
+		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
+		public static readonly string godmode = "tshock.godmode";
+
+		[Description("Player can chat")] 
+		public static readonly string canchat = "tshock.canchat";
+
         /// <summary>
         /// Lists all commands associated with a given permission
         /// </summary>
@@ -300,7 +309,7 @@ namespace TShockAPI
 			var sb = new StringBuilder();
 			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
 			{
-				var name = field.Name;
+				var name = (string)field.GetValue(null);
 
 				var descattr =
 					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
@@ -319,9 +328,9 @@ namespace TShockAPI
 						c =>
 						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
-				sb.AppendLine("## <a id=\"{0}\">{0}</a>  ".SFormat(name));
-				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
-				sb.AppendLine("**Commands:** {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
+				sb.AppendLine("{0}".SFormat(name));
+				sb.AppendLine("Description: {0}  ".SFormat(desc));
+				sb.AppendLine("Commands: {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
 				sb.AppendLine();
 			}
 
