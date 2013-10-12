@@ -1,7 +1,7 @@
 import os
 import shutil
 import subprocess
-import urllib32
+import urllib2
 import zipfile
 
 cur_wd = os.getcwd()
