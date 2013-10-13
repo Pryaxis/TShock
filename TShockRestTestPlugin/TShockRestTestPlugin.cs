@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -38,8 +39,8 @@ namespace TshockRestTestPlugin
 	{
 		// The status of the JSON request
 		[DisplayName("JSON Status")]
-		[DefaultValue("400")]
-		public new string JSonStatus { get { return base.JSonStatus; } set { base.JSonStatus = value; } }
+		[DefaultValue(HttpStatusCode.BadRequest)]
+		public new HttpStatusCode JSonStatus { get { return base.JSonStatus; } set { base.JSonStatus = value; } }
 
 		// The name of the desired JSON property
 		[DisplayName("Property")]
@@ -164,8 +165,8 @@ namespace TshockRestTestPlugin
 	{
 		// The status of the JSON request
 		[DisplayName("JSON Status")]
-		[DefaultValue("200")]
-		public string JSonStatus { get; set; }
+		[DefaultValue(HttpStatusCode.OK)]
+		public HttpStatusCode JSonStatus { get; set; }
 
 		public RestObject ValidateJson(object sender, ValidationEventArgs e)
 		{

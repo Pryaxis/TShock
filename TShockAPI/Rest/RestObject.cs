@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Net;
 using System.Collections.Generic;
 
 namespace Rests
@@ -24,9 +25,9 @@ namespace Rests
 	[Serializable]
 	public class RestObject : Dictionary<string, object>
 	{
-		public string Status
+		public HttpStatusCode Status
 		{
-			get { return this["status"] as string; }
+			get { return (HttpStatusCode)this["status"]; }
 			set { this["status"] = value; }
 		}
 
@@ -46,10 +47,10 @@ namespace Rests
 		// Note: The constructor with all defaults isn't good enough :(
 		public RestObject()
 		{
-			Status = "200";
+			Status = HttpStatusCode.OK;
 		}
 
-		public RestObject(string status = "200")
+		public RestObject(HttpStatusCode status = HttpStatusCode.OK)
 		{
 			Status = status;
 		}

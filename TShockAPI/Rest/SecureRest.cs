@@ -37,13 +37,13 @@ namespace Rests
 		}
 
 		public Dictionary<string,TokenData> Tokens { get; protected set; }
-        public Dictionary<string, TokenData> AppTokens { get; protected set; }
+		public Dictionary<string, TokenData> AppTokens { get; protected set; }
 
 		public SecureRest(IPAddress ip, int port)
 			: base(ip, port)
 		{
 			Tokens = new Dictionary<string, TokenData>();
-            AppTokens = new Dictionary<string, TokenData>();
+			AppTokens = new Dictionary<string, TokenData>();
 
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
 			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { DoLog = false });
@@ -55,10 +55,10 @@ namespace Rests
 				AppTokens.Add(t.Key, t.Value);
 			}
 
-            foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
-            {
-                AppTokens.Add(t.Key, t.Value);
-            }
+			foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
+			{
+				AppTokens.Add(t.Key, t.Value);
+			}
 
 			// TODO: Get rid of this when the old REST permission model is removed.
 			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
@@ -93,11 +93,11 @@ namespace Rests
 			}
 			catch (Exception)
 			{
-				return new RestObject("400")
-				       	{ Error = "The specified token queued for destruction failed to be deleted." };
+				return new RestObject(HttpStatusCode.BadRequest)
+					{ Error = "The specified token queued for destruction failed to be deleted." };
 			}
 			return new RestObject()
-			       	{ Response = "Requested token was successfully destroyed." };
+				{ Response = "Requested token was successfully destroyed." };
 		}
 
 		private object DestroyAllTokens(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
@@ -105,7 +105,7 @@ namespace Rests
 			Tokens.Clear();
 
 			return new RestObject()
-			       	{ Response = "All tokens were successfully destroyed." };
+				{ Response = "All tokens were successfully destroyed." };
 		}
 
 		private object NewTokenV2(RestVerbs verbs, IParameterCollection parameters)
@@ -129,17 +129,19 @@ namespace Rests
 		private RestObject NewTokenInternal(string username, string password)
 		{
 			User userAccount = TShock.Users.GetUserByName(username);
-            if (userAccount == null)
-                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
-			
-			if (!TShock.Utils.HashPassword(password).Equals(userAccount.Password, StringComparison.InvariantCultureIgnoreCase))
-				return new RestObject("401")
+			if (userAccount == null ||
+				!TShock.Utils.HashPassword(password).Equals(userAccount.Password, StringComparison.InvariantCultureIgnoreCase))
+			{
+				return new RestObject(HttpStatusCode.Unauthorized)
 					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+			}
 
 			Group userGroup = TShock.Utils.GetGroup(userAccount.Group);
 			if (!userGroup.HasPermission(RestPermissions.restapi) && userAccount.Group != "superadmin")
-				return new RestObject("403")
+			{
+				return new RestObject(HttpStatusCode.Unauthorized)
 					{ Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (restapi)" };
+			}
 			
 			string tokenHash;
 			var rand = new Random();
@@ -164,13 +166,13 @@ namespace Rests
 			
 			var token = parms["token"];
 			if (token == null)
-				return new RestObject("401")
+				return new RestObject(HttpStatusCode.Unauthorized)
 					{ Error = "Not authorized. The specified API endpoint requires a token." };
 
 			SecureRestCommand secureCmd = (SecureRestCommand)cmd;
 			TokenData tokenData;
-            if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
-				return new RestObject("403")
+			if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
+				return new RestObject(HttpStatusCode.Forbidden)
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
 			// TODO: Get rid of this when the old REST permission model is removed.
@@ -180,22 +182,24 @@ namespace Rests
 				{
 					Tokens.Remove(token);
 
-					return new RestObject("403")
-					{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+					return new RestObject(HttpStatusCode.Forbidden)
+						{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
 				}
 
 				if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
 				{
-					return new RestObject("403")
-					{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
+					return new RestObject(HttpStatusCode.Forbidden)
+						{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
 				}
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData);
 			if (cmd.DoLog && TShock.Config.LogRest)
+			{
 				TShock.Utils.SendLogs(string.Format(
 					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)), 
 					Color.PaleVioletRed);
+			}
 
 			return result;
 		}

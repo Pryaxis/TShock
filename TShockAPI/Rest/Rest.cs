@@ -144,7 +144,14 @@ namespace Rests
 			e.Response.ContentType = new ContentTypeHeader("application/json");
 			e.Response.Add(serverHeader);
 			e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
-			e.Response.Status = HttpStatusCode.OK;
+			if (obj is RestObject)
+			{
+				e.Response.Status = ((RestObject)obj).Status;
+			}
+			else
+			{
+				e.Response.Status = HttpStatusCode.OK;
+			}
 		}
 
 		protected virtual object ProcessRequest(object sender, RequestEventArgs e)
@@ -180,14 +187,14 @@ namespace Rests
 			}
 			catch (Exception exception)
 			{
-				return new RestObject("500")
+				return new RestObject(HttpStatusCode.InternalServerError)
 				       	{
 				       		{"error", "Internal server error."},
 				       		{"errormsg", exception.Message},
 				       		{"stacktrace", exception.StackTrace},
 				       	};
 			}
-			return new RestObject("404")
+			return new RestObject(HttpStatusCode.NotFound)
 			       	{
 			       		{"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."}
 			       	};
