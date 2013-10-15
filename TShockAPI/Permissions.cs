@@ -40,6 +40,9 @@ namespace TShockAPI
 
 		// tshock.admin nodes
 
+		[Description("User can set build protection status.")]
+		public static readonly string antibuild = "tshock.admin.antibuild";
+
 		[Description("Prevents you from being kicked.")]
 		public static readonly string immunetokick = "tshock.admin.nokick";
 
@@ -107,12 +110,6 @@ namespace TShockAPI
 		[Description("User can reload the configurations file.")]
 		public static readonly string cfgreload = "tshock.cfg.reload";
 
-		[Description("User can edit the max spawns.")]
-		public static readonly string cfgmaxspawns = "tshock.cfg.maxspawns";
-
-		[Description("User can edit the spawnrate.")]
-		public static readonly string cfgspawnrate = "tshock.cfg.spawnrate";
-
 		[Description("User can download updates to plugins that are currently running.")]
 		public static readonly string updateplugins = "tshock.cfg.updateplugins";
 
@@ -157,6 +154,15 @@ namespace TShockAPI
 		public static readonly string usebanneditem = "tshock.item.usebanned";
 
 		// tshock.npc nodes
+
+		[Description("User can edit the max spawns.")]
+		public static readonly string maxspawns = "tshock.npc.maxspawns";
+
+		[Description("User can edit the spawnrate.")]
+		public static readonly string spawnrate = "tshock.npc.spawnrate";
+
+		[Description("User can start an invasion.")]
+		public static readonly string invade = "tshock.npc.invade";
 
 		[Description("User can spawn bosses.")]
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
@@ -209,8 +215,14 @@ namespace TShockAPI
 		[Description("Allows you to edit the spawn.")]
 		public static readonly string editspawn = "tshock.world.editspawn";
 
+		[Description("Allows you to edit regions.")]
+		public static readonly string editregion = "tshock.world.editregion";
+
+		[Description("User can force a blood moon.")]
+		public static readonly string bloodmoon = "tshock.world.time.bloodmoon";
+
 		[Description("User can set the time.")]
-		public static readonly string time = "tshock.world.settime";
+		public static readonly string time = "tshock.world.time.set";
 
 		[Description("User can grow plants.")]
 		public static readonly string grow = "tshock.world.grow";
@@ -239,14 +251,23 @@ namespace TShockAPI
 		[Description("User can set the world spawn.")]
 		public static readonly string worldspawn = "tshock.world.setspawn";
 
-		[Description("User can cause some events.")]
-		public static readonly string causeevents = "tshock.world.causeevents";
+		[Description("User can drop a meteor.")]
+		public static readonly string dropmeteor = "tshock.world.time.dropmeteor";
+
+		[Description("User can force an eclipse.")]
+		public static readonly string eclipse = "tshock.world.time.eclipse";
+
+		[Description("User can force a full moon.")]
+		public static readonly string fullmoon = "tshock.world.time.fullmoon";
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
 		
 		[Description("User can paint tiles.")]
 		public static readonly string canpaint = "tshock.world.paint";
+
+		[Description("User can turn on or off the rain.")]
+		public static readonly string rain = "tshock.world.rain";
 
 		// Non-grouped
 
