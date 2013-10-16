@@ -1349,7 +1349,7 @@ namespace TShockAPI
 					}
 
     		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
-					    player.SendMessage("You do not have permission to build!", Color.Red);
+					    player.SendMessage(Config.CannotBuildMessage, Color.Red);
 			            player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                     }
 
@@ -1363,7 +1363,7 @@ namespace TShockAPI
 				}
 				
 		        if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
-					player.SendMessage("You do not have permission to build!", Color.Red);
+                    player.SendMessage(Config.CannotBuildMessage, Color.Red);
 			        player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 }   
 
@@ -1419,7 +1419,7 @@ namespace TShockAPI
 			{
 
 		    if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000){
-					player.SendMessage("You do not have permission to build!", Color.Red);
+                    player.SendMessage(Config.CannotBuildMessage, Color.Red);
 					player.BPm=DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 				return true;

@@ -58,6 +58,7 @@ namespace TShockAPI
 
 		[Description("Global protection agent for any block distance based anti-grief check.")] public bool RangeChecks = true;
 		[Description("Disables any building; placing of blocks")] public bool DisableBuild;
+        [Description("Reason given to players for why they cannot build")] public string CannotBuildMessage = "You do not have permission to build!";
 
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")] public float[]
 			SuperAdminChatRGB = {255, 0, 0};
