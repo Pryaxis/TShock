@@ -2717,8 +2717,18 @@ namespace TShockAPI
 			}
 			else
 				args.Player.InitSpawn = true;
+				
+			if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
+            {
 
-            if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
+				args.Player.sX=args.TPlayer.SpawnX;
+				args.Player.sY=args.TPlayer.SpawnY;
+				
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
+					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
+            }
+			
+            else if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
             {
 				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);

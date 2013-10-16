@@ -686,7 +686,13 @@ namespace TShockAPI
 					if (player.RecentFuse >0)
 						player.RecentFuse--;
 
-					if ((TShock.Config.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0))
+					if ((TShock.Config.ServerSideCharacter) && (player.TPlayer.SpawnX > 0) &&(player.sX != player.TPlayer.SpawnX))
+					{
+						player.sX=player.TPlayer.SpawnX;
+						player.sY=player.TPlayer.SpawnY;
+					}
+
+					if ((TShock.Config.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0) && (player.TPlayer.SpawnX < 0))
 					{
 						player.TPlayer.SpawnX = player.sX;
 						player.TPlayer.SpawnY = player.sY;
