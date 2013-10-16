@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2012 The TShock Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,15 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Rests;
 
 namespace TShockAPI
 {
@@ -58,7 +55,6 @@ namespace TShockAPI
 
 		[Description("Global protection agent for any block distance based anti-grief check.")] public bool RangeChecks = true;
 		[Description("Disables any building; placing of blocks")] public bool DisableBuild;
-        [Description("Reason given to players why they cannot build.")] public string CannotBuildReason = "You do not have permission to build!";
 
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")] public float[]
 			SuperAdminChatRGB = {255, 0, 0};
@@ -81,7 +77,6 @@ namespace TShockAPI
 		[Description("Bans a hardcore player on death.")] public bool BanOnMediumcoreDeath;
 
 		[Description("Enable/disable Terraria's built in auto save.")] public bool AutoSave = true;
-		[Description("Enable/disable save announcements.")] public bool AnnounceSave = true;
 
 		[Description("Number of failed login attempts before kicking the player.")] public int MaximumLoginAttempts = 3;
 
@@ -106,8 +101,6 @@ namespace TShockAPI
 			EnableDNSHostResolution;
 
 		[Description("Enables kicking of banned users by matching their IP Address.")] public bool EnableIPBans = true;
-
-		[Description("Enables kicking of banned users by matching their client UUID.")] public bool EnableUUIDBans = true;
 
 		[Description("Enables kicking of banned users by matching their Character Name.")] public bool EnableBanOnUsernames;
 
@@ -136,8 +129,10 @@ namespace TShockAPI
 
 		[Description("This will announce a player's location on join")] public bool EnableGeoIP;
 
-		[Description("This will turn on token requirement for the public REST API endpoints.")] public bool
+		[Description("This will turn on a token requirement for the /status API endpoint.")] public bool
 			EnableTokenEndpointAuthentication;
+
+        [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
 
 		[Description("Enable/disable the rest api.")] public bool RestApiEnabled;
 
@@ -157,12 +152,14 @@ namespace TShockAPI
 
 		[Description("Disables the dungeon guardian from being spawned by player packets, this will instead force a respawn.")] public bool DisableDungeonGuardian;
 
-		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")] public bool ServerSideCharacter;
+		[Description("Enable server side inventory checks, EXPERIMENTAL")] public bool ServerSideInventory;
 
-        [Description("How often SSC should save, in minutes.")] public int ServerSideCharacterSave = 5;
+        [Description("How often SSI should save, in minutes.")] public int ServerSideInventorySave = 15;
 
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")] public int LogonDiscardThreshold=250;
 		
+		[Description("Disables reporting of playercount to the stat system.")] public bool DisablePlayerCountReporting;
+
 		[Description("Disables clown bomb projectiles from spawning.")] public bool DisableClownBombs;
 
 		[Description("Disables snow ball projectiles from spawning.")] public bool DisableSnowBalls;
@@ -171,7 +168,7 @@ namespace TShockAPI
 			"Changes ingame chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message"
 			)] public string ChatFormat = "{1}{2}{3}: {4}";
 
-	    [Description("Change the player name when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat(minus the text aka {4}).")] public string ChatAboveHeadsFormat = "{2}";
+	    [Description("Change the chat format when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat.")] public string ChatAboveHeadsFormat = "{4}";
 
 		[Description("Force the world time to be normal, day, or night.")] public string ForceTime = "normal";
 
@@ -208,10 +205,6 @@ namespace TShockAPI
 		[Description("Disable users from being able to login with account password when joining.")] public bool
 			DisableLoginBeforeJoin;
 
-		[Description("Disable users from being able to login with their client UUID.")] public bool DisableUUIDLogin;
-
-		[Description("Kick clients that don't send a UUID to the server.")] public bool KickEmptyUUID;
-		
 		[Description("Allows users to register any username with /register.")] public bool AllowRegisterAnyUsername;
 
 		[Description("Allows users to login with any username with /login.")] public bool AllowLoginAnyUsername = true;
@@ -240,40 +233,17 @@ namespace TShockAPI
 
 	    [Description("Prevent banned items from being /i or /give.")] public bool PreventBannedItemSpawn = false;
 
+	    [Description("Prevent banks on SSI.")] public bool DisablePiggybanksOnSSI = false;
+
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
-	        true;
+	        false;
 
 	    [Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")] public
 	        bool EnableChatAboveHeads = false;
 
+	    [Description("Hide stat tracker console messages.")] public bool HideStatTrackerDebugMessages = true;
+
 	    [Description("Force Christmas only events to occur all year.")] public bool ForceXmas = false;
-
-        [Description("Allows groups on the banned item allowed list to spawn banned items.")] public bool AllowAllowedGroupsToSpawnBannedItems = false;
-
-	    [Description("Allows stacks in chests to be beyond the stack limit")] public bool IgnoreChestStacksOnLoad = false;
-
-		[Description("The path of the directory where logs should be written into.")] public string LogPath = "tshock";
-
-		[Description("Prevents players from placing tiles with an invalid style.")] public bool PreventInvalidPlaceStyle = true;
-
-		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
-		    {127,255,212};
-
-		// TODO: Get rid of this when the old REST permission model is removed.
-		[Description(
-			"Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future."
-			)] public bool RestUseNewPermissionModel = true;
-
-        [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
-            public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
-
-		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
-		
-		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public bool LogRest = false;
-
-		[Description("The number of seconds a player must wait before being respawned.")] public int RespawnSeconds = 3;
-
-		[Description("Disables a player if this number of tiles is painted within 1 second.")] public int TilePaintThreshold = 15;
 
         /// <summary>
         /// Reads a configuration file from a given path
@@ -358,10 +328,10 @@ namespace TShockAPI
 
 				var def = field.GetValue(defaults);
 
-				sb.AppendLine("{0}  ".SFormat(name));
-				sb.AppendLine("Type: {0}  ".SFormat(type));
-				sb.AppendLine("Description: {0}  ".SFormat(desc));
-				sb.AppendLine("Default: \"{0}\"  ".SFormat(def));
+				sb.AppendLine("## {0}  ".SFormat(name));
+				sb.AppendLine("**Type:** {0}  ".SFormat(type));
+				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
+				sb.AppendLine("**Default:** \"{0}\"  ".SFormat(def));
 				sb.AppendLine();
 			}
 
