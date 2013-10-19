@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using HttpServer;
 
@@ -92,13 +93,13 @@ namespace Rests
 
 		public override object Execute(RestVerbs verbs, IParameterCollection parameters)
 		{
-			return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
+			return new RestObject(HttpStatusCode.Unauthorized) { Error = "Not authorized. The specified API endpoint requires a token." };
 		}
 
 		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
 		{
 			if (tokenData.Equals(SecureRest.TokenData.None))
-				return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
+				return new RestObject(HttpStatusCode.Unauthorized) { Error = "Not authorized. The specified API endpoint requires a token." };
 
 			return callback(verbs, parameters, tokenData);
 		}

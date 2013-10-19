@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -186,7 +187,7 @@ namespace TShockAPI
 		{
 			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
 			if (!File.Exists(motdFilePath))
-				return this.RestError("The motd.txt was not found.", "500");
+				return this.RestError("The motd.txt was not found.", HttpStatusCode.InternalServerError);
 
 			return new RestObject()
 			{
@@ -198,7 +199,7 @@ namespace TShockAPI
 		{
 			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
 			if (!File.Exists(rulesFilePath))
-				return this.RestError("The rules.txt was not found.", "500");
+				return this.RestError("The rules.txt was not found.", HttpStatusCode.InternalServerError);
 
 			return new RestObject()
 			{
@@ -733,12 +734,12 @@ namespace TShockAPI
 
 		#region Utility Methods
 
-		private RestObject RestError(string message, string status = "400")
+		private RestObject RestError(string message, HttpStatusCode status = HttpStatusCode.BadRequest)
 		{
 			return new RestObject(status) {Error = message};
 		}
 
-		private RestObject RestResponse(string message, string status = "200")
+		private RestObject RestResponse(string message, HttpStatusCode status = HttpStatusCode.OK)
 		{
 			return new RestObject(status) {Response = message};
 		}
