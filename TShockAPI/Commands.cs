@@ -332,7 +332,11 @@ namespace TShockAPI
 			{
 				HelpText = "Kills hostile NPCs or NPCs of a certain type."
 			});
-			add(new Command(Permissions.cfgmaxspawns, MaxSpawns, "maxspawns")
+			add(new Command(Permissions.invade, Invade, "invade")
+			{
+				HelpText = "Starts an NPC invasion."
+			});
+			add(new Command(Permissions.maxspawns, MaxSpawns, "maxspawns")
 			{
 				HelpText = "Sets the maximum number of NPCs."
 			});
@@ -346,7 +350,7 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Spawns a number of mobs around you."
 			});
-			add(new Command(Permissions.cfgspawnrate, SpawnRate, "spawnrate")
+			add(new Command(Permissions.spawnrate, SpawnRate, "spawnrate")
 			{
 				HelpText = "Sets the spawn rate of NPCs."
 			});
@@ -379,11 +383,11 @@ namespace TShockAPI
 			});
 			#endregion
 			#region World Commands
-			add(new Command(Permissions.editspawn, ToggleAntiBuild, "antibuild")
+			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
 				HelpText = "Toggles build protection."
 			});
-			add(new Command(Permissions.causeevents, Bloodmoon, "bloodmoon")
+			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
 			{
 				HelpText = "Sets a blood moon."
 			});
@@ -392,11 +396,11 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Grows plants at your location."
 			});
-			add(new Command(Permissions.causeevents, DropMeteor, "dropmeteor")
+			add(new Command(Permissions.dropmeteor, DropMeteor, "dropmeteor")
 			{
 				HelpText = "Drops a meteor somewhere in the world."
 			});
-			add(new Command(Permissions.causeevents, Eclipse, "eclipse")
+			add(new Command(Permissions.eclipse, Eclipse, "eclipse")
 			{
 				HelpText = "Sets an eclipse."
 			});
@@ -404,7 +408,7 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles christmas mode (present spawning, santa, etc)."
 			});
-			add(new Command(Permissions.causeevents, Fullmoon, "fullmoon")
+			add(new Command(Permissions.fullmoon, Fullmoon, "fullmoon")
 			{
 				HelpText = "Sets a full moon."
 			});
@@ -412,15 +416,11 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles the world's hardmode status."
 			});
-			add(new Command(Permissions.causeevents, Invade, "invade")
-			{
-				HelpText = "Starts an NPC invasion."
-			});
 			add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn")
 			{
 				HelpText = "Toggles spawn protection."
 			});
-			add(new Command(Permissions.causeevents, Rain, "rain")
+			add(new Command(Permissions.rain, Rain, "rain")
 			{
 				HelpText = "Toggles the rain."
 			});

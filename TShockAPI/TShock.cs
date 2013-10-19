@@ -1482,7 +1482,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1495,7 +1495,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.Group.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
@@ -1537,7 +1537,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editspawn) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1550,7 +1550,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.Group.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
