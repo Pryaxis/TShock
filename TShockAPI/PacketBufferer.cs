@@ -213,6 +213,7 @@ namespace TShockAPI
                 switch ((uint)e.ErrorCode)
                 {
                     case 0x80004005:
+					case 10053:
                         break;
                     default:
                         Log.Warn(e.ToString());
