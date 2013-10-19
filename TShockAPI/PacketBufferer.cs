@@ -182,6 +182,12 @@ namespace TShockAPI
 				{
 					buffers[socket.whoAmI].AddRange(ms.ToArray());
 				}
+
+				if (TShock.Config.EnableMaxBytesInBuffer && buffers[socket.whoAmI].Count > TShock.Config.MaxBytesInBuffer)
+				{
+					buffers[socket.whoAmI].Clear();
+					socket.kill = true;
+				}
 			}
 		}
 

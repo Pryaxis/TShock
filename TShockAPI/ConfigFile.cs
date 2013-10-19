@@ -274,6 +274,10 @@ namespace TShockAPI
 
 		[Description("Disables a player if this number of tiles is painted within 1 second.")] public int TilePaintThreshold = 15;
 
+		[Description("Enables max packet bufferer size.")] public bool EnableMaxBytesInBuffer = false;
+
+		[Description("Number of bytes in the packet buffer before we disconnect the player.")] public int MaxBytesInBuffer = 5242880;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
