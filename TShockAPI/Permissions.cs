@@ -210,6 +210,9 @@ namespace TShockAPI
 		[Description("User can use /spawn.")]
 		public static readonly string spawn = "tshock.tp.spawn";
 
+		[Description("User can use the Rod of Discor.")] 
+		public static readonly string rod = "tshock.tp.rod";
+
 		// tshock.world nodes
 
 		[Description("Allows you to edit the spawn.")]

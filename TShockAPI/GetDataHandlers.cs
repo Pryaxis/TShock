@@ -3339,11 +3339,10 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (!isNPC && !args.Player.Group.HasPermission(Permissions.tp))
+				if (!isNPC && !args.Player.Group.HasPermission(Permissions.rod))
 				{
 					args.Player.SendErrorMessage("You do not have permission to teleport.");
-					Main.player[id].Teleport(new Vector2(Main.player[id].position.X, Main.player[id].position.Y), style);
-					NetMessage.SendData(65, -1, -1, "", 0, (float)id, Main.player[id].position.X, Main.player[id].position.Y, style);
+					args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
 					return true;
 				}
 
