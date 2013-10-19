@@ -756,7 +756,7 @@ namespace TShockAPI
 					check = "none";
 					foreach (Item item in player.TPlayer.armor)
 					{
-						if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(item.name, player))
+						if (Itembans.ItemIsBanned(item.name, player))
 						{
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
@@ -768,8 +768,7 @@ namespace TShockAPI
 					{
 						player.Disable("check ignores failed in SecondUpdate()", false);
 					}
-					else if (!player.Group.HasPermission(Permissions.usebanneditem) &&
-							 Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+					else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 					{
 						player.SetBuff(23, 120); //Cursed
 					}
@@ -1407,14 +1406,13 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (type == 17 && !player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned("Dirt Rod", player))
+			if (type == 17 && Itembans.ItemIsBanned("Dirt Rod", player))
 				//Dirt Rod Projectile
 			{
 				return true;
 			}
 
-			if ((type == 42 || type == 65 || type == 68) && !player.Group.HasPermission(Permissions.usebanneditem) &&
-				Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
+			if ((type == 42 || type == 65 || type == 68) && Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
 			{
 				return true;
 			}
@@ -1422,7 +1420,7 @@ namespace TShockAPI
 			Projectile proj = new Projectile();
 			proj.SetDefaults(type);
 
-			if (!player.Group.HasPermission(Permissions.usebanneditem) && Itembans.ItemIsBanned(proj.name, player))
+			if (Itembans.ItemIsBanned(proj.name, player))
 			{
 				return true;
 			}

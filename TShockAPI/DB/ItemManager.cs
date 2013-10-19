@@ -200,6 +200,10 @@ namespace TShockAPI.DB
         {
             if (ply == null)
                 return false;
+
+	        if (ply.Group.HasPermission(Permissions.usebanneditem))
+		        return true;
+
             var cur = ply.Group;
             var traversed = new List<Group>();
             while (cur != null)

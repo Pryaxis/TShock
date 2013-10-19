@@ -2235,8 +2235,7 @@ namespace TShockAPI
 
 			if ((control & 32) == 32)
 			{
-				if (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name, args.Player))
+				if (TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name, args.Player))
 				{
 					control -= 32;
 					args.Player.Disable("Using banned item");
@@ -2583,8 +2582,7 @@ namespace TShockAPI
                     return true;
                 } 
                 
-                if(type == 1 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) && 
-                            TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player)))
+                if(type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Using banned lava bucket without permissions");
@@ -2600,8 +2598,7 @@ namespace TShockAPI
                     return true;
                 } 
 
-				if (type == 0 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-					          TShock.Itembans.ItemIsBanned("Water Bucket", args.Player)))
+				if (type == 0 &&  TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned water bucket without permissions");
@@ -2617,8 +2614,7 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (type == 2 && (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-							  TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player)))
+				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned honey bucket without permissions");
@@ -3135,8 +3131,7 @@ namespace TShockAPI
 
 				if (buff == 10)
 				{
-					if (!args.Player.Group.HasPermission(Permissions.usebanneditem) &&
-						TShock.Itembans.ItemIsBanned("Invisibility Potion", args.Player))
+					if (TShock.Itembans.ItemIsBanned("Invisibility Potion", args.Player))
 						buff = 0;
 					else if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 						buff = 0;
