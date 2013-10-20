@@ -2537,8 +2537,8 @@ namespace TShockAPI
 			if (OnLiquidSet(tileX, tileY, amount, type))
 				return true;
 
-			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
-				return false;
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{
@@ -2653,11 +2653,8 @@ namespace TShockAPI
 			var tileY = args.Data.ReadInt32();
 			if (OnTileKill(tileX, tileY))
 				return true;
-			if (tileX < 0 || tileX >= Main.maxTilesX || tileY < 0 || tileY >= Main.maxTilesY)
-				return false;
-
-            if (args.Player.Dead && TShock.Config.PreventDeadModification)
-                return true;
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				return true;
 
 			if (TShock.CheckIgnores(args.Player))
 			{
