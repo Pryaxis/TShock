@@ -3153,6 +3153,11 @@ namespace TShockAPI
 
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				return true;
+			}
+
 			var spawnboss = false;
 			var invasion = false;
 			var plr = args.Data.ReadInt32();
