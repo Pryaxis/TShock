@@ -2501,15 +2501,18 @@ namespace TShockAPI
 
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
+
 			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
 			if (textlength > 0)
 			{
 				deathtext = Encoding.UTF8.GetString(args.Data.ReadBytes(textlength));
-				/*if (!TShock.Utils.ValidString(deathtext))
-				{
-					return true;
-				}*/
+			}
+
+			if (deathtext.Length > 500)
+			{
+				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
+				return true;
 			}
 
 			args.Player.LastDeath = DateTime.Now;

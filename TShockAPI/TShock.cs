@@ -950,6 +950,13 @@ namespace TShockAPI
 				return;
 			}
 
+			if (args.Text.Length > 500)
+			{
+				Utils.Kick(tsplr, "Crash attempt", true);
+				args.Handled = true;
+				return;
+			}
+
 			/*if (!Utils.ValidString(text))
 			{
 				e.Handled = true;
