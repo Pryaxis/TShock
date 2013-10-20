@@ -236,7 +236,7 @@ namespace TShockAPI
 				var players = new ArrayList();
 				foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
 				{
-					var p = PlayerFilter(tsPlayer, parameters);
+					var p = PlayerFilter(tsPlayer, parameters, ((tokenData.UserGroupName) != "" && TShock.Utils.GetGroup(tokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
 					if (null != p)
 						players.Add(p);
 				}
@@ -859,18 +859,22 @@ namespace TShockAPI
 			return group;
 		}
 
-		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, IParameterCollection parameters)
+		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, IParameterCollection parameters, bool viewips = false)
 		{
 			var player = new Dictionary<string, object>
 				{
 					{"nickname", tsPlayer.Name},
-					{"username", null == tsPlayer.UserAccountName ? "" : tsPlayer.UserAccountName},
-					{"ip", tsPlayer.IP},
+					{"username", tsPlayer.UserAccountName ?? ""},
 					{"group", tsPlayer.Group.Name},
 					{"active", tsPlayer.Active},
 					{"state", tsPlayer.State},
 					{"team", tsPlayer.Team},
 				};
+
+			if (viewips)
+			{
+				player.Add("ip", tsPlayer.IP);
+			}
 			foreach (IParameter filter in parameters)
 			{
 				if (player.ContainsKey(filter.Name) && !player[filter.Name].Equals(filter.Value))
