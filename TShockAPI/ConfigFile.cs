@@ -146,10 +146,6 @@ namespace TShockAPI
 
 		[Description("Displays a player's IP on join to everyone who has the log permission.")] public bool DisplayIPToAdmins;
 
-		[Description(
-			"Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain aesthetic tiles.")] public
-			bool EnableInsecureTileFixes = true;
-
 		[Description("Kicks users using a proxy as identified with the GeoIP database.")] public bool KickProxyUsers = true;
 
 		[Description("Disables hardmode, can't never be activated. Overrides /starthardmode.")] public bool DisableHardmode;

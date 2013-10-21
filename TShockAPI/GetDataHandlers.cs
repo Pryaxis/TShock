@@ -1604,7 +1604,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 128, 137, 209 };
+		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 105, 128, 137, 139, 209 };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
@@ -1667,14 +1667,7 @@ namespace TShockAPI
 					{
 						continue;
 					}
-					if ((tile.type == 128 && newtile.Type == 128) || (tile.type == 105 && newtile.Type == 105) || (tile.type == 139 && newtile.Type == 139))
-					{
-						if (TShock.Config.EnableInsecureTileFixes)
-						{
-							return false;
-						}
-					}
-
+					
 					// Orientable tiles
 					if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
 					{
@@ -1846,7 +1839,7 @@ namespace TShockAPI
 			}
 
 			Item selectedItem = args.Player.SelectedItem;
-			if (type == 0 && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
+			if (action == EditAction.KillTile && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 			{
 				// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 				if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
