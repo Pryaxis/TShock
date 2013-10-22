@@ -2493,12 +2493,14 @@ namespace TShockAPI
 			}
 
 			if (id >= Main.maxPlayers)
+			{
 				return true;
+			}
 
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
+			int textlength = (int)(args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
 			if (textlength > 0)
 			{
@@ -2987,7 +2989,9 @@ namespace TShockAPI
 			}
 
 			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			{
 				return true;
+			}
 
 			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
