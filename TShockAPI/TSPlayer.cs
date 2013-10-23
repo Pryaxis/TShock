@@ -800,8 +800,7 @@ namespace TShockAPI
 		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{
 			LastThreat = DateTime.UtcNow;
-			SetBuff(33, 330, true); //Weak
-			SetBuff(32, 330, true); //Slow
+            SetBuff(47, 330, true); //Frozen
 			SetBuff(23, 330, true); //Cursed
 			if (!string.IsNullOrEmpty(reason))
 			{
