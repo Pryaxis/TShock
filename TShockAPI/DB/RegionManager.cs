@@ -628,8 +628,7 @@ namespace TShockAPI.DB
 				return true;
 			}
 
-			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName ||
-			       ply.Group.HasPermission("manageregion");
+			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName;
 		}
 
 		public void setAllowedIDs(String ids)
