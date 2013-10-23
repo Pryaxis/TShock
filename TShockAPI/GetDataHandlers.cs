@@ -2503,10 +2503,15 @@ namespace TShockAPI
 				return false;
 			}
 
+			if (id >= Main.maxPlayers)
+			{
+				return true;
+			}
+
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
+			int textlength = (int)(args.Data.Length - args.Data.Position - 1);
 			string deathtext = "";
 			if (textlength > 0)
 			{
@@ -2882,6 +2887,12 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
 				return true;
 			}
+
+			if (id >= Main.maxPlayers)
+			{
+				return true;
+			}
+
 			if (!TShock.Players[id].TPlayer.hostile)
 			{
 				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
@@ -2988,8 +2999,10 @@ namespace TShockAPI
 				}*/
 			}
 
-			if (TShock.Players[id] == null)
+			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			{
 				return true;
+			}
 
 			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
@@ -3341,7 +3354,7 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (Main.player[id] == null || TShock.Players[id] == null)
+				if (id >= Main.maxPlayers || Main.player[id] == null || TShock.Players[id] == null)
 				{
 					return true;
 				}

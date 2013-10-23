@@ -1150,7 +1150,7 @@ namespace TShockAPI
 
 			player.LastNetPosition = new Vector2(Main.spawnTileX*16f, Main.spawnTileY*16f);
 
-            if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && Config.ServerSideCharacter && Config.DisableLoginBeforeJoin)
+            if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 			    player.RPPending=3;
 			    player.SendMessage("You will be teleported to your last known location...", Color.Red);

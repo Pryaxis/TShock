@@ -258,7 +258,7 @@ namespace TShockAPI
 				return found;
 
 			byte plrID;
-			if (byte.TryParse(plr, out plrID))
+			if (byte.TryParse(plr, out plrID) && plrID < Main.maxPlayers)
 			{
 				TSPlayer player = TShock.Players[plrID];
 				if (player != null && player.Active)
@@ -592,6 +592,7 @@ namespace TShockAPI
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.ReloadAllRegions();
+			TShock.Itembans.UpdateItemBans();
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
