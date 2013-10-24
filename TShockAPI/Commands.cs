@@ -676,12 +676,13 @@ namespace TShockAPI
             
 			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string encrPass = "";
-
-			if (args.Parameters.Count == 0)
+			bool usingUUID = false;
+			if (args.Parameters.Count == 0 && !TShock.Config.DisableUUIDLogin)
 			{
 				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
 					return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
+				usingUUID = true;
 			}
 			else if (args.Parameters.Count == 1)
 			{
@@ -705,7 +706,9 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage(String.Format("Syntax: /login{0} [password]", TShock.Config.AllowLoginAnyUsername ? " [username]" : " "));
+				args.Player.SendErrorMessage("Syntax: /login - Logs in using your UUID and character name");
+				args.Player.SendErrorMessage("        /login <password> - Logs in using your password and character name");
+				args.Player.SendErrorMessage("        /login <username> <password> - Logs in using your username and password");
 				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
@@ -715,7 +718,9 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
 				}
-				else if (user.Password.ToUpper() == encrPass.ToUpper() || (user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin && !String.IsNullOrWhiteSpace(args.Player.UUID)))
+				else if (user.Password.ToUpper() == encrPass.ToUpper() ||
+						(usingUUID && user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
+						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
 
@@ -738,7 +743,7 @@ namespace TShockAPI
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
 					args.Player.Group = group;
-				    args.Player.tempGroup = null;
+					args.Player.tempGroup = null;
 					args.Player.UserAccountName = user.Name;
 					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
 					args.Player.IsLoggedIn = true;
@@ -757,18 +762,25 @@ namespace TShockAPI
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
 							Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
-							args.Player.Teleport((int)pos.X*16, (int)pos.Y *16 );
+							args.Player.Teleport((int) pos.X*16, (int) pos.Y*16);
 						}
 						args.Player.LoginHarassed = false;
 
 					}
 					TShock.Users.SetUserUUID(user, args.Player.UUID);
 
-				    Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Incorrect password.");
+					if (usingUUID && !TShock.Config.DisableUUIDLogin)
+					{
+						args.Player.SendErrorMessage("UUID does not match this character!");
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Invalid password!");
+					}
 					Log.Warn(args.Player.IP + " failed to authenticate as user: " + user.Name + ".");
 					args.Player.LoginAttempts++;
 				}
