@@ -797,12 +797,21 @@ namespace TShockAPI
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
+		public int ActiveChest = -1;
+
 		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{
 			LastThreat = DateTime.UtcNow;
 			SetBuff(33, 330, true); //Weak
 			SetBuff(32, 330, true); //Slow
 			SetBuff(23, 330, true); //Cursed
+			SetBuff(47, 330, true); //Frozen
+
+			if (ActiveChest != -1)
+			{
+				SendData(PacketTypes.ChestOpen, "", -1);
+			}
+
 			if (!string.IsNullOrEmpty(reason))
 			{
 				if ((DateTime.UtcNow - LastDisableNotification).TotalMilliseconds > 5000)

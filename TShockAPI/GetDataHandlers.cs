@@ -1213,6 +1213,7 @@ namespace TShockAPI
 											{PacketTypes.LiquidSet, HandleLiquidSet},
 											{PacketTypes.PlayerSpawn, HandleSpawn},
 											{PacketTypes.ChestGetContents, HandleChestOpen},
+											{PacketTypes.ChestOpen, HandleChestActive},
 											{PacketTypes.ChestItem, HandleChestItem},
 											{PacketTypes.SignNew, HandleSign},
 											{PacketTypes.PlayerSlot, HandlePlayerSlot},
@@ -2768,6 +2769,17 @@ namespace TShockAPI
 			{
 				return true;
 			}
+
+			return false;
+		}
+
+		private static bool HandleChestActive(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+
+			args.Player.ActiveChest = id;
 
 			return false;
 		}
