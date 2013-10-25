@@ -564,7 +564,8 @@ namespace TShockAPI
 											 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
 											 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
 											 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
-												(WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None),
+												(WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
+												(Main.pumpkinMoon ? BossFlags2.Pumpkin : BossFlags2.None),
 								Rain = Main.maxRaining,
 								WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 							};
