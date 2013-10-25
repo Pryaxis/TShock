@@ -354,6 +354,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the spawn rate of NPCs."
 			});
+			add(new Command(Permissions.invade, PumpkinInvasion, "pumpkin")
+			{
+				HelpText = "Starts a Pumpkin Moon invasion at the specified wave."
+			});
 			#endregion
 			#region TP Commands
 			add(new Command(Permissions.home, Home, "home")
@@ -1670,6 +1674,27 @@ namespace TShockAPI
 			}
 		}
 
+		private static void PumpkinInvasion(CommandArgs args)
+		{
+			int wave = 0;
+			if (args.Parameters.Count != 0)
+				int.TryParse(args.Parameters[0], out wave);
+
+			Main.pumpkinMoon = true;
+			Main.bloodMoon = false;
+			NPC.waveKills = 0f;
+			NPC.waveCount = wave;
+			string text = "Pumpkin Invasion started at wave;" + wave;
+			if (Main.netMode == 0)
+			{
+				Main.NewText(text, 175, 75, 255, false);
+				return;
+			}
+			if (Main.netMode == 2)
+			{
+				NetMessage.SendData(25, -1, -1, text, 255, 175f, 75f, 255f, 0);
+			}
+		}
         private static void Hardmode(CommandArgs args)
         {
 			if (Main.hardMode)
