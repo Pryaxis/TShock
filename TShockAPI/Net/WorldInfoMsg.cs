@@ -45,7 +45,8 @@ namespace TShockAPI.Net
 		DownedMechBoss3 = 4,
 		DownedMechBossAny = 8,
 		CloudBg = 16,
-		Crimson = 32
+		Crimson = 32,
+		Pumpkin = 64
 	}
 
 	public class WorldInfoMsg : BaseMsg
