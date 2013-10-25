@@ -1676,6 +1676,8 @@ namespace TShockAPI
 
 		private static void PumpkinInvasion(CommandArgs args)
 		{
+			TSPlayer.Server.SetTime(false, 0.0);
+
 			int wave = 0;
 			if (args.Parameters.Count != 0)
 				int.TryParse(args.Parameters[0], out wave);
