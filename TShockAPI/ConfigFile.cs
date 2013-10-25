@@ -274,6 +274,8 @@ namespace TShockAPI
 
 		[Description("Number of bytes in the packet buffer before we disconnect the player.")] public int MaxBytesInBuffer = 5242880;
 
+		[Description("Forces your world to be in Halloween mode regardless of the data.")] public bool ForceHalloween = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

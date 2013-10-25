@@ -251,6 +251,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
 			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				TShockAPI.Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
@@ -328,6 +329,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldStartHardMode.Deregister(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Deregister(this, SaveManager.Instance.OnSaveWorld);
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
+				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
                 TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
@@ -414,6 +416,18 @@ namespace TShockAPI
                 args.Handled = true;
             }
         }
+
+		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
+		{
+			if (args.Handled)
+				return;
+
+			if (Config.ForceHalloween)
+			{
+				args.Halloween = true;
+				args.Handled = true;
+			}
+		}
 		/// <summary>
 		/// Handles exceptions that we didn't catch or that Red fucked up
 		/// </summary>

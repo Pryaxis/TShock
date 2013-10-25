@@ -3204,6 +3204,7 @@ namespace TShockAPI
 					case -1:
 					case -2:
 					case -3:
+					case -4:
 						invasion = true;
 						break;
 					case 4:
@@ -3242,6 +3243,9 @@ namespace TShockAPI
 			string boss;
 			switch (Type)
 			{
+				case -4:
+					boss = "a pumpkin invasion";
+					break;
 				case -3:
 					boss = "the pirates";
 					break;
