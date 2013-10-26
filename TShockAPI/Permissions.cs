@@ -145,6 +145,9 @@ namespace TShockAPI
 		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")]
 		public static readonly string allowclientsideworldedit = "tshock.ignore.sendtilesquare";
 
+		[Description("Allow dropping banned items without the item being eaten.")]
+		public static readonly string allowdroppingbanneditems = "tshock.ignore.dropbanneditem";
+
 		// tshock.item nodes
 
 		[Description("User can spawn items.")]

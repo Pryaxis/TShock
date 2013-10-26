@@ -2961,7 +2961,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name, args.Player))
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.name, args.Player) && !args.Player.Group.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
