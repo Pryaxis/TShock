@@ -276,6 +276,10 @@ namespace TShockAPI
 
 		[Description("Forces your world to be in Halloween mode regardless of the data.")] public bool ForceHalloween = false;
 
+		[Description("Disables the pumpkin moon when the night is over, regardless of wave.")] public bool DisablePumpkinMoonOnDaybreak = false;
+
+		[Description("Disables the pumpkin moon when the night is over if you reached wave 15.")] public bool DisablePumpkinMoonAfterWave15 = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
