@@ -2913,6 +2913,10 @@ namespace TShockAPI
 					Main.StopRain();
 					TSPlayer.All.SendInfoMessage("{0} ended the downpour.", args.Player.Name);
 					break;
+				default:
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /rain <stop/start>");
+					break;
+
 			}
 		}
 
