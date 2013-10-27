@@ -648,7 +648,6 @@ namespace TShockAPI
 			}
 		}
 
-		private bool lastTickDay = false;
 		private void OnSecondUpdate()
 		{
 			if (Config.ForceTime != "normal")
@@ -662,20 +661,6 @@ namespace TShockAPI
 						TSPlayer.Server.SetTime(false, 16200.0);
 						break;
 				}
-			}
-
-			if (!lastTickDay && Main.dayTime)
-			{
-				lastTickDay = true;
-				if (Config.DisablePumpkinMoonOnDaybreak || (Config.DisablePumpkinMoonAfterWave15 && NPC.waveCount == 15))
-				{
-					Main.pumpkinMoon = false;
-				}
-
-			}
-			else if (lastTickDay && !Main.dayTime)
-			{
-				lastTickDay = false;
 			}
 			
 			foreach (TSPlayer player in Players)
