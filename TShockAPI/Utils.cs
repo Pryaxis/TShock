@@ -721,7 +721,7 @@ namespace TShockAPI
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
-			Console.WriteLine("ShowFile to user is deprecated. Do not use it.")
+			Console.WriteLine("ShowFile to user is deprecated. Do not use it.");
 			return;
 		}
 
