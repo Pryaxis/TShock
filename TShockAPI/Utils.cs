@@ -721,38 +721,8 @@ namespace TShockAPI
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
-			string foo = "";
-			using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
-			{
-				while ((foo = tr.ReadLine()) != null)
-				{
-					foo = foo.Replace("%map%", Main.worldName);
-					foo = foo.Replace("%players%", GetPlayers());
-					//foo = SanitizeString(foo);
-					if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
-					{
-						string possibleColor = foo.Substring(0, 13);
-						foo = foo.Remove(0, 13);
-						float[] pC = {0, 0, 0};
-						possibleColor = possibleColor.Replace("%", "");
-						string[] pCc = possibleColor.Split(',');
-						if (pCc.Length == 3)
-						{
-							try
-							{
-								player.SendMessage(foo, (byte) Convert.ToInt32(pCc[0]), (byte) Convert.ToInt32(pCc[1]),
-								                   (byte) Convert.ToInt32(pCc[2]));
-								continue;
-							}
-							catch (Exception e)
-							{
-								Log.Error(e.ToString());
-							}
-						}
-					}
-					player.SendMessage(foo);
-				}
-			}
+			Console.WriteLine("ShowFile to user is deprecated. Do not use it.")
+			return;
 		}
 
 		/// <summary>
