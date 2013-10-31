@@ -28,6 +28,10 @@ namespace TShockAPI.DB
 	public class WarpManager
 	{
 		private IDbConnection database;
+		/// <summary>
+		/// The list of warps.
+		/// </summary>
+		public List<Warp> Warps;
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		public WarpManager(IDbConnection db)
@@ -53,6 +57,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("INSERT INTO Warps (X, Y, WarpName, WorldID) VALUES (@0, @1, @2, @3);", x, y, name, worldid);
+				Warps.Add(new Warp(new Vector2(x, y), name, worldid, "0"));
 				return true;
 			}
 			catch (Exception ex)
@@ -67,6 +72,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("DELETE FROM Warps WHERE WarpName=@0 AND WorldID=@1", name, Main.worldID.ToString());
+				Warps.RemoveAll(w => w.WarpName == name);
 				return true;
 			}
 			catch (Exception ex)
@@ -116,20 +122,11 @@ namespace TShockAPI.DB
 			var warps = new List<Warp>();
 			try
 			{
-				using (var reader = database.QueryReader("SELECT * FROM Warps WHERE WorldID=@0", worldid))
+				using (var reader = database.QueryReader("SELECT * FROM Warps WHERE Private = @0 AND WorldID = @1",
+					"0", worldid))
 				{
 					while (reader.Read())
-					{
-						try
-						{
-							if (reader.Get<String>("Private") == "0" || reader.Get<String>("Private") == null)
-								warps.Add(new Warp {WarpName = reader.Get<string>("WarpName")});
-						}
-						catch
-						{
-							warps.Add(new Warp {WarpName = reader.Get<string>("WarpName")});
-						}
-					}
+						warps.Add(new Warp {WarpName = reader.Get<string>("WarpName")});
 				}
 			}
 			catch (Exception ex)
@@ -140,25 +137,52 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Gets all the warps names from world
+		/// Sets the position of a warp.
 		/// </summary>
-		/// <param name="worldid">World name to get warps from</param>
-		/// <returns>List of warps with only their names</returns>
-		public bool HideWarp(string warp, bool state)
+		/// <param name="warpName">The warp name.</param>
+		/// <param name="x">The X position.</param>
+		/// <param name="y">The Y position.</param>
+		/// <returns>Whether the operation suceeded.</returns>
+		public bool PositionWarp(string warpName, int x, int y)
 		{
 			try
 			{
-				string query = "UPDATE Warps SET Private=@0 WHERE WarpName=@1 AND WorldID=@2";
-
-				database.Query(query, state ? "1" : "0", warp, Main.worldID.ToString());
-
-				return true;
+				if (database.Query("UPDATE Warps SET X = @0, Y = @1 WHERE WarpName = @2 AND WorldID = @3",
+					x, y, warpName, Main.worldID.ToString()) > 0)
+				{
+					Warps.Find(w => w.WarpName == warpName).WarpPos = new Vector2(x, y);
+					return true;
+				}
 			}
 			catch (Exception ex)
 			{
 				Log.Error(ex.ToString());
-				return false;
 			}
+			return false;
+		}
+
+		/// <summary>
+		/// Sets the hidden state of a warp.
+		/// </summary>
+		/// <param name="warpName">The warp name.</param>
+		/// <param name="state">The state.</param>
+		/// <returns>Whether the operation suceeded.</returns>
+		public bool HideWarp(string warpName, bool state)
+		{
+			try
+			{
+				if (database.Query("UPDATE Warps SET Private = @0 WHERE WarpName = @1 AND WorldID = @2",
+					state ? "1" : "0", warpName, Main.worldID.ToString()) > 0)
+				{
+					Warps.Find(w => w.WarpName == warpName).Private = state ? "1" : "0";
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return false;
 		}
 	}
 

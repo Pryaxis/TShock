@@ -1234,7 +1234,8 @@ namespace TShockAPI
                                             {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss},
 											{PacketTypes.Teleport, HandleTeleport},
 											{PacketTypes.PaintTile, HandlePaintTile},
-											{PacketTypes.PaintWall, HandlePaintWall}
+											{PacketTypes.PaintWall, HandlePaintWall},
+											{PacketTypes.Placeholder, HandleRaptor}
 										};
 		}
 
@@ -3389,6 +3390,78 @@ namespace TShockAPI
 			}
 
 			return true;
+		}
+
+		private static bool HandleRaptor(GetDataHandlerArgs args)
+		{
+			var type = (RaptorPacketTypes)args.Data.ReadInt8();
+
+			switch (type)
+			{
+				case RaptorPacketTypes.Acknowledge:
+					args.Player.IsRaptor = true;
+					return true;
+				case RaptorPacketTypes.Region:
+					if (args.Player.Group.HasPermission(Permissions.manageregion))
+					{
+						int x = args.Data.ReadInt32();
+						int y = args.Data.ReadInt32();
+						int width = args.Data.ReadInt32();
+						int height = args.Data.ReadInt32();
+						string regionName = args.Data.ReadString();
+
+						if (TShock.Regions.GetRegionByName(regionName).Area == Rectangle.Empty)
+						{
+							TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName, Main.worldID.ToString());
+							Log.Info("{0} added region \"{1}\".", args.Player.UserAccountName, regionName);
+						}
+						else
+						{
+							TShock.Regions.PositionRegion(regionName, x, y, width, height);
+							Log.Info("{0} moved region \"{1}\".", args.Player.UserAccountName, regionName);
+						}
+					}
+					return true;
+				case RaptorPacketTypes.RegionDelete:
+					if (args.Player.Group.HasPermission(Permissions.manageregion))
+					{
+						string regionName = args.Data.ReadString();
+						TShock.Regions.DeleteRegion(regionName);
+						Log.Info("{0} deleted region \"{1}\".", args.Player.UserAccountName, regionName);
+					}
+					return true;
+				case RaptorPacketTypes.Warp:
+					if (args.Player.Group.HasPermission(Permissions.managewarp))
+					{
+						int x = (int)args.Data.ReadSingle();
+						int y = (int)args.Data.ReadSingle();
+						bool isHidden = args.Data.ReadBoolean();
+						string warpName = args.Data.ReadString();
+
+						Warp warp = TShock.Warps.FindWarp(warpName);
+						if (warp.WarpPos == Vector2.Zero)
+						{
+							TShock.Warps.AddWarp(x, y, warpName, Main.worldID.ToString());
+							Log.Info("{0} added warp \"{1}\".", args.Player.UserAccountName, warpName);
+						}
+						else
+						{
+							TShock.Warps.PositionWarp(warpName, x, y);
+							Log.Info("{0} moved warp \"{1}\".", args.Player.UserAccountName, warpName);
+						}
+					}
+					return true;
+				case RaptorPacketTypes.WarpDelete:
+					if (args.Player.Group.HasPermission(Permissions.managewarp))
+					{
+						string warpName = args.Data.ReadString();
+						TShock.Warps.RemoveWarp(warpName);
+						Log.Info("{0} deleted warp \"{1}\".", args.Player.UserAccountName, warpName);
+					}
+					return true;
+				default:
+					return true;
+			}
 		}
 	}
 }

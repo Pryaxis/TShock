@@ -36,6 +36,8 @@ using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TShockAPI
 {
@@ -346,6 +348,24 @@ namespace TShockAPI
 
 	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
 	    {
+			if (args.Player.IsRaptor)
+			{
+				Task.Factory.StartNew(() =>
+					{
+						args.Player.SendRaptorPermissions();
+						if (args.Player.Group.HasPermission(Permissions.manageregion))
+						{
+							for (int i = 0; i < Regions.Regions.Count; i++)
+								args.Player.SendRaptorRegion(Regions.Regions[i]);
+						}
+						if (args.Player.Group.HasPermission(Permissions.managewarp))
+						{
+							for (int i = 0; i < Warps.Warps.Count; i++)
+								args.Player.SendRaptorWarp(Warps.Warps[i]);
+						}
+					});
+			}
+
 	        User u = Users.GetUserByName(args.Player.UserAccountName);
             List<String> KnownIps = new List<string>();
 	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
@@ -1090,13 +1110,7 @@ namespace TShockAPI
 			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte) type, type);
 
 			var player = Players[e.Msg.whoAmI];
-			if (player == null)
-			{
-				e.Handled = true;
-				return;
-			}
-
-			if (!player.ConnectionAlive)
+			if (player == null || !player.ConnectionAlive)
 			{
 				e.Handled = true;
 				return;
@@ -1109,7 +1123,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38 && (int) type != 21)
+				(int) type != 38 && (int) type != 21 && (int) type != 67)
 			{
 				e.Handled = true;
 				return;

@@ -420,6 +420,51 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
+		/// Sets the position of a region.
+		/// </summary>
+		/// <param name="regionName">The region name.</param>
+		/// <param name="x">The X position.</param>
+		/// <param name="y">The Y position.</param>
+		/// <param name="height">The height.</param>
+		/// <param name="width">The width.</param>
+		/// <returns>Whether the operation succeeded.</returns>
+		public bool PositionRegion(string regionName, int x, int y, int width, int height)
+		{
+			try
+			{
+				if (database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID = @5",
+					x, y, width, height, regionName, Main.worldID.ToString()) > 0)
+					return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return false;
+		}
+		/// <summary>
+		/// Offsets a region.
+		/// </summary>
+		/// <param name="regionName">The region name.</param>
+		/// <param name="x">The X offset.</param>
+		/// <param name="y">The Y offset.</param>
+		/// <returns>Whether the operation succeeded.</returns>
+		public bool OffsetRegion(string regionName, int x, int y)
+		{
+			try
+			{
+				if (database.Query("UPDATE Regions SET X1 = X1 + @0, Y1 = Y1 + @1 WHERE RegionName = @2 AND WorldID = @3",
+					x, y, regionName, Main.worldID.ToString()) > 0)
+					return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Gets all the regions names from world
 		/// </summary>
 		/// <param name="worldid">World name to get regions from</param>

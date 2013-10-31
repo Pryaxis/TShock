@@ -58,7 +58,7 @@ namespace TShockAPI.Hooks
 
         public static void OnPlayerPostLogin(TSPlayer ply)
         {
-            if(PlayerPostLogin == null)
+            if (PlayerPostLogin == null)
             {
                 return;
             }

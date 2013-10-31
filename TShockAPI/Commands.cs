@@ -3017,6 +3017,12 @@ namespace TShockAPI
 									args.Player.TempPoints[0] = Point.Zero;
 									args.Player.TempPoints[1] = Point.Zero;
 									args.Player.SendMessage("Set region " + regionName, Color.Yellow);
+
+									foreach (TSPlayer tsplr in TShock.Players)
+									{
+										if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+											tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(regionName));
+									}
 								}
 								else
 								{
@@ -3064,19 +3070,26 @@ namespace TShockAPI
 						{
 							string regionName = String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
 							if (TShock.Regions.DeleteRegion(regionName))
-								args.Player.SendMessage("Deleted region " + regionName, Color.Yellow);
+							{
+								args.Player.SendInfoMessage("Deleted region \"{0}\".", regionName);
+								foreach (TSPlayer tsplr in TShock.Players)
+								{
+									if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+										tsplr.SendRaptorRegionDelete(TShock.Regions.GetRegionByName(regionName));
+								}
+							}
 							else
-								args.Player.SendMessage("Could not find specified region", Color.Red);
+								args.Player.SendErrorMessage("Could not find the specified region!");
 						}
 						else
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region delete <name>", Color.Red);
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region delete <name>");
 						break;
 					}
 				case "clear":
 					{
 						args.Player.TempPoints[0] = Point.Zero;
 						args.Player.TempPoints[1] = Point.Zero;
-						args.Player.SendMessage("Cleared temp area", Color.Yellow);
+						args.Player.SendInfoMessage("Cleared temporary points.");
 						args.Player.AwaitingTempPoint = 0;
 						break;
 					}
@@ -3415,19 +3428,18 @@ namespace TShockAPI
 							if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
 							{
 								args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
+								foreach (TSPlayer tsplr in TShock.Players)
+								{
+									if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+										tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(args.Parameters[1]));
+								}
 								TShock.Regions.ReloadAllRegions();
 							}
 							else
-							{
-								args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>",
-														Color.Red);
-							}
+								args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>");
 						}
 						else
-						{
-							args.Player.SendMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>",
-													Color.Red);
-						}
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>");
 						break;
 					}
 				case "tp":
@@ -3452,7 +3464,6 @@ namespace TShockAPI
 						}
 
 						args.Player.Teleport(region.Area.Center.X * 16, region.Area.Center.Y * 16);
-
 						break;
 					}
 				case "help":
