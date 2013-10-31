@@ -2056,6 +2056,11 @@ namespace TShockAPI
                     else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
                     {
                         args.Player.SendSuccessMessage("Warp added: " + warpName);
+						foreach (TSPlayer tsplr in TShock.Players)
+						{
+							if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
+								tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
+						}
                     }
                     else
                     {
@@ -2072,10 +2077,17 @@ namespace TShockAPI
                 if (args.Parameters.Count == 2)
                 {
                     string warpName = args.Parameters[1];
-                    if (TShock.Warps.RemoveWarp(warpName))
-                        args.Player.SendSuccessMessage("Warp deleted: " + warpName);
-                    else
-                        args.Player.SendErrorMessage("Could not find the specified warp.");
+					if (TShock.Warps.RemoveWarp(warpName))
+					{
+						args.Player.SendSuccessMessage("Warp deleted: " + warpName);
+						foreach (TSPlayer tsplr in TShock.Players)
+						{
+							if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
+								tsplr.SendRaptorWarpDeletion(TShock.Warps.FindWarp(warpName));
+						}
+					}
+					else
+						args.Player.SendErrorMessage("Could not find the specified warp.");
                 }
                 else
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp del [name]");
