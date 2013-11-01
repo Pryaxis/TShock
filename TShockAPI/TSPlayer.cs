@@ -962,7 +962,7 @@ namespace TShockAPI
 		/// Sends a region deletion to the player.
 		/// <param name="regionName">The region name.</param>
 		/// </summary>
-		public void SendRaptorRegionDelete(string regionName)
+		public void SendRaptorRegionDeletion(string regionName)
 		{
 			if (!IsRaptor)
 				return;

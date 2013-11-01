@@ -3410,14 +3410,25 @@ namespace TShockAPI
 						int height = args.Data.ReadInt32();
 						string regionName = args.Data.ReadString();
 
-						if (TShock.Regions.GetRegionByName(regionName) == null)
+						Region region;
+						if ((region = TShock.Regions.GetRegionByName(regionName)) == null)
 						{
 							TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName, Main.worldID.ToString());
+							foreach (TSPlayer tsplr in TShock.Players)
+							{
+								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
+									tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(regionName));
+							}
 							Log.Info("{0} added region \"{1}\".", args.Player.UserAccountName, regionName);
 						}
 						else
 						{
 							TShock.Regions.PositionRegion(regionName, x, y, width, height);
+							foreach (TSPlayer tsplr in TShock.Players)
+							{
+								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
+									tsplr.SendRaptorRegion(region);
+							}
 							Log.Info("{0} moved region \"{1}\".", args.Player.UserAccountName, regionName);
 						}
 					}
@@ -3427,6 +3438,11 @@ namespace TShockAPI
 					{
 						string regionName = args.Data.ReadString();
 						TShock.Regions.DeleteRegion(regionName);
+						foreach (TSPlayer tsplr in TShock.Players)
+						{
+							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
+								tsplr.SendRaptorRegionDeletion(regionName);
+						}
 						Log.Info("{0} deleted region \"{1}\".", args.Player.UserAccountName, regionName);
 					}
 					return true;
@@ -3442,11 +3458,21 @@ namespace TShockAPI
 						if (warp.WarpPos == Vector2.Zero)
 						{
 							TShock.Warps.AddWarp(x, y, warpName, Main.worldID.ToString());
+							foreach (TSPlayer tsplr in TShock.Players)
+							{
+								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
+									tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
+							}
 							Log.Info("{0} added warp \"{1}\".", args.Player.UserAccountName, warpName);
 						}
 						else
 						{
 							TShock.Warps.PositionWarp(warpName, x, y);
+							foreach (TSPlayer tsplr in TShock.Players)
+							{
+								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
+									tsplr.SendRaptorWarp(warp);
+							}
 							Log.Info("{0} moved warp \"{1}\".", args.Player.UserAccountName, warpName);
 						}
 					}
@@ -3456,6 +3482,11 @@ namespace TShockAPI
 					{
 						string warpName = args.Data.ReadString();
 						TShock.Warps.RemoveWarp(warpName);
+						foreach (TSPlayer tsplr in TShock.Players)
+						{
+							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
+								tsplr.SendRaptorWarpDeletion(warpName);
+						}
 						Log.Info("{0} deleted warp \"{1}\".", args.Player.UserAccountName, warpName);
 					}
 					return true;

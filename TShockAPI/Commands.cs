@@ -3087,7 +3087,7 @@ namespace TShockAPI
 								foreach (TSPlayer tsplr in TShock.Players)
 								{
 									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
-										tsplr.SendRaptorRegionDelete(regionName);
+										tsplr.SendRaptorRegionDeletion(regionName);
 								}
 							}
 							else
