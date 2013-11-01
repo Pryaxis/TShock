@@ -960,9 +960,9 @@ namespace TShockAPI
 		}
 		/// <summary>
 		/// Sends a region deletion to the player.
-		/// <param name="region">The region.</param>
+		/// <param name="regionName">The region name.</param>
 		/// </summary>
-		public void SendRaptorRegionDelete(Region region)
+		public void SendRaptorRegionDelete(string regionName)
 		{
 			if (!IsRaptor)
 				return;
@@ -980,7 +980,7 @@ namespace TShockAPI
 						writer.Write((byte)PacketTypes.Placeholder);
 						writer.Write((byte)RaptorPacketTypes.RegionDelete);
 
-						writer.Write(region.Name);
+						writer.Write(regionName);
 
 						length = (int)writer.BaseStream.Position;
 						writer.BaseStream.Position = 0;
@@ -1029,9 +1029,9 @@ namespace TShockAPI
 		}
 		/// <summary>
 		/// Sends a warp deletion to the player.
-		/// <param name="warp">The warp.</param>
+		/// <param name="warpName">The warp name.</param>
 		/// </summary>
-		public void SendRaptorWarpDeletion(Warp warp)
+		public void SendRaptorWarpDeletion(string warpName)
 		{
 			if (!IsRaptor)
 				return;
@@ -1049,7 +1049,7 @@ namespace TShockAPI
 						writer.Write((byte)PacketTypes.Placeholder);
 						writer.Write((byte)RaptorPacketTypes.WarpDelete);
 
-						writer.Write(warp.WarpName);
+						writer.Write(warpName);
 
 						length = (int)writer.BaseStream.Position;
 						writer.BaseStream.Position = 0;

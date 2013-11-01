@@ -2058,7 +2058,7 @@ namespace TShockAPI
                         args.Player.SendSuccessMessage("Warp added: " + warpName);
 						foreach (TSPlayer tsplr in TShock.Players)
 						{
-							if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
+							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
 								tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
 						}
                     }
@@ -2082,8 +2082,8 @@ namespace TShockAPI
 						args.Player.SendSuccessMessage("Warp deleted: " + warpName);
 						foreach (TSPlayer tsplr in TShock.Players)
 						{
-							if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
-								tsplr.SendRaptorWarpDeletion(TShock.Warps.FindWarp(warpName));
+							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
+								tsplr.SendRaptorWarpDeletion(warpName);
 						}
 					}
 					else
@@ -3032,7 +3032,7 @@ namespace TShockAPI
 
 									foreach (TSPlayer tsplr in TShock.Players)
 									{
-										if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+										if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
 											tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(regionName));
 									}
 								}
@@ -3086,8 +3086,8 @@ namespace TShockAPI
 								args.Player.SendInfoMessage("Deleted region \"{0}\".", regionName);
 								foreach (TSPlayer tsplr in TShock.Players)
 								{
-									if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
-										tsplr.SendRaptorRegionDelete(TShock.Regions.GetRegionByName(regionName));
+									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+										tsplr.SendRaptorRegionDelete(regionName);
 								}
 							}
 							else
@@ -3442,7 +3442,7 @@ namespace TShockAPI
 								args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
 								foreach (TSPlayer tsplr in TShock.Players)
 								{
-									if (tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
+									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
 										tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(args.Parameters[1]));
 								}
 								TShock.Regions.ReloadAllRegions();

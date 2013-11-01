@@ -3410,7 +3410,7 @@ namespace TShockAPI
 						int height = args.Data.ReadInt32();
 						string regionName = args.Data.ReadString();
 
-						if (TShock.Regions.GetRegionByName(regionName).Area == Rectangle.Empty)
+						if (TShock.Regions.GetRegionByName(regionName) == null)
 						{
 							TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName, Main.worldID.ToString());
 							Log.Info("{0} added region \"{1}\".", args.Player.UserAccountName, regionName);
