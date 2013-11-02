@@ -715,13 +715,18 @@ namespace TShockAPI
 			/// Y location of said chest
 			/// </summary>
 			public int Y { get; set; }
+
+            /// <summary>
+            /// The player opening the chest
+            /// </summary>
+            public TSPlayer Player { get; set; }
 		}
 		/// <summary>
 		/// ChestOpen - Called when any chest is opened
 		/// </summary>
 		public static HandlerList<ChestOpenEventArgs> ChestOpen;
 
-		private static bool OnChestOpen(int x, int y)
+		private static bool OnChestOpen(int x, int y, TSPlayer player)
 		{
 			if (ChestOpen == null)
 				return false;
@@ -730,6 +735,7 @@ namespace TShockAPI
 			{
 				X = x,
 				Y = y,
+                Player = player,
 			};
 			ChestOpen.Invoke(null, args);
 			return args.Handled;
@@ -2752,7 +2758,7 @@ namespace TShockAPI
 			var x = args.Data.ReadInt32();
 			var y = args.Data.ReadInt32();
 
-			if (OnChestOpen(x, y))
+			if (OnChestOpen(x, y, args.Player))
 				return true;
 
 			if (TShock.CheckIgnores(args.Player))
