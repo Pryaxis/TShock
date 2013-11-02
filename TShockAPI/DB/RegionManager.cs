@@ -432,29 +432,11 @@ namespace TShockAPI.DB
 		{
 			try
 			{
+				Region region = Regions.First(r => String.Equals(regionName, r.Name, StringComparison.OrdinalIgnoreCase));
+				region.Area = new Rectangle(x, y, width, height);
+
 				if (database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID = @5",
 					x, y, width, height, regionName, Main.worldID.ToString()) > 0)
-					return true;
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex.ToString());
-			}
-			return false;
-		}
-		/// <summary>
-		/// Offsets a region.
-		/// </summary>
-		/// <param name="regionName">The region name.</param>
-		/// <param name="x">The X offset.</param>
-		/// <param name="y">The Y offset.</param>
-		/// <returns>Whether the operation succeeded.</returns>
-		public bool OffsetRegion(string regionName, int x, int y)
-		{
-			try
-			{
-				if (database.Query("UPDATE Regions SET X1 = X1 + @0, Y1 = Y1 + @1 WHERE RegionName = @2 AND WorldID = @3",
-					x, y, regionName, Main.worldID.ToString()) > 0)
 					return true;
 			}
 			catch (Exception ex)

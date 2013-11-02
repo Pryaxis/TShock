@@ -3454,14 +3454,14 @@ namespace TShockAPI
 						bool isHidden = args.Data.ReadBoolean();
 						string warpName = args.Data.ReadString();
 
-						Warp warp = TShock.Warps.FindWarp(warpName);
-						if (warp.WarpPos == Vector2.Zero)
+						Warp warp = TShock.Warps.Find(warpName);
+						if (warp == null)
 						{
-							TShock.Warps.AddWarp(x, y, warpName, Main.worldID.ToString());
+							TShock.Warps.Add(x, y, warpName);
 							foreach (TSPlayer tsplr in TShock.Players)
 							{
 								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
-									tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
+									tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
 							}
 							Log.Info("{0} added warp \"{1}\".", args.Player.UserAccountName, warpName);
 						}
@@ -3481,7 +3481,7 @@ namespace TShockAPI
 					if (args.Player.Group.HasPermission(Permissions.managewarp))
 					{
 						string warpName = args.Data.ReadString();
-						TShock.Warps.RemoveWarp(warpName);
+						TShock.Warps.Remove(warpName);
 						foreach (TSPlayer tsplr in TShock.Players)
 						{
 							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)

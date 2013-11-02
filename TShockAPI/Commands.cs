@@ -2032,8 +2032,9 @@ namespace TShockAPI
 				int pageNumber;
 				if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 					return;
-				IEnumerable<string> warpNames = from warp in TShock.Warps.ListAllPublicWarps(Main.worldID.ToString())
-												select warp.WarpName;
+				IEnumerable<string> warpNames = from warp in TShock.Warps.Warps
+												where !warp.IsPrivate
+												select warp.Name;
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(warpNames),
 					new PaginationTools.Settings
 					{
@@ -2053,13 +2054,13 @@ namespace TShockAPI
                     {
                         args.Player.SendErrorMessage("Name reserved, use a different name.");
                     }
-                    else if (TShock.Warps.AddWarp(args.Player.TileX, args.Player.TileY, warpName, Main.worldID.ToString()))
+                    else if (TShock.Warps.Add(args.Player.TileX, args.Player.TileY, warpName))
                     {
                         args.Player.SendSuccessMessage("Warp added: " + warpName);
 						foreach (TSPlayer tsplr in TShock.Players)
 						{
 							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
-								tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
+								tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
 						}
                     }
                     else
@@ -2077,7 +2078,7 @@ namespace TShockAPI
                 if (args.Parameters.Count == 2)
                 {
                     string warpName = args.Parameters[1];
-					if (TShock.Warps.RemoveWarp(warpName))
+					if (TShock.Warps.Remove(warpName))
 					{
 						args.Player.SendSuccessMessage("Warp deleted: " + warpName);
 						foreach (TSPlayer tsplr in TShock.Players)
@@ -2139,30 +2140,31 @@ namespace TShockAPI
 					TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
                     return;
                 }
+
                 string warpName = args.Parameters[2];
-                var warp = TShock.Warps.FindWarp(warpName);
+                var warp = TShock.Warps.Find(warpName);
                 var plr = foundplr[0];
-                if (warp.WarpPos != Vector2.Zero)
-                {
-                    if (plr.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 ))
-                    {
-                        plr.SendSuccessMessage(string.Format("{0} warped you to {1}.", args.Player.Name, warpName));
-                        args.Player.SendSuccessMessage(string.Format("You warped {0} to {1}.", plr.Name, warpName));
-                    }
-                }
-                else
-                {
-                    args.Player.SendErrorMessage("Specified warp not found.");
-                }
+				if (warp.Position != Point.Zero)
+				{
+					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
+					{
+						plr.SendSuccessMessage(String.Format("{0} warped you to {1}.", args.Player.Name, warpName));
+						args.Player.SendSuccessMessage(String.Format("You warped {0} to {1}.", plr.Name, warpName));
+					}
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Specified warp not found.");
+				}
                 #endregion
             }
             else
             {
                 string warpName = String.Join(" ", args.Parameters);
-                var warp = TShock.Warps.FindWarp(warpName);
-                if (warp.WarpPos != Vector2.Zero)
+                var warp = TShock.Warps.Find(warpName);
+                if (warp.Position != Point.Zero)
                 {
-                    if (args.Player.Teleport((int)warp.WarpPos.X*16, (int)warp.WarpPos.Y*16 ))
+					if (args.Player.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
                         args.Player.SendSuccessMessage("Warped to " + warpName + ".");
                 }
                 else

@@ -1013,10 +1013,10 @@ namespace TShockAPI
 						writer.Write((byte)PacketTypes.Placeholder);
 						writer.Write((byte)RaptorPacketTypes.Warp);
 
-						writer.Write(warp.WarpPos.X);
-						writer.Write(warp.WarpPos.Y);
-						writer.Write(warp.Private != "0");
-						writer.Write(warp.WarpName);
+						writer.Write(warp.Position.X);
+						writer.Write(warp.Position.Y);
+						writer.Write(warp.IsPrivate);
+						writer.Write(warp.Name);
 
 						length = (int)writer.BaseStream.Position;
 						writer.BaseStream.Position = 0;
