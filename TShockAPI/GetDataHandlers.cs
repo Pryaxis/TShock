@@ -716,10 +716,10 @@ namespace TShockAPI
 			/// </summary>
 			public int Y { get; set; }
 
-            /// <summary>
-            /// The player opening the chest
-            /// </summary>
-            public TSPlayer Player { get; set; }
+			/// <summary>
+			/// The player opening the chest
+			/// </summary>
+			public TSPlayer Player { get; set; }
 		}
 		/// <summary>
 		/// ChestOpen - Called when any chest is opened
@@ -735,7 +735,7 @@ namespace TShockAPI
 			{
 				X = x,
 				Y = y,
-                Player = player,
+				Player = player,
 			};
 			ChestOpen.Invoke(null, args);
 			return args.Handled;
