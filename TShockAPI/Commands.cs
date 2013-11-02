@@ -2162,7 +2162,7 @@ namespace TShockAPI
             {
                 string warpName = String.Join(" ", args.Parameters);
                 var warp = TShock.Warps.Find(warpName);
-                if (warp.Position != Point.Zero)
+                if (warp != null)
                 {
 					if (args.Player.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
                         args.Player.SendSuccessMessage("Warped to " + warpName + ".");
