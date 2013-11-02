@@ -32,7 +32,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// The list of warps.
 		/// </summary>
-		public List<Warp> Warps;
+		public List<Warp> Warps = new List<Warp>();
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		public WarpManager(IDbConnection db)
