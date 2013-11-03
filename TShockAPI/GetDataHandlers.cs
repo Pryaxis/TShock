@@ -24,9 +24,10 @@ using System.IO;
 using System.IO.Streams;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TShockAPI.DB;
-using Terraria;
 using TShockAPI.Net;
+using Terraria;
 
 namespace TShockAPI
 {
@@ -3400,6 +3401,24 @@ namespace TShockAPI
 			{
 				case RaptorPacketTypes.Acknowledge:
 					args.Player.IsRaptor = true;
+					// Send these if the player was logged in before this packet arrives
+					if (args.Player.IsLoggedIn)
+					{
+						Task.Factory.StartNew(() =>
+						{
+							args.Player.SendRaptorPermissions();
+							if (args.Player.Group.HasPermission(Permissions.manageregion))
+							{
+								for (int i = 0; i < TShock.Regions.Regions.Count; i++)
+									args.Player.SendRaptorRegion(TShock.Regions.Regions[i]);
+							}
+							if (args.Player.Group.HasPermission(Permissions.managewarp))
+							{
+								for (int i = 0; i < TShock.Warps.Warps.Count; i++)
+									args.Player.SendRaptorWarp(TShock.Warps.Warps[i]);
+							}
+						});
+					}
 					return true;
 				case RaptorPacketTypes.Region:
 					if (args.Player.Group.HasPermission(Permissions.manageregion))

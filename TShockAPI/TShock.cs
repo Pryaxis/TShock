@@ -1123,7 +1123,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38 && (int) type != 21 && (int) type != 67)
+				(int) type != 38 && (int) type != 21)
 			{
 				e.Handled = true;
 				return;
@@ -1131,15 +1131,8 @@ namespace TShockAPI
 
 			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
 			{
-				try
-				{
-					if (GetDataHandlers.HandlerGetData(type, player, data))
-						e.Handled = true;
-				}
-				catch (Exception ex)
-				{
-					Log.Error(ex.ToString());
-				}
+				// Exceptions are already handled
+				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
 			}
 		}
 
