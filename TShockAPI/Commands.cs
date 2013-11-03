@@ -2103,7 +2103,7 @@ namespace TShockAPI
                     bool state = false;
                     if (Boolean.TryParse(args.Parameters[2], out state))
                     {
-                        if (TShock.Warps.HideWarp(args.Parameters[1], state))
+                        if (TShock.Warps.Hide(args.Parameters[1], state))
                         {
                             if (state)
                                 args.Player.SendSuccessMessage("Warp " + warpName + " is now private.");
@@ -3447,7 +3447,7 @@ namespace TShockAPI
 									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
 										tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(args.Parameters[1]));
 								}
-								TShock.Regions.ReloadAllRegions();
+								TShock.Regions.Reload();
 							}
 							else
 								args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /region resize <region> <u/d/l/r> <amount>");

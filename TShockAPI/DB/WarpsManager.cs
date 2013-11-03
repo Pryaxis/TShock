@@ -35,7 +35,7 @@ namespace TShockAPI.DB
 		public List<Warp> Warps = new List<Warp>();
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-		public WarpManager(IDbConnection db)
+		internal WarpManager(IDbConnection db)
 		{
 			database = db;
 
@@ -51,8 +51,6 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			ReloadWarps();
 		}
 
 		/// <summary>
@@ -95,7 +93,7 @@ namespace TShockAPI.DB
 					Warps.Add(new Warp(
 						new Point(reader.Get<int>("X"), reader.Get<int>("Y")),
 						reader.Get<string>("WarpName"),
-						reader.Get<string>("Private") != "0"));
+						(reader.Get<string>("Private") ?? "0") != "0"));
 				}
 			}
 		}
@@ -164,7 +162,7 @@ namespace TShockAPI.DB
 		/// <param name="warpName">The warp name.</param>
 		/// <param name="state">The state.</param>
 		/// <returns>Whether the operation suceeded.</returns>
-		public bool HideWarp(string warpName, bool state)
+		public bool Hide(string warpName, bool state)
 		{
 			try
 			{

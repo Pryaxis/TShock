@@ -27,11 +27,14 @@ namespace TShockAPI.DB
 {
 	public class RegionManager
 	{
+		/// <summary>
+		/// The list of regions.
+		/// </summary>
 		public List<Region> Regions = new List<Region>();
 
 		private IDbConnection database;
 
-		public RegionManager(IDbConnection db)
+		internal RegionManager(IDbConnection db)
 		{
 			database = db;
 			var table = new SqlTable("Regions",
@@ -52,11 +55,12 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			ReloadAllRegions();
 		}
 
-		public void ReloadAllRegions()
+		/// <summary>
+		/// Reloads all regions.
+		/// </summary>
+		public void Reload()
 		{
 			try
 			{

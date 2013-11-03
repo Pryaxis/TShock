@@ -612,12 +612,11 @@ namespace TShockAPI
 				AuthToken = 0;
 			}
 
-            Regions.ReloadAllRegions();
+            Regions.Reload();
+			Warps.ReloadWarps();
 
 			Lighting.lightMode = 2;
 			FixChestStacks();
-
-            
 		}
 
 		private void FixChestStacks()
