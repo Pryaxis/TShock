@@ -3468,9 +3468,8 @@ namespace TShockAPI
 				case RaptorPacketTypes.Warp:
 					if (args.Player.Group.HasPermission(Permissions.managewarp))
 					{
-						int x = (int)args.Data.ReadSingle();
-						int y = (int)args.Data.ReadSingle();
-						bool isHidden = args.Data.ReadBoolean();
+						int x = args.Data.ReadInt32();
+						int y = args.Data.ReadInt32();
 						string warpName = args.Data.ReadString();
 
 						Warp warp = TShock.Warps.Find(warpName);

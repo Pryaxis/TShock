@@ -1015,7 +1015,6 @@ namespace TShockAPI
 
 						writer.Write(warp.Position.X);
 						writer.Write(warp.Position.Y);
-						writer.Write(warp.IsPrivate);
 						writer.Write(warp.Name);
 
 						length = (int)writer.BaseStream.Position;
