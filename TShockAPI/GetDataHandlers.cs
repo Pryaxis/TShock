@@ -1379,7 +1379,7 @@ namespace TShockAPI
 			var male = args.Data.ReadBoolean();
 			args.Data.Position += 21;
 			var difficulty = args.Data.ReadInt8();
-			string name = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+			string name = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position)));
 
 			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
 			{
@@ -1487,7 +1487,7 @@ namespace TShockAPI
 			if (!args.Player.RequiresPassword)
 				return true;
 
-			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position)));
 
             if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
                 return true;
@@ -2518,7 +2518,7 @@ namespace TShockAPI
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			int textlength = (int)(args.Data.Length - args.Data.Position - 1);
+			int textlength = (int)(args.Data.Length - args.Data.Position);
 			string deathtext = "";
 			if (textlength > 0)
 			{
@@ -3006,7 +3006,7 @@ namespace TShockAPI
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;
 
-			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
+			int textlength = (int) (args.Data.Length - args.Data.Position);
 			string deathtext = "";
 			if (textlength > 0)
 			{

@@ -1115,7 +1115,7 @@ namespace TShockAPI
 				return;
 			}
 
-			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
 			{
 				try
 				{
