@@ -1885,10 +1885,13 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 				{
 					if (action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle && ((editData == 4 && style > 11) ||
-						(editData == 13 && style > 4) || (editData == 15 && style > 23) || (editData == 21 && style > 22) ||
+						(editData == 13 && style > 4) || (editData == 15 && style > 25) || (editData == 21 && style > 22) ||
 						(editData == 82 && style > 5) || (editData == 91 && style > 108) || (editData == 105 && style > 49) ||
 						(editData == 135 && style > 6) || (editData == 139 && style > 27) || (editData == 144 && style > 2) ||
-						(editData == 149 && style > 2) || (editData == 137 && style > 4) || (editData == 79 && style > 12)))
+						(editData == 149 && style > 2) || (editData == 137 && style > 4) || (editData == 79 && style > 12) ||
+						(editData == 10 && style > 25) || (editData == 14 && style > 22) || (editData == 18 && style > 17) ||
+						(editData == 19 && style > 16) || (editData == 34 && style > 6) || (editData == 42 && style > 8) ||
+						(editData == 96 && style > 1)))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
