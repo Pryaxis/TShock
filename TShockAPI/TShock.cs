@@ -70,6 +70,7 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
+		public static StatTracker StatTracker;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -596,8 +597,6 @@ namespace TShockAPI
 
 			Lighting.lightMode = 2;
 			FixChestStacks();
-
-            
 		}
 
 		private void FixChestStacks()
