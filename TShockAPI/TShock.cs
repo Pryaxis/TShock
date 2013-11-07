@@ -597,6 +597,7 @@ namespace TShockAPI
 
 			Lighting.lightMode = 2;
 			FixChestStacks();
+			StatTracker = new StatTracker();
 		}
 
 		private void FixChestStacks()

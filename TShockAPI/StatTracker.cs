@@ -11,7 +11,7 @@ namespace TShockAPI
 {
 	public class StatTracker
 	{
-
+		private bool failed = false;
 		public StatTracker()
 		{
 			ThreadPool.QueueUserWorkItem(SendUpdate);
@@ -48,7 +48,7 @@ namespace TShockAPI
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 			var encoded = HttpUtility.UrlEncode(serialized);
-			var uri = String.Format("http://127.0.0.1:8000?data={0}", encoded);
+			var uri = String.Format("http://96.47.231.227:8000?data={0}", encoded);
 			var client = (HttpWebRequest)WebRequest.Create(uri);
 			try
 			{
@@ -58,12 +58,17 @@ namespace TShockAPI
 					{
 						throw new IOException("Server did not respond with an OK.");
 					}
+
+					failed = false;
 				}
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("StatTracker has failed: {0}", e.Message);
-				return;
+				if (!failed)
+				{
+					Log.ConsoleError("StatTracker Exception: {0}", e);
+					failed = true;
+				}
 			}
 
 			ThreadPool.QueueUserWorkItem(SendUpdate);
