@@ -2795,6 +2795,12 @@ namespace TShockAPI
 
 			args.Player.ActiveChest = id;
 
+			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
+			{
+				args.Player.SendData(PacketTypes.ChestOpen, "", -1);
+				return true;
+			}
+
 			return false;
 		}
 
