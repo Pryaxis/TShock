@@ -276,6 +276,8 @@ namespace TShockAPI
 
 		[Description("Forces your world to be in Halloween mode regardless of the data.")] public bool ForceHalloween = false;
 
+		[Description("Allows anyone to break grass, pots, etc.")] public bool AllowCutTilesAndBreakables = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>

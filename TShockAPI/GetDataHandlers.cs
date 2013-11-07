@@ -1948,6 +1948,11 @@ namespace TShockAPI
 					}
 				}
 
+				if (TShock.Config.AllowCutTilesAndBreakables && (Main.tileCut[Main.tile[tileX, tileY].type] || breakableTiles.Contains(Main.tile[tileX, tileY].type)))
+				{
+					return false;
+				}
+
 				if (TShock.CheckIgnores(args.Player))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
