@@ -1890,7 +1890,7 @@ namespace TShockAPI
 						(editData == 135 && style > 6) || (editData == 139 && style > 27) || (editData == 144 && style > 2) ||
 						(editData == 149 && style > 2) || (editData == 137 && style > 4) || (editData == 79 && style > 12) ||
 						(editData == 10 && style > 25) || (editData == 14 && style > 22) || (editData == 18 && style > 17) ||
-						(editData == 19 && style > 16) || (editData == 34 && style > 6) || (editData == 42 && style > 8) ||
+						(editData == 19 && style > 16) || (editData == 34 && style > 6) || (editData == 42 && style > 10) ||
 						(editData == 96 && style > 1)))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
