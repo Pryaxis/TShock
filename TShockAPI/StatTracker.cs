@@ -11,10 +11,20 @@ namespace TShockAPI
 {
 	public class StatTracker
 	{
-		private bool failed = false;
+		private bool failed;
+		private bool initialized;
 		public StatTracker()
 		{
-			ThreadPool.QueueUserWorkItem(SendUpdate);
+			
+		}
+
+		public void Initialize()
+		{
+			if (!initialized)
+			{
+				initialized = true;
+				ThreadPool.QueueUserWorkItem(SendUpdate);
+			}
 		}
 
 		private HttpWebResponse GetResponseNoException(HttpWebRequest req)
@@ -51,6 +61,7 @@ namespace TShockAPI
 			var encoded = HttpUtility.UrlEncode(serialized);
 			var uri = String.Format("http://96.47.231.227:8000?data={0}", encoded);
 			var client = (HttpWebRequest)WebRequest.Create(uri);
+			client.Timeout = 5000;
 			try
 			{
 				using (var resp = GetResponseNoException(client))

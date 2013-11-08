@@ -70,7 +70,7 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
-		public static StatTracker StatTracker;
+		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -599,7 +599,7 @@ namespace TShockAPI
 
 			ComputeMaxStyles();
 			FixChestStacks();
-			StatTracker = new StatTracker();
+			StatTracker.Initialize();
 		}
 
 		private void ComputeMaxStyles()
