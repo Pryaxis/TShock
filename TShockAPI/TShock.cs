@@ -593,6 +593,8 @@ namespace TShockAPI
 				AuthToken = 0;
 			}
 
+			Regions.ReloadAllRegions();
+
 			Lighting.lightMode = 2;
 
 			ComputeMaxStyles();
