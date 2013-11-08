@@ -1766,6 +1766,10 @@ namespace TShockAPI
 		/// The maximum place styles for each tile.
 		/// </summary>
 		public static Dictionary<int, int> MaxPlaceStyles = new Dictionary<int, int>();
+		/// <summary>
+		/// These projectiles create tiles on death.
+		/// </summary>
+		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int> {{42, 53}, {65, 112}, {68, 116}};
 
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
@@ -1863,6 +1867,7 @@ namespace TShockAPI
 				}
 
 				Item selectedItem = args.Player.SelectedItem;
+				int lastKilledProj = args.Player.LastKilledProjectile;
 				if (action == EditAction.KillTile && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
@@ -1893,6 +1898,10 @@ namespace TShockAPI
 						return true;
 					}
 				}
+				else if (action == EditAction.PlaceTile && (projectileCreatesTile.ContainsKey(lastKilledProj) && editData == projectileCreatesTile[lastKilledProj]))
+				{
+					args.Player.LastKilledProjectile = 0;
+				}
 				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 				{
 					if (action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle &&
@@ -1901,6 +1910,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
+
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
 					if ((editData != 127 && editData != 213) && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
@@ -2525,6 +2535,8 @@ namespace TShockAPI
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
+
+			args.Player.LastKilledProjectile = type;
 
 			return false;
 		}

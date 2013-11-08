@@ -301,6 +301,11 @@ namespace TShockAPI
 		/// Players controls are inverted if using SSC
 		/// </summary>
 		public bool Confused = false;
+
+		/// <summary>
+		/// The last projectile type this player tried to kill.
+		/// </summary>
+		public int LastKilledProjectile = 0;
 		
         /// <summary>
         /// Whether the player is a real, human, player on the server.
