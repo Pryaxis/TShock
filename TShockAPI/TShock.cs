@@ -596,7 +596,6 @@ namespace TShockAPI
 			Lighting.lightMode = 2;
 
 			ComputeMaxStyles();
-
 			FixChestStacks();
 			StatTracker = new StatTracker();
 		}
@@ -607,13 +606,16 @@ namespace TShockAPI
 			for (int i = 0; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
+				if (item.placeStyle > 0)
 				{
-					if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
-						GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
+					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
+					{
+						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
+							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
+					}
+					else
+						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
 				}
-				else
-					GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
 			}
 		}
 		private void FixChestStacks()

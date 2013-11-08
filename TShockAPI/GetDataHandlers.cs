@@ -1742,7 +1742,14 @@ namespace TShockAPI
 			KillTileNoItem,
 			PlaceWire,
 			KillWire,
-			PoundTile
+			PoundTile,
+			PlaceActuator,
+			KillActuator,
+			PlaceWire2,
+			KillWire2,
+			PlaceWire3,
+			KillWire3,
+			SlopeTile
 		}
 		public enum EditType
 		{
@@ -1927,19 +1934,38 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (action == EditAction.PlaceWire)
+				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
-					// If they aren't selecting the wrench, they're hacking.
-					if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 509)
+					// If they aren't selecting a wrench, they're hacking.
+					if (selectedItem.type != 509 && selectedItem.type != 850 && selectedItem.type != 851)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
 					}
 				}
-				else if (action == EditAction.KillWire)
+				else if (action == EditAction.KillActuator || action == EditAction.KillWire ||
+					action == EditAction.KillWire2 || action == EditAction.KillWire3)
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
-					if (args.TPlayer.inventory[args.TPlayer.selectedItem].type != 510)
+					if (selectedItem.type != 510)
+					{
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						return true;
+					}
+				}
+				else if (action == EditAction.PlaceActuator)
+				{
+					// If they aren't selecting the actuator, they're hacking.
+					if (selectedItem.type != 849)
+					{
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						return true;
+					}
+				}
+				else if (action == EditAction.PoundTile || action == EditAction.SlopeTile)
+				{
+					// If they aren't selecting a hammer, they're hacking.
+					if (selectedItem.hammer == 0)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
