@@ -40,10 +40,11 @@ namespace TShockAPI
 				port = Terraria.Netplay.serverPort,
 				currentPlayers = TShock.Utils.ActivePlayers(),
 				maxPlayers = TShock.Config.MaxSlots,
-				systemRam = 2097152,
-				systemCPUClock = 2516582,
+				systemRam = 0,
+				systemCPUClock = 0,
 				version = TShock.VersionNum.ToString(),
-				terrariaVersion = Terraria.Main.versionNumber2		
+				terrariaVersion = Terraria.Main.versionNumber2,
+				mono = Terraria.Main.runningMono
 			};
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -84,5 +85,6 @@ namespace TShockAPI
 		public int systemCPUClock;
 		public string version;
 		public string terrariaVersion;
+		public bool mono;
 	}
 }
