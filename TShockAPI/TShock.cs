@@ -593,13 +593,29 @@ namespace TShockAPI
 				AuthToken = 0;
 			}
 
-            Regions.ReloadAllRegions();
-
 			Lighting.lightMode = 2;
+
+			ComputeMaxStyles();
+
 			FixChestStacks();
 			StatTracker = new StatTracker();
 		}
 
+		private void ComputeMaxStyles()
+		{
+			var item = new Item();
+			for (int i = 0; i < Main.maxItemTypes; i++)
+			{
+				item.netDefaults(i);
+				if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
+				{
+					if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
+						GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
+				}
+				else
+					GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
+			}
+		}
 		private void FixChestStacks()
 		{
             if (Config.IgnoreChestStacksOnLoad)
