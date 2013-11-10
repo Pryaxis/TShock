@@ -18,7 +18,8 @@ http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
 tshock_symbols = "TShockAPI.dll.mdb"
 
-terraria_bin = os.path.join(cur_wd, "TerrariaServerBins", terraria_bin_name)
+terraria_release_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Release", terraria_bin_name)
+terraria_debug_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Debug", terraria_bin_name)
 sql_dep = os.path.join(cur_wd, "SqlBins")
 http_bin = os.path.join(cur_wd, "HttpBins", http_bin_name)
 json_bin = os.path.join(cur_wd, "TShockAPI", json_bin_name)
@@ -38,10 +39,12 @@ def copy_dependencies():
     shutil.copy(os.path.join(sql_dep, f), release_dir)
   
 def copy_debug_files():
+  shutil.copy(terraria_debug_bin, release_dir)
   shutil.copy(os.path.join(debug_folder, tshock_bin_name), release_dir)
   shutil.copy(os.path.join(debug_folder, tshock_symbols), release_dir)
 
 def copy_release_files():
+  shutil.copy(terraria_release_bin, release_dir)
   shutil.copy(release_bin, release_dir)
   shutil.copy(release_bin, release_dir)
 
@@ -62,6 +65,7 @@ def package_release():
   zip.write(tshock_bin_name, os.path.join("ServerPlugins", tshock_bin_name))
   zip.close()
   os.remove(tshock_bin_name)
+  os.remove(terraria_bin_name)
   os.chdir(cur_wd)
 
 def package_debug():
@@ -72,11 +76,11 @@ def package_debug():
   zip.close()
   os.remove(tshock_bin_name)
   os.remove(tshock_symbols)
+  os.remove(terraria_bin_name)
   os.chdir(cur_wd)
 
 def delete_files():
   os.chdir(release_dir)
-  os.remove(terraria_bin_name)
   for f in sql_bins_names:
     os.remove(f)
   os.remove(sqlite_dep)
@@ -84,23 +88,23 @@ def delete_files():
   os.remove(http_bin_name)
   os.chdir(cur_wd)
 
-def update_terraria_exe():
-  url = urllib2.urlopen('http://direct.tshock.co:8085/browse/TERRA-TSAPI/latestSuccessful/artifact/JOB1/Server-Bin/TerrariaServer.exe')
-  localFile = open('TerrariaServer.exe', 'w')
-  localFile.write(url.read())
-  localFile.close()
-  shutil.copy(terraria_bin_name, terraria_bin)
-  os.remove(terraria_bin_name)
+def update_terraria_source():
+  subprocess.check_call('git submodule init')
+  subprocess.check_call('git submodule update')
 
 def build_software():
   release_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
   debug_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
   release_proc.wait()
   debug_proc.wait()
-
+  if (release_proc.returncode != 0):
+    raise CalledProcessError(release_proc.returncode)
+  if (debug_proc.returncode != 0):
+    raise CalledProcessError(debug_proc.returncode)
+    
 if __name__ == '__main__':
   create_release_folder()
-  update_terraria_exe()
+  update_terraria_source()
   copy_dependencies()
   build_software()
   package_release()
