@@ -734,7 +734,7 @@ namespace TShockAPI
 
 					foo = foo.Replace("%map%", Main.worldName);
 					foo = foo.Replace("%players%", GetPlayers());
-					Regex reg = new Regex("%\\s*(?<r>\\d{0,3})\\s*,\\s*(?<g>\\d{0,3})\\s*,\\s*(?<b>\\d{0,3})\\s*%");
+					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
 					var matches = reg.Matches(foo);
 					Color c = Color.White;
 					foreach (Match match in matches)
