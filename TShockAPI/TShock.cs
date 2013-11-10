@@ -840,35 +840,41 @@ namespace TShockAPI
 		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
-        private void OnHardUpdate(HardmodeTileUpdateEventArgs args)
-        {
-            if (args.Handled)
-                return;
+		private void OnHardUpdate(HardmodeTileUpdateEventArgs args)
+		{
+			if (args.Handled)
+				return;
 
-            if (!Config.AllowCorruptionCreep && ( args.Type == 23 || args.Type == 25 || args.Type == 0 ||
-                args.Type == 112 || args.Type == 23 || args.Type == 32 ) )
-            {
-                args.Handled = true;
-                return;
-            }
+			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 203 || args.Type == 234))
+			{
+				args.Handled = true;
+				return;
+			}
 
-            if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 ) )
-            {
-                args.Handled = true;
-            }
-        }
+			if (!Config.AllowCorruptionCreep && (args.Type == 23 || args.Type == 25 || args.Type == 0 ||
+				args.Type == 112 || args.Type == 32))
+			{
+				args.Handled = true;
+				return;
+			}
 
-        private void OnStatueSpawn( StatueSpawnEventArgs args )
-        {
-            if( args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld )
-            {
-                args.Handled = true;
-            }
-            else
-            {
-                args.Handled = false;
-            }
-        }
+			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116))
+			{
+				args.Handled = true;
+			}
+		}
+
+		private void OnStatueSpawn(StatueSpawnEventArgs args)
+		{
+			if (args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld)
+			{
+				args.Handled = true;
+			}
+			else
+			{
+				args.Handled = false;
+			}
+		}
 
 		private void OnConnect(ConnectEventArgs args)
 		{
