@@ -20,8 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using Terraria;
+using TShockAPI.DB;
 using TShockAPI.Net;
 
 namespace TShockAPI
@@ -37,6 +39,11 @@ namespace TShockAPI
         /// This player represents all the players.
         /// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
+
+		/// <summary>
+		/// Gets whether the player is using Raptor.
+		/// </summary>
+		public bool IsRaptor { get; internal set; }
 
         /// <summary>
         /// The amount of tiles that the player has killed in the last second.
@@ -885,6 +892,177 @@ namespace TShockAPI
 				return false;
 
 			return TShock.SendBytes(Netplay.serverSock[Index], data);
+		}
+
+		/// <summary>
+		/// Sends Raptor permissions to the player.
+		/// </summary>
+		public void SendRaptorPermissions()
+		{
+			if (!IsRaptor)
+				return;
+
+			lock (NetMessage.buffer[Index].writeBuffer)
+			{
+				int length = 0;
+
+				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
+				{
+					using (var writer = new BinaryWriter(ms))
+					{
+						writer.BaseStream.Position = 4;
+
+						writer.Write((byte)PacketTypes.Placeholder);
+						writer.Write((byte)RaptorPacketTypes.Permissions);
+
+						writer.Write(String.Join(",", Group.TotalPermissions.ToArray()));
+
+						length = (int)writer.BaseStream.Position;
+						writer.BaseStream.Position = 0;
+						writer.Write(length - 4);
+					}
+				}
+
+				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
+			}
+		}
+		/// <summary>
+		/// Sends a region to the player.
+		/// <param name="region">The region.</param>
+		/// </summary>
+		public void SendRaptorRegion(Region region)
+		{
+			if (!IsRaptor)
+				return;
+
+			lock (NetMessage.buffer[Index].writeBuffer)
+			{
+				int length = 0;
+
+				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
+				{
+					using (var writer = new BinaryWriter(ms))
+					{
+						writer.BaseStream.Position = 4;
+
+						writer.Write((byte)PacketTypes.Placeholder);
+						writer.Write((byte)RaptorPacketTypes.Region);
+
+						writer.Write(region.Area.X);
+						writer.Write(region.Area.Y);
+						writer.Write(region.Area.Width);
+						writer.Write(region.Area.Height);
+						writer.Write(region.Name);
+
+						length = (int)writer.BaseStream.Position;
+						writer.BaseStream.Position = 0;
+						writer.Write(length - 4);
+					}
+				}
+
+				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
+			}
+		}
+		/// <summary>
+		/// Sends a region deletion to the player.
+		/// <param name="regionName">The region name.</param>
+		/// </summary>
+		public void SendRaptorRegionDeletion(string regionName)
+		{
+			if (!IsRaptor)
+				return;
+
+			lock (NetMessage.buffer[Index].writeBuffer)
+			{
+				int length = 0;
+
+				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
+				{
+					using (var writer = new BinaryWriter(ms))
+					{
+						writer.BaseStream.Position = 4;
+
+						writer.Write((byte)PacketTypes.Placeholder);
+						writer.Write((byte)RaptorPacketTypes.RegionDelete);
+
+						writer.Write(regionName);
+
+						length = (int)writer.BaseStream.Position;
+						writer.BaseStream.Position = 0;
+						writer.Write(length - 4);
+					}
+				}
+
+				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
+			}
+		}
+		/// <summary>
+		/// Sends a warp to the player.
+		/// <param name="warp">The warp.</param>
+		/// </summary>
+		public void SendRaptorWarp(Warp warp)
+		{
+			if (!IsRaptor)
+				return;
+
+			lock (NetMessage.buffer[Index].writeBuffer)
+			{
+				int length = 0;
+
+				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
+				{
+					using (var writer = new BinaryWriter(ms))
+					{
+						writer.BaseStream.Position = 4;
+
+						writer.Write((byte)PacketTypes.Placeholder);
+						writer.Write((byte)RaptorPacketTypes.Warp);
+
+						writer.Write(warp.Position.X);
+						writer.Write(warp.Position.Y);
+						writer.Write(warp.Name);
+
+						length = (int)writer.BaseStream.Position;
+						writer.BaseStream.Position = 0;
+						writer.Write(length - 4);
+					}
+				}
+
+				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
+			}
+		}
+		/// <summary>
+		/// Sends a warp deletion to the player.
+		/// <param name="warpName">The warp name.</param>
+		/// </summary>
+		public void SendRaptorWarpDeletion(string warpName)
+		{
+			if (!IsRaptor)
+				return;
+
+			lock (NetMessage.buffer[Index].writeBuffer)
+			{
+				int length = 0;
+
+				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
+				{
+					using (var writer = new BinaryWriter(ms))
+					{
+						writer.BaseStream.Position = 4;
+
+						writer.Write((byte)PacketTypes.Placeholder);
+						writer.Write((byte)RaptorPacketTypes.WarpDelete);
+
+						writer.Write(warpName);
+
+						length = (int)writer.BaseStream.Position;
+						writer.BaseStream.Position = 0;
+						writer.Write(length - 4);
+					}
+				}
+
+				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
+			}
 		}
 
         /// <summary>

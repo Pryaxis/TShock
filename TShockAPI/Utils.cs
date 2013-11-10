@@ -592,7 +592,7 @@ namespace TShockAPI
 			FileTools.SetupConfig();
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
-			TShock.Regions.ReloadAllRegions();
+			TShock.Regions.Reload();
 			TShock.Itembans.UpdateItemBans();
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}

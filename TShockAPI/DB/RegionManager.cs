@@ -27,11 +27,14 @@ namespace TShockAPI.DB
 {
 	public class RegionManager
 	{
+		/// <summary>
+		/// The list of regions.
+		/// </summary>
 		public List<Region> Regions = new List<Region>();
 
 		private IDbConnection database;
 
-		public RegionManager(IDbConnection db)
+		internal RegionManager(IDbConnection db)
 		{
 			database = db;
 			var table = new SqlTable("Regions",
@@ -52,11 +55,12 @@ namespace TShockAPI.DB
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
-
-			ReloadAllRegions();
 		}
 
-		public void ReloadAllRegions()
+		/// <summary>
+		/// Reloads all regions.
+		/// </summary>
+		public void Reload()
 		{
 			try
 			{
@@ -411,6 +415,33 @@ namespace TShockAPI.DB
 						r.setAllowedIDs(mergedIDs);
 				}
 				return q != 0;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Sets the position of a region.
+		/// </summary>
+		/// <param name="regionName">The region name.</param>
+		/// <param name="x">The X position.</param>
+		/// <param name="y">The Y position.</param>
+		/// <param name="height">The height.</param>
+		/// <param name="width">The width.</param>
+		/// <returns>Whether the operation succeeded.</returns>
+		public bool PositionRegion(string regionName, int x, int y, int width, int height)
+		{
+			try
+			{
+				Region region = Regions.First(r => String.Equals(regionName, r.Name, StringComparison.OrdinalIgnoreCase));
+				region.Area = new Rectangle(x, y, width, height);
+
+				if (database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID = @5",
+					x, y, width, height, regionName, Main.worldID.ToString()) > 0)
+					return true;
 			}
 			catch (Exception ex)
 			{
