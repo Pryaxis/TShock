@@ -24,6 +24,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Terraria;
 using TShockAPI.DB;
 
@@ -717,7 +718,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="ply">TSPlayer player</param>
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
@@ -726,31 +727,28 @@ namespace TShockAPI
 			{
 				while ((foo = tr.ReadLine()) != null)
 				{
+					if (string.IsNullOrWhiteSpace(foo))
+					{
+						continue;
+					}
+
 					foo = foo.Replace("%map%", Main.worldName);
 					foo = foo.Replace("%players%", GetPlayers());
-					//foo = SanitizeString(foo);
-					if (foo.Substring(0, 1) == "%" && foo.Substring(12, 1) == "%") //Look for a beginning color code.
+					Regex reg = new Regex("%\\s*(?<r>\\d{0,3})\\s*,\\s*(?<g>\\d{0,3})\\s*,\\s*(?<b>\\d{0,3})\\s*%");
+					var matches = reg.Matches(foo);
+					Color c = Color.White;
+					foreach (Match match in matches)
 					{
-						string possibleColor = foo.Substring(0, 13);
-						foo = foo.Remove(0, 13);
-						float[] pC = {0, 0, 0};
-						possibleColor = possibleColor.Replace("%", "");
-						string[] pCc = possibleColor.Split(',');
-						if (pCc.Length == 3)
+						byte r, g, b;
+						if (byte.TryParse(match.Groups["r"].Value, out r) &&
+							byte.TryParse(match.Groups["g"].Value, out g) &&
+							byte.TryParse(match.Groups["b"].Value, out b))
 						{
-							try
-							{
-								player.SendMessage(foo, (byte) Convert.ToInt32(pCc[0]), (byte) Convert.ToInt32(pCc[1]),
-								                   (byte) Convert.ToInt32(pCc[2]));
-								continue;
-							}
-							catch (Exception e)
-							{
-								Log.Error(e.ToString());
-							}
+							c = new Color(r, g, b);
 						}
+						foo = foo.Remove(match.Index, match.Length);
 					}
-					player.SendMessage(foo);
+					player.SendMessage(foo, c);
 				}
 			}
 		}
