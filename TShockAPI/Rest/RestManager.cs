@@ -50,7 +50,7 @@ namespace TShockAPI
 			else
 			{
 				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
-				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatus(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v3/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v3/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
 			}
