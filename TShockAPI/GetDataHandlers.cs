@@ -3082,7 +3082,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!TShock.Players[id].TPlayer.hostile && pvp)
+			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
 			{
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
