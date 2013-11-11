@@ -887,23 +887,6 @@ namespace TShockAPI
 				return;
 			}
 
-			var ipban = Bans.GetBanByIp(player.IP);
-			Ban ban = null;
-			if (ipban != null && Config.EnableIPBans)
-				ban = ipban;
-
-			if (ban != null)
-			{
-				if (!Utils.HasBanExpired(ban))
-			    {
-			        DateTime exp;
-			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
-			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
-					args.Handled = true;
-			        return;
-			    }
-			}
-
 			if (!FileTools.OnWhitelist(player.IP))
 			{
 				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
@@ -939,7 +922,9 @@ namespace TShockAPI
 			
 			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client");
+				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client.", true);
+				args.Handled = true;
+				return;
 			}
 
 			Ban ban = null;
@@ -974,7 +959,6 @@ namespace TShockAPI
 
 		private void OnLeave(LeaveEventArgs args)
 		{
-
 			var tsplr = Players[args.Who];
 			Players[args.Who] = null;
 

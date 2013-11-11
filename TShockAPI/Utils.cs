@@ -698,7 +698,7 @@ namespace TShockAPI
             bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
 
             if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) &&
-                (DateTime.Now >= exp))
+                (DateTime.UtcNow >= exp))
             {
                 if (byName)
                 {
@@ -876,6 +876,50 @@ namespace TShockAPI
 			{
 				if (Main.chest[i] == null)
 					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Attempts to parse a string as a timespan (_d_m_h_s).
+		/// </summary>
+		/// <param name="time">The time string.</param>
+		/// <param name="seconds">The seconds.</param>
+		/// <returns>Whether the string was parsed successfully.</returns>
+		public bool TryParseTime(string str, out int seconds)
+		{
+			seconds = 0;
+
+			var sb = new StringBuilder(3);
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+'))
+					sb.Append(str[i]);
+				else
+				{
+					int num;
+					if (!int.TryParse(sb.ToString(), out num))
+						return false;
+					
+					sb.Clear();
+					switch (str[i])
+					{
+						case 's':
+							seconds += num;
+							break;
+						case 'm':
+							seconds += num * 60;
+							break;
+						case 'h':
+							seconds += num * 60 * 60;
+							break;
+						case 'd':
+							seconds += num * 60 * 60 * 24;
+							break;
+						default:
+							return false;
+					}
+				}
 			}
 			return true;
 		}
