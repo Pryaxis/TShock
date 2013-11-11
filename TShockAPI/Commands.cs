@@ -1076,8 +1076,8 @@ namespace TShockAPI
 			switch (subcmd)
 			{
 				case "add":
+					#region Add ban
 					{
-						#region Add ban
 						if (args.Parameters.Count < 2)
 						{
 							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban add <player> [reason]");
@@ -1098,12 +1098,12 @@ namespace TShockAPI
 							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
 						}
-						#endregion
 					}
+					#endregion
 					return;
 				case "addip":
+					#region Add IP ban
 					{
-						#region Add IP ban
 						if (args.Parameters.Count < 2)
 						{
 							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban addip <ip> [reason]");
@@ -1116,12 +1116,12 @@ namespace TShockAPI
 											: "Manually added IP address ban.";
 						TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.UserAccountName);
 						args.Player.SendSuccessMessage("Banned IP {0}.", ip);
-						#endregion
 					}
+					#endregion
 					return;
 				case "addtemp":
+					#region Add temp ban
 					{
-						#region Add temp ban
 						if (args.Parameters.Count < 3)
 						{
 							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban addtemp <player> <time> [reason]");
@@ -1166,12 +1166,12 @@ namespace TShockAPI
 							else
 								args.Player.SendErrorMessage("Failed to ban {0}, check logs.", players[0].Name);
 						}
-						#endregion
 					}
+					#endregion
 					return;
 				case "del":
+					#region Delete ban
 					{
-						#region Delete ban
 						string plStr = args.Parameters[1];
 						Ban ban = TShock.Bans.GetBanByName(plStr, false);
 						if (ban != null)
@@ -1183,12 +1183,12 @@ namespace TShockAPI
 						}
 						else
 							args.Player.SendErrorMessage("No bans for {0} exist.", plStr);
-						#endregion
 					}
+					#endregion
 					return;
 				case "delip":
+					#region Delete IP ban
 					{
-						#region Delete IP ban
 						if (args.Parameters.Count != 2)
 						{
 							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban delip <ip>");
@@ -1206,12 +1206,12 @@ namespace TShockAPI
 						}
 						else
 							args.Player.SendErrorMessage("IP {0} is not banned.", ip);
-						#endregion
 					}
+					#endregion
 					return;
 				case "help":
+					#region Help
 					{
-						#region Help
 						int pageNumber;
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 							return;
@@ -1234,12 +1234,12 @@ namespace TShockAPI
 								FooterFormat = "Type /ban help {0} for more sub-commands."
 							}
 						);
-						#endregion
 					}
+					#endregion
 					return;
 				case "list":
+					#region List bans
 					{
-						#region List bans
 						int pageNumber;
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 						{
@@ -1259,12 +1259,12 @@ namespace TShockAPI
 								FooterFormat = "Type /ban list {0} for more.",
 								NothingToDisplayString = "There are currently no bans."
 							});
-						#endregion
 					}
+					#endregion
 					return;
 				case "listip":
+					#region List IP bans
 					{
-						#region List IP bans
 						int pageNumber;
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 						{
@@ -1284,8 +1284,8 @@ namespace TShockAPI
 								FooterFormat = "Type /ban listip {0} for more.",
 								NothingToDisplayString = "There are currently no IP bans."
 							});
-						#endregion
 					}
+					#endregion
 					return;
 				default:
 					args.Player.SendErrorMessage("Invalid subcommand! Type /ban help for more information.");
@@ -2128,14 +2128,7 @@ namespace TShockAPI
 
 		private static void Group(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0)
-			{
-				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /group <command> [arguments]");
-				args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
-				args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
-				args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
-				return;
-			}
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
 			switch (args.Parameters[0].ToLower())
 			{
@@ -2203,7 +2196,37 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				case "help":
+					#region Help
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
 
+						var lines = new List<string>
+						{
+							"add <name> <permissions...> - Adds a new group.",
+							"addperm <group> <permissions...> - Adds permissions to a group.",
+							"color <group> <rrr,ggg,bbb> - Changes a group's chat color.",
+							"del <group> - Deletes a group.",
+							"delperm <group> <permissions...> - Removes permissions from a group.",
+							"list [page] - Lists groups.",
+							"listperm <group> [page] - Lists a group's permissions.",
+							"parent <group> <parent group> - Changes a group's parent group.",
+							"prefix <group> <prefix> - Changes a group's prefix.",
+							"suffix <group> <suffix> - Changes a group's suffix."
+                        };
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Group Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /group help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
+					return;
 				case "parent":
 					#region Parent
 					{
@@ -2460,8 +2483,8 @@ namespace TShockAPI
 						int pageNumber;
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 							return;
-						IEnumerable<string> groupNames = from grp in TShock.Groups.groups
-														 select grp.Name;
+						var groupNames = from grp in TShock.Groups.groups
+										 select grp.Name;
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(groupNames),
 							new PaginationTools.Settings
 							{
@@ -2500,12 +2523,6 @@ namespace TShockAPI
 							});
 					}
 					#endregion
-					return;
-				case "help":
-					args.Player.SendInfoMessage("Syntax: /group <command> [arguments]");
-					args.Player.SendInfoMessage("Commands: add, addperm, parent, del, delperm, list, listperm");
-					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
-					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
 					return;
 			}
 		}

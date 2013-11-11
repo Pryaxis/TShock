@@ -950,6 +950,30 @@ namespace TShockAPI
 			    if (!Utils.HasBanExpired(ban))
 			    {
 			        DateTime exp;
+					if (!DateTime.TryParse(ban.Expiration, out exp))
+					{
+						player.Disconnect("You are banned forever: " + ban.Reason);
+					}
+					else
+					{
+						TimeSpan ts = exp - DateTime.UtcNow;
+						if (ts.Days > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} day{1}, {2} hour{3}: {4}",
+								ts.Days, ts.Days == 1 ? "": "s", ts.Hours, ts.Hours == 1 ? "" : "s", ban.Reason));
+						}
+						else if (ts.Hours > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} hour{1}, {2} minute{3}: {4}",
+								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+						}
+						else
+						{
+							player.Disconnect(String.Format("You are banned for {0} minute{1}: {2}",
+								ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+						}
+
+					}
 			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
 					player.Disconnect(String.Format("Banned {0}: {1}", duration, ban.Reason));
 					args.Handled = true;
