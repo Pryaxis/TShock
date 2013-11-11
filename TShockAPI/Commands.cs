@@ -618,7 +618,7 @@ namespace TShockAPI
 						sb.Clear();
 					}
 				}
-				else if (IsWhiteSpace(c))
+				else if (IsWhiteSpace(c) && !instr)
 				{
 					if (sb.Length > 0)
 					{

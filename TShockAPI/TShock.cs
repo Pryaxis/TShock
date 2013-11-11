@@ -957,14 +957,20 @@ namespace TShockAPI
 					else
 					{
 						TimeSpan ts = exp - DateTime.UtcNow;
-						if (ts.Days > 0)
+						int months = ts.Days / 30;
+						if (months > 0)
 						{
-							player.Disconnect(String.Format("You are banned for {0} day{1}, {2} hour{3}: {4}",
+							player.Disconnect(String.Format("You are banned for {0} month{1} and {2} day{3}: {4}",
+								months, months == 1 ? "" : "s", ts.Days, ts.Days == 1 ? "" : "s", ban.Reason));
+						}
+						else if (ts.Days > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} day{1} and {2} hour{3}: {4}",
 								ts.Days, ts.Days == 1 ? "": "s", ts.Hours, ts.Hours == 1 ? "" : "s", ban.Reason));
 						}
 						else if (ts.Hours > 0)
 						{
-							player.Disconnect(String.Format("You are banned for {0} hour{1}, {2} minute{3}: {4}",
+							player.Disconnect(String.Format("You are banned for {0} hour{1} and {2} minute{3}: {4}",
 								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
 						}
 						else
