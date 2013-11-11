@@ -951,7 +951,7 @@ namespace TShockAPI
 			    {
 			        DateTime exp;
 			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
-			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+					player.Disconnect(String.Format("Banned {0}: {1}", duration, ban.Reason));
 					args.Handled = true;
 			    }
 			}            

@@ -1072,16 +1072,7 @@ namespace TShockAPI
 
 		private static void Ban(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0 || args.Parameters[0].ToLower() == "help")
-			{
-				args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
-				args.Player.SendInfoMessage("Options: list, listip, clear, add, addip, del, delip");
-				args.Player.SendInfoMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]");
-				args.Player.SendInfoMessage("In addition, a reason may be provided for all new bans after the arguments.");
-				return;
-			}
-
-			string subcmd = args.Parameters[0].ToLower();
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 			switch (subcmd)
 			{
 				case "add":
@@ -1215,6 +1206,34 @@ namespace TShockAPI
 						}
 						else
 							args.Player.SendErrorMessage("IP {0} is not banned.", ip);
+						#endregion
+					}
+					return;
+				case "help":
+					{
+						#region Help
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+
+						var lines = new List<string>
+						{
+							"add <player> [reason] - Bans a player.",
+							"addip <ip> [reason] - Bans an IP.",
+							"addtemp <player> <time> [reason] - Temporarily bans a player.",
+							"del <player> - Unbans a player.",
+							"delip <ip> - Unbans an IP.",
+							"list [page] - Lists all player bans.",
+							"listip [page] - Lists all IP bans."
+                        };
+						
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Ban Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /ban help {0} for more sub-commands."
+							}
+						);
 						#endregion
 					}
 					return;
