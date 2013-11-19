@@ -2447,7 +2447,7 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-				if ((type == 100) || (type > 289 && type < 298) || (type >= 325 && type <= 328))
+				if ((type == 100) || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328))
 				{	
 					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
@@ -3189,7 +3189,6 @@ namespace TShockAPI
 
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
-
 			if (OnPlayerAnimation())
 				return true;
 
