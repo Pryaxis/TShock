@@ -1984,7 +1984,7 @@ namespace TShockAPI
 					}
 				}
 
-				if (TShock.Config.AllowCutTilesAndBreakables && breakableTiles.Contains(Main.tile[tileX, tileY].type))
+				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[Main.tile[tileX, tileY].type])
 				{
 					return false;
 				}
