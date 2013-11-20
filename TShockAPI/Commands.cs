@@ -4282,7 +4282,7 @@ namespace TShockAPI
 					else
 					{
 						var plr = players[0];
-						if (plr.InventorySlotAvailable || (item.name.Contains("Coin") && item.type != 905)  || item.type == 58 || item.type == 184)
+						if (plr.InventorySlotAvailable || (item.type > 70 && item.type < 75) || item.ammo > 0 || item.type == 58 || item.type == 184)
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
