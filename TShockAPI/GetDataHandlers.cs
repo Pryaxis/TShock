@@ -1870,7 +1870,7 @@ namespace TShockAPI
 
 				Item selectedItem = args.Player.SelectedItem;
 				int lastKilledProj = args.Player.LastKilledProjectile;
-				if (action == EditAction.KillTile && !Main.tileCut[Main.tile[tileX, tileY].type])
+				if (action == EditAction.KillTile && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
