@@ -1854,7 +1854,7 @@ namespace TShockAPI
 						args.Player.AwaitingNameParameters = null;
 					}
 
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 
@@ -1863,7 +1863,7 @@ namespace TShockAPI
 					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
 					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].Y = tileY;
 					args.Player.SendInfoMessage("Set temp point {0}.", args.Player.AwaitingTempPoint);
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Player.AwaitingTempPoint = 0;
 					return true;
 				}
@@ -1974,16 +1974,6 @@ namespace TShockAPI
 						return true;
 					}
 				}
-				else if (action == EditAction.PoundTile || action == EditAction.SlopeTile)
-				{
-					// If they aren't selecting a hammer, they're hacking.
-					if (selectedItem.hammer == 0)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-
 				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[Main.tile[tileX, tileY].type])
 				{
 					return false;
@@ -2607,14 +2597,14 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
 
 			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
 			{
 				args.Player.Disable("Reached TileLiquid threshold.");
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
 
@@ -2646,7 +2636,7 @@ namespace TShockAPI
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading lava without holding a lava bucket");
-                    args.Player.SendTileSquare(tileX, tileY);
+                    args.Player.SendTileSquare(tileX, tileY, 1);
                     return true;
                 } 
                 
@@ -2654,7 +2644,7 @@ namespace TShockAPI
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Using banned lava bucket without permissions");
-                    args.Player.SendTileSquare(tileX, tileY);
+                    args.Player.SendTileSquare(tileX, tileY, 1);
                     return true;
                 }
 
@@ -2662,7 +2652,7 @@ namespace TShockAPI
                 {
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
                     args.Player.Disable("Spreading water without holding a water bucket");
-                    args.Player.SendTileSquare(tileX, tileY);
+                    args.Player.SendTileSquare(tileX, tileY, 1);
                     return true;
                 } 
 
@@ -2670,7 +2660,7 @@ namespace TShockAPI
 				{
                     args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned water bucket without permissions");
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 
@@ -2678,7 +2668,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Spreading honey without holding a honey bucket");
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 
@@ -2686,26 +2676,26 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned honey bucket without permissions");
-					args.Player.SendTileSquare(tileX, tileY);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
 			}
 
 			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, tileX, tileY, 16))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
 
@@ -2723,25 +2713,25 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
 			}
 
 			if (Main.tile[tileX, tileY].type != 0x15 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
 			}
 
 			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
 			{
-				args.Player.SendTileSquare(tileX, tileY);
+				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
 			}
 
