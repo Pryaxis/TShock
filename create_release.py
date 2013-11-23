@@ -31,7 +31,6 @@ def create_release_folder():
   os.mkdir(release_dir)
 
 def copy_dependencies():
-  shutil.copy(terraria_bin, release_dir)
   shutil.copy(http_bin, release_dir)
   shutil.copy(json_bin, release_dir)
   shutil.copy(os.path.join(sql_dep, sqlite_dep), release_dir)
