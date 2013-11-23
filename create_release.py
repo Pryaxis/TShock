@@ -89,8 +89,8 @@ def delete_files():
   os.chdir(cur_wd)
 
 def update_terraria_source():
-  subprocess.check_call('/usr/local/bin/git submodule init')
-  subprocess.check_call('/usr/local/bin/git submodule update')
+  subprocess.check_call('/usr/bin/git submodule init')
+  subprocess.check_call('/usr/bin/git submodule update')
 
 def build_software():
   release_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
