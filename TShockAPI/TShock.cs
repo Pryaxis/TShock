@@ -887,23 +887,6 @@ namespace TShockAPI
 				return;
 			}
 
-			var ipban = Bans.GetBanByIp(player.IP);
-			Ban ban = null;
-			if (ipban != null && Config.EnableIPBans)
-				ban = ipban;
-
-			if (ban != null)
-			{
-				if (!Utils.HasBanExpired(ban))
-			    {
-			        DateTime exp;
-			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
-			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
-					args.Handled = true;
-			        return;
-			    }
-			}
-
 			if (!FileTools.OnWhitelist(player.IP))
 			{
 				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
@@ -939,7 +922,9 @@ namespace TShockAPI
 			
 			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client");
+				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client.", true);
+				args.Handled = true;
+				return;
 			}
 
 			Ban ban = null;
@@ -965,8 +950,36 @@ namespace TShockAPI
 			    if (!Utils.HasBanExpired(ban))
 			    {
 			        DateTime exp;
-			        string duration = DateTime.TryParse(ban.Expiration, out exp) ? String.Format("until {0}", exp.ToString("G")) : "forever";
-			        Utils.ForceKick(player, string.Format("You are banned {0}: {1}", duration, ban.Reason), true, false);
+					if (!DateTime.TryParse(ban.Expiration, out exp))
+					{
+						player.Disconnect("You are banned forever: " + ban.Reason);
+					}
+					else
+					{
+						TimeSpan ts = exp - DateTime.UtcNow;
+						int months = ts.Days / 30;
+						if (months > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} month{1} and {2} day{3}: {4}",
+								months, months == 1 ? "" : "s", ts.Days, ts.Days == 1 ? "" : "s", ban.Reason));
+						}
+						else if (ts.Days > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} day{1} and {2} hour{3}: {4}",
+								ts.Days, ts.Days == 1 ? "": "s", ts.Hours, ts.Hours == 1 ? "" : "s", ban.Reason));
+						}
+						else if (ts.Hours > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} hour{1} and {2} minute{3}: {4}",
+								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+						}
+						else
+						{
+							player.Disconnect(String.Format("You are banned for {0} minute{1}: {2}",
+								ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+						}
+
+					}
 					args.Handled = true;
 			    }
 			}            
@@ -974,7 +987,6 @@ namespace TShockAPI
 
 		private void OnLeave(LeaveEventArgs args)
 		{
-
 			var tsplr = Players[args.Who];
 			Players[args.Who] = null;
 

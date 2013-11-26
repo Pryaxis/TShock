@@ -55,6 +55,11 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>
+		/// Gets a ban by IP.
+		/// </summary>
+		/// <param name="ip">The IP.</param>
+		/// <returns>The ban.</returns>
 		public Ban GetBanByIp(string ip)
 		{
 			try
@@ -72,6 +77,9 @@ namespace TShockAPI.DB
 			return null;
 		}
 
+		/// <summary>
+		/// Gets a list of bans.
+		/// </summary>
 		public List<Ban> GetBans()
 		{
 			List<Ban> banlist = new List<Ban>();
@@ -94,6 +102,12 @@ namespace TShockAPI.DB
 			return null;
 		}
 
+		/// <summary>
+		/// Gets a ban by name.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <param name="casesensitive">Whether to check with case sensitivity.</param>
+		/// <returns>The ban.</returns>
 		public Ban GetBanByName(string name, bool casesensitive = true)
 		{
 			try
@@ -114,6 +128,11 @@ namespace TShockAPI.DB
 			return null;
 		}
 
+		/// <summary>
+		/// Gets a ban by UUID.
+		/// </summary>
+		/// <param name="uuid">The UUID.</param>
+		/// <returns>The ban.</returns>
 		public Ban GetBanByUUID(string uuid)
 		{
 			try
@@ -138,7 +157,7 @@ namespace TShockAPI.DB
 			return AddBan(ip, name, "", reason, false, "", "");
 		}
 #endif
-		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "",  string expiration = "")
+		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
 		{
 			try
 			{

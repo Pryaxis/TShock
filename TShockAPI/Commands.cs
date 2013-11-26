@@ -598,47 +598,36 @@ namespace TShockAPI
 			{
 				char c = str[i];
 
-				if (instr)
+				if (c == '\\' && ++i < str.Length)
 				{
-					if (c == '\\')
-					{
-						if (i + 1 >= str.Length)
-							break;
-						c = GetEscape(str[++i]);
-					}
-					else if (c == '"')
+					if (str[i] != '"' && str[i] != ' ' && str[i] != '\\')
+						sb.Append('\\');
+					sb.Append(str[i]);
+				}
+				else if (c == '"')
+				{
+					instr = !instr;
+					if (!instr)
 					{
 						ret.Add(sb.ToString());
 						sb.Clear();
-						instr = false;
-						continue;
 					}
-					sb.Append(c);
+					else if (sb.Length > 0)
+					{
+						ret.Add(sb.ToString());
+						sb.Clear();
+					}
+				}
+				else if (IsWhiteSpace(c) && !instr)
+				{
+					if (sb.Length > 0)
+					{
+						ret.Add(sb.ToString());
+						sb.Clear();
+					}
 				}
 				else
-				{
-					if (IsWhiteSpace(c))
-					{
-						if (sb.Length > 0)
-						{
-							ret.Add(sb.ToString());
-							sb.Clear();
-						}
-					}
-					else if (c == '"')
-					{
-						if (sb.Length > 0)
-						{
-							ret.Add(sb.ToString());
-							sb.Clear();
-						}
-						instr = true;
-					}
-					else
-					{
-						sb.Append(c);
-					}
-				}
+					sb.Append(c);
 			}
 			if (sb.Length > 0)
 				ret.Add(sb.ToString());
@@ -1083,267 +1072,226 @@ namespace TShockAPI
 
 		private static void Ban(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0 || args.Parameters[0].ToLower() == "help")
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+			switch (subcmd)
 			{
-				args.Player.SendInfoMessage("Syntax: /ban [option] [arguments]");
-				args.Player.SendInfoMessage("Options: list, listip, clear, add, addip, del, delip");
-				args.Player.SendInfoMessage("Arguments: list, listip, clear [code], add [name], addip [ip], del [name], delip [name]");
-				args.Player.SendInfoMessage("In addition, a reason may be provided for all new bans after the arguments.");
-				return;
-			}
-			if (args.Parameters[0].ToLower() == "list")
-			{
-				#region List bans
-				if (TShock.Bans.GetBans().Count == 0)
-				{
-					args.Player.SendErrorMessage("There are currently no players banned.");
-					return;
-				}
-
-				string banString = "";
-				foreach (Ban b in TShock.Bans.GetBans())
-				{
-
-					if (b.Name.Trim() == "")
-					{
-						continue;
-					}
-
-					if (banString.Length == 0)
-					{
-						banString = b.Name;
-					}
-					else
-					{
-						int length = banString.Length;
-						while (length > 60)
-						{
-							length = length - 60;
-						}
-						if (length + b.Name.Length >= 60)
-						{
-							banString += "|, " + b.Name;
-						}
-						else
-						{
-							banString += ", " + b.Name;
-						}
-					}
-				}
-
-				String[] banStrings = banString.Split('|');
-
-				if (banStrings.Length == 0)
-				{
-					args.Player.SendErrorMessage("There are currently no players with valid names banned.");
-					return;
-				}
-
-				if (banStrings[0].Trim() == "")
-				{
-					args.Player.SendErrorMessage("There are currently no bans with valid names found.");
-					return;
-				}
-
-				args.Player.SendInfoMessage("List of banned players:");
-				foreach (string s in banStrings)
-				{
-					args.Player.SendInfoMessage(s);
-				}
-				return;
-				#endregion List bans
-			}
-
-			if (args.Parameters[0].ToLower() == "listip")
-			{
-				#region List ip bans
-				if (TShock.Bans.GetBans().Count == 0)
-				{
-					args.Player.SendWarningMessage("There are currently no players banned.");
-					return;
-				}
-
-				string banString = "";
-				foreach (Ban b in TShock.Bans.GetBans())
-				{
-
-					if (b.IP.Trim() == "")
-					{
-						continue;
-					}
-
-					if (banString.Length == 0)
-					{
-						banString = b.IP;
-					}
-					else
-					{
-						int length = banString.Length;
-						while (length > 60)
-						{
-							length = length - 60;
-						}
-						if (length + b.Name.Length >= 60)
-						{
-							banString += "|, " + b.IP;
-						}
-						else
-						{
-							banString += ", " + b.IP;
-						}
-					}
-				}
-
-				String[] banStrings = banString.Split('|');
-
-				if (banStrings.Length == 0)
-				{
-					args.Player.SendErrorMessage("There are currently no players with valid IPs banned.");
-					return;
-				}
-
-				if (banStrings[0].Trim() == "")
-				{
-					args.Player.SendErrorMessage("There are currently no bans with valid IPs found.");
-					return;
-				}
-
-				args.Player.SendInfoMessage("List of IP banned players:");
-				foreach (string s in banStrings)
-				{
-					args.Player.SendInfoMessage(s);
-				}
-				return;
-				#endregion List ip bans
-			}
-
-			if (args.Parameters.Count >= 2)
-			{
-				if (args.Parameters[0].ToLower() == "add")
-				{
+				case "add":
 					#region Add ban
-					string plStr = args.Parameters[1];
-					var players = TShock.Utils.FindPlayer(plStr);
-					if (players.Count == 0)
 					{
-						args.Player.SendErrorMessage("Invalid player!");
+						if (args.Parameters.Count < 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban add <player> [reason]");
+							return;
+						}
+
+						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
+						if (players.Count == 0)
+							args.Player.SendErrorMessage("Invalid player!");
+						else if (players.Count > 1)
+							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+						else
+						{
+							string reason = args.Parameters.Count > 2
+												? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
+												: "Misbehavior.";
+
+							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
+								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
+						}
 					}
-					else if (players.Count > 1)
+					#endregion
+					return;
+				case "addip":
+					#region Add IP ban
 					{
-						TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-					}
-					else
-					{
+						if (args.Parameters.Count < 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban addip <ip> [reason]");
+							return;
+						}
+
+						string ip = args.Parameters[1];
 						string reason = args.Parameters.Count > 2
 											? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
-											: "Misbehavior.";
-						if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
+											: "Manually added IP address ban.";
+						TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.UserAccountName);
+						args.Player.SendSuccessMessage("Banned IP {0}.", ip);
+					}
+					#endregion
+					return;
+				case "addtemp":
+					#region Add temp ban
+					{
+						if (args.Parameters.Count < 3)
 						{
-							args.Player.SendErrorMessage("You can't ban another admin!");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban addtemp <player> <time> [reason]");
+							return;
+						}
+
+						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
+						if (players.Count == 0)
+							args.Player.SendErrorMessage("Invalid player!");
+						else if (players.Count > 1)
+							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+						else
+						{
+							int time;
+							if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
+							{
+								args.Player.SendErrorMessage("Invalid time string! Proper format: 0d0h0m0s, with at least one time specifier.");
+								return;
+							}
+
+							string reason = args.Parameters.Count > 3
+												? String.Join(" ", args.Parameters.GetRange(3, args.Parameters.Count - 3))
+												: "Misbehavior.";
+
+							if (args.Player.RealPlayer && players[0].Group.HasPermission(Permissions.immunetoban))
+							{
+								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
+								return;
+							}
+
+							if (TShock.Bans.AddBan(players[0].IP, players[0].Name, players[0].UUID, reason,
+								false, args.Player.Name, DateTime.UtcNow.AddSeconds(time).ToString("s")))
+							{
+								players[0].Disconnect(String.Format("Banned: {0}", reason));
+								Log.ConsoleInfo("Banned {0} for : '{1}'", players[0].Name, reason);
+								string verb = args.Player.RealPlayer ? "force " : "";
+								if (args.Player.RealPlayer)
+									TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
+								else
+									TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
+							}
+							else
+								args.Player.SendErrorMessage("Failed to ban {0}, check logs.", players[0].Name);
 						}
 					}
+					#endregion
 					return;
-					#endregion Add ban
-				}
-				else if (args.Parameters[0].ToLower() == "addip")
-				{
-					#region Add ip ban
-					string ip = args.Parameters[1];
-					string reason = args.Parameters.Count > 2
-										? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
-										: "Manually added IP address ban.";
-					TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.UserAccountName);
-					args.Player.SendSuccessMessage(ip + " banned.");
-					return;
-					#endregion Add ip ban
-				}
-				else if (args.Parameters[0].ToLower() == "delip")
-				{
-					#region Delete ip ban
-					var ip = args.Parameters[1];
-					var ban = TShock.Bans.GetBanByIp(ip);
-					if (ban != null)
-					{
-						if (TShock.Bans.RemoveBan(ban.IP))
-							args.Player.SendSuccessMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP));
-						else
-							args.Player.SendErrorMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP));
-					}
-					else
-					{
-						args.Player.SendErrorMessage(string.Format("No bans for ip {0} exist", ip));
-					}
-					return;
-					#endregion Delete ip ban
-				}
-				else if (args.Parameters[0].ToLower() == "del")
-				{
+				case "del":
 					#region Delete ban
-					string plStr = args.Parameters[1];
-					var ban = TShock.Bans.GetBanByName(plStr, false);
-					if (ban != null)
 					{
-						if (TShock.Bans.RemoveBan(ban.Name, true))
-							args.Player.SendSuccessMessage(string.Format("Unbanned {0} ({1})!", ban.Name, ban.IP));
+						string plStr = args.Parameters[1];
+						Ban ban = TShock.Bans.GetBanByName(plStr, false);
+						if (ban != null)
+						{
+							if (TShock.Bans.RemoveBan(ban.Name, true))
+								args.Player.SendSuccessMessage("Unbanned {0} ({1}).", ban.Name, ban.IP);
+							else
+								args.Player.SendErrorMessage("Failed to unban {0} ({1}), check logs.", ban.Name, ban.IP);
+						}
 						else
-							args.Player.SendErrorMessage(string.Format("Failed to unban {0} ({1})!", ban.Name, ban.IP));
+							args.Player.SendErrorMessage("No bans for {0} exist.", plStr);
 					}
-					else
-					{
-						args.Player.SendErrorMessage(string.Format("No bans for player {0} exist", plStr));
-					}
+					#endregion
 					return;
-					#endregion Delete ban
-				}
-
-				#region Clear bans
-				if (args.Parameters[0].ToLower() == "clear")
-				{
-					if (args.Parameters.Count < 1 && ClearBansCode == -1)
+				case "delip":
+					#region Delete IP ban
 					{
-						ClearBansCode = new Random().Next(0, short.MaxValue);
-						args.Player.SendInfoMessage("ClearBans Code: " + ClearBansCode);
-						return;
-					}
-					if (args.Parameters.Count < 1)
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban clear <code>");
-						return;
-					}
-
-					int num;
-					if (!int.TryParse(args.Parameters[1], out num))
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Expected a number, didn't get one.");
-						return;
-					}
-
-					if (num == ClearBansCode)
-					{
-						ClearBansCode = -1;
-						if (TShock.Bans.ClearBans())
+						if (args.Parameters.Count != 2)
 						{
-							Log.ConsoleInfo("Bans cleared.");
-							args.Player.SendSuccessMessage("Bans cleared.");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /ban delip <ip>");
+							return;
+						}
+
+						string ip = args.Parameters[1];
+						Ban ban = TShock.Bans.GetBanByIp(ip);
+						if (ban != null)
+						{
+							if (TShock.Bans.RemoveBan(ban.IP, false))
+								args.Player.SendSuccessMessage("Unbanned IP {0} ({1}).", ban.IP, ban.Name);
+							else
+								args.Player.SendErrorMessage("Failed to unban IP {0} ({1}), check logs.", ban.IP, ban.Name);
 						}
 						else
-						{
-							args.Player.SendErrorMessage("Failed to clear bans.");
-						}
+							args.Player.SendErrorMessage("IP {0} is not banned.", ip);
 					}
-					else
+					#endregion
+					return;
+				case "help":
+					#region Help
 					{
-						args.Player.SendErrorMessage("Incorrect clear code.");
-					}
-				}
-				return;
-				#endregion Clear bans
-			}
-			args.Player.SendErrorMessage("Invalid syntax or old command provided.");
-			args.Player.SendErrorMessage("Type /ban help for more information.");
-		}
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
 
-		private static int ClearBansCode = -1;
+						var lines = new List<string>
+						{
+							"add <player> [reason] - Bans a player.",
+							"addip <ip> [reason] - Bans an IP.",
+							"addtemp <player> <time> [reason] - Temporarily bans a player.",
+							"del <player> - Unbans a player.",
+							"delip <ip> - Unbans an IP.",
+							"list [page] - Lists all player bans.",
+							"listip [page] - Lists all IP bans."
+                        };
+						
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Ban Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /ban help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
+					return;
+				case "list":
+					#region List bans
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						{
+							return;
+						}
+
+						List<Ban> bans = TShock.Bans.GetBans();
+
+						var nameBans = from ban in bans
+									   where !String.IsNullOrEmpty(ban.Name)
+									   select ban.Name;
+
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(nameBans),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Bans ({0}/{1}):",
+								FooterFormat = "Type /ban list {0} for more.",
+								NothingToDisplayString = "There are currently no bans."
+							});
+					}
+					#endregion
+					return;
+				case "listip":
+					#region List IP bans
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						{
+							return;
+						}
+
+						List<Ban> bans = TShock.Bans.GetBans();
+
+						var ipBans = from ban in bans
+									 where String.IsNullOrEmpty(ban.Name)
+									 select ban.IP;
+
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(ipBans),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "IP Bans ({0}/{1}):",
+								FooterFormat = "Type /ban listip {0} for more.",
+								NothingToDisplayString = "There are currently no IP bans."
+							});
+					}
+					#endregion
+					return;
+				default:
+					args.Player.SendErrorMessage("Invalid subcommand! Type /ban help for more information.");
+					return;
+			}
+		}
 
 		private static void Whitelist(CommandArgs args)
 		{
@@ -2180,14 +2128,7 @@ namespace TShockAPI
 
 		private static void Group(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0)
-			{
-				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /group <command> [arguments]");
-				args.Player.SendInfoMessage("Commands: add, addperm, del, delperm, list, listperm");
-				args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
-				args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
-				return;
-			}
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
 			switch (args.Parameters[0].ToLower())
 			{
@@ -2255,7 +2196,37 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				case "help":
+					#region Help
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
 
+						var lines = new List<string>
+						{
+							"add <name> <permissions...> - Adds a new group.",
+							"addperm <group> <permissions...> - Adds permissions to a group.",
+							"color <group> <rrr,ggg,bbb> - Changes a group's chat color.",
+							"del <group> - Deletes a group.",
+							"delperm <group> <permissions...> - Removes permissions from a group.",
+							"list [page] - Lists groups.",
+							"listperm <group> [page] - Lists a group's permissions.",
+							"parent <group> <parent group> - Changes a group's parent group.",
+							"prefix <group> <prefix> - Changes a group's prefix.",
+							"suffix <group> <suffix> - Changes a group's suffix."
+                        };
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Group Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /group help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
+					return;
 				case "parent":
 					#region Parent
 					{
@@ -2512,8 +2483,8 @@ namespace TShockAPI
 						int pageNumber;
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 							return;
-						IEnumerable<string> groupNames = from grp in TShock.Groups.groups
-														 select grp.Name;
+						var groupNames = from grp in TShock.Groups.groups
+										 select grp.Name;
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(groupNames),
 							new PaginationTools.Settings
 							{
@@ -2552,12 +2523,6 @@ namespace TShockAPI
 							});
 					}
 					#endregion
-					return;
-				case "help":
-					args.Player.SendInfoMessage("Syntax: /group <command> [arguments]");
-					args.Player.SendInfoMessage("Commands: add, addperm, parent, del, delperm, list, listperm");
-					args.Player.SendInfoMessage("Arguments: add <group name>, addperm <group name> <permissions...>, del <group name>");
-					args.Player.SendInfoMessage("Arguments: delperm <group name> <permissions...>, list [page], listperm <group name> [page]");
 					return;
 			}
 		}
