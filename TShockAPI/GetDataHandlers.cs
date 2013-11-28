@@ -2134,37 +2134,17 @@ namespace TShockAPI
 				return true;
 
 			if (id != args.Player.Index)
+				return true;
+
+			string pvpMode = TShock.Config.PvPMode.ToLowerInvariant();
+			if (pvpMode == "disabled" || pvpMode == "always" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
+				args.Player.SendData(PacketTypes.TogglePvp, "", id);
 				return true;
 			}
 
-			if (TShock.Config.PvPMode == "disabled")
-			{
-				return true;
-			}
-
-			if (args.TPlayer.hostile != pvp)
-			{
-				long seconds = (long) (DateTime.UtcNow - args.Player.LastPvpChange).TotalSeconds;
-				if (seconds > 5)
-				{
-					TSPlayer.All.SendMessage(string.Format("{0} has {1} PvP!", args.Player.Name, pvp ? "enabled" : "disabled"),
-											 Main.teamColor[args.Player.Team]);
-				}
-				args.Player.LastPvpChange = DateTime.UtcNow;
-			}
-
-			args.TPlayer.hostile = pvp;
-
-			if (TShock.Config.PvPMode == "always")
-			{
-				if (!pvp)
-					args.Player.Spawn();
-			}
-
-			NetMessage.SendData((int) PacketTypes.TogglePvp, -1, -1, "", args.Player.Index);
-
-			return true;
+			args.Player.LastPvPTeamChange = DateTime.UtcNow;
+			return false;
 		}
 
         private static bool HandlePlayerTeam(GetDataHandlerArgs args)
@@ -2175,15 +2155,16 @@ namespace TShockAPI
                 return true;
 
             if (id != args.Player.Index)
-            {
                 return true;
-            }
 
-            args.TPlayer.team = team;
+			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			{
+				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
+				return true;
+			}
 
-            NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, "", args.Player.Index);
-
-            return true;
+			args.Player.LastPvPTeamChange = DateTime.UtcNow;
+            return false;
         }
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
@@ -2243,11 +2224,6 @@ namespace TShockAPI
 						else if (args.Player.IgnoreActionsForClearingTrashCan)
 						{
 							args.Player.SendMessage("You need to rejoin to ensure your trash can is cleared!", Color.Red);
-						}
-						else if (TShock.Config.PvPMode == "always" && !args.TPlayer.hostile)
-						{
-							args.Player.SendMessage("PvP is forced! Enable PvP or else you can't do anything!",
-													Color.Red);
 						}
 						var lastTileX = args.Player.LastNetPosition.X;
 						var lastTileY = args.Player.LastNetPosition.Y - 48;

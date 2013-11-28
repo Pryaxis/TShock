@@ -130,7 +130,7 @@ namespace TShockAPI
         /// <summary>
         /// The last time the player changed their team or pvp status.  
         /// </summary>
-		public DateTime LastPvpChange;
+		public DateTime LastPvPTeamChange;
 
         /// <summary>
         /// Temp points for use in regions and other plugins.

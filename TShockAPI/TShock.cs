@@ -1183,13 +1183,17 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
-			player.LoginMS= DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			
+
+			player.LoginMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
 			Utils.ShowFileToUser(player, "motd.txt");
 
-			if (Config.PvPMode == "always" && !player.TPlayer.hostile)
+			string pvpMode = Config.PvPMode.ToLowerInvariant();
+			if (pvpMode == "always")
 			{
-				player.SendMessage("PvP is forced! Enable PvP else you can't do anything!", Color.Red);
+				player.TPlayer.hostile = true;
+				player.SendData(PacketTypes.TogglePvp, "", player.Index);
+				TSPlayer.All.SendData(PacketTypes.TogglePvp, "", player.Index);
 			}
 
 			if (!player.IsLoggedIn)
@@ -1199,7 +1203,7 @@ namespace TShockAPI
 					player.SendMessage(
 						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",
 						Color.Red);
-						player.LoginHarassed = true;
+					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
@@ -1208,14 +1212,14 @@ namespace TShockAPI
 				}
 			}
 
-			player.LastNetPosition = new Vector2(Main.spawnTileX*16f, Main.spawnTileY*16f);
+			player.LastNetPosition = new Vector2(Main.spawnTileX * 16f, Main.spawnTileY * 16f);
 
-            if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
+			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
-			    player.RPPending=3;
-			    player.SendMessage("You will be teleported to your last known location...", Color.Red);
+				player.RPPending = 3;
+				player.SendMessage("You will be teleported to your last known location...", Color.Red);
 			}
-			
+
 			args.Handled = true;
 		}
 
@@ -1739,7 +1743,7 @@ namespace TShockAPI
 
 		public static bool CheckIgnores(TSPlayer player)
 		{
-			return Config.PvPMode == "always" && !player.TPlayer.hostile || player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;;
+			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;;
 		}
 
 		public void OnConfigRead(ConfigFile file)
