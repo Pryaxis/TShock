@@ -125,14 +125,10 @@ namespace TShockAPI
 			{
 				if (settings.NothingToDisplayString != null)
 				{
-					if (player is TSServerPlayer)
-					{
+					if (!player.RealPlayer)
 						player.SendSuccessMessage(settings.NothingToDisplayString);
-					}
 					else
-					{
 						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
-					}
 				}
 				return;
 			}
@@ -145,14 +141,10 @@ namespace TShockAPI
 
 			if (settings.IncludeHeader)
 			{
-				if (player is TSServerPlayer)
-				{
+				if (!player.RealPlayer)
 					player.SendSuccessMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount));
-				}
 				else
-				{
 					player.SendMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount), settings.HeaderTextColor);
-				}
 			}
 
 			int listOffset = (pageNumber - 1) * settings.MaxLinesPerPage;
@@ -199,14 +191,10 @@ namespace TShockAPI
 
 				if (lineMessage != null)
 				{
-					if (player is TSServerPlayer)
-					{
+					if (!player.RealPlayer)
 						player.SendInfoMessage(lineMessage);
-					}
 					else
-					{
 						player.SendMessage(lineMessage, lineColor);
-					}
 				}
 			}
 
@@ -214,26 +202,18 @@ namespace TShockAPI
 			{
 				if (settings.NothingToDisplayString != null)
 				{
-					if (player is TSServerPlayer)
-					{
+					if (!player.RealPlayer)
 						player.SendSuccessMessage(settings.NothingToDisplayString);
-					}
 					else
-					{
 						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
-					}
 				}
 			}
 			else if (settings.IncludeFooter && pageNumber + 1 <= pageCount)
 			{
-				if (player is TSServerPlayer)
-				{
+				if (!player.RealPlayer)
 					player.SendInfoMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount));
-				}
 				else
-				{
 					player.SendMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount), settings.FooterTextColor);
-				}
 			}
 		}
 

@@ -1588,26 +1588,6 @@ namespace TShockAPI
 			}
 
 			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-
-			if (TShock.Config.EnableGeoIP && TShock.Geo != null)
-			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", args.Player.Name, args.Player.IP,
-									   args.Player.Group.Name, args.Player.Country, TShock.Utils.ActivePlayers(),
-									   TShock.Config.MaxSlots));
-				if (!args.Player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", args.Player.Name, args.Player.Country), Color.Yellow);
-			}
-			else
-			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", args.Player.Name, args.Player.IP,
-									   args.Player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
-				if (!args.Player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(args.Player.Name + " has joined.", Color.Yellow);
-			}
-
-			if (TShock.Config.DisplayIPToAdmins)
-				TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", args.Player.Name, args.Player.IP), Color.Blue);
-
 			return false;
 		}
 

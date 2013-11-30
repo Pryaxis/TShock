@@ -993,9 +993,7 @@ namespace TShockAPI
 			if (tsplr != null && tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
-				{
-					Utils.Broadcast(tsplr.Name + " left", Color.Yellow);
-				}
+					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
@@ -1004,7 +1002,7 @@ namespace TShockAPI
 					CharacterDB.InsertPlayerData(tsplr);
 				}
 
-				if ((Config.RememberLeavePos) &&(!tsplr.LoginHarassed))
+				if (Config.RememberLeavePos && !tsplr.LoginHarassed)
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
@@ -1185,6 +1183,25 @@ namespace TShockAPI
 			}
 
 			player.LoginMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+			if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+			{
+				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
+									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
+									   TShock.Config.MaxSlots));
+				if (!player.SilentJoinInProgress)
+					TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+			}
+			else
+			{
+				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
+									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+				if (!player.SilentJoinInProgress)
+					TShock.Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
+			}
+
+			if (TShock.Config.DisplayIPToAdmins)
+				TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			Utils.ShowFileToUser(player, "motd.txt");
 
