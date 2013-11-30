@@ -163,8 +163,6 @@ namespace TShockAPI
         /// </summary>
 		public bool DisplayLogs = true;
 
-		public Vector2 oldSpawn = Vector2.Zero;
-
         /// <summary>
         /// The last player that the player whispered with (to or from).
         /// </summary>
@@ -216,8 +214,6 @@ namespace TShockAPI
         /// Whether the player is muted or not.
         /// </summary>
 		public bool mute;
-
-		public bool TpLock;
 
 		private Player FakePlayer;
 

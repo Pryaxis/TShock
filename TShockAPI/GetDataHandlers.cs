@@ -1319,7 +1319,7 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerHP(plr, cur, max))
+			if (OnPlayerHP(plr, cur, max) || cur <= 0)
 				return true;
 
 			if (args.Player.FirstMaxHP == 0)
@@ -1328,7 +1328,7 @@ namespace TShockAPI
 			if (cur < 0 || cur > 500 || max < 100 || max > 500) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				return false;
+				return true;
 			}
 
 			if (args.Player.IsLoggedIn)
