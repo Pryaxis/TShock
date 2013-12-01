@@ -4423,6 +4423,13 @@ namespace TShockAPI
 			var name = "Fail";
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
+
+			if (TShock.Regions.Regions.Where(Region => !Region.HasPermissionToBuildInRegion(args.Player) && Region.InArea(x, y)).Count() > 0)
+			{
+				args.Player.SendErrorMessage("You're not allowed to build in this region!");
+				return;
+			}
+
 			switch (args.Parameters[0].ToLower())
 			{
 				case "tree":
