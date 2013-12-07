@@ -4228,13 +4228,13 @@ namespace TShockAPI
 			{
 				int.TryParse(args.Parameters[0], out itemAmount);
 				var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-				if (item.accessory && prefixIds.Contains(42))
+				if (items[0].accessory && prefixIds.Contains(42))
 				{
 					prefixIds.Remove(42);
 					prefixIds.Remove(76);
 					prefixIds.Add(76);
 				}
-				else if (!item.accessory && prefixIds.Contains(42))
+				else if (!items[0].accessory && prefixIds.Contains(42))
 					prefixIds.Remove(76);
 				if (prefixIds.Count == 1)
 					prefix = prefixIds[0];
