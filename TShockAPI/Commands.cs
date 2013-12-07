@@ -4150,20 +4150,30 @@ namespace TShockAPI
 			if (amountParamIndex != -1 && args.Parameters.Count > amountParamIndex + 1)
 			{
 				string prefixidOrName = args.Parameters[amountParamIndex + 1];
-				var matchedPrefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
-				if (matchedPrefixIds.Count > 1) 
+				var prefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
+
+				if (item.accessory && prefixIds.Contains(42))
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, matchedPrefixIds.Select(p => p.ToString()));
+					prefixIds.Remove(42);
+					prefixIds.Remove(76);
+					prefixIds.Add(76);
+				}
+				else if (!item.accessory && prefixIds.Contains(42))
+					prefixIds.Remove(76);
+
+				if (prefixIds.Count > 1) 
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, prefixIds.Select(p => p.ToString()));
 					return;
 				}
-				else if (matchedPrefixIds.Count == 0) 
+				else if (prefixIds.Count == 0) 
 				{
 					args.Player.SendErrorMessage("No prefix matched \"{0}\".", prefixidOrName);
 					return;
 				}
 				else
 				{
-					prefixId = matchedPrefixIds[0];
+					prefixId = prefixIds[0];
 				}
 			}
 
@@ -4217,9 +4227,17 @@ namespace TShockAPI
 			else if (args.Parameters.Count == 2)
 			{
 				int.TryParse(args.Parameters[0], out itemAmount);
-				var found = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-				if (found.Count == 1)
-					prefix = found[0];
+				var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+				if (item.accessory && prefixIds.Contains(42))
+				{
+					prefixIds.Remove(42);
+					prefixIds.Remove(76);
+					prefixIds.Add(76);
+				}
+				else if (!item.accessory && prefixIds.Contains(42))
+					prefixIds.Remove(76);
+				if (prefixIds.Count == 1)
+					prefix = prefixIds[0];
 			}
 
 			if (items.Count == 0)
