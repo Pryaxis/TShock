@@ -1658,8 +1658,15 @@ namespace TShockAPI
 						// Orientable tiles
 						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
 						{
-							tile.frameX = newtile.FrameX;
-							tile.frameY = newtile.FrameY;
+							Main.tile[realx, realy].frameX = newtile.FrameX;
+							Main.tile[realx, realy].frameY = newtile.FrameY;
+							changed = true;
+						}
+
+						// Landmine
+						if (tile.type == 210 && !newtile.Active)
+						{
+							Main.tile[realx, realy].active(false);
 							changed = true;
 						}
 
@@ -1681,7 +1688,7 @@ namespace TShockAPI
 								((tile.type == 53 || tile.type == 112 || tile.type == 116 || tile.type == 234) &&
 								(newtile.Type == 53 || newtile.Type == 112 || newtile.Type == 116 || newtile.Type == 234)))
 							{
-								tile.type = newtile.Type;
+								Main.tile[realx, realy].type = newtile.Type;
 								changed = true;
 							}
 						}
@@ -1692,7 +1699,7 @@ namespace TShockAPI
 							(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
 							((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
 						{
-							tile.wall = newtile.Wall;
+							Main.tile[realx, realy].wall = newtile.Wall;
 							changed = true;
 						}
 					}
@@ -1850,22 +1857,23 @@ namespace TShockAPI
 
 				Item selectedItem = args.Player.SelectedItem;
 				int lastKilledProj = args.Player.LastKilledProjectile;
-				if (action == EditAction.KillTile && !Main.tileCut[Main.tile[tileX, tileY].type] && !breakableTiles.Contains(Main.tile[tileX, tileY].type))
+				Tile tile = Main.tile[tileX, tileY];
+				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[Main.tile[tileX, tileY].type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					if (Main.tileAxe[tile.type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
 					// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
-					else if (Main.tileHammer[Main.tile[tileX, tileY].type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					else if (Main.tileHammer[tile.type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					else if ((!Main.tileAxe[Main.tile[tileX, tileY].type] && !Main.tileHammer[Main.tile[tileX, tileY].type]) && Main.tile[tileX, tileY].wall == 0 && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2393,7 +2401,7 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
 			{
-				if ((type == 100) || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328))
+				if (type == 100 || type == 164 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328))
 				{	
 					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
