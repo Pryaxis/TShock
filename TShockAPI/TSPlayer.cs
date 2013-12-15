@@ -458,6 +458,8 @@ namespace TShockAPI
 			get { return (int) (Y/16); }
 		}
 
+		public bool TpLock;
+
 		public bool InventorySlotAvailable
 		{
 			get

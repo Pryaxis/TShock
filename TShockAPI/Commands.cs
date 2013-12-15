@@ -2008,7 +2008,7 @@ namespace TShockAPI
 						foreach (TSPlayer tsplr in TShock.Players)
 						{
 							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
-								tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
+								tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
 						}
                     }
                     else
@@ -2090,7 +2090,7 @@ namespace TShockAPI
                 }
 
                 string warpName = args.Parameters[2];
-                var warp = TShock.Warps.Find(warpName);
+                var warp = TShock.Warps.FindWarp(warpName);
                 var plr = foundplr[0];
 				if (warp.Position != Point.Zero)
 				{
@@ -2109,7 +2109,7 @@ namespace TShockAPI
             else
             {
                 string warpName = String.Join(" ", args.Parameters);
-                var warp = TShock.Warps.Find(warpName);
+                var warp = TShock.Warps.FindWarp(warpName);
                 if (warp != null)
                 {
 					if (args.Player.Teleport(warp.Position.X * 16, warp.Position.Y * 16))

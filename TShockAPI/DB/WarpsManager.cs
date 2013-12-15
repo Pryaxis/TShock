@@ -126,7 +126,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="warpName">The name.</param>
 		/// <returns>The warp, if it exists, or else null.</returns>
-		public Warp Find(string warpName)
+		public Warp FindWarp(string warpName)
 		{
 			return Warps.FirstOrDefault(w => String.Equals(w.Name, warpName, StringComparison.OrdinalIgnoreCase));
 		}
