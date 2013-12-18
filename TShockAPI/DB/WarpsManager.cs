@@ -126,6 +126,16 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="warpName">The name.</param>
 		/// <returns>The warp, if it exists, or else null.</returns>
+		public Warp Find(string warpName)
+		{
+			return Warps.FirstOrDefault(w => String.Equals(w.Name, warpName, StringComparison.OrdinalIgnoreCase));
+		}
+		/// <summary>
+		/// Finds the warp with the given name.
+		/// </summary>
+		/// <param name="warpName">The name.</param>
+		/// <returns>The warp, if it exists, or else null.</returns>
+		[Obsolete]
 		public Warp FindWarp(string warpName)
 		{
 			return Warps.FirstOrDefault(w => String.Equals(w.Name, warpName, StringComparison.OrdinalIgnoreCase));
@@ -138,7 +148,7 @@ namespace TShockAPI.DB
 		/// <param name="x">The X position.</param>
 		/// <param name="y">The Y position.</param>
 		/// <returns>Whether the operation suceeded.</returns>
-		public bool PositionWarp(string warpName, int x, int y)
+		public bool Position(string warpName, int x, int y)
 		{
 			try
 			{
@@ -198,6 +208,15 @@ namespace TShockAPI.DB
 		/// Gets or sets the position.
 		/// </summary>
 		public Point Position { get; set; }
+		/// <summary>
+		/// Gets or sets the position.
+		/// </summary>
+		[Obsolete]
+		public Vector2 WarpPos
+		{
+			get { return new Vector2(Position.X, Position.Y); }
+			set { Position = new Point((int)value.X, (int)value.Y); }
+		}
 
 		public Warp(Point position, string name, bool isPrivate = false)
 		{
@@ -205,7 +224,13 @@ namespace TShockAPI.DB
 			Position = position;
 			IsPrivate = isPrivate;
 		}
-
+		[Obsolete]
+		public Warp(Vector2 position, string name, bool isPrivate = false)
+		{
+			Name = name;
+			WarpPos = position;
+			IsPrivate = isPrivate;
+		}
 		public Warp()
 		{
 			Position = Point.Zero;

@@ -3481,20 +3481,20 @@ namespace TShockAPI
 						int y = args.Data.ReadInt32();
 						string warpName = args.Data.ReadString();
 
-						Warp warp = TShock.Warps.FindWarp(warpName);
+						Warp warp = TShock.Warps.Find(warpName);
 						if (warp == null)
 						{
 							TShock.Warps.Add(x, y, warpName);
 							foreach (TSPlayer tsplr in TShock.Players)
 							{
 								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
-									tsplr.SendRaptorWarp(TShock.Warps.FindWarp(warpName));
+									tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
 							}
 							Log.Info("{0} added warp \"{1}\".", args.Player.UserAccountName, warpName);
 						}
 						else
 						{
-							TShock.Warps.PositionWarp(warpName, x, y);
+							TShock.Warps.Position(warpName, x, y);
 							foreach (TSPlayer tsplr in TShock.Players)
 							{
 								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
