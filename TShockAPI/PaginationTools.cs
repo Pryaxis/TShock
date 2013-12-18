@@ -264,7 +264,7 @@ namespace TShockAPI
 
 			if (lineBuilder.Length > 0)
 			{
-				lines.Add(lineBuilder.ToString().Substring(0, lineBuilder.Length - 2));
+				lines.Add(lineBuilder.ToString().Substring(0, lineBuilder.Length - separator.Length));
 			}
 			return lines;
 		}
