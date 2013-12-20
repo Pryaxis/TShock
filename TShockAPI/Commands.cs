@@ -1684,7 +1684,7 @@ namespace TShockAPI
 			if (Main.netMode != 1)
 			{
 				NPC.waveKills = 0f;
-				NPC.waveCount = 1;
+				NPC.waveCount = wave;
 				string text = "Snow Invasion started at wave: " + wave;
 				if (Main.netMode == 0)
 				{

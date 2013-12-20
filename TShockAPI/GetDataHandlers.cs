@@ -2399,15 +2399,15 @@ namespace TShockAPI
 			}
 
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
-			if (!TShock.Config.IgnoreProjUpdate && !hasPermission)
+			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if (type == 100 || type == 164 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328))
+				if (type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352))
 				{	
 					Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
 				else
 				{
-					args.Player.Disable("Does not have projectile permission to update projectile.");
+					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type));
 					args.Player.RemoveProjectile(ident, owner);
 				}
 				return true;
