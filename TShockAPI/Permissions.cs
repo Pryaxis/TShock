@@ -227,6 +227,12 @@ namespace TShockAPI
 		[Description("User can force a blood moon.")]
 		public static readonly string bloodmoon = "tshock.world.time.bloodmoon";
 
+		[Description("User can force a pumpkin moon.")]
+		public static readonly string pumpkinmoon = "tshock.world.time.pumpkinmoon";
+
+		[Description("User can force a snow moon.")]
+		public static readonly string snowmoon = "tshock.world.time.snowmoon";
+
 		[Description("User can set the time.")]
 		public static readonly string time = "tshock.world.time.set";
 

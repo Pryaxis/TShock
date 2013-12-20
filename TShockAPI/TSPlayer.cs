@@ -1195,6 +1195,18 @@ namespace TShockAPI
 			Main.bloodMoon = bloodMoon;
 			SetTime(false, 0);
 		}
+
+		public void SetSnowMoon(bool snowMoon)
+		{
+			Main.snowMoon = snowMoon;
+			SetTime(false, 0);
+		}
+
+		public void SetPumpkinMoon(bool pumpkinMoon)
+		{
+			Main.pumpkinMoon = pumpkinMoon;
+			SetTime(false, 0);
+		}
 		
 		public void SetEclipse(bool Eclipse)
 		{
