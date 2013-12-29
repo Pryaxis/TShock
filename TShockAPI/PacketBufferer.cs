@@ -22,8 +22,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Hooks;
 using Terraria;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -33,6 +33,8 @@ namespace TShockAPI
 		/// Maximum number of bytes to send per update per socket
 		/// </summary>
 		public int BytesPerUpdate { get; set; }
+
+		private readonly TShock plugin;
 
 		private PacketBuffer[] buffers = new PacketBuffer[Netplay.serverSock.Length];
 
@@ -45,8 +47,9 @@ namespace TShockAPI
 		Command flush;
 #endif
 
-		public PacketBufferer()
+		public PacketBufferer(TShock p)
 		{
+			plugin = p;
 			BytesPerUpdate = 0xFFFF;
 			for (int i = 0; i < buffers.Length; i++)
 				buffers[i] = new PacketBuffer();
@@ -58,9 +61,9 @@ namespace TShockAPI
 			Commands.ChatCommands.Add(flush);
 #endif
 
-			NetHooks.SendBytes += ServerHooks_SendBytes;
-			ServerHooks.SocketReset += ServerHooks_SocketReset;
-			GameHooks.PostUpdate += GameHooks_Update;
+			ServerApi.Hooks.NetSendBytes.Register(plugin, ServerHooks_SendBytes);
+			ServerApi.Hooks.ServerSocketReset.Register(plugin, ServerHooks_SocketReset);
+			ServerApi.Hooks.GamePostUpdate.Register(plugin, GameHooks_Update);
 		}
 
 		~PacketBufferer()
@@ -82,9 +85,9 @@ namespace TShockAPI
 				Commands.ChatCommands.Remove(dump);
 				Commands.ChatCommands.Remove(flush);
 #endif
-				NetHooks.SendBytes -= ServerHooks_SendBytes;
-				ServerHooks.SocketReset -= ServerHooks_SocketReset;
-				GameHooks.PostUpdate -= GameHooks_Update;
+				ServerApi.Hooks.NetSendBytes.Deregister(plugin, ServerHooks_SendBytes);
+				ServerApi.Hooks.ServerSocketReset.Deregister(plugin, ServerHooks_SocketReset);
+				ServerApi.Hooks.GamePostUpdate.Deregister(plugin, GameHooks_Update);
 			}
 		}
 
@@ -107,7 +110,7 @@ namespace TShockAPI
 			Compressed = new int[52];
 		}
 
-		private void GameHooks_Update()
+		private void GameHooks_Update(EventArgs args)
 		{
 			FlushAll();
 		}
@@ -148,9 +151,9 @@ namespace TShockAPI
 		}
 
 
-		private void ServerHooks_SocketReset(ServerSock socket)
+		private void ServerHooks_SocketReset(SocketResetEventArgs args)
 		{
-			buffers[socket.whoAmI] = new PacketBuffer();
+			buffers[args.Socket.whoAmI] = new PacketBuffer();
 		}
 
 		public bool SendBytes(ServerSock socket, byte[] buffer)
@@ -179,6 +182,12 @@ namespace TShockAPI
 				{
 					buffers[socket.whoAmI].AddRange(ms.ToArray());
 				}
+
+				if (TShock.Config.EnableMaxBytesInBuffer && buffers[socket.whoAmI].Count > TShock.Config.MaxBytesInBuffer)
+				{
+					buffers[socket.whoAmI].Clear();
+					socket.kill = true;
+				}
 			}
 		}
 
@@ -204,6 +213,7 @@ namespace TShockAPI
                 switch ((uint)e.ErrorCode)
                 {
                     case 0x80004005:
+					case 10053:
                         break;
                     default:
                         Log.Warn(e.ToString());
@@ -217,10 +227,10 @@ namespace TShockAPI
 			return false;
 		}
 
-		private void ServerHooks_SendBytes(ServerSock socket, byte[] buffer, int offset, int count, HandledEventArgs e)
+		private void ServerHooks_SendBytes(SendBytesEventArgs args)
 		{
-			e.Handled = true;
-			BufferBytes(socket, buffer, offset, count);
+			args.Handled = true;
+			BufferBytes(args.Socket, args.Buffer, args.Offset, args.Count);
 		}
 
 #if DEBUG_NET

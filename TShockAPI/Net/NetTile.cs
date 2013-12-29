@@ -29,10 +29,32 @@ namespace TShockAPI.Net
 		public byte Type { get; set; }
 		public short FrameX { get; set; }
 		public short FrameY { get; set; }
+		public bool Lighted { get; set; }
 		public byte Wall { get; set; }
 		public byte Liquid { get; set; }
-		public bool Lava { get; set; }
+		public byte LiquidType { get; set; }
 		public bool Wire { get; set; }
+		public bool Wire2 { get; set; }
+		public bool Wire3 { get; set; }
+		public byte HalfBrick { get; set; }
+		public byte Actuator { get; set; }
+		public bool Inactive { get; set; }
+		public bool IsHalf { get; set; }
+		public bool IsActuator { get; set; }
+		public byte TileColor { get; set; }
+		public byte WallColor { get; set; }
+		public bool Slope { get; set; }
+		public bool Slope2 { get; set; }
+
+	public bool HasColor
+		{
+			get { return TileColor > 0; }
+		}
+
+		public bool HasWallColor
+		{
+			get { return WallColor > 0; }
+		}
 
 		public bool HasWall
 		{
@@ -57,8 +79,17 @@ namespace TShockAPI.Net
 			FrameY = -1;
 			Wall = 0;
 			Liquid = 0;
-			Lava = false;
 			Wire = false;
+			Wire2 = false;
+			Wire3 = false;
+			HalfBrick = 0;
+			Actuator = 0;
+			Inactive = false;
+			TileColor = 0;
+			WallColor = 0;
+			Lighted = false;
+			Slope = false;
+			Slope2 = false;
 		}
 
 		public NetTile(Stream stream)
@@ -71,8 +102,11 @@ namespace TShockAPI.Net
 		{
 			var flags = TileFlags.None;
 
-			if (Active)
+			if ((Active) && (!Inactive))
 				flags |= TileFlags.Active;
+
+			if (Lighted)
+				flags |= TileFlags.Lighted;
 
 			if (HasWall)
 				flags |= TileFlags.Wall;
@@ -82,8 +116,52 @@ namespace TShockAPI.Net
 
 			if (Wire)
 				flags |= TileFlags.Wire;
+			
+			if (IsHalf)
+				flags |= TileFlags.HalfBrick;
+
+			if (IsActuator)
+				flags |= TileFlags.Actuator;
+
+			if (Inactive)
+			{
+				flags |= TileFlags.Inactive;
+			}
 
 			stream.WriteInt8((byte) flags);
+
+			var flags2 = TileFlags2.None;
+
+			if ((Wire2))
+				flags2 |= TileFlags2.Wire2;
+
+			if (Wire3)
+				flags2 |= TileFlags2.Wire3;
+
+			if (HasColor)
+				flags2 |= TileFlags2.Color;
+
+			if (HasWallColor)
+				flags2 |= TileFlags2.WallColor;
+
+			if (Slope)
+				flags2 |= TileFlags2.Slope;
+
+			if (Slope2)
+				flags2 |= TileFlags2.Slope2;
+
+
+			stream.WriteInt8((byte)flags2);
+
+			if (HasColor)
+			{
+				stream.WriteByte(TileColor);
+			}
+
+			if (HasWallColor)
+			{
+				stream.WriteByte(WallColor);
+			}
 
 			if (Active)
 			{
@@ -101,13 +179,29 @@ namespace TShockAPI.Net
 			if (HasLiquid)
 			{
 				stream.WriteInt8(Liquid);
-				stream.WriteBoolean(Lava);
+				stream.WriteInt8(LiquidType);
 			}
 		}
 
 		public void Unpack(Stream stream)
 		{
 			var flags = (TileFlags) stream.ReadInt8();
+			var flags2 = (TileFlags2)stream.ReadInt8();
+
+			Wire2 = flags2.HasFlag(TileFlags2.Wire2);
+			Wire3 = flags2.HasFlag(TileFlags2.Wire3);
+			Slope = flags2.HasFlag(TileFlags2.Slope);
+			Slope2 = flags2.HasFlag(TileFlags2.Slope2);
+
+			if (flags2.HasFlag(TileFlags2.Color))
+			{
+				TileColor = stream.ReadInt8();
+			}
+
+			if (flags2.HasFlag(TileFlags2.WallColor))
+			{
+				WallColor = stream.ReadInt8();
+			}
 
 			Active = flags.HasFlag(TileFlags.Active);
 			if (Active)
@@ -120,6 +214,11 @@ namespace TShockAPI.Net
 				}
 			}
 
+			if (flags.HasFlag(TileFlags.Lighted))
+			{
+				Lighted = true;
+			}
+
 			if (flags.HasFlag(TileFlags.Wall))
 			{
 				Wall = stream.ReadInt8();
@@ -128,11 +227,23 @@ namespace TShockAPI.Net
 			if (flags.HasFlag(TileFlags.Liquid))
 			{
 				Liquid = stream.ReadInt8();
-				Lava = stream.ReadBoolean();
+				LiquidType = stream.ReadInt8();
 			}
 
 			if (flags.HasFlag(TileFlags.Wire))
 				Wire = true;
+
+			if (flags.HasFlag(TileFlags.HalfBrick))
+				IsHalf = true;
+			
+			if (flags.HasFlag(TileFlags.Actuator))
+				IsActuator = true;
+
+			if (flags.HasFlag(TileFlags.Inactive))
+			{
+				Inactive = true;
+				Active = false;
+			}
 		}
 	}
 
@@ -144,6 +255,21 @@ namespace TShockAPI.Net
 		Lighted = 2,
 		Wall = 4,
 		Liquid = 8,
-		Wire = 16
+		Wire = 16,
+		HalfBrick = 32,
+		Actuator = 64,
+		Inactive = 128
+	}
+
+	[Flags]
+	public enum TileFlags2 : byte
+	{
+		None = 0,
+		Wire2 = 1,
+		Wire3 = 2,
+		Color = 4,
+		WallColor = 8,
+		Slope = 16,
+		Slope2 = 32
 	}
 }

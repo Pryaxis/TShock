@@ -80,6 +80,7 @@ namespace TShockAPI
 		[Description("Bans a hardcore player on death.")] public bool BanOnMediumcoreDeath;
 
 		[Description("Enable/disable Terraria's built in auto save.")] public bool AutoSave = true;
+		[Description("Enable/disable save announcements.")] public bool AnnounceSave = true;
 
 		[Description("Number of failed login attempts before kicking the player.")] public int MaximumLoginAttempts = 3;
 
@@ -104,6 +105,8 @@ namespace TShockAPI
 			EnableDNSHostResolution;
 
 		[Description("Enables kicking of banned users by matching their IP Address.")] public bool EnableIPBans = true;
+
+		[Description("Enables kicking of banned users by matching their client UUID.")] public bool EnableUUIDBans = true;
 
 		[Description("Enables kicking of banned users by matching their Character Name.")] public bool EnableBanOnUsernames;
 
@@ -135,8 +138,6 @@ namespace TShockAPI
 		[Description("This will turn on token requirement for the public REST API endpoints.")] public bool
 			EnableTokenEndpointAuthentication;
 
-        [Description("Deprecated. Use ServerName instead.")] public string ServerNickname = "TShock Server";
-
 		[Description("Enable/disable the rest api.")] public bool RestApiEnabled;
 
 		[Description("This is the port which the rest api will listen on.")] public int RestApiPort = 7878;
@@ -145,19 +146,15 @@ namespace TShockAPI
 
 		[Description("Displays a player's IP on join to everyone who has the log permission.")] public bool DisplayIPToAdmins;
 
-		[Description(
-			"Some tiles are 'fixed' by not letting TShock handle them. Disabling this may break certain aesthetic tiles.")] public
-			bool EnableInsecureTileFixes = true;
-
 		[Description("Kicks users using a proxy as identified with the GeoIP database.")] public bool KickProxyUsers = true;
 
 		[Description("Disables hardmode, can't never be activated. Overrides /starthardmode.")] public bool DisableHardmode;
 
 		[Description("Disables the dungeon guardian from being spawned by player packets, this will instead force a respawn.")] public bool DisableDungeonGuardian;
 
-		[Description("Enable server side inventory checks, EXPERIMENTAL")] public bool ServerSideInventory;
+		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")] public bool ServerSideCharacter;
 
-        [Description("How often SSI should save, in minutes.")] public int ServerSideInventorySave = 15;
+        [Description("How often SSC should save, in minutes.")] public int ServerSideCharacterSave = 5;
 
 		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")] public int LogonDiscardThreshold=250;
 		
@@ -169,7 +166,7 @@ namespace TShockAPI
 			"Changes ingame chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message"
 			)] public string ChatFormat = "{1}{2}{3}: {4}";
 
-	    [Description("Change the chat format when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat.")] public string ChatAboveHeadsFormat = "{4}";
+	    [Description("Change the player name when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat(minus the text aka {4}).")] public string ChatAboveHeadsFormat = "{2}";
 
 		[Description("Force the world time to be normal, day, or night.")] public string ForceTime = "normal";
 
@@ -206,6 +203,10 @@ namespace TShockAPI
 		[Description("Disable users from being able to login with account password when joining.")] public bool
 			DisableLoginBeforeJoin;
 
+		[Description("Disable users from being able to login with their client UUID.")] public bool DisableUUIDLogin;
+
+		[Description("Kick clients that don't send a UUID to the server.")] public bool KickEmptyUUID;
+		
 		[Description("Allows users to register any username with /register.")] public bool AllowRegisterAnyUsername;
 
 		[Description("Allows users to login with any username with /login.")] public bool AllowLoginAnyUsername = true;
@@ -222,7 +223,10 @@ namespace TShockAPI
 
 	    [Description("Allow ice placement even when user does not have canbuild.")] public bool AllowIce = false;
 
-	    [Description("Allows corrutption to spread when a world is hardmode.")] public bool AllowCorruptionCreep = true;
+		[Description("Allows crimson to spread when a world is hardmode.")]
+		public bool AllowCrimsonCreep = true;
+
+	    [Description("Allows corruption to spread when a world is hardmode.")] public bool AllowCorruptionCreep = true;
 
         [Description("Allows hallow to spread when a world is hardmode.")] public bool AllowHallowCreep = true;
 
@@ -233,8 +237,6 @@ namespace TShockAPI
         [Description("How many things a statue spawns can exist in the world before it stops spawning. Default = 10")] public int StatueSpawnWorld = 10;
 
 	    [Description("Prevent banned items from being /i or /give.")] public bool PreventBannedItemSpawn = false;
-
-	    [Description("Prevent banks on SSI.")] public bool DisablePiggybanksOnSSI = false;
 
 	    [Description("Prevent players from interacting with the world if dead.")] public bool PreventDeadModification =
 	        true;
@@ -263,11 +265,22 @@ namespace TShockAPI
         [Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
             public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
-	    [Description("The maximum value that a character may have for health.")] public int MaxHealth = 400;
+		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
+		
+		[Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public bool LogRest = false;
 
-	    [Description("The maximum value that a character may have for health.")] public int MaxMana = 400;
+		[Description("The number of seconds a player must wait before being respawned.")] public int RespawnSeconds = 3;
 
-        [Description("The number of reserved slots past your max server slot that can be joined by reserved players")] public int ReservedSlots = 20;
+		[Description("Disables a player if this number of tiles is painted within 1 second.")] public int TilePaintThreshold = 15;
+
+		[Description("Enables max packet bufferer size.")] public bool EnableMaxBytesInBuffer = false;
+
+		[Description("Number of bytes in the packet buffer before we disconnect the player.")] public int MaxBytesInBuffer = 5242880;
+
+		[Description("Forces your world to be in Halloween mode regardless of the data.")] public bool ForceHalloween = false;
+
+		[Description("Allows anyone to break grass, pots, etc.")] public bool AllowCutTilesAndBreakables = false;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
@@ -351,10 +364,10 @@ namespace TShockAPI
 
 				var def = field.GetValue(defaults);
 
-				sb.AppendLine("## {0}  ".SFormat(name));
-				sb.AppendLine("**Type:** {0}  ".SFormat(type));
-				sb.AppendLine("**Description:** {0}  ".SFormat(desc));
-				sb.AppendLine("**Default:** \"{0}\"  ".SFormat(def));
+				sb.AppendLine("{0}  ".SFormat(name));
+				sb.AppendLine("Type: {0}  ".SFormat(type));
+				sb.AppendLine("Description: {0}  ".SFormat(desc));
+				sb.AppendLine("Default: \"{0}\"  ".SFormat(def));
 				sb.AppendLine();
 			}
 

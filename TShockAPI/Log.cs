@@ -78,7 +78,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void Data(String format, params String[] args)
+		public static void Data(string format, params object[] args)
 		{
 			Data(String.Format(format, args));
 		}
@@ -97,7 +97,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void Error(String format, params String[] args)
+		public static void Error(string format, params object[] args)
 		{
 			Error(String.Format(format, args));
 		}
@@ -119,7 +119,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void ConsoleError(String format, params String[] args)
+		public static void ConsoleError(string format, params object[] args)
 		{
 			ConsoleError(String.Format(format, args));
 		}
@@ -138,7 +138,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void Warn(String format, params String[] args)
+		public static void Warn(string format, params object[] args)
 		{
 			Warn(String.Format(format, args));
 		}
@@ -157,7 +157,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void Info(String format, params String[] args)
+		public static void Info(string format, params object[] args)
 		{
 			Info(String.Format(format, args));
 		}
@@ -179,7 +179,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void ConsoleInfo(String format, params String[] args)
+		public static void ConsoleInfo(string format, params object[] args)
 		{
 			ConsoleInfo(String.Format(format, args));
 		}
@@ -198,7 +198,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		public static void Debug(String format, params String[] args)
+		public static void Debug(string format, params object[] args)
 		{
 			Debug(String.Format(format, args));
 		}

@@ -70,11 +70,11 @@ namespace TShockAPI
 
         /// <summary>
         /// The chat color of the group.
-        /// Returns "255255255", sets "255,255,255"
+        /// Returns "255,255,255", sets "255,255,255"
         /// </summary>
 		public string ChatColor
 		{
-			get { return string.Format("{0}{1}{2}", R.ToString("X2"), G.ToString("X2"), B.ToString("X2")); }
+			get { return string.Format("{0},{1},{2}", R.ToString("D3"), G.ToString("D3"), B.ToString("D3")); }
 			set
 			{
 				if (null != value)
@@ -118,7 +118,7 @@ namespace TShockAPI
         /// <summary>
         /// The permissions of this group and all that it inherits from.
         /// </summary>
-		public List<string> TotalPermissions
+		public virtual List<string> TotalPermissions
 		{
 			get
 			{
@@ -175,24 +175,30 @@ namespace TShockAPI
         /// <param name="permission">The permission to check.</param>
         /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
-		{
-			if (String.IsNullOrEmpty(permission) || RealHasPermission(permission))
+        {
+	        bool negated = false;
+			if (String.IsNullOrEmpty(permission) || (RealHasPermission(permission, ref negated) && !negated))
 			{
 				return true;
 			}
+
+	        if (negated)
+		        return false;
+
 			string[] nodes = permission.Split('.');
 			for (int i = nodes.Length - 1; i >= 0; i--)
 			{
 				nodes[i] = "*";
-				if (RealHasPermission(String.Join(".", nodes, 0, i + 1)))
+				if (RealHasPermission(String.Join(".", nodes, 0, i + 1), ref negated))
 				{
-					return true;
+					return !negated;
 				}
 			}
 			return false;
 		}
-        private bool RealHasPermission(string permission)
+        private bool RealHasPermission(string permission, ref bool negated)
         {
+	        negated = false;
             if (string.IsNullOrEmpty(permission))
                 return true;
 
@@ -200,9 +206,12 @@ namespace TShockAPI
             var traversed = new List<Group>();
             while (cur != null)
             {
-                if (cur.negatedpermissions.Contains(permission))
-                    return false;
-                if (cur.permissions.Contains(permission))
+	            if (cur.negatedpermissions.Contains(permission))
+	            {
+		            negated = true;
+		            return false;
+	            }
+	            if (cur.permissions.Contains(permission))
                     return true;
                 if (traversed.Contains(cur))
                 {
@@ -226,6 +235,12 @@ namespace TShockAPI
 				negatedpermissions.Add(permission);
 				permissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
 			}
+
+			for (int i = 0; i < TShock.Players.Length; i++)
+			{
+				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor)
+					TShock.Players[i].SendRaptorPermissions();
+			}
 		}
 
         /// <summary>
@@ -244,6 +259,12 @@ namespace TShockAPI
 			{
 				permissions.Add(permission);
 				negatedpermissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
+			}
+
+			for (int i = 0; i < TShock.Players.Length; i++)
+			{
+				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor)
+					TShock.Players[i].SendRaptorPermissions();
 			}
 		}
 
@@ -272,6 +293,11 @@ namespace TShockAPI
 				return;
 			}
 			permissions.Remove(permission);
+			for (int i = 0; i < TShock.Players.Length; i++)
+			{
+				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor && TShock.Players[i].Group == this)
+					TShock.Players[i].SendRaptorPermissions();
+			}
 		}
 
 		/// <summary>
@@ -300,6 +326,10 @@ namespace TShockAPI
     /// </summary>
 	public class SuperAdminGroup : Group
 	{
+		public override List<string> TotalPermissions
+		{
+			get { return new List<string> { "*" }; }
+		}
 		public SuperAdminGroup()
 			: base("superadmin")
 		{

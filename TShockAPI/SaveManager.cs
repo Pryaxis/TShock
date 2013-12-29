@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Terraria;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -45,18 +46,21 @@ namespace TShockAPI
 		/// <summary>
 		/// SaveWorld event handler which notifies users that the server may lag
 		/// </summary>
-		public void OnSaveWorld(bool resettime = false, HandledEventArgs e = null)
+		public void OnSaveWorld(WorldSaveEventArgs args)
 		{
-			// Protect against internal errors causing save failures
-			// These can be caused by an unexpected error such as a bad or out of date plugin
-			try
+			if (TShock.Config.AnnounceSave)
 			{
-				TShock.Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
-			}
-			catch (Exception ex)
-			{
-				Log.Error("World saved notification failed");
-				Log.Error(ex.ToString());
+				// Protect against internal errors causing save failures
+				// These can be caused by an unexpected error such as a bad or out of date plugin
+				try
+				{
+					TShock.Utils.Broadcast("Saving world. Momentary lag might result from this.", Color.Red);
+				}
+				catch (Exception ex)
+				{
+					Log.Error("World saved notification failed");
+					Log.Error(ex.ToString());
+				}
 			}
 		}
 
@@ -120,7 +124,7 @@ namespace TShockAPI
 							{
 								if (task.direct)
 								{
-									OnSaveWorld();
+									OnSaveWorld(new WorldSaveEventArgs());
 									WorldGen.realsaveWorld(task.resetTime);
 								}
 								else

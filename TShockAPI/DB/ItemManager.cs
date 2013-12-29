@@ -196,13 +196,32 @@ namespace TShockAPI.DB
 			return Name == other.Name;
 		}
 
-		public bool HasPermissionToUseItem(TSPlayer ply)
-		{
-			if (ply == null)
-				return false;
-			return AllowedGroups.Contains(ply.Group.Name);
-				// could add in the other permissions in this class instead of a giant if switch.
-		}
+        public bool HasPermissionToUseItem(TSPlayer ply)
+        {
+            if (ply == null)
+                return false;
+
+	        if (ply.Group.HasPermission(Permissions.usebanneditem))
+		        return true;
+
+            var cur = ply.Group;
+            var traversed = new List<Group>();
+            while (cur != null)
+            {
+                if (AllowedGroups.Contains(cur.Name))
+                {
+                    return true;
+                }
+                if (traversed.Contains(cur))
+                {
+                    throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
+                }
+                traversed.Add(cur);
+                cur = cur.Parent;
+            }
+            return false;
+            // could add in the other permissions in this class instead of a giant if switch.
+        }
 
 		public void SetAllowedGroups(String groups)
 		{

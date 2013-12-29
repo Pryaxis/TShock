@@ -53,18 +53,18 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			// Add default groups if they don't exist
-			AddDefaultGroup(TShock.Config.DefaultGuestGroupName, "",
+			AddDefaultGroup("guest", "",
 				string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
-					Permissions.cantalkinthird));
+					Permissions.cantalkinthird, Permissions.canchat));
 
-			AddDefaultGroup("default", TShock.Config.DefaultGuestGroupName,
+			AddDefaultGroup("default", "guest",
 				string.Join(",", Permissions.warp, Permissions.canchangepassword));
 
 			AddDefaultGroup("newadmin", "default",
 				string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
 
 			AddDefaultGroup("admin", "newadmin",
-				string.Join(",", Permissions.ban, Permissions.whitelist, Permissions.causeevents, Permissions.spawnboss,
+				string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
 					Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
 					Permissions.kill, Permissions.logs,
 					Permissions.immunetokick, Permissions.tphere));
@@ -181,7 +181,7 @@ namespace TShockAPI.DB
 		/// <param name="parentname">parent of group</param>
 		/// <param name="permissions">permissions</param>
 		/// <param name="chatcolor">chatcolor</param>
-		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor)
+		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
 		{
 			Group group = GetGroupByName(name);
 			if (group == null)
@@ -210,13 +210,17 @@ namespace TShockAPI.DB
 
 			// Ensure any group validation is also persisted to the DB.
 			var newGroup = new Group(name, parent, chatcolor, permissions);
-			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2 WHERE GroupName=@3";
-			if (database.Query(query, parentname, newGroup.Permissions, string.Format("{0},{1},{2}", newGroup.R, newGroup.G, newGroup.B), name) != 1)
+			newGroup.Prefix = prefix;
+			newGroup.Suffix = suffix;
+			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2, Suffix=@3, Prefix=@4 WHERE GroupName=@5";
+			if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) != 1)
 				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
 
 			group.ChatColor = chatcolor;
 			group.Permissions = permissions;
 			group.Parent = parent;
+			group.Prefix = prefix;
+			group.Suffix = suffix;
 		}
 
 #if COMPAT_SIGS

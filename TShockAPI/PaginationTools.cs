@@ -23,6 +23,9 @@ using System.Text;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Provides tools for sending paginated output.
+	/// </summary>
 	public static class PaginationTools
 	{
 		public delegate Tuple<string, Color> LineFormatterDelegate(object lineData, int lineIndex, int pageNumber);
@@ -105,7 +108,7 @@ namespace TShockAPI
 				this.FooterTextColor = Color.Yellow;
 				this.NothingToDisplayString = null;
 				this.LineFormatter = null;
-				this.LineTextColor = Color.White;
+				this.LineTextColor = Color.Yellow;
 				this.maxLinesPerPage = 4;
 				this.pageLimit = 0;
 			}
@@ -122,14 +125,10 @@ namespace TShockAPI
 			{
 				if (settings.NothingToDisplayString != null)
 				{
-					if (player is TSServerPlayer)
-					{
+					if (!player.RealPlayer)
 						player.SendSuccessMessage(settings.NothingToDisplayString);
-					}
 					else
-					{
 						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
-					}
 				}
 				return;
 			}
@@ -142,14 +141,10 @@ namespace TShockAPI
 
 			if (settings.IncludeHeader)
 			{
-				if (player is TSServerPlayer)
-				{
+				if (!player.RealPlayer)
 					player.SendSuccessMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount));
-				}
 				else
-				{
 					player.SendMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount), settings.HeaderTextColor);
-				}
 			}
 
 			int listOffset = (pageNumber - 1) * settings.MaxLinesPerPage;
@@ -196,14 +191,10 @@ namespace TShockAPI
 
 				if (lineMessage != null)
 				{
-					if (player is TSServerPlayer)
-					{
-						Console.WriteLine(lineMessage);
-					}
+					if (!player.RealPlayer)
+						player.SendInfoMessage(lineMessage);
 					else
-					{
 						player.SendMessage(lineMessage, lineColor);
-					}
 				}
 			}
 
@@ -211,26 +202,18 @@ namespace TShockAPI
 			{
 				if (settings.NothingToDisplayString != null)
 				{
-					if (player is TSServerPlayer)
-					{
+					if (!player.RealPlayer)
 						player.SendSuccessMessage(settings.NothingToDisplayString);
-					}
 					else
-					{
 						player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
-					}
 				}
 			}
 			else if (settings.IncludeFooter && pageNumber + 1 <= pageCount)
 			{
-				if (player is TSServerPlayer)
-				{
+				if (!player.RealPlayer)
 					player.SendInfoMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount));
-				}
 				else
-				{
 					player.SendMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount), settings.FooterTextColor);
-				}
 			}
 		}
 
@@ -239,11 +222,11 @@ namespace TShockAPI
 			PaginationTools.SendPage(player, pageNumber, dataToPaginate, dataToPaginate.Count, settings);
 		}
 
-		public static List<string> BuildLinesFromTerms(
-		  IEnumerable terms, Func<object, string> termFormatter = null, string separator = ", ", int maxCharsPerLine = 80)
+		public static List<string> BuildLinesFromTerms(IEnumerable terms, Func<object, string> termFormatter = null, string separator = ", ", int maxCharsPerLine = 80)
 		{
 			List<string> lines = new List<string>();
 			StringBuilder lineBuilder = new StringBuilder();
+
 			foreach (object term in terms)
 			{
 				if (term == null && termFormatter == null)
@@ -254,9 +237,7 @@ namespace TShockAPI
 				{
 					try
 					{
-						termString = termFormatter(term);
-
-						if (termString == null)
+						if ((termString = termFormatter(term)) == null)
 							continue;
 					}
 					catch (Exception ex)
@@ -270,41 +251,35 @@ namespace TShockAPI
 					termString = term.ToString();
 				}
 
-				bool goesOnNextLine = (lineBuilder.Length + termString.Length > maxCharsPerLine);
-				if (!goesOnNextLine)
+				if (lineBuilder.Length + termString.Length + separator.Length < maxCharsPerLine)
 				{
-					if (lineBuilder.Length > 0)
-						lineBuilder.Append(separator);
-					lineBuilder.Append(termString);
+					lineBuilder.Append(termString).Append(separator);
 				}
 				else
 				{
-					// A separator should always be at the end of a line as we know it is followed by another line.
-					lineBuilder.Append(separator);
 					lines.Add(lineBuilder.ToString());
-					lineBuilder.Clear();
-
-					lineBuilder.Append(termString);
+					lineBuilder.Clear().Append(termString).Append(separator);
 				}
 			}
-			if (lineBuilder.Length > 0)
-				lines.Add(lineBuilder.ToString());
 
+			if (lineBuilder.Length > 0)
+			{
+				lines.Add(lineBuilder.ToString().Substring(0, lineBuilder.Length - separator.Length));
+			}
 			return lines;
 		}
 
-		public static bool TryParsePageNumber(
-		  List<string> commandParameters, int expectedParamterIndex, TSPlayer errorMessageReceiver, out int pageNumber)
+		public static bool TryParsePageNumber(List<string> commandParameters, int expectedParameterIndex, TSPlayer errorMessageReceiver, out int pageNumber)
 		{
 			pageNumber = 1;
-			if (commandParameters.Count <= expectedParamterIndex)
+			if (commandParameters.Count <= expectedParameterIndex)
 				return true;
 
-			string pageNumberRaw = commandParameters[expectedParamterIndex];
+			string pageNumberRaw = commandParameters[expectedParameterIndex];
 			if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1)
 			{
 				if (errorMessageReceiver != null)
-					errorMessageReceiver.SendErrorMessage(string.Format("\"{0}\" is not a valid page number.", pageNumberRaw));
+					errorMessageReceiver.SendErrorMessage("\"{0}\" is not a valid page number.", pageNumberRaw);
 
 				pageNumber = 1;
 				return false;

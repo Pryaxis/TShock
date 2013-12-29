@@ -50,7 +50,7 @@ namespace TShockAPI
 			else
 			{
 				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
-				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
+				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatus(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v3/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v3/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
 			}
@@ -236,7 +236,7 @@ namespace TShockAPI
 				var players = new ArrayList();
 				foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
 				{
-					var p = PlayerFilter(tsPlayer, parameters);
+					var p = PlayerFilter(tsPlayer, parameters, ((tokenData.UserGroupName) != "" && TShock.Utils.GetGroup(tokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
 					if (null != p)
 						players.Add(p);
 				}
@@ -258,7 +258,7 @@ namespace TShockAPI
 				rules.Add("PvPMode", TShock.Config.PvPMode);
 				rules.Add("SpawnProtection", TShock.Config.SpawnProtection);
 				rules.Add("SpawnProtectionRadius", TShock.Config.SpawnProtectionRadius);
-				rules.Add("ServerSideInventory", TShock.Config.ServerSideInventory);
+				rules.Add("ServerSideInventory", TShock.Config.ServerSideCharacter);
 
 				ret.Add("rules", rules);
 			}
@@ -307,7 +307,7 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, group, "", "");
+			User user = new User(username, password, "", group, "", "", "");
 			try
 			{
 				TShock.Users.AddUser(user);
@@ -404,7 +404,7 @@ namespace TShockAPI
 
 			try
 			{
-				TShock.Bans.AddBan(ip, name, parameters["reason"], true, tokenData.Username);
+				TShock.Bans.AddBan(ip, name, "", parameters["reason"], true, tokenData.Username);
 			}
 			catch (Exception e)
 			{
@@ -622,7 +622,7 @@ namespace TShockAPI
 
 			TSPlayer player = (TSPlayer)ret;
 			var reason = null == parameters["reason"] ? "Banned via web" : parameters["reason"];
-			TShock.Bans.AddBan(player.IP, player.Name, reason);
+			TShock.Bans.AddBan(player.IP, player.Name, "", reason);
 			TShock.Utils.ForceKick(player, reason, false, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}
@@ -719,7 +719,7 @@ namespace TShockAPI
 			var permissions = (null == parameters["permissions"]) ? group.Permissions : parameters["permissions"];
 			try
 			{
-				TShock.Groups.UpdateGroup(group.Name, parent, permissions, chatcolor);
+				TShock.Groups.UpdateGroup(group.Name, parent, permissions, chatcolor, group.Suffix, group.Prefix);
 			}
 			catch (Exception e)
 			{
@@ -859,18 +859,22 @@ namespace TShockAPI
 			return group;
 		}
 
-		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, IParameterCollection parameters)
+		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, IParameterCollection parameters, bool viewips = false)
 		{
 			var player = new Dictionary<string, object>
 				{
 					{"nickname", tsPlayer.Name},
-					{"username", null == tsPlayer.UserAccountName ? "" : tsPlayer.UserAccountName},
-					{"ip", tsPlayer.IP},
+					{"username", tsPlayer.UserAccountName ?? ""},
 					{"group", tsPlayer.Group.Name},
 					{"active", tsPlayer.Active},
 					{"state", tsPlayer.State},
 					{"team", tsPlayer.Team},
 				};
+
+			if (viewips)
+			{
+				player.Add("ip", tsPlayer.IP);
+			}
 			foreach (IParameter filter in parameters)
 			{
 				if (player.ContainsKey(filter.Name) && !player[filter.Name].Equals(filter.Value))
