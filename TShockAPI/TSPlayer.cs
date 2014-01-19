@@ -809,6 +809,7 @@ namespace TShockAPI
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
 		public int ActiveChest = -1;
+		public Item ItemInHand = new Item();
 
 		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{

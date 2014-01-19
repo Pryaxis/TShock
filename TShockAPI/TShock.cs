@@ -393,6 +393,12 @@ namespace TShockAPI
 		{
 			if (args.Player.IsLoggedIn)
 				args.Player.SaveServerCharacter();
+
+			if (args.Player.ItemInHand.type != 0)
+			{
+				args.Player.SendErrorMessage("Attempting to bypass SSC with item in hand.");
+				args.Handled = true;
+			}
 		}
 
         private void NetHooks_NameCollision(NameCollisionEventArgs args)

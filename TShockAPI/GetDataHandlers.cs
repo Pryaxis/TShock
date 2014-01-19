@@ -1310,6 +1310,12 @@ namespace TShockAPI
 				args.Player.IgnoreActionsForClearingTrashCan = true;
 			}
 
+			if (slot == 58) //this is the hand
+			{
+				item.stack = stack;
+				args.Player.ItemInHand = item;
+			}
+			
 			return false;
 		}
 
