@@ -1531,7 +1531,7 @@ namespace TShockAPI
 
 	public class NetItem
 	{
-		public static readonly int maxNetInventory = 82;
+		public static readonly int maxNetInventory = 83;
 		public static readonly int armorSlots = 16;
 		public static readonly int dyeSlots = 8;
 		public int netID;
