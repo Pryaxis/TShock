@@ -79,7 +79,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The Tile ID being edited.
 			/// </summary>
-			public byte EditData { get; set; }
+			public ushort EditData { get; set; }
 			/// <summary>
 			/// The EditType.
 			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
@@ -101,7 +101,7 @@ namespace TShockAPI
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, byte editData, byte style)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, ushort editData, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -1600,7 +1600,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static byte[] orientableTiles = new byte[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209 };
+		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209 };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
@@ -1756,7 +1756,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be broken without any tools.
 		/// </summary>
-		private static byte[] breakableTiles = new byte[] { 4, 13, 33, 49, 50, 127, 128, 162 };
+		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, 128, 162 };
 		/// <summary>
 		/// The maximum place styles for each tile.
 		/// </summary>
@@ -1774,7 +1774,7 @@ namespace TShockAPI
 
 			try
 			{
-				var editData = args.Data.ReadInt8();
+				var editData = args.Data.ReadUInt16();
 				EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
 								 action == EditAction.KillTileNoItem)
 								? EditType.Fail

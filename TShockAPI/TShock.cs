@@ -1548,7 +1548,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, byte tileType, GetDataHandlers.EditAction actionType)
+		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, ushort tileType, GetDataHandlers.EditAction actionType)
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
 			{
