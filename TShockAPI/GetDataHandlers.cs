@@ -2674,8 +2674,10 @@ namespace TShockAPI
 
 		private static bool HandleTileKill(GetDataHandlerArgs args)
 		{
-			var tileX = args.Data.ReadInt32();
-			var tileY = args.Data.ReadInt32();
+			int flag = args.Data.ReadByte();
+			int tileX = args.Data.ReadInt16();
+			int tileY = args.Data.ReadInt16();
+
 			if (OnTileKill(tileX, tileY))
 				return true;
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
@@ -2687,7 +2689,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (Main.tile[tileX, tileY].type != 0x15 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
+			if (flag != 0 && Main.tile[tileX, tileY].type != 21 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
@@ -2704,7 +2706,6 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
 			}
-
 			return false;
 		}
 
