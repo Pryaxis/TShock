@@ -45,6 +45,7 @@ namespace TShockAPI.Net
 		public byte WallColor { get; set; }
 		public bool Slope { get; set; }
 		public bool Slope2 { get; set; }
+		public bool Slope3 { get; set; }
 
 	public bool HasColor
 		{
@@ -150,6 +151,9 @@ namespace TShockAPI.Net
 			if (Slope2)
 				flags2 |= TileFlags2.Slope2;
 
+			if (Slope3)
+				flags2 |= TileFlags2.Slope3;
+
 
 			stream.WriteInt8((byte)flags2);
 
@@ -192,6 +196,7 @@ namespace TShockAPI.Net
 			Wire3 = flags2.HasFlag(TileFlags2.Wire3);
 			Slope = flags2.HasFlag(TileFlags2.Slope);
 			Slope2 = flags2.HasFlag(TileFlags2.Slope2);
+			Slope3 = flags2.HasFlag(TileFlags2.Slope3);
 
 			if (flags2.HasFlag(TileFlags2.Color))
 			{
@@ -270,6 +275,7 @@ namespace TShockAPI.Net
 		Color = 4,
 		WallColor = 8,
 		Slope = 16,
-		Slope2 = 32
+		Slope2 = 32,
+		Slope3 = 64
 	}
 }
