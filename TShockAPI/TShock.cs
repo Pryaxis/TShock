@@ -851,8 +851,9 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 203 || args.Type == 234))
-			{
+			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 200 || args.Type == 203
+                		|| args.Type == 234))
+                	{
 				args.Handled = true;
 				return;
 			}
@@ -864,7 +865,8 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116))
+			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 || args.Type == 115
+                		|| args.Type == 164))
 			{
 				args.Handled = true;
 			}
