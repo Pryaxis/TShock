@@ -33,7 +33,8 @@ namespace TShockAPI.Net
 		DownedBoss3 = 8,
 		HardMode = 16,
 		DownedClown = 32,
-		ServerSideCharacter = 64
+		ServerSideCharacter = 64,
+		DownedPlantBoss = 128
 	}
 
 	[Flags]
@@ -46,7 +47,8 @@ namespace TShockAPI.Net
 		DownedMechBossAny = 8,
 		CloudBg = 16,
 		Crimson = 32,
-		Pumpkin = 64
+		PumpkinMoon = 64,
+		SnowMoon = 128
 	}
 
 	public class WorldInfoMsg : BaseMsg
