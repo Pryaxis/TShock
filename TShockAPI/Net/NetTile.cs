@@ -26,7 +26,7 @@ namespace TShockAPI.Net
 	public class NetTile : IPackable
 	{
 		public bool Active { get; set; }
-		public byte Type { get; set; }
+		public ushort Type { get; set; }
 		public short FrameX { get; set; }
 		public short FrameY { get; set; }
 		public bool Lighted { get; set; }
@@ -169,7 +169,7 @@ namespace TShockAPI.Net
 
 			if (Active)
 			{
-				stream.WriteInt8(Type);
+				stream.WriteInt16((short)Type);
 				if (FrameImportant)
 				{
 					stream.WriteInt16(FrameX);
@@ -211,7 +211,7 @@ namespace TShockAPI.Net
 			Active = flags.HasFlag(TileFlags.Active);
 			if (Active)
 			{
-				Type = stream.ReadInt8();
+				Type = stream.ReadUInt16();
 				if (FrameImportant)
 				{
 					FrameX = stream.ReadInt16();
