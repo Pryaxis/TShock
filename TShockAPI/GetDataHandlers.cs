@@ -1385,7 +1385,15 @@ namespace TShockAPI
 			var playerid = args.Data.ReadInt8();
 			var hair = args.Data.ReadInt8();
 			var male = args.Data.ReadBoolean();
-			args.Data.Position += 21;
+			byte hairDye = args.Data.ReadInt8();
+			BitsByte hideVisual = args.Data.ReadInt8();
+			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color skinColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color eyeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color shirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			var difficulty = args.Data.ReadInt8();
 			string name = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
 
@@ -1402,6 +1410,14 @@ namespace TShockAPI
 			}
 			if (args.Player.ReceivedInfo)
 			{
+				args.Player.TPlayer.hairDye = hairDye;
+
+				// Since Terraria 1.2.3 these settings can be changed afterwards.
+				args.Player.TPlayer.shirtColor = shirtColor;
+				args.Player.TPlayer.shirtColor = shirtColor;
+				args.Player.TPlayer.underShirtColor = underShirtColor;
+				args.Player.TPlayer.shoeColor = shoeColor;
+				args.Player.TPlayer.hideVisual = hideVisual;
 				return true;
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
