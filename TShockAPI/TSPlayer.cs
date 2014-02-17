@@ -887,12 +887,11 @@ namespace TShockAPI
             NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
         }
 
-		public virtual bool SendRawData(byte[] data)
+		public virtual void SendRawData(byte[] data)
 		{
 			if (!RealPlayer || !ConnectionAlive)
-				return false;
-
-			return TShock.SendBytes(Netplay.serverSock[Index], data);
+				return;
+			NetMessage.SendBytes(Netplay.serverSock[Index], data, 0, data.Length, Netplay.serverSock[Index].ServerWriteCallBack, Netplay.serverSock[Index].networkStream);
 		}
 
 		/// <summary>
