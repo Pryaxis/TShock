@@ -1410,7 +1410,8 @@ namespace TShockAPI
 			}
 			if (args.Player.ReceivedInfo)
 			{
-				// Since Terraria 1.2.3 these settings can be changed afterwards.
+				// Since Terraria 1.2.3 these character properties can change ingame.
+				args.Player.TPlayer.hairColor = hairColor;
 				args.Player.TPlayer.hairDye = hairDye;
 				args.Player.TPlayer.pantsColor = pantsColor;
 				args.Player.TPlayer.shirtColor = shirtColor;
