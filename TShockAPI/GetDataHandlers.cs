@@ -1410,10 +1410,9 @@ namespace TShockAPI
 			}
 			if (args.Player.ReceivedInfo)
 			{
-				args.Player.TPlayer.hairDye = hairDye;
-
 				// Since Terraria 1.2.3 these settings can be changed afterwards.
-				args.Player.TPlayer.shirtColor = shirtColor;
+				args.Player.TPlayer.hairDye = hairDye;
+				args.Player.TPlayer.pantsColor = pantsColor;
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
