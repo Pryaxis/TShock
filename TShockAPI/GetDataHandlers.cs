@@ -1364,12 +1364,6 @@ namespace TShockAPI
 			if (args.Player.FirstMaxMP == 0)
 				args.Player.FirstMaxMP = max;
 
-			if (cur < 0 || cur > 400 || max < 0 || max > 200) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				return false;
-			}
-
 			if (args.Player.IsLoggedIn)
 			{
 				args.Player.TPlayer.statMana = cur;
