@@ -1334,6 +1334,7 @@ namespace TShockAPI
 			if (cur < 0 || cur > 500 || max < 100 || max > 500) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+                Log.ConsoleError("HP Exploit Attempt: Current HP {0}, Max HP {0}", cur, max);
 				return true;
 			}
 
@@ -2523,6 +2524,7 @@ namespace TShockAPI
 			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+                Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
 				return false;
 			}
 
@@ -3023,6 +3025,7 @@ namespace TShockAPI
 			if (dmg > 12000) //Abnormal values have the potential to cause infinite loops in the server.
 			{				 //12000 because Skely Prime Head does 10339 or some bs during the day.
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+                Log.ConsoleError("Damage Exploit Attempt: Damage {0}", dmg);
 				return false;
 			}
 
