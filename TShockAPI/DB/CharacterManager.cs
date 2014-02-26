@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Data;
 using MySql.Data.MySqlClient;
+using Terraria;
 
 namespace TShockAPI.DB
 {
@@ -38,7 +39,15 @@ namespace TShockAPI.DB
 			                         new SqlColumn("MaxMana", MySqlDbType.Int32),
 			                         new SqlColumn("Inventory", MySqlDbType.Text),
 									 new SqlColumn("spawnX", MySqlDbType.Int32),
-									 new SqlColumn("spawnY", MySqlDbType.Int32)
+									 new SqlColumn("spawnY", MySqlDbType.Int32),
+									 new SqlColumn("hair", MySqlDbType.Int32),
+									 new SqlColumn("hairDye", MySqlDbType.Int32),
+									 new SqlColumn("hairColor", MySqlDbType.Int32),
+									 new SqlColumn("pantsColor", MySqlDbType.Int32),
+									 new SqlColumn("shirtColor", MySqlDbType.Int32),
+									 new SqlColumn("underShirtColor", MySqlDbType.Int32),
+									 new SqlColumn("shoeColor", MySqlDbType.Int32),
+									 new SqlColumn("hideVisuals", MySqlDbType.Int32)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -65,6 +74,14 @@ namespace TShockAPI.DB
 						playerData.inventory = NetItem.Parse(reader.Get<string>("Inventory"));
 						playerData.spawnX = reader.Get<int>("spawnX");
 						playerData.spawnY = reader.Get<int>("spawnY");
+						playerData.hair = reader.Get<int?>("hair");
+						playerData.hairDye = (byte)reader.Get<int>("hairDye");
+						playerData.hairColor = TShock.Utils.DecodeColor(reader.Get<int?>("hairColor"));
+						playerData.pantsColor = TShock.Utils.DecodeColor(reader.Get<int?>("pantsColor"));
+						playerData.shirtColor = TShock.Utils.DecodeColor(reader.Get<int?>("shirtColor"));
+						playerData.underShirtColor = TShock.Utils.DecodeColor(reader.Get<int?>("underShirtColor"));
+						playerData.shoeColor = TShock.Utils.DecodeColor(reader.Get<int?>("shoeColor"));
+						playerData.hideVisuals = TShock.Utils.DecodeBitsByte(reader.Get<int?>("hideVisuals"));
 						return playerData;
 					}
 				}
@@ -106,8 +123,8 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", player.UserID,
-								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.TPlayer.SpawnX, player.TPlayer.SpawnY);
+					database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, hair, hairDye, hairColor, pantsColor, shirtColor, underShirtColor, shoeColor, hideVisuals) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14);", player.UserID,
+								   playerData.health, playerData.maxHealth, playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.TPlayer.SpawnX, player.TPlayer.SpawnY, player.TPlayer.hair, player.TPlayer.hairDye, TShock.Utils.EncodeColor(player.TPlayer.hairColor), TShock.Utils.EncodeColor(player.TPlayer.pantsColor), TShock.Utils.EncodeColor(player.TPlayer.shirtColor), TShock.Utils.EncodeColor(player.TPlayer.underShirtColor), TShock.Utils.EncodeColor(player.TPlayer.shoeColor), TShock.Utils.EncodeBitsByte(player.TPlayer.hideVisual));
 					return true;
 				}
 				catch (Exception ex)
@@ -119,8 +136,8 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					database.Query("UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4, spawnX = @6, spawnY = @7 WHERE Account = @5;", playerData.health, playerData.maxHealth,
-								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID, player.TPlayer.SpawnX, player.TPlayer.SpawnY);
+					database.Query("UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4, spawnX = @6, spawnY = @7, hair = @8, hairDye = @9, hairColor = @10, pantsColor = @11, shirtColor = @12, underShirtColor = @13, shoeColor = @14, hideVisuals = @15 WHERE Account = @5;", playerData.health, playerData.maxHealth,
+								   playerData.mana, playerData.maxMana, NetItem.ToString(playerData.inventory), player.UserID, player.TPlayer.SpawnX, player.TPlayer.SpawnY, player.TPlayer.hair, player.TPlayer.hairDye, TShock.Utils.EncodeColor(player.TPlayer.hairColor), TShock.Utils.EncodeColor(player.TPlayer.pantsColor), TShock.Utils.EncodeColor(player.TPlayer.shirtColor), TShock.Utils.EncodeColor(player.TPlayer.underShirtColor), TShock.Utils.EncodeColor(player.TPlayer.shoeColor), TShock.Utils.EncodeBitsByte(player.TPlayer.hideVisual));
 					return true;
 				}
 				catch (Exception ex)

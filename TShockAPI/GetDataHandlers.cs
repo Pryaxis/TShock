@@ -1405,6 +1405,7 @@ namespace TShockAPI
 			if (args.Player.ReceivedInfo)
 			{
 				// Since Terraria 1.2.3 these character properties can change ingame.
+				args.Player.TPlayer.hair = hair;
 				args.Player.TPlayer.hairColor = hairColor;
 				args.Player.TPlayer.hairDye = hairDye;
 				args.Player.TPlayer.pantsColor = pantsColor;
