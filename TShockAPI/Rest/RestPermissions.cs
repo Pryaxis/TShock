@@ -86,5 +86,14 @@ namespace Rests
 
 		[Description("REST user can view the ips of players.")] 
 		public static readonly string viewips = "tshock.rest.viewips";
+
+		[Description("REST user can send broadcasts.")] 
+		public static readonly string broadcast = "tshock.rest.broadcast";
+
+		[Description("REST user can view world information.")] 
+		public static readonly string worldinfo = "tshock.rest.worldinfo";
+
+		[Description("REST user can view the online players.")] 
+		public static readonly string playerinfo = "tshock.rest.playerinfo";
 	}
 }

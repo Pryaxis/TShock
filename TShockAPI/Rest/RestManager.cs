@@ -55,7 +55,7 @@ namespace TShockAPI
 				Rest.Register(new RestCommand("/v3/server/rules", (a, b) => this.ServerRules(a, b, SecureRest.TokenData.None)));
 			}
 
-			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
+			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast, RestPermissions.broadcast));
 			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
 			Rest.Register(new SecureRestCommand("/v3/server/restart", ServerRestart, RestPermissions.restmaintenance));
@@ -78,7 +78,7 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/v2/bans/destroy", BanDestroyV2, RestPermissions.restmanagebans));
 
 			// World Commands
-			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
+			Rest.Register(new SecureRestCommand("/world/read", WorldRead, RestPermissions.worldinfo));
 			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
@@ -86,8 +86,8 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
-			Rest.Register(new SecureRestCommand("/lists/players", PlayerList));
-			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2));
+			Rest.Register(new SecureRestCommand("/lists/players", PlayerList, RestPermissions.playerinfo));
+			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2, RestPermissions.playerinfo));
 			Rest.Register(new SecureRestCommand("/v2/players/read", PlayerReadV2, RestPermissions.restuserinfo));
 			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, RestPermissions.restkick));
 			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, RestPermissions.restban, RestPermissions.restmanagebans));
