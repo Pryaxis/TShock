@@ -281,6 +281,8 @@ namespace TShockAPI
 
 		[Description("Allows anyone to break grass, pots, etc.")] public bool AllowCutTilesAndBreakables = false;
 
+		[Description("Whether warning messages of the Packet Bufferer are logged or not.")] public bool LogPacketBuffererWarnings = true;
+
         /// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
