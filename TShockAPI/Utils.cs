@@ -975,5 +975,47 @@ namespace TShockAPI
 				yield return new Point(regionArea.Right, regionArea.Top + y);
 			}
 		}
+
+		public int? EncodeColor(Color? color)
+		{
+			if (color == null)
+				return null;
+
+			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
+		}
+
+		public Color? DecodeColor(int? encodedColor)
+		{
+			if (encodedColor == null)
+				return null;
+
+			byte[] data = BitConverter.GetBytes(encodedColor.Value);
+			return new Color(data[0], data[1], data[2], data[3]);
+		}
+
+		public byte? EncodeBitsByte(BitsByte? bitsByte)
+		{
+			if (bitsByte == null)
+				return null;
+
+			byte result = 0;
+			for (int i = 0; i < 8; i++)
+				if (bitsByte.Value[i])
+					result |= (byte)(1 << i);
+
+			return result;
+		}
+
+		public BitsByte? DecodeBitsByte(int? encodedBitsByte)
+		{
+			if (encodedBitsByte == null)
+				return null;
+
+			BitsByte result = new BitsByte();
+			for (int i = 0; i < 8; i++)
+				result[i] = (encodedBitsByte & 1 << i) != 0;
+
+			return result;
+		}
 	}
 }

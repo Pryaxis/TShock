@@ -119,20 +119,40 @@ namespace TShockAPI.DB
 		                                                                                     			(s, i) => s.GetBoolean(i)
 		                                                                                     			},
 		                                                                                     		{
+		                                                                                     			typeof (bool?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetBoolean(i)
+		                                                                                     			},
+		                                                                                     		{
 		                                                                                     			typeof (byte),
 		                                                                                     			(s, i) => s.GetByte(i)
+		                                                                                     			},
+		                                                                                     		{
+		                                                                                     			typeof (byte?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetByte(i)
 		                                                                                     			},
 		                                                                                     		{
 		                                                                                     			typeof (Int16),
 		                                                                                     			(s, i) => s.GetInt16(i)
 		                                                                                     			},
 		                                                                                     		{
+		                                                                                     			typeof (Int16?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt16(i)
+		                                                                                     			},
+		                                                                                     		{
 		                                                                                     			typeof (Int32),
 		                                                                                     			(s, i) => s.GetInt32(i)
 		                                                                                     			},
 		                                                                                     		{
+		                                                                                     			typeof (Int32?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt32(i)
+		                                                                                     			},
+		                                                                                     		{
 		                                                                                     			typeof (Int64),
 		                                                                                     			(s, i) => s.GetInt64(i)
+		                                                                                     			},
+		                                                                                     		{
+		                                                                                     			typeof (Int64?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt64(i)
 		                                                                                     			},
 		                                                                                     		{
 		                                                                                     			typeof (string),
@@ -143,12 +163,24 @@ namespace TShockAPI.DB
 		                                                                                     			(s, i) => s.GetDecimal(i)
 		                                                                                     			},
 		                                                                                     		{
+		                                                                                     			typeof (decimal?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetDecimal(i)
+		                                                                                     			},
+		                                                                                     		{
 		                                                                                     			typeof (float),
 		                                                                                     			(s, i) => s.GetFloat(i)
 		                                                                                     			},
 		                                                                                     		{
+		                                                                                     			typeof (float?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetFloat(i)
+		                                                                                     			},
+		                                                                                     		{
 		                                                                                     			typeof (double),
 		                                                                                     			(s, i) => s.GetDouble(i)
+		                                                                                     			},
+		                                                                                     		{
+		                                                                                     			typeof (double?),
+		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetDouble(i)
 		                                                                                     			},
 		                                                                                     		{
 		                                                                                     			typeof (object),

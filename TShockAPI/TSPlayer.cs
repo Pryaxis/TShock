@@ -1274,6 +1274,14 @@ namespace TShockAPI
 		public bool exists;
 		public int spawnX= -1;
 		public int spawnY= -1;
+		public int? hair;
+		public byte hairDye;
+		public Color? hairColor;
+		public Color? pantsColor;
+		public Color? shirtColor;
+		public Color? underShirtColor;
+		public Color? shoeColor;
+		public BitsByte? hideVisuals;
 		
 
 		public PlayerData(TSPlayer player)
@@ -1333,6 +1341,15 @@ namespace TShockAPI
 				this.spawnX = player.TPlayer.SpawnX;
 				this.spawnY = player.TPlayer.SpawnY;
 			}
+			this.hair = player.TPlayer.hair;
+			this.hairDye = player.TPlayer.hairDye;
+			this.hairColor = player.TPlayer.hairColor;
+			this.pantsColor = player.TPlayer.pantsColor;
+			this.shirtColor = player.TPlayer.shirtColor;
+			this.underShirtColor = player.TPlayer.underShirtColor;
+			this.shoeColor = player.TPlayer.shoeColor;
+			this.hideVisuals = player.TPlayer.hideVisual;
+
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
@@ -1419,6 +1436,24 @@ namespace TShockAPI
 			player.TPlayer.SpawnY = this.spawnY;
 			player.sX = this.spawnX;
 			player.sY = this.spawnY;
+			player.TPlayer.hairDye = this.hairDye;
+
+			if (this.hair != null)
+				player.TPlayer.hair = this.hair.Value;
+			if (this.hairColor != null)
+				player.TPlayer.hairColor = this.hairColor.Value;
+			if (this.pantsColor != null)
+				player.TPlayer.pantsColor = this.pantsColor.Value;
+			if (this.shirtColor != null)
+				player.TPlayer.shirtColor = this.shirtColor.Value;
+			if (this.underShirtColor != null)
+				player.TPlayer.underShirtColor = this.underShirtColor.Value;
+			if (this.shoeColor != null)
+				player.TPlayer.shoeColor = this.shoeColor.Value;
+			if (this.hideVisuals != null)
+				player.TPlayer.hideVisual = this.hideVisuals.Value;
+			else
+				player.TPlayer.hideVisual.ClearAll();
 			
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
