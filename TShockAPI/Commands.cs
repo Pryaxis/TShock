@@ -899,10 +899,12 @@ namespace TShockAPI
 						user.Name = args.Parameters[1];
 						user.Password = args.Parameters[2];
 						user.Group = args.Parameters[3];
-							
-                        args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
+						
 						TShock.Users.AddUser(user);
-						TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
+						if (!TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user)))
+							args.Player.SendErrorMessage("Failed to seed initial server side character data.");
+
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
 					else
@@ -962,15 +964,16 @@ namespace TShockAPI
 				// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group")
 			{
-                var user = new User();
-                user.Name = args.Parameters[1];
+				var user = new User();
+				user.Name = args.Parameters[1];
 
 				try
 				{
 					if (args.Parameters.Count == 3)
 					{
-						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 						TShock.Users.SetUserGroup(user, args.Parameters[2]);
+
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 						Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 					}
 					else
