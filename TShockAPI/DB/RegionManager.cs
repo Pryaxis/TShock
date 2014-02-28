@@ -370,10 +370,23 @@ namespace TShockAPI.DB
 
 		public bool RemoveUser(string regionName, string userName)
 		{
+			return RemoveUser(regionName, TShock.Users.GetUserID(userName));
+		}
+
+		public bool RemoveUser(string regionName, int userId)
+		{
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				r.RemoveID(TShock.Users.GetUserID(userName));
+				try
+				{
+					r.RemoveID(userId);
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					return false;
+				}
+
 				string ids = string.Join(",", r.AllowedIDs);
 				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", ids,
 				                       regionName, Main.worldID.ToString());
