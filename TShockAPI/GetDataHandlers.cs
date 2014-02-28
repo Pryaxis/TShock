@@ -25,9 +25,11 @@ using System.IO.Streams;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
+using Terraria.ID;
 
 namespace TShockAPI
 {
@@ -3316,9 +3318,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
-			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
-				args.Player.SelectedItem.type != 1543 && args.Player.SelectedItem.type != 1545)
+			if (args.Player.SelectedItem.type != ItemID.Paintbrush && args.Player.SelectedItem.type != ItemID.PaintScraper &&
+				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush && args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
+				!args.Player.Accessories.Any(i => i != null && i.stack > 0 && i.type == ItemID.PaintSprayer))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
