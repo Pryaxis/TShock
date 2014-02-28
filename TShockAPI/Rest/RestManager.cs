@@ -24,6 +24,7 @@ using System.Linq;
 using HttpServer;
 using Rests;
 using Terraria;
+using TerrariaApi.Server;
 using TShockAPI.DB;
 
 namespace TShockAPI
@@ -42,6 +43,7 @@ namespace TShockAPI
 			// Server Commands
 			if (TShock.Config.EnableTokenEndpointAuthentication)
 			{
+				Rest.Register(new SecureRestCommand("/v3/server/status", ServerStatusV3));
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
 				Rest.Register(new SecureRestCommand("/status", ServerStatus));
 				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
@@ -49,6 +51,7 @@ namespace TShockAPI
 			}
 			else
 			{
+				Rest.Register(new RestCommand("/v3/server/status", (a, b) => this.ServerStatusV3(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v2/server/status", (a, b) => this.ServerStatusV2(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/status", (a, b) => this.ServerStatus(a, b, SecureRest.TokenData.None)));
 				Rest.Register(new RestCommand("/v3/server/motd", (a, b) => this.ServerMotd(a, b, SecureRest.TokenData.None)));
@@ -233,10 +236,17 @@ namespace TShockAPI
 
 			if (GetBool(parameters["players"], false))
 			{
+				Group restUserGroup = TShock.Utils.GetGroup(tokenData.UserGroupName);
+				if (!restUserGroup.HasPermission(RestPermissions.playerinfo))
+				{
+					return new RestObject("403")
+						{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint together with the given set of parameters.", tokenData.Username) };
+				}
+
 				var players = new ArrayList();
 				foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
 				{
-					var p = PlayerFilter(tsPlayer, parameters, ((tokenData.UserGroupName) != "" && TShock.Utils.GetGroup(tokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
+					var p = PlayerFilter(tsPlayer, parameters, ((tokenData.UserGroupName) != "" && restUserGroup.HasPermission(RestPermissions.viewips)));
 					if (null != p)
 						players.Add(p);
 				}
@@ -262,6 +272,15 @@ namespace TShockAPI
 
 				ret.Add("rules", rules);
 			}
+			return ret;
+		}
+
+		private object ServerStatusV3(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		{
+			var ret = (RestObject)this.ServerStatusV2(verbs, parameters, tokenData);
+			ret.Add("terrariaversion", Main.versionNumber);
+			ret.Add("serverapiversion", ServerApi.ApiVersion.ToString(2));
+
 			return ret;
 		}
 

@@ -61,7 +61,7 @@ namespace TShockAPI.DB
 			if (!TShock.Groups.GroupExists(user.Group))
 				throw new GroupNotExistsException(user.Group);
 
-			int ret;
+			int ret = 0;
 			try
 			{
 				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
