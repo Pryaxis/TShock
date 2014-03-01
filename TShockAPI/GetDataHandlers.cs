@@ -1614,7 +1614,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209 };
+		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, TileID.Mannequin, 137, 139, 171, 207, 209, TileID.Womannequin };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
@@ -1770,7 +1770,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be broken without any tools.
 		/// </summary>
-		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, 128, 162 };
+		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, TileID.Mannequin, 162, TileID.Womannequin };
 		/// <summary>
 		/// The maximum place styles for each tile.
 		/// </summary>
