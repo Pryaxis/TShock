@@ -1042,7 +1042,7 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith("/") && args.Text.Length > 1)
+			if (args.Text.StartsWith(Config.CommandSpecifier) && args.Text.Length > 1)
 			{
 				try
 				{

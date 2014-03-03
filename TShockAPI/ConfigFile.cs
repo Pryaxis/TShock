@@ -281,7 +281,9 @@ namespace TShockAPI
 
 		[Description("Allows anyone to break grass, pots, etc.")] public bool AllowCutTilesAndBreakables = false;
 
-        /// <summary>
+		[Description("Specifies which string starts a command")] public string CommandSpecifier = "/";
+
+		/// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
         /// <param name="path">string path</param>
