@@ -68,7 +68,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Gets or sets the help text of this command.
 		/// </summary>
-		public string HelpText { get; set; }
+		public string[] HelpText { get; set; }
 		/// <summary>
 		/// Gets the name of the command.
 		/// </summary>
@@ -117,7 +117,7 @@ namespace TShockAPI
 			AllowServer = true;
 			CommandDelegate = cmd;
 			DoLog = true;
-			HelpText = "No help available.";
+			HelpText = new[] {"No help available."};
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
@@ -177,16 +177,16 @@ namespace TShockAPI
 			add(new Command(AuthToken, "auth")
 			{
 				AllowServer = false,
-				HelpText = "Used to authenticate as superadmin when first setting up TShock."
+				HelpText = new[] {"Used to authenticate as superadmin when first setting up TShock."}
 			});
 			add(new Command(Permissions.authverify, AuthVerify, "auth-verify")
 			{
-				HelpText = "Used to verify that you have correctly set up TShock."
+				HelpText = new[] {"Used to verify that you have correctly set up TShock."}
 			});
 			add(new Command(Permissions.user, ManageUsers, "user")
 			{
 				DoLog = false,
-				HelpText = "Manages user accounts."
+				HelpText = new[] {"Manages user accounts."}
 			});
 
 			#region Account Commands
@@ -194,117 +194,117 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				DoLog = false,
-				HelpText = "Logs you into an account."
+				HelpText = new[] {"Logs you into an account."}
 			});
 			add(new Command(Permissions.canchangepassword, PasswordUser, "password")
 			{
 				AllowServer = false,
 				DoLog = false,
-				HelpText = "Changes your account's password."
+				HelpText = new[] {"Changes your account's password."}
 			});
 			add(new Command(Permissions.canregister, RegisterUser, "register")
 			{
 				AllowServer = false,
 				DoLog = false,
-				HelpText = "Registers you an account."
+				HelpText = new[] {"Registers you an account."}
 			});
 			#endregion
 			#region Admin Commands
 			add(new Command(Permissions.ban, Ban, "ban")
 			{
-				HelpText = "Manages player bans."
+				HelpText = new[] {"Manages player bans."}
 			});
 			add(new Command(Permissions.broadcast, Broadcast, "broadcast", "bc", "say")
 			{
-				HelpText = "Broadcasts a message to everyone on the server."
+				HelpText = new[] {"Broadcasts a message to everyone on the server."}
 			});
 			add(new Command(Permissions.logs, DisplayLogs, "displaylogs")
 			{
-				HelpText = "Toggles whether you receive server logs."
+				HelpText = new[] {"Toggles whether you receive server logs."}
 			});
 			add(new Command(Permissions.managegroup, Group, "group")
 			{
-				HelpText = "Manages groups."
+				HelpText = new[] {"Manages groups."}
 			});
 			add(new Command(Permissions.manageitem, ItemBan, "itemban")
 			{
-				HelpText = "Manages item bans."
+				HelpText = new[] {"Manages item bans."}
 			});
 			add(new Command(Permissions.manageregion, Region, "region")
 			{
-				HelpText = "Manages regions."
+				HelpText = new[] {"Manages regions."}
 			});
 			add(new Command(Permissions.kick, Kick, "kick")
 			{
-				HelpText = "Removes a player from the server."
+				HelpText = new [] {"Removes a player from the server."}
 			});
 			add(new Command(Permissions.mute, Mute, "mute", "unmute")
 			{
-				HelpText = "Prevents a player from talking."
+				HelpText = new[] {"Prevents a player from talking."}
 			});
 			add(new Command(Permissions.savessc, OverrideSSC, "overridessc", "ossc")
 			{
-				HelpText = "Overrides serverside characters for a player, temporarily."
+				HelpText = new[] {"Overrides serverside characters for a player, temporarily."}
 			});
 			add(new Command(Permissions.savessc, SaveSSC, "savessc")
 			{
-				HelpText = "Saves all serverside characters."
+				HelpText = new[] {"Saves all serverside characters."}
 			});
 			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
 			{
-				HelpText = "Temporarily sets another player's group."
+				HelpText = new[] {"Temporarily sets another player's group."}
 			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
-				HelpText = "Shows information about a user."
+				HelpText = new[] {"Shows information about a user."}
 			});
 			#endregion
 			#region Annoy Commands
 			add(new Command(Permissions.annoy, Annoy, "annoy")
 			{
-				HelpText = "Annoys a player for an amount of time."
+				HelpText = new[] {"Annoys a player for an amount of time."}
 			});
 			add(new Command(Permissions.annoy, Confuse, "confuse")
 			{
-				HelpText = "Confuses a player for an amount of time."
+				HelpText = new[] {"Confuses a player for an amount of time."}
 			});
 			add(new Command(Permissions.annoy, Rocket, "rocket")
 			{
-				HelpText = "Rockets a player upwards. Requires SSC."
+				HelpText = new[] {"Rockets a player upwards. Requires SSC."}
 			});
 			add(new Command(Permissions.annoy, FireWork, "firework")
 			{
-				HelpText = "Spawns fireworks at a player."
+				HelpText = new[] {"Spawns fireworks at a player."}
 			});
 			#endregion
 			#region Configuration Commands
 			add(new Command(Permissions.maintenance, CheckUpdates, "checkupdates")
 			{
-				HelpText = "Checks for TShock updates."
+				HelpText = new[] {"Checks for TShock updates."}
 			});
 			add(new Command(Permissions.maintenance, Off, "off", "exit")
 			{
-				HelpText = "Shuts down the server while saving."
+				HelpText = new[] {"Shuts down the server while saving."}
 			});
 			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave")
 			{
-				HelpText = "Shuts down the server without saving."
+				HelpText = new[] {"Shuts down the server without saving."}
 			});
 			add(new Command(Permissions.maintenance, Reload, "reload")
 			{
-				HelpText = "Reloads the server configuration file."
+				HelpText = new[] {"Reloads the server configuration file."}
 			});
 			add(new Command(Permissions.maintenance, Restart, "restart")
 			{
-				HelpText = "Restarts the server."
+				HelpText = new[] {"Restarts the server."}
 			});
 			add(new Command(Permissions.cfgpassword, ServerPassword, "serverpassword")
 			{
-				HelpText = "Changes the server password."
+				HelpText = new[] {"Changes the server password."}
 			});
 			add(new Command(Permissions.maintenance, GetVersion, "version")
 			{
-				HelpText = "Shows the TShock version."
+				HelpText = new[] {"Shows the TShock version."}
 			});
 			/* Does nothing atm.
 			 * 
@@ -313,235 +313,235 @@ namespace TShockAPI
 			});*/
 			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
 			{
-				HelpText = "Manages the server whitelist."
+				HelpText = new[] {"Manages the server whitelist."}
 			});
 			#endregion
 			#region Item Commands
 			add(new Command(Permissions.item, Give, "give", "g")
 			{
-				HelpText = "Gives another player an item."
+				HelpText = new[] {"Gives another player an item."}
 			});
 			add(new Command(Permissions.item, Item, "item", "i")
 			{
 				AllowServer = false,
-				HelpText = "Gives yourself an item."
+				HelpText = new[] {"Gives yourself an item."}
 			});
 			#endregion
 			#region NPC Commands
 			add(new Command(Permissions.butcher, Butcher, "butcher")
 			{
-				HelpText = "Kills hostile NPCs or NPCs of a certain type."
+				HelpText = new[] {"Kills hostile NPCs or NPCs of a certain type."}
 			});
 			add(new Command(Permissions.invade, Invade, "invade")
 			{
-				HelpText = "Starts an NPC invasion."
+				HelpText = new[] {"Starts an NPC invasion."}
 			});
 			add(new Command(Permissions.maxspawns, MaxSpawns, "maxspawns")
 			{
-				HelpText = "Sets the maximum number of NPCs."
+				HelpText = new[] {"Sets the maximum number of NPCs."}
 			});
 			add(new Command(Permissions.spawnboss, SpawnBoss, "spawnboss", "sb")
 			{
 				AllowServer = false,
-				HelpText = "Spawns a number of bosses around you."
+				HelpText = new[] {"Spawns a number of bosses around you."}
 			});
 			add(new Command(Permissions.spawnmob, SpawnMob, "spawnmob", "sm")
 			{
 				AllowServer = false,
-				HelpText = "Spawns a number of mobs around you."
+				HelpText = new[] {"Spawns a number of mobs around you."}
 			});
 			add(new Command(Permissions.spawnrate, SpawnRate, "spawnrate")
 			{
-				HelpText = "Sets the spawn rate of NPCs."
+				HelpText = new[] {"Sets the spawn rate of NPCs."}
 			});
 			add(new Command(Permissions.invade, PumpkinInvasion, "pumpkin")
 			{
-				HelpText = "Starts a Pumpkin Moon invasion at the specified wave."
+				HelpText = new[] {"Starts a Pumpkin Moon invasion at the specified wave."}
 			});
 			add(new Command(Permissions.invade, SnowInvasion, "snowinvasion")
 			{
-				HelpText = "Starts a Snow Moon invasion at the specified wave."
+				HelpText = new[] {"Starts a Snow Moon invasion at the specified wave."}
 			});
 			#endregion
 			#region TP Commands
 			add(new Command(Permissions.home, Home, "home")
 			{
 				AllowServer = false,
-				HelpText = "Sends you to your spawn point."
+				HelpText = new[] {"Sends you to your spawn point."}
 			});
 			add(new Command(Permissions.spawn, Spawn, "spawn")
 			{
 				AllowServer = false,
-				HelpText = "Sends you to the world's spawn point."
+				HelpText = new[] {"Sends you to the world's spawn point."}
 			});
 			add(new Command(Permissions.tp, TP, "tp")
 			{
 				AllowServer = false,
-				HelpText = "Teleports you to another player or a coordinate."
+				HelpText = new[] {"Teleports you to another player or a coordinate."}
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
 				AllowServer = false,
-				HelpText = "Toggles whether other people can teleport to you."
+				HelpText = new[] {"Toggles whether other people can teleport to you."}
 			});
 			add(new Command(Permissions.tphere, TPHere, "tphere")
 			{
 				AllowServer = false,
-				HelpText = "Teleports another player to you."
+				HelpText = new[] {"Teleports another player to you."}
 			});
 			#endregion
 			#region World Commands
 			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
-				HelpText = "Toggles build protection."
+				HelpText = new[] {"Toggles build protection."}
 			});
 			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
 			{
-				HelpText = "Sets a blood moon."
+				HelpText = new[] {"Sets a blood moon."}
 			});
 			add(new Command(Permissions.snowmoon, SnowMoon, "snowmoon")
 			{
-				HelpText = "Sets a snow moon."
+				HelpText = new[] {"Sets a snow moon."}
 			});
 			add(new Command(Permissions.pumpkinmoon, PumpkinMoon, "pumpkinmoon")
 			{
-				HelpText = "Sets a pumpkin moon."
+				HelpText = new[] {"Sets a pumpkin moon."}
 			});
 			add(new Command(Permissions.grow, Grow, "grow")
 			{
 				AllowServer = false,
-				HelpText = "Grows plants at your location."
+				HelpText = new[] {"Grows plants at your location."}
 			});
 			add(new Command(Permissions.dropmeteor, DropMeteor, "dropmeteor")
 			{
-				HelpText = "Drops a meteor somewhere in the world."
+				HelpText = new[] {"Drops a meteor somewhere in the world."}
 			});
 			add(new Command(Permissions.eclipse, Eclipse, "eclipse")
 			{
-				HelpText = "Sets an eclipse."
+				HelpText = new[] {"Sets an eclipse."}
 			});
 			add(new Command(Permissions.xmas, ForceXmas, "forcexmas")
 			{
-				HelpText = "Toggles christmas mode (present spawning, santa, etc)."
+				HelpText = new[] {"Toggles christmas mode (present spawning, santa, etc)."}
 			});
 			add(new Command(Permissions.fullmoon, Fullmoon, "fullmoon")
 			{
-				HelpText = "Sets a full moon."
+				HelpText = new[] {"Sets a full moon."}
 			});
 			add(new Command(Permissions.hardmode, Hardmode, "hardmode")
 			{
-				HelpText = "Toggles the world's hardmode status."
+				HelpText = new[] {"Toggles the world's hardmode status."}
 			});
 			add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn")
 			{
-				HelpText = "Toggles spawn protection."
+				HelpText = new[] {"Toggles spawn protection."}
 			});
 			add(new Command(Permissions.rain, Rain, "rain")
 			{
-				HelpText = "Toggles the rain."
+				HelpText = new[] {"Toggles the rain."}
 			});
 			add(new Command(Permissions.worldsave, Save, "save")
 			{
-				HelpText = "Saves the world file."
+				HelpText = new[] {"Saves the world file."}
 			});
 			add(new Command(Permissions.worldspawn, SetSpawn, "setspawn")
 			{
 				AllowServer = false,
-				HelpText = "Sets the world's spawn point to your location."
+				HelpText = new[] {"Sets the world's spawn point to your location."}
 			});
 			add(new Command(Permissions.worldsettle, Settle, "settle")
 			{
-				HelpText = "Forces all liquids to update immediately."
+				HelpText = new[] {"Forces all liquids to update immediately."}
 			});
 			add(new Command(Permissions.time, Time, "time")
 			{
-				HelpText = "Sets the world time."
+				HelpText = new[] {"Sets the world time."}
 			});
 			add(new Command(Permissions.worldinfo, WorldInfo, "world")
 			{
-				HelpText = "Shows information about the current world."
+				HelpText = new[] {"Shows information about the current world."}
 			});
 			#endregion
 			#region Other Commands
 			add(new Command(Permissions.buff, Buff, "buff")
 			{
 				AllowServer = false,
-				HelpText = "Gives yourself a buff for an amount of time."
+				HelpText = new[] {"Gives yourself a buff for an amount of time."}
 			});
 			add(new Command(Permissions.clear, Clear, "clear")
 			{
-				HelpText = "Clears item drops or projectiles."
+				HelpText = new[] {"Clears item drops or projectiles."}
 			});
 			add(new Command(Permissions.buffplayer, GBuff, "gbuff", "buffplayer")
 			{
-				HelpText = "Gives another player a buff for an amount of time."
+				HelpText = new[] {"Gives another player a buff for an amount of time."}
 			});
 			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
 			{
-				HelpText = "Toggles godmode on a player."
+				HelpText = new[] {"Toggles godmode on a player."}
 			});
 			add(new Command(Permissions.heal, Heal, "heal")
 			{
-				HelpText = "Heals a player in HP and MP."
+				HelpText = new[] {"Heals a player in HP and MP."}
 			});
 			add(new Command(Permissions.kill, Kill, "kill")
 			{
-				HelpText = "Kills another player."
+				HelpText = new[] {"Kills another player."}
 			});
 			add(new Command(Permissions.cantalkinthird, ThirdPerson, "me")
 			{
-				HelpText = "Sends an action message to everyone."
+				HelpText = new[] {"Sends an action message to everyone."}
 			});
 			add(new Command(Permissions.canpartychat, PartyChat, "party", "p")
 			{
 				AllowServer = false,
-				HelpText = "Sends a message to everyone on your team."
+				HelpText = new[] {"Sends a message to everyone on your team."}
 			});
 			add(new Command(Permissions.whisper, Reply, "reply", "r")
 			{
-				HelpText = "Replies to a PM sent to you."
+				HelpText = new[] {"Replies to a PM sent to you."}
 			});
 			add(new Command(Rests.RestPermissions.restmanage, ManageRest, "rest")
 			{
-				HelpText = "Manages the REST API."
+				HelpText = new[] {"Manages the REST API."}
 			});
 			add(new Command(Permissions.slap, Slap, "slap")
 			{
-				HelpText = "Slaps a player, dealing damage."
+				HelpText = new[] {"Slaps a player, dealing damage."}
 			});
 			add(new Command(Permissions.serverinfo, ServerInfo, "stats")
 			{
-				HelpText = "Shows the server information."
+				HelpText = new[] {"Shows the server information."}
 			});
 			add(new Command(Permissions.warp, Warp, "warp")
 			{
-				HelpText = "Teleports you to a warp point or manages warps."
+				HelpText = new[] {"Teleports you to a warp point or manages warps."}
 			});
 			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell")
 			{
-				HelpText = "Sends a PM to a player."
+				HelpText = new[] {"Sends a PM to a player."}
 			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
 			{
-				HelpText = "Shows a command's aliases."
+				HelpText = new[] {"Shows a command's aliases."}
 			});
 			add(new Command(Help, "help")
 			{
-				HelpText = "Lists commands or gives help on them."
+				HelpText = new[] {"Lists commands or gives help on them."}
 			});
 			add(new Command(Motd, "motd")
 			{
-				HelpText = "Shows the message of the day."
+				HelpText = new[] {"Shows the message of the day."}
 			});
 			add(new Command(ListConnectedPlayers, "playing", "online", "who")
 			{
-				HelpText = "Shows the currently connected players."
+				HelpText = new[] {"Shows the currently connected players."}
 			});
 			add(new Command(Rules, "rules")
 			{
-				HelpText = "Shows the server's rules."
+				HelpText = new[] {"Shows the server's rules."}
 			});
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -3608,7 +3608,10 @@ namespace TShockAPI
 				}
 
 				args.Player.SendSuccessMessage("/{0} help: ", command.Name);
-				args.Player.SendInfoMessage(command.HelpText);
+                foreach (string line in command.HelpText)
+                {
+                    args.Player.SendInfoMessage(line);
+                }
 			}
 		}
 
