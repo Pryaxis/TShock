@@ -572,14 +572,14 @@ namespace TShockAPI
 					call(new CommandArgs(cmdText, player, args));
 					return true;
 				}
-				player.SendErrorMessage("Invalid command entered. Type /help for a list of valid commands.");
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", TShock.Config.CommandSpecifier);
 				return true;
 			}
             foreach (Command cmd in cmds)
             {
                 if (!cmd.CanRun(player))
                 {
-                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
                     player.SendErrorMessage("You do not have access to this command.");
                 }
                 else if (!cmd.AllowServer && !player.RealPlayer)
@@ -589,7 +589,7 @@ namespace TShockAPI
                 else
                 {
                     if (cmd.DoLog)
-                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
+                        TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
                     cmd.Run(cmdText, player, args);
                 }
             }

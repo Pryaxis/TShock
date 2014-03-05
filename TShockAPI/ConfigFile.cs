@@ -283,7 +283,9 @@ namespace TShockAPI
 
 		[Description("Whether warning messages of the Packet Bufferer are logged or not.")] public bool LogPacketBuffererWarnings = true;
 
-        /// <summary>
+		[Description("Specifies which string starts a command")] public string CommandSpecifier = "/";
+
+		/// <summary>
         /// Reads a configuration file from a given path
         /// </summary>
         /// <param name="path">string path</param>
