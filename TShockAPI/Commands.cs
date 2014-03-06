@@ -70,7 +70,7 @@ namespace TShockAPI
 		/// </summary>
 		public string HelpText { get; set; }
         /// <summary>
-        /// Gets or sets the help text of this command.
+        /// Gets or sets an extended description of this command.
         /// </summary>
         public string[] HelpDesc { get; set; }
 		/// <summary>
@@ -3613,15 +3613,17 @@ namespace TShockAPI
 				}
 
 				args.Player.SendSuccessMessage("/{0} help: ", command.Name);
-                if (command.HelpDesc != null)
+                if (command.HelpDesc == null)
+                {
+                    args.Player.SendInfoMessage(command.HelpText);
+                }
+                else if (command.HelpDesc != null)
                 {
                     foreach (string line in command.HelpDesc)
                     {
                         args.Player.SendInfoMessage(line);
                     }
                 }
-                else
-				    args.Player.SendInfoMessage(command.HelpText);
 			}
 		}
 
