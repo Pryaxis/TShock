@@ -4494,6 +4494,13 @@ namespace TShockAPI
 			var name = "Fail";
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
+
+			if (!TShock.Regions.CanBuild(x, y, args.Player))
+			{
+				args.Player.SendErrorMessage("You're not allowed to build here!");
+				return;
+			}
+
 			switch (args.Parameters[0].ToLower())
 			{
 				case "tree":
