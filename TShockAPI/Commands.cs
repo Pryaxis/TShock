@@ -69,6 +69,10 @@ namespace TShockAPI
 		/// Gets or sets the help text of this command.
 		/// </summary>
 		public string HelpText { get; set; }
+        /// <summary>
+        /// Gets or sets an extended description of this command.
+        /// </summary>
+        public string[] HelpDesc { get; set; }
 		/// <summary>
 		/// Gets the name of the command.
 		/// </summary>
@@ -118,6 +122,7 @@ namespace TShockAPI
 			CommandDelegate = cmd;
 			DoLog = true;
 			HelpText = "No help available.";
+            HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
@@ -3608,7 +3613,15 @@ namespace TShockAPI
 				}
 
 				args.Player.SendSuccessMessage("/{0} help: ", command.Name);
-				args.Player.SendInfoMessage(command.HelpText);
+                if (command.HelpDesc == null)
+                {
+                    args.Player.SendInfoMessage(command.HelpText);
+                    return;
+                }
+                foreach (string line in command.HelpDesc)
+                {
+                    args.Player.SendInfoMessage(line);
+                }
 			}
 		}
 
