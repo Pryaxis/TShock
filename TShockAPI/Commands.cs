@@ -4497,7 +4497,7 @@ namespace TShockAPI
 
 			if (!TShock.Regions.CanBuild(x, y, args.Player))
 			{
-				args.Player.SendErrorMessage("You have no permission to /grow in this area.");
+				args.Player.SendErrorMessage("You're not allowed to change tiles here!");
 				return;
 			}
 
