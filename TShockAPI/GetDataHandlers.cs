@@ -1242,7 +1242,8 @@ namespace TShockAPI
 											{PacketTypes.Teleport, HandleTeleport},
 											{PacketTypes.PaintTile, HandlePaintTile},
 											{PacketTypes.PaintWall, HandlePaintWall},
-											{PacketTypes.Placeholder, HandleRaptor}
+											{PacketTypes.Placeholder, HandleRaptor},
+											{PacketTypes.DoorUse, HandleDoorUse}
 										};
 		}
 
@@ -3546,6 +3547,21 @@ namespace TShockAPI
 				default:
 					return true;
 			}
+		}
+
+		private static bool HandleDoorUse(GetDataHandlerArgs e)
+		{
+			var Close = e.Data.ReadByte();
+			var X = e.Data.ReadInt32();
+			var Y = e.Data.ReadInt32();
+
+			if (X >= Main.tile.GetLength(0) || Y >= Main.tile.GetLength(1) || X < 0 || Y < 0) // Check for out of range
+				return true;
+
+			if (Main.tile[X, Y].type != 10 && Main.tile[X, Y].type != 11) // Check for tile types
+				return true;
+
+			return false;
 		}
 	}
 }
