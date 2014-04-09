@@ -2976,17 +2976,31 @@ namespace TShockAPI
 			if (OnItemDrop(id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
 
-            // player is attempting to crash clients
+			// player is attempting to crash clients
 			if (type < -48 || type >= Main.maxItemTypes)
 			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
-			if (type == 0) //Item removed, let client do this to prevent item duplication client side
+
+			if (prefix > Item.maxPrefixes) //make sure the prefix is a legit value
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				return true;
+			}
+
+			if (type == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check above)
 			{
 				return false;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, (int) (pos.X/16f), (int) (pos.Y/16f)))
+			if (Main.item[id].active && Main.item[id].netID != type) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
