@@ -2989,15 +2989,21 @@ namespace TShockAPI
 				return true;
 			}
 
+			if (type == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check)
+			{
+				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					return true;
+				}
+
+				return false;
+			}
+
 			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
-			}
-
-			if (type == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check above)
-			{
-				return false;
 			}
 
 			if (Main.item[id].active && Main.item[id].netID != type) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
