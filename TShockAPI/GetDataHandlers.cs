@@ -2393,9 +2393,17 @@ namespace TShockAPI
 
 			if (index > Main.maxProjectiles || index < 0)
 			{
-				return false;
+                args.Player.RemoveProjectile(ident, owner);
+				return true;
 			}
 
+		    if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
+		    {
+                args.Player.Disable("Player does not have permission to create that projectile.", true);
+                args.Player.SendErrorMessage("You do not have permission to create that projectile.");
+                args.Player.RemoveProjectile(ident, owner);
+		        return false;
+		    }
             // Server now checks owner + ident, if owner is different, server will create new projectile.
 			/*if (args.Player.Index != owner)
 			{
