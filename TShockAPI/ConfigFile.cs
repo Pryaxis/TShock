@@ -211,7 +211,7 @@ namespace TShockAPI
 
 		[Description("Allows users to login with any username with /login.")] public bool AllowLoginAnyUsername = true;
 
-        [Description("The maximum damage a player/npc can inflict.")] public int MaxDamage = 175;
+        [Description("The maximum damage a player/npc can inflict.")] public int MaxDamage = 200;
         
         [Description("The maximum damage a projectile can inflict.")] public int MaxProjDamage = 175;
 
