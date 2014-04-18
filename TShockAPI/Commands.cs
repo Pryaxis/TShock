@@ -1467,8 +1467,8 @@ namespace TShockAPI
 
 			TShock.Utils.Broadcast(
 				"(Server Broadcast) " + message, 
-				Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]), 
-				Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+				(byte) TShock.Config.BroadcastRGB[0], (byte) TShock.Config.BroadcastRGB[1], 
+				(byte) TShock.Config.BroadcastRGB[2]);
 		}
 
 		private static void Off(CommandArgs args)

@@ -59,7 +59,7 @@ namespace TShockAPI
 		[Description("Global protection agent for any block distance based anti-grief check.")] public bool RangeChecks = true;
 		[Description("Disables any building; placing of blocks")] public bool DisableBuild;
 
-		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")] public float[]
+		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")] public int[]
 			SuperAdminChatRGB = {255, 0, 0};
 
 		[Description("Super admin group chat prefix")] public string SuperAdminChatPrefix = "(Admin) ";
@@ -254,7 +254,7 @@ namespace TShockAPI
 
 		[Description("Prevents players from placing tiles with an invalid style.")] public bool PreventInvalidPlaceStyle = true;
 
-		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public float[] BroadcastRGB = 
+		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")] public int[] BroadcastRGB = 
 		    {127,255,212};
 
 		// TODO: Get rid of this when the old REST permission model is removed.
