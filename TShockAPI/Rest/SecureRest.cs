@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
@@ -157,10 +157,10 @@ namespace Rests
 			return response;
 		}
 
-		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
+		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IHttpContext context)
 		{
 			if (!cmd.RequiresToken)
-				return base.ExecuteCommand(cmd, verbs, parms);
+				return base.ExecuteCommand(cmd, verbs, parms, context);
 			
 			var token = parms["token"];
 			if (token == null)
@@ -194,7 +194,7 @@ namespace Rests
 			object result = secureCmd.Execute(verbs, parms, tokenData);
 			if (cmd.DoLog && TShock.Config.LogRest)
 				TShock.Utils.SendLogs(string.Format(
-					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)), 
+					"\"{0}\"({1}) requested REST endpoint: {2}", tokenData.Username, context.RemoteEndPoint.Address, this.BuildRequestUri(cmd, verbs, parms, false)), 
 					Color.PaleVioletRed);
 
 			return result;
