@@ -78,6 +78,9 @@
     <Compile Include="PaginationTools.cs" />
     <Compile Include="RaptorPacketTypes.cs" />
     <Compile Include="Rest\RestPermissions.cs" />
+    <Compile Include="Rest\SecureRestCommand.cs" />
+    <Compile Include="Rest\SecureWebRestCommand.cs" />
+    <Compile Include="Rest\WebRestCommand.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
     <Compile Include="DB\CharacterManager.cs" />
