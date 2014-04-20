@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
@@ -204,10 +203,6 @@ namespace TShockAPI
 					return true;
 				}
 			}
-			catch (ObjectDisposedException e)
-			{
-                Log.Warn(e.ToString());
-			}
 			catch (SocketException e)
 			{
                 switch ((uint)e.ErrorCode)
@@ -219,6 +214,10 @@ namespace TShockAPI
                         Log.Warn(e.ToString());
                         break;
                 }
+			}
+			catch (ObjectDisposedException e)
+			{
+                Log.Warn(e.ToString());
 			}
 			catch (IOException e)
 			{
@@ -246,29 +245,5 @@ namespace TShockAPI
 			}
 		}
 #endif
-	}
-
-	public class PacketBuffer : List<byte>
-	{
-		public byte[] GetBytes(int max)
-		{
-			lock (this)
-			{
-				if (this.Count < 1)
-					return null;
-
-				var ret = new byte[Math.Min(max, this.Count)];
-				this.CopyTo(0, ret, 0, ret.Length);
-				return ret;
-			}
-		}
-
-		public void Pop(int count)
-		{
-			lock (this)
-			{
-				this.RemoveRange(0, count);
-			}
-		}
 	}
 }
