@@ -107,6 +107,7 @@
     <Compile Include="Net\ProjectileRemoveMsg.cs" />
     <Compile Include="Net\SpawnMsg.cs" />
     <Compile Include="Net\WorldInfoMsg.cs" />
+    <Compile Include="PacketBuffer.cs" />
     <Compile Include="PacketBufferer.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="RconHandler.cs" />
