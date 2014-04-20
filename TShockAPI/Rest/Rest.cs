@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
@@ -31,23 +31,6 @@ using HttpListener = HttpServer.HttpListener;
 
 namespace Rests
 {
-	/// <summary>
-	/// Rest command delegate
-	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
-	/// <returns>Response object or null to not handle request</returns>
-	public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
-
-	/// <summary>
-	/// Secure Rest command delegate including token data.
-	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
-	/// <param name="tokenData">The data of stored for the provided token.</param>
-	/// <returns>Response object or null to not handle request</returns>
-	public delegate object SecureRestCommandD(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData);
-
 	public class Rest : IDisposable
 	{
 		private readonly List<RestCommand> commands = new List<RestCommand>();
@@ -124,26 +107,41 @@ namespace Rests
 		}
 		#endregion
 
-
 		protected virtual void OnRequest(object sender, RequestEventArgs e)
 		{
-			var obj = ProcessRequest(sender, e);
+			RestObject obj = (RestObject)ProcessRequest(sender, e);
 			if (obj == null)
 				throw new NullReferenceException("obj");
 
 			if (OnRestRequestCall(e))
 				return;
 
-			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
-			var jsonp = e.Request.Parameters["jsonp"];
-			if (!string.IsNullOrWhiteSpace(jsonp))
-			{
-				str = string.Format("{0}({1});", jsonp, str);
-			}
+		    string str;
 			e.Response.Connection.Type = ConnectionType.Close;
-			e.Response.ContentType = new ContentTypeHeader("application/json");
+            if (obj["Web"] != null)
+            {
+	            if (obj["Raw"] == null)
+	            {
+		            str = obj.ToWeb();
+	            }
+	            else
+	            {
+					str = obj.Response ?? obj.Error;
+	            }
+                e.Response.ContentType = new ContentTypeHeader("text/html");
+            }
+            else
+            {
+			    str = JsonConvert.SerializeObject(obj, Formatting.Indented);    
+			    var jsonp = e.Request.Parameters["jsonp"];
+			    if (!string.IsNullOrWhiteSpace(jsonp))
+			    {
+				    str = string.Format("{0}({1});", jsonp, str);
+			    }
+			    e.Response.ContentType = new ContentTypeHeader("application/json");
+            }
 			e.Response.Add(serverHeader);
-			e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
+			e.Response.Body.Write(Encoding.UTF8.GetBytes(str), 0, str.Length);
 			e.Response.Status = HttpStatusCode.OK;
 		}
 
@@ -173,7 +171,7 @@ namespace Rests
 						continue;
 					}
 
-					var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
+					var obj = ExecuteCommand(com, verbs, e.Request.Parameters, e.Context);
 					if (obj != null)
 						return obj;
 				}
@@ -193,12 +191,12 @@ namespace Rests
 			       	};
 		}
 
-		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
+		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IHttpContext context)
 		{
 			object result = cmd.Execute(verbs, parms);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
-				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+				Log.ConsoleInfo("Anonymous({0}) requested REST endpoint: {1}", context.RemoteEndPoint.Address, BuildRequestUri(cmd, verbs, parms, false));
 			}
 
 			return result;
