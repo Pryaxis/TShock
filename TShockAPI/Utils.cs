@@ -1,6 +1,6 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team) 2014 Commaster
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
+using TerrariaApi.Server;
 using TShockAPI.DB;
 
 namespace TShockAPI
@@ -243,7 +245,7 @@ namespace TShockAPI
 		/// <returns>int playerCount</returns>
 		public int ActivePlayers()
 		{
-			return Main.player.Where(p => null != p && p.active).Count();
+			return Main.player.Count(p => null != p && p.active);
 		}
 
 		/// <summary>
@@ -532,7 +534,6 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks all player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		public void ForceKickAll(string reason)
 		{
@@ -584,6 +585,41 @@ namespace TShockAPI
 			Environment.Exit(0);
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pluginName">Plugins name to look for</param>
+        /// <param name="requiredVersion">Min required version</param>
+        /// <param name="author">Specify the author of that modification</param>
+        /// <returns>True if there is a loaded plugin, that meets all the specified requirement</returns>
+        public TerrariaPlugin IsPluginLoaded(string pluginName, Version requiredVersion = null, string author = "")
+        {
+            if (string.IsNullOrWhiteSpace(pluginName))
+            {
+                return null;
+            }
+            IOrderedEnumerable<PluginContainer> orderedPluginSelector =
+                from x in ServerApi.Plugins
+                where x.Plugin.Name.Equals(pluginName)
+                orderby x.Plugin.Order, x.Plugin.Name
+                select x;
+            if (requiredVersion == null)
+            {
+				if (orderedPluginSelector.Any(x => string.IsNullOrWhiteSpace(author) || x.Plugin.Author.Equals(author)))
+				{
+					return orderedPluginSelector.First(x => string.IsNullOrWhiteSpace(author) || x.Plugin.Author.Equals(author)).Plugin;
+				}
+            }
+            else
+            {
+				if (orderedPluginSelector.Any(x => x.Plugin.Version.CompareTo(requiredVersion) > 0 && (string.IsNullOrWhiteSpace(author) || x.Plugin.Author.Equals(author))))
+				{
+					return orderedPluginSelector.First(x => x.Plugin.Version.CompareTo(requiredVersion) > 0 && (string.IsNullOrWhiteSpace(author) || x.Plugin.Author.Equals(author))).Plugin;
+				}
+            }
+			return null;
+        }
+
 		/// <summary>
 		/// Reloads all configuration settings, groups, regions and raises the reload event.
 		/// </summary>
@@ -607,9 +643,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
+        /// <param name="player">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
+        /// <param name="saveSSI">bool saveSSI (default: false)</param>
 		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
 			Kick(player, reason, true, silent, null, saveSSI);
@@ -625,7 +662,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server..
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
@@ -666,7 +703,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">int player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="adminUserName">bool silent (default: null)</param>
@@ -718,7 +755,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="ply">TSPlayer player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
@@ -756,7 +793,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Group from the name of the group
 		/// </summary>
-		/// <param name="ply">string groupName</param>
+		/// <param name="groupName">string groupName</param>
 		public Group GetGroup(string groupName)
 		{
 			//first attempt on cached groups
@@ -842,7 +879,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Sha256 string for a given string
 		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
+		/// <param name="password">bytes to hash</param>
 		/// <returns>string sha256</returns>
 		public string HashPassword(string password)
 		{
@@ -856,17 +893,16 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str">String to check</param>
 		/// <returns>True if the string only contains printable characters</returns>
-		public bool ValidString(string str)
+		public Char ValidString(string str, bool allowTextFlow = false)
 		{
-			foreach (var c in str)
-			{
-				if (c < 0x20 || c > 0xA9)
-					return false;
-			}
-			return true;
+		    foreach (var c in str.Where(c => ((!allowTextFlow) && (c < 0x20)) || c > 0x7E))
+		    {
+		        return c;
+		    }
+		    return Char.MaxValue;
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>
@@ -883,7 +919,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Attempts to parse a string as a timespan (_d_m_h_s).
 		/// </summary>
-		/// <param name="time">The time string.</param>
+        /// <param name="str">The time string.</param>
 		/// <param name="seconds">The seconds.</param>
 		/// <returns>Whether the string was parsed successfully.</returns>
 		public bool TryParseTime(string str, out int seconds)
@@ -950,7 +986,7 @@ namespace TShockAPI
 			var returnstr = str.ToCharArray();
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (!ValidString(str[i].ToString()))
+				if (ValidString(str[i].ToString()) != Char.MaxValue)
 					returnstr[i] = ' ';
 			}
 			return new string(returnstr);
