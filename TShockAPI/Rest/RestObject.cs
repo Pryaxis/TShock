@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Rests
 {
@@ -53,6 +54,24 @@ namespace Rests
 		{
 			Status = status;
 		}
+
+	    public string ToWeb()
+	    {
+            StringBuilder ContentPrep = new StringBuilder();
+	        ContentPrep.AppendFormat("{0}", "<html>").AppendLine();
+	        if (this["title"] != null)
+	        {
+	            ContentPrep.AppendFormat("{0}", "<title>")
+	                .AppendFormat("{0}", this["title"] as string)
+	                .AppendFormat("{0}", "</title>")
+	                .AppendLine();
+	        }
+            ContentPrep.AppendFormat("{0}", "<body>").AppendLine();
+	        ContentPrep.AppendFormat("    {0}", this["response"] ?? this["error"]).AppendLine();
+            ContentPrep.AppendFormat("{0}", "</body>").AppendLine();
+            ContentPrep.AppendFormat("{0}", "</html>");
+	        return ContentPrep.ToString();
+	    }
 
 		/// <summary>
 		/// Gets value safely, if it does not exist, return null. Sets/Adds value safely, if null it will remove.

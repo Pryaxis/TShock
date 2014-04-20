@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
 
@@ -22,6 +22,14 @@ using HttpServer;
 
 namespace Rests
 {
+    /// <summary>
+    /// Rest command delegate
+    /// </summary>
+    /// <param name="parameters">Parameters in the url</param>
+    /// <param name="verbs">{x} in urltemplate</param>
+    /// <returns>Response object or null to not handle request</returns>
+    public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
+
 	public class RestCommand
 	{
 		public string Name { get; protected set; }
@@ -29,7 +37,8 @@ namespace Rests
 		public string UriVerbMatch { get; protected set; }
 		public string[] UriVerbs { get; protected set; }
 		public virtual bool RequiresToken { get { return false; } }
-		public bool DoLog { get; set; }
+	    public virtual bool WebHandler { get { return false; } }
+	    public bool DoLog { get; set; }
 
 		private RestCommandD callback;
 
@@ -68,39 +77,6 @@ namespace Rests
 		public virtual object Execute(RestVerbs verbs, IParameterCollection parameters)
 		{
 			return callback(verbs, parameters);
-		}
-	}
-
-	public class SecureRestCommand: RestCommand
-	{
-		public override bool RequiresToken { get { return true; } }
-		public string[] Permissions { get; set; }
-
-		private SecureRestCommandD callback;
-
-		public SecureRestCommand(string name, string uritemplate, SecureRestCommandD callback, params string[] permissions)
-			: base(name, uritemplate, null)
-		{
-			this.callback = callback;
-			Permissions = permissions;
-		}
-
-		public SecureRestCommand(string uritemplate, SecureRestCommandD callback, params string[] permissions)
-			: this(string.Empty, uritemplate, callback, permissions)
-		{
-		}
-
-		public override object Execute(RestVerbs verbs, IParameterCollection parameters)
-		{
-			return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
-		}
-
-		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
-		{
-			if (tokenData.Equals(SecureRest.TokenData.None))
-				return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
-
-			return callback(verbs, parameters, tokenData);
 		}
 	}
 }
