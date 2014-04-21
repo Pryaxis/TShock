@@ -62,6 +62,7 @@ namespace TShockAPI
 		public static GroupManager Groups;
 		public static UserManager Users;
 		public static ItemManager Itembans;
+		public static ProjectileManagager ProjectileBans;
 		public static RememberedPosManager RememberedPos;
 		public static CharacterManager CharacterDB;
 		public static ConfigFile Config { get; set; }
@@ -223,6 +224,7 @@ namespace TShockAPI
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
+				ProjectileBans = new ProjectileManagager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
@@ -249,7 +251,6 @@ namespace TShockAPI
 				ServerApi.Hooks.NetSendData.Register(this, NetHooks_SendData);
 				ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Register(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.NpcSetDefaultsInt.Register(this, OnNpcSetDefaults);
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
@@ -327,7 +328,6 @@ namespace TShockAPI
 				ServerApi.Hooks.NetSendData.Deregister(this, NetHooks_SendData);
 				ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Deregister(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.NpcSetDefaultsInt.Deregister(this, OnNpcSetDefaults);
 				ServerApi.Hooks.ProjectileSetDefaults.Deregister(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Deregister(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Deregister(this, SaveManager.Instance.OnSaveWorld);
@@ -1274,14 +1274,6 @@ namespace TShockAPI
 					e.Object.SetDefaults(0);
 		}
 
-		private void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
-		{
-			if (Itembans.ItemIsBanned(e.Object.name, null))
-			{
-				e.Object.SetDefaults(0);
-			}
-		}
-
 		/// <summary>
 		/// Send bytes to client using packetbuffering if available
 		/// </summary>
@@ -1525,11 +1517,6 @@ namespace TShockAPI
 
 			Projectile proj = new Projectile();
 			proj.SetDefaults(type);
-
-			if (Itembans.ItemIsBanned(proj.name, player))
-			{
-				return true;
-			}
 
 			if (Main.projHostile[type])
 			{
