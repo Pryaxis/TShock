@@ -21,6 +21,7 @@ using System.CodeDom.Compiler;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
@@ -60,17 +61,25 @@ namespace TShockAPI.DB
 			if (!TShock.Groups.GroupExists(user.Group))
 				throw new GroupNotExistsException(user.Group);
 
-			int ret;
+			int ret = 0;
 			try
 			{
 				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
 								   TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
 			}
-			catch (Exception ex)
+			catch (SqliteException ex)
 			{
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
 				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
 					throw new UserExistsException(user.Name);
+			}
+			catch (MySqlException ex)
+			{
+				if (ex.Message.StartsWith("Duplicate entry"))
+					throw new UserExistsException(user.Name);
+			}
+			catch (Exception ex)
+			{
 				throw new UserManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
 

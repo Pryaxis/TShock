@@ -206,23 +206,27 @@ namespace TShockAPI
 			}
 			catch (ObjectDisposedException e)
 			{
-                Log.Warn(e.ToString());
+				if (TShock.Config.LogPacketBuffererWarnings)
+					Log.Warn(e.ToString());
 			}
 			catch (SocketException e)
 			{
-                switch ((uint)e.ErrorCode)
-                {
-                    case 0x80004005:
+				switch ((uint)e.ErrorCode)
+				{
+					case 0x80004005:
 					case 10053:
-                        break;
-                    default:
-                        Log.Warn(e.ToString());
-                        break;
-                }
+						break;
+					default:
+						if (TShock.Config.LogPacketBuffererWarnings)
+							Log.Warn(e.ToString());
+
+						break;
+				}
 			}
 			catch (IOException e)
 			{
-                Log.Warn(e.ToString());
+				if (TShock.Config.LogPacketBuffererWarnings)
+					Log.Warn(e.ToString());
 			}
 			return false;
 		}

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Terraria;
@@ -477,6 +478,93 @@ namespace TShockAPI
 					}
 				}
 				return flag;
+			}
+		}
+
+		public IEnumerable<Item> Armor
+		{
+			get
+			{
+				for (int i = 0; i < 3; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
+		public IEnumerable<Item> Accessories
+		{
+			get
+			{
+				for (int i = 3; i < 8; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
+		public IEnumerable<Item> Equipment
+		{
+			get
+			{
+				foreach (Item item in Armor)
+					yield return item;
+				foreach (Item item in Accessories)
+					yield return item;
+			}
+		}
+
+		public IEnumerable<Item> ArmorSocial
+		{
+			get
+			{
+				for (int i = 8; i < 11; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
+		public IEnumerable<Item> AccessoriesSocial
+		{
+			get
+			{
+				for (int i = 11; i < 16; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
+		public IEnumerable<Item> EquipmentSocial
+		{
+			get
+			{
+				foreach (Item item in ArmorSocial)
+					yield return item;
+				foreach (Item item in AccessoriesSocial)
+					yield return item;
+			}
+		}
+
+		public IEnumerable<Item> ArmorDyes
+		{
+			get
+			{
+				for (int i = 0; i < 3; i++)
+					yield return TPlayer.dye[i];
+			}
+		}
+
+		public IEnumerable<Item> AccessoriesDyes
+		{
+			get
+			{
+				for (int i = 3; i < 8; i++)
+					yield return TPlayer.dye[i];
+			}
+		}
+
+		public IEnumerable<Item> EquipmentDyes
+		{
+			get
+			{
+				foreach (Item item in ArmorDyes)
+					yield return item;
+				foreach (Item item in AccessoriesDyes)
+					yield return item;
 			}
 		}
 

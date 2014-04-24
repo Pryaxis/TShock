@@ -25,9 +25,11 @@ using System.IO.Streams;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
+using Terraria.ID;
 
 namespace TShockAPI
 {
@@ -1613,7 +1615,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209 };
+		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, TileID.Mannequin, 137, 139, 171, 207, 209, TileID.Womannequin };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
@@ -1769,7 +1771,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be broken without any tools.
 		/// </summary>
-		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, 128, 162 };
+		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, TileID.Mannequin, 162, TileID.Womannequin };
 		/// <summary>
 		/// The maximum place styles for each tile.
 		/// </summary>
@@ -3345,9 +3347,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
-			if (args.Player.SelectedItem.type != 1071 && args.Player.SelectedItem.type != 1100 &&
-				args.Player.SelectedItem.type != 1543 && args.Player.SelectedItem.type != 1545)
+			if (args.Player.SelectedItem.type != ItemID.Paintbrush && args.Player.SelectedItem.type != ItemID.PaintScraper &&
+				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush && args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
+				!args.Player.Accessories.Any(i => i != null && i.stack > 0 && i.type == ItemID.PaintSprayer))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
