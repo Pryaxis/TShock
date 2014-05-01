@@ -156,8 +156,8 @@ namespace TShockAPI
 		[Description("User can spawn items.")]
 		public static readonly string item = "tshock.item.spawn";
 
-        [Description("User can give items.")]
-        public static readonly string give = "tshock.item.give";
+		[Description("User can give items.")]
+        	public static readonly string give = "tshock.item.give";
 
 		[Description("Allows you to use banned items.")]
 		public static readonly string usebanneditem = "tshock.item.usebanned";
