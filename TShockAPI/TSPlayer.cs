@@ -369,6 +369,15 @@ namespace TShockAPI
 			}
 		}
 
+		public IEnumerable<Item> Accessories
+		{
+			get
+			{
+				for (int i = 3; i < 8; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
         /// <summary>
         /// Saves the player's inventory to SSI
         /// </summary>
