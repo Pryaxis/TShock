@@ -33,7 +33,7 @@ namespace TShockAPI.Net
 
 		public override void Pack(Stream stream)
 		{
-			stream.WriteBytes(Encoding.UTF8.GetBytes(Reason));
+			stream.WriteString(Reason);
 		}
 	}
 }

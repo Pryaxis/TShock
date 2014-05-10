@@ -1332,7 +1332,7 @@ namespace TShockAPI
 			if (args.Player.FirstMaxHP == 0)
 				args.Player.FirstMaxHP = max;
 
-			if (cur < 0 || cur > 500 || max < 100 || max > 500) //Abnormal values have the potential to cause infinite loops in the server.
+			if (cur < 0 || cur > 600 || max < 100 || max > 600) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
                 Log.ConsoleError("HP Exploit Attempt: Current HP {0}, Max HP {0}", cur, max);

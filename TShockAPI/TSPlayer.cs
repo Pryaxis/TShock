@@ -611,7 +611,7 @@ namespace TShockAPI
 			return true;
 		}
 
-		public void Heal(int health = 500)
+		public void Heal(int health = 600)
 		{
 			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, health);
 		}
