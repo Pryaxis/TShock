@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nyx Studios & TShock Contributors")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Nyx Studios 2011-2013")]
+[assembly: AssemblyCopyright("Copyright © Nyx Studios 2011-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -49,5 +49,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      MMdd of the build
 
-[assembly: AssemblyVersion("4.2.2.1228")]
-[assembly: AssemblyFileVersion("4.2.2.1228")]
+[assembly: AssemblyVersion("4.2.2.0510")]
+[assembly: AssemblyFileVersion("4.2.2.0510")]

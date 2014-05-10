@@ -67,6 +67,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Double, "REAL" },
 			{ MySqlDbType.Int32, "INTEGER" },
 			{ MySqlDbType.Blob, "BLOB" },
+            { MySqlDbType.Int64, "BIGINT"},
 		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)
@@ -115,6 +116,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Float, "FLOAT" },
 			{ MySqlDbType.Double, "DOUBLE" },
 			{ MySqlDbType.Int32, "INT" },
+            { MySqlDbType.Int64, "BIGINT"},
 		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)

@@ -442,7 +442,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffName[id] : "null";
 		}
 
 		/// <summary>
@@ -452,7 +452,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffTip[id] : "null";
 		}
 
 		/// <summary>
@@ -463,13 +463,13 @@ namespace TShockAPI
 		public List<int> GetBuffByName(string name)
 		{
 			string nameLower = name.ToLower();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower().StartsWith(nameLower))
 					found.Add(i);
@@ -974,6 +974,48 @@ namespace TShockAPI
 				yield return new Point(regionArea.Left, regionArea.Top + y);
 				yield return new Point(regionArea.Right, regionArea.Top + y);
 			}
+		}
+
+		public int? EncodeColor(Color? color)
+		{
+			if (color == null)
+				return null;
+
+			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
+		}
+
+		public Color? DecodeColor(int? encodedColor)
+		{
+			if (encodedColor == null)
+				return null;
+
+			byte[] data = BitConverter.GetBytes(encodedColor.Value);
+			return new Color(data[0], data[1], data[2], data[3]);
+		}
+
+		public byte? EncodeBitsByte(BitsByte? bitsByte)
+		{
+			if (bitsByte == null)
+				return null;
+
+			byte result = 0;
+			for (int i = 0; i < 8; i++)
+				if (bitsByte.Value[i])
+					result |= (byte)(1 << i);
+
+			return result;
+		}
+
+		public BitsByte? DecodeBitsByte(int? encodedBitsByte)
+		{
+			if (encodedBitsByte == null)
+				return null;
+
+			BitsByte result = new BitsByte();
+			for (int i = 0; i < 8; i++)
+				result[i] = (encodedBitsByte & 1 << i) != 0;
+
+			return result;
 		}
 	}
 }

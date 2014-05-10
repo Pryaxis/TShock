@@ -69,6 +69,10 @@ namespace TShockAPI
 		/// Gets or sets the help text of this command.
 		/// </summary>
 		public string HelpText { get; set; }
+        /// <summary>
+        /// Gets or sets an extended description of this command.
+        /// </summary>
+        public string[] HelpDesc { get; set; }
 		/// <summary>
 		/// Gets the name of the command.
 		/// </summary>
@@ -118,6 +122,7 @@ namespace TShockAPI
 			CommandDelegate = cmd;
 			DoLog = true;
 			HelpText = "No help available.";
+            HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
@@ -230,6 +235,10 @@ namespace TShockAPI
 			{
 				HelpText = "Manages item bans."
 			});
+            add(new Command(Permissions.manageprojectile, ProjectileBan, "projban")
+            {
+                HelpText = "Manages item bans."
+            });
 			add(new Command(Permissions.manageregion, Region, "region")
 			{
 				HelpText = "Manages regions."
@@ -572,14 +581,14 @@ namespace TShockAPI
 					call(new CommandArgs(cmdText, player, args));
 					return true;
 				}
-				player.SendErrorMessage("Invalid command entered. Type /help for a list of valid commands.");
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", TShock.Config.CommandSpecifier);
 				return true;
 			}
             foreach (Command cmd in cmds)
             {
                 if (!cmd.CanRun(player))
                 {
-                    TShock.Utils.SendLogs(string.Format("{0} tried to execute /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
+                    TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
                     player.SendErrorMessage("You do not have access to this command.");
                 }
                 else if (!cmd.AllowServer && !player.RealPlayer)
@@ -589,7 +598,7 @@ namespace TShockAPI
                 else
                 {
                     if (cmd.DoLog)
-                        TShock.Utils.SendLogs(string.Format("{0} executed: /{1}.", player.Name, cmdText), Color.PaleVioletRed, player);
+                        TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
                     cmd.Run(cmdText, player, args);
                 }
             }
@@ -2764,9 +2773,210 @@ namespace TShockAPI
 		}
 		#endregion Item Management
 
-		#region Server Config Commands
+		#region Projectile Management
 
-		private static void SetSpawn(CommandArgs args)
+		private static void ProjectileBan(CommandArgs args)
+		{
+			if (args.Parameters.Count == 0)
+			{
+				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /projban <command> [arguments]");
+				args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
+				args.Player.SendInfoMessage("Arguments: add <proj id>, allow <proj id> <group name>");
+				args.Player.SendInfoMessage("Arguments: del <proj id>, disallow <proj id> <group name>, list [page]");
+				return;
+			}
+
+			switch (args.Parameters[0].ToLower())
+			{
+				case "add":
+
+					#region Add projectile
+
+				{
+					if (args.Parameters.Count != 2)
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban add <proj id>");
+						return;
+					}
+					short id;
+					if (Int16.TryParse(args.Parameters[1], out id))
+					{
+						TShock.ProjectileBans.AddNewBan(id);
+						args.Player.SendSuccessMessage("Banned Projectile: " + id + ".");
+						return;
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
+						return;
+					}
+
+				}
+
+					#endregion
+
+					return;
+				case "allow":
+
+					#region Allow group to projectile
+
+				{
+					if (args.Parameters.Count != 3)
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban allow <id> <group name>");
+						return;
+					}
+
+					short id;
+					if (Int16.TryParse(args.Parameters[1], out id))
+					{
+						if (!TShock.Groups.GroupExists(args.Parameters[2]))
+						{
+							args.Player.SendErrorMessage("Invalid group.");
+							return;
+						}
+
+						ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
+						if (ban == null)
+						{
+							args.Player.SendErrorMessage("Projectile " + id + " is not banned.");
+							return;
+						}
+						if (!ban.AllowedGroups.Contains(args.Parameters[2]))
+						{
+							TShock.ProjectileBans.AllowGroup(id, args.Parameters[2]);
+							args.Player.SendSuccessMessage(String.Format("{0} has been allowed to use projectile {1}.", args.Parameters[2],
+								id));
+							return;
+						}
+						else
+						{
+							args.Player.SendWarningMessage(String.Format("{0} is already allowed to use projectile {1}.", args.Parameters[2],
+								id));
+							return;
+						}
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
+						return;
+					}
+				}
+
+					#endregion
+
+				case "del":
+
+					#region Delete item
+
+				{
+					if (args.Parameters.Count != 2)
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban del <id>");
+						return;
+					}
+
+					short id;
+					if (Int16.TryParse(args.Parameters[1], out id))
+					{
+						TShock.ProjectileBans.RemoveBan(id);
+						args.Player.SendSuccessMessage("Unbanned Projectile: " + id + ".");
+						return;
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
+						return;
+					}
+				}
+
+					#endregion
+
+					return;
+				case "disallow":
+
+					#region Allow group to item
+
+				{
+					if (args.Parameters.Count != 3)
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban disallow <id> <group name>");
+						return;
+					}
+
+					short id;
+					if (Int16.TryParse(args.Parameters[1], out id))
+					{
+						if (!TShock.Groups.GroupExists(args.Parameters[2]))
+						{
+							args.Player.SendErrorMessage("Invalid group.");
+							return;
+						}
+
+						ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
+						if (ban == null)
+						{
+							args.Player.SendErrorMessage("Projectile " + id + " is not banned.");
+							return;
+						}
+						if (ban.AllowedGroups.Contains(args.Parameters[2]))
+						{
+							TShock.ProjectileBans.RemoveGroup(id, args.Parameters[2]);
+							args.Player.SendSuccessMessage(String.Format("{0} has been disallowed from using projectile {1}.",
+								args.Parameters[2], id));
+							return;
+						}
+						else
+						{
+							args.Player.SendWarningMessage(String.Format("{0} is already prevented from using projectile {1}.",
+								args.Parameters[2], id));
+							return;
+						}
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
+						return;
+					}
+				}
+
+					#endregion
+
+					return;
+				case "help":
+					args.Player.SendInfoMessage("Syntax: /projban <command> [arguments]");
+					args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
+					args.Player.SendInfoMessage("Arguments: add <id>, allow <id> <group name>");
+					args.Player.SendInfoMessage("Arguments: del <id>, disallow <id> <group name>, list [page]");
+					return;
+				case "list":
+
+					#region List items
+
+					int pageNumber;
+					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+						return;
+					IEnumerable<Int16> projectileIds = from projectileBan in TShock.ProjectileBans.ProjectileBans
+						select projectileBan.ID;
+					PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(projectileIds),
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Projectile bans ({0}/{1}):",
+							FooterFormat = "Type /Projectile list {0} for more.",
+							NothingToDisplayString = "There are currently no banned projectiles."
+						});
+
+					#endregion
+
+					return;
+			}
+			}
+
+		#endregion Projectile Management
+
+        #region Server Config Commands
+
+        private static void SetSpawn(CommandArgs args)
 		{
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
@@ -3608,7 +3818,15 @@ namespace TShockAPI
 				}
 
 				args.Player.SendSuccessMessage("/{0} help: ", command.Name);
-				args.Player.SendInfoMessage(command.HelpText);
+                if (command.HelpDesc == null)
+                {
+                    args.Player.SendInfoMessage(command.HelpText);
+                    return;
+                }
+                foreach (string line in command.HelpDesc)
+                {
+                    args.Player.SendInfoMessage(line);
+                }
 			}
 		}
 
@@ -4416,7 +4634,7 @@ namespace TShockAPI
 			}
 			if (args.Parameters.Count == 2)
 				int.TryParse(args.Parameters[1], out time);
-			if (id > 0 && id < Main.maxBuffs)
+			if (id > 0 && id < Main.maxBuffTypes)
 			{
 				if (time < 0 || time > short.MaxValue)
 					time = 60;
@@ -4467,7 +4685,7 @@ namespace TShockAPI
 				}
 				if (args.Parameters.Count == 3)
 					int.TryParse(args.Parameters[2], out time);
-				if (id > 0 && id < Main.maxBuffs)
+				if (id > 0 && id < Main.maxBuffTypes)
 				{
 					if (time < 0 || time > short.MaxValue)
 						time = 60;
@@ -4494,6 +4712,13 @@ namespace TShockAPI
 			var name = "Fail";
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
+
+			if (!TShock.Regions.CanBuild(x, y, args.Player))
+			{
+				args.Player.SendErrorMessage("You're not allowed to change tiles here!");
+				return;
+			}
+
 			switch (args.Parameters[0].ToLower())
 			{
 				case "tree":

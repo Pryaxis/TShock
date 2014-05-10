@@ -232,7 +232,7 @@ namespace TShockAPI.DB
 		{
 			IP = ip;
 			Name = name;
-			UUID = UUID;
+			UUID = uuid;
 			Reason = reason;
 		    BanningUser = banner;
 		    Date = date;

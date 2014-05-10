@@ -125,12 +125,12 @@ namespace TShockAPI
 								if (task.direct)
 								{
 									OnSaveWorld(new WorldSaveEventArgs());
-									WorldGen.realsaveWorld(task.resetTime);
+									WorldFile.RealSaveWorld(task.resetTime);
 								}
 								else
-									WorldGen.saveWorld(task.resetTime);
-								TShock.Utils.Broadcast("World saved.", Color.Yellow);
-								Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+									WorldFile.saveWorld(task.resetTime);
+									TShock.Utils.Broadcast("World saved.", Color.Yellow);
+									Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
 							catch (Exception e)
 							{

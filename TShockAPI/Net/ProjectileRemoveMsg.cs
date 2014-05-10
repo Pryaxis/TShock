@@ -41,8 +41,7 @@ namespace TShockAPI.Net
 			stream.WriteSingle(0);
 			stream.WriteInt16(0);
 			stream.WriteByte(Owner);
-			stream.WriteByte(0);
-			stream.WriteSingle(0);
+			stream.WriteInt16(0);
 			stream.WriteSingle(0);
 			stream.WriteSingle(0);
 		}
