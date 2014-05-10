@@ -1023,7 +1023,7 @@ namespace TShockAPI
 			/// <summary>
 			/// ???
 			/// </summary>
-			public byte ID { get; set; }
+			public short ID { get; set; }
 			/// <summary>
 			/// Direction the damage occurred from
 			/// </summary>
@@ -1033,9 +1033,9 @@ namespace TShockAPI
 			/// </summary>
 			public short Damage { get; set; }
 			/// <summary>
-			/// Is PVP enabled...?
+			/// Knockback
 			/// </summary>
-			public byte PVP { get; set; }
+			public float Knockback { get; set; }
 			/// <summary>
 			/// Critical?
 			/// </summary>
@@ -1046,7 +1046,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
 
-		private static bool OnNPCStrike(byte id, byte dir, short dmg, byte pvp, byte crit)
+		private static bool OnNPCStrike(short id, byte dir, short dmg, float knockback, byte crit)
 		{
 			if (NPCStrike == null)
 				return false;
@@ -1056,7 +1056,7 @@ namespace TShockAPI
 				ID = id,
 				Direction = dir,
 				Damage = dmg,
-				PVP = pvp,
+				Knockback = knockback,
 				Critical = crit,
 			};
 			NPCStrike.Invoke(null, args);
@@ -1379,8 +1379,9 @@ namespace TShockAPI
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
 		{
 			var playerid = args.Data.ReadInt8();
+			var male = args.Data.ReadByte() == 0;
 			var hair = args.Data.ReadInt8();
-			var male = args.Data.ReadBoolean();
+			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 			BitsByte hideVisual = args.Data.ReadInt8();
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
@@ -1391,7 +1392,6 @@ namespace TShockAPI
 			Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			var difficulty = args.Data.ReadInt8();
-			string name = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
 
 			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
 			{
@@ -1508,7 +1508,7 @@ namespace TShockAPI
 			if (!args.Player.RequiresPassword)
 				return true;
 
-			string password = Encoding.UTF8.GetString(args.Data.ReadBytes((int) (args.Data.Length - args.Data.Position - 1)));
+			string password = args.Data.ReadString();
 
             if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
                 return true;
@@ -1621,8 +1621,8 @@ namespace TShockAPI
 				return false;
 
 			var size = args.Data.ReadInt16();
-			var tileX = args.Data.ReadInt32();
-			var tileY = args.Data.ReadInt32();
+			var tileX = args.Data.ReadInt16();
+			var tileY = args.Data.ReadInt16();
 
 			if (OnSendTileSquare(size, tileX, tileY))
 				return true;
@@ -1782,8 +1782,8 @@ namespace TShockAPI
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
 			EditAction action = (EditAction)args.Data.ReadInt8();
-			var tileX = args.Data.ReadInt32();
-			var tileY = args.Data.ReadInt32();
+			var tileX = args.Data.ReadInt16();
+			var tileY = args.Data.ReadInt16();
 
 			try
 			{
@@ -2177,11 +2177,14 @@ namespace TShockAPI
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
 			var plr = args.Data.ReadInt8();
-			var control = args.Data.ReadInt8();
+			var control = (BitsByte)args.Data.ReadInt8();
+			var pulley = (BitsByte)args.Data.ReadInt8();
 			var item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			byte pulley = args.Data.ReadInt8();
+			var vel = Vector2.Zero;
+			if(pulley[2])
+				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+
 			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
 				return true;
 
@@ -2264,11 +2267,11 @@ namespace TShockAPI
 				args.Player.LastNetPosition = pos;
 			}
 
-			if ((control & 32) == 32)
+			if (control[5])
 			{
 				if (TShock.Itembans.ItemIsBanned(args.TPlayer.inventory[item].name, args.Player))
 				{
-					control -= 32;
+					control[5] = false;
 					args.Player.Disable("Using banned item");
 					args.Player.SendMessage(
 						string.Format("You cannot use {0} on this server. Your actions are being ignored.",
@@ -2297,8 +2300,8 @@ namespace TShockAPI
 
 			args.TPlayer.selectedItem = item;
 			args.TPlayer.position = pos;
-			args.TPlayer.velocity = vel;
 			args.TPlayer.oldVelocity = args.TPlayer.velocity;
+			args.TPlayer.velocity = vel;
 			args.TPlayer.fallStart = (int) (pos.Y/16f);
 			args.TPlayer.controlUp = false;
 			args.TPlayer.controlDown = false;
@@ -2306,38 +2309,42 @@ namespace TShockAPI
 			args.TPlayer.controlRight = false;
 			args.TPlayer.controlJump = false;
 			args.TPlayer.controlUseItem = false;
-			args.TPlayer.pulley = pulley != 0;
-			args.TPlayer.pulleyDir = pulley;
+			args.TPlayer.pulley = pulley[0];
+			if(pulley[0])
+				args.TPlayer.pulleyDir = (byte)(pulley[1] ? 2 : 1);
 			args.TPlayer.direction = -1;
-			if ((control & 1) == 1)
+			if (control[0])
 			{
 				args.TPlayer.controlUp = true;
 			}
-			if ((control & 2) == 2)
+			if (control[1])
 			{
 				args.TPlayer.controlDown = true;
 			}
-			if ((control & 4) == 4)
+			if (control[2])
 			{
 				args.TPlayer.controlLeft = true;
 			}
-			if ((control & 8) == 8)
+			if (control[3])
 			{
 				args.TPlayer.controlRight = true;
 			}
-			if ((control & 16) == 16)
+			if (control[4])
 			{
 				args.TPlayer.controlJump = true;
 			}
-			if ((control & 32) == 32)
+			if (control[5])
 			{
 				args.TPlayer.controlUseItem = true;
 			}
-			if ((control & 64) == 64)
+			if (control[6])
 			{
 				args.TPlayer.direction = 1;
 			}
-			
+			else
+			{
+				args.TPlayer.direction = -1;
+			}
 
 
 			if (args.Player.Confused && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
@@ -2385,7 +2392,19 @@ namespace TShockAPI
 			var dmg = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
+			var bits = (BitsByte) args.Data.ReadInt8();
 		    owner = (byte)args.Player.Index;
+			float[] ai = new float[Projectile.maxAI];
+
+			for (int i = 0; i < Projectile.maxAI; i++)
+			{
+				if (bits[i])
+					ai[i] = args.Data.ReadSingle();
+				else
+					ai[i] = 0f;
+			}
+			
+
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
@@ -2527,10 +2546,10 @@ namespace TShockAPI
 		private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
-			var direction = args.Data.ReadInt8();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var dmg = args.Data.ReadInt16();
 			var pvp = args.Data.ReadInt8() == 0;
-
+			var text = args.Data.ReadString();
 			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
@@ -2546,14 +2565,7 @@ namespace TShockAPI
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			int textlength = (int)(args.Data.Length - args.Data.Position - 1);
-			string deathtext = "";
-			if (textlength > 0)
-			{
-				deathtext = Encoding.UTF8.GetString(args.Data.ReadBytes(textlength));
-			}
-
-			if (deathtext.Length > 500)
+			if (text.Length > 500)
 			{
 				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
 				return true;
@@ -2576,8 +2588,8 @@ namespace TShockAPI
 
 		private static bool HandleLiquidSet(GetDataHandlerArgs args)
 		{
-			int tileX = args.Data.ReadInt32();
-			int tileY = args.Data.ReadInt32();
+			int tileX = args.Data.ReadInt16();
+			int tileY = args.Data.ReadInt16();
 			byte amount = args.Data.ReadInt8();
 			byte type = args.Data.ReadInt8();
 
@@ -2699,6 +2711,7 @@ namespace TShockAPI
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
+			int style = args.Data.ReadInt16();
 
 			if (OnTileKill(tileX, tileY))
 				return true;
@@ -2734,8 +2747,8 @@ namespace TShockAPI
 		private static bool HandleSpawn(GetDataHandlerArgs args)
 		{
 			var player = args.Data.ReadInt8();
-			var spawnx = args.Data.ReadInt32();
-			var spawny = args.Data.ReadInt32();
+			var spawnx = args.Data.ReadInt16();
+			var spawny = args.Data.ReadInt16();
 
 			if (OnPlayerSpawn(player, spawnx, spawny))
 				return true;
@@ -2784,8 +2797,8 @@ namespace TShockAPI
 
 		private static bool HandleChestOpen(GetDataHandlerArgs args)
 		{
-			var x = args.Data.ReadInt32();
-			var y = args.Data.ReadInt32();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
 
 			if (OnChestOpen(x, y, args.Player))
 				return true;
@@ -2811,8 +2824,13 @@ namespace TShockAPI
 		private static bool HandleChestActive(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
-			var x = args.Data.ReadInt32();
-			var y = args.Data.ReadInt32();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var b = args.Data.ReadInt8();
+			var name = "";
+
+			if (b <= 20)
+				name = args.Data.ReadString();
 
 			args.Player.ActiveChest = id;
 
@@ -2870,8 +2888,9 @@ namespace TShockAPI
 		private static bool HandleSign(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
-			var x = args.Data.ReadInt32();
-			var y = args.Data.ReadInt32();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var text = args.Data.ReadString();
 
 			if (OnSignEvent(id, x, y))
 				return true;
@@ -2978,7 +2997,7 @@ namespace TShockAPI
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
-			var noDelay = args.Data.ReadBoolean();
+			var noDelay = args.Data.ReadInt8() == 1;
 			var type = args.Data.ReadInt16();
 
 			if (OnItemDrop(id, pos, vel, stacks, prefix, noDelay, type))
@@ -3047,10 +3066,12 @@ namespace TShockAPI
 		private static bool HandlePlayerDamage(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
-			var direction = args.Data.ReadInt8();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadBoolean();
-			var crit = args.Data.ReadBoolean();
+			var text = args.Data.ReadString();
+			var bits = (BitsByte)args.Data.ReadInt8();
+			var pvp = bits[0];
+			var crit = bits[1];
 
 			if (dmg > 12000) //Abnormal values have the potential to cause infinite loops in the server.
 			{				 //12000 because Skely Prime Head does 10339 or some bs during the day.
@@ -3061,17 +3082,6 @@ namespace TShockAPI
 
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;
-
-			int textlength = (int) (args.Data.Length - args.Data.Position - 1);
-			string deathtext = "";
-			if (textlength > 0)
-			{
-				deathtext = Encoding.UTF8.GetString(args.Data.ReadBytes(textlength));
-				/*if (!TShock.Utils.ValidString(deathtext))
-				{
-					return true;
-				}*/
-			}
 
 			if (id >= Main.maxPlayers || TShock.Players[id] == null)
 			{
@@ -3124,13 +3134,13 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt8();
-			var direction = args.Data.ReadInt8();
+			var id = args.Data.ReadInt16();
 			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadInt8();
+			var knockback = args.Data.ReadSingle();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
 
-			if (OnNPCStrike(id, direction, dmg, pvp, crit))
+			if (OnNPCStrike(id, direction, dmg, knockback, crit))
 				return true;
 
 			if (Main.npc[id] == null)
@@ -3283,6 +3293,7 @@ namespace TShockAPI
 					case 245:
 					case 262:
 					case 266:
+					case 370:
 						spawnboss = true;
 						break;
 				}
@@ -3332,8 +3343,8 @@ namespace TShockAPI
 
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
 		{
-			var x = args.Data.ReadInt32();
-			var y = args.Data.ReadInt32();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
@@ -3370,8 +3381,8 @@ namespace TShockAPI
 
 		private static bool HandlePaintWall(GetDataHandlerArgs args)
 		{
-			var x = args.Data.ReadInt32();
-			var y = args.Data.ReadInt32();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
@@ -3408,7 +3419,7 @@ namespace TShockAPI
 
 		private static bool HandleTeleport(GetDataHandlerArgs args)
 		{
-			var flag = args.Data.ReadInt8();
+			var flag = (BitsByte)args.Data.ReadInt8();
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
@@ -3580,8 +3591,9 @@ namespace TShockAPI
 		private static bool HandleDoorUse(GetDataHandlerArgs e)
 		{
 			var Close = e.Data.ReadByte();
-			var X = e.Data.ReadInt32();
-			var Y = e.Data.ReadInt32();
+			var X = e.Data.ReadInt16();
+			var Y = e.Data.ReadInt16();
+			var dir = e.Data.ReadByte() == 0 ? -1 : 1;
 
 			if (X >= Main.tile.GetLength(0) || Y >= Main.tile.GetLength(1) || X < 0 || Y < 0) // Check for out of range
 				return true;

@@ -1150,7 +1150,7 @@ namespace TShockAPI
 			if (e.Handled)
 				return;
 			
-			/*PacketTypes type = e.MsgID;
+			PacketTypes type = e.MsgID;
 
 			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte) type, type);
 
@@ -1178,7 +1178,7 @@ namespace TShockAPI
 			{
 				// Exceptions are already handled
 				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
-			}*/
+			}
 		}
 
 		private void OnGreetPlayer(GreetPlayerEventArgs args)
