@@ -41,7 +41,7 @@ using System.Threading.Tasks;
 
 namespace TShockAPI
 {
-	[ApiVersion(1, 15)]
+	[ApiVersion(1, 16)]
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
@@ -1149,8 +1149,8 @@ namespace TShockAPI
 		{
 			if (e.Handled)
 				return;
-
-			PacketTypes type = e.MsgID;
+			
+			/*PacketTypes type = e.MsgID;
 
 			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte) type, type);
 
@@ -1174,11 +1174,11 @@ namespace TShockAPI
 				return;
 			}
 
-			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
 			{
 				// Exceptions are already handled
 				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
-			}
+			}*/
 		}
 
 		private void OnGreetPlayer(GreetPlayerEventArgs args)
@@ -1359,12 +1359,12 @@ namespace TShockAPI
 						DayTime = Main.dayTime,
 						MoonPhase = (byte)Main.moonPhase,
 						BloodMoon = Main.bloodMoon,
-						MaxTilesX = Main.maxTilesX,
-						MaxTilesY = Main.maxTilesY,
-						SpawnX = Main.spawnTileX,
-						SpawnY = Main.spawnTileY,
-						WorldSurface = (int)Main.worldSurface,
-						RockLayer = (int)Main.rockLayer,
+						MaxTilesX = (short)Main.maxTilesX,
+						MaxTilesY = (short)Main.maxTilesY,
+						SpawnX = (short)Main.spawnTileX,
+						SpawnY = (short)Main.spawnTileY,
+						WorldSurface = (short)Main.worldSurface,
+						RockLayer = (short)Main.rockLayer,
 						//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
 						//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
 						WorldID = Main.worldID,
@@ -1408,7 +1408,7 @@ namespace TShockAPI
 									 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
 									 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
 									 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
-									 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
+									 (Main.cloudBGActive >= 1f ? BossFlags2.CloudBg : BossFlags2.None) |
 									 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
 									 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
 									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None) ,

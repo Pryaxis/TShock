@@ -4634,7 +4634,7 @@ namespace TShockAPI
 			}
 			if (args.Parameters.Count == 2)
 				int.TryParse(args.Parameters[1], out time);
-			if (id > 0 && id < Main.maxBuffs)
+			if (id > 0 && id < Main.maxBuffTypes)
 			{
 				if (time < 0 || time > short.MaxValue)
 					time = 60;
@@ -4685,7 +4685,7 @@ namespace TShockAPI
 				}
 				if (args.Parameters.Count == 3)
 					int.TryParse(args.Parameters[2], out time);
-				if (id > 0 && id < Main.maxBuffs)
+				if (id > 0 && id < Main.maxBuffTypes)
 				{
 					if (time < 0 || time > short.MaxValue)
 						time = 60;

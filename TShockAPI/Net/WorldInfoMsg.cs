@@ -20,6 +20,7 @@ using System;
 using System.IO;
 using System.IO.Streams;
 using System.Text;
+using Terraria;
 
 namespace TShockAPI.Net
 {
@@ -58,12 +59,12 @@ namespace TShockAPI.Net
 		public byte MoonPhase { get; set; }
 		public bool BloodMoon { get; set; }
 		public bool Eclipse { get; set; }
-		public int MaxTilesX { get; set; }
-		public int MaxTilesY { get; set; }
-		public int SpawnX { get; set; }
-		public int SpawnY { get; set; }
-		public int WorldSurface { get; set; }
-		public int RockLayer { get; set; }
+		public short MaxTilesX { get; set; }
+		public short MaxTilesY { get; set; }
+		public short SpawnX { get; set; }
+		public short SpawnY { get; set; }
+		public short WorldSurface { get; set; }
+		public short RockLayer { get; set; }
 		public int WorldID { get; set; }
 		public byte MoonType { get; set; }
 		public int TreeX0 { get; set; }
@@ -105,50 +106,71 @@ namespace TShockAPI.Net
 
 		public override void Pack(Stream stream)
 		{
-			stream.WriteInt32(Time);
-			stream.WriteBoolean(DayTime);
-			stream.WriteInt8(MoonPhase);
-			stream.WriteBoolean(BloodMoon);
-			stream.WriteBoolean(Eclipse);
-			stream.WriteInt32(MaxTilesX);
-			stream.WriteInt32(MaxTilesY);
-			stream.WriteInt32(SpawnX);
-			stream.WriteInt32(SpawnY);
-			stream.WriteInt32(WorldSurface);
-			stream.WriteInt32(RockLayer);
-			stream.WriteInt32(WorldID);
-			stream.WriteByte(MoonType);
-			stream.WriteInt32(TreeX0);
-			stream.WriteInt32(TreeX1);
-			stream.WriteInt32(TreeX2);
-			stream.WriteByte(TreeStyle0);
-			stream.WriteByte(TreeStyle1);
-			stream.WriteByte(TreeStyle2);
-			stream.WriteByte(TreeStyle3);
-			stream.WriteInt32(CaveBackX0);
-			stream.WriteInt32(CaveBackX1);
-			stream.WriteInt32(CaveBackX2);
-			stream.WriteByte(CaveBackStyle0);
-			stream.WriteByte(CaveBackStyle1);
-			stream.WriteByte(CaveBackStyle2);
-			stream.WriteByte(CaveBackStyle3);
-			stream.WriteByte(SetBG0);
-			stream.WriteByte(SetBG1);
-			stream.WriteByte(SetBG2);
-			stream.WriteByte(SetBG3);
-			stream.WriteByte(SetBG4);
-			stream.WriteByte(SetBG5);
-			stream.WriteByte(SetBG6);
-			stream.WriteByte(SetBG7);
-			stream.WriteByte(IceBackStyle);
-			stream.WriteByte(JungleBackStyle);
-			stream.WriteByte(HellBackStyle);
-			stream.WriteSingle(WindSpeed);
-			stream.WriteByte(NumberOfClouds);
-			stream.WriteInt8((byte)BossFlags);
-			stream.WriteInt8((byte)BossFlags2);
-			stream.WriteSingle(Rain);
-			stream.WriteBytes(Encoding.UTF8.GetBytes(WorldName));
+			BinaryWriter writer = new BinaryWriter(stream);
+			writer.Write(Time);
+			BitsByte worldinfo = new BitsByte(DayTime, BloodMoon, Eclipse);
+			writer.Write(worldinfo);
+			writer.Write(MoonPhase);
+			writer.Write(MaxTilesX);
+			writer.Write(MaxTilesY);
+			writer.Write(SpawnX);
+			writer.Write(SpawnY);
+			writer.Write(WorldSurface);
+			writer.Write(RockLayer);
+			writer.Write(WorldID);
+			writer.Write(WorldName);
+			writer.Write(MoonType);
+
+			writer.Write(SetBG0);
+			writer.Write(SetBG1);
+			writer.Write(SetBG2);
+			writer.Write(SetBG3);
+			writer.Write(SetBG4);
+			writer.Write(SetBG5);
+			writer.Write(SetBG6);
+			writer.Write(SetBG7);
+			writer.Write(IceBackStyle);
+			writer.Write(JungleBackStyle);
+			writer.Write(HellBackStyle);
+			writer.Write(WindSpeed);
+			writer.Write(NumberOfClouds);
+
+			writer.Write(TreeX0);
+			writer.Write(TreeX1);
+			writer.Write(TreeX2);
+			writer.Write(TreeStyle0);
+			writer.Write(TreeStyle1);
+			writer.Write(TreeStyle2);
+			writer.Write(TreeStyle3);
+			writer.Write(CaveBackX0);
+			writer.Write(CaveBackX1);
+			writer.Write(CaveBackX2);
+			writer.Write(CaveBackStyle0);
+			writer.Write(CaveBackStyle1);
+			writer.Write(CaveBackStyle2);
+			writer.Write(CaveBackStyle3);
+
+			writer.Write(Rain);
+
+			BitsByte bosses1 = new BitsByte((BossFlags & BossFlags.OrbSmashed) == BossFlags.OrbSmashed,
+				(BossFlags & BossFlags.DownedBoss1) == BossFlags.DownedBoss1,
+				(BossFlags & BossFlags.DownedBoss2) == BossFlags.DownedBoss2,
+				(BossFlags & BossFlags.DownedBoss3) == BossFlags.DownedBoss3,
+				(BossFlags & BossFlags.HardMode) == BossFlags.HardMode,
+				(BossFlags & BossFlags.DownedClown) == BossFlags.DownedClown,
+				(BossFlags & BossFlags.ServerSideCharacter) == BossFlags.ServerSideCharacter,
+				(BossFlags & BossFlags.DownedPlantBoss) == BossFlags.DownedPlantBoss);
+			writer.Write(bosses1);
+
+			BitsByte bosses2 = new BitsByte((BossFlags2 & BossFlags2.DownedMechBoss1) == BossFlags2.DownedMechBoss1,
+				(BossFlags2 & BossFlags2.DownedMechBoss2) == BossFlags2.DownedMechBoss2,
+				(BossFlags2 & BossFlags2.DownedMechBoss3) == BossFlags2.DownedMechBoss3,
+				(BossFlags2 & BossFlags2.DownedMechBossAny) == BossFlags2.DownedMechBossAny,
+				(BossFlags2 & BossFlags2.CloudBg) == BossFlags2.CloudBg,
+				(BossFlags2 & BossFlags2.Crimson) == BossFlags2.Crimson,
+				(BossFlags2 & BossFlags2.PumpkinMoon) == BossFlags2.PumpkinMoon,
+				(BossFlags2 & BossFlags2.SnowMoon) == BossFlags2.SnowMoon);
+			writer.Write(bosses2);
 		}
 	}
 }

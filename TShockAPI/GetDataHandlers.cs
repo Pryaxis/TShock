@@ -1198,7 +1198,7 @@ namespace TShockAPI
 		{
 			#region Blacklists
 
-			WhitelistBuffMaxTime = new int[Main.maxBuffs];
+			WhitelistBuffMaxTime = new int[Main.maxBuffTypes];
 			WhitelistBuffMaxTime[20] = 600;
 			WhitelistBuffMaxTime[0x18] = 1200;
 			WhitelistBuffMaxTime[0x1f] = 120;
@@ -3218,7 +3218,7 @@ namespace TShockAPI
 			if (OnPlayerBuffUpdate(id))
 				return true;
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < Terraria.Player.maxBuffs; i++)
 			{
 				var buff = args.Data.ReadInt8();
 

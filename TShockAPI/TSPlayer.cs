@@ -525,12 +525,12 @@ namespace TShockAPI
 					DayTime = Main.dayTime,
 					MoonPhase = (byte)Main.moonPhase,
 					BloodMoon = Main.bloodMoon,
-					MaxTilesX = Main.maxTilesX,
-					MaxTilesY = Main.maxTilesY,
-					SpawnX = Main.spawnTileX,
-					SpawnY = Main.spawnTileY,
-					WorldSurface = (int)Main.worldSurface,
-					RockLayer = (int)Main.rockLayer,
+					MaxTilesX = (short)Main.maxTilesX,
+					MaxTilesY = (short)Main.maxTilesY,
+					SpawnX = (short)Main.spawnTileX,
+					SpawnY = (short)Main.spawnTileY,
+					WorldSurface = (short)Main.worldSurface,
+					RockLayer = (short)Main.rockLayer,
 					//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
 					//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
 					WorldID = Main.worldID,
@@ -636,8 +636,8 @@ namespace TShockAPI
 				var msg = new SpawnMsg
 							{
 								PlayerIndex = (byte) Index,
-								TileX = tilex,
-								TileY = tiley
+								TileX = (short)tilex,
+								TileY = (short)tiley
 							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());

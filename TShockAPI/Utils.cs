@@ -442,7 +442,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffName[id] : "null";
 		}
 
 		/// <summary>
@@ -452,7 +452,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffTip[id] : "null";
 		}
 
 		/// <summary>
@@ -463,13 +463,13 @@ namespace TShockAPI
 		public List<int> GetBuffByName(string name)
 		{
 			string nameLower = name.ToLower();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower().StartsWith(nameLower))
 					found.Add(i);

@@ -32,12 +32,12 @@ namespace TShockAPI.Net
 		public void PackFull(Stream stream)
 		{
 			long start = stream.Position;
-			stream.WriteInt32(1);
+			stream.WriteInt16(0);
 			stream.WriteInt8((byte) ID);
 			Pack(stream);
 			long end = stream.Position;
 			stream.Position = start;
-			stream.WriteInt32((int) (end - start) - 4);
+			stream.WriteInt16((short)end);
 			stream.Position = end;
 		}
 

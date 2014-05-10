@@ -28,8 +28,8 @@ namespace TShockAPI.Net
 			get { return PacketTypes.PlayerSpawn; }
 		}
 
-		public int TileX { get; set; }
-		public int TileY { get; set; }
+		public short TileX { get; set; }
+		public short TileY { get; set; }
 		public byte PlayerIndex { get; set; }
 
 		public override void Pack(Stream stream)
