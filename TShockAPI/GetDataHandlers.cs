@@ -1613,7 +1613,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209 };
+		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, 128, 137, 139, 171, 207, 209, 314 };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
