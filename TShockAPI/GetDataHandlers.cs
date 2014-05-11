@@ -80,7 +80,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The Tile ID being edited.
 			/// </summary>
-			public ushort EditData { get; set; }
+			public short EditData { get; set; }
 			/// <summary>
 			/// The EditType.
 			/// (KillTile = 0, PlaceTile = 1, KillWall = 2, PlaceWall = 3, KillTileNoItem = 4, PlaceWire = 5, KillWire = 6)
@@ -102,7 +102,7 @@ namespace TShockAPI
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
 		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, ushort editData, byte style)
+		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, short editData, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -1227,7 +1227,7 @@ namespace TShockAPI
 											{PacketTypes.PlayerSlot, HandlePlayerSlot},
 											{PacketTypes.TileGetSection, HandleGetSection},
 											{PacketTypes.UpdateNPCHome, UpdateNPCHome},
-											{PacketTypes.PlayerAddBuff, HandlePlayerBuff},
+											{PacketTypes.PlayerAddBuff, HandlePlayerAddBuff},
 											{PacketTypes.ItemDrop, HandleItemDrop},
 											{PacketTypes.PlayerHp, HandlePlayerHp},
 											{PacketTypes.PlayerMana, HandlePlayerMana},
@@ -1235,7 +1235,7 @@ namespace TShockAPI
 											{PacketTypes.NpcStrike, HandleNpcStrike},
 											{PacketTypes.NpcSpecial, HandleSpecial},
 											{PacketTypes.PlayerAnimation, HandlePlayerAnimation},
-											{PacketTypes.PlayerBuff, HandlePlayerBuffUpdate},
+											{PacketTypes.PlayerBuff, HandlePlayerBuffList},
 											{PacketTypes.PasswordSend, HandlePassword},
 											{PacketTypes.ContinueConnecting2, HandleConnecting},
 											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
@@ -1779,6 +1779,10 @@ namespace TShockAPI
 		/// These projectiles create tiles on death.
 		/// </summary>
 		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int> {{42, 53}, {65, 112}, {68, 116}};
+		/// <summary>
+		/// Extra place style limits for strange hardcoded values in Terraria
+		/// </summary>
+		private static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>{{TileID.MinecartTrack, 3}};
 
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
@@ -1788,7 +1792,7 @@ namespace TShockAPI
 
 			try
 			{
-				var editData = args.Data.ReadUInt16();
+				var editData = args.Data.ReadInt16();
 				EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
 								 action == EditAction.KillTileNoItem)
 								? EditType.Fail
@@ -1914,8 +1918,9 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 				{
-					if (action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle &&
-						MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData])
+					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) && 
+						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
+						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2946,7 +2951,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerBuff(GetDataHandlerArgs args)
+		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
@@ -2957,28 +2962,29 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				return true;
 			}
 
 			if (id >= Main.maxPlayers)
 			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				return true;
 			}
 
-			if (!TShock.Players[id].TPlayer.hostile)
+			if (!TShock.Players[id].TPlayer.hostile || !Main.pvpBuff[type])
 			{
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				return true;
 			}
 			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
 			{
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				return true;
 			}
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				return true;
 			}
 
@@ -2987,7 +2993,7 @@ namespace TShockAPI
 				return false;
 			}
 
-			args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 			return true;
 		}
 
@@ -3222,7 +3228,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerBuffUpdate(GetDataHandlerArgs args)
+		private static bool HandlePlayerBuffList(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
 
@@ -3233,11 +3239,20 @@ namespace TShockAPI
 			{
 				var buff = args.Data.ReadInt8();
 
+				if (TShock.Itembans.ItemBans.Any(s =>
+				{
+					Item item = new Item();
+					item.SetDefaults(s.Name);
+					return item.buffType == buff;
+				}))
+				{
+					args.Player.SetBuff(buff, 1, true);
+					continue;
+				}
+
 				if (buff == 10)
 				{
-					if (TShock.Itembans.ItemIsBanned("Invisibility Potion", args.Player))
-						buff = 0;
-					else if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
+					if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 						buff = 0;
 				}
 
