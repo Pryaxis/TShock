@@ -1230,7 +1230,7 @@ namespace TShockAPI
 			Main.dayTime = dayTime;
 			Main.time = time;
 			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-			NetMessage.syncPlayers();
+			// NetMessage.syncPlayers(); Is not in any way resposnsible for time...
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
