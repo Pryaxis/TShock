@@ -3246,15 +3246,11 @@ namespace TShockAPI
 					return item.buffType == buff;
 				}))
 				{
-					args.Player.SetBuff(buff, 1, true);
-					continue;
+					buff = 0;
 				}
 
-				if (buff == 10)
-				{
-					if (TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
-						buff = 0;
-				}
+				if (buff == 10 && TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
+					buff = 0;
 
 				args.TPlayer.buffType[i] = buff;
 				if (args.TPlayer.buffType[i] > 0)
@@ -3266,6 +3262,7 @@ namespace TShockAPI
 					args.TPlayer.buffTime[i] = 0;
 				}
 			}
+
 			NetMessage.SendData((int) PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
 			return true;
 		}
