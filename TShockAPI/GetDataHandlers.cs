@@ -2830,7 +2830,7 @@ namespace TShockAPI
 			var b = args.Data.ReadInt8();
 			var name = "";
 
-			if (b <= 20)
+			if (b != 0 && b <= 20)
 				name = args.Data.ReadString();
 
 			args.Player.ActiveChest = id;
