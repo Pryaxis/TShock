@@ -132,7 +132,7 @@ namespace TShockAPI
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
 
-				Main.ServerSideCharacter = Config.ServerSideCharacter; //FYI, This cannot be disabled once flipped.
+				Main.ServerSideCharacter = Config.ServerSideCharacter;
 
 				DateTime now = DateTime.Now;
 				string logFilename;
