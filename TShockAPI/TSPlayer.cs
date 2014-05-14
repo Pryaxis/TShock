@@ -1290,8 +1290,10 @@ namespace TShockAPI
 		public Color? shirtColor;
 		public Color? underShirtColor;
 		public Color? shoeColor;
+		public Color? skinColor;
+		public Color? eyeColor;
 		public BitsByte? hideVisuals;
-		
+		public int questsCompleted;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -1358,6 +1360,9 @@ namespace TShockAPI
 			this.underShirtColor = player.TPlayer.underShirtColor;
 			this.shoeColor = player.TPlayer.shoeColor;
 			this.hideVisuals = player.TPlayer.hideVisual;
+			this.skinColor = player.TPlayer.skinColor;
+			this.skinColor = player.TPlayer.eyeColor;
+			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -1446,6 +1451,7 @@ namespace TShockAPI
 			player.sX = this.spawnX;
 			player.sY = this.spawnY;
 			player.TPlayer.hairDye = this.hairDye;
+			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
 
 			if (this.hair != null)
 				player.TPlayer.hair = this.hair.Value;
@@ -1459,6 +1465,11 @@ namespace TShockAPI
 				player.TPlayer.underShirtColor = this.underShirtColor.Value;
 			if (this.shoeColor != null)
 				player.TPlayer.shoeColor = this.shoeColor.Value;
+			if (this.skinColor != null)
+				player.TPlayer.skinColor = this.skinColor.Value;
+			if (this.eyeColor != null)
+				player.TPlayer.eyeColor = this.eyeColor.Value;
+
 			if (this.hideVisuals != null)
 				player.TPlayer.hideVisual = this.hideVisuals.Value;
 			else
@@ -1591,6 +1602,7 @@ namespace TShockAPI
 			}
 			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(76, -1, -1, "", player.Index);
 		}
 	}
 
