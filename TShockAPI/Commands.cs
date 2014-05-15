@@ -237,7 +237,7 @@ namespace TShockAPI
 			});
             add(new Command(Permissions.manageprojectile, ProjectileBan, "projban")
             {
-                HelpText = "Manages item bans."
+                HelpText = "Manages projectile bans."
             });
 			add(new Command(Permissions.manageregion, Region, "region")
 			{
