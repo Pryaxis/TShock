@@ -1361,7 +1361,7 @@ namespace TShockAPI
 			this.shoeColor = player.TPlayer.shoeColor;
 			this.hideVisuals = player.TPlayer.hideVisual;
 			this.skinColor = player.TPlayer.skinColor;
-			this.skinColor = player.TPlayer.eyeColor;
+			this.eyeColor = player.TPlayer.eyeColor;
 			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
 
 			Item[] inventory = player.TPlayer.inventory;
