@@ -2480,13 +2480,13 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if ((type == 90) && (TShock.Config.ProjIgnoreShrapnel))// ignore shrapnel
+				if (type == 90 && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
 					Log.Debug("Ignoring shrapnel per config..");
 				}
-				else
+				else if (!Main.projectile[index].active)
 				{
-					args.Player.ProjectileThreshold++;
+					args.Player.ProjectileThreshold++; // Creating new projectile
 				}
 			}
 
@@ -3079,13 +3079,6 @@ namespace TShockAPI
 			var bits = (BitsByte)args.Data.ReadInt8();
 			var pvp = bits[0];
 			var crit = bits[1];
-
-			if (dmg > 12000) //Abnormal values have the potential to cause infinite loops in the server.
-			{				 //12000 because Skely Prime Head does 10339 or some bs during the day.
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-                Log.ConsoleError("Damage Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
 
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;
