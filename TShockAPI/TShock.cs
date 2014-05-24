@@ -1067,9 +1067,10 @@ namespace TShockAPI
 				}
 				else if (!TShock.Config.EnableChatAboveHeads)
 				{
-					Utils.Broadcast(
-						String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text),
-						tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					var text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+					                         args.Text);
+					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					args.Handled = true;
 				}
 				else
@@ -1079,12 +1080,14 @@ namespace TShockAPI
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, ply.name, args.Who, 0, 0, 0, 0);
 					ply.name = name;
-					NetMessage.SendData((int) PacketTypes.ChatText, -1, args.Who, args.Text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					var text = args.Text;
+					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
-						args.Text);
+						text);
 
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 

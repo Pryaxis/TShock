@@ -43,7 +43,15 @@ namespace TShockAPI.Hooks
         public string CommandName { get; set; }
         public string CommandText { get; set; }
         public List<string> Parameters { get; set; }
+		public IEnumerable<Command> CommandList { get; set; }
     }
+
+	public class PlayerChatEventArgs : HandledEventArgs
+	{
+		public TSPlayer Player { get; set; }
+		public string RawText { get; set; }
+		public string TShockFormattedText { get; set; }
+	}
 
     public static class PlayerHooks
     {
@@ -56,6 +64,9 @@ namespace TShockAPI.Hooks
         public delegate void PlayerCommandD(PlayerCommandEventArgs e);
         public static event PlayerCommandD PlayerCommand;
 
+		public delegate void PlayerChatD(PlayerChatEventArgs e);
+		public static event PlayerChatD PlayerChat;
+
         public static void OnPlayerPostLogin(TSPlayer ply)
         {
             if (PlayerPostLogin == null)
@@ -67,7 +78,7 @@ namespace TShockAPI.Hooks
             PlayerPostLogin(args);
         }
 
-        public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args)
+        public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands)
         {
             if (PlayerCommand == null)
             {
@@ -78,10 +89,11 @@ namespace TShockAPI.Hooks
                 Player = player,
                 CommandName = cmdName,
                 CommandText = cmdText,
-                Parameters = args
-
+                Parameters = args,
+				CommandList = commands
             };
             PlayerCommand(playerCommandEventArgs);
+        	commands = playerCommandEventArgs.CommandList;
             return playerCommandEventArgs.Handled;
         }
 
@@ -94,5 +106,15 @@ namespace TShockAPI.Hooks
             PlayerPreLogin(args);
             return args.Handled;
         }
+
+		public static void OnPlayerChat(TSPlayer ply, string rawtext, ref string tshockText)
+		{
+			if (PlayerChat == null)
+				return;
+
+			var args = new PlayerChatEventArgs {Player = ply, RawText = rawtext, TShockFormattedText = tshockText};
+			PlayerChat(args);
+			tshockText = args.TShockFormattedText;
+		}
     }
 }
