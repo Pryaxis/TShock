@@ -567,7 +567,7 @@ namespace TShockAPI
 			string cmdName = args[0].ToLower();
 			args.RemoveAt(0);
 
-			IEnumerable<Command> cmds = ChatCommands.Where(c => c.HasAlias(cmdName));
+			IEnumerable<Command> cmds = ChatCommands.Where(c => c.HasAlias(cmdName)).ToList();
 
 			if (Hooks.PlayerHooks.OnPlayerCommand(player, cmdName, cmdText, args, ref cmds))
 				return true;
