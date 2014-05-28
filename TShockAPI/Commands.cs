@@ -1746,6 +1746,17 @@ namespace TShockAPI
 			NPC npc = new NPC();
 			switch (args.Parameters[0].ToLower())
 			{
+				case "*":
+				case "all":
+					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370 };
+					TSPlayer.Server.SetTime(false, 0.0);
+					foreach (int i in npcIds)
+					{
+						npc.SetDefaults(i);
+						TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					}
+					TSPlayer.All.SendSuccessMessage("{0} has spawned all bosses {1} time(s).", args.Player.Name, amount);
+					return;
 				case "brain":
 				case "brain of cthulhu":
 					npc.SetDefaults(266);
@@ -1757,6 +1768,13 @@ namespace TShockAPI
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Destroyer {1} time(s).", args.Player.Name, amount);
+					return;
+				case "duke":
+				case "duke fishron":
+				case "fishron":
+					npc.SetDefaults(370);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Duke Fishron {1} time(s).", args.Player.Name, amount);
 					return;
 				case "eater":
 				case "eater of worlds":
