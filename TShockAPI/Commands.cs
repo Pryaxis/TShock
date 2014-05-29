@@ -1105,19 +1105,28 @@ namespace TShockAPI
 							return;
 						}
 
-						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
-						if (players.Count == 0)
+						var plStr = args.Parameters[1].ToLower();
+						List<User> found = new List<User>();
+						foreach (var u in TShock.Users.GetUsers())
+						{
+							if (u.Name.ToLower() == plStr)
+								found = new List<User> { u };
+							if (u.Name.StartsWith(plStr))
+								found.Add(u);
+						}
+
+						if (found.Count == 0)
 							args.Player.SendErrorMessage("Invalid player!");
-						else if (players.Count > 1)
-							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+						else if (found.Count > 1)
+							TShock.Utils.SendMultipleMatchError(args.Player, found.Select(u => u.Name));
 						else
 						{
 							string reason = args.Parameters.Count > 2
 												? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 												: "Misbehavior.";
 
-							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
-								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
+							if (!TShock.Utils.Ban(found[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
+								args.Player.SendErrorMessage("You can't ban {0}!", found[0].Name);
 						}
 					}
 					#endregion
