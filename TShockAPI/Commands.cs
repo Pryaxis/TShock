@@ -1105,15 +1105,15 @@ namespace TShockAPI
 							return;
 						}
 
-                        var plStr = args.Parameters[1].ToLower();
-                        List<User> found = new List<User>();
-                        foreach (var u in TShock.Users.GetUsers())
-                        {
-                            if (u.Name.ToLower() == plStr)
-                                found = new List<User> { u };
-                            if (u.Name.StartsWith(plStr))
-                                found.Add(u);
-                        }
+						var plStr = args.Parameters[1].ToLower();
+						List<User> found = new List<User>();
+						foreach (var u in TShock.Users.GetUsers())
+						{
+							if (u.Name.ToLower() == plStr)
+								found = new List<User> { u };
+							if (u.Name.StartsWith(plStr))
+								found.Add(u);
+						}
 
 						if (found.Count == 0)
 							args.Player.SendErrorMessage("Invalid player!");

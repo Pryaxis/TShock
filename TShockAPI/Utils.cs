@@ -667,61 +667,69 @@ namespace TShockAPI
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="ply">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="adminUserName">bool silent (default: null)</param>
-        public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
-        {
-            if (!player.ConnectionAlive)
-                return true;
-            if (force || !player.Group.HasPermission(Permissions.immunetoban))
-            {
-                string ip = player.IP;
-                string uuid = player.UUID;
-                string playerName = player.Name;
-                TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
-                player.Disconnect(string.Format("Banned: {0}", reason));
-                Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
-                string verb = force ? "force " : "";
-                if (string.IsNullOrWhiteSpace(adminUserName))
-                    Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()),
-                        Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
-                        Convert.ToByte(TShock.Config.BroadcastRGB[2]));
-                else
-                    Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()),
-                        Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
-                        Convert.ToByte(TShock.Config.BroadcastRGB[2]));
-                return true;
-            }
-            return false;
-        }
+		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
+		{
+			if (!player.ConnectionAlive)
+				return true;
+			if (force || !player.Group.HasPermission(Permissions.immunetoban))
+			{
+				string ip = player.IP;
+				string uuid = player.UUID;
+				string playerName = player.Name;
+				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
+				player.Disconnect(string.Format("Banned: {0}", reason));
+				Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()),
+						Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
+						Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+				else
+					Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()),
+						Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
+						Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+				return true;
+			}
+			return false;
+		}
 
-        public bool Ban(User user, string reason, bool force = false, string adminUserName = null)
-        {
-            if (FindPlayer(user.Name).Count == 1)
-            {
-                Ban(FindPlayer(user.Name)[0], reason, force, adminUserName);
-                return true;
-            }
+		/// <summary>
+		/// Bans and possibly kicks a player from the server
+		/// </summary>
+		/// <param name="user">User user</param>
+		/// <param name="reason">string reason</param>
+		/// <param name="force">bool force (default: false)</param>
+		/// <param name="adminUserName">bool silent (default: null)</param>
+		/// <returns></returns>
+		public bool Ban(User user, string reason, bool force = false, string adminUserName = null)
+		{
+			if (FindPlayer(user.Name).Count == 1)
+			{
+				Ban(FindPlayer(user.Name)[0], reason, force, adminUserName);
+				return true;
+			}
 
-            var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-            var ip = knownIps[knownIps.Count - 1];
-            var uuid = user.UUID;
-            var playerName = user.Name;
-            TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
-            Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
-            string verb = force ? "force " : "";
-            if (string.IsNullOrWhiteSpace(adminUserName))
-                Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()),
-                    Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
-                        Convert.ToByte(TShock.Config.BroadcastRGB[2]));
-            else
-                Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()),
-                    Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
-                    Convert.ToByte(TShock.Config.BroadcastRGB[2]));
-            return true;
-        }
+			var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+			var ip = knownIps[knownIps.Count - 1];
+			var uuid = user.UUID;
+			var playerName = user.Name;
+			TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
+			Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
+			string verb = force ? "force " : "";
+			if (string.IsNullOrWhiteSpace(adminUserName))
+				Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()),
+					Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
+						Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+			else
+				Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()),
+					Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
+					Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+			return true;
+		}
 
 	    public bool HasBanExpired(Ban ban, bool byName = false)
 	    {
