@@ -466,6 +466,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the world time."
 			});
+			add(new Command(Permissions.wind, Wind, "wind")
+			{
+				HelpText = "Changes the wind speed."
+			});
 			add(new Command(Permissions.worldinfo, WorldInfo, "world")
 			{
 				HelpText = "Shows information about the current world."
@@ -654,21 +658,6 @@ namespace TShockAPI
 				ret.Add(sb.ToString());
 
 			return ret;
-		}
-
-		private static char GetEscape(char c)
-		{
-			switch (c)
-			{
-				case '\\':
-					return '\\';
-				case '"':
-					return '"';
-				case 't':
-					return '\t';
-				default:
-					return c;
-			}
 		}
 
 		private static bool IsWhiteSpace(char c)
@@ -3219,6 +3208,28 @@ namespace TShockAPI
 				TSPlayer.All.SendInfoMessage("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
 				Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
 			}
+		}
+
+		private static void Wind(CommandArgs args)
+		{
+			if (args.Parameters.Count != 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /wind <speed>");
+				return;
+			}
+
+			float speed;
+			if (!float.TryParse(args.Parameters[0], out speed))
+			{
+				args.Player.SendErrorMessage("Invalid wind speed!");
+				return;
+			}
+
+			Main.windSpeed = speed;
+			Main.windSpeedSet = speed;
+			Main.windSpeedSpeed = 0f;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
+			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
 		}
 
 		#endregion Time/PvpFun Commands

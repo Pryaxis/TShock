@@ -284,6 +284,9 @@ namespace TShockAPI
 		[Description("User can turn on or off the rain.")]
 		public static readonly string rain = "tshock.world.rain";
 
+		[Description("User can modify the wind.")]
+		public static readonly string wind = "tshock.world.wind";
+
 		// Non-grouped
 
 		[Description("User can clear items or projectiles.")]
