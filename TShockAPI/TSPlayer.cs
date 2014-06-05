@@ -1617,23 +1617,16 @@ namespace TShockAPI
 		
 		public static string ToString(NetItem[] inventory)
 		{
-			string inventoryString = "";
+			StringBuilder items = new StringBuilder();
 			for (int i = 0; i < maxNetInventory; i++)
 			{
-				if (i != 0)
-					inventoryString += "~";
-				inventoryString += inventory[i].netID;
+				items.Append(inventory[i].netID).Append(",");
 				if (inventory[i].netID != 0)
-				{
-					inventoryString += "," + inventory[i].stack;
-					inventoryString += "," + inventory[i].prefix;
-				}
+					items.Append(inventory[i].stack).Append(",").Append(inventory[i].prefix).Append("~");
 				else
-				{
-					inventoryString += ",0,0";
-				}
+					items.Append("0,0~");
 			}
-			return inventoryString;
+			return items.ToString(0, items.Length - 1);
 		}
 
 		public static NetItem[] Parse(string data)

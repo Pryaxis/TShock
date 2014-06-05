@@ -1792,7 +1792,6 @@ namespace TShockAPI
 					return;
 				case "plantera":
 					npc.SetDefaults(262);
-					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Plantera {1} time(s).", args.Player.Name, amount);
 					return;

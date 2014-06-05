@@ -1208,44 +1208,46 @@ namespace TShockAPI
 			#endregion Blacklists
 
 			GetDataHandlerDelegates = new Dictionary<PacketTypes, GetDataHandlerDelegate>
-										{
-											{PacketTypes.PlayerInfo, HandlePlayerInfo},
-											{PacketTypes.PlayerUpdate, HandlePlayerUpdate},
-											{PacketTypes.Tile, HandleTile},
-											{PacketTypes.TileSendSquare, HandleSendTileSquare},
-											{PacketTypes.ProjectileNew, HandleProjectileNew},
-											{PacketTypes.TogglePvp, HandleTogglePvp},
-                                            {PacketTypes.PlayerTeam, HandlePlayerTeam},
-											{PacketTypes.TileKill, HandleTileKill},
-											{PacketTypes.PlayerKillMe, HandlePlayerKillMe},
-											{PacketTypes.LiquidSet, HandleLiquidSet},
-											{PacketTypes.PlayerSpawn, HandleSpawn},
-											{PacketTypes.ChestGetContents, HandleChestOpen},
-											{PacketTypes.ChestOpen, HandleChestActive},
-											{PacketTypes.ChestItem, HandleChestItem},
-											{PacketTypes.SignNew, HandleSign},
-											{PacketTypes.PlayerSlot, HandlePlayerSlot},
-											{PacketTypes.TileGetSection, HandleGetSection},
-											{PacketTypes.UpdateNPCHome, UpdateNPCHome},
-											{PacketTypes.PlayerAddBuff, HandlePlayerAddBuff},
-											{PacketTypes.ItemDrop, HandleItemDrop},
-											{PacketTypes.PlayerHp, HandlePlayerHp},
-											{PacketTypes.PlayerMana, HandlePlayerMana},
-											{PacketTypes.PlayerDamage, HandlePlayerDamage},
-											{PacketTypes.NpcStrike, HandleNpcStrike},
-											{PacketTypes.NpcSpecial, HandleSpecial},
-											{PacketTypes.PlayerAnimation, HandlePlayerAnimation},
-											{PacketTypes.PlayerBuff, HandlePlayerBuffList},
-											{PacketTypes.PasswordSend, HandlePassword},
-											{PacketTypes.ContinueConnecting2, HandleConnecting},
-											{PacketTypes.ProjectileDestroy, HandleProjectileKill},
-                                            {PacketTypes.SpawnBossorInvasion, HandleSpawnBoss},
-											{PacketTypes.Teleport, HandleTeleport},
-											{PacketTypes.PaintTile, HandlePaintTile},
-											{PacketTypes.PaintWall, HandlePaintWall},
-											{PacketTypes.Placeholder, HandleRaptor},
-											{PacketTypes.DoorUse, HandleDoorUse}
-										};
+				{
+					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
+					{ PacketTypes.PlayerUpdate, HandlePlayerUpdate },
+					{ PacketTypes.Tile, HandleTile },
+					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
+					{ PacketTypes.ProjectileNew, HandleProjectileNew },
+					{ PacketTypes.TogglePvp, HandleTogglePvp },
+					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
+					{ PacketTypes.TileKill, HandleTileKill },
+					{ PacketTypes.PlayerKillMe, HandlePlayerKillMe },
+					{ PacketTypes.LiquidSet, HandleLiquidSet },
+					{ PacketTypes.PlayerSpawn, HandleSpawn },
+					{ PacketTypes.ChestGetContents, HandleChestOpen },
+					{ PacketTypes.ChestOpen, HandleChestActive },
+					{ PacketTypes.ChestItem, HandleChestItem },
+					{ PacketTypes.SignNew, HandleSign },
+					{ PacketTypes.PlayerSlot, HandlePlayerSlot },
+					{ PacketTypes.TileGetSection, HandleGetSection },
+					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
+					{ PacketTypes.ItemDrop, HandleItemDrop },
+					{ PacketTypes.PlayerHp, HandlePlayerHp },
+					{ PacketTypes.PlayerMana, HandlePlayerMana },
+					{ PacketTypes.PlayerDamage, HandlePlayerDamage },
+					{ PacketTypes.NpcStrike, HandleNpcStrike },
+					{ PacketTypes.NpcSpecial, HandleSpecial },
+					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
+					{ PacketTypes.PlayerBuff, HandlePlayerBuffList },
+					{ PacketTypes.PasswordSend, HandlePassword },
+					{ PacketTypes.ContinueConnecting2, HandleConnecting },
+					{ PacketTypes.ProjectileDestroy, HandleProjectileKill },
+					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
+					{ PacketTypes.Teleport, HandleTeleport },
+					{ PacketTypes.PaintTile, HandlePaintTile },
+					{ PacketTypes.PaintWall, HandlePaintWall },
+					{ PacketTypes.Placeholder, HandleRaptor },
+					{ PacketTypes.DoorUse, HandleDoorUse },
+					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
+					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted }
+				};
 		}
 
 		public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)
@@ -3604,20 +3606,33 @@ namespace TShockAPI
 			}
 		}
 
-		private static bool HandleDoorUse(GetDataHandlerArgs e)
+		private static bool HandleDoorUse(GetDataHandlerArgs args)
 		{
-			var Close = e.Data.ReadByte();
-			var X = e.Data.ReadInt16();
-			var Y = e.Data.ReadInt16();
-			var dir = e.Data.ReadByte() == 0 ? -1 : 1;
+			var close = args.Data.ReadByte();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var dir = args.Data.ReadByte() == 0 ? -1 : 1;
 
-			if (X >= Main.tile.GetLength(0) || Y >= Main.tile.GetLength(1) || X < 0 || Y < 0) // Check for out of range
+			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
 				return true;
 
-			if (Main.tile[X, Y].type != 10 && Main.tile[X, Y].type != 11) // Check for tile types
+			if (Main.tile[x, y].type != 10 && Main.tile[x, y].type != 11) // Check for tile types
 				return true;
 
 			return false;
+		}
+
+		private static bool HandleCompleteAnglerQuest(GetDataHandlerArgs args)
+		{
+			// Since packet 76 is NEVER sent to us, we actually have to rely on this to get the true count
+			args.TPlayer.anglerQuestsFinished++;
+			return false;
+		}
+
+		private static bool HandleNumberOfAnglerQuestsCompleted(GetDataHandlerArgs args)
+		{
+			// Never sent by vanilla client, ignore this
+			return true;
 		}
 	}
 }
