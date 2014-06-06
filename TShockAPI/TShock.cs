@@ -811,8 +811,8 @@ namespace TShockAPI
 							item.type != 0)
 						{
 							check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-                            player.SendErrorMessage(check);
-                            break;
+							player.SendErrorMessage(check);
+							break;
 						}
 					}
 					player.IgnoreActionsForCheating = check;
@@ -824,8 +824,9 @@ namespace TShockAPI
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
 							check = "Remove armor/accessory " + item.name;
-
-                            player.SendErrorMessage(string.Format("You are wearing banned equipment. {0}", check));
+							
+							player.SendErrorMessage(string.Format("You are wearing banned equipment. {0}", check));
+							break;
 						}
 					}
 					player.IgnoreActionsForDisabledArmor = check;
