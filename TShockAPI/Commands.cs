@@ -2198,7 +2198,7 @@ namespace TShockAPI
 		{
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
-			switch (args.Parameters[0].ToLower())
+			switch (subcmd)
 			{
 				case "add":
 					#region Add group
