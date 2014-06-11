@@ -3476,14 +3476,9 @@ namespace TShockAPI
 					args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
 					return true;
 				}
-
-				if (!isNPC)
-				{
-					TShock.Players[id].Teleport(x, y, style);
-				}
 			}
 
-			return true;
+			return false;
 		}
 
 		private static bool HandleRaptor(GetDataHandlerArgs args)
