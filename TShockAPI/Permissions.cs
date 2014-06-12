@@ -174,7 +174,7 @@ namespace TShockAPI
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
 
 		[Description("User can rename NPCs.")]
-		public static readonly string rename = "tshock.npc.rename";
+		public static readonly string renamenpc = "tshock.npc.rename";
 
 		[Description("User can spawn npcs.")]
 		public static readonly string spawnmob = "tshock.npc.spawnmob";

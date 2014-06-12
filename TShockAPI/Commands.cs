@@ -341,7 +341,7 @@ namespace TShockAPI
 			{
 				HelpText = "Kills hostile NPCs or NPCs of a certain type."
 			});
-			add(new Command(Permissions.rename, RenameNPC, "renamenpc")
+			add(new Command(Permissions.renamenpc, RenameNPC, "renamenpc")
 			{
 				HelpText = "Renames an NPC."
 			});
