@@ -341,6 +341,10 @@ namespace TShockAPI
 			{
 				HelpText = "Kills hostile NPCs or NPCs of a certain type."
 			});
+			add(new Command(Permissions.rename, RenameNPC, "renamenpc")
+			{
+				HelpText = "Renames an NPC."
+			});
 			add(new Command(Permissions.invade, Invade, "invade")
 			{
 				HelpText = "Starts an NPC invasion."
@@ -500,10 +504,6 @@ namespace TShockAPI
 			add(new Command(Permissions.kill, Kill, "kill")
 			{
 				HelpText = "Kills another player."
-			});
-			add(new Command(Permissions.renamenpc, RenameNPC, "renamenpc")
-			{
-				HelpText = "Renames an NPC."
 			});
 			add(new Command(Permissions.cantalkinthird, ThirdPerson, "me")
 			{

@@ -173,6 +173,9 @@ namespace TShockAPI
 		[Description("User can spawn bosses.")]
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
 
+		[Description("User can rename NPCs.")]
+		public static readonly string rename = "tshock.npc.rename";
+
 		[Description("User can spawn npcs.")]
 		public static readonly string spawnmob = "tshock.npc.spawnmob";
 
@@ -294,9 +297,6 @@ namespace TShockAPI
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
-
-		[Description("User can rename NPCs.")]
-		public static readonly string renamenpc = "tshock.renamenpc";
 		
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max.")]
 		public static readonly string reservedslot = "tshock.reservedslot";
