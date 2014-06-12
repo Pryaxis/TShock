@@ -501,6 +501,10 @@ namespace TShockAPI
 			{
 				HelpText = "Kills another player."
 			});
+			add(new Command(Permissions.renamenpc, RenameNPC, "renamenpc")
+			{
+				HelpText = "Renames an NPC."
+			});
 			add(new Command(Permissions.cantalkinthird, ThirdPerson, "me")
 			{
 				HelpText = "Sends an action message to everyone."
@@ -4496,7 +4500,58 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Your inventory seems full.");
 			}
 		}
-
+		
+		private static void RenameNPC(CommandArgs args)
+		{
+			if (args.Parameters.Count != 2)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /renameNPC <guide, nurse, etc.> <newname>");
+				return;
+			}
+			int npcId = 0;
+			if (args.Parameters.Count == 2)
+			{
+				List<NPC> npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+				if (npcs.Count == 0)
+				{
+					args.Player.SendErrorMessage("Invalid mob type!");
+					return;
+				}
+				else if (npcs.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
+					return;
+				}
+				else if (args.Parameters[1].Length >200)
+				{
+					args.Player.SendErrorMessage("New name is too large!");
+					return;
+				}
+				else
+				{
+					npcId = npcs[0].netID;
+				}
+			}
+			int done=0;
+			for (int i = 0; i < Main.npc.Length; i++)
+			{
+				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || (Main.npc[i].netID == npcId && Main.npc[i].townNPC)))
+				{
+				Main.npc[i].displayName= args.Parameters[1];
+				NetMessage.SendData(56, -1, -1, args.Parameters[1], i, 0f, 0f, 0f, 0);
+				done++;
+				}
+			}
+			if (done >0 )
+			{
+			TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
+			}
+			else
+			{
+			args.Player.SendErrorMessage("Could not rename {0}!", args.Parameters[0]);
+			}
+		}
+		
 		private static void Give(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
