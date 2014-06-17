@@ -223,6 +223,7 @@ namespace TShockAPI
 			var ret = new RestObject()
 			{
 				{"name", TShock.Config.ServerName},
+				{"version", Main.versionNumber},
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},
