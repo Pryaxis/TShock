@@ -1616,7 +1616,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
 		/// </summary>
-		private static int[] orientableTiles = new int[] { 15, 79, 90, 105, TileID.Mannequin, 137, 139, 171, 207, 209, 314, TileID.Womannequin, TileID.MinecartTrack, TileID.WeaponsRack };
+		private static int[] orientableTiles = new int[] { TileID.Cannon, 15, 79, 90, 105, TileID.Mannequin, 137, 139, 171, 207, 314, TileID.Womannequin, TileID.MinecartTrack, TileID.WeaponsRack };
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
@@ -1684,9 +1684,8 @@ namespace TShockAPI
 							Main.tile[realx, realy].frameY = newtile.FrameY;
 							changed = true;
 						}
-
 						// Landmine
-						if (tile.type == 210 && !newtile.Active)
+						if (tile.type == TileID.LandMine && !newtile.Active)
 						{
 							Main.tile[realx, realy].active(false);
 							changed = true;
@@ -1729,7 +1728,7 @@ namespace TShockAPI
 
 				if (changed)
 				{
-					TSPlayer.All.SendTileSquare(tileX, tileY, size);
+					TSPlayer.All.SendTileSquare(tileX, tileY, size + 1);
 					WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
 				}
 				else
@@ -1806,7 +1805,11 @@ namespace TShockAPI
 
 				if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 					return true;
-				if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+					return true;
+				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
+					return false;
+				if (args.Player.Dead && TShock.Config.PreventDeadModification)
 					return true;
 
 				if (args.Player.AwaitingName)
@@ -2006,14 +2009,8 @@ namespace TShockAPI
 					return true;
 				}
 
-				// Ignore ice rod break
-				if ((editData == 127 || Main.tileCut[editData]) && (action == EditAction.KillTile || action == EditAction.KillTileNoItem))
-				{
-					return false;
-				}
-
 				// Ignore rope placement range
-				if ((editData != 213 || action != EditAction.PlaceTile) && TShock.CheckRangePermission(args.Player, tileX, tileY))
+				if ((editData != TileID.Rope || action != EditAction.PlaceTile) && TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
