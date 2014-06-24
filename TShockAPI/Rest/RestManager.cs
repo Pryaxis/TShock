@@ -224,7 +224,7 @@ namespace TShockAPI
 			{
 				{"name", TShock.Config.ServerName},
 				{"version", Main.versionNumber},
-				{"tshock version", TShock.VersionNum},
+				{"tshockversion", TShock.VersionNum},
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},
