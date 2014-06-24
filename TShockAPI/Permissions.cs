@@ -198,6 +198,9 @@ namespace TShockAPI
 
 		// tshock.tp nodes
 
+		[Description("User can teleport *everyone* to them.")]
+		public static readonly string tpallothers = "tshock.tp.allothers";
+
 		[Description("User can teleport to others.")]
 		public static readonly string tp = "tshock.tp.self";
 

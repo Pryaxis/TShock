@@ -1960,7 +1960,7 @@ namespace TShockAPI
 				else
 				{
 					var plr = players[0];
-					if (args.Player.Teleport(plr.TileX * 16, plr.TileY * 16 ))
+					if (args.Player.Teleport(plr.TPlayer.position.X, plr.TPlayer.position.Y))
 					{
 						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
 						if (!args.Player.Group.HasPermission(Permissions.tphide))
@@ -1976,30 +1976,36 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player> ");
+				if (args.Player.Group.HasPermission(Permissions.tpallothers))
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player|*>");
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player>");
 				return;
 			}
 
-			string plStr = String.Join(" ", args.Parameters);
-
-			if (plStr == "all" || plStr == "*")
-			{
-				args.Player.SendInfoMessage(string.Format("You brought all players here."));
-				for (int i = 0; i < Main.maxPlayers; i++)
-				{
-					if (Main.player[i].active && (Main.player[i] != args.TPlayer))
-					{
-						if (TShock.Players[i].Teleport(args.Player.TileX*16, args.Player.TileY*16 ))
-							TShock.Players[i].SendSuccessMessage(string.Format("You were teleported to {0}.", args.Player.Name) + ".");
-					}
-				}
-				return;
-			}
-
-			var players = TShock.Utils.FindPlayer(plStr);
+			string playerName = String.Join(" ", args.Parameters);
+			var players = TShock.Utils.FindPlayer(playerName);
 			if (players.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				if (playerName == "*")
+				{
+					if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+					{
+						args.Player.SendErrorMessage("You do not have permission to use this command.");
+						return;
+					}
+					args.Player.SendInfoMessage(string.Format("You teleported everyone here."));
+					for (int i = 0; i < Main.maxPlayers; i++)
+					{
+						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+						{
+							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+								TShock.Players[i].SendSuccessMessage(String.Format("You were teleported to {0}.", args.Player.Name));
+						}
+					}
+				}
+				else
+					args.Player.SendErrorMessage("Invalid player!");
 			}
 			else if (players.Count > 1)
 			{
@@ -2008,7 +2014,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				if (plr.Teleport(args.Player.TileX*16, args.Player.TileY*16 ))
+				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
 				{
 					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
 					args.Player.SendSuccessMessage("You teleported {0} here.", plr.Name);
