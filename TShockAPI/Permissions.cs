@@ -170,6 +170,9 @@ namespace TShockAPI
 		[Description("User can start an invasion.")]
 		public static readonly string invade = "tshock.npc.invade";
 
+		[Description("User can hurt town NPCs.")]
+		public static readonly string hurttownnpc = "tshock.npc.hurttown";
+
 		[Description("User can spawn bosses.")]
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
 

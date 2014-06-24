@@ -3158,9 +3158,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.movenpc))
+			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.hurttownnpc))
 			{
-                args.Player.SendMessage( "You don't have permission to move this NPC.", Color.Yellow);
+                args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
