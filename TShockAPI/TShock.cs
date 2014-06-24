@@ -1367,6 +1367,7 @@ namespace TShockAPI
 						DayTime = Main.dayTime,
 						MoonPhase = (byte)Main.moonPhase,
 						BloodMoon = Main.bloodMoon,
+						Eclipse = Main.eclipse,
 						MaxTilesX = (short)Main.maxTilesX,
 						MaxTilesY = (short)Main.maxTilesY,
 						SpawnX = (short)Main.spawnTileX,

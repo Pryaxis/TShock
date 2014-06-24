@@ -2352,7 +2352,7 @@ namespace TShockAPI
 			}
 
 
-			if (args.Player.Confused && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
+			if (args.Player.Confused && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
 				if (args.TPlayer.controlUp)
 				{

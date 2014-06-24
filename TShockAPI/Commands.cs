@@ -4171,7 +4171,7 @@ namespace TShockAPI
 			{
 				var ply = players[0];
 
-				if (ply.IsLoggedIn && TShock.Config.ServerSideCharacter)
+				if (ply.IsLoggedIn && Main.ServerSideCharacter)
 				{
 					ply.TPlayer.velocity.Y = -50;
 					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
