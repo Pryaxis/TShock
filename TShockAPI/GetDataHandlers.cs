@@ -1769,9 +1769,25 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Tiles that can be broken without any tools.
+		/// Tiles that can be broken without any pickaxes/etc.
 		/// </summary>
-		private static int[] breakableTiles = new int[] { 4, 13, 33, 49, 50, 127, TileID.Mannequin, 162, TileID.Womannequin };
+		private static int[] breakableTiles = new int[]
+		{
+			TileID.Books,
+			TileID.Bottles,
+			TileID.BreakableIce,
+			TileID.Candles,
+			TileID.CorruptGrass,
+			TileID.Dirt,
+			TileID.FleshGrass,
+			TileID.Grass,
+			TileID.HallowedGrass,
+			TileID.MagicalIceBlock,
+			TileID.Mannequin,
+			TileID.Torches,
+			TileID.WaterCandle,
+			TileID.Womannequin
+		};
 		/// <summary>
 		/// The maximum place styles for each tile.
 		/// </summary>
@@ -1779,7 +1795,13 @@ namespace TShockAPI
 		/// <summary>
 		/// These projectiles create tiles on death.
 		/// </summary>
-		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int> {{42, 53}, {65, 112}, {68, 116}};
+		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
+		{
+			{ 17, TileID.Dirt},
+			{ 42, TileID.Sand},
+			{ 65, TileID.Ebonsand},
+			{ 68, TileID.Pearlsand}
+		};
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
