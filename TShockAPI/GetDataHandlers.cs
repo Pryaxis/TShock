@@ -1786,7 +1786,7 @@ namespace TShockAPI
 			TileID.Mannequin,
 			TileID.Torches,
 			TileID.WaterCandle,
-			TileID.Womannequin
+			TileID.Womannequin,
 		};
 		/// <summary>
 		/// The maximum place styles for each tile.
@@ -1797,10 +1797,11 @@ namespace TShockAPI
 		/// </summary>
 		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
-			{ 17, TileID.Dirt},
-			{ 42, TileID.Sand},
-			{ 65, TileID.Ebonsand},
-			{ 68, TileID.Pearlsand}
+			{ 17, TileID.Dirt },
+			{ 42, TileID.Sand },
+			{ 65, TileID.Ebonsand },
+			{ 68, TileID.Pearlsand },
+			{ 354, TileID.Crimsand },
 		};
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
