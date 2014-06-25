@@ -1243,7 +1243,6 @@ namespace TShockAPI
 					{ PacketTypes.Teleport, HandleTeleport },
 					{ PacketTypes.PaintTile, HandlePaintTile },
 					{ PacketTypes.PaintWall, HandlePaintWall },
-					{ PacketTypes.Placeholder, HandleRaptor },
 					{ PacketTypes.DoorUse, HandleDoorUse },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted }
@@ -3477,126 +3476,6 @@ namespace TShockAPI
 			}
 
 			return false;
-		}
-
-		private static bool HandleRaptor(GetDataHandlerArgs args)
-		{
-			var type = (RaptorPacketTypes)args.Data.ReadInt8();
-
-			switch (type)
-			{
-				case RaptorPacketTypes.Acknowledge:
-					args.Player.IsRaptor = true;
-					// Send these if the player was logged in before this packet arrives
-					if (args.Player.IsLoggedIn)
-					{
-						Task.Factory.StartNew(() =>
-						{
-							args.Player.SendRaptorPermissions();
-							if (args.Player.Group.HasPermission(Permissions.manageregion))
-							{
-								for (int i = 0; i < TShock.Regions.Regions.Count; i++)
-									args.Player.SendRaptorRegion(TShock.Regions.Regions[i]);
-							}
-							if (args.Player.Group.HasPermission(Permissions.managewarp))
-							{
-								for (int i = 0; i < TShock.Warps.Warps.Count; i++)
-									args.Player.SendRaptorWarp(TShock.Warps.Warps[i]);
-							}
-						});
-					}
-					return true;
-				case RaptorPacketTypes.Region:
-					if (args.Player.Group.HasPermission(Permissions.manageregion))
-					{
-						int x = args.Data.ReadInt32();
-						int y = args.Data.ReadInt32();
-						int width = args.Data.ReadInt32();
-						int height = args.Data.ReadInt32();
-						string regionName = args.Data.ReadString();
-
-						Region region;
-						if ((region = TShock.Regions.GetRegionByName(regionName)) == null)
-						{
-							TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName, Main.worldID.ToString());
-							foreach (TSPlayer tsplr in TShock.Players)
-							{
-								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
-									tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(regionName));
-							}
-							Log.Info("{0} added region \"{1}\".", args.Player.UserAccountName, regionName);
-						}
-						else
-						{
-							TShock.Regions.PositionRegion(regionName, x, y, width, height);
-							foreach (TSPlayer tsplr in TShock.Players)
-							{
-								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
-									tsplr.SendRaptorRegion(region);
-							}
-							Log.Info("{0} moved region \"{1}\".", args.Player.UserAccountName, regionName);
-						}
-					}
-					return true;
-				case RaptorPacketTypes.RegionDelete:
-					if (args.Player.Group.HasPermission(Permissions.manageregion))
-					{
-						string regionName = args.Data.ReadString();
-						TShock.Regions.DeleteRegion(regionName);
-						foreach (TSPlayer tsplr in TShock.Players)
-						{
-							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion) && tsplr != args.Player)
-								tsplr.SendRaptorRegionDeletion(regionName);
-						}
-						Log.Info("{0} deleted region \"{1}\".", args.Player.UserAccountName, regionName);
-					}
-					return true;
-				case RaptorPacketTypes.Warp:
-					if (args.Player.Group.HasPermission(Permissions.managewarp))
-					{
-						int x = args.Data.ReadInt32();
-						int y = args.Data.ReadInt32();
-						string warpName = args.Data.ReadString();
-
-						Warp warp = TShock.Warps.Find(warpName);
-						if (warp == null)
-						{
-							TShock.Warps.Add(x, y, warpName);
-							foreach (TSPlayer tsplr in TShock.Players)
-							{
-								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
-									tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
-							}
-							Log.Info("{0} added warp \"{1}\".", args.Player.UserAccountName, warpName);
-						}
-						else
-						{
-							TShock.Warps.Position(warpName, x, y);
-							foreach (TSPlayer tsplr in TShock.Players)
-							{
-								if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
-									tsplr.SendRaptorWarp(warp);
-							}
-							Log.Info("{0} moved warp \"{1}\".", args.Player.UserAccountName, warpName);
-						}
-					}
-					return true;
-				case RaptorPacketTypes.WarpDelete:
-					if (args.Player.Group.HasPermission(Permissions.managewarp))
-					{
-						string warpName = args.Data.ReadString();
-						TShock.Warps.Remove(warpName);
-						foreach (TSPlayer tsplr in TShock.Players)
-						{
-							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp) && tsplr != args.Player)
-								tsplr.SendRaptorWarpDeletion(warpName);
-						}
-						Log.Info("{0} deleted warp \"{1}\".", args.Player.UserAccountName, warpName);
-					}
-					return true;
-				default:
-					return true;
-			}
 		}
 
 		private static bool HandleDoorUse(GetDataHandlerArgs args)

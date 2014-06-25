@@ -235,12 +235,6 @@ namespace TShockAPI
 				negatedpermissions.Add(permission);
 				permissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
 			}
-
-			for (int i = 0; i < TShock.Players.Length; i++)
-			{
-				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor)
-					TShock.Players[i].SendRaptorPermissions();
-			}
 		}
 
         /// <summary>
@@ -259,12 +253,6 @@ namespace TShockAPI
 			{
 				permissions.Add(permission);
 				negatedpermissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
-			}
-
-			for (int i = 0; i < TShock.Players.Length; i++)
-			{
-				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor)
-					TShock.Players[i].SendRaptorPermissions();
 			}
 		}
 
@@ -293,11 +281,6 @@ namespace TShockAPI
 				return;
 			}
 			permissions.Remove(permission);
-			for (int i = 0; i < TShock.Players.Length; i++)
-			{
-				if (TShock.Players[i] != null && TShock.Players[i].IsRaptor && TShock.Players[i].Group == this)
-					TShock.Players[i].SendRaptorPermissions();
-			}
 		}
 
 		/// <summary>

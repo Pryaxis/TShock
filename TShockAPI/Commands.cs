@@ -2083,11 +2083,6 @@ namespace TShockAPI
                     else if (TShock.Warps.Add(args.Player.TileX, args.Player.TileY, warpName))
                     {
                         args.Player.SendSuccessMessage("Warp added: " + warpName);
-						foreach (TSPlayer tsplr in TShock.Players)
-						{
-							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
-								tsplr.SendRaptorWarp(TShock.Warps.Find(warpName));
-						}
                     }
                     else
                     {
@@ -2107,11 +2102,6 @@ namespace TShockAPI
 					if (TShock.Warps.Remove(warpName))
 					{
 						args.Player.SendSuccessMessage("Warp deleted: " + warpName);
-						foreach (TSPlayer tsplr in TShock.Players)
-						{
-							if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.managewarp))
-								tsplr.SendRaptorWarpDeletion(warpName);
-						}
 					}
 					else
 						args.Player.SendErrorMessage("Could not find the specified warp.");
@@ -3297,12 +3287,6 @@ namespace TShockAPI
 									args.Player.TempPoints[0] = Point.Zero;
 									args.Player.TempPoints[1] = Point.Zero;
 									args.Player.SendMessage("Set region " + regionName, Color.Yellow);
-
-									foreach (TSPlayer tsplr in TShock.Players)
-									{
-										if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
-											tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(regionName));
-									}
 								}
 								else
 								{
@@ -3352,11 +3336,6 @@ namespace TShockAPI
 							if (TShock.Regions.DeleteRegion(regionName))
 							{
 								args.Player.SendInfoMessage("Deleted region \"{0}\".", regionName);
-								foreach (TSPlayer tsplr in TShock.Players)
-								{
-									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
-										tsplr.SendRaptorRegionDeletion(regionName);
-								}
 							}
 							else
 								args.Player.SendErrorMessage("Could not find the specified region!");
@@ -3708,11 +3687,6 @@ namespace TShockAPI
 							if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
 							{
 								args.Player.SendMessage("Region Resized Successfully!", Color.Yellow);
-								foreach (TSPlayer tsplr in TShock.Players)
-								{
-									if (tsplr != null && tsplr.IsRaptor && tsplr.Group.HasPermission(Permissions.manageregion))
-										tsplr.SendRaptorRegion(TShock.Regions.GetRegionByName(args.Parameters[1]));
-								}
 								TShock.Regions.Reload();
 							}
 							else

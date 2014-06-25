@@ -349,24 +349,6 @@ namespace TShockAPI
 
 	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
 	    {
-			if (args.Player.IsRaptor)
-			{
-				Task.Factory.StartNew(() =>
-					{
-						args.Player.SendRaptorPermissions();
-						if (args.Player.Group.HasPermission(Permissions.manageregion))
-						{
-							for (int i = 0; i < Regions.Regions.Count; i++)
-								args.Player.SendRaptorRegion(Regions.Regions[i]);
-						}
-						if (args.Player.Group.HasPermission(Permissions.managewarp))
-						{
-							for (int i = 0; i < Warps.Warps.Count; i++)
-								args.Player.SendRaptorWarp(Warps.Warps[i]);
-						}
-					});
-			}
-
 	        User u = Users.GetUserByName(args.Player.UserAccountName);
             List<String> KnownIps = new List<string>();
 	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
