@@ -1418,6 +1418,7 @@ namespace TShockAPI
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
 				args.Player.TPlayer.hideVisual = hideVisual;
+				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, args.Player.Name, args.Player.Index);
 				return true;
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
@@ -3160,7 +3161,7 @@ namespace TShockAPI
 
 			if (Main.npc[id].townNPC && !args.Player.Group.HasPermission(Permissions.hurttownnpc))
 			{
-                args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
+				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
