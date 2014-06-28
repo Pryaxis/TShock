@@ -1307,7 +1307,7 @@ namespace TShockAPI
 			}
 			else if (
 				TShock.Config.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
-				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassinventorychecks)
+				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassssc)
 			) {
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
 				args.Player.IgnoreActionsForClearingTrashCan = true;
@@ -1455,7 +1455,7 @@ namespace TShockAPI
 
 					if (TShock.Config.ServerSideCharacter)
 					{
-						if (group.HasPermission(Permissions.bypassinventorychecks))
+						if (group.HasPermission(Permissions.bypassssc))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
@@ -1533,7 +1533,7 @@ namespace TShockAPI
 
 				    if (TShock.Config.ServerSideCharacter)
 				    {
-				        if (group.HasPermission(Permissions.bypassinventorychecks))
+				        if (group.HasPermission(Permissions.bypassssc))
 				        {
 				            args.Player.IgnoreActionsForClearingTrashCan = false;
 				        }

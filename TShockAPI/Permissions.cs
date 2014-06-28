@@ -142,8 +142,8 @@ namespace TShockAPI
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 
-		[Description("Bypass server side inventory checks")]
-		public static readonly string bypassinventorychecks = "tshock.ignore.ssi";
+		[Description("Bypass server side character checks")]
+		public static readonly string bypassssc = "tshock.ignore.ssc";
 
 		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")]
 		public static readonly string allowclientsideworldedit = "tshock.ignore.sendtilesquare";

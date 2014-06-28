@@ -735,7 +735,7 @@ namespace TShockAPI
 
 					if (TShock.Config.ServerSideCharacter)
 					{
-						if (group.HasPermission(Permissions.bypassinventorychecks))
+						if (group.HasPermission(Permissions.bypassssc))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
