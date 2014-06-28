@@ -1032,9 +1032,9 @@ namespace TShockAPI
 			SetTime(false, 0);
 		}
 
-		public void SetSnowMoon(bool snowMoon)
+		public void SetFrostMoon(bool frostMoon)
 		{
-			Main.snowMoon = snowMoon;
+			Main.snowMoon = frostMoon;
 			SetTime(false, 0);
 		}
 

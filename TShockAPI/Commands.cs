@@ -367,11 +367,11 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the spawn rate of NPCs."
 			});
-			add(new Command(Permissions.invade, PumpkinInvasion, "pumpkin")
+			add(new Command(Permissions.invade, PumpkinMoon, "pumpkinmoon", "pmoon")
 			{
 				HelpText = "Starts a Pumpkin Moon invasion at the specified wave."
 			});
-			add(new Command(Permissions.invade, SnowInvasion, "snowinvasion")
+			add(new Command(Permissions.invade, FrostMoon, "frostmoon", "fmoon")
 			{
 				HelpText = "Starts a Snow Moon invasion at the specified wave."
 			});
@@ -411,14 +411,6 @@ namespace TShockAPI
 			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
 			{
 				HelpText = "Sets a blood moon."
-			});
-			add(new Command(Permissions.snowmoon, SnowMoon, "snowmoon")
-			{
-				HelpText = "Sets a snow moon."
-			});
-			add(new Command(Permissions.pumpkinmoon, PumpkinMoon, "pumpkinmoon")
-			{
-				HelpText = "Sets a pumpkin moon."
 			});
 			add(new Command(Permissions.grow, Grow, "grow")
 			{
@@ -1592,18 +1584,6 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
 		}
 
-		private static void SnowMoon(CommandArgs args)
-		{
-			TSPlayer.Server.SetSnowMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the snow moon.", args.Player.Name), Color.Green);
-		}
-
-		private static void PumpkinMoon(CommandArgs args)
-		{
-			TSPlayer.Server.SetPumpkinMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the pumpkin moon.", args.Player.Name), Color.Green);
-		}
-
 		private static void Eclipse(CommandArgs args)
 		{
 			TSPlayer.Server.SetEclipse(true);
@@ -1648,56 +1628,44 @@ namespace TShockAPI
 			}
 		}
 
-		private static void PumpkinInvasion(CommandArgs args)
+		private static void PumpkinMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetTime(false, 0.0);
+			TSPlayer.Server.SetPumpkinMoon(true);
 
 			int wave = 1;
 			if (args.Parameters.Count != 0)
-				int.TryParse(args.Parameters[0], out wave);
+			{
+				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
+				{
+					args.Player.SendErrorMessage("Invalid wave!");
+					return;
+				}
+			}
 
-			Main.pumpkinMoon = true;
 			Main.bloodMoon = false;
 			NPC.waveKills = 0f;
 			NPC.waveCount = wave;
-			string text = "Pumpkin Invasion started at wave: " + wave;
-			if (Main.netMode == 0)
-			{
-				Main.NewText(text, 175, 75, 255, false);
-				return;
-			}
-			if (Main.netMode == 2)
-			{
-				NetMessage.SendData(25, -1, -1, text, 255, 175f, 75f, 255f, 0);
-			}
+			TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
 		}
 
-		private static void SnowInvasion(CommandArgs args)
+		private static void FrostMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetTime(false, 0.0);
+			TSPlayer.Server.SetFrostMoon(true);
 
 			int wave = 1;
 			if (args.Parameters.Count != 0)
-				int.TryParse(args.Parameters[0], out wave);
-
-			Main.snowMoon = true;
-			Main.pumpkinMoon = false;
-			Main.bloodMoon = false;
-			if (Main.netMode != 1)
 			{
-				NPC.waveKills = 0f;
-				NPC.waveCount = wave;
-				string text = "Snow Invasion started at wave: " + wave;
-				if (Main.netMode == 0)
+				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
 				{
-					Main.NewText(text, 175, 75, 255, false);
+					args.Player.SendErrorMessage("Invalid wave!");
 					return;
 				}
-				if (Main.netMode == 2)
-				{
-					NetMessage.SendData(25, -1, -1, text, 255, 175f, 75f, 255f, 0);
-				}
 			}
+
+			Main.bloodMoon = false;
+			NPC.waveKills = 0f;
+			NPC.waveCount = wave;
+			TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 		}
 
         private static void Hardmode(CommandArgs args)
