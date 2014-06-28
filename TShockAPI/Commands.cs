@@ -369,11 +369,11 @@ namespace TShockAPI
 			});
 			add(new Command(Permissions.invade, PumpkinMoon, "pumpkinmoon", "pmoon")
 			{
-				HelpText = "Starts a Pumpkin Moon invasion at the specified wave."
+				HelpText = "Starts a Pumpkin Moon at the specified wave."
 			});
 			add(new Command(Permissions.invade, FrostMoon, "frostmoon", "fmoon")
 			{
-				HelpText = "Starts a Snow Moon invasion at the specified wave."
+				HelpText = "Starts a Frost Moon at the specified wave."
 			});
 			#endregion
 			#region TP Commands
