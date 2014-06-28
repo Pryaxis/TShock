@@ -207,17 +207,20 @@ namespace TShockAPI
 		[Description("User can teleport to others.")]
 		public static readonly string tp = "tshock.tp.self";
 
-		[Description("User can teleport people to them.")]
-		public static readonly string tphere = "tshock.tp.others";
+		[Description("User can teleport other people.")]
+		public static readonly string tpothers = "tshock.tp.others";
 
-		[Description("Users can stop people from teleporting to them")]
+		[Description("User can teleport to tile positions.")]
+		public static readonly string tppos = "tshock.tp.pos";
+
+		[Description("Users can stop people from teleporting.")]
 		public static readonly string tpallow = "tshock.tp.block";
 
-		[Description("Users can tp to anyone")]
-		public static readonly string tpall = "tshock.tp.toall";
+		[Description("Users can override teleport blocks.")]
+		public static readonly string tpoverride = "tshock.tp.override";
 
-		[Description("Users can tp to people without showing a notice")]
-		public static readonly string tphide = "tshock.tp.silent";
+		[Description("Users can teleport to people without showing a notice")]
+		public static readonly string tpsilent = "tshock.tp.silent";
 
 		[Description("User can use /home.")]
 		public static readonly string home = "tshock.tp.home";

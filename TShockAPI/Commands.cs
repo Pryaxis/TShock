@@ -390,17 +390,17 @@ namespace TShockAPI
 			add(new Command(Permissions.tp, TP, "tp")
 			{
 				AllowServer = false,
+				HelpText = "Teleports a player to another player."
+			});
+			add(new Command(Permissions.tppos, TPPos, "tppos")
+			{
+				AllowServer = false,
 				HelpText = "Teleports you to another player or a coordinate."
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
 				AllowServer = false,
-				HelpText = "Toggles whether other people can teleport to you."
-			});
-			add(new Command(Permissions.tphere, TPHere, "tphere")
-			{
-				AllowServer = false,
-				HelpText = "Teleports another player to you."
+				HelpText = "Toggles whether other people can teleport you."
 			});
 			#endregion
 			#region World Commands
@@ -1922,104 +1922,146 @@ namespace TShockAPI
 
 		private static void TP(CommandArgs args)
 		{
-			if (args.Parameters.Count < 1)
+			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
-				args.Player.SendErrorMessage("                               /tp <x> <y>");
+				if (args.Player.Group.HasPermission(Permissions.tpothers))
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player> [player 2]");
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
 				return;
 			}
 
-			if(args.Parameters.Count == 2)
+			if (args.Parameters.Count == 1)
 			{
-				float x, y;
-				if (float.TryParse(args.Parameters[0], out x) && float.TryParse(args.Parameters[1], out y))
+				var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				if (players.Count == 0)
+					args.Player.SendErrorMessage("Invalid player!");
+				else if (players.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				else
 				{
-					args.Player.Teleport(x, y);
-					args.Player.SendSuccessMessage("Teleported!");
+					var target = players[0];
+					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+					{
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
+						return;
+					}
+					if (args.Player.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					{
+						args.Player.SendSuccessMessage("Teleported to {0}.", target.Name);
+						if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+							target.SendInfoMessage("{0} teleported to you.", args.Player.Name);
+					}
 				}
 			}
 			else
 			{
-				string plStr = String.Join(" ", args.Parameters);
-				var players = TShock.Utils.FindPlayer(plStr);
-				if (players.Count == 0)
+				if (!args.Player.Group.HasPermission(Permissions.tpothers))
 				{
-					args.Player.SendErrorMessage("Invalid user name.");
-					args.Player.SendErrorMessage("Proper syntax: /tp <player>");
-					args.Player.SendErrorMessage("               /tp <x> <y>");
+					args.Player.SendErrorMessage("You do not have access to this command.");
+					return;
 				}
 
-				else if (players.Count > 1)
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-				else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+				var players1 = TShock.Utils.FindPlayer(args.Parameters[0]);
+				var players2 = TShock.Utils.FindPlayer(args.Parameters[1]);
+
+				if (players2.Count == 0)
+					args.Player.SendErrorMessage("Invalid player!");
+				else if (players2.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players2.Select(p => p.Name));
+				else if (players1.Count == 0)
 				{
-					var plr = players[0];
-					args.Player.SendErrorMessage(plr.Name + " has prevented users from teleporting to them.");
-					plr.SendInfoMessage(args.Player.Name + " attempted to teleport to you.");
-				}
-				else
-				{
-					var plr = players[0];
-					if (args.Player.Teleport(plr.TPlayer.position.X, plr.TPlayer.position.Y))
+					if (args.Parameters[0] == "*")
 					{
-						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
-						if (!args.Player.Group.HasPermission(Permissions.tphide))
-							plr.SendInfoMessage(args.Player.Name + " teleported to you.");
+						if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+						{
+							args.Player.SendErrorMessage("You do not have access to this command.");
+							return;
+						}
+
+						var target = players2[0];
+						foreach (var source in TShock.Players.Where(p => p != null && p != args.Player))
+						{
+							if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+								continue;
+							if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+							{
+								if (args.Player != source)
+								{
+									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+										source.SendSuccessMessage("You were teleported to {0}.", target.Name);
+									else
+										source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+								}
+								if (args.Player != target)
+								{
+									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+										target.SendInfoMessage("{0} was teleported to you.", source.Name);
+									if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+										target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
+								}
+							}
+						}
+						args.Player.SendSuccessMessage("Teleported everyone to {0}.", target.Name);
 					}
+					else
+						args.Player.SendErrorMessage("Invalid player!");
 				}
-			}
-
-
-	}
-
-		private static void TPHere(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				if (args.Player.Group.HasPermission(Permissions.tpallothers))
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player|*>");
+				else if (players1.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players1.Select(p => p.Name));
 				else
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player>");
-				return;
-			}
-
-			string playerName = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(playerName);
-			if (players.Count == 0)
-			{
-				if (playerName == "*")
 				{
-					if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+					var source = players1[0];
+					if (!source.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
 					{
-						args.Player.SendErrorMessage("You do not have permission to use this command.");
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", source.Name);
 						return;
 					}
-					args.Player.SendInfoMessage(string.Format("You teleported everyone here."));
-					for (int i = 0; i < Main.maxPlayers; i++)
+					var target = players2[0];
+					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
 					{
-						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
+						return;
+					}
+					args.Player.SendSuccessMessage("Teleported {0} to {1}.", source.Name, target.Name);
+					if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					{
+						if (args.Player != source)
 						{
-							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
-								TShock.Players[i].SendSuccessMessage(String.Format("You were teleported to {0}.", args.Player.Name));
+							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+								source.SendSuccessMessage("You were teleported to {0}.", target.Name);
+							else
+								source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+						}
+						if (args.Player != target)
+						{
+							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+								target.SendInfoMessage("{0} was teleported to you.", source.Name);
+							if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+								target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
 						}
 					}
 				}
-				else
-					args.Player.SendErrorMessage("Invalid player!");
 			}
-			else if (players.Count > 1)
+		}
+
+		private static void TPPos(CommandArgs args)
+		{
+			if (args.Parameters.Count != 2)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tppos <tile x> <tile y>");
+				return;
 			}
-			else
+
+			int x, y;
+			if (!int.TryParse(args.Parameters[0], out x) || !int.TryParse(args.Parameters[1], out y)
+				|| x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
 			{
-				var plr = players[0];
-				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
-				{
-					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
-					args.Player.SendSuccessMessage("You teleported {0} here.", plr.Name);
-				}
+				args.Player.SendErrorMessage("Invalid tile positions!");
+				return;
 			}
+			args.Player.Teleport(16 * x, 16 * y);
+			args.Player.SendSuccessMessage("Teleported to {0}, {1}!", x, y);
 		}
 
 		private static void TPAllow(CommandArgs args)
@@ -2136,7 +2178,7 @@ namespace TShockAPI
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp hide [name] <true/false>");
                 #endregion
             }
-            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tphere))
+            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tpothers))
             {
                 #region Warp send
                 if (args.Parameters.Count < 3)
