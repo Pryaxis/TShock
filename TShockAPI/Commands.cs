@@ -3099,36 +3099,60 @@ namespace TShockAPI
 
 		private static void Time(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>");
+				double time = Main.time / 3600.0;
+				time += 4.5;
+				if (!Main.dayTime)
+					time += 15.0;
+				args.Player.SendInfoMessage("The current time is {0:D2}:{1:D2}.", (int)Math.Floor(time), (int)Math.Round((time % 1.0) * 30.0));
 				return;
 			}
-
+			
 			switch (args.Parameters[0].ToLower())
 			{
 				case "day":
-					TSPlayer.Server.SetTime(true, 150.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to day.", args.Player.Name);
+					TSPlayer.Server.SetTime(true, 0.0);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 4:30.", args.Player.Name);
 					break;
 				case "night":
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to night.", args.Player.Name);
-					break;
-				case "dusk":
-					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to dusk.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 19:30.", args.Player.Name);
 					break;
 				case "noon":
 					TSPlayer.Server.SetTime(true, 27000.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to noon.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 12:00.", args.Player.Name);
 					break;
 				case "midnight":
 					TSPlayer.Server.SetTime(false, 16200.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to midnight.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 0:00.", args.Player.Name);
 					break;
 				default:
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>");
+					string[] array = args.Parameters[0].Split(':');
+					if (array.Length != 2)
+					{
+						args.Player.SendErrorMessage("Invalid time string! Proper format: hh:mm, in 24-hour time.");
+						return;
+					}
+
+					int hours;
+					int minutes;
+					if (!int.TryParse(array[0], out hours) || hours < 0 || hours > 23
+						|| !int.TryParse(array[1], out minutes) || minutes < 0 || minutes > 59)
+					{
+						args.Player.SendErrorMessage("Invalid time string! Proper format: hh:mm, in 24-hour time.");
+						return;
+					}
+
+					decimal time = hours + minutes / 60.0m;
+					time -= 4.50m;
+					if (time < 0.00m)
+						time += 24.00m;
+					if (time >= 15.00m)
+						TSPlayer.Server.SetTime(false, (double)((time - 15.00m) * 3600.0m));
+					else
+						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
+					TSPlayer.All.SendInfoMessage("{0} set the time to {1:D2}:{2:D2}.", args.Player.Name, hours, minutes);
 					break;
 			}
 		}
