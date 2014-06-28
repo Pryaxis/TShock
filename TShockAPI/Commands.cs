@@ -395,7 +395,7 @@ namespace TShockAPI
 			add(new Command(Permissions.tppos, TPPos, "tppos")
 			{
 				AllowServer = false,
-				HelpText = "Teleports you to another player or a coordinate."
+				HelpText = "Teleports you to tile coordinates."
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
@@ -3075,74 +3075,54 @@ namespace TShockAPI
 
 		private static void MaxSpawns(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>");
-				args.Player.SendErrorMessage("Proper syntax: /maxspawns show");
-				args.Player.SendErrorMessage("Proper syntax: /maxspawns default");
+				args.Player.SendInfoMessage("Current maximum spawns: {0}", TShock.Config.DefaultMaximumSpawns);
 				return;
 			}
 
-			if (args.Parameters[0] == "show")
+			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				args.Player.SendInfoMessage("Current maximum spawns is " + TShock.Config.DefaultMaximumSpawns + ".");
-				return;
-			}
-			
-			if(args.Parameters[0]=="default"){
-				TShock.Config.DefaultMaximumSpawns = 5;
-				NPC.defaultMaxSpawns = 5;
-				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to 5.", args.Player.Name));
+				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 600;
+				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 600.", args.Player.Name);
 				return;
 			}
 
-			int amount = Convert.ToInt32(args.Parameters[0]);
-			int.TryParse(args.Parameters[0], out amount);
-			NPC.defaultMaxSpawns = amount;
-			TShock.Config.DefaultMaximumSpawns = amount;
-			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to {1}.", args.Player.Name, amount));
+			int maxSpawns = -1;
+			if (!int.TryParse(args.Parameters[0], out maxSpawns) || maxSpawns < 0 || maxSpawns > Main.maxNPCs)
+			{
+				args.Player.SendWarningMessage("Invalid maximum spawns!");
+				return;
+			}
+
+			TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
+			TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
 		}
 
 		private static void SpawnRate(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnrate <spawnrate>");
-				args.Player.SendErrorMessage("/spawnrate show");
-				args.Player.SendErrorMessage("/spawnrate default");
+				args.Player.SendInfoMessage("Current spawn rate: {0}", TShock.Config.DefaultSpawnRate);
 				return;
 			}
 
-			if (args.Parameters[0] == "show")
+			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				args.Player.SendInfoMessage("Current spawn rate is " + TShock.Config.DefaultSpawnRate + ".");
+				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
+				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
 				return;
 			}
 
-			if (args.Parameters[0] == "default")
+			int spawnRate = -1;
+			if (!int.TryParse(args.Parameters[0], out spawnRate) || spawnRate < 0)
 			{
-				TShock.Config.DefaultSpawnRate = 600;
-				NPC.defaultSpawnRate = 600;
-				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to 600.", args.Player.Name));
+				args.Player.SendWarningMessage("Invalid spawn rate!");
 				return;
 			}
 
-			int amount = -1;
-			if (!int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendWarningMessage(string.Format("Invalid spawnrate ({0})", args.Parameters[0]));
-				return;
-			}
-
-			if (amount < 0)
-			{
-				args.Player.SendWarningMessage("Spawnrate cannot be negative!");
-				return;
-			}
-
-			NPC.defaultSpawnRate = amount;
-			TShock.Config.DefaultSpawnRate = amount;
-			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to {1}.", args.Player.Name, amount));
+			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
+			TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
 		}
 
 		#endregion Server Config Commands
