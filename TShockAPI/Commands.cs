@@ -425,6 +425,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sets an eclipse."
 			});
+			add(new Command(Permissions.halloween, ForceHalloween, "forcehalloween")
+			{
+				HelpText = "Toggles halloween mode (goodie bags, pumpkins, etc)."
+			});
 			add(new Command(Permissions.xmas, ForceXmas, "forcexmas")
 			{
 				HelpText = "Toggles christmas mode (present spawning, santa, etc)."
@@ -1379,37 +1383,19 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
-        private static void ForceXmas(CommandArgs args)
-        {
-            if(args.Parameters.Count == 0)
-            {
-                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
-                args.Player.SendInfoMessage(
-                    String.Format("The server is currently {0} force Christmas mode.",
-                                (TShock.Config.ForceXmas ? "in" : "not in")));
-                return;
-            }
+		private static void ForceHalloween(CommandArgs args)
+		{
+			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
+			Main.checkHalloween();
+			TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+		}
 
-            if(args.Parameters[0].ToLower() == "true")
-            {
-                TShock.Config.ForceXmas = true;
-                Main.checkXMas();
-            }
-            else if(args.Parameters[0].ToLower() == "false")
-            {
-                TShock.Config.ForceXmas = false;
-                Main.checkXMas();
-            }
-            else
-            {
-                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
-                return;
-            }
-
-            args.Player.SendInfoMessage(
-                    String.Format("The server is currently {0} force Christmas mode.",
-                                (TShock.Config.ForceXmas ? "in" : "not in")));
-        }
+		private static void ForceXmas(CommandArgs args)
+		{
+			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
+			Main.checkXMas();
+			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+		}
 
 		private static void TempGroup(CommandArgs args)
         {
@@ -1668,26 +1654,24 @@ namespace TShockAPI
 			TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 		}
 
-        private static void Hardmode(CommandArgs args)
-        {
+		private static void Hardmode(CommandArgs args)
+		{
 			if (Main.hardMode)
 			{
 				Main.hardMode = false;
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 				args.Player.SendSuccessMessage("Hardmode is now off.");
+			}
+			else if (!TShock.Config.DisableHardmode)
+			{
+				WorldGen.StartHardmode();
+				args.Player.SendSuccessMessage("Hardmode is now on.");
 			}
 			else
 			{
-				if (!TShock.Config.DisableHardmode)
-				{
-					WorldGen.StartHardmode();
-					args.Player.SendSuccessMessage("Hardmode is now on.");
-				}
-				else
-				{
-					args.Player.SendErrorMessage("Hardmode is disabled via config.");
-				}
+				args.Player.SendErrorMessage("Hardmode is disabled via config.");
 			}
-        }
+		}
 
 		private static void SpawnBoss(CommandArgs args)
 		{
@@ -2022,12 +2006,16 @@ namespace TShockAPI
 			}
 
 			int x, y;
-			if (!int.TryParse(args.Parameters[0], out x) || !int.TryParse(args.Parameters[1], out y)
-				|| x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
+			if (!int.TryParse(args.Parameters[0], out x) || !int.TryParse(args.Parameters[1], out y))
 			{
 				args.Player.SendErrorMessage("Invalid tile positions!");
 				return;
 			}
+			x = Math.Max(0, x);
+			y = Math.Max(0, y);
+			x = Math.Min(x, Main.maxTilesX - 1);
+			y = Math.Min(y, Main.maxTilesY - 1);
+
 			args.Player.Teleport(16 * x, 16 * y);
 			args.Player.SendSuccessMessage("Teleported to {0}, {1}!", x, y);
 		}
@@ -4367,7 +4355,7 @@ namespace TShockAPI
 
 			if (args.Parameters.Count == 1)
 			{
-				List<NPC> npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+				var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
 				if (npcs.Count == 0)
 				{
 					args.Player.SendErrorMessage("Invalid mob type!");

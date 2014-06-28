@@ -242,12 +242,6 @@ namespace TShockAPI
 		[Description("User can force a blood moon.")]
 		public static readonly string bloodmoon = "tshock.world.time.bloodmoon";
 
-		[Description("User can force a pumpkin moon.")]
-		public static readonly string pumpkinmoon = "tshock.world.time.pumpkinmoon";
-
-		[Description("User can force a snow moon.")]
-		public static readonly string snowmoon = "tshock.world.time.snowmoon";
-
 		[Description("User can set the time.")]
 		public static readonly string time = "tshock.world.time.set";
 
@@ -262,6 +256,9 @@ namespace TShockAPI
 
 		[Description("User can convert hallow into corruption and vice-versa")]
 		public static readonly string converthardmode = "tshock.world.converthardmode";
+
+		[Description("User can force the server to Halloween mode.")]
+		public static readonly string halloween = "tshock.world.sethalloween";
 
 		[Description("User can force the server to Christmas mode.")]
 		public static readonly string xmas = "tshock.world.setxmas";
