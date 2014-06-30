@@ -1560,20 +1560,20 @@ namespace TShockAPI
 
 		private static void Fullmoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetFullMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the full moon.", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetFullMoon();
+			TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
 		}
 
 		private static void Bloodmoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetBloodMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetBloodMoon(!Main.bloodMoon);
+			TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
 		}
 
 		private static void Eclipse(CommandArgs args)
 		{
-			TSPlayer.Server.SetEclipse(true);
-			TShock.Utils.Broadcast(string.Format("{0} has forced an Eclipse!", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetEclipse(!Main.eclipse);
+			TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
 		}
 		
 		private static void Invade(CommandArgs args)
@@ -1616,8 +1616,6 @@ namespace TShockAPI
 
 		private static void PumpkinMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetPumpkinMoon(true);
-
 			int wave = 1;
 			if (args.Parameters.Count != 0)
 			{
@@ -1628,6 +1626,7 @@ namespace TShockAPI
 				}
 			}
 
+			TSPlayer.Server.SetPumpkinMoon(true);
 			Main.bloodMoon = false;
 			NPC.waveKills = 0f;
 			NPC.waveCount = wave;
@@ -1636,8 +1635,6 @@ namespace TShockAPI
 
 		private static void FrostMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetFrostMoon(true);
-
 			int wave = 1;
 			if (args.Parameters.Count != 0)
 			{
@@ -1648,6 +1645,7 @@ namespace TShockAPI
 				}
 			}
 
+			TSPlayer.Server.SetFrostMoon(true);
 			Main.bloodMoon = false;
 			NPC.waveKills = 0f;
 			NPC.waveCount = wave;
@@ -3093,7 +3091,7 @@ namespace TShockAPI
 				time += 4.5;
 				if (!Main.dayTime)
 					time += 15.0;
-				args.Player.SendInfoMessage("The current time is {0:D2}:{1:D2}.", (int)Math.Floor(time), (int)Math.Round((time % 1.0) * 30.0));
+				args.Player.SendInfoMessage("The current time is {0}:{1:D2}.", (int)Math.Floor(time), (int)Math.Round((time % 1.0) * 30.0));
 				return;
 			}
 			
@@ -3140,7 +3138,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetTime(false, (double)((time - 15.00m) * 3600.0m));
 					else
 						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
-					TSPlayer.All.SendInfoMessage("{0} set the time to {1:D2}:{2:D2}.", args.Player.Name, hours, minutes);
+					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
 					break;
 			}
 		}
