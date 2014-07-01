@@ -1020,42 +1020,70 @@ namespace TShockAPI
 			//RconHandler.Response += msg + "\n";
 		}
 
-		public void SetFullMoon(bool fullmoon)
+		public void SetFullMoon()
 		{
+			Main.dayTime = false;
 			Main.moonPhase = 0;
-			SetTime(false, 0);
+			Main.time = 0.0;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetBloodMoon(bool bloodMoon)
 		{
-			Main.bloodMoon = bloodMoon;
-			SetTime(false, 0);
+			if (bloodMoon)
+			{
+				Main.dayTime = false;
+				Main.bloodMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.bloodMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
-		public void SetSnowMoon(bool snowMoon)
+		public void SetFrostMoon(bool snowMoon)
 		{
-			Main.snowMoon = snowMoon;
-			SetTime(false, 0);
+			if (snowMoon)
+			{
+				Main.dayTime = false;
+				Main.snowMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.snowMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetPumpkinMoon(bool pumpkinMoon)
 		{
-			Main.pumpkinMoon = pumpkinMoon;
-			SetTime(false, 0);
+			if (pumpkinMoon)
+			{
+				Main.dayTime = false;
+				Main.pumpkinMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.pumpkinMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 		
-		public void SetEclipse(bool Eclipse)
+		public void SetEclipse(bool eclipse)
 		{
-			Main.eclipse = Eclipse;
-			SetTime(true, 150);
+			if (eclipse)
+			{
+				Main.dayTime = Main.eclipse = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.eclipse = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetTime(bool dayTime, double time)
 		{
 			Main.dayTime = dayTime;
 			Main.time = time;
-			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-			// NetMessage.syncPlayers(); Is not in any way resposnsible for time...
+			TSPlayer.All.SendData(PacketTypes.TimeSet, "", 0, 0, Main.sunModY, Main.moonModY);
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,

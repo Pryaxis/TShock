@@ -367,13 +367,13 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the spawn rate of NPCs."
 			});
-			add(new Command(Permissions.invade, PumpkinInvasion, "pumpkin")
+			add(new Command(Permissions.invade, PumpkinMoon, "pumpkinmoon", "pmoon")
 			{
-				HelpText = "Starts a Pumpkin Moon invasion at the specified wave."
+				HelpText = "Starts a Pumpkin Moon at the specified wave."
 			});
-			add(new Command(Permissions.invade, SnowInvasion, "snowinvasion")
+			add(new Command(Permissions.invade, FrostMoon, "frostmoon", "fmoon")
 			{
-				HelpText = "Starts a Snow Moon invasion at the specified wave."
+				HelpText = "Starts a Frost Moon at the specified wave."
 			});
 			#endregion
 			#region TP Commands
@@ -390,17 +390,17 @@ namespace TShockAPI
 			add(new Command(Permissions.tp, TP, "tp")
 			{
 				AllowServer = false,
-				HelpText = "Teleports you to another player or a coordinate."
+				HelpText = "Teleports a player to another player."
+			});
+			add(new Command(Permissions.tppos, TPPos, "tppos")
+			{
+				AllowServer = false,
+				HelpText = "Teleports you to tile coordinates."
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
 				AllowServer = false,
-				HelpText = "Toggles whether other people can teleport to you."
-			});
-			add(new Command(Permissions.tphere, TPHere, "tphere")
-			{
-				AllowServer = false,
-				HelpText = "Teleports another player to you."
+				HelpText = "Toggles whether other people can teleport you."
 			});
 			#endregion
 			#region World Commands
@@ -411,14 +411,6 @@ namespace TShockAPI
 			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
 			{
 				HelpText = "Sets a blood moon."
-			});
-			add(new Command(Permissions.snowmoon, SnowMoon, "snowmoon")
-			{
-				HelpText = "Sets a snow moon."
-			});
-			add(new Command(Permissions.pumpkinmoon, PumpkinMoon, "pumpkinmoon")
-			{
-				HelpText = "Sets a pumpkin moon."
 			});
 			add(new Command(Permissions.grow, Grow, "grow")
 			{
@@ -432,6 +424,10 @@ namespace TShockAPI
 			add(new Command(Permissions.eclipse, Eclipse, "eclipse")
 			{
 				HelpText = "Sets an eclipse."
+			});
+			add(new Command(Permissions.halloween, ForceHalloween, "forcehalloween")
+			{
+				HelpText = "Toggles halloween mode (goodie bags, pumpkins, etc)."
 			});
 			add(new Command(Permissions.xmas, ForceXmas, "forcexmas")
 			{
@@ -1387,37 +1383,19 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
-        private static void ForceXmas(CommandArgs args)
-        {
-            if(args.Parameters.Count == 0)
-            {
-                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
-                args.Player.SendInfoMessage(
-                    String.Format("The server is currently {0} force Christmas mode.",
-                                (TShock.Config.ForceXmas ? "in" : "not in")));
-                return;
-            }
+		private static void ForceHalloween(CommandArgs args)
+		{
+			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
+			Main.checkHalloween();
+			TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+		}
 
-            if(args.Parameters[0].ToLower() == "true")
-            {
-                TShock.Config.ForceXmas = true;
-                Main.checkXMas();
-            }
-            else if(args.Parameters[0].ToLower() == "false")
-            {
-                TShock.Config.ForceXmas = false;
-                Main.checkXMas();
-            }
-            else
-            {
-                args.Player.SendErrorMessage("Usage: /forcexmas [true/false]");
-                return;
-            }
-
-            args.Player.SendInfoMessage(
-                    String.Format("The server is currently {0} force Christmas mode.",
-                                (TShock.Config.ForceXmas ? "in" : "not in")));
-        }
+		private static void ForceXmas(CommandArgs args)
+		{
+			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
+			Main.checkXMas();
+			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+		}
 
 		private static void TempGroup(CommandArgs args)
         {
@@ -1582,32 +1560,20 @@ namespace TShockAPI
 
 		private static void Fullmoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetFullMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the full moon.", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetFullMoon();
+			TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
 		}
 
 		private static void Bloodmoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetBloodMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the blood moon.", args.Player.Name), Color.Green);
-		}
-
-		private static void SnowMoon(CommandArgs args)
-		{
-			TSPlayer.Server.SetSnowMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the snow moon.", args.Player.Name), Color.Green);
-		}
-
-		private static void PumpkinMoon(CommandArgs args)
-		{
-			TSPlayer.Server.SetPumpkinMoon(true);
-			TShock.Utils.Broadcast(string.Format("{0} turned on the pumpkin moon.", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetBloodMoon(!Main.bloodMoon);
+			TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
 		}
 
 		private static void Eclipse(CommandArgs args)
 		{
-			TSPlayer.Server.SetEclipse(true);
-			TShock.Utils.Broadcast(string.Format("{0} has forced an Eclipse!", args.Player.Name), Color.Green);
+			TSPlayer.Server.SetEclipse(!Main.eclipse);
+			TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
 		}
 		
 		private static void Invade(CommandArgs args)
@@ -1648,78 +1614,62 @@ namespace TShockAPI
 			}
 		}
 
-		private static void PumpkinInvasion(CommandArgs args)
+		private static void PumpkinMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetTime(false, 0.0);
-
 			int wave = 1;
 			if (args.Parameters.Count != 0)
-				int.TryParse(args.Parameters[0], out wave);
+			{
+				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
+				{
+					args.Player.SendErrorMessage("Invalid wave!");
+					return;
+				}
+			}
 
-			Main.pumpkinMoon = true;
+			TSPlayer.Server.SetPumpkinMoon(true);
 			Main.bloodMoon = false;
 			NPC.waveKills = 0f;
 			NPC.waveCount = wave;
-			string text = "Pumpkin Invasion started at wave: " + wave;
-			if (Main.netMode == 0)
-			{
-				Main.NewText(text, 175, 75, 255, false);
-				return;
-			}
-			if (Main.netMode == 2)
-			{
-				NetMessage.SendData(25, -1, -1, text, 255, 175f, 75f, 255f, 0);
-			}
+			TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
 		}
 
-		private static void SnowInvasion(CommandArgs args)
+		private static void FrostMoon(CommandArgs args)
 		{
-			TSPlayer.Server.SetTime(false, 0.0);
-
 			int wave = 1;
 			if (args.Parameters.Count != 0)
-				int.TryParse(args.Parameters[0], out wave);
-
-			Main.snowMoon = true;
-			Main.pumpkinMoon = false;
-			Main.bloodMoon = false;
-			if (Main.netMode != 1)
 			{
-				NPC.waveKills = 0f;
-				NPC.waveCount = wave;
-				string text = "Snow Invasion started at wave: " + wave;
-				if (Main.netMode == 0)
+				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
 				{
-					Main.NewText(text, 175, 75, 255, false);
+					args.Player.SendErrorMessage("Invalid wave!");
 					return;
 				}
-				if (Main.netMode == 2)
-				{
-					NetMessage.SendData(25, -1, -1, text, 255, 175f, 75f, 255f, 0);
-				}
 			}
+
+			TSPlayer.Server.SetFrostMoon(true);
+			Main.bloodMoon = false;
+			NPC.waveKills = 0f;
+			NPC.waveCount = wave;
+			TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 		}
 
-        private static void Hardmode(CommandArgs args)
-        {
+		private static void Hardmode(CommandArgs args)
+		{
 			if (Main.hardMode)
 			{
 				Main.hardMode = false;
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 				args.Player.SendSuccessMessage("Hardmode is now off.");
+			}
+			else if (!TShock.Config.DisableHardmode)
+			{
+				WorldGen.StartHardmode();
+				args.Player.SendSuccessMessage("Hardmode is now on.");
 			}
 			else
 			{
-				if (!TShock.Config.DisableHardmode)
-				{
-					WorldGen.StartHardmode();
-					args.Player.SendSuccessMessage("Hardmode is now on.");
-				}
-				else
-				{
-					args.Player.SendErrorMessage("Hardmode is disabled via config.");
-				}
+				args.Player.SendErrorMessage("Hardmode is disabled via config.");
 			}
-        }
+		}
 
 		private static void SpawnBoss(CommandArgs args)
 		{
@@ -1922,104 +1872,150 @@ namespace TShockAPI
 
 		private static void TP(CommandArgs args)
 		{
-			if (args.Parameters.Count < 1)
+			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
-				args.Player.SendErrorMessage("                               /tp <x> <y>");
+				if (args.Player.Group.HasPermission(Permissions.tpothers))
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player> [player 2]");
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tp <player>");
 				return;
 			}
 
-			if(args.Parameters.Count == 2)
+			if (args.Parameters.Count == 1)
 			{
-				float x, y;
-				if (float.TryParse(args.Parameters[0], out x) && float.TryParse(args.Parameters[1], out y))
+				var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				if (players.Count == 0)
+					args.Player.SendErrorMessage("Invalid player!");
+				else if (players.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				else
 				{
-					args.Player.Teleport(x, y);
-					args.Player.SendSuccessMessage("Teleported!");
+					var target = players[0];
+					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+					{
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
+						return;
+					}
+					if (args.Player.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					{
+						args.Player.SendSuccessMessage("Teleported to {0}.", target.Name);
+						if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+							target.SendInfoMessage("{0} teleported to you.", args.Player.Name);
+					}
 				}
 			}
 			else
 			{
-				string plStr = String.Join(" ", args.Parameters);
-				var players = TShock.Utils.FindPlayer(plStr);
-				if (players.Count == 0)
+				if (!args.Player.Group.HasPermission(Permissions.tpothers))
 				{
-					args.Player.SendErrorMessage("Invalid user name.");
-					args.Player.SendErrorMessage("Proper syntax: /tp <player>");
-					args.Player.SendErrorMessage("               /tp <x> <y>");
+					args.Player.SendErrorMessage("You do not have access to this command.");
+					return;
 				}
 
-				else if (players.Count > 1)
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-				else if (!players[0].TPAllow && !args.Player.Group.HasPermission(Permissions.tpall))
+				var players1 = TShock.Utils.FindPlayer(args.Parameters[0]);
+				var players2 = TShock.Utils.FindPlayer(args.Parameters[1]);
+
+				if (players2.Count == 0)
+					args.Player.SendErrorMessage("Invalid player!");
+				else if (players2.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players2.Select(p => p.Name));
+				else if (players1.Count == 0)
 				{
-					var plr = players[0];
-					args.Player.SendErrorMessage(plr.Name + " has prevented users from teleporting to them.");
-					plr.SendInfoMessage(args.Player.Name + " attempted to teleport to you.");
-				}
-				else
-				{
-					var plr = players[0];
-					if (args.Player.Teleport(plr.TPlayer.position.X, plr.TPlayer.position.Y))
+					if (args.Parameters[0] == "*")
 					{
-						args.Player.SendSuccessMessage(string.Format("Teleported to {0}.", plr.Name));
-						if (!args.Player.Group.HasPermission(Permissions.tphide))
-							plr.SendInfoMessage(args.Player.Name + " teleported to you.");
+						if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+						{
+							args.Player.SendErrorMessage("You do not have access to this command.");
+							return;
+						}
+
+						var target = players2[0];
+						foreach (var source in TShock.Players.Where(p => p != null && p != args.Player))
+						{
+							if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+								continue;
+							if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+							{
+								if (args.Player != source)
+								{
+									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+										source.SendSuccessMessage("You were teleported to {0}.", target.Name);
+									else
+										source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+								}
+								if (args.Player != target)
+								{
+									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+										target.SendInfoMessage("{0} was teleported to you.", source.Name);
+									if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+										target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
+								}
+							}
+						}
+						args.Player.SendSuccessMessage("Teleported everyone to {0}.", target.Name);
 					}
+					else
+						args.Player.SendErrorMessage("Invalid player!");
 				}
-			}
-
-
-	}
-
-		private static void TPHere(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				if (args.Player.Group.HasPermission(Permissions.tpallothers))
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player|*>");
+				else if (players1.Count > 1)
+					TShock.Utils.SendMultipleMatchError(args.Player, players1.Select(p => p.Name));
 				else
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player>");
-				return;
-			}
-
-			string playerName = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(playerName);
-			if (players.Count == 0)
-			{
-				if (playerName == "*")
 				{
-					if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+					var source = players1[0];
+					if (!source.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
 					{
-						args.Player.SendErrorMessage("You do not have permission to use this command.");
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", source.Name);
 						return;
 					}
-					args.Player.SendInfoMessage(string.Format("You teleported everyone here."));
-					for (int i = 0; i < Main.maxPlayers; i++)
+					var target = players2[0];
+					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
 					{
-						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
+						return;
+					}
+					args.Player.SendSuccessMessage("Teleported {0} to {1}.", source.Name, target.Name);
+					if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					{
+						if (args.Player != source)
 						{
-							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
-								TShock.Players[i].SendSuccessMessage(String.Format("You were teleported to {0}.", args.Player.Name));
+							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+								source.SendSuccessMessage("You were teleported to {0}.", target.Name);
+							else
+								source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+						}
+						if (args.Player != target)
+						{
+							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+								target.SendInfoMessage("{0} was teleported to you.", source.Name);
+							if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+								target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
 						}
 					}
 				}
-				else
-					args.Player.SendErrorMessage("Invalid player!");
 			}
-			else if (players.Count > 1)
+		}
+
+		private static void TPPos(CommandArgs args)
+		{
+			if (args.Parameters.Count != 2)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tppos <tile x> <tile y>");
+				return;
 			}
-			else
+
+			int x, y;
+			if (!int.TryParse(args.Parameters[0], out x) || !int.TryParse(args.Parameters[1], out y))
 			{
-				var plr = players[0];
-				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
-				{
-					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
-					args.Player.SendSuccessMessage("You teleported {0} here.", plr.Name);
-				}
+				args.Player.SendErrorMessage("Invalid tile positions!");
+				return;
 			}
+			x = Math.Max(0, x);
+			y = Math.Max(0, y);
+			x = Math.Min(x, Main.maxTilesX - 1);
+			y = Math.Min(y, Main.maxTilesY - 1);
+
+			args.Player.Teleport(16 * x, 16 * y);
+			args.Player.SendSuccessMessage("Teleported to {0}, {1}!", x, y);
 		}
 
 		private static void TPAllow(CommandArgs args)
@@ -2136,7 +2132,7 @@ namespace TShockAPI
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /warp hide [name] <true/false>");
                 #endregion
             }
-            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tphere))
+            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tpothers))
             {
                 #region Warp send
                 if (args.Parameters.Count < 3)
@@ -3033,74 +3029,54 @@ namespace TShockAPI
 
 		private static void MaxSpawns(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /maxspawns <maxspawns>");
-				args.Player.SendErrorMessage("Proper syntax: /maxspawns show");
-				args.Player.SendErrorMessage("Proper syntax: /maxspawns default");
+				args.Player.SendInfoMessage("Current maximum spawns: {0}", TShock.Config.DefaultMaximumSpawns);
 				return;
 			}
 
-			if (args.Parameters[0] == "show")
+			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				args.Player.SendInfoMessage("Current maximum spawns is " + TShock.Config.DefaultMaximumSpawns + ".");
-				return;
-			}
-			
-			if(args.Parameters[0]=="default"){
-				TShock.Config.DefaultMaximumSpawns = 5;
-				NPC.defaultMaxSpawns = 5;
-				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to 5.", args.Player.Name));
+				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 600;
+				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 600.", args.Player.Name);
 				return;
 			}
 
-			int amount = Convert.ToInt32(args.Parameters[0]);
-			int.TryParse(args.Parameters[0], out amount);
-			NPC.defaultMaxSpawns = amount;
-			TShock.Config.DefaultMaximumSpawns = amount;
-			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the maximum spawns to {1}.", args.Player.Name, amount));
+			int maxSpawns = -1;
+			if (!int.TryParse(args.Parameters[0], out maxSpawns) || maxSpawns < 0 || maxSpawns > Main.maxNPCs)
+			{
+				args.Player.SendWarningMessage("Invalid maximum spawns!");
+				return;
+			}
+
+			TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
+			TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
 		}
 
 		private static void SpawnRate(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /spawnrate <spawnrate>");
-				args.Player.SendErrorMessage("/spawnrate show");
-				args.Player.SendErrorMessage("/spawnrate default");
+				args.Player.SendInfoMessage("Current spawn rate: {0}", TShock.Config.DefaultSpawnRate);
 				return;
 			}
 
-			if (args.Parameters[0] == "show")
+			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				args.Player.SendInfoMessage("Current spawn rate is " + TShock.Config.DefaultSpawnRate + ".");
+				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
+				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
 				return;
 			}
 
-			if (args.Parameters[0] == "default")
+			int spawnRate = -1;
+			if (!int.TryParse(args.Parameters[0], out spawnRate) || spawnRate < 0)
 			{
-				TShock.Config.DefaultSpawnRate = 600;
-				NPC.defaultSpawnRate = 600;
-				TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to 600.", args.Player.Name));
+				args.Player.SendWarningMessage("Invalid spawn rate!");
 				return;
 			}
 
-			int amount = -1;
-			if (!int.TryParse(args.Parameters[0], out amount))
-			{
-				args.Player.SendWarningMessage(string.Format("Invalid spawnrate ({0})", args.Parameters[0]));
-				return;
-			}
-
-			if (amount < 0)
-			{
-				args.Player.SendWarningMessage("Spawnrate cannot be negative!");
-				return;
-			}
-
-			NPC.defaultSpawnRate = amount;
-			TShock.Config.DefaultSpawnRate = amount;
-			TSPlayer.All.SendInfoMessage(string.Format("{0} changed the spawn rate to {1}.", args.Player.Name, amount));
+			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
+			TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
 		}
 
 		#endregion Server Config Commands
@@ -3109,36 +3085,60 @@ namespace TShockAPI
 
 		private static void Time(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>");
+				double time = Main.time / 3600.0;
+				time += 4.5;
+				if (!Main.dayTime)
+					time += 15.0;
+				args.Player.SendInfoMessage("The current time is {0}:{1:D2}.", (int)Math.Floor(time), (int)Math.Round((time % 1.0) * 30.0));
 				return;
 			}
-
+			
 			switch (args.Parameters[0].ToLower())
 			{
 				case "day":
-					TSPlayer.Server.SetTime(true, 150.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to day.", args.Player.Name);
+					TSPlayer.Server.SetTime(true, 0.0);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 4:30.", args.Player.Name);
 					break;
 				case "night":
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to night.", args.Player.Name);
-					break;
-				case "dusk":
-					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to dusk.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 19:30.", args.Player.Name);
 					break;
 				case "noon":
 					TSPlayer.Server.SetTime(true, 27000.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to noon.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 12:00.", args.Player.Name);
 					break;
 				case "midnight":
 					TSPlayer.Server.SetTime(false, 16200.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to midnight.", args.Player.Name);
+					TSPlayer.All.SendInfoMessage("{0} set the time to 0:00.", args.Player.Name);
 					break;
 				default:
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /time <day/night/dusk/noon/midnight>");
+					string[] array = args.Parameters[0].Split(':');
+					if (array.Length != 2)
+					{
+						args.Player.SendErrorMessage("Invalid time string! Proper format: hh:mm, in 24-hour time.");
+						return;
+					}
+
+					int hours;
+					int minutes;
+					if (!int.TryParse(array[0], out hours) || hours < 0 || hours > 23
+						|| !int.TryParse(array[1], out minutes) || minutes < 0 || minutes > 59)
+					{
+						args.Player.SendErrorMessage("Invalid time string! Proper format: hh:mm, in 24-hour time.");
+						return;
+					}
+
+					decimal time = hours + minutes / 60.0m;
+					time -= 4.50m;
+					if (time < 0.00m)
+						time += 24.00m;
+					if (time >= 15.00m)
+						TSPlayer.Server.SetTime(false, (double)((time - 15.00m) * 3600.0m));
+					else
+						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
+					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
 					break;
 			}
 		}
@@ -4353,7 +4353,7 @@ namespace TShockAPI
 
 			if (args.Parameters.Count == 1)
 			{
-				List<NPC> npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
+				var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
 				if (npcs.Count == 0)
 				{
 					args.Player.SendErrorMessage("Invalid mob type!");

@@ -67,7 +67,7 @@ namespace TShockAPI.DB
 				string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
 					Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
 					Permissions.kill, Permissions.logs,
-					Permissions.immunetokick, Permissions.tphere));
+					Permissions.immunetokick, Permissions.tpothers));
 
 			AddDefaultGroup("trustedadmin", "admin",
 				string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
