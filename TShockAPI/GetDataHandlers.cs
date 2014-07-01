@@ -2599,8 +2599,18 @@ namespace TShockAPI
 				return true;
 			}
 
-			args.Player.LastDeath = DateTime.Now;
 			args.Player.Dead = true;
+			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
+
+			foreach (NPC npc in Main.npc)
+			{
+				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
+					Math.Abs(args.TPlayer.center().X - npc.center().X) + Math.Abs(args.TPlayer.center().Y - npc.center().Y) < 4000f)
+				{
+					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
+					break;
+				}
+			}
 
 			if (args.TPlayer.difficulty == 2 && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
 			{

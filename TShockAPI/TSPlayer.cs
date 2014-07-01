@@ -214,10 +214,10 @@ namespace TShockAPI
 
 		public bool RequestedSection;
 
-        /// <summary>
-        /// The last time the player died.
-        /// </summary>
-		public DateTime LastDeath { get; set; }
+		/// <summary>
+		/// The player's respawn timer.
+		/// </summary>
+		public int RespawnTimer;
 
         /// <summary>
         /// Whether the player is dead or not.

@@ -353,7 +353,10 @@ namespace TShockAPI
 		public bool LogRest = false;
 
 		[Description("The number of seconds a player must wait before being respawned.")]
-		public int RespawnSeconds = 3;
+		public int RespawnSeconds = 5;
+
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby.")]
+		public int RespawnBossSeconds = 10;
 
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
 		public int TilePaintThreshold = 15;

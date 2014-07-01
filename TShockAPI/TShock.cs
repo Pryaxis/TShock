@@ -782,7 +782,7 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
-					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= Config.RespawnSeconds && player.Difficulty != 2)
+					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
 					{
 						player.Spawn();
 					}
