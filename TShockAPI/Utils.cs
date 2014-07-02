@@ -681,12 +681,11 @@ namespace TShockAPI
 				string playerName = player.Name;
 				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
-				Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()));
+					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", playerName, verb, reason);
 				else
-					Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()));
+					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, playerName, reason);
 				return true;
 			}
 			return false;

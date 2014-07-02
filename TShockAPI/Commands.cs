@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1096,15 +1097,32 @@ namespace TShockAPI
 
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
 						if (players.Count == 0)
-							args.Player.SendErrorMessage("Invalid player!");
+						{
+							var user = TShock.Users.GetUserByName(args.Parameters[1]);
+							if (user != null)
+							{
+								bool force = !args.Player.RealPlayer;
+								if (TShock.Groups.GetGroupByName(user.Group).HasPermission(Permissions.immunetoban) && !force)
+									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
+								else
+								{
+									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+									string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
+									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName);
+									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
+										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									else
+										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+								}
+							}
+							else
+								args.Player.SendErrorMessage("Invalid player or account!");
+						}
 						else if (players.Count > 1)
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 						else
 						{
-							string reason = args.Parameters.Count > 2
-												? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
-												: "Misbehavior.";
-
+							string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
 							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
 						}
@@ -1229,7 +1247,7 @@ namespace TShockAPI
 
 						var lines = new List<string>
 						{
-							"add <player> [reason] - Bans a player.",
+							"add <player> [reason] - Bans a player or user account if the player is not online.",
 							"addip <ip> [reason] - Bans an IP.",
 							"addtemp <player> <time> [reason] - Temporarily bans a player.",
 							"del <player> - Unbans a player.",
