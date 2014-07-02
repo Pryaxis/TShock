@@ -383,36 +383,32 @@ namespace TShockAPI
 			}
 		}
 
-        private void NetHooks_NameCollision(NameCollisionEventArgs args)
-        {
-            string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
-            foreach (TSPlayer ply in TShock.Players)
-            {
-                if (ply == null)
-                {
-                    continue;
-                }
-                if (ply.Name == args.Name && ply.Index != args.Who)
-                {
-                    if (ply.IP == ip)
-                    {
-                        if (ply.State < 2)
-                        {
-                            Utils.ForceKick(ply, "Name collision and this client has no world data.", true, false);
-                            args.Handled = true;
-                            return;
-                        }
-                        else
-                        {
-							args.Handled = false;
-                            return;
-                        }
-                    }
-                }
-            }
-			args.Handled = false;
-            return;
-        }
+		private void NetHooks_NameCollision(NameCollisionEventArgs args)
+		{
+			string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
+
+			var player = TShock.Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
+			if (player != null)
+			{
+				if (player.IP == ip)
+				{
+					player.Disconnect("Connection killed");
+					args.Handled = true;
+					return;
+				}
+				else if (player.IsLoggedIn)
+				{
+					User user = TShock.Users.GetUserByName(player.UserAccountName);
+					var ips = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+					if (ips.Contains(ip))
+					{
+						player.Disconnect("Connection killed");
+						args.Handled = true;
+						return;
+					}
+				}
+			}
+		}
 
         private void OnXmasCheck(ChristmasCheckEventArgs args)
         {
