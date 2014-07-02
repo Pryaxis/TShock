@@ -1148,7 +1148,8 @@ namespace TShockAPI
 							int time;
 							if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
 							{
-								args.Player.SendErrorMessage("Invalid time string! Proper format: 0d0h0m0s, with at least one time specifier.");
+								args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
+								args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
 								return;
 							}
 
@@ -2192,9 +2193,9 @@ namespace TShockAPI
 
 		private static void Group(CommandArgs args)
 		{
-			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+			string subCmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
-			switch (subcmd)
+			switch (subCmd)
 			{
 				case "add":
 					#region Add group
@@ -2596,16 +2597,8 @@ namespace TShockAPI
 
 		private static void ItemBan(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0)
-			{
-				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /itemban <command> [arguments]");
-				args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
-				args.Player.SendInfoMessage("Arguments: add <item name>, allow <item name> <group name>");
-				args.Player.SendInfoMessage("Arguments: del <item name>, disallow <item name> <group name>, list [page]");
-				return;
-			}
-
-			switch (args.Parameters[0].ToLower())
+			string subCmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+			switch (subCmd)
 			{
 				case "add":
 					#region Add item
@@ -2662,17 +2655,17 @@ namespace TShockAPI
 							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
 							if (ban == null)
 							{
-								args.Player.SendErrorMessage(items[0].name + " is not banned.");
+								args.Player.SendErrorMessage("{0} is not banned.", items[0].name);
 								return;
 							}
 							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
 								TShock.Itembans.AllowGroup(items[0].name, args.Parameters[2]);
-								args.Player.SendSuccessMessage(String.Format("{0} has been allowed to use {1}.", args.Parameters[2], items[0].name));
+								args.Player.SendSuccessMessage("{0} has been allowed to use {1}.", args.Parameters[2], items[0].name);
 							}
 							else
 							{
-								args.Player.SendWarningMessage(String.Format("{0} is already allowed to use {1}.", args.Parameters[2], items[0].name));
+								args.Player.SendWarningMessage("{0} is already allowed to use {1}.", args.Parameters[2], items[0].name);
 							}
 						}
 					}
@@ -2705,7 +2698,7 @@ namespace TShockAPI
 					#endregion
 					return;
 				case "disallow":
-					#region Allow group to item
+					#region Disllow group from item
 					{
 						if (args.Parameters.Count != 3)
 						{
@@ -2733,42 +2726,64 @@ namespace TShockAPI
 							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
 							if (ban == null)
 							{
-								args.Player.SendErrorMessage(items[0].name + " is not banned.");
+								args.Player.SendErrorMessage("{0} is not banned.", items[0].name);
 								return;
 							}
 							if (ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
 								TShock.Itembans.RemoveGroup(items[0].name, args.Parameters[2]);
-								args.Player.SendSuccessMessage(String.Format("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].name));
+								args.Player.SendSuccessMessage("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].name);
 							}
 							else
 							{
-								args.Player.SendWarningMessage(String.Format("{0} is already disallowed to use {1}.", args.Parameters[2], items[0].name));
+								args.Player.SendWarningMessage("{0} is already disallowed to use {1}.", args.Parameters[2], items[0].name);
 							}
 						}
 					}
 					#endregion
 					return;
 				case "help":
-					args.Player.SendInfoMessage("Syntax: /itemban <command> [arguments]");
-					args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
-					args.Player.SendInfoMessage("Arguments: add <item name>, allow <item name> <group name>");
-					args.Player.SendInfoMessage("Arguments: del <item name>, disallow <item name> <group name>, list [page]");
+					#region Help
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+
+						var lines = new List<string>
+						{
+							"add <item> - Adds an item ban.",
+							"allow <item> <group> - Allows a group to use an item.",
+							"del <item> - Deletes an item ban.",
+							"disallow <item> <group> - Disallows a group from using an item.",
+							"list [page] - Lists all item bans."
+                        };
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Item Ban Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /itemban help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
 					return;
 				case "list":
 					#region List items
-					int pageNumber;
-					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-						return;
-					IEnumerable<string> itemNames = from itemBan in TShock.Itembans.ItemBans
-													select itemBan.Name;
-					PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(itemNames),
-						new PaginationTools.Settings
-						{
-							HeaderFormat = "Item bans ({0}/{1}):",
-							FooterFormat = "Type /itemban list {0} for more.",
-							NothingToDisplayString = "There are currently no banned items."
-						});
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+						IEnumerable<string> itemNames = from itemBan in TShock.Itembans.ItemBans
+														select itemBan.Name;
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(itemNames),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Item bans ({0}/{1}):",
+								FooterFormat = "Type /itemban list {0} for more.",
+								NothingToDisplayString = "There are currently no banned items."
+							});
+					}
 					#endregion
 					return;
 			}
@@ -2779,201 +2794,170 @@ namespace TShockAPI
 
 		private static void ProjectileBan(CommandArgs args)
 		{
-			if (args.Parameters.Count == 0)
-			{
-				args.Player.SendInfoMessage("Invalid syntax! Proper syntax: /projban <command> [arguments]");
-				args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
-				args.Player.SendInfoMessage("Arguments: add <proj id>, allow <proj id> <group name>");
-				args.Player.SendInfoMessage("Arguments: del <proj id>, disallow <proj id> <group name>, list [page]");
-				return;
-			}
-
-			switch (args.Parameters[0].ToLower())
+			string subCmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+			switch (subCmd)
 			{
 				case "add":
-
 					#region Add projectile
-
-				{
-					if (args.Parameters.Count != 2)
 					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban add <proj id>");
-						return;
+						if (args.Parameters.Count != 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban add <proj id>");
+							return;
+						}
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						{
+							TShock.ProjectileBans.AddNewBan(id);
+							args.Player.SendSuccessMessage("Banned projectile {0}.", id);
+						}
+						else
+							args.Player.SendErrorMessage("Invalid projectile ID!");
 					}
-					short id;
-					if (Int16.TryParse(args.Parameters[1], out id))
-					{
-						TShock.ProjectileBans.AddNewBan(id);
-						args.Player.SendSuccessMessage("Banned Projectile: " + id + ".");
-						return;
-					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
-						return;
-					}
-
-				}
-
 					#endregion
-
 					return;
 				case "allow":
-
 					#region Allow group to projectile
-
-				{
-					if (args.Parameters.Count != 3)
 					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban allow <id> <group name>");
-						return;
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban allow <id> <group>");
+							return;
+						}
+
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						{
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage("Projectile {0} is not banned.", id);
+								return;
+							}
+							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.ProjectileBans.AllowGroup(id, args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been allowed to use projectile {1}.", args.Parameters[2], id);
+							}
+							else
+								args.Player.SendWarningMessage("{0} is already allowed to use projectile {1}.", args.Parameters[2], id);
+						}
+						else
+							args.Player.SendErrorMessage("Invalid projectile ID!");
 					}
-
-					short id;
-					if (Int16.TryParse(args.Parameters[1], out id))
+					#endregion
+					return;
+				case "del":
+					#region Delete projectile
 					{
-						if (!TShock.Groups.GroupExists(args.Parameters[2]))
+						if (args.Parameters.Count != 2)
 						{
-							args.Player.SendErrorMessage("Invalid group.");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban del <id>");
 							return;
 						}
 
-						ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
-						if (ban == null)
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
 						{
-							args.Player.SendErrorMessage("Projectile " + id + " is not banned.");
-							return;
-						}
-						if (!ban.AllowedGroups.Contains(args.Parameters[2]))
-						{
-							TShock.ProjectileBans.AllowGroup(id, args.Parameters[2]);
-							args.Player.SendSuccessMessage(String.Format("{0} has been allowed to use projectile {1}.", args.Parameters[2],
-								id));
+							TShock.ProjectileBans.RemoveBan(id);
+							args.Player.SendSuccessMessage("Unbanned projectile {0}.", id);
 							return;
 						}
 						else
-						{
-							args.Player.SendWarningMessage(String.Format("{0} is already allowed to use projectile {1}.", args.Parameters[2],
-								id));
-							return;
-						}
+							args.Player.SendErrorMessage("Invalid projectile ID!");
 					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
-						return;
-					}
-				}
-
 					#endregion
-
-				case "del":
-
-					#region Delete item
-
-				{
-					if (args.Parameters.Count != 2)
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban del <id>");
-						return;
-					}
-
-					short id;
-					if (Int16.TryParse(args.Parameters[1], out id))
-					{
-						TShock.ProjectileBans.RemoveBan(id);
-						args.Player.SendSuccessMessage("Unbanned Projectile: " + id + ".");
-						return;
-					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
-						return;
-					}
-				}
-
-					#endregion
-
 					return;
 				case "disallow":
-
-					#region Allow group to item
-
-				{
-					if (args.Parameters.Count != 3)
+					#region Disallow group from projectile
 					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban disallow <id> <group name>");
-						return;
-					}
-
-					short id;
-					if (Int16.TryParse(args.Parameters[1], out id))
-					{
-						if (!TShock.Groups.GroupExists(args.Parameters[2]))
+						if (args.Parameters.Count != 3)
 						{
-							args.Player.SendErrorMessage("Invalid group.");
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /projban disallow <id> <group name>");
 							return;
 						}
 
-						ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
-						if (ban == null)
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
 						{
-							args.Player.SendErrorMessage("Projectile " + id + " is not banned.");
-							return;
-						}
-						if (ban.AllowedGroups.Contains(args.Parameters[2]))
-						{
-							TShock.ProjectileBans.RemoveGroup(id, args.Parameters[2]);
-							args.Player.SendSuccessMessage(String.Format("{0} has been disallowed from using projectile {1}.",
-								args.Parameters[2], id));
-							return;
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							ProjectileBan ban = TShock.ProjectileBans.GetBanById(id);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage("Projectile {0} is not banned.", id);
+								return;
+							}
+							if (ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.ProjectileBans.RemoveGroup(id, args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been disallowed from using projectile {1}.", args.Parameters[2], id);
+								return;
+							}
+							else
+								args.Player.SendWarningMessage("{0} is already prevented from using projectile {1}.", args.Parameters[2], id);
 						}
 						else
-						{
-							args.Player.SendWarningMessage(String.Format("{0} is already prevented from using projectile {1}.",
-								args.Parameters[2], id));
-							return;
-						}
+							args.Player.SendErrorMessage("Invalid projectile ID!");
 					}
-					else
-					{
-						args.Player.SendErrorMessage("Invalid syntax! Projectile Id must be a number.");
-						return;
-					}
-				}
-
 					#endregion
-
 					return;
 				case "help":
-					args.Player.SendInfoMessage("Syntax: /projban <command> [arguments]");
-					args.Player.SendInfoMessage("Commands: add, allow, del, disallow, list");
-					args.Player.SendInfoMessage("Arguments: add <id>, allow <id> <group name>");
-					args.Player.SendInfoMessage("Arguments: del <id>, disallow <id> <group name>, list [page]");
+					#region Help
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+
+						var lines = new List<string>
+						{
+							"add <projectile ID> - Adds a projectile ban.",
+							"allow <projectile ID> <group> - Allows a group to use a projectile.",
+							"del <projectile ID> - Deletes an projectile ban.",
+							"disallow <projectile ID> <group> - Disallows a group from using a projectile.",
+							"list [page] - Lists all projectile bans."
+                        };
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Projectile Ban Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /projban help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
 					return;
 				case "list":
-
-					#region List items
-
-					int pageNumber;
-					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-						return;
-					IEnumerable<Int16> projectileIds = from projectileBan in TShock.ProjectileBans.ProjectileBans
-						select projectileBan.ID;
-					PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(projectileIds),
-						new PaginationTools.Settings
-						{
-							HeaderFormat = "Projectile bans ({0}/{1}):",
-							FooterFormat = "Type /Projectile list {0} for more.",
-							NothingToDisplayString = "There are currently no banned projectiles."
-						});
-
+					#region List projectiles
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+						IEnumerable<Int16> projectileIds = from projectileBan in TShock.ProjectileBans.ProjectileBans
+														   select projectileBan.ID;
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(projectileIds),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Projectile bans ({0}/{1}):",
+								FooterFormat = "Type /projban list {0} for more.",
+								NothingToDisplayString = "There are currently no banned projectiles."
+							});
+					}
 					#endregion
-
 					return;
 			}
-			}
-
+		}
 		#endregion Projectile Management
 
         #region Server Config Commands

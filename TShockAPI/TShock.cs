@@ -968,12 +968,16 @@ namespace TShockAPI
 							player.Disconnect(String.Format("You are banned for {0} hour{1} and {2} minute{3}: {4}",
 								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
 						}
+						else if (ts.Minutes > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} minute{1} and {2} second{3}: {4}",
+								ts.Minutes, ts.Minutes == 1 ? "" : "s", ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
+						}
 						else
 						{
-							player.Disconnect(String.Format("You are banned for {0} minute{1}: {2}",
-								ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+							player.Disconnect(String.Format("You are banned for {0} second{1}: {2}",
+								ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
 						}
-
 					}
 					args.Handled = true;
 			    }
