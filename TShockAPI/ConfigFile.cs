@@ -93,9 +93,9 @@ namespace TShockAPI
 		public bool HardcoreOnly;
 		[Description("Mediumcore players ONLY. This means softcore players cannot join.")]
 		public bool MediumcoreOnly;
-		[Description("Kicks a hardcore player on death.")]
+		[Description("Kicks a mediumcore player on death.")]
 		public bool KickOnMediumcoreDeath;
-		[Description("Bans a hardcore player on death.")]
+		[Description("Bans a mediumcore player on death.")]
 		public bool BanOnMediumcoreDeath;
 
 		[Description("Enable/disable Terraria's built in auto save.")]
@@ -375,6 +375,19 @@ namespace TShockAPI
 
 		[Description("Specifies which string starts a command")]
 		public string CommandSpecifier = "/";
+		
+		[Description("Kicks a hardcore player on death.")]
+		public bool KickOnHardcoreDeath;
+		
+		[Description("Bans a hardcore player on death.")]
+		public bool BanOnHardcoreDeath;
+		
+		[Description("Bans a hardcore player on death.")]
+		public string HardcoreBanReason = "Death results in a ban";
+		
+		[Description("Kicks a hardcore player on death.")]
+		public string HardcoreKickReason = "Death results in a kick";
+		
 
 		/// <summary>
 		/// Reads a configuration file from a given path
