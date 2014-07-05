@@ -26,7 +26,7 @@ namespace TShockAPI
 {
 	internal class UpdateManager
 	{
-		private static string updateUrl = "http://shankshock.com/tshock-update.json";
+		private static string updateUrl = "https://github.com/NyxStudios/TShock/blob/general-devel/tshock_update.json?raw=true";
 		public static DateTime lastcheck = DateTime.MinValue;
 
 		/// <summary>
