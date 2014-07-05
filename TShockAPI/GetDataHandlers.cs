@@ -2612,6 +2612,19 @@ namespace TShockAPI
 				}
 			}
 
+            if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+            {
+                if (TShock.Config.BanOnHardcoreDeath)
+                {
+                    if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+                        TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
+                }
+                else
+                {
+                    TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
+                }
+            }
+			
 			if (args.TPlayer.difficulty == 2 && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
 				User user = TShock.Users.GetUserByName(args.Player.UserAccountName);
