@@ -393,6 +393,11 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Teleports a player to another player."
 			});
+			add(new Command(Permissions.tpothers, TPHere, "tphere")
+			{
+				AllowServer = false,
+				HelpText = "Teleports a player to yourself."
+			});
 			add(new Command(Permissions.tppos, TPPos, "tppos")
 			{
 				AllowServer = false,
@@ -2010,6 +2015,54 @@ namespace TShockAPI
 								target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
 						}
 					}
+				}
+			}
+		}
+
+		private static void TPHere(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				if (args.Player.Group.HasPermission(Permissions.tpallothers))
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player|*>");
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tphere <player>");
+				return;
+			}
+
+			string playerName = String.Join(" ", args.Parameters);
+			var players = TShock.Utils.FindPlayer(playerName);
+			if (players.Count == 0)
+			{
+				if (playerName == "*")
+				{
+					if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+					{
+						args.Player.SendErrorMessage("You do not have permission to use this command.");
+						return;
+					}
+					for (int i = 0; i < Main.maxPlayers; i++)
+					{
+						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+						{
+							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+								TShock.Players[i].SendSuccessMessage(String.Format("You were teleported to {0}.", args.Player.Name));
+						}
+					}
+					args.Player.SendSuccessMessage("Teleported everyone to yourself.");
+				}
+				else
+					args.Player.SendErrorMessage("Invalid player!");
+			}
+			else if (players.Count > 1)
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			else
+			{
+				var plr = players[0];
+				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+				{
+					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
+					args.Player.SendSuccessMessage("Teleported {0} to yourself.", plr.Name);
 				}
 			}
 		}
