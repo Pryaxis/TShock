@@ -213,6 +213,9 @@ namespace TShockAPI
 		[Description("User can teleport to tile positions.")]
 		public static readonly string tppos = "tshock.tp.pos";
 
+		[Description("User can teleport to npcs.")]
+		public static readonly string tpnpcs = "tshock.tp.npcs";
+
 		[Description("Users can stop people from teleporting.")]
 		public static readonly string tpallow = "tshock.tp.block";
 

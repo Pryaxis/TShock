@@ -398,6 +398,11 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Teleports a player to yourself."
 			});
+			add(new Command(Permissions.tpnpcs, TPNpc, "tpnpc")
+			{
+				AllowServer = false,
+				HelpText = "Teleports you to an npc"
+			});
 			add(new Command(Permissions.tppos, TPPos, "tppos")
 			{
 				AllowServer = false,
@@ -2065,6 +2070,43 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Teleported {0} to yourself.", plr.Name);
 				}
 			}
+		}
+
+		private static void TPNpc(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tpnpc <npc>");
+				return;
+			}
+
+			var npcStr = string.Join(" ", args.Parameters);
+			var matches = new List<NPC>();
+			foreach (var npc in Main.npc.Where(npc => npc.active))
+			{
+				if (string.Equals(npc.name, npcStr, StringComparison.CurrentCultureIgnoreCase))
+				{
+					matches = new List<NPC> { npc };
+					break;
+				}
+				if (npc.name.ToLower().StartsWith(npcStr.ToLower()))
+					matches.Add(npc);
+			}
+
+			if (matches.Count > 1)
+			{
+				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => n.name));
+				return;
+			}
+			if (matches.Count == 0)
+			{
+				args.Player.SendErrorMessage("Invalid Npc!");
+				return;
+			}
+
+			var target = matches[0];
+			args.Player.Teleport(target.position.X, target.position.Y);
+			args.Player.SendSuccessMessage("Teleported to the {0}", target.name);
 		}
 
 		private static void TPPos(CommandArgs args)
