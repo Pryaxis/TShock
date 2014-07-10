@@ -387,7 +387,9 @@ namespace TShockAPI
 		
 		[Description("Kicks a hardcore player on death.")]
 		public string HardcoreKickReason = "Death results in a kick";
-		
+
+		[Description("Whether bosses or invasions should be anonymously spawned.")]
+		public bool AnonymousBossInvasions = true;
 
 		/// <summary>
 		/// Reads a configuration file from a given path

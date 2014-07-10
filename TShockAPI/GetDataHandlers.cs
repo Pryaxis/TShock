@@ -3369,13 +3369,13 @@ namespace TShockAPI
 			switch (Type)
 			{
 				case -5:
-					boss = "a snow invasion";
+					boss = "a frost moon";
 					break;
 				case -4:
-					boss = "a pumpkin invasion";
+					boss = "a pumpkin moon";
 					break;
 				case -3:
-					boss = "the pirates";
+					boss = "the Pirates";
 					break;
 				case -2:
 					boss = "the Snow Legion";
@@ -3387,8 +3387,10 @@ namespace TShockAPI
 					boss = String.Format("the {0}", npc.name);
 					break;
 			}
-
-			TShock.Utils.SendLogs(string.Format("{0} summoned {1}.", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			if (TShock.Config.AnonymousBossInvasions)
+				TShock.Utils.SendLogs(string.Format("{0} summoned {1}!", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+			else
+				TShock.Utils.Broadcast(String.Format("{0} summoned {1}!", args.Player.Name, boss), 175, 75, 255);
 			return false;
 		}
 
