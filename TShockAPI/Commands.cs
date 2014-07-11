@@ -735,7 +735,7 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideCharacter)
+					if (Main.ServerSideCharacter)
 					{
 						if (group.HasPermission(Permissions.bypassssc))
 						{
@@ -758,7 +758,7 @@ namespace TShockAPI
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
-					if (!args.Player.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
+					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
 					{
 						args.Player.PlayerData.CopyCharacter(args.Player);
 						TShock.CharacterDB.InsertPlayerData(args.Player);
@@ -1347,7 +1347,7 @@ namespace TShockAPI
 
 		private static void SaveSSC(CommandArgs args)
 		{
-			if (TShock.Config.ServerSideCharacter)
+			if (Main.ServerSideCharacter)
 			{
 				args.Player.SendSuccessMessage("SSC has been saved.");
 				foreach (TSPlayer player in TShock.Players)
@@ -1362,7 +1362,7 @@ namespace TShockAPI
 
 		private static void OverrideSSC(CommandArgs args)
 		{
-			if (!TShock.Config.ServerSideCharacter)
+			if (!Main.ServerSideCharacter)
 			{
 				args.Player.SendErrorMessage("Server Side Characters is disabled.");
 				return;
@@ -1473,7 +1473,7 @@ namespace TShockAPI
 		private static void Off(CommandArgs args)
 		{
 
-			if (TShock.Config.ServerSideCharacter)
+			if (Main.ServerSideCharacter)
 			{
 				foreach (TSPlayer player in TShock.Players)
 				{

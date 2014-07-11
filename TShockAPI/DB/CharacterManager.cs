@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Data;
+using System.Text;
 using MySql.Data.MySqlClient;
 using Terraria;
 
@@ -102,11 +103,36 @@ namespace TShockAPI.DB
 
 		public bool SeedInitialData(User user)
 		{
-			string initialItems = "-15,1,0~-13,1,0~-16,1,45~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0~0,0,0";
+			var inventory = new StringBuilder();
+			for (int i = 0; i < Terraria.Main.maxInventory; i++)
+			{
+				if (i > 0)
+				{
+					inventory.Append("~");
+				}
+				if (i < TShock.ServerSideCharacterConfig.StartingInventory.Count)
+				{
+					var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
+					inventory.Append(item.netID).Append(',').Append(item.stack).Append(',').Append(item.prefix);
+				}
+				else
+				{
+					inventory.Append("0,0,0");
+				}
+			}
+			string initialItems = inventory.ToString();
 			try
 			{
-				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);", user.ID,
-							   100, 100, 20, 20, initialItems, -1, -1, 0);
+				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);", 
+							   user.ID,
+							   TShock.ServerSideCharacterConfig.StartingHealth,
+							   TShock.ServerSideCharacterConfig.StartingHealth,
+							   TShock.ServerSideCharacterConfig.StartingMana,
+							   TShock.ServerSideCharacterConfig.StartingMana, 
+							   initialItems, 
+							   -1, 
+							   -1, 
+							   0);
 				return true;
 			}
 			catch (Exception ex)

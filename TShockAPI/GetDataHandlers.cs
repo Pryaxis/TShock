@@ -1306,7 +1306,7 @@ namespace TShockAPI
 				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
 			}
 			else if (
-				TShock.Config.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
+				Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
 				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassssc)
 			) {
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
@@ -1453,7 +1453,7 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
-					if (TShock.Config.ServerSideCharacter)
+					if (Main.ServerSideCharacter)
 					{
 						if (group.HasPermission(Permissions.bypassssc))
 						{
@@ -1476,7 +1476,7 @@ namespace TShockAPI
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
-					if (!args.Player.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
+					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
 					{
 						args.Player.PlayerData.CopyCharacter(args.Player);
 						TShock.CharacterDB.InsertPlayerData(args.Player);
@@ -1531,7 +1531,7 @@ namespace TShockAPI
 
 				    var group = TShock.Utils.GetGroup(user.Group);
 
-				    if (TShock.Config.ServerSideCharacter)
+				    if (Main.ServerSideCharacter)
 				    {
 				        if (group.HasPermission(Permissions.bypassssc))
 				        {
@@ -1554,7 +1554,7 @@ namespace TShockAPI
 				    args.Player.IsLoggedIn = true;
 				    args.Player.IgnoreActionsForInventory = "none";
 
-				    if (!args.Player.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter)
+				    if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
                     {
 				        args.Player.PlayerData.CopyCharacter(args.Player);
 				        TShock.CharacterDB.InsertPlayerData(args.Player);
@@ -1965,7 +1965,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
-					if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && TShock.Config.ServerSideCharacter)
+					if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && Main.ServerSideCharacter)
 					{
 						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
 						args.Player.SendTileSquare(tileX, tileY, 3);
@@ -2625,7 +2625,7 @@ namespace TShockAPI
                 }
             }
 			
-			if (args.TPlayer.difficulty == 2 && TShock.Config.ServerSideCharacter && args.Player.IsLoggedIn)
+			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
 				User user = TShock.Users.GetUserByName(args.Player.UserAccountName);
 				if (TShock.CharacterDB.RemovePlayer(user.ID))
@@ -2826,7 +2826,7 @@ namespace TShockAPI
 			else
 				args.Player.InitSpawn = true;
 				
-			if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
+			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
             {
 
 				args.Player.sX=args.TPlayer.SpawnX;
@@ -2836,7 +2836,7 @@ namespace TShockAPI
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
             }
 			
-            else if ((TShock.Config.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
+            else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
             {
 				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
@@ -3098,7 +3098,7 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
-			if ((TShock.Config.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.Config.LogonDiscardThreshold))
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
 			{
 			//Player is probably trying to sneak items onto the server in their hands!!!
 				Log.ConsoleInfo(string.Format("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name));

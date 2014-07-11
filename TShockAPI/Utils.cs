@@ -574,7 +574,7 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void RestartServer(bool save = true, string reason = "Server shutting down!")
 		{
-			if (TShock.Config.ServerSideCharacter)
+			if (Main.ServerSideCharacter)
 				foreach (TSPlayer player in TShock.Players)
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 						TShock.CharacterDB.InsertPlayerData(player);

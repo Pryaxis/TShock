@@ -38,6 +38,7 @@ using TShockAPI.DB;
 using TShockAPI.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
@@ -66,6 +67,7 @@ namespace TShockAPI
 		public static RememberedPosManager RememberedPos;
 		public static CharacterManager CharacterDB;
 		public static ConfigFile Config { get; set; }
+		public static ServerSideConfig ServerSideCharacterConfig;
 		public static IDbConnection DB;
 		public static bool OverridePort;
 		public static PacketBufferer PacketBuffer;
@@ -112,6 +114,10 @@ namespace TShockAPI
 			: base(game)
 		{
 			Config = new ConfigFile();
+			ServerSideCharacterConfig = new ServerSideConfig();
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -15, prefix = 0, stack = 1 });
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -13, prefix = 0, stack = 1 });
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -16, prefix = 0, stack = 1 });
 			Order = 0;
 		}
 
@@ -132,7 +138,7 @@ namespace TShockAPI
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
 
-				Main.ServerSideCharacter = Config.ServerSideCharacter;
+				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
 
 				DateTime now = DateTime.Now;
 				string logFilename;
@@ -658,7 +664,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 
-			if (TShock.Config.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideCharacterSave)
+			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -725,13 +731,13 @@ namespace TShockAPI
 					if (player.RecentFuse >0)
 						player.RecentFuse--;
 
-					if ((TShock.Config.ServerSideCharacter) && (player.TPlayer.SpawnX > 0) &&(player.sX != player.TPlayer.SpawnX))
+					if ((Main.ServerSideCharacter) && (player.TPlayer.SpawnX > 0) &&(player.sX != player.TPlayer.SpawnX))
 					{
 						player.sX=player.TPlayer.SpawnX;
 						player.sY=player.TPlayer.SpawnY;
 					}
 
-					if ((TShock.Config.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0) && (player.TPlayer.SpawnX < 0))
+					if ((Main.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0) && (player.TPlayer.SpawnX < 0))
 					{
 						player.TPlayer.SpawnX = player.sX;
 						player.TPlayer.SpawnY = player.sY;
@@ -991,7 +997,7 @@ namespace TShockAPI
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -1213,7 +1219,7 @@ namespace TShockAPI
 
 			if (!player.IsLoggedIn)
 			{
-				if (Config.ServerSideCharacter)
+				if (Main.ServerSideCharacter)
 				{
 					player.SendMessage(
 						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",

@@ -379,7 +379,7 @@ namespace TShockAPI
         /// <returns>bool - True/false if it saved successfully</returns>
         public bool SaveServerCharacter()
         {
-            if (!TShock.Config.ServerSideCharacter)
+            if (!Main.ServerSideCharacter)
             {
                 return false;
             }
@@ -402,7 +402,7 @@ namespace TShockAPI
 		/// <returns>bool - True/false if it saved successfully</returns>
 		public bool SendServerCharacter()
 		{
-			if (!TShock.Config.ServerSideCharacter)
+			if (!Main.ServerSideCharacter)
 			{
 				return false;
 			}
@@ -1129,10 +1129,10 @@ namespace TShockAPI
 	public class PlayerData
 	{
 		public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
-		public int health = 100;
-		public int maxHealth = 100;
-		public int mana = 20;
-		public int maxMana = 20;
+		public int health = TShock.ServerSideCharacterConfig.StartingHealth;
+		public int maxHealth = TShock.ServerSideCharacterConfig.StartingHealth;
+		public int mana = TShock.ServerSideCharacterConfig.StartingMana;
+		public int maxMana = TShock.ServerSideCharacterConfig.StartingMana;
 		public bool exists;
 		public int spawnX= -1;
 		public int spawnY= -1;
@@ -1166,7 +1166,12 @@ namespace TShockAPI
 			this.inventory[2].stack = 1;
 			if (player.TPlayer.inventory[2] != null && player.TPlayer.inventory[2].netID == -16)
 				this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
-			
+
+			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
+			{
+				var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
+				StoreSlot(i, item.netID, item.prefix, item.stack);
+			}
 		}
 
 		public void StoreSlot(int slot, int netID, int prefix, int stack)

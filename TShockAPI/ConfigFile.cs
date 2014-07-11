@@ -201,15 +201,6 @@ namespace TShockAPI
 		[Description("Disables the dungeon guardian from being spawned by player packets, this will instead force a respawn.")]
 		public bool DisableDungeonGuardian;
 
-		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")]
-		public bool ServerSideCharacter;
-
-		[Description("How often SSC should save, in minutes.")]
-		public int ServerSideCharacterSave = 5;
-
-		[Description("Time, in milliseconds, to disallow discarding items after logging in when ServerSideInventory is ON.")]
-		public int LogonDiscardThreshold = 250;
-
 		[Description("Disables clown bomb projectiles from spawning.")]
 		public bool DisableClownBombs;
 

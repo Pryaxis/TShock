@@ -260,7 +260,7 @@ namespace TShockAPI
 				rules.Add("PvPMode", TShock.Config.PvPMode);
 				rules.Add("SpawnProtection", TShock.Config.SpawnProtection);
 				rules.Add("SpawnProtectionRadius", TShock.Config.SpawnProtectionRadius);
-				rules.Add("ServerSideInventory", TShock.Config.ServerSideCharacter);
+				rules.Add("ServerSideInventory", Main.ServerSideCharacter);
 
 				ret.Add("rules", rules);
 			}
