@@ -1418,7 +1418,7 @@ namespace TShockAPI
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
 			Main.checkXMas();
-			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
 		}
 
 		private static void TempGroup(CommandArgs args)
