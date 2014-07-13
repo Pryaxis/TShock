@@ -1101,6 +1101,7 @@ namespace TShockAPI
 						}
 
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
+						string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
 						if (players.Count == 0)
 						{
 							var user = TShock.Users.GetUserByName(args.Parameters[1]);
@@ -1112,7 +1113,6 @@ namespace TShockAPI
 								else
 								{
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-									string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName);
 									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
 										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
@@ -1127,7 +1127,6 @@ namespace TShockAPI
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 						else
 						{
-							string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
 							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
 						}
@@ -1161,25 +1160,44 @@ namespace TShockAPI
 							return;
 						}
 
+						int time;
+						if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
+						{
+							args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
+							args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
+							return;
+						}
+
+						string reason = args.Parameters.Count > 3
+											? String.Join(" ", args.Parameters.Skip(3))
+											: "Misbehavior.";
+
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
 						if (players.Count == 0)
-							args.Player.SendErrorMessage("Invalid player!");
+						{
+							var user = TShock.Users.GetUserByName(args.Parameters[1]);
+							if (user != null)
+							{
+								bool force = !args.Player.RealPlayer;
+								if (TShock.Groups.GetGroupByName(user.Group).HasPermission(Permissions.immunetoban) && !force)
+									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
+								else
+								{
+									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName, DateTime.UtcNow.AddSeconds(time).ToString("s"));
+									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
+										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									else
+										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+								}
+							}
+							else
+								args.Player.SendErrorMessage("Invalid player or account!");
+						}
 						else if (players.Count > 1)
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 						else
 						{
-							int time;
-							if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
-							{
-								args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
-								args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
-								return;
-							}
-
-							string reason = args.Parameters.Count > 3
-												? String.Join(" ", args.Parameters.GetRange(3, args.Parameters.Count - 3))
-												: "Misbehavior.";
-
 							if (args.Player.RealPlayer && players[0].Group.HasPermission(Permissions.immunetoban))
 							{
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
@@ -1190,7 +1208,6 @@ namespace TShockAPI
 								false, args.Player.Name, DateTime.UtcNow.AddSeconds(time).ToString("s")))
 							{
 								players[0].Disconnect(String.Format("Banned: {0}", reason));
-								Log.ConsoleInfo("Banned {0} for : '{1}'", players[0].Name, reason);
 								string verb = args.Player.RealPlayer ? "force " : "";
 								if (args.Player.RealPlayer)
 									TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
