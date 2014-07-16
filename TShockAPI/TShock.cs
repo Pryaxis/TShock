@@ -398,7 +398,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					player.Disconnect("Connection killed");
+					Netplay.serverSock[player.Index].kill = true;
 					args.Handled = true;
 					return;
 				}
@@ -408,7 +408,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 					if (ips.Contains(ip))
 					{
-						player.Disconnect("Connection killed");
+						Netplay.serverSock[player.Index].kill = true;
 						args.Handled = true;
 						return;
 					}
