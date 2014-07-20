@@ -484,11 +484,7 @@ namespace TShockAPI
 		/// <returns>Prefix name</returns>
 		public string GetPrefixById(int id)
 		{
-			var item = new Item();
-			item.SetDefaults(0);
-			item.prefix = (byte) id;
-			item.AffixName();
-			return item.name.Trim();
+			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id] ?? "";
 		}
 
 		/// <summary>
