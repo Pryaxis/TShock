@@ -506,9 +506,6 @@ namespace TShockAPI
 			if (!bool.TryParse(parameters["killfriendly"], out killFriendly))
 				return RestInvalidParam("killfriendly");
 
-			if (killFriendly)
-				killFriendly = !killFriendly;
-
 			int killcount = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
