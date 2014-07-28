@@ -67,6 +67,9 @@ namespace TShockAPI
 		[Description("User can manage projectile bans.")]
 		public static readonly string manageprojectile = "tshock.admin.projectileban";
 
+		[Description("User can manage tile bans.")]
+		public static readonly string managetile = "tshock.admin.tileban";
+
 		[Description("User can manage groups.")]
 		public static readonly string managegroup = "tshock.admin.group";
 
@@ -342,6 +345,9 @@ namespace TShockAPI
 
 		[Description("Player can use banned projectiles.")]
 		public static readonly string canusebannedprojectiles = "tshock.projectiles.usebanned";
+
+		[Description("Player can place banned tiles.")]
+		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
 
 		/// <summary>
 		/// Lists all commands associated with a given permission

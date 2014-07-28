@@ -64,6 +64,7 @@ namespace TShockAPI
 		public static UserManager Users;
 		public static ItemManager Itembans;
 		public static ProjectileManagager ProjectileBans;
+		public static TileManager TileBans;
 		public static RememberedPosManager RememberedPos;
 		public static CharacterManager CharacterDB;
 		public static ConfigFile Config { get; set; }
@@ -231,6 +232,7 @@ namespace TShockAPI
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
 				ProjectileBans = new ProjectileManagager(DB);
+				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);

@@ -1910,6 +1910,17 @@ namespace TShockAPI
 				Item selectedItem = args.Player.SelectedItem;
 				int lastKilledProj = args.Player.LastKilledProjectile;
 				Tile tile = Main.tile[tileX, tileY];
+
+				if (action == EditAction.PlaceTile)
+				{
+					if (TShock.TileBans.TileIsBanned(editData, args.Player))
+					{
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						args.Player.SendErrorMessage("You do not have permission to place this tile.");
+						return true;
+					}
+				}
+
 				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.

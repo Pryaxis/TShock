@@ -240,6 +240,10 @@ namespace TShockAPI
             {
                 HelpText = "Manages projectile bans."
             });
+			add(new Command(Permissions.managetile, TileBan, "tileban")
+			{
+				HelpText = "Manages tile bans."
+			});
 			add(new Command(Permissions.manageregion, Region, "region")
 			{
 				HelpText = "Manages regions."
@@ -3090,9 +3094,178 @@ namespace TShockAPI
 		}
 		#endregion Projectile Management
 
-        #region Server Config Commands
+		#region Tile Management
+		private static void TileBan(CommandArgs args)
+		{
+			string subCmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+			switch (subCmd)
+			{
+				case "add":
+					#region Add tile
+					{
+						if (args.Parameters.Count != 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tileban add <tile id>");
+							return;
+						}
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						{
+							TShock.TileBans.AddNewBan(id);
+							args.Player.SendSuccessMessage("Banned tile {0}.", id);
+						}
+						else
+							args.Player.SendErrorMessage("Invalid tile ID!");
+					}
+					#endregion
+					return;
+				case "allow":
+					#region Allow group to place tile
+					{
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tileban allow <id> <group>");
+							return;
+						}
 
-        private static void SetSpawn(CommandArgs args)
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						{
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							TileBan ban = TShock.TileBans.GetBanById(id);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage("Tile {0} is not banned.", id);
+								return;
+							}
+							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.TileBans.AllowGroup(id, args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been allowed to place tile {1}.", args.Parameters[2], id);
+							}
+							else
+								args.Player.SendWarningMessage("{0} is already allowed to place tile {1}.", args.Parameters[2], id);
+						}
+						else
+							args.Player.SendErrorMessage("Invalid tile ID!");
+					}
+					#endregion
+					return;
+				case "del":
+					#region Delete tile ban
+					{
+						if (args.Parameters.Count != 2)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tileban del <id>");
+							return;
+						}
+
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						{
+							TShock.TileBans.RemoveBan(id);
+							args.Player.SendSuccessMessage("Unbanned tile {0}.", id);
+							return;
+						}
+						else
+							args.Player.SendErrorMessage("Invalid tile ID!");
+					}
+					#endregion
+					return;
+				case "disallow":
+					#region Disallow group from placing tile
+					{
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tileban disallow <id> <group name>");
+							return;
+						}
+
+						short id;
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						{
+							if (!TShock.Groups.GroupExists(args.Parameters[2]))
+							{
+								args.Player.SendErrorMessage("Invalid group.");
+								return;
+							}
+
+							TileBan ban = TShock.TileBans.GetBanById(id);
+							if (ban == null)
+							{
+								args.Player.SendErrorMessage("Tile {0} is not banned.", id);
+								return;
+							}
+							if (ban.AllowedGroups.Contains(args.Parameters[2]))
+							{
+								TShock.TileBans.RemoveGroup(id, args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been disallowed from placing tile {1}.", args.Parameters[2], id);
+								return;
+							}
+							else
+								args.Player.SendWarningMessage("{0} is already prevented from placing tile {1}.", args.Parameters[2], id);
+						}
+						else
+							args.Player.SendErrorMessage("Invalid tile ID!");
+					}
+					#endregion
+					return;
+				case "help":
+					#region Help
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+
+						var lines = new List<string>
+						{
+							"add <tile ID> - Adds a tile ban.",
+							"allow <tile ID> <group> - Allows a group to place a tile.",
+							"del <tile ID> - Deletes a tile ban.",
+							"disallow <tile ID> <group> - Disallows a group from place a tile.",
+							"list [page] - Lists all tile bans."
+                        };
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Tile Ban Sub-Commands ({0}/{1}):",
+								FooterFormat = "Type /tileban help {0} for more sub-commands."
+							}
+						);
+					}
+					#endregion
+					return;
+				case "list":
+					#region List tile bans
+					{
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
+						IEnumerable<Int16> tileIds = from tileBan in TShock.TileBans.TileBans
+														   select tileBan.ID;
+						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(tileIds),
+							new PaginationTools.Settings
+							{
+								HeaderFormat = "Tile bans ({0}/{1}):",
+								FooterFormat = "Type /tileban list {0} for more.",
+								NothingToDisplayString = "There are currently no banned tiles."
+							});
+					}
+					#endregion
+					return;
+			}
+		}
+		#endregion Tile Management
+
+		#region Server Config Commands
+
+		private static void SetSpawn(CommandArgs args)
 		{
 			Main.spawnTileX = args.Player.TileX + 1;
 			Main.spawnTileY = args.Player.TileY + 3;
