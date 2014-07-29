@@ -1166,7 +1166,7 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38 && (int) type != 21)
+				(int) type != 38 && (int) type != 21 && (int) type != 22)
 			{
 				e.Handled = true;
 				return;

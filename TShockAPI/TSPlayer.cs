@@ -69,16 +69,19 @@ namespace TShockAPI
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		/// </summary>
 		public int RecentFuse = 0;
-		
+
+		/// <summary>
+		/// Whether to ignore packets that are SSC-relevant.
+		/// </summary>
+		public bool IgnoreSSCPackets { get; set; }
+
 		/// <summary>
 		/// A system to delay Remembered Position Teleports a few seconds
 		/// </summary>
-		
 		public int RPPending = 0;
 		
 		public int sX = -1;
 		public int sY = -1;
-		
 		
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
@@ -89,10 +92,6 @@ namespace TShockAPI
         /// A queue of tiles placed by the player for reverting.
         /// </summary>
 		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
-
-		public int FirstMaxHP { get; set; }
-
-		public int FirstMaxMP { get; set; }
 
 	    /// <summary>
 	    /// The player's group.
@@ -1300,6 +1299,9 @@ namespace TShockAPI
 
 		public void RestoreCharacter(TSPlayer player)
 		{
+			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
+			player.IgnoreSSCPackets = true;
+
 			player.TPlayer.statLife = this.health;
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.maxMana;
@@ -1461,6 +1463,8 @@ namespace TShockAPI
 			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(76, -1, -1, "", player.Index);
+
+			NetMessage.SendData(39, player.Index, -1, "", 400);
 		}
 	}
 

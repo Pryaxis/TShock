@@ -154,6 +154,12 @@ namespace TShockAPI
 		[Description("Allow dropping banned items without the item being eaten.")]
 		public static readonly string allowdroppingbanneditems = "tshock.ignore.dropbanneditem";
 
+		[Description("Prevents you from being disabled by abnormal HP.")]
+		public static readonly string ignorehp = "tshock.ignore.hp";
+
+		[Description("Prevents you from being disabled by abnormal MP.")]
+		public static readonly string ignoremp = "tshock.ignore.mp";
+
 		// tshock.item nodes
 
 		[Description("User can spawn items.")]

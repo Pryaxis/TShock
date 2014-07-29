@@ -382,6 +382,12 @@ namespace TShockAPI
 		[Description("Whether bosses or invasions should be anonymously spawned.")]
 		public bool AnonymousBossInvasions = true;
 
+		[Description("The maximum allowable HP, before equipment buffs.")]
+		public int MaxHP = 500;
+
+		[Description("The maximum allowable MP, before equipment buffs.")]
+		public int MaxMP = 200;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>

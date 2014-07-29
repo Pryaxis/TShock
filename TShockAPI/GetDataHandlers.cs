@@ -1229,6 +1229,7 @@ namespace TShockAPI
 					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
 					{ PacketTypes.ItemDrop, HandleItemDrop },
+					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
 					{ PacketTypes.PlayerDamage, HandlePlayerDamage },
@@ -1283,18 +1284,8 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(plr, slot, stack, prefix, type))
+			if (OnPlayerSlot(plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 || slot > NetItem.maxNetInventory || args.Player.IgnoreSSCPackets)
 				return true;
-
-			if (plr != args.Player.Index)
-			{
-				return true;
-			}
-
-			if (slot < 0 || slot > NetItem.maxNetInventory)
-			{
-				return true;
-			}
 
 			// Garabage? Or will it cause some internal initialization or whatever?
 			var item = new Item();
@@ -1305,10 +1296,9 @@ namespace TShockAPI
 			{
 				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
 			}
-			else if (
-				Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck && 
-				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassssc)
-			) {
+			else if (Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
+				args.Player.HasSentInventory && !args.Player.Group.HasPermission(Permissions.bypassssc))
+			{
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
 				args.Player.IgnoreActionsForClearingTrashCan = true;
 			}
@@ -1328,16 +1318,12 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerHP(plr, cur, max) || cur <= 0)
+			if (OnPlayerHP(plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
-			if (args.Player.FirstMaxHP == 0)
-				args.Player.FirstMaxHP = max;
-
-			if (cur < 0 || cur > 600 || max < 100 || max > 600) //Abnormal values have the potential to cause infinite loops in the server.
+			if ((max > TShock.Config.MaxHP || cur > max) && !args.Player.Group.HasPermission(Permissions.ignorehp))
 			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-                Log.ConsoleError("HP Exploit Attempt: Current HP {0}, Max HP {0}", cur, max);
+				args.Player.Disable("Maximum HP beyond limit");
 				return true;
 			}
 
@@ -1350,9 +1336,8 @@ namespace TShockAPI
 
 			if (args.Player.GodMode && (cur < max))
 			{
-				args.Player.Heal(args.TPlayer.statLifeMax);
+				args.Player.Heal(args.TPlayer.statLifeMax2);
 			}
-
 			return false;
 		}
 
@@ -1362,11 +1347,14 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerMana(plr, cur, max))
+			if (OnPlayerMana(plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
-			if (args.Player.FirstMaxMP == 0)
-				args.Player.FirstMaxMP = max;
+			if ((max > TShock.Config.MaxMP || cur > max) && !args.Player.Group.HasPermission(Permissions.ignoremp))
+			{
+				args.Player.Disable("Maximum MP beyond limit");
+				return true;
+			}
 
 			if (args.Player.IsLoggedIn)
 			{
@@ -1374,7 +1362,6 @@ namespace TShockAPI
 				args.Player.TPlayer.statManaMax = max;
 				args.Player.PlayerData.maxMana = max;
 			}
-
 			return false;
 		}
 
@@ -3120,6 +3107,23 @@ namespace TShockAPI
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleItemOwner(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var owner = args.Data.ReadInt8();
+
+			if (id < 0 || id > 400)
+				return true;
+
+			if (id == 400 && owner == 255)
+			{
+				args.Player.IgnoreSSCPackets = false;
 				return true;
 			}
 
