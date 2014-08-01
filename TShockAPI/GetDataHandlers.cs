@@ -1321,7 +1321,7 @@ namespace TShockAPI
 			if (OnPlayerHP(plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
-			if ((max > TShock.Config.MaxHP || cur > max) && !args.Player.Group.HasPermission(Permissions.ignorehp))
+			if (max > TShock.Config.MaxHP && !args.Player.Group.HasPermission(Permissions.ignorehp))
 			{
 				args.Player.Disable("Maximum HP beyond limit");
 				return true;
@@ -1350,7 +1350,7 @@ namespace TShockAPI
 			if (OnPlayerMana(plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
-			if ((max > TShock.Config.MaxMP || cur > max) && !args.Player.Group.HasPermission(Permissions.ignoremp))
+			if (max > TShock.Config.MaxMP && !args.Player.Group.HasPermission(Permissions.ignoremp))
 			{
 				args.Player.Disable("Maximum MP beyond limit");
 				return true;
