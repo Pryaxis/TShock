@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using TShockAPI.DB;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -379,6 +380,10 @@ namespace TShockAPI
 			add(new Command(Permissions.invade, FrostMoon, "frostmoon", "fmoon")
 			{
 				HelpText = "Starts a Frost Moon at the specified wave."
+			});
+			add(new Command(Permissions.clearangler, ClearAnglerQuests, "clearangler")
+			{
+				HelpText = "Resets the list of users who have completed an angler quest that day."
 			});
 			#endregion
 			#region TP Commands
@@ -1516,7 +1521,7 @@ namespace TShockAPI
 		
 		private static void Restart(CommandArgs args)
 		{
-			if (Main.runningMono)
+			if (ServerApi.RunningMono)
 			{
 				Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono.");
 			}
@@ -1700,6 +1705,32 @@ namespace TShockAPI
 			NPC.waveKills = 0f;
 			NPC.waveCount = wave;
 			TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
+		}
+
+		private static void ClearAnglerQuests(CommandArgs args)
+		{
+			if (args.Parameters.Count > 0)
+			{
+				var result = Main.anglerWhoFinishedToday.RemoveAll(s => s.ToLower().Equals(args.Parameters[0].ToLower()));
+				if (result > 0)
+				{
+					args.Player.SendSuccessMessage("Removed {0} players from the angler quest completion list for today.", result);
+					foreach (TSPlayer ply in TShock.Players.Where(p => p!= null && p.Active && p.TPlayer.name.ToLower().Equals(args.Parameters[0].ToLower())))
+					{
+						//this will always tell the client that they have not done the quest today.
+						ply.SendData((PacketTypes)74, "");
+					}
+				}
+				else
+					args.Player.SendErrorMessage("Failed to find any users by that name on the list.");
+
+			}
+			else
+			{
+				Main.anglerWhoFinishedToday.Clear();
+				NetMessage.SendAnglerQuest();
+				args.Player.SendSuccessMessage("Cleared all users from the angler quest completion list for today.");
+			}
 		}
 
 		private static void Hardmode(CommandArgs args)

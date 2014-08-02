@@ -197,7 +197,7 @@ namespace TShockAPI
 			{
 				if (socket.tcpClient.Client != null && socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
 				{
-					if (Main.runningMono)
+					if (ServerApi.RunningMono)
 						socket.networkStream.Write(buffer, offset, count);
 					else
 						socket.tcpClient.Client.Send(buffer, offset, count, SocketFlags.None);

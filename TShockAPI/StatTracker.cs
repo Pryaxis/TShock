@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.IO;
 using System.Web;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -54,7 +55,7 @@ namespace TShockAPI
 				systemCPUClock = 0,
 				version = TShock.VersionNum.ToString(),
 				terrariaVersion = Terraria.Main.versionNumber2,
-				mono = Terraria.Main.runningMono
+				mono = ServerApi.RunningMono
 			};
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
