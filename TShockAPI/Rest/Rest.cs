@@ -37,17 +37,31 @@ namespace Rests
 	/// <param name="parameters">Parameters in the url</param>
 	/// <param name="verbs">{x} in urltemplate</param>
 	/// <returns>Response object or null to not handle request</returns>
-	public delegate object RestCommandD(RestVerbs verbs, IParameterCollection parameters);
+	public delegate object RestCommandD(RestRequestArgs args);
 
-	/// <summary>
-	/// Secure Rest command delegate including token data.
-	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
-	/// <param name="tokenData">The data of stored for the provided token.</param>
-	/// <returns>Response object or null to not handle request</returns>
-	public delegate object SecureRestCommandD(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData);
+	public class RestRequestArgs
+	{
+		public RestVerbs Verbs { get; private set; }
+		public IParameterCollection Parameters { get; private set; }
+		public IRequest Request { get; private set; }
+		public SecureRest.TokenData TokenData { get; private set; }
 
+		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request)
+		{
+			Verbs = verbs;
+			Parameters = param;
+			Request = request;
+			TokenData = SecureRest.TokenData.None;
+		}
+
+		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, SecureRest.TokenData tokenData)
+		{
+			Verbs = verbs;
+			Parameters = param;
+			Request = request;
+			TokenData = tokenData;
+		}
+	}
 	public class Rest : IDisposable
 	{
 		private readonly List<RestCommand> commands = new List<RestCommand>();
@@ -173,7 +187,7 @@ namespace Rests
 						continue;
 					}
 
-					var obj = ExecuteCommand(com, verbs, e.Request.Parameters);
+					var obj = ExecuteCommand(com, verbs, e.Request.Parameters, e.Request);
 					if (obj != null)
 						return obj;
 				}
@@ -193,9 +207,9 @@ namespace Rests
 			       	};
 		}
 
-		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
+		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request)
 		{
-			object result = cmd.Execute(verbs, parms);
+			object result = cmd.Execute(verbs, parms, request);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
 				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));

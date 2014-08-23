@@ -65,9 +65,9 @@ namespace Rests
 			get { return UriVerbs.Length > 0; }
 		}
 
-		public virtual object Execute(RestVerbs verbs, IParameterCollection parameters)
+		public virtual object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request)
 		{
-			return callback(verbs, parameters);
+			return callback(new RestRequestArgs(verbs, parameters, request));
 		}
 	}
 
@@ -76,31 +76,31 @@ namespace Rests
 		public override bool RequiresToken { get { return true; } }
 		public string[] Permissions { get; set; }
 
-		private SecureRestCommandD callback;
+		private RestCommandD callback;
 
-		public SecureRestCommand(string name, string uritemplate, SecureRestCommandD callback, params string[] permissions)
+		public SecureRestCommand(string name, string uritemplate, RestCommandD callback, params string[] permissions)
 			: base(name, uritemplate, null)
 		{
 			this.callback = callback;
 			Permissions = permissions;
 		}
 
-		public SecureRestCommand(string uritemplate, SecureRestCommandD callback, params string[] permissions)
+		public SecureRestCommand(string uritemplate, RestCommandD callback, params string[] permissions)
 			: this(string.Empty, uritemplate, callback, permissions)
 		{
 		}
 
-		public override object Execute(RestVerbs verbs, IParameterCollection parameters)
+		public override object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request)
 		{
 			return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
 		}
 
-		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData, IRequest request)
 		{
 			if (tokenData.Equals(SecureRest.TokenData.None))
 				return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
 
-			return callback(verbs, parameters, tokenData);
+			return callback(new RestRequestArgs(verbs, parameters, request, tokenData));
 		}
 	}
 }

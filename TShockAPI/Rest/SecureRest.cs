@@ -84,9 +84,9 @@ namespace Rests
 			}
 		}
 
-		private object DestroyToken(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		private object DestroyToken(RestRequestArgs args)
 		{
-			var token = verbs["token"];
+			var token = args.Verbs["token"];
 			try
 			{
 				Tokens.Remove(token);
@@ -100,7 +100,7 @@ namespace Rests
 			       	{ Response = "Requested token was successfully destroyed." };
 		}
 
-		private object DestroyAllTokens(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData)
+		private object DestroyAllTokens(RestRequestArgs args)
 		{
 			Tokens.Clear();
 
@@ -108,18 +108,18 @@ namespace Rests
 			       	{ Response = "All tokens were successfully destroyed." };
 		}
 
-		private object NewTokenV2(RestVerbs verbs, IParameterCollection parameters)
+		private object NewTokenV2(RestRequestArgs args)
 		{
-			var user = parameters["username"];
-			var pass = verbs["password"];
+			var user = args.Parameters["username"];
+			var pass = args.Verbs["password"];
 
 			return this.NewTokenInternal(user, pass);
 		}
 
-		private object NewToken(RestVerbs verbs, IParameterCollection parameters)
+		private object NewToken(RestRequestArgs args)
 		{
-			var user = verbs["username"];
-			var pass = verbs["password"];
+			var user = args.Verbs["username"];
+			var pass = args.Verbs["password"];
 
 			RestObject response = this.NewTokenInternal(user, pass);
 			response["deprecated"] = "This endpoint is depracted and will be removed in the future.";
@@ -157,10 +157,10 @@ namespace Rests
 			return response;
 		}
 
-		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms)
+		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request)
 		{
 			if (!cmd.RequiresToken)
-				return base.ExecuteCommand(cmd, verbs, parms);
+				return base.ExecuteCommand(cmd, verbs, parms, request);
 			
 			var token = parms["token"];
 			if (token == null)
@@ -191,7 +191,7 @@ namespace Rests
 				}
 			}
 
-			object result = secureCmd.Execute(verbs, parms, tokenData);
+			object result = secureCmd.Execute(verbs, parms, tokenData, request);
 			if (cmd.DoLog && TShock.Config.LogRest)
 				TShock.Utils.SendLogs(string.Format(
 					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)), 
