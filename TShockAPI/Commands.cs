@@ -3355,8 +3355,8 @@ namespace TShockAPI
 
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 600;
-				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 600.", args.Player.Name);
+				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
+				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
 				return;
 			}
 
