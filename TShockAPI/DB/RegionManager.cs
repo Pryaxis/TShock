@@ -38,12 +38,13 @@ namespace TShockAPI.DB
 		{
 			database = db;
 			var table = new SqlTable("Regions",
+									 new SqlColumn("Id", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
 			                         new SqlColumn("X1", MySqlDbType.Int32),
 			                         new SqlColumn("Y1", MySqlDbType.Int32),
 			                         new SqlColumn("width", MySqlDbType.Int32),
 			                         new SqlColumn("height", MySqlDbType.Int32),
-			                         new SqlColumn("RegionName", MySqlDbType.VarChar, 50) {Primary = true},
-			                         new SqlColumn("WorldID", MySqlDbType.Text),
+			                         new SqlColumn("RegionName", MySqlDbType.VarChar, 50) {Unique = true},
+									 new SqlColumn("WorldID", MySqlDbType.Text) {Unique = true},
 			                         new SqlColumn("UserIds", MySqlDbType.Text),
 			                         new SqlColumn("Protected", MySqlDbType.Int32),
 			                         new SqlColumn("Groups", MySqlDbType.Text),
@@ -111,53 +112,6 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				Log.Error(ex.ToString());
-			}
-		}
-
-		public void ReloadForUnitTest(String n)
-		{
-			using (var reader = database.QueryReader("SELECT * FROM Regions WHERE WorldID=@0", n))
-			{
-				Regions.Clear();
-				while (reader.Read())
-				{
-					int X1 = reader.Get<int>("X1");
-					int Y1 = reader.Get<int>("Y1");
-					int height = reader.Get<int>("height");
-					int width = reader.Get<int>("width");
-					int Protected = reader.Get<int>("Protected");
-					string MergedIDs = reader.Get<string>("UserIds");
-					string name = reader.Get<string>("RegionName");
-					string[] SplitIDs = MergedIDs.Split(',');
-					string owner = reader.Get<string>("Owner");
-					string groups = reader.Get<string>("Groups");
-				    int z = reader.Get<int>("Z");
-
-					Region r = new Region(new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString(), z);
-					r.SetAllowedGroups(groups);
-					try
-					{
-						for (int i = 0; i < SplitIDs.Length; i++)
-						{
-							int id;
-
-							if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
-								r.AllowedIDs.Add(id);
-							else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
-								// but we only want to let the user know if it's really a nonparsable integer.
-								Log.Warn("UnitTest: One of your UserIDs is not a usable integer: " + SplitIDs[i]);
-						}
-					}
-					catch (Exception e)
-					{
-						Log.Error("Your database contains invalid UserIDs (they should be ints).");
-						Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-						Log.Error(e.Message);
-						Log.Error(e.StackTrace);
-					}
-
-					Regions.Add(r);
-				}
 			}
 		}
 
@@ -467,16 +421,6 @@ namespace TShockAPI.DB
 		public Region GetRegionByName(String name)
 		{
 			return Regions.FirstOrDefault(r => r.Name.Equals(name) && r.WorldID == Main.worldID.ToString());
-		}
-
-		public Region ZacksGetRegionByName(String name)
-		{
-			foreach (Region r in Regions)
-			{
-				if (r.Name.Equals(name))
-					return r;
-			}
-			return null;
 		}
 
 		public bool ChangeOwner(string regionName, string newOwner)

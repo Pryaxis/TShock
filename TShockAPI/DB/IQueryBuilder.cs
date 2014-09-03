@@ -44,10 +44,15 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"'{0}' {1} {2} {3} {4} {5}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
-													c.AutoIncrement ? "AUTOINCREMENT" : "", c.NotNull ? "NOT NULL" : "",
-													c.Unique ? "UNIQUE" : ""));
-			return "CREATE TABLE {0} ({1})".SFormat(EscapeTableName(table.Name), string.Join(", ", columns));
+					"'{0}' {1} {2} {3} {4}".SFormat(c.Name, 
+													DbTypeToString(c.Type, c.Length), 
+													c.Primary ? "PRIMARY KEY" : "",
+													c.AutoIncrement ? "AUTOINCREMENT" : "", 
+													c.NotNull ? "NOT NULL" : ""));
+			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
+			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), 
+														string.Join(", ", columns),
+														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
 		}
 
 		public override string RenameTable(string from, string to)
