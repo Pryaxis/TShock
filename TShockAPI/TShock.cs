@@ -77,6 +77,7 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
 		public static StatTracker StatTracker = new StatTracker();
+		public static UpdateManager UpdateManager;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -613,6 +614,7 @@ namespace TShockAPI
 			FixChestStacks();
 			
 			StatTracker.Initialize();
+			UpdateManager = new UpdateManager();
 		}
 
 		private void ComputeMaxStyles()
@@ -656,7 +658,6 @@ namespace TShockAPI
 
 		private void OnUpdate(EventArgs args)
 		{
-			UpdateManager.UpdateProcedureCheck();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update

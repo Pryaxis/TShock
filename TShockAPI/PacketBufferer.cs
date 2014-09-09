@@ -197,10 +197,10 @@ namespace TShockAPI
 			{
 				if (socket.tcpClient.Client != null && socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
 				{
-					if (ServerApi.RunningMono)
+					if (ServerApi.RunningMono && !ServerApi.UseAsyncSocketsInMono)
 						socket.networkStream.Write(buffer, offset, count);
 					else
-						socket.tcpClient.Client.Send(buffer, offset, count, SocketFlags.None);
+						socket.networkStream.BeginWrite(buffer, offset, count, socket.ServerWriteCallBack, socket.networkStream);
 					return true;
 				}
 			}

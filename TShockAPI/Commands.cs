@@ -1541,7 +1541,15 @@ namespace TShockAPI
 		private static void CheckUpdates(CommandArgs args)
 		{
             args.Player.SendInfoMessage("An update check has been queued.");
-			ThreadPool.QueueUserWorkItem(UpdateManager.CheckUpdate);
+			try
+			{
+				TShock.UpdateManager.UpdateCheck(null);
+			}
+			catch (Exception)
+			{
+				//swallow the exception
+				return;
+			}
 		}
 
         private static void UpdatePlugins(CommandArgs args)
@@ -3363,7 +3371,7 @@ namespace TShockAPI
 			int maxSpawns = -1;
 			if (!int.TryParse(args.Parameters[0], out maxSpawns) || maxSpawns < 0 || maxSpawns > Main.maxNPCs)
 			{
-				args.Player.SendWarningMessage("Invalid maximum spawns!");
+				args.Player.SendWarningMessage("Invalid maximum spawns!  Acceptable range is {0} to {1}", 0, Main.maxNPCs);
 				return;
 			}
 
