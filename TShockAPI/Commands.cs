@@ -4316,42 +4316,55 @@ namespace TShockAPI
 		}
 
 		private static void Mute(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> [reason]");
-				return;
-			}
-
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
-			if (players.Count == 0)
-			{
-				args.Player.SendErrorMessage("Invalid player!");
-			}
-			else if (players.Count > 1)
-			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-			}
-			else if (players[0].Group.HasPermission(Permissions.mute))
-			{
-				args.Player.SendErrorMessage("You cannot mute this player.");
-			}
-			else if (players[0].mute)
-			{
-				var plr = players[0];
-				plr.mute = false;
-				TSPlayer.All.SendInfoMessage("{0} has been unmuted by {1}.", plr.Name, args.Player.Name);
-			}
-			else
-			{
-				string reason = "misbehavior";
-				if (args.Parameters.Count > 1)
-					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				var plr = players[0];
-				plr.mute = true;
-				TSPlayer.All.SendInfoMessage("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason);
-			}
-		}
+	        {
+	            if (args.Parameters.Count < 1)
+	            {
+	                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /mute <player> <time> [reason]");
+	                return;
+	            }
+	
+	            var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+	            if (players.Count == 0)
+	            {
+	                args.Player.SendErrorMessage("Invalid player!");
+	            }
+	            else if (players.Count > 1)
+	            {
+	                TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+	            }
+	            else if (players[0].Group.HasPermission(Permissions.mute))
+	            {
+	                args.Player.SendErrorMessage("You cannot mute this player.");
+	            }
+	            else if (players[0].mute)
+	            {
+	                var plr = players[0];
+	                if (TShock.Mutes.RemoveMute(plr.Name, true));
+	                {
+	                    plr.mute = false;
+	                    TSPlayer.All.SendInfoMessage("{0} has been unmuted by {1}.", plr.Name, args.Player.Name);
+	                }
+	            }
+	            else
+	            {
+	                var plr = players[0];
+	                int time;
+	                if (!TShock.Utils.TryParseTime(args.Parameters[1], out time))
+	                {
+	                    args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
+	                    args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
+	                    return;
+	                }
+	
+	                string reason = args.Parameters.Count > 2
+	                    ? String.Join(" ", args.Parameters.Skip(2))
+	                    : "Misbehavior.";
+	
+	                TShock.Mutes.AddMute(players[0].Name, players[0].IP, DateTime.UtcNow.AddSeconds(time).ToString("s"), args.Player.UserAccountName, reason);
+	                TSPlayer.All.SendInfoMessage("{0} has been muted for {1} by for {2}.", plr.Name, args.Player.Name, reason);
+					plr.mute = true;
+	            }
+	        }
 
 		private static void Motd(CommandArgs args)
 		{
