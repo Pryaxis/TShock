@@ -709,6 +709,27 @@ namespace TShockAPI
 
 	        return false;
 	    }
+	    
+	public bool HasMuteExpired(Mute mute, bool byName = false)
+        {
+            DateTime exp;
+            bool expirationExists = DateTime.TryParse(mute.UnmuteDate, out exp);
+
+            if (!string.IsNullOrWhiteSpace(mute.UnmuteDate) && (expirationExists) &&
+                (DateTime.UtcNow >= exp))
+            {
+                if (byName)
+                {
+                    TShock.Mutes.RemoveMute(mute.Account, true, true, false);
+                }
+                else
+                {
+                    TShock.Mutes.RemoveMute(mute.IP, false, true, false);
+                }
+                return true;
+            }
+            return false;
+        }
 
 		/// <summary>
 		/// Shows a file to the user.
