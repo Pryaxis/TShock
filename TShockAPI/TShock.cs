@@ -927,6 +927,23 @@ namespace TShockAPI
 				return;
 			}
 
+	            Mute mute = null;
+	            mute = Mutes.GetMuteByAccount(player.Name);
+	            mute = Mutes.GetMuteByIp(player.IP);
+	            if (mute != null)
+	            {
+	                if (!Utils.HasMuteExpired(mute))
+	                {
+	                    player.mute = true;
+	                    Log.Info(string.Format("{0} was muted on login.", player.Name));
+	                }
+	                else
+	                {
+	                    player.mute = false;
+	                    Log.Info(string.Format("{0} was unmuted on login.", player.Name));
+	                }
+	            }
+
 			Ban ban = null;
 			if (Config.EnableBanOnUsernames)
 			{
@@ -986,7 +1003,7 @@ namespace TShockAPI
 					}
 					args.Handled = true;
 			    }
-			}            
+			}
 		}
 
 		private void OnLeave(LeaveEventArgs args)
