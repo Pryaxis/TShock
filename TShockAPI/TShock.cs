@@ -57,8 +57,9 @@ namespace TShockAPI
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
+		public static MuteManager Mutes;
 		public static WarpManager Warps;
-        public static RegionManager Regions;
+		public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
@@ -227,6 +228,7 @@ namespace TShockAPI
 				Backups.KeepFor = Config.BackupKeepFor;
 				Backups.Interval = Config.BackupInterval;
 				Bans = new BanManager(DB);
+				Mutes = new MuteManager(DB);
 				Warps = new WarpManager(DB);
                 Regions = new RegionManager(DB);
 				Users = new UserManager(DB);
@@ -927,6 +929,23 @@ namespace TShockAPI
 				return;
 			}
 
+	            Mute mute = null;
+	            mute = Mutes.GetMuteByAccount(player.Name);
+	            mute = Mutes.GetMuteByIp(player.IP);
+	            if (mute != null)
+	            {
+	                if (!Utils.HasMuteExpired(mute))
+	                {
+	                    player.mute = true;
+	                    Log.Info(string.Format("{0} was muted on login.", player.Name));
+	                }
+	                else
+	                {
+	                    player.mute = false;
+	                    Log.Info(string.Format("{0} was unmuted on login.", player.Name));
+	                }
+	            }
+
 			Ban ban = null;
 			if (Config.EnableBanOnUsernames)
 			{
@@ -986,7 +1005,7 @@ namespace TShockAPI
 					}
 					args.Handled = true;
 			    }
-			}            
+			}
 		}
 
 		private void OnLeave(LeaveEventArgs args)
