@@ -57,8 +57,9 @@ namespace TShockAPI
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
+		public static MuteManager Mutes;
 		public static WarpManager Warps;
-        public static RegionManager Regions;
+		public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
@@ -227,6 +228,7 @@ namespace TShockAPI
 				Backups.KeepFor = Config.BackupKeepFor;
 				Backups.Interval = Config.BackupInterval;
 				Bans = new BanManager(DB);
+				Mutes = new MuteManager(DB);
 				Warps = new WarpManager(DB);
                 Regions = new RegionManager(DB);
 				Users = new UserManager(DB);
