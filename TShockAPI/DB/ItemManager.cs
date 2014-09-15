@@ -101,12 +101,8 @@ namespace TShockAPI.DB
 
 		public bool ItemIsBanned(string name, TSPlayer ply)
 		{
-			if (ItemBans.Contains(new ItemBan(name)))
-			{
-				ItemBan b = GetItemBanByName(name);
-				return !b.HasPermissionToUseItem(ply);
-			}
-			return false;
+			ItemBan b = GetItemBanByName(name);
+			return b != null &&!b.HasPermissionToUseItem(ply);
 		}
 
 		public bool AllowGroup(string item, string name)
@@ -162,11 +158,11 @@ namespace TShockAPI.DB
 
 		public ItemBan GetItemBanByName(String name)
 		{
-			foreach (ItemBan b in ItemBans)
+			for (int i = 0; i < ItemBans.Count; i++)
 			{
-				if (b.Name == name)
+				if (ItemBans[i].Name == name)
 				{
-					return b;
+					return ItemBans[i];
 				}
 			}
 			return null;

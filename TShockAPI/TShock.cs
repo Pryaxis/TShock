@@ -804,6 +804,7 @@ namespace TShockAPI
 					}
 					player.IgnoreActionsForCheating = check;
 					check = "none";
+					//todo: pretty sure we check every place a players inventory can change, so do we really need to do this?
 					foreach (Item item in player.TPlayer.armor)
 					{
 						if (Itembans.ItemIsBanned(item.name, player))

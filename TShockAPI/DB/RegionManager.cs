@@ -44,7 +44,7 @@ namespace TShockAPI.DB
 									 new SqlColumn("width", MySqlDbType.Int32),
 									 new SqlColumn("height", MySqlDbType.Int32),
 									 new SqlColumn("RegionName", MySqlDbType.VarChar, 50) {Unique = true},
-									 new SqlColumn("WorldID", MySqlDbType.Text) {Unique = true},
+									 new SqlColumn("WorldID", MySqlDbType.VarChar, 50) { Unique = true },
 									 new SqlColumn("UserIds", MySqlDbType.Text),
 									 new SqlColumn("Protected", MySqlDbType.Int32),
 									 new SqlColumn("Groups", MySqlDbType.Text),

@@ -3292,7 +3292,7 @@ namespace TShockAPI
 			{
 				var buff = args.Data.ReadInt8();
 
-				if (TShock.Itembans.ItemBans.Any(s =>
+				/*if (TShock.Itembans.ItemBans.Any(s =>
 				{
 					Item item = new Item();
 					item.SetDefaults(s.Name);
@@ -3300,7 +3300,7 @@ namespace TShockAPI
 				}))
 				{
 					buff = 0;
-				}
+				}*/
 
 				if (buff == 10 && TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 					buff = 0;

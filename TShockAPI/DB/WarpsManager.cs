@@ -44,7 +44,7 @@ namespace TShockAPI.DB
 									 new SqlColumn("WarpName", MySqlDbType.VarChar, 50) {Unique = true},
 			                         new SqlColumn("X", MySqlDbType.Int32),
 			                         new SqlColumn("Y", MySqlDbType.Int32),
-			                         new SqlColumn("WorldID", MySqlDbType.Text) {Unique = true},
+									 new SqlColumn("WorldID", MySqlDbType.VarChar, 50) { Unique = true },
 			                         new SqlColumn("Private", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
