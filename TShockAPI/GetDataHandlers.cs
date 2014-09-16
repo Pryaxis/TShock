@@ -2866,6 +2866,8 @@ namespace TShockAPI
 			{
 				return true;
 			}
+			
+			args.Player.ActiveChest = Chest.FindChest(x, y);
 
 			return false;
 		}
@@ -2880,8 +2882,6 @@ namespace TShockAPI
 
 			if (b != 0 && b <= 20)
 				name = args.Data.ReadString();
-
-			args.Player.ActiveChest = id;
 
 			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
 			{
