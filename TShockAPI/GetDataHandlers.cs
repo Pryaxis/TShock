@@ -2889,6 +2889,9 @@ namespace TShockAPI
 				return true;
 			}
 
+			// This is only sent when closing, no need to read the value
+			args.Player.ActiveChest = -1;
+
 			return false;
 		}
 
