@@ -1755,7 +1755,7 @@ namespace TShockAPI
 
 		public static bool CheckIgnores(TSPlayer player)
 		{
-			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;;
+			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
 		}
 
 		public void OnConfigRead(ConfigFile file)
