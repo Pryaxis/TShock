@@ -2447,7 +2447,7 @@ namespace TShockAPI
 				args.Player.Disable("Player does not have permission to create that projectile.", true);
 				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
 				args.Player.RemoveProjectile(ident, owner);
-				return false;
+				return true;
 			}
             // Server now checks owner + ident, if owner is different, server will create new projectile.
 			/*if (args.Player.Index != owner)
