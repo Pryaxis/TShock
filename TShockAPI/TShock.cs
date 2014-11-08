@@ -1763,7 +1763,7 @@ namespace TShockAPI
 			NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
 			NPC.defaultSpawnRate = file.DefaultSpawnRate;
 
-		    Main.npcStreamSpeed = file.NpcStreamSpeed;
+			Main.npcStreamSpeed = file.NpcStreamSpeed;
 			Main.autoSave = file.AutoSave;
 			if (Backups != null)
 			{
