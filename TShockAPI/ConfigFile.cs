@@ -388,9 +388,6 @@ namespace TShockAPI
 		[Description("The maximum allowable MP, before equipment buffs.")]
 		public int MaxMP = 200;
 
-		[Description("Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but more data is sent. 0 is off.")]
-		public int NpcStreamSpeed = 60;
-
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>
