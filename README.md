@@ -1,4 +1,7 @@
-# This project is in maintenance mode.  This means that the developer time dedicated to this project is very limited and only extremely game breaking bugs will be fixed.  Improvements, new features, and minor issues will have to be resolved via pull requests or until a developer has time.
+# Current Status
+This project is in maintenance mode. This means that the core team of developers' time is very limited, and only extremely game breaking bugs will be fixed. Improvements, new features, and minor issues will not be resolved by direct development until this time restriction has passed. Issues created reflecting these requests will not be worked on until this notice is removed.
+
+Thanks for your continued support of TShock for Terraria.
 
 # TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock)
 
