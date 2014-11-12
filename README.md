@@ -1,3 +1,5 @@
+# This project is in maintenance mode.  This means that the developer time dedicated to this project is very limited and only extremely game breaking bugs will be fixed.  Improvements, new features, and minor issues will have to be resolved via pull requests or until a developer has time.
+
 # TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock)
 
 TShock is a server modification for Terraria, written in C#, and based upon the [Terraria Server API](https://github.com/Deathmax/TerrariaAPI-Server). It uses JSON for configuration management, and offers several features not present in the Terraria Server normally.
