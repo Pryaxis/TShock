@@ -271,6 +271,9 @@ namespace TShockAPI
 		[Description("The maximum damage a projectile can inflict.")]
 		public int MaxProjDamage = 175;
 
+		[Description("Kicks a user if set to true, if they inflict more damage then the max damage.")]
+		public bool KickOnDamageThresholdBroken = false;
+
 		[Description("Ignores checking to see if player 'can' update a projectile.")]
 		public bool IgnoreProjUpdate = false;
 
