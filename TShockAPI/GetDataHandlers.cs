@@ -3150,7 +3150,15 @@ namespace TShockAPI
 
 			if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
-				args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+				if (TShock.Config.KickOnDamageThresholdBroken)
+				{
+					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					return true;
+				}
+				else
+				{
+					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+				}			
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
@@ -3208,7 +3216,15 @@ namespace TShockAPI
 
             if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
-                args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage ) );
+				if (TShock.Config.KickOnDamageThresholdBroken)
+				{
+					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					return true;
+				}
+				else
+				{
+					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+				}
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
