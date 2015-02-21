@@ -47,7 +47,11 @@ using System.Runtime.InteropServices;
 //      Major Version
 //      Minor Version 
 //      Build Number
-//      MMdd of the build
+//      Starting in version 4.2.5, we are no longer including the fourth decimal
+//      location, which previously held the date and time.
 
-[assembly: AssemblyVersion("4.2.4.0128")]
-[assembly: AssemblyFileVersion("4.2.4.0128")]
+// Also, be sure to release on github with the exact assembly version tag as below
+// so that the update manager works correctly (via the Github releases api and mimic)
+
+[assembly: AssemblyVersion("4.2.5")]
+[assembly: AssemblyFileVersion("4.2.5")]
