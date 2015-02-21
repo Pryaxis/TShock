@@ -72,11 +72,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
+    <Compile Include="DB\ProjectileManager.cs" />
     <Compile Include="DB\RegionManager.cs" />
+    <Compile Include="DB\TileManager.cs" />
     <Compile Include="Hooks\GeneralHooks.cs" />
     <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="PaginationTools.cs" />
-    <Compile Include="RaptorPacketTypes.cs" />
     <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="DB\BanManager.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Rest\RestObject.cs" />
     <Compile Include="Rest\RestVerbs.cs" />
     <Compile Include="Rest\SecureRest.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideConfig.cs" />
     <Compile Include="StatTracker.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="TShock.cs" />

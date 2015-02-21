@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,10 +38,11 @@ using TShockAPI.DB;
 using TShockAPI.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
-	[ApiVersion(1, 14)]
+	[ApiVersion(1, 16)]
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
@@ -62,9 +63,12 @@ namespace TShockAPI
 		public static GroupManager Groups;
 		public static UserManager Users;
 		public static ItemManager Itembans;
+		public static ProjectileManagager ProjectileBans;
+		public static TileManager TileBans;
 		public static RememberedPosManager RememberedPos;
 		public static CharacterManager CharacterDB;
 		public static ConfigFile Config { get; set; }
+		public static ServerSideConfig ServerSideCharacterConfig;
 		public static IDbConnection DB;
 		public static bool OverridePort;
 		public static PacketBufferer PacketBuffer;
@@ -72,7 +76,7 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
-		public static StatTracker StatTracker = new StatTracker();
+		public static UpdateManager UpdateManager;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -111,6 +115,10 @@ namespace TShockAPI
 			: base(game)
 		{
 			Config = new ConfigFile();
+			ServerSideCharacterConfig = new ServerSideConfig();
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -15, prefix = 0, stack = 1 });
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -13, prefix = 0, stack = 1 });
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -16, prefix = 0, stack = 1 });
 			Order = 0;
 		}
 
@@ -131,7 +139,7 @@ namespace TShockAPI
 				ConfigFile.ConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
 
-				Main.ServerSideCharacter = Config.ServerSideCharacter; //FYI, This cannot be disabled once flipped.
+				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
 
 				DateTime now = DateTime.Now;
 				string logFilename;
@@ -223,6 +231,8 @@ namespace TShockAPI
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
+				ProjectileBans = new ProjectileManagager(DB);
+				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
 				RestApi = new SecureRest(Netplay.serverListenIP, Config.RestApiPort);
@@ -249,7 +259,6 @@ namespace TShockAPI
 				ServerApi.Hooks.NetSendData.Register(this, NetHooks_SendData);
 				ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Register(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.NpcSetDefaultsInt.Register(this, OnNpcSetDefaults);
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
@@ -327,7 +336,6 @@ namespace TShockAPI
 				ServerApi.Hooks.NetSendData.Deregister(this, NetHooks_SendData);
 				ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Deregister(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.NpcSetDefaultsInt.Deregister(this, OnNpcSetDefaults);
 				ServerApi.Hooks.ProjectileSetDefaults.Deregister(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Deregister(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Deregister(this, SaveManager.Instance.OnSaveWorld);
@@ -349,24 +357,6 @@ namespace TShockAPI
 
 	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
 	    {
-			if (args.Player.IsRaptor)
-			{
-				Task.Factory.StartNew(() =>
-					{
-						args.Player.SendRaptorPermissions();
-						if (args.Player.Group.HasPermission(Permissions.manageregion))
-						{
-							for (int i = 0; i < Regions.Regions.Count; i++)
-								args.Player.SendRaptorRegion(Regions.Regions[i]);
-						}
-						if (args.Player.Group.HasPermission(Permissions.managewarp))
-						{
-							for (int i = 0; i < Warps.Warps.Count; i++)
-								args.Player.SendRaptorWarp(Warps.Warps[i]);
-						}
-					});
-			}
-
 	        User u = Users.GetUserByName(args.Player.UserAccountName);
             List<String> KnownIps = new List<string>();
 	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
@@ -393,38 +383,40 @@ namespace TShockAPI
 		{
 			if (args.Player.IsLoggedIn)
 				args.Player.SaveServerCharacter();
+
+			if (args.Player.ItemInHand.type != 0)
+			{
+				args.Player.SendErrorMessage("Attempting to bypass SSC with item in hand.");
+				args.Handled = true;
+			}
 		}
 
-        private void NetHooks_NameCollision(NameCollisionEventArgs args)
-        {
-            string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
-            foreach (TSPlayer ply in TShock.Players)
-            {
-                if (ply == null)
-                {
-                    continue;
-                }
-                if (ply.Name == args.Name && ply.Index != args.Who)
-                {
-                    if (ply.IP == ip)
-                    {
-                        if (ply.State < 2)
-                        {
-                            Utils.ForceKick(ply, "Name collision and this client has no world data.", true, false);
-                            args.Handled = true;
-                            return;
-                        }
-                        else
-                        {
-							args.Handled = false;
-                            return;
-                        }
-                    }
-                }
-            }
-			args.Handled = false;
-            return;
-        }
+		private void NetHooks_NameCollision(NameCollisionEventArgs args)
+		{
+			string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
+
+			var player = TShock.Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
+			if (player != null)
+			{
+				if (player.IP == ip)
+				{
+					Netplay.serverSock[player.Index].kill = true;
+					args.Handled = true;
+					return;
+				}
+				else if (player.IsLoggedIn)
+				{
+					User user = TShock.Users.GetUserByName(player.UserAccountName);
+					var ips = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+					if (ips.Contains(ip))
+					{
+						Netplay.serverSock[player.Index].kill = true;
+						args.Handled = true;
+						return;
+					}
+				}
+			}
+		}
 
         private void OnXmasCheck(ChristmasCheckEventArgs args)
         {
@@ -620,7 +612,7 @@ namespace TShockAPI
 			ComputeMaxStyles();
 			FixChestStacks();
 			
-			StatTracker.Initialize();
+			UpdateManager = new UpdateManager();
 		}
 
 		private void ComputeMaxStyles()
@@ -664,7 +656,6 @@ namespace TShockAPI
 
 		private void OnUpdate(EventArgs args)
 		{
-			UpdateManager.UpdateProcedureCheck();
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update
@@ -674,7 +665,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 
-			if (TShock.Config.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= Config.ServerSideCharacterSave)
+			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -741,13 +732,13 @@ namespace TShockAPI
 					if (player.RecentFuse >0)
 						player.RecentFuse--;
 
-					if ((TShock.Config.ServerSideCharacter) && (player.TPlayer.SpawnX > 0) &&(player.sX != player.TPlayer.SpawnX))
+					if ((Main.ServerSideCharacter) && (player.TPlayer.SpawnX > 0) &&(player.sX != player.TPlayer.SpawnX))
 					{
 						player.sX=player.TPlayer.SpawnX;
 						player.sY=player.TPlayer.SpawnY;
 					}
 
-					if ((TShock.Config.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0) && (player.TPlayer.SpawnX < 0))
+					if ((Main.ServerSideCharacter) && (player.sX > 0) && (player.sY > 0) && (player.TPlayer.SpawnX < 0))
 					{
 						player.TPlayer.SpawnX = player.sX;
 						player.TPlayer.SpawnY = player.sY;
@@ -794,21 +785,24 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
-					if (player.Dead && (DateTime.Now - player.LastDeath).Seconds >= Config.RespawnSeconds && player.Difficulty != 2)
+					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
 					{
 						player.Spawn();
 					}
 					string check = "none";
 					foreach (Item item in player.TPlayer.inventory)
 					{
-						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && item.stack > item.maxStack &&
+						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
 							item.type != 0)
 						{
 							check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+							player.SendErrorMessage(check);
+							break;
 						}
 					}
 					player.IgnoreActionsForCheating = check;
 					check = "none";
+					//todo: pretty sure we check every place a players inventory can change, so do we really need to do this?
 					foreach (Item item in player.TPlayer.armor)
 					{
 						if (Itembans.ItemIsBanned(item.name, player))
@@ -816,6 +810,9 @@ namespace TShockAPI
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
 							check = "Remove armor/accessory " + item.name;
+							
+							player.SendErrorMessage(string.Format("You are wearing banned equipment. {0}", check));
+							break;
 						}
 					}
 					player.IgnoreActionsForDisabledArmor = check;
@@ -845,8 +842,9 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 203 || args.Type == 234))
-			{
+			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 200 || args.Type == 203
+                		|| args.Type == 234))
+                	{
 				args.Handled = true;
 				return;
 			}
@@ -858,7 +856,8 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116))
+			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 || args.Type == 115
+                		|| args.Type == 164))
 			{
 				args.Handled = true;
 			}
@@ -973,12 +972,16 @@ namespace TShockAPI
 							player.Disconnect(String.Format("You are banned for {0} hour{1} and {2} minute{3}: {4}",
 								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
 						}
+						else if (ts.Minutes > 0)
+						{
+							player.Disconnect(String.Format("You are banned for {0} minute{1} and {2} second{3}: {4}",
+								ts.Minutes, ts.Minutes == 1 ? "" : "s", ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
+						}
 						else
 						{
-							player.Disconnect(String.Format("You are banned for {0} minute{1}: {2}",
-								ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
+							player.Disconnect(String.Format("You are banned for {0} second{1}: {2}",
+								ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
 						}
-
 					}
 					args.Handled = true;
 			    }
@@ -996,7 +999,7 @@ namespace TShockAPI
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && TShock.Config.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -1034,7 +1037,7 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith("/") && args.Text.Length > 1)
+			if (args.Text.StartsWith(Config.CommandSpecifier) && !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
 			{
 				try
 				{
@@ -1059,9 +1062,10 @@ namespace TShockAPI
 				}
 				else if (!TShock.Config.EnableChatAboveHeads)
 				{
-					Utils.Broadcast(
-						String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix, args.Text),
-						tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					var text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+					                         args.Text);
+					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					args.Handled = true;
 				}
 				else
@@ -1071,12 +1075,14 @@ namespace TShockAPI
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, ply.name, args.Who, 0, 0, 0, 0);
 					ply.name = name;
-					NetMessage.SendData((int) PacketTypes.ChatText, -1, args.Who, args.Text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					var text = args.Text;
+					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
-						args.Text);
+						text);
 
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 
@@ -1141,7 +1147,7 @@ namespace TShockAPI
 		{
 			if (e.Handled)
 				return;
-
+			
 			PacketTypes type = e.MsgID;
 
 			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte) type, type);
@@ -1160,13 +1166,13 @@ namespace TShockAPI
 			}
 
 			if ((player.State < 10 || player.Dead) && (int) type > 12 && (int) type != 16 && (int) type != 42 && (int) type != 50 &&
-				(int) type != 38 && (int) type != 21)
+				(int) type != 38 && (int) type != 21 && (int) type != 22)
 			{
 				e.Handled = true;
 				return;
 			}
 
-			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length))
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
 			{
 				// Exceptions are already handled
 				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
@@ -1215,7 +1221,7 @@ namespace TShockAPI
 
 			if (!player.IsLoggedIn)
 			{
-				if (Config.ServerSideCharacter)
+				if (Main.ServerSideCharacter)
 				{
 					player.SendMessage(
 						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",
@@ -1264,14 +1270,6 @@ namespace TShockAPI
 			if (e.Info == 109)
 				if (Config.DisableSnowBalls)
 					e.Object.SetDefaults(0);
-		}
-
-		private void OnNpcSetDefaults(SetDefaultsEventArgs<NPC, int> e)
-		{
-			if (Itembans.ItemIsBanned(e.Object.name, null))
-			{
-				e.Object.SetDefaults(0);
-			}
 		}
 
 		/// <summary>
@@ -1351,76 +1349,76 @@ namespace TShockAPI
 				if (e.remoteClient == -1) return;
 				var player = Players[e.remoteClient];
 				if (player == null) return;
-				if (Config.UseServerName)
+				using (var ms = new MemoryStream())
 				{
-					using (var ms = new MemoryStream())
+					var msg = new WorldInfoMsg
 					{
-						var msg = new WorldInfoMsg
-						{
-							Time = (int)Main.time,
-							DayTime = Main.dayTime,
-							MoonPhase = (byte)Main.moonPhase,
-							BloodMoon = Main.bloodMoon,
-							MaxTilesX = Main.maxTilesX,
-							MaxTilesY = Main.maxTilesY,
-							SpawnX = Main.spawnTileX,
-							SpawnY = Main.spawnTileY,
-							WorldSurface = (int)Main.worldSurface,
-							RockLayer = (int)Main.rockLayer,
-							//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
-							//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
-							WorldID = Main.worldID,
-							MoonType = (byte)Main.moonType,
-							TreeX0 = Main.treeX[0],
-							TreeX1 = Main.treeX[1],
-							TreeX2 = Main.treeX[2],
-							TreeStyle0 = (byte)Main.treeStyle[0],
-							TreeStyle1 = (byte)Main.treeStyle[1],
-							TreeStyle2 = (byte)Main.treeStyle[2],
-							TreeStyle3 = (byte)Main.treeStyle[3],
-							CaveBackX0 = Main.caveBackX[0],
-							CaveBackX1 = Main.caveBackX[1],
-							CaveBackX2 = Main.caveBackX[2],
-							CaveBackStyle0 = (byte)Main.caveBackStyle[0],
-							CaveBackStyle1 = (byte)Main.caveBackStyle[1],
-							CaveBackStyle2 = (byte)Main.caveBackStyle[2],
-							CaveBackStyle3 = (byte)Main.caveBackStyle[3],
-							SetBG0 = (byte)WorldGen.treeBG,
-							SetBG1 = (byte)WorldGen.corruptBG,
-							SetBG2 = (byte)WorldGen.jungleBG,
-							SetBG3 = (byte)WorldGen.snowBG,
-							SetBG4 = (byte)WorldGen.hallowBG,
-							SetBG5 = (byte)WorldGen.crimsonBG,
-							SetBG6 = (byte)WorldGen.desertBG,
-							SetBG7 = (byte)WorldGen.oceanBG,
-							IceBackStyle = (byte)Main.iceBackStyle,
-							JungleBackStyle = (byte)Main.jungleBackStyle,
-							HellBackStyle = (byte)Main.hellBackStyle,
-							WindSpeed = Main.windSpeed,
-							NumberOfClouds = (byte)Main.numClouds,
-							BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
-										(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
-										(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
-										(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
-										(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
-										(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
-										(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None),
-							BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
-										 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
-										 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
-										 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
-										 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
-											(WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
-											(Main.pumpkinMoon ? BossFlags2.Pumpkin : BossFlags2.None),
-							Rain = Main.maxRaining,
-							WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
-						};
-						msg.PackFull(ms);
-						player.SendRawData(ms.ToArray());
-					}
-					e.Handled = true;
-					return;
+						Time = (int)Main.time,
+						DayTime = Main.dayTime,
+						MoonPhase = (byte)Main.moonPhase,
+						BloodMoon = Main.bloodMoon,
+						Eclipse = Main.eclipse,
+						MaxTilesX = (short)Main.maxTilesX,
+						MaxTilesY = (short)Main.maxTilesY,
+						SpawnX = (short)Main.spawnTileX,
+						SpawnY = (short)Main.spawnTileY,
+						WorldSurface = (short)Main.worldSurface,
+						RockLayer = (short)Main.rockLayer,
+						//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
+						//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
+						WorldID = Main.worldID,
+						MoonType = (byte)Main.moonType,
+						TreeX0 = Main.treeX[0],
+						TreeX1 = Main.treeX[1],
+						TreeX2 = Main.treeX[2],
+						TreeStyle0 = (byte)Main.treeStyle[0],
+						TreeStyle1 = (byte)Main.treeStyle[1],
+						TreeStyle2 = (byte)Main.treeStyle[2],
+						TreeStyle3 = (byte)Main.treeStyle[3],
+						CaveBackX0 = Main.caveBackX[0],
+						CaveBackX1 = Main.caveBackX[1],
+						CaveBackX2 = Main.caveBackX[2],
+						CaveBackStyle0 = (byte)Main.caveBackStyle[0],
+						CaveBackStyle1 = (byte)Main.caveBackStyle[1],
+						CaveBackStyle2 = (byte)Main.caveBackStyle[2],
+						CaveBackStyle3 = (byte)Main.caveBackStyle[3],
+						SetBG0 = (byte)WorldGen.treeBG,
+						SetBG1 = (byte)WorldGen.corruptBG,
+						SetBG2 = (byte)WorldGen.jungleBG,
+						SetBG3 = (byte)WorldGen.snowBG,
+						SetBG4 = (byte)WorldGen.hallowBG,
+						SetBG5 = (byte)WorldGen.crimsonBG,
+						SetBG6 = (byte)WorldGen.desertBG,
+						SetBG7 = (byte)WorldGen.oceanBG,
+						IceBackStyle = (byte)Main.iceBackStyle,
+						JungleBackStyle = (byte)Main.jungleBackStyle,
+						HellBackStyle = (byte)Main.hellBackStyle,
+						WindSpeed = Main.windSpeed,
+						NumberOfClouds = (byte)Main.numClouds,
+						BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
+									(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
+									(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
+									(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
+									(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
+									(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
+									(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None) |
+									(NPC.downedPlantBoss ? BossFlags.DownedPlantBoss : BossFlags.None),
+						BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
+									 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
+									 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
+									 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
+									 (Main.cloudBGActive >= 1f ? BossFlags2.CloudBg : BossFlags2.None) |
+									 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
+									 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
+									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None) ,
+						Rain = Main.maxRaining,
+						WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
+					};
+					msg.PackFull(ms);
+					player.SendRawData(ms.ToArray());
 				}
+				e.Handled = true;
+				return;
 			}
 			else if (e.MsgId == PacketTypes.PlayerHp)
 			{
@@ -1519,11 +1517,6 @@ namespace TShockAPI
 			Projectile proj = new Projectile();
 			proj.SetDefaults(type);
 
-			if (Itembans.ItemIsBanned(proj.name, player))
-			{
-				return true;
-			}
-
 			if (Main.projHostile[type])
 			{
                 //player.SendMessage( proj.name, Color.Yellow);
@@ -1542,7 +1535,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, byte tileType, GetDataHandlers.EditAction actionType)
+		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, short tileType, GetDataHandlers.EditAction actionType)
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
 			{
@@ -1760,7 +1753,7 @@ namespace TShockAPI
 
 		public static bool CheckIgnores(TSPlayer player)
 		{
-			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;;
+			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
 		}
 
 		public void OnConfigRead(ConfigFile file)

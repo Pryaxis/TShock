@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,32 +18,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
 
 namespace TShockAPI
 {
-	internal class UpdateManager
+	public class UpdateManager
 	{
-		private static string updateUrl = "http://shankshock.com/tshock-update.json";
-		public static DateTime lastcheck = DateTime.MinValue;
+		private string updateUrl = "http://update.tshock.co/latest/";
 
 		/// <summary>
 		/// Check once every X minutes.
 		/// </summary>
-		private static readonly int CheckXMinutes = 30;
+		private readonly int CheckXMinutes = 30;
 
-		public static void UpdateProcedureCheck()
+		public UpdateManager()
 		{
-			if ((DateTime.Now - lastcheck).TotalMinutes >= CheckXMinutes)
-			{
-				ThreadPool.QueueUserWorkItem(CheckUpdate);
-				lastcheck = DateTime.Now;
-			}
+			ThreadPool.QueueUserWorkItem(CheckForUpdates);
 		}
 
-		public static void CheckUpdate(object o)
+		private void CheckForUpdates(object state)
+		{
+			try
+			{
+				UpdateCheck(state);
+			}
+			catch (Exception)
+			{
+				//swallow the exception
+				return;
+			}
+			
+			Thread.Sleep(CheckXMinutes * 60 * 1000);
+			ThreadPool.QueueUserWorkItem(CheckForUpdates);
+		}
+
+		public void UpdateCheck(object o)
 		{
 			var updates = ServerIsOutOfDate();
 			if (updates != null)
@@ -56,29 +68,39 @@ namespace TShockAPI
 		/// Checks to see if the server is out of date.
 		/// </summary>
 		/// <returns></returns>
-		private static Dictionary<string, string> ServerIsOutOfDate()
+		private Dictionary<string, string> ServerIsOutOfDate()
 		{
-			using (var client = new WebClient())
+			var client = (HttpWebRequest)WebRequest.Create(updateUrl);
+			client.Timeout = 5000;
+			try
 			{
-				client.Headers.Add("user-agent",
-				                   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705;)");
-				try
+				using (var resp = TShock.Utils.GetResponseNoException(client))
 				{
-					string updatejson = client.DownloadString(updateUrl);
-					var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
-					var version = new Version(update["version"]);
-					if (TShock.VersionNum.CompareTo(version) < 0)
-						return update;
+					if (resp.StatusCode != HttpStatusCode.OK)
+					{
+						throw new IOException("Server did not respond with an OK.");
+					}
+
+					using(var reader = new StreamReader(resp.GetResponseStream()))
+					{
+						string updatejson = reader.ReadToEnd();
+						var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
+						var version = new Version(update["version"]);
+						if (TShock.VersionNum.CompareTo(version) < 0)
+							return update;
+					}
 				}
-				catch (Exception e)
-				{
-					Log.Error(e.ToString());
-				}
-				return null;
 			}
+			catch (Exception e)
+			{
+				Log.ConsoleError("UpdateManager Exception: {0}", e);
+				throw e;
+			}
+
+			return null;
 		}
 
-		private static void NotifyAdministrators(Dictionary<string, string> update)
+		private void NotifyAdministrators(Dictionary<string, string> update)
 		{
 			var changes = update["changes"].Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
 			NotifyAdministrator(TSPlayer.Server, changes);
@@ -91,9 +113,9 @@ namespace TShockAPI
 			}
 		}
 
-		private static void NotifyAdministrator(TSPlayer player, string[] changes)
+		private void NotifyAdministrator(TSPlayer player, string[] changes)
 		{
-			player.SendMessage("The server is out of date.", Color.Red);
+			player.SendMessage("The server is out of date. Latest version: ", Color.Red);
 			for (int j = 0; j < changes.Length; j++)
 			{
 				player.SendMessage(changes[j], Color.Red);

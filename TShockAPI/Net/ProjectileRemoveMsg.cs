@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ namespace TShockAPI.Net
 			stream.WriteSingle(0);
 			stream.WriteInt16(0);
 			stream.WriteByte(Owner);
-			stream.WriteByte(0);
-			stream.WriteSingle(0);
+			stream.WriteInt16(0);
 			stream.WriteSingle(0);
 			stream.WriteSingle(0);
 		}

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -63,6 +63,12 @@ namespace TShockAPI
 
 		[Description("User can manage item bans.")]
 		public static readonly string manageitem = "tshock.admin.itemban";
+
+		[Description("User can manage projectile bans.")]
+		public static readonly string manageprojectile = "tshock.admin.projectileban";
+
+		[Description("User can manage tile bans.")]
+		public static readonly string managetile = "tshock.admin.tileban";
 
 		[Description("User can manage groups.")]
 		public static readonly string managegroup = "tshock.admin.group";
@@ -139,14 +145,20 @@ namespace TShockAPI
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 
-		[Description("Bypass server side inventory checks")]
-		public static readonly string bypassinventorychecks = "tshock.ignore.ssi";
+		[Description("Bypass server side character checks")]
+		public static readonly string bypassssc = "tshock.ignore.ssc";
 
 		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")]
 		public static readonly string allowclientsideworldedit = "tshock.ignore.sendtilesquare";
 
 		[Description("Allow dropping banned items without the item being eaten.")]
 		public static readonly string allowdroppingbanneditems = "tshock.ignore.dropbanneditem";
+
+		[Description("Prevents you from being disabled by abnormal HP.")]
+		public static readonly string ignorehp = "tshock.ignore.hp";
+
+		[Description("Prevents you from being disabled by abnormal MP.")]
+		public static readonly string ignoremp = "tshock.ignore.mp";
 
 		// tshock.item nodes
 
@@ -167,8 +179,14 @@ namespace TShockAPI
 		[Description("User can start an invasion.")]
 		public static readonly string invade = "tshock.npc.invade";
 
+		[Description("User can hurt town NPCs.")]
+		public static readonly string hurttownnpc = "tshock.npc.hurttown";
+
 		[Description("User can spawn bosses.")]
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
+
+		[Description("User can rename NPCs.")]
+		public static readonly string renamenpc = "tshock.npc.rename";
 
 		[Description("User can spawn npcs.")]
 		public static readonly string spawnmob = "tshock.npc.spawnmob";
@@ -182,6 +200,9 @@ namespace TShockAPI
 		[Description("User can start invasions (Goblin/Snow Legion) using items")]
 		public static readonly string startinvasion = "tshock.npc.startinvasion";
 
+		[Description("User can clear the list of users who have completed an angler quest that day.")]
+		public static readonly string clearangler = "tshock.npc.clearanglerquests";
+
 		// tshock.superadmin nodes
 
 		[Description("Meant for super admins only.")]
@@ -192,20 +213,29 @@ namespace TShockAPI
 
 		// tshock.tp nodes
 
+		[Description("User can teleport *everyone* to them.")]
+		public static readonly string tpallothers = "tshock.tp.allothers";
+
 		[Description("User can teleport to others.")]
 		public static readonly string tp = "tshock.tp.self";
 
-		[Description("User can teleport people to them.")]
-		public static readonly string tphere = "tshock.tp.others";
+		[Description("User can teleport other people.")]
+		public static readonly string tpothers = "tshock.tp.others";
 
-		[Description("Users can stop people from teleporting to them")]
+		[Description("User can teleport to tile positions.")]
+		public static readonly string tppos = "tshock.tp.pos";
+
+		[Description("User can teleport to an NPC.")]
+		public static readonly string tpnpc = "tshock.tp.npc";
+
+		[Description("Users can stop people from teleporting.")]
 		public static readonly string tpallow = "tshock.tp.block";
 
-		[Description("Users can tp to anyone")]
-		public static readonly string tpall = "tshock.tp.toall";
+		[Description("Users can override teleport blocks.")]
+		public static readonly string tpoverride = "tshock.tp.override";
 
-		[Description("Users can tp to people without showing a notice")]
-		public static readonly string tphide = "tshock.tp.silent";
+		[Description("Users can teleport to people without showing a notice")]
+		public static readonly string tpsilent = "tshock.tp.silent";
 
 		[Description("User can use /home.")]
 		public static readonly string home = "tshock.tp.home";
@@ -227,12 +257,6 @@ namespace TShockAPI
 		[Description("User can force a blood moon.")]
 		public static readonly string bloodmoon = "tshock.world.time.bloodmoon";
 
-		[Description("User can force a pumpkin moon.")]
-		public static readonly string pumpkinmoon = "tshock.world.time.pumpkinmoon";
-
-		[Description("User can force a snow moon.")]
-		public static readonly string snowmoon = "tshock.world.time.snowmoon";
-
 		[Description("User can set the time.")]
 		public static readonly string time = "tshock.world.time.set";
 
@@ -247,6 +271,9 @@ namespace TShockAPI
 
 		[Description("User can convert hallow into corruption and vice-versa")]
 		public static readonly string converthardmode = "tshock.world.converthardmode";
+
+		[Description("User can force the server to Halloween mode.")]
+		public static readonly string halloween = "tshock.world.sethalloween";
 
 		[Description("User can force the server to Christmas mode.")]
 		public static readonly string xmas = "tshock.world.setxmas";
@@ -281,6 +308,9 @@ namespace TShockAPI
 		[Description("User can turn on or off the rain.")]
 		public static readonly string rain = "tshock.world.rain";
 
+		[Description("User can modify the wind.")]
+		public static readonly string wind = "tshock.world.wind";
+
 		// Non-grouped
 
 		[Description("User can clear items or projectiles.")]
@@ -288,7 +318,7 @@ namespace TShockAPI
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
-
+		
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max.")]
 		public static readonly string reservedslot = "tshock.reservedslot";
 
@@ -322,11 +352,17 @@ namespace TShockAPI
 		[Description("Player can chat")] 
 		public static readonly string canchat = "tshock.canchat";
 
-        /// <summary>
-        /// Lists all commands associated with a given permission
-        /// </summary>
-        /// <param name="perm">string permission - the permission to get information on</param>
-        /// <returns>List of commands</returns>
+		[Description("Player can use banned projectiles.")]
+		public static readonly string canusebannedprojectiles = "tshock.projectiles.usebanned";
+
+		[Description("Player can place banned tiles.")]
+		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
+
+		/// <summary>
+		/// Lists all commands associated with a given permission
+		/// </summary>
+		/// <param name="perm">string permission - the permission to get information on</param>
+		/// <returns>List of commands</returns>
 		private static List<Command> GetCommands(string perm)
 		{
 			if (Commands.ChatCommands.Count < 1)
@@ -334,9 +370,9 @@ namespace TShockAPI
 			return Commands.ChatCommands.Where(c => c.Permissions.Contains(perm)).ToList();
 		}
 
-        /// <summary>
-        /// Dumps the descriptions of each permission to a file in Markdown format.
-        /// </summary>
+		/// <summary>
+		/// Dumps the descriptions of each permission to a file in Markdown format.
+		/// </summary>
 		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();

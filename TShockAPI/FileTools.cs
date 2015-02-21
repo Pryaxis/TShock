@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.IO;
+using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
@@ -53,6 +54,14 @@ namespace TShockAPI
 		internal static string ConfigPath
 		{
 			get { return Path.Combine(TShock.SavePath, "config.json"); }
+		}
+
+		/// <summary>
+		/// Path to the file containing the config.
+		/// </summary>
+		internal static string ServerSideCharacterConfigPath
+		{
+			get { return Path.Combine(TShock.SavePath, "sscconfig.json"); }
 		}
 
         /// <summary>
@@ -98,6 +107,12 @@ namespace TShockAPI
 			}
 			TShock.Config.Write(ConfigPath);
 
+			if (File.Exists(ServerSideCharacterConfigPath))
+			{
+				TShock.ServerSideCharacterConfig = ServerSideConfig.Read(ServerSideCharacterConfigPath);
+				// Add all the missing config properties in the json file
+			}
+			TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 		}
 
 		/// <summary>

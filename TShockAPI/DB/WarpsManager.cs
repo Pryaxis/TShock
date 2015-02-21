@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,10 +40,11 @@ namespace TShockAPI.DB
 			database = db;
 
 			var table = new SqlTable("Warps",
-			                         new SqlColumn("WarpName", MySqlDbType.VarChar, 50) {Primary = true},
+			                         new SqlColumn("Id", MySqlDbType.Int32){Primary = true, AutoIncrement = true},
+									 new SqlColumn("WarpName", MySqlDbType.VarChar, 50) {Unique = true},
 			                         new SqlColumn("X", MySqlDbType.Int32),
 			                         new SqlColumn("Y", MySqlDbType.Int32),
-			                         new SqlColumn("WorldID", MySqlDbType.Text),
+									 new SqlColumn("WorldID", MySqlDbType.VarChar, 50) { Unique = true },
 			                         new SqlColumn("Private", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,

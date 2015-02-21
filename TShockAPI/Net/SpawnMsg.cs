@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ namespace TShockAPI.Net
 			get { return PacketTypes.PlayerSpawn; }
 		}
 
-		public int TileX { get; set; }
-		public int TileY { get; set; }
+		public short TileX { get; set; }
+		public short TileY { get; set; }
 		public byte PlayerIndex { get; set; }
 
 		public override void Pack(Stream stream)

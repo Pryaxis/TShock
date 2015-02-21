@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -197,32 +197,45 @@ namespace TShockAPI
 			{
 				if (socket.tcpClient.Client != null && socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
 				{
-					if (Main.runningMono)
+					if (ServerApi.RunningMono && !ServerApi.UseAsyncSocketsInMono)
 						socket.networkStream.Write(buffer, offset, count);
 					else
-						socket.tcpClient.Client.Send(buffer, offset, count, SocketFlags.None);
+						socket.networkStream.BeginWrite(buffer, offset, count, socket.ServerWriteCallBack, socket.networkStream);
 					return true;
 				}
 			}
 			catch (ObjectDisposedException e)
 			{
-                Log.Warn(e.ToString());
+				Log.Warn(e.ToString());
 			}
 			catch (SocketException e)
 			{
-                switch ((uint)e.ErrorCode)
-                {
-                    case 0x80004005:
+				switch ((uint)e.ErrorCode)
+				{
+					case 0x80004005:
 					case 10053:
-                        break;
-                    default:
-                        Log.Warn(e.ToString());
-                        break;
-                }
+						break;
+					default:
+						Log.Warn(e.ToString());
+						break;
+				}
 			}
 			catch (IOException e)
 			{
-                Log.Warn(e.ToString());
+				if (e.InnerException is SocketException)
+				{
+					switch (((SocketException)e.InnerException).SocketErrorCode)
+					{
+						case SocketError.Shutdown:
+						case SocketError.ConnectionReset:
+							break;
+						default:
+							Log.Warn(e.ToString());
+							break;
+					}
+				}
+				else
+					Log.Warn(e.ToString());
 			}
 			return false;
 		}

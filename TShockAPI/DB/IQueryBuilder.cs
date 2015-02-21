@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,10 +44,15 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"'{0}' {1} {2} {3} {4} {5}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
-													c.AutoIncrement ? "AUTOINCREMENT" : "", c.NotNull ? "NOT NULL" : "",
-													c.Unique ? "UNIQUE" : ""));
-			return "CREATE TABLE {0} ({1})".SFormat(EscapeTableName(table.Name), string.Join(", ", columns));
+					"'{0}' {1} {2} {3} {4}".SFormat(c.Name, 
+													DbTypeToString(c.Type, c.Length), 
+													c.Primary ? "PRIMARY KEY" : "",
+													c.AutoIncrement ? "AUTOINCREMENT" : "", 
+													c.NotNull ? "NOT NULL" : ""));
+			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
+			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), 
+														string.Join(", ", columns),
+														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
 		}
 
 		public override string RenameTable(string from, string to)
@@ -67,6 +72,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Double, "REAL" },
 			{ MySqlDbType.Int32, "INTEGER" },
 			{ MySqlDbType.Blob, "BLOB" },
+            { MySqlDbType.Int64, "BIGINT"},
 		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)
@@ -115,6 +121,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Float, "FLOAT" },
 			{ MySqlDbType.Double, "DOUBLE" },
 			{ MySqlDbType.Int32, "INT" },
+            { MySqlDbType.Int64, "BIGINT"},
 		};
 
 		public string DbTypeToString(MySqlDbType type, int? length)

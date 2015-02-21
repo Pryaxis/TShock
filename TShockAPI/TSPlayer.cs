@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,11 +40,6 @@ namespace TShockAPI
         /// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
 
-		/// <summary>
-		/// Gets whether the player is using Raptor.
-		/// </summary>
-		public bool IsRaptor { get; internal set; }
-
         /// <summary>
         /// The amount of tiles that the player has killed in the last second.
         /// </summary>
@@ -74,16 +69,19 @@ namespace TShockAPI
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		/// </summary>
 		public int RecentFuse = 0;
-		
+
+		/// <summary>
+		/// Whether to ignore packets that are SSC-relevant.
+		/// </summary>
+		public bool IgnoreSSCPackets { get; set; }
+
 		/// <summary>
 		/// A system to delay Remembered Position Teleports a few seconds
 		/// </summary>
-		
 		public int RPPending = 0;
 		
 		public int sX = -1;
 		public int sY = -1;
-		
 		
         /// <summary>
         /// A queue of tiles destroyed by the player for reverting.
@@ -94,10 +92,6 @@ namespace TShockAPI
         /// A queue of tiles placed by the player for reverting.
         /// </summary>
 		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
-
-		public int FirstMaxHP { get; set; }
-
-		public int FirstMaxMP { get; set; }
 
 	    /// <summary>
 	    /// The player's group.
@@ -219,10 +213,10 @@ namespace TShockAPI
 
 		public bool RequestedSection;
 
-        /// <summary>
-        /// The last time the player died.
-        /// </summary>
-		public DateTime LastDeath { get; set; }
+		/// <summary>
+		/// The player's respawn timer.
+		/// </summary>
+		public int RespawnTimer;
 
         /// <summary>
         /// Whether the player is dead or not.
@@ -369,13 +363,22 @@ namespace TShockAPI
 			}
 		}
 
+		public IEnumerable<Item> Accessories
+		{
+			get
+			{
+				for (int i = 3; i < 8; i++)
+					yield return TPlayer.armor[i];
+			}
+		}
+
         /// <summary>
         /// Saves the player's inventory to SSI
         /// </summary>
         /// <returns>bool - True/false if it saved successfully</returns>
         public bool SaveServerCharacter()
         {
-            if (!TShock.Config.ServerSideCharacter)
+            if (!Main.ServerSideCharacter)
             {
                 return false;
             }
@@ -398,7 +401,7 @@ namespace TShockAPI
 		/// <returns>bool - True/false if it saved successfully</returns>
 		public bool SendServerCharacter()
 		{
-			if (!TShock.Config.ServerSideCharacter)
+			if (!Main.ServerSideCharacter)
 			{
 				return false;
 			}
@@ -520,65 +523,68 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new WorldInfoMsg
-							{
-								Time = (int) Main.time,
-								DayTime = Main.dayTime,
-								MoonPhase = (byte) Main.moonPhase,
-								BloodMoon = Main.bloodMoon,
-								MaxTilesX = Main.maxTilesX,
-								MaxTilesY = Main.maxTilesY,
-								SpawnX = tilex,
-								SpawnY = tiley,
-								WorldSurface = (int) Main.worldSurface,
-								RockLayer = (int) Main.rockLayer,
-								//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
-								//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
-								WorldID = !fakeid ? Main.worldID : -1,
-								MoonType = (byte)Main.moonType,
-								TreeX0 = Main.treeX[0],
-								TreeX1 = Main.treeX[1],
-								TreeX2 = Main.treeX[2],
-								TreeStyle0 = (byte)Main.treeStyle[0],
-								TreeStyle1 = (byte)Main.treeStyle[1],
-								TreeStyle2 = (byte)Main.treeStyle[2],
-								TreeStyle3 = (byte)Main.treeStyle[3],
-								CaveBackX0 = Main.caveBackX[0],
-								CaveBackX1 = Main.caveBackX[1],
-								CaveBackX2 = Main.caveBackX[2],
-								CaveBackStyle0 = (byte)Main.caveBackStyle[0],
-								CaveBackStyle1 = (byte)Main.caveBackStyle[1],
-								CaveBackStyle2 = (byte)Main.caveBackStyle[2],
-								CaveBackStyle3 = (byte)Main.caveBackStyle[3],
-								SetBG0 = (byte)WorldGen.treeBG,
-								SetBG1 = (byte)WorldGen.corruptBG,
-								SetBG2 = (byte)WorldGen.jungleBG,
-								SetBG3 = (byte)WorldGen.snowBG,
-								SetBG4 = (byte)WorldGen.hallowBG,
-								SetBG5 = (byte)WorldGen.crimsonBG,
-								SetBG6 = (byte)WorldGen.desertBG,
-								SetBG7 = (byte)WorldGen.oceanBG,
-								IceBackStyle = (byte)Main.iceBackStyle,
-								JungleBackStyle = (byte)Main.jungleBackStyle,
-								HellBackStyle = (byte)Main.hellBackStyle,
-								WindSpeed = Main.windSpeed,
-								NumberOfClouds = (byte)Main.numClouds,
-								BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
-											(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
-											(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
-											(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
-											(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
-											(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
-											(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None),
-								BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
-											 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
-											 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
-											 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
-											 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
-												(WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
-												(Main.pumpkinMoon ? BossFlags2.Pumpkin : BossFlags2.None),
-								Rain = Main.maxRaining,
-								WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
-							};
+				{
+					Time = (int)Main.time,
+					DayTime = Main.dayTime,
+					MoonPhase = (byte)Main.moonPhase,
+					BloodMoon = Main.bloodMoon,
+					Eclipse = Main.eclipse,
+					MaxTilesX = (short)Main.maxTilesX,
+					MaxTilesY = (short)Main.maxTilesY,
+					SpawnX = (short)Main.spawnTileX,
+					SpawnY = (short)Main.spawnTileY,
+					WorldSurface = (short)Main.worldSurface,
+					RockLayer = (short)Main.rockLayer,
+					//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
+					//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
+					WorldID = Main.worldID,
+					MoonType = (byte)Main.moonType,
+					TreeX0 = Main.treeX[0],
+					TreeX1 = Main.treeX[1],
+					TreeX2 = Main.treeX[2],
+					TreeStyle0 = (byte)Main.treeStyle[0],
+					TreeStyle1 = (byte)Main.treeStyle[1],
+					TreeStyle2 = (byte)Main.treeStyle[2],
+					TreeStyle3 = (byte)Main.treeStyle[3],
+					CaveBackX0 = Main.caveBackX[0],
+					CaveBackX1 = Main.caveBackX[1],
+					CaveBackX2 = Main.caveBackX[2],
+					CaveBackStyle0 = (byte)Main.caveBackStyle[0],
+					CaveBackStyle1 = (byte)Main.caveBackStyle[1],
+					CaveBackStyle2 = (byte)Main.caveBackStyle[2],
+					CaveBackStyle3 = (byte)Main.caveBackStyle[3],
+					SetBG0 = (byte)WorldGen.treeBG,
+					SetBG1 = (byte)WorldGen.corruptBG,
+					SetBG2 = (byte)WorldGen.jungleBG,
+					SetBG3 = (byte)WorldGen.snowBG,
+					SetBG4 = (byte)WorldGen.hallowBG,
+					SetBG5 = (byte)WorldGen.crimsonBG,
+					SetBG6 = (byte)WorldGen.desertBG,
+					SetBG7 = (byte)WorldGen.oceanBG,
+					IceBackStyle = (byte)Main.iceBackStyle,
+					JungleBackStyle = (byte)Main.jungleBackStyle,
+					HellBackStyle = (byte)Main.hellBackStyle,
+					WindSpeed = Main.windSpeed,
+					NumberOfClouds = (byte)Main.numClouds,
+					BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
+								(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
+								(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
+								(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
+								(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
+								(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
+								(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None) |
+								(NPC.downedPlantBoss ? BossFlags.DownedPlantBoss : BossFlags.None),
+					BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
+								 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
+								 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
+								 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
+								 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
+								 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
+								 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
+								 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None),
+					Rain = Main.maxRaining,
+					WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
+				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -609,7 +615,7 @@ namespace TShockAPI
 			return true;
 		}
 
-		public void Heal(int health = 500)
+		public void Heal(int health = 600)
 		{
 			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, health);
 		}
@@ -634,8 +640,8 @@ namespace TShockAPI
 				var msg = new SpawnMsg
 							{
 								PlayerIndex = (byte) Index,
-								TileX = tilex,
-								TileY = tiley
+								TileX = (short)tilex,
+								TileY = (short)tiley
 							};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
@@ -809,6 +815,7 @@ namespace TShockAPI
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
 		public int ActiveChest = -1;
+		public Item ItemInHand = new Item();
 
 		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{
@@ -884,183 +891,11 @@ namespace TShockAPI
             NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
         }
 
-		public virtual bool SendRawData(byte[] data)
+		public virtual void SendRawData(byte[] data)
 		{
 			if (!RealPlayer || !ConnectionAlive)
-				return false;
-
-			return TShock.SendBytes(Netplay.serverSock[Index], data);
-		}
-
-		/// <summary>
-		/// Sends Raptor permissions to the player.
-		/// </summary>
-		public void SendRaptorPermissions()
-		{
-			if (!IsRaptor)
 				return;
-
-			lock (NetMessage.buffer[Index].writeBuffer)
-			{
-				int length = 0;
-
-				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
-				{
-					using (var writer = new BinaryWriter(ms))
-					{
-						writer.BaseStream.Position = 4;
-
-						writer.Write((byte)PacketTypes.Placeholder);
-						writer.Write((byte)RaptorPacketTypes.Permissions);
-
-						writer.Write(String.Join(",", Group.TotalPermissions.ToArray()));
-
-						length = (int)writer.BaseStream.Position;
-						writer.BaseStream.Position = 0;
-						writer.Write(length - 4);
-					}
-				}
-
-				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
-			}
-		}
-		/// <summary>
-		/// Sends a region to the player.
-		/// <param name="region">The region.</param>
-		/// </summary>
-		public void SendRaptorRegion(Region region)
-		{
-			if (!IsRaptor)
-				return;
-
-			lock (NetMessage.buffer[Index].writeBuffer)
-			{
-				int length = 0;
-
-				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
-				{
-					using (var writer = new BinaryWriter(ms))
-					{
-						writer.BaseStream.Position = 4;
-
-						writer.Write((byte)PacketTypes.Placeholder);
-						writer.Write((byte)RaptorPacketTypes.Region);
-
-						writer.Write(region.Area.X);
-						writer.Write(region.Area.Y);
-						writer.Write(region.Area.Width);
-						writer.Write(region.Area.Height);
-						writer.Write(region.Name);
-
-						length = (int)writer.BaseStream.Position;
-						writer.BaseStream.Position = 0;
-						writer.Write(length - 4);
-					}
-				}
-
-				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
-			}
-		}
-		/// <summary>
-		/// Sends a region deletion to the player.
-		/// <param name="regionName">The region name.</param>
-		/// </summary>
-		public void SendRaptorRegionDeletion(string regionName)
-		{
-			if (!IsRaptor)
-				return;
-
-			lock (NetMessage.buffer[Index].writeBuffer)
-			{
-				int length = 0;
-
-				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
-				{
-					using (var writer = new BinaryWriter(ms))
-					{
-						writer.BaseStream.Position = 4;
-
-						writer.Write((byte)PacketTypes.Placeholder);
-						writer.Write((byte)RaptorPacketTypes.RegionDelete);
-
-						writer.Write(regionName);
-
-						length = (int)writer.BaseStream.Position;
-						writer.BaseStream.Position = 0;
-						writer.Write(length - 4);
-					}
-				}
-
-				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
-			}
-		}
-		/// <summary>
-		/// Sends a warp to the player.
-		/// <param name="warp">The warp.</param>
-		/// </summary>
-		public void SendRaptorWarp(Warp warp)
-		{
-			if (!IsRaptor)
-				return;
-
-			lock (NetMessage.buffer[Index].writeBuffer)
-			{
-				int length = 0;
-
-				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
-				{
-					using (var writer = new BinaryWriter(ms))
-					{
-						writer.BaseStream.Position = 4;
-
-						writer.Write((byte)PacketTypes.Placeholder);
-						writer.Write((byte)RaptorPacketTypes.Warp);
-
-						writer.Write(warp.Position.X);
-						writer.Write(warp.Position.Y);
-						writer.Write(warp.Name);
-
-						length = (int)writer.BaseStream.Position;
-						writer.BaseStream.Position = 0;
-						writer.Write(length - 4);
-					}
-				}
-
-				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
-			}
-		}
-		/// <summary>
-		/// Sends a warp deletion to the player.
-		/// <param name="warpName">The warp name.</param>
-		/// </summary>
-		public void SendRaptorWarpDeletion(string warpName)
-		{
-			if (!IsRaptor)
-				return;
-
-			lock (NetMessage.buffer[Index].writeBuffer)
-			{
-				int length = 0;
-
-				using (var ms = new MemoryStream(NetMessage.buffer[Index].writeBuffer, true))
-				{
-					using (var writer = new BinaryWriter(ms))
-					{
-						writer.BaseStream.Position = 4;
-
-						writer.Write((byte)PacketTypes.Placeholder);
-						writer.Write((byte)RaptorPacketTypes.WarpDelete);
-
-						writer.Write(warpName);
-
-						length = (int)writer.BaseStream.Position;
-						writer.BaseStream.Position = 0;
-						writer.Write(length - 4);
-					}
-				}
-
-				TShock.PacketBuffer.SendBytes(Netplay.serverSock[Index], NetMessage.buffer[Index].writeBuffer, 0, length);
-			}
+			NetMessage.SendBytes(Netplay.serverSock[Index], data, 0, data.Length, Netplay.serverSock[Index].ServerWriteCallBack, Netplay.serverSock[Index].networkStream);
 		}
 
         /// <summary>
@@ -1184,42 +1019,70 @@ namespace TShockAPI
 			//RconHandler.Response += msg + "\n";
 		}
 
-		public void SetFullMoon(bool fullmoon)
+		public void SetFullMoon()
 		{
+			Main.dayTime = false;
 			Main.moonPhase = 0;
-			SetTime(false, 0);
+			Main.time = 0.0;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetBloodMoon(bool bloodMoon)
 		{
-			Main.bloodMoon = bloodMoon;
-			SetTime(false, 0);
+			if (bloodMoon)
+			{
+				Main.dayTime = false;
+				Main.bloodMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.bloodMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
-		public void SetSnowMoon(bool snowMoon)
+		public void SetFrostMoon(bool snowMoon)
 		{
-			Main.snowMoon = snowMoon;
-			SetTime(false, 0);
+			if (snowMoon)
+			{
+				Main.dayTime = false;
+				Main.snowMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.snowMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetPumpkinMoon(bool pumpkinMoon)
 		{
-			Main.pumpkinMoon = pumpkinMoon;
-			SetTime(false, 0);
+			if (pumpkinMoon)
+			{
+				Main.dayTime = false;
+				Main.pumpkinMoon = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.pumpkinMoon = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 		
-		public void SetEclipse(bool Eclipse)
+		public void SetEclipse(bool eclipse)
 		{
-			Main.eclipse = Eclipse;
-			SetTime(true, 150);
+			if (eclipse)
+			{
+				Main.dayTime = Main.eclipse = true;
+				Main.time = 0.0;
+			}
+			else
+				Main.eclipse = false;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		public void SetTime(bool dayTime, double time)
 		{
 			Main.dayTime = dayTime;
 			Main.time = time;
-			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
-			NetMessage.syncPlayers();
+			TSPlayer.All.SendData(PacketTypes.TimeSet, "", 0, 0, Main.sunModY, Main.moonModY);
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
@@ -1265,14 +1128,24 @@ namespace TShockAPI
 	public class PlayerData
 	{
 		public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
-		public int health = 100;
-		public int maxHealth = 100;
-		public int mana = 20;
-		public int maxMana = 20;
+		public int health = TShock.ServerSideCharacterConfig.StartingHealth;
+		public int maxHealth = TShock.ServerSideCharacterConfig.StartingHealth;
+		public int mana = TShock.ServerSideCharacterConfig.StartingMana;
+		public int maxMana = TShock.ServerSideCharacterConfig.StartingMana;
 		public bool exists;
 		public int spawnX= -1;
 		public int spawnY= -1;
-		
+		public int? hair;
+		public byte hairDye;
+		public Color? hairColor;
+		public Color? pantsColor;
+		public Color? shirtColor;
+		public Color? underShirtColor;
+		public Color? shoeColor;
+		public Color? skinColor;
+		public Color? eyeColor;
+		public BitsByte? hideVisuals;
+		public int questsCompleted;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -1292,7 +1165,12 @@ namespace TShockAPI
 			this.inventory[2].stack = 1;
 			if (player.TPlayer.inventory[2] != null && player.TPlayer.inventory[2].netID == -16)
 				this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
-			
+
+			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
+			{
+				var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
+				StoreSlot(i, item.netID, item.prefix, item.stack);
+			}
 		}
 
 		public void StoreSlot(int slot, int netID, int prefix, int stack)
@@ -1331,6 +1209,18 @@ namespace TShockAPI
 				this.spawnX = player.TPlayer.SpawnX;
 				this.spawnY = player.TPlayer.SpawnY;
 			}
+			this.hair = player.TPlayer.hair;
+			this.hairDye = player.TPlayer.hairDye;
+			this.hairColor = player.TPlayer.hairColor;
+			this.pantsColor = player.TPlayer.pantsColor;
+			this.shirtColor = player.TPlayer.shirtColor;
+			this.underShirtColor = player.TPlayer.underShirtColor;
+			this.shoeColor = player.TPlayer.shoeColor;
+			this.hideVisuals = player.TPlayer.hideVisual;
+			this.skinColor = player.TPlayer.skinColor;
+			this.eyeColor = player.TPlayer.eyeColor;
+			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
+
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
@@ -1409,6 +1299,9 @@ namespace TShockAPI
 
 		public void RestoreCharacter(TSPlayer player)
 		{
+			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
+			player.IgnoreSSCPackets = true;
+
 			player.TPlayer.statLife = this.health;
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.maxMana;
@@ -1417,6 +1310,30 @@ namespace TShockAPI
 			player.TPlayer.SpawnY = this.spawnY;
 			player.sX = this.spawnX;
 			player.sY = this.spawnY;
+			player.TPlayer.hairDye = this.hairDye;
+			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
+
+			if (this.hair != null)
+				player.TPlayer.hair = this.hair.Value;
+			if (this.hairColor != null)
+				player.TPlayer.hairColor = this.hairColor.Value;
+			if (this.pantsColor != null)
+				player.TPlayer.pantsColor = this.pantsColor.Value;
+			if (this.shirtColor != null)
+				player.TPlayer.shirtColor = this.shirtColor.Value;
+			if (this.underShirtColor != null)
+				player.TPlayer.underShirtColor = this.underShirtColor.Value;
+			if (this.shoeColor != null)
+				player.TPlayer.shoeColor = this.shoeColor.Value;
+			if (this.skinColor != null)
+				player.TPlayer.skinColor = this.skinColor.Value;
+			if (this.eyeColor != null)
+				player.TPlayer.eyeColor = this.eyeColor.Value;
+
+			if (this.hideVisuals != null)
+				player.TPlayer.hideVisual = this.hideVisuals.Value;
+			else
+				player.TPlayer.hideVisual.ClearAll();
 			
 			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
@@ -1490,9 +1407,19 @@ namespace TShockAPI
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 70f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
+            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
 			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
@@ -1501,61 +1428,67 @@ namespace TShockAPI
 			{
 				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
 			}
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 70f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 71f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 72f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
+            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
 			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 
-			for (int k = 0; k < 10; k++)
+			for (int k = 0; k < 22; k++)
 			{
 				player.TPlayer.buffType[k] = 0;
 			}
 			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(76, -1, -1, "", player.Index);
+
+			NetMessage.SendData(39, player.Index, -1, "", 400);
 		}
 	}
 
 	public class NetItem
 	{
-		public static readonly int maxNetInventory = 73;
-		public static readonly int armorSlots = 11;
-		public static readonly int dyeSlots = 3;
+		public static readonly int maxNetInventory = 83;
+		public static readonly int armorSlots = 16;
+		public static readonly int dyeSlots = 8;
 		public int netID;
 		public int stack;
 		public int prefix;
 		
 		public static string ToString(NetItem[] inventory)
 		{
-			string inventoryString = "";
+			StringBuilder items = new StringBuilder();
 			for (int i = 0; i < maxNetInventory; i++)
 			{
-				if (i != 0)
-					inventoryString += "~";
-				inventoryString += inventory[i].netID;
+				items.Append(inventory[i].netID).Append(",");
 				if (inventory[i].netID != 0)
-				{
-					inventoryString += "," + inventory[i].stack;
-					inventoryString += "," + inventory[i].prefix;
-				}
+					items.Append(inventory[i].stack).Append(",").Append(inventory[i].prefix).Append("~");
 				else
-				{
-					inventoryString += ",0,0";
-				}
+					items.Append("0,0~");
 			}
-			return inventoryString;
+			return items.ToString(0, items.Length - 1);
 		}
 
 		public static NetItem[] Parse(string data)

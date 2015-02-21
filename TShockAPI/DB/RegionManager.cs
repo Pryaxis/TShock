@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,22 +38,23 @@ namespace TShockAPI.DB
 		{
 			database = db;
 			var table = new SqlTable("Regions",
-			                         new SqlColumn("X1", MySqlDbType.Int32),
-			                         new SqlColumn("Y1", MySqlDbType.Int32),
-			                         new SqlColumn("width", MySqlDbType.Int32),
-			                         new SqlColumn("height", MySqlDbType.Int32),
-			                         new SqlColumn("RegionName", MySqlDbType.VarChar, 50) {Primary = true},
-			                         new SqlColumn("WorldID", MySqlDbType.Text),
-			                         new SqlColumn("UserIds", MySqlDbType.Text),
-			                         new SqlColumn("Protected", MySqlDbType.Int32),
-			                         new SqlColumn("Groups", MySqlDbType.Text),
-			                         new SqlColumn("Owner", MySqlDbType.VarChar, 50),
-                                     new SqlColumn("Z", MySqlDbType.Int32){ DefaultValue = "0" }
+									 new SqlColumn("Id", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
+									 new SqlColumn("X1", MySqlDbType.Int32),
+									 new SqlColumn("Y1", MySqlDbType.Int32),
+									 new SqlColumn("width", MySqlDbType.Int32),
+									 new SqlColumn("height", MySqlDbType.Int32),
+									 new SqlColumn("RegionName", MySqlDbType.VarChar, 50) {Unique = true},
+									 new SqlColumn("WorldID", MySqlDbType.VarChar, 50) { Unique = true },
+									 new SqlColumn("UserIds", MySqlDbType.Text),
+									 new SqlColumn("Protected", MySqlDbType.Int32),
+									 new SqlColumn("Groups", MySqlDbType.Text),
+									 new SqlColumn("Owner", MySqlDbType.VarChar, 50),
+									 new SqlColumn("Z", MySqlDbType.Int32){ DefaultValue = "0" }
 				);
 			var creator = new SqlTableCreator(db,
-			                                  db.GetSqlType() == SqlType.Sqlite
-			                                  	? (IQueryBuilder) new SqliteQueryCreator()
-			                                  	: new MysqlQueryCreator());
+											  db.GetSqlType() == SqlType.Sqlite
+											  	? (IQueryBuilder) new SqliteQueryCreator()
+											  	: new MysqlQueryCreator());
 			creator.EnsureExists(table);
 		}
 
@@ -78,7 +79,7 @@ namespace TShockAPI.DB
 						string name = reader.Get<string>("RegionName");
 						string owner = reader.Get<string>("Owner");
 						string groups = reader.Get<string>("Groups");
-					    int z = reader.Get<int>("Z");
+						int z = reader.Get<int>("Z");
 
 						string[] splitids = mergedids.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -111,53 +112,6 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				Log.Error(ex.ToString());
-			}
-		}
-
-		public void ReloadForUnitTest(String n)
-		{
-			using (var reader = database.QueryReader("SELECT * FROM Regions WHERE WorldID=@0", n))
-			{
-				Regions.Clear();
-				while (reader.Read())
-				{
-					int X1 = reader.Get<int>("X1");
-					int Y1 = reader.Get<int>("Y1");
-					int height = reader.Get<int>("height");
-					int width = reader.Get<int>("width");
-					int Protected = reader.Get<int>("Protected");
-					string MergedIDs = reader.Get<string>("UserIds");
-					string name = reader.Get<string>("RegionName");
-					string[] SplitIDs = MergedIDs.Split(',');
-					string owner = reader.Get<string>("Owner");
-					string groups = reader.Get<string>("Groups");
-				    int z = reader.Get<int>("Z");
-
-					Region r = new Region(new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString(), z);
-					r.SetAllowedGroups(groups);
-					try
-					{
-						for (int i = 0; i < SplitIDs.Length; i++)
-						{
-							int id;
-
-							if (Int32.TryParse(SplitIDs[i], out id)) // if unparsable, it's not an int, so silently skip
-								r.AllowedIDs.Add(id);
-							else if (SplitIDs[i] == "") // Split gotcha, can return an empty string with certain conditions
-								// but we only want to let the user know if it's really a nonparsable integer.
-								Log.Warn("UnitTest: One of your UserIDs is not a usable integer: " + SplitIDs[i]);
-						}
-					}
-					catch (Exception e)
-					{
-						Log.Error("Your database contains invalid UserIDs (they should be ints).");
-						Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-						Log.Error(e.Message);
-						Log.Error(e.StackTrace);
-					}
-
-					Regions.Add(r);
-				}
 			}
 		}
 
@@ -203,7 +157,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name,
-				               Main.worldID.ToString());
+							   Main.worldID.ToString());
 				var region = GetRegionByName(name);
 				if (region != null)
 					region.DisableBuild = state;
@@ -239,26 +193,26 @@ namespace TShockAPI.DB
 			{
 				return false;
 			}
-		    Region top = null;
+			Region top = null;
 
-            foreach (Region region in Regions.ToList())
-            {
-                if (region.InArea(x, y))
-                {
-                    if (top == null || region.Z > top.Z)
-                        top = region;    
-                }
-            }
-            return top == null || top.HasPermissionToBuildInRegion(ply);
+			foreach (Region region in Regions.ToList())
+			{
+				if (region.InArea(x, y))
+				{
+					if (top == null || region.Z > top.Z)
+						top = region;	
+				}
+			}
+			return top == null || top.HasPermissionToBuildInRegion(ply);
 		}
 
 		public bool InArea(int x, int y)
 		{
-            foreach (Region region in Regions.ToList())
+			foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
-				    y >= region.Area.Top && y <= region.Area.Bottom &&
-				    region.DisableBuild)
+					y >= region.Area.Top && y <= region.Area.Bottom &&
+					region.DisableBuild)
 				{
 					return true;
 				}
@@ -266,35 +220,35 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-        public List<string> InAreaRegionName(int x, int y)
-        {
-            List<string> regions = new List<string>() { };
-            foreach (Region region in Regions.ToList())
-            {
-                if (x >= region.Area.Left && x <= region.Area.Right &&
-                    y >= region.Area.Top && y <= region.Area.Bottom &&
-                    region.DisableBuild)
-                {
-                    regions.Add(region.Name);
-                }
-            }
-            return regions;
-        }
+		public List<string> InAreaRegionName(int x, int y)
+		{
+			List<string> regions = new List<string>() { };
+			foreach (Region region in Regions.ToList())
+			{
+				if (x >= region.Area.Left && x <= region.Area.Right &&
+					y >= region.Area.Top && y <= region.Area.Bottom &&
+					region.DisableBuild)
+				{
+					regions.Add(region.Name);
+				}
+			}
+			return regions;
+		}
 
-        public List<Region> InAreaRegion(int x, int y)
-        {
-            List<Region> regions = new List<Region>() { };
-            foreach (Region region in Regions.ToList())
-            {
-                if (x >= region.Area.Left && x <= region.Area.Right &&
-                    y >= region.Area.Top && y <= region.Area.Bottom &&
-                    region.DisableBuild)
-                {
-                    regions.Add(region);
-                }
-            }
-            return regions;
-        }
+		public List<Region> InAreaRegion(int x, int y)
+		{
+			List<Region> regions = new List<Region>() { };
+			foreach (Region region in Regions.ToList())
+			{
+				if (x >= region.Area.Left && x <= region.Area.Right &&
+					y >= region.Area.Top && y <= region.Area.Bottom &&
+					region.DisableBuild)
+				{
+					regions.Add(region);
+				}
+			}
+			return regions;
+		}
 
 		public static List<string> ListIDs(string MergedIDs)
 		{
@@ -311,52 +265,43 @@ namespace TShockAPI.DB
 			int Y = 0;
 			int height = 0;
 			int width = 0;
+
 			try
 			{
-				using (
-					var reader = database.QueryReader("SELECT X1, Y1, height, width FROM Regions WHERE RegionName=@0 AND WorldID=@1",
-					                                  regionName, Main.worldID.ToString()))
+				using (var reader = database.QueryReader("SELECT X1, Y1, height, width FROM Regions WHERE RegionName=@0 AND WorldID=@1",
+													  regionName, Main.worldID.ToString()))
 				{
 					if (reader.Read())
+					{
 						X = reader.Get<int>("X1");
-					width = reader.Get<int>("width");
-					Y = reader.Get<int>("Y1");
-					height = reader.Get<int>("height");
-				}
-				if (!(direction == 0))
-				{
-					if (!(direction == 1))
-					{
-						if (!(direction == 2))
-						{
-							if (!(direction == 3))
-							{
-								return false;
-							}
-							else
-							{
-								X -= addAmount;
-								width += addAmount;
-							}
-						}
-						else
-						{
-							height += addAmount;
-						}
+						width = reader.Get<int>("width");
+						Y = reader.Get<int>("Y1");
+						height = reader.Get<int>("height");
 					}
-					else
-					{
+				}
+				switch (direction)
+				{
+					case 0:
+						Y -= addAmount;
+						height += addAmount;
+						break;
+					case 1:
 						width += addAmount;
-					}
+						break;
+					case 2:
+						height += addAmount;
+						break;
+					case 3:
+						X -= addAmount;
+						width += addAmount;
+						break;
+					default:
+						return false;
 				}
-				else
-				{
-					Y -= addAmount;
-					height += addAmount;
-				}
-				int q =
-					database.Query(
-						"UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID=@5", X, Y, width,
+				
+				foreach (var region in Regions.Where(r => r.Name == regionName))
+					region.Area = new Rectangle(X, Y, width, height);
+				int q = database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID=@5", X, Y, width,
 						height, regionName, Main.worldID.ToString());
 				if (q > 0)
 					return true;
@@ -376,7 +321,7 @@ namespace TShockAPI.DB
 				r.RemoveID(TShock.Users.GetUserID(userName));
 				string ids = string.Join(",", r.AllowedIDs);
 				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", ids,
-				                       regionName, Main.worldID.ToString());
+									   regionName, Main.worldID.ToString());
 				if (q > 0)
 					return true;
 			}
@@ -390,7 +335,7 @@ namespace TShockAPI.DB
 				string mergedIDs = string.Empty;
 				using (
 					var reader = database.QueryReader("SELECT UserIds FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
-					                                  Main.worldID.ToString()))
+													  Main.worldID.ToString()))
 				{
 					if (reader.Read())
 						mergedIDs = reader.Get<string>("UserIds");
@@ -408,7 +353,7 @@ namespace TShockAPI.DB
 					mergedIDs = string.Concat(mergedIDs, ",", userIdToAdd);
 
 				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", mergedIDs,
-				                       regionName, Main.worldID.ToString());
+									   regionName, Main.worldID.ToString());
 				foreach (var r in Regions)
 				{
 					if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
@@ -478,16 +423,6 @@ namespace TShockAPI.DB
 			return Regions.FirstOrDefault(r => r.Name.Equals(name) && r.WorldID == Main.worldID.ToString());
 		}
 
-		public Region ZacksGetRegionByName(String name)
-		{
-			foreach (Region r in Regions)
-			{
-				if (r.Name.Equals(name))
-					return r;
-			}
-			return null;
-		}
-
 		public bool ChangeOwner(string regionName, string newOwner)
 		{
 			var region = GetRegionByName(regionName);
@@ -495,7 +430,7 @@ namespace TShockAPI.DB
 			{
 				region.Owner = newOwner;
 				int q = database.Query("UPDATE Regions SET Owner=@0 WHERE RegionName=@1 AND WorldID=@2", newOwner,
-				                       regionName, Main.worldID.ToString());
+									   regionName, Main.worldID.ToString());
 				if (q > 0)
 					return true;
 			}
@@ -507,7 +442,7 @@ namespace TShockAPI.DB
 			string mergedGroups = "";
 			using (
 				var reader = database.QueryReader("SELECT Groups FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
-				                                  Main.worldID.ToString()))
+												  Main.worldID.ToString()))
 			{
 				if (reader.Read())
 					mergedGroups = reader.Get<string>("Groups");
@@ -523,7 +458,7 @@ namespace TShockAPI.DB
 			mergedGroups += groupName;
 
 			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", mergedGroups,
-			                       regionName, Main.worldID.ToString());
+								   regionName, Main.worldID.ToString());
 
 			Region r = GetRegionByName(regionName);
 			if (r != null)
@@ -546,47 +481,47 @@ namespace TShockAPI.DB
 				r.RemoveGroup(group);
 				string groups = string.Join(",", r.AllowedGroups);
 				int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groups,
-				                       regionName, Main.worldID.ToString());
+									   regionName, Main.worldID.ToString());
 				if (q > 0)
 					return true;
 			}
 			return false;
 		}
 
-        public Region GetTopRegion( List<Region> regions )
-        {
-            Region ret = null;
-            foreach( Region r in regions)
-            {
-                if (ret == null)
-                    ret = r;
-                else
-                {
-                    if (r.Z > ret.Z)
-                        ret = r;
-                }
-            }
-            return ret;
-        }
+		public Region GetTopRegion( List<Region> regions )
+		{
+			Region ret = null;
+			foreach( Region r in regions)
+			{
+				if (ret == null)
+					ret = r;
+				else
+				{
+					if (r.Z > ret.Z)
+						ret = r;
+				}
+			}
+			return ret;
+		}
 
-        public bool SetZ( string name, int z )
-        {
-            try
-            {
-                database.Query("UPDATE Regions SET Z=@0 WHERE RegionName=@1 AND WorldID=@2", z, name,
-                               Main.worldID.ToString());
+		public bool SetZ( string name, int z )
+		{
+			try
+			{
+				database.Query("UPDATE Regions SET Z=@0 WHERE RegionName=@1 AND WorldID=@2", z, name,
+							   Main.worldID.ToString());
 
-                var region = GetRegionByName(name);
-                if (region != null)
-                    region.Z = z;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-                return false;
-            }
-        }
+				var region = GetRegionByName(name);
+				if (region != null)
+					region.Z = z;
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex.ToString());
+				return false;
+			}
+		}
 	}
 
 	public class Region
@@ -598,7 +533,7 @@ namespace TShockAPI.DB
 		public string WorldID { get; set; }
 		public List<int> AllowedIDs { get; set; }
 		public List<string> AllowedGroups { get; set; }
-        public int Z { get; set; }
+		public int Z { get; set; }
 
 		public Region(Rectangle region, string name, string owner, bool disablebuild, string RegionWorldIDz, int z)
 			: this()
@@ -608,7 +543,7 @@ namespace TShockAPI.DB
 			Owner = owner;
 			DisableBuild = disablebuild;
 			WorldID = RegionWorldIDz;
-		    Z = z;
+			Z = z;
 		}
 
 		public Region()
@@ -619,7 +554,7 @@ namespace TShockAPI.DB
 			WorldID = string.Empty;
 			AllowedIDs = new List<int>();
 			AllowedGroups = new List<string>();
-		    Z = 0;
+			Z = 0;
 		}
 
 		public bool InArea(Rectangle point)

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2013 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -442,7 +442,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffName[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffName[id] : "null";
 		}
 
 		/// <summary>
@@ -452,7 +452,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffs) ? Main.buffTip[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffTip[id] : "null";
 		}
 
 		/// <summary>
@@ -463,13 +463,13 @@ namespace TShockAPI
 		public List<int> GetBuffByName(string name)
 		{
 			string nameLower = name.ToLower();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
-			for (int i = 1; i < Main.maxBuffs; i++)
+			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
 				if (Main.buffName[i].ToLower().StartsWith(nameLower))
 					found.Add(i);
@@ -484,11 +484,7 @@ namespace TShockAPI
 		/// <returns>Prefix name</returns>
 		public string GetPrefixById(int id)
 		{
-			var item = new Item();
-			item.SetDefaults(0);
-			item.prefix = (byte) id;
-			item.AffixName();
-			return item.name.Trim();
+			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id] ?? "";
 		}
 
 		/// <summary>
@@ -574,7 +570,7 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void RestartServer(bool save = true, string reason = "Server shutting down!")
 		{
-			if (TShock.Config.ServerSideCharacter)
+			if (Main.ServerSideCharacter)
 				foreach (TSPlayer player in TShock.Players)
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 						TShock.CharacterDB.InsertPlayerData(player);
@@ -681,12 +677,11 @@ namespace TShockAPI
 				string playerName = player.Name;
 				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
-				Log.ConsoleInfo(string.Format("Banned {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
-					Broadcast(string.Format("{0} was {1}banned for '{2}'", playerName, verb, reason.ToLower()));
+					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", playerName, verb, reason);
 				else
-					Broadcast(string.Format("{0} {1}banned {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()));
+					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, playerName, reason);
 				return true;
 			}
 			return false;
@@ -893,7 +888,7 @@ namespace TShockAPI
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+'))
+				if (Char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+'))
 					sb.Append(str[i]);
 				else
 				{
@@ -921,6 +916,8 @@ namespace TShockAPI
 					}
 				}
 			}
+			if (sb.Length != 0)
+				return false;
 			return true;
 		}
 
@@ -973,6 +970,63 @@ namespace TShockAPI
 			{
 				yield return new Point(regionArea.Left, regionArea.Top + y);
 				yield return new Point(regionArea.Right, regionArea.Top + y);
+			}
+		}
+
+		public int? EncodeColor(Color? color)
+		{
+			if (color == null)
+				return null;
+
+			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
+		}
+
+		public Color? DecodeColor(int? encodedColor)
+		{
+			if (encodedColor == null)
+				return null;
+
+			byte[] data = BitConverter.GetBytes(encodedColor.Value);
+			return new Color(data[0], data[1], data[2], data[3]);
+		}
+
+		public byte? EncodeBitsByte(BitsByte? bitsByte)
+		{
+			if (bitsByte == null)
+				return null;
+
+			byte result = 0;
+			for (int i = 0; i < 8; i++)
+				if (bitsByte.Value[i])
+					result |= (byte)(1 << i);
+
+			return result;
+		}
+
+		public BitsByte? DecodeBitsByte(int? encodedBitsByte)
+		{
+			if (encodedBitsByte == null)
+				return null;
+
+			BitsByte result = new BitsByte();
+			for (int i = 0; i < 8; i++)
+				result[i] = (encodedBitsByte & 1 << i) != 0;
+
+			return result;
+		}
+
+		public HttpWebResponse GetResponseNoException(HttpWebRequest req)
+		{
+			try
+			{
+				return (HttpWebResponse)req.GetResponse();
+			}
+			catch (WebException we)
+			{
+				var resp = we.Response as HttpWebResponse;
+				if (resp == null)
+					throw;
+				return resp;
 			}
 		}
 	}

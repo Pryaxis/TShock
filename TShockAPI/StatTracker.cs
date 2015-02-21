@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.IO;
 using System.Web;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -27,21 +28,6 @@ namespace TShockAPI
 			}
 		}
 
-		private HttpWebResponse GetResponseNoException(HttpWebRequest req)
-		{
-			try
-			{
-				return (HttpWebResponse)req.GetResponse();
-			}
-			catch (WebException we)
-			{
-				var resp = we.Response as HttpWebResponse;
-				if (resp == null)
-					throw;
-				return resp;
-			}
-		}
-
 		private void SendUpdate(object info)
 		{
 			Thread.Sleep(1000*60*15);
@@ -54,7 +40,7 @@ namespace TShockAPI
 				systemCPUClock = 0,
 				version = TShock.VersionNum.ToString(),
 				terrariaVersion = Terraria.Main.versionNumber2,
-				mono = Terraria.Main.runningMono
+				mono = ServerApi.RunningMono
 			};
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -64,7 +50,7 @@ namespace TShockAPI
 			client.Timeout = 5000;
 			try
 			{
-				using (var resp = GetResponseNoException(client))
+				using (var resp = TShock.Utils.GetResponseNoException(client))
 				{
 					if (resp.StatusCode != HttpStatusCode.OK)
 					{
