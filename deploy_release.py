@@ -3,9 +3,9 @@ import json
 import sys 
 import os
 
-branch = sys.argv[1]
-tag_name = sys.argv[2]
-name = sys.argv[3]
+branch = os.environ["GIT_BRANCH"]
+tag_name = os.environ["bamboo_tag_name"]
+name = os.environ["bamboo_release_name"]
 
 #because we can't find any other secure way to get a token into this script run from bamboo :'(
 with open('/home/bamboo/scripts/token.py') as f:
