@@ -155,9 +155,9 @@ namespace Rests
 				str = string.Format("{0}({1});", jsonp, str);
 			}
 			e.Response.Connection.Type = ConnectionType.Close;
-			e.Response.ContentType = new ContentTypeHeader("application/json");
+			e.Response.ContentType = new ContentTypeHeader("application/json; charset=utf-8");
 			e.Response.Add(serverHeader);
-			e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
+			e.Response.Body.Write(Encoding.UTF8.GetBytes(str), 0, str.Length);
 			e.Response.Status = HttpStatusCode.OK;
 		}
 
