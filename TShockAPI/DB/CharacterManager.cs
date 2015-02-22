@@ -104,7 +104,7 @@ namespace TShockAPI.DB
 		public bool SeedInitialData(User user)
 		{
 			var inventory = new StringBuilder();
-			for (int i = 0; i < Terraria.Main.maxInventory; i++)
+			for (int i = 0; i < NetItem.maxNetInventory; i++)
 			{
 				if (i > 0)
 				{
