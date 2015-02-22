@@ -76,6 +76,8 @@ namespace TShockAPI.DB
 
 			if (1 > ret)
 				throw new UserExistsException(user.Name);
+
+			Hooks.AccountHooks.OnAccountCreate(user);
 		}
 
 		/// <summary>
@@ -90,6 +92,8 @@ namespace TShockAPI.DB
 
 				if (affected < 1)
 					throw new UserNotExistException(user.Name);
+
+				Hooks.AccountHooks.OnAccountDelete(user);
 			}
 			catch (Exception ex)
 			{
