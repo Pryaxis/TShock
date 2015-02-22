@@ -1000,23 +1000,31 @@ namespace TShockAPI
 	      var user = new User();
 	      user.Name = args.Parameters[1];
 
-				try
+				if (args.Parameters.Count == 3)
 				{
-					if (args.Parameters.Count == 3)
+					try
 					{
-						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 						TShock.Users.SetUserGroup(user, args.Parameters[2]);
 						Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 					}
-					else
+					catch (GroupNotExistsException e)
 					{
-						args.Player.SendErrorMessage("Invalid user group syntax. Try /user help.");
+						args.Player.SendErrorMessage("That group does not exist!");
 					}
+					catch (UserNotExistException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " could not be added. Check console for details.");
+					}
+
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendMessage(ex.Message, Color.Green);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid user group syntax. Try /user help.");
 				}
 			}
 			else if (subcmd == "help")
