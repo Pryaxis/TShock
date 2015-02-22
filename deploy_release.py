@@ -28,5 +28,5 @@ upload_url = upload_url + '?name=' + release_name
 
 upload_headers = {'Authorization': 'token ' + token}
 files = {'file': (release_name, open(release_name, 'rb'), 'application/zip')}
-r = requests.post(upload_url, files=files, headers = upload_headers)
+r = requests.post(upload_url, files=files, headers = upload_headers, verify=False)
 
