@@ -35,19 +35,19 @@ namespace TShockAPI.DB
 			database = db;
 
 			var table = new SqlTable("Users",
-			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
-			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
-			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
-                                     new SqlColumn("UUID", MySqlDbType.VarChar, 128),
-			                         new SqlColumn("Usergroup", MySqlDbType.Text),
+															 new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
+															 new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
+															 new SqlColumn("Password", MySqlDbType.VarChar, 128),
+																		 new SqlColumn("UUID", MySqlDbType.VarChar, 128),
+															 new SqlColumn("Usergroup", MySqlDbType.Text),
 									 new SqlColumn("Registered", MySqlDbType.Text),
-                                     new SqlColumn("LastAccessed", MySqlDbType.Text),
-                                     new SqlColumn("KnownIPs", MySqlDbType.Text)
+																		 new SqlColumn("LastAccessed", MySqlDbType.Text),
+																		 new SqlColumn("KnownIPs", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
-			                                  db.GetSqlType() == SqlType.Sqlite
-			                                  	? (IQueryBuilder) new SqliteQueryCreator()
-			                                  	: new MysqlQueryCreator());
+																				db.GetSqlType() == SqlType.Sqlite
+																					? (IQueryBuilder) new SqliteQueryCreator()
+																					: new MysqlQueryCreator());
 			creator.EnsureExists(table);
 		}
 
@@ -64,7 +64,7 @@ namespace TShockAPI.DB
 			try
 			{
 				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
+									 TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
@@ -113,7 +113,7 @@ namespace TShockAPI.DB
 			{
 				if (
 					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", TShock.Utils.HashPassword(password),
-					               user.Name) == 0)
+												 user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}
 			catch (Exception ex)
@@ -133,7 +133,7 @@ namespace TShockAPI.DB
 			{
 				if (
 					database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
-								   user.Name) == 0)
+									 user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}
 			catch (Exception ex)
@@ -170,18 +170,18 @@ namespace TShockAPI.DB
 			}
 		}
 
-	    public void UpdateLogin(User user)
-	    {
-            try
-            {
-                if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
-                    throw new UserNotExistException(user.Name);
-            }
-            catch (Exception ex)
-            {
-                throw new UserManagerException("UpdateLogin SQL returned an error", ex);
-            }
-	    }
+			public void UpdateLogin(User user)
+			{
+						try
+						{
+								if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
+										throw new UserNotExistException(user.Name);
+						}
+						catch (Exception ex)
+						{
+								throw new UserManagerException("UpdateLogin SQL returned an error", ex);
+						}
+			}
 
 		public int GetUserID(string username)
 		{
@@ -295,11 +295,11 @@ namespace TShockAPI.DB
 			user.ID = result.Get<int>("ID");
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
-            user.UUID = result.Get<string>("UUID");
+						user.UUID = result.Get<string>("UUID");
 			user.Name = result.Get<string>("Username");
 			user.Registered = result.Get<string>("Registered");
-            user.LastAccessed = result.Get<string>("LastAccessed");
-            user.KnownIps = result.Get<string>("KnownIps");
+						user.LastAccessed = result.Get<string>("LastAccessed");
+						user.KnownIps = result.Get<string>("KnownIps");
 			return user;
 		}
 	}
@@ -309,32 +309,32 @@ namespace TShockAPI.DB
 		public int ID { get; set; }
 		public string Name { get; set; }
 		public string Password { get; set; }
-        public string UUID { get; set; }
+				public string UUID { get; set; }
 		public string Group { get; set; }
 		public string Registered { get; set; }
-        public string LastAccessed { get; set; }
-        public string KnownIps { get; set; }
+				public string LastAccessed { get; set; }
+				public string KnownIps { get; set; }
 
 		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
-            UUID = uuid;
+						UUID = uuid;
 			Group = group;
 			Registered = registered;
-		    LastAccessed = last;
-		    KnownIps = known;
+				LastAccessed = last;
+				KnownIps = known;
 		}
 
 		public User()
 		{
 			Name = "";
 			Password = "";
-            UUID = "";
+						UUID = "";
 			Group = "";
 			Registered = "";
-            LastAccessed = "";
-            KnownIps = "";
+						LastAccessed = "";
+						KnownIps = "";
 		}
 	}
 
