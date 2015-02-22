@@ -349,6 +349,9 @@ namespace TShockAPI
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
 		public static readonly string godmode = "tshock.godmode";
 
+		[Description("User can godmode other players")]
+		public static readonly string godmodeother = "tshock.godmode.other";
+
 		[Description("Player can chat")] 
 		public static readonly string canchat = "tshock.canchat";
 
