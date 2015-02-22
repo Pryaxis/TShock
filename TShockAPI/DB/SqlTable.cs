@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ namespace TShockAPI.DB
 			creator = provider;
 		}
 
-		public void EnsureExists(SqlTable table)
+		// Returns true if the table was created; false if it was not.
+		public bool EnsureTableStructure(SqlTable table)
 		{
 			var columns = GetColumns(table);
 			if (columns.Count > 0)
@@ -66,7 +67,19 @@ namespace TShockAPI.DB
 			else
 			{
 				database.Query(creator.CreateTable(table));
+				return true;
 			}
+			return false;
+		}
+
+		/// <summary>
+        /// Ensures a table exists and that its structure is correct
+		/// </summary>
+		/// <param name="table">The table name</param>
+        [Obsolete("This method will be replaced by EnsureTableExists.")]
+		public void EnsureExists(SqlTable table)
+		{
+			EnsureTableStructure(table);
 		}
 
 		public List<string> GetColumns(SqlTable table)

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,33 +47,34 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-			creator.EnsureExists(table);
+			if (creator.EnsureTableStructure(table))
+			{
+				// Add default groups if they don't exist
+				AddDefaultGroup("guest", "",
+					string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
+						Permissions.cantalkinthird, Permissions.canchat));
+
+				AddDefaultGroup("default", "guest",
+					string.Join(",", Permissions.warp, Permissions.canchangepassword));
+
+				AddDefaultGroup("newadmin", "default",
+					string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
+
+				AddDefaultGroup("admin", "newadmin",
+					string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
+						Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
+						Permissions.kill, Permissions.logs,
+						Permissions.immunetokick, Permissions.tpothers));
+
+				AddDefaultGroup("trustedadmin", "admin",
+					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
+						Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
+
+				AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
+			}
 
 			// Load Permissions from the DB
 			LoadPermisions();
-
-			// Add default groups if they don't exist
-			AddDefaultGroup("guest", "",
-				string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
-					Permissions.cantalkinthird, Permissions.canchat));
-
-			AddDefaultGroup("default", "guest",
-				string.Join(",", Permissions.warp, Permissions.canchangepassword));
-
-			AddDefaultGroup("newadmin", "default",
-				string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
-
-			AddDefaultGroup("admin", "newadmin",
-				string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
-					Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
-					Permissions.kill, Permissions.logs,
-					Permissions.immunetokick, Permissions.tpothers));
-
-			AddDefaultGroup("trustedadmin", "admin",
-				string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
-					Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
-
-			AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
 
 			Group.DefaultGroup = GetGroupByName(TShock.Config.DefaultGuestGroupName);
 		}

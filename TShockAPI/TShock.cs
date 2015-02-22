@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -76,7 +76,6 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
-		public static StatTracker StatTracker = new StatTracker();
 		public static UpdateManager UpdateManager;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
@@ -266,8 +265,10 @@ namespace TShockAPI
 			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
-				TShockAPI.Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
-				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
+				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
+				Hooks.AccountHooks.AccountCreate += OnAccountCreate;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -379,6 +380,16 @@ namespace TShockAPI
             u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 	        Users.UpdateLogin(u);
 	    }
+
+		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
+		{
+			CharacterDB.RemovePlayer(args.User.ID);
+		}
+
+		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
+		{
+			CharacterDB.SeedInitialData(Users.GetUser(args.User));
+		}
 
 		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
 		{
@@ -613,7 +624,6 @@ namespace TShockAPI
 			ComputeMaxStyles();
 			FixChestStacks();
 			
-			StatTracker.Initialize();
 			UpdateManager = new UpdateManager();
 		}
 

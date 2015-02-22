@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -878,7 +878,6 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", user.Password);
 					TShock.Users.AddUser(user);
-					TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
 					Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
 				}
 				else
@@ -910,28 +909,35 @@ namespace TShockAPI
 			{
 				var user = new User();
 
-				try
+				if (args.Parameters.Count == 4)
 				{
-					if (args.Parameters.Count == 4)
+					user.Name = args.Parameters[1];
+					user.Password = args.Parameters[2];
+					user.Group = args.Parameters[3];
+					
+					try
 					{
-						user.Name = args.Parameters[1];
-						user.Password = args.Parameters[2];
-						user.Group = args.Parameters[3];
-							
-                        args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						TShock.Users.AddUser(user);
-						TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
-					else
+					catch (GroupNotExistsException e)
 					{
-						args.Player.SendErrorMessage("Invalid syntax. Try /user help.");
+						args.Player.SendErrorMessage("Group " + user.Group + " does not exist!");
+					}
+					catch (UserExistsException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " already exists!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " could not be added, check console for details.");
+						Log.ConsoleError(e.ToString());
 					}
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendErrorMessage(ex.Message);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid syntax. Try /user help.");
 				}
 			}
 				// User deletion requires a username
@@ -946,60 +952,77 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account removed successfully.");
 					Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
+				catch (UserNotExistException e)
+				{
+					args.Player.SendErrorMessage("The user " + user.Name + " does not exist! Deleted nobody!");
+				}
 				catch (UserManagerException ex)
 				{
 					args.Player.SendMessage(ex.Message, Color.Red);
 					Log.ConsoleError(ex.ToString());
 				}
 			}
-				// Password changing requires a username, and a new password to set
+			
+			// Password changing requires a username, and a new password to set
 			else if (subcmd == "password")
 			{
 				var user = new User();
 				user.Name = args.Parameters[1];
 
-				try
+				if (args.Parameters.Count == 3)
 				{
-					if (args.Parameters.Count == 3)
+					try
 					{
-						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 						TShock.Users.SetUserPassword(user, args.Parameters[2]);
 						Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
+						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 					}
-					else
+					catch (UserNotExistException e)
 					{
-						args.Player.SendErrorMessage("Invalid user password syntax. Try /user help.");
+						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("Password change for " + user.Name + " failed! Check console!");
+						Log.ConsoleError(e.ToString());
 					}
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendErrorMessage(ex.Message);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid user password syntax. Try /user help.");
 				}
 			}
-				// Group changing requires a username or IP address, and a new group to set
+			// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group")
 			{
-                var user = new User();
-                user.Name = args.Parameters[1];
+	      var user = new User();
+	      user.Name = args.Parameters[1];
 
-				try
+				if (args.Parameters.Count == 3)
 				{
-					if (args.Parameters.Count == 3)
+					try
 					{
-						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 						TShock.Users.SetUserGroup(user, args.Parameters[2]);
 						Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 					}
-					else
+					catch (GroupNotExistsException e)
 					{
-						args.Player.SendErrorMessage("Invalid user group syntax. Try /user help.");
+						args.Player.SendErrorMessage("That group does not exist!");
 					}
+					catch (UserNotExistException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " could not be added. Check console for details.");
+					}
+
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendMessage(ex.Message, Color.Green);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid user group syntax. Try /user help.");
 				}
 			}
 			else if (subcmd == "help")
