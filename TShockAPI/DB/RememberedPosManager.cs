@@ -42,7 +42,7 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-			creator.EnsureExists(table);
+			creator.EnsureTableStructure(table);
 		}
 
 		public Vector2 CheckLeavePos(string name)

@@ -48,7 +48,7 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-			creator.EnsureExists(table);
+			creator.EnsureTableStructure(table);
 		}
 
 		/// <summary>

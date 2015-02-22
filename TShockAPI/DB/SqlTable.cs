@@ -53,7 +53,7 @@ namespace TShockAPI.DB
 		}
 
 		// Returns true if the table was created; false if it was not.
-		public bool EnsureExists(SqlTable table)
+		public bool EnsureTableStructure(SqlTable table)
 		{
 			var columns = GetColumns(table);
 			if (columns.Count > 0)
@@ -70,6 +70,28 @@ namespace TShockAPI.DB
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+        /// Ensures a table exists and that its structure is correct
+		/// </summary>
+		/// <param name="table">The table name</param>
+        [Obsolete("This method will be replaced by EnsureTableExists.")]
+		public void EnsureExists(SqlTable table)
+		{
+			var columns = GetColumns(table);
+			if (columns.Count > 0)
+			{
+				if (!table.Columns.All(c => columns.Contains(c.Name)) || !columns.All(c => table.Columns.Any(c2 => c2.Name == c)))
+				{
+					var from = new SqlTable(table.Name, columns.Select(s => new SqlColumn(s, MySqlDbType.String)).ToList());
+					database.Query(creator.AlterTable(from, table));
+				}
+			}
+			else
+			{
+				database.Query(creator.CreateTable(table));
+			}
 		}
 
 		public List<string> GetColumns(SqlTable table)

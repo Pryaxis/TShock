@@ -46,7 +46,7 @@ namespace TShockAPI.DB
 			                                  	: new MysqlQueryCreator());
 			try
 			{
-				creator.EnsureExists(table);
+				creator.EnsureTableStructure(table);
 			}
 			catch (DllNotFoundException)
 			{
