@@ -52,7 +52,8 @@ namespace TShockAPI.DB
 			creator = provider;
 		}
 
-		public void EnsureExists(SqlTable table)
+		// Returns true if the table was created; false if it was not.
+		public bool EnsureExists(SqlTable table)
 		{
 			var columns = GetColumns(table);
 			if (columns.Count > 0)
@@ -66,7 +67,9 @@ namespace TShockAPI.DB
 			else
 			{
 				database.Query(creator.CreateTable(table));
+				return true;
 			}
+			return false;
 		}
 
 		public List<string> GetColumns(SqlTable table)
