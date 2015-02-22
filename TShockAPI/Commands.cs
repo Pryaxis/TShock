@@ -954,13 +954,18 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account removed successfully.");
 					Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
+				catch (UserNotExistException e)
+				{
+					args.Player.SendErrorMessage("The user " + user.Name + " does not exist! Deleted nobody!");
+				}
 				catch (UserManagerException ex)
 				{
 					args.Player.SendMessage(ex.Message, Color.Red);
 					Log.ConsoleError(ex.ToString());
 				}
 			}
-				// Password changing requires a username, and a new password to set
+			
+			// Password changing requires a username, and a new password to set
 			else if (subcmd == "password")
 			{
 				var user = new User();
@@ -985,11 +990,11 @@ namespace TShockAPI
 					Log.ConsoleError(ex.ToString());
 				}
 			}
-				// Group changing requires a username or IP address, and a new group to set
+			// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group")
 			{
-                var user = new User();
-                user.Name = args.Parameters[1];
+	      var user = new User();
+	      user.Name = args.Parameters[1];
 
 				try
 				{
