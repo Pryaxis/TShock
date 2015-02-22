@@ -6,7 +6,11 @@ import os
 branch = sys.argv[1]
 tag_name = sys.argv[2]
 name = sys.argv[3]
-token = os.environ['GITHUB_TSHOCK_OAUTH']
+
+#because we can't find any other secure way to get a token into this script run from bamboo :'(
+with open('/home/bamboo/scripts/token.py') as f:
+    token = f.read().rsplit('=', 1)[1].strip()
+
 body = 'This is the newest release for TShock.  Please see the release thread for more information @ http://tshock.co/xf'
 
 data = {'tag_name':tag_name, 'target_commitish':branch, 'name':name, 'body':body, 'draft':False, 'prerelease':False}
