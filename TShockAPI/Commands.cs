@@ -910,28 +910,36 @@ namespace TShockAPI
 			{
 				var user = new User();
 
-				try
+				if (args.Parameters.Count == 4)
 				{
-					if (args.Parameters.Count == 4)
+					user.Name = args.Parameters[1];
+					user.Password = args.Parameters[2];
+					user.Group = args.Parameters[3];
+					
+					try
 					{
-						user.Name = args.Parameters[1];
-						user.Password = args.Parameters[2];
-						user.Group = args.Parameters[3];
-							
-                        args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						TShock.Users.AddUser(user);
 						TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
+						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
-					else
+					catch (GroupNotExistsException e)
 					{
-						args.Player.SendErrorMessage("Invalid syntax. Try /user help.");
+						args.Player.SendErrorMessage("Group " + user.Group + " does not exist!");
+					}
+					catch (UserExistsException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " already exists!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("User " + user.Name + " could not be added, check console for details.");
+						Log.ConsoleError(e.ToString());
 					}
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendErrorMessage(ex.Message);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid syntax. Try /user help.");
 				}
 			}
 				// User deletion requires a username
