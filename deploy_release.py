@@ -16,7 +16,7 @@ with open('/home/bamboo/scripts/token.py') as f:
 
 body = 'This is the newest release for TShock.  Please see the release thread for more information @ http://tshock.co/xf'
 
-data = {'tag_name':tag_name, 'target_commitish':branch, 'name':name, 'body':body, 'draft':True, 'prerelease':False}
+data = {'tag_name':tag_name, 'target_commitish':branch, 'name':name, 'body':body, 'draft':False, 'prerelease':False}
 create_headers = {'Content-Type': 'application/json', 'Authorization': 'token ' + token}
 json_data = json.dumps(data)
 
