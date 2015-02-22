@@ -88,12 +88,13 @@ namespace TShockAPI.DB
 		{
 			try
 			{
+				tempuser = GetUser(user);
 				int affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
 
 				if (affected < 1)
 					throw new UserNotExistException(user.Name);
 
-				Hooks.AccountHooks.OnAccountDelete(user);
+				Hooks.AccountHooks.OnAccountDelete(tempuser);
 			}
 			catch (Exception ex)
 			{
