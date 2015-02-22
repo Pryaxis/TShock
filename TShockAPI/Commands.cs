@@ -971,23 +971,27 @@ namespace TShockAPI
 				var user = new User();
 				user.Name = args.Parameters[1];
 
-				try
+				if (args.Parameters.Count == 3)
 				{
-					if (args.Parameters.Count == 3)
+					try
 					{
-						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 						TShock.Users.SetUserPassword(user, args.Parameters[2]);
 						Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
+						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 					}
-					else
+					catch (UserNotExistException e)
 					{
-						args.Player.SendErrorMessage("Invalid user password syntax. Try /user help.");
+						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					}
+					catch (UserManagerException e)
+					{
+						args.Player.SendErrorMessage("Password change for " + user.Name + " failed! Check console!");
+						Log.ConsoleError(e.ToString());
 					}
 				}
-				catch (UserManagerException ex)
+				else
 				{
-					args.Player.SendErrorMessage(ex.Message);
-					Log.ConsoleError(ex.ToString());
+					args.Player.SendErrorMessage("Invalid user password syntax. Try /user help.");
 				}
 			}
 			// Group changing requires a username or IP address, and a new group to set
