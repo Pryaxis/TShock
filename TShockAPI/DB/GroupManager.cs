@@ -36,17 +36,17 @@ namespace TShockAPI.DB
 			database = db;
 
 			var table = new SqlTable("GroupList",
-															 new SqlColumn("GroupName", MySqlDbType.VarChar, 32) {Primary = true},
-															 new SqlColumn("Parent", MySqlDbType.VarChar, 32),
-															 new SqlColumn("Commands", MySqlDbType.Text),
-															 new SqlColumn("ChatColor", MySqlDbType.Text),
-															 new SqlColumn("Prefix", MySqlDbType.Text),
-															 new SqlColumn("Suffix", MySqlDbType.Text)
+			                         new SqlColumn("GroupName", MySqlDbType.VarChar, 32) {Primary = true},
+			                         new SqlColumn("Parent", MySqlDbType.VarChar, 32),
+			                         new SqlColumn("Commands", MySqlDbType.Text),
+			                         new SqlColumn("ChatColor", MySqlDbType.Text),
+			                         new SqlColumn("Prefix", MySqlDbType.Text),
+			                         new SqlColumn("Suffix", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
-																				db.GetSqlType() == SqlType.Sqlite
-																					? (IQueryBuilder) new SqliteQueryCreator()
-																					: new MysqlQueryCreator());
+			                                  db.GetSqlType() == SqlType.Sqlite
+			                                  	? (IQueryBuilder) new SqliteQueryCreator()
+			                                  	: new MysqlQueryCreator());
 			if (creator.EnsureExists(table))
 			{
 				// Add default groups if they don't exist
