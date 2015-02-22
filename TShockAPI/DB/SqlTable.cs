@@ -79,19 +79,7 @@ namespace TShockAPI.DB
         [Obsolete("This method will be replaced by EnsureTableExists.")]
 		public void EnsureExists(SqlTable table)
 		{
-			var columns = GetColumns(table);
-			if (columns.Count > 0)
-			{
-				if (!table.Columns.All(c => columns.Contains(c.Name)) || !columns.All(c => table.Columns.Any(c2 => c2.Name == c)))
-				{
-					var from = new SqlTable(table.Name, columns.Select(s => new SqlColumn(s, MySqlDbType.String)).ToList());
-					database.Query(creator.AlterTable(from, table));
-				}
-			}
-			else
-			{
-				database.Query(creator.CreateTable(table));
-			}
+			EnsureTableStructure(table);
 		}
 
 		public List<string> GetColumns(SqlTable table)
