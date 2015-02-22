@@ -5194,6 +5194,11 @@ namespace TShockAPI
 			TSPlayer playerToGod;
 			if (args.Parameters.Count > 0)
 			{
+                if (!args.Player.Group.HasPermission(Permissions.godmodeother))
+                {
+                    args.Player.SendErrorMessage("You do not have permission to god mode another player!");
+                    return;
+                }
 				string plStr = String.Join(" ", args.Parameters);
 				var players = TShock.Utils.FindPlayer(plStr);
 				if (players.Count == 0)
