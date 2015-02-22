@@ -88,7 +88,7 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				tempuser = GetUser(user);
+				var tempuser = GetUser(user);
 				int affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
 
 				if (affected < 1)
