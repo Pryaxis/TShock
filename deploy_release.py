@@ -13,9 +13,10 @@ name = os.environ["bamboo_release_name"]
 #because we can't find any other secure way to get a token into this script run from bamboo :'(
 with open('/home/bamboo/scripts/token.py') as f:
     token = f.read().rsplit('=', 1)[1].strip()
+
 body = 'This is the newest release for TShock.  Please see the release thread for more information @ http://tshock.co/xf'
 
-data = {'tag_name':tag_name, 'target_commitish':branch, 'name':name, 'body':body, 'draft':False, 'prerelease':False}
+data = {'tag_name':tag_name, 'target_commitish':branch, 'name':name, 'body':body, 'draft':True, 'prerelease':False}
 create_headers = {'Content-Type': 'application/json', 'Authorization': 'token ' + token}
 json_data = json.dumps(data)
 
@@ -26,7 +27,6 @@ release_id = json_response['id']
 upload_url = json_response['upload_url'].rsplit('{')[0]
 upload_url = upload_url + '?name=' + release_name
 
-upload_headers = {'Authorization': 'token ' + token}
-files = {'file': (release_name, open(release_name, 'rb'), 'application/zip')}
-r = requests.post(upload_url, files=files, headers = upload_headers, verify=False)
+upload_headers = {'Authorization': 'token ' + token, 'Content-Type':'application/zip', 'Content-Length':str(os.path.getsize(release_name))}
+r = requests.post(upload_url, data=open(release_name, 'rb'), headers = upload_headers, verify=False)
 
