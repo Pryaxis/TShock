@@ -47,7 +47,7 @@ namespace TShockAPI.DB
 			                                  db.GetSqlType() == SqlType.Sqlite
 			                                  	? (IQueryBuilder) new SqliteQueryCreator()
 			                                  	: new MysqlQueryCreator());
-			if (creator.EnsureExists(table))
+			if (creator.EnsureTableStructure(table))
 			{
 				// Add default groups if they don't exist
 				AddDefaultGroup("guest", "",
