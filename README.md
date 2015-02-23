@@ -21,11 +21,11 @@ TShock is a server modification for Terraria, written in C#, and based upon the 
 
 Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
-* [Website & Forums](http://tshock.co/xf/)
+* [Website & Forums](https://tshock.co/xf/)
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
-* [IRC: #tshock @ irc.rizon.net](http://tshock.co/xf/index.php?ezirc/)
 
 ## Download
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
+* [Plugins](https://tshock.co/xf/index.php?resources/)
 * [Download Archive](https://github.com/TShock/TShock/downloads)
