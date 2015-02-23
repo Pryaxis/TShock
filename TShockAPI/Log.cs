@@ -37,7 +37,7 @@ namespace TShockAPI
 
 	public static class Log
 	{
-		private static string _filename;
+		public static string _filename { get; private set; }
 		private static LogLevel _logLevel;
 		private static StreamWriter _logWriter;
 
