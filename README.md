@@ -28,4 +28,4 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
 * [Plugins](https://tshock.co/xf/index.php?resources/)
-* [Download Archive](https://github.com/TShock/TShock/downloads)
+* [Very, very old versions of TShock](https://github.com/TShock/TShock/downloads)
