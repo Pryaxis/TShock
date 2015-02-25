@@ -46,7 +46,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "And the great beast rose from its slumber, ready to take on the world again.";
+		public static readonly string VersionCodename = "2015!!";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
@@ -244,7 +244,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo(string.Format("TShock {0} ({1}) now running.", Version, VersionCodename));
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -262,7 +262,7 @@ namespace TShockAPI
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
-			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+			  ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
@@ -344,7 +344,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -430,17 +430,17 @@ namespace TShockAPI
 			}
 		}
 
-        private void OnXmasCheck(ChristmasCheckEventArgs args)
-        {
-            if (args.Handled)
-                return;
+    private void OnXmasCheck(ChristmasCheckEventArgs args)
+    {
+        if (args.Handled)
+            return;
 
-            if(Config.ForceXmas)
-            {
-                args.Xmas = true;
-                args.Handled = true;
-            }
+        if(Config.ForceXmas)
+        {
+            args.Xmas = true;
+            args.Handled = true;
         }
+    }
 
 		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
 		{
@@ -1057,7 +1057,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("Command exception");
+					Log.ConsoleError("An exeption occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
