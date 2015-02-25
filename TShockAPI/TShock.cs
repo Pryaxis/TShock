@@ -1022,6 +1022,12 @@ namespace TShockAPI
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
 			}
+			
+			// The last player will leave after this hook is executed.
+			if (Utils.ActivePlayers() == 1)
+			{
+				SaveManager.Instance.SaveWorld();
+			}
 		}
 
 		private void OnChat(ServerChatEventArgs args)
