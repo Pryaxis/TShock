@@ -584,7 +584,7 @@ namespace TShockAPI
 
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int) DateTime.Now.ToBinary());
@@ -838,14 +838,14 @@ namespace TShockAPI
 					}
 				}
 			}
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 		}
 
-		private void SetConsoleTitle()
+		private void SetConsoleTitle(bool empty)
 		{
 		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TerrariaShock v{5})",
 		                                  !string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-		                                  Utils.ActivePlayers(),
+		                                  empty ? 0 : Utils.ActivePlayers(),
 		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
@@ -1027,6 +1027,7 @@ namespace TShockAPI
 			if (Utils.ActivePlayers() == 1)
 			{
 				SaveManager.Instance.SaveWorld();
+				SetConsoleTitle(true);
 			}
 		}
 
