@@ -1261,9 +1261,27 @@ namespace TShockAPI
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName, DateTime.UtcNow.AddSeconds(time).ToString("s"));
 									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
-										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+										}
+									}
 									else
-										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("[broken name] was {1}banned for '{2}'.", force ? "force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} {1}banned [broken name] for '{3}'.", args.Player.Name, force ? "force " : "", reason);
+										}
+									}
 								}
 							}
 							else
@@ -1285,11 +1303,27 @@ namespace TShockAPI
 								false, args.Player.Name, DateTime.UtcNow.AddSeconds(time).ToString("s")))
 							{
 								players[0].Disconnect(String.Format("Banned: {0}", reason));
-								string verb = args.Player.RealPlayer ? "force " : "";
+								string verb = args.Player.RealPlayer ? "Force " : "";
 								if (args.Player.RealPlayer)
-									TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
+									if (args.Silent)
+									{
+										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
+									}
+									else
+									{
+										TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
+									}
 								else
-									TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
+								{
+									if (args.Silent) 
+									{
+										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
+									}
+									else
+									{
+										TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
+									}
+								}
 							}
 							else
 								args.Player.SendErrorMessage("Failed to ban {0}, check logs.", players[0].Name);
@@ -1505,14 +1539,20 @@ namespace TShockAPI
 		{
 			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
 			Main.checkHalloween();
-			TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+			if (args.Silent) 
+				args.Player.SendInfoMessage("{0}abled halloween mode!", (TShock.Config.ForceHalloween ? "en" : "dis"));
+			else
+				TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
 		}
 
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
 			Main.checkXMas();
-			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
+			if (args.Silent)
+				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
+			else
+				TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
 		}
 
 		private static void TempGroup(CommandArgs args)
