@@ -3497,7 +3497,13 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
-				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
+				if (args.Silent) 
+				{
+					args.Player.SendInfoMessage("Changed the maximum spawns to 5.");
+				}
+				else {
+					TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
+				}
 				return;
 			}
 
@@ -3509,7 +3515,13 @@ namespace TShockAPI
 			}
 
 			TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
-			TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
+			if (args.Silent)
+			{
+				args.Player.SendInfoMessage("Changed the maximum spawns to {0}.", maxSpawns);
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
+			}
 		}
 
 		private static void SpawnRate(CommandArgs args)
@@ -3523,7 +3535,13 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
-				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
+				if (args.Silent) 
+				{
+					args.Player.SendInfoMessage("Changed the spawn rate to 600.");
+				}
+				else {
+					TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
+				}
 				return;
 			}
 
@@ -3533,9 +3551,14 @@ namespace TShockAPI
 				args.Player.SendWarningMessage("Invalid spawn rate!");
 				return;
 			}
-
 			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
-			TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("Changed the spawn rate to {0}."spawnRate);
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
+			}
 		}
 
 		#endregion Server Config Commands
@@ -4226,7 +4249,7 @@ namespace TShockAPI
 
         #region World Protection Commands
 
-        private static void ToggleAntiBuild(CommandArgs args)
+    private static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
 			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
