@@ -1049,7 +1049,8 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith(Config.CommandSpecifier) && !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
+			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier)) 
+				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
 			{
 				try
 				{

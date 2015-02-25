@@ -367,8 +367,11 @@ namespace TShockAPI
 		[Description("Allows anyone to break grass, pots, etc.")]
 		public bool AllowCutTilesAndBreakables = false;
 
-		[Description("Specifies which string starts a command")]
+		[Description("Specifies which string starts a command.")]
 		public string CommandSpecifier = "/";
+
+		[Description("Specifies which string starts a command silently.")]
+		public string CommandSilentSpecifier = ".";
 		
 		[Description("Kicks a hardcore player on death.")]
 		public bool KickOnHardcoreDeath;

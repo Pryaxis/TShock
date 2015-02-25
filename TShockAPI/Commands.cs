@@ -37,6 +37,7 @@ namespace TShockAPI
 	{
 		public string Message { get; private set; }
 		public TSPlayer Player { get; private set; }
+		public bool Silent { get; private set; }
 
 		/// <summary>
 		/// Parameters passed to the arguement. Does not include the command name.
@@ -54,6 +55,15 @@ namespace TShockAPI
 			Message = message;
 			Player = ply;
 			Parameters = args;
+			Silent = false;
+		}
+
+		public CommandArgs(string message, bool silent, TSPlayer ply, List<string> args)
+		{
+			Message = message;
+			Player = ply;
+			Parameters = args;
+			Silent = silent;
 		}
 	}
 
@@ -124,19 +134,19 @@ namespace TShockAPI
 			CommandDelegate = cmd;
 			DoLog = true;
 			HelpText = "No help available.";
-            HelpDesc = null;
+      HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
 
-		public bool Run(string msg, TSPlayer ply, List<string> parms)
+		public bool Run(string msg, bool silent, TSPlayer ply, List<string> parms)
 		{
 			if (!CanRun(ply))
 				return false;
 
 			try
 			{
-				CommandDelegate(new CommandArgs(msg, ply, parms));
+				CommandDelegate(new CommandArgs(msg, silent, ply, parms));
 			}
 			catch (Exception e)
 			{
@@ -145,6 +155,11 @@ namespace TShockAPI
 			}
 
 			return true;
+		}
+
+		public bool Run(string msg, TSPlayer ply, List<string> parms)
+		{
+			return Run(msg, false, ply, parms);
 		}
 
 		public bool HasAlias(string name)
@@ -583,6 +598,11 @@ namespace TShockAPI
 		public static bool HandleCommand(TSPlayer player, string text)
 		{
 			string cmdText = text.Remove(0, 1);
+			string cmdPrefix = text[0].ToString();
+			bool silent = false;
+
+			if (cmdPrefix == TShock.Config.CommandSilentSpecifier)
+				silent = true;
 
 			var args = ParseParameters(cmdText);
 			if (args.Count < 1)
@@ -622,8 +642,8 @@ namespace TShockAPI
           else
           {
               if (cmd.DoLog)
-                  TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
-              cmd.Run(cmdText, player, args);
+                  TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
+              cmd.Run(cmdText, silent, player, args);
           }
       }
 		  return true;
@@ -1152,9 +1172,27 @@ namespace TShockAPI
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName);
 									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
-										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
+										}
+									}
 									else
-										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0}banned {1} for '{2}'.", force ? "Force " : "", user.Name, reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "Force " : "", user.Name, reason);
+										}
+									}
 								}
 							}
 							else
@@ -1229,7 +1267,9 @@ namespace TShockAPI
 								}
 							}
 							else
+							{
 								args.Player.SendErrorMessage("Invalid player or account!");
+							}
 						}
 						else if (players.Count > 1)
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
@@ -1563,7 +1603,7 @@ namespace TShockAPI
 
 		private static void CheckUpdates(CommandArgs args)
 		{
-            args.Player.SendInfoMessage("An update check has been queued.");
+      args.Player.SendInfoMessage("An update check has been queued.");
 			try
 			{
 				TShock.UpdateManager.UpdateCheck(null);
@@ -1574,12 +1614,6 @@ namespace TShockAPI
 				return;
 			}
 		}
-
-        private static void UpdatePlugins(CommandArgs args)
-        {
-            args.Player.SendInfoMessage("Starting plugin update process:");
-            args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
-        }
 
 		private static void ManageRest(CommandArgs args)
 		{
@@ -1947,7 +1981,14 @@ namespace TShockAPI
 				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
 				{
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.name, amount);
+					if (args.Silent)
+					{
+            args.Player.SendSuccessMessage("Spawned {0} {1} time(s).", npc.name, amount);
+					}
+					else
+					{
+						TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.name, amount);
+					}
 				}
 				else if (npc.type == 113)
 				{
@@ -1957,7 +1998,14 @@ namespace TShockAPI
 						return;
 					}
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Wall of Flesh!", args.Player.Name);
+					if (args.Silent)
+					{
+						args.Player.SendSuccessMessage("Spawned Wall of Flesh!");
+					}
+					else
+					{
+						TSPlayer.All.SendSuccessMessage("{0} has spawned a Wall of Flesh!", args.Player.Name);
+					}
 				}
 				else
 				{
