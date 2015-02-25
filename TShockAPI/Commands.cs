@@ -37,6 +37,7 @@ namespace TShockAPI
 	{
 		public string Message { get; private set; }
 		public TSPlayer Player { get; private set; }
+		public bool Silent { get; private set; }
 
 		/// <summary>
 		/// Parameters passed to the arguement. Does not include the command name.
@@ -54,6 +55,15 @@ namespace TShockAPI
 			Message = message;
 			Player = ply;
 			Parameters = args;
+			Silent = false;
+		}
+
+		public CommandArgs(string message, bool silent, TSPlayer ply, List<string> args)
+		{
+			Message = message;
+			Player = ply;
+			Parameters = args;
+			Silent = silent;
 		}
 	}
 
@@ -124,19 +134,19 @@ namespace TShockAPI
 			CommandDelegate = cmd;
 			DoLog = true;
 			HelpText = "No help available.";
-            HelpDesc = null;
+			HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
 
-		public bool Run(string msg, TSPlayer ply, List<string> parms)
+		public bool Run(string msg, bool silent, TSPlayer ply, List<string> parms)
 		{
 			if (!CanRun(ply))
 				return false;
 
 			try
 			{
-				CommandDelegate(new CommandArgs(msg, ply, parms));
+				CommandDelegate(new CommandArgs(msg, silent, ply, parms));
 			}
 			catch (Exception e)
 			{
@@ -145,6 +155,11 @@ namespace TShockAPI
 			}
 
 			return true;
+		}
+
+		public bool Run(string msg, TSPlayer ply, List<string> parms)
+		{
+			return Run(msg, false, ply, parms);
 		}
 
 		public bool HasAlias(string name)
@@ -583,6 +598,11 @@ namespace TShockAPI
 		public static bool HandleCommand(TSPlayer player, string text)
 		{
 			string cmdText = text.Remove(0, 1);
+			string cmdPrefix = text[0].ToString();
+			bool silent = false;
+
+			if (cmdPrefix == TShock.Config.CommandSilentSpecifier)
+				silent = true;
 
 			var args = ParseParameters(cmdText);
 			if (args.Count < 1)
@@ -608,25 +628,25 @@ namespace TShockAPI
 				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", TShock.Config.CommandSpecifier);
 				return true;
 			}
-            foreach (Command cmd in cmds)
-            {
-                if (!cmd.CanRun(player))
-                {
-                    TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
-                    player.SendErrorMessage("You do not have access to this command.");
-                }
-                else if (!cmd.AllowServer && !player.RealPlayer)
-                {
-                    player.SendErrorMessage("You must use this command in-game.");
-                }
-                else
-                {
-                    if (cmd.DoLog)
-                        TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
-                    cmd.Run(cmdText, player, args);
-                }
-            }
-		    return true;
+      foreach (Command cmd in cmds)
+      {
+          if (!cmd.CanRun(player))
+          {
+              TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
+              player.SendErrorMessage("You do not have access to this command.");
+          }
+          else if (!cmd.AllowServer && !player.RealPlayer)
+          {
+              player.SendErrorMessage("You must use this command in-game.");
+          }
+          else
+          {
+              if (cmd.DoLog)
+                  TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier, cmdText), Color.PaleVioletRed, player);
+              cmd.Run(cmdText, silent, player, args);
+          }
+      }
+		  return true;
 		}
 
 		/// <summary>
@@ -873,12 +893,14 @@ namespace TShockAPI
 				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
 				user.UUID = args.Player.UUID;
 
-                if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
+				if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName)
+					// Cheap way of checking for existance of a user
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", user.Password);
 					TShock.Users.AddUser(user);
 					TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
+					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
 				}
 				else
@@ -919,7 +941,6 @@ namespace TShockAPI
 					try
 					{
 						TShock.Users.AddUser(user);
-						TShock.CharacterDB.SeedInitialData(TShock.Users.GetUser(user));
 						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
@@ -1154,9 +1175,27 @@ namespace TShockAPI
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName);
 									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
-										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
+										}
+									}
 									else
-										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0}banned {1} for '{2}'.", force ? "Force " : "", user.Name, reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "Force " : "", user.Name, reason);
+										}
+									}
 								}
 							}
 							else
@@ -1225,13 +1264,33 @@ namespace TShockAPI
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName, DateTime.UtcNow.AddSeconds(time).ToString("s"));
 									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
-										TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
+										}
+									}
 									else
-										TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
+									{
+										if (args.Silent)
+										{
+											args.Player.SendInfoMessage("[broken name] was {1}banned for '{2}'.", force ? "force " : "", reason);
+										}
+										else
+										{
+											TSPlayer.All.SendInfoMessage("{0} {1}banned [broken name] for '{3}'.", args.Player.Name, force ? "force " : "", reason);
+										}
+									}
 								}
 							}
 							else
+							{
 								args.Player.SendErrorMessage("Invalid player or account!");
+							}
 						}
 						else if (players.Count > 1)
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
@@ -1247,11 +1306,27 @@ namespace TShockAPI
 								false, args.Player.Name, DateTime.UtcNow.AddSeconds(time).ToString("s")))
 							{
 								players[0].Disconnect(String.Format("Banned: {0}", reason));
-								string verb = args.Player.RealPlayer ? "force " : "";
+								string verb = args.Player.RealPlayer ? "Force " : "";
 								if (args.Player.RealPlayer)
-									TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
+									if (args.Silent)
+									{
+										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
+									}
+									else
+									{
+										TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
+									}
 								else
-									TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
+								{
+									if (args.Silent) 
+									{
+										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
+									}
+									else
+									{
+										TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
+									}
+								}
 							}
 							else
 								args.Player.SendErrorMessage("Failed to ban {0}, check logs.", players[0].Name);
@@ -1467,14 +1542,20 @@ namespace TShockAPI
 		{
 			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
 			Main.checkHalloween();
-			TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+			if (args.Silent) 
+				args.Player.SendInfoMessage("{0}abled halloween mode!", (TShock.Config.ForceHalloween ? "en" : "dis"));
+			else
+				TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
 		}
 
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
 			Main.checkXMas();
-			TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
+			if (args.Silent)
+				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
+			else
+				TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
 		}
 
 		private static void TempGroup(CommandArgs args)
@@ -1565,7 +1646,7 @@ namespace TShockAPI
 
 		private static void CheckUpdates(CommandArgs args)
 		{
-            args.Player.SendInfoMessage("An update check has been queued.");
+      args.Player.SendInfoMessage("An update check has been queued.");
 			try
 			{
 				TShock.UpdateManager.UpdateCheck(null);
@@ -1576,12 +1657,6 @@ namespace TShockAPI
 				return;
 			}
 		}
-
-        private static void UpdatePlugins(CommandArgs args)
-        {
-            args.Player.SendInfoMessage("Starting plugin update process:");
-            args.Player.SendInfoMessage("This may take a while, do not turn off the server!");
-        }
 
 		private static void ManageRest(CommandArgs args)
 		{
@@ -1639,29 +1714,51 @@ namespace TShockAPI
 
         #region Cause Events and Spawn Monsters Commands
 
-        private static void DropMeteor(CommandArgs args)
+    private static void DropMeteor(CommandArgs args)
 		{
 			WorldGen.spawnMeteor = false;
 			WorldGen.dropMeteor();
-            args.Player.SendInfoMessage("A meteor has been triggered.");
+      if (args.Silent) 
+      {
+      	args.Player.SendInfoMessage("A meteor has been triggered.");
+      }
+      else {
+      	TSPlayer.All.SendInfoMessage("{0} triggered a meteor.", args.Player.Name);
+      }
 		}
 
 		private static void Fullmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetFullMoon();
-			TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("Started a full moon.");
+			} else {
+				TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
+			}
 		}
 
 		private static void Bloodmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetBloodMoon(!Main.bloodMoon);
-			TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("{0}ed a blood moon.", Main.bloodMoon ? "start" : "stopp");
+			} else {
+				TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
+			}
 		}
 
 		private static void Eclipse(CommandArgs args)
 		{
 			TSPlayer.Server.SetEclipse(!Main.eclipse);
-			TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("{0}ed an eclipse.", Main.eclipse ? "start" : "stopp");
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
+			}
 		}
 		
 		private static void Invade(CommandArgs args)
@@ -1949,7 +2046,14 @@ namespace TShockAPI
 				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
 				{
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.name, amount);
+					if (args.Silent)
+					{
+            args.Player.SendSuccessMessage("Spawned {0} {1} time(s).", npc.name, amount);
+					}
+					else
+					{
+						TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.name, amount);
+					}
 				}
 				else if (npc.type == 113)
 				{
@@ -1959,7 +2063,14 @@ namespace TShockAPI
 						return;
 					}
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Wall of Flesh!", args.Player.Name);
+					if (args.Silent)
+					{
+						args.Player.SendSuccessMessage("Spawned Wall of Flesh!");
+					}
+					else
+					{
+						TSPlayer.All.SendSuccessMessage("{0} has spawned a Wall of Flesh!", args.Player.Name);
+					}
 				}
 				else
 				{
@@ -3389,7 +3500,13 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
-				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
+				if (args.Silent) 
+				{
+					args.Player.SendInfoMessage("Changed the maximum spawns to 5.");
+				}
+				else {
+					TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
+				}
 				return;
 			}
 
@@ -3401,7 +3518,13 @@ namespace TShockAPI
 			}
 
 			TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
-			TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
+			if (args.Silent)
+			{
+				args.Player.SendInfoMessage("Changed the maximum spawns to {0}.", maxSpawns);
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
+			}
 		}
 
 		private static void SpawnRate(CommandArgs args)
@@ -3415,7 +3538,13 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
-				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
+				if (args.Silent) 
+				{
+					args.Player.SendInfoMessage("Changed the spawn rate to 600.");
+				}
+				else {
+					TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
+				}
 				return;
 			}
 
@@ -3425,9 +3554,14 @@ namespace TShockAPI
 				args.Player.SendWarningMessage("Invalid spawn rate!");
 				return;
 			}
-
 			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
-			TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("Changed the spawn rate to {0}.", spawnRate);
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
+			}
 		}
 
 		#endregion Server Config Commands
@@ -4118,7 +4252,7 @@ namespace TShockAPI
 
         #region World Protection Commands
 
-        private static void ToggleAntiBuild(CommandArgs args)
+    private static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
 			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
@@ -4369,7 +4503,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				string reason = "misbehavior";
+				string reason = "Banned by Administrator";
 				if (args.Parameters.Count > 1)
 					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				var plr = players[0];
@@ -5196,6 +5330,11 @@ namespace TShockAPI
 			TSPlayer playerToGod;
 			if (args.Parameters.Count > 0)
 			{
+				if (!args.Player.Group.HasPermission(Permissions.godmodeother))
+				{
+					args.Player.SendErrorMessage("You do not have permission to god mode another player!");
+					return;
+				}
 				string plStr = String.Join(" ", args.Parameters);
 				var players = TShock.Utils.FindPlayer(plStr);
 				if (players.Count == 0)

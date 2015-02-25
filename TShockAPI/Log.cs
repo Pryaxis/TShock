@@ -22,6 +22,8 @@ namespace TShockAPI
 {
 	public static class Log
 	{
+		public static string _filename { get; private set; }
+
 		/// <summary>
 		/// Writes data to the log file.
 		/// </summary>

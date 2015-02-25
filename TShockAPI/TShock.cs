@@ -44,7 +44,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "And the great beast rose from its slumber, ready to take on the world again.";
+		public static readonly string VersionCodename = "2015!!";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
@@ -252,7 +252,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo(string.Format("TShock {0} ({1}) now running.", Version, VersionCodename));
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -271,10 +271,13 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
 				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
-				TShockAPI.Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
-				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
+				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
+				Hooks.AccountHooks.AccountCreate += OnAccountCreate;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
@@ -350,7 +353,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -386,6 +389,16 @@ namespace TShockAPI
             u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 	        Users.UpdateLogin(u);
 	    }
+
+		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
+		{
+			CharacterDB.RemovePlayer(args.User.ID);
+		}
+
+		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
+		{
+			CharacterDB.SeedInitialData(Users.GetUser(args.User));
+		}
 
 		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
 		{
@@ -426,17 +439,17 @@ namespace TShockAPI
 			}
 		}
 
-        private void OnXmasCheck(ChristmasCheckEventArgs args)
-        {
-            if (args.Handled)
-                return;
+    private void OnXmasCheck(ChristmasCheckEventArgs args)
+    {
+        if (args.Handled)
+            return;
 
-            if(Config.ForceXmas)
-            {
-                args.Xmas = true;
-                args.Handled = true;
-            }
+        if(Config.ForceXmas)
+        {
+            args.Xmas = true;
+            args.Handled = true;
         }
+    }
 
 		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
 		{
@@ -580,7 +593,7 @@ namespace TShockAPI
 
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int) DateTime.Now.ToBinary());
@@ -834,14 +847,14 @@ namespace TShockAPI
 					}
 				}
 			}
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 		}
 
-		private void SetConsoleTitle()
+		private void SetConsoleTitle(bool empty)
 		{
 		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TerrariaShock v{5})",
 		                                  !string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-		                                  Utils.ActivePlayers(),
+		                                  empty ? 0 : Utils.ActivePlayers(),
 		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
@@ -1018,6 +1031,13 @@ namespace TShockAPI
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
 			}
+			
+			// The last player will leave after this hook is executed.
+			if (Utils.ActivePlayers() == 1)
+			{
+				SaveManager.Instance.SaveWorld();
+				SetConsoleTitle(true);
+			}
 		}
 
 		private void OnChat(ServerChatEventArgs args)
@@ -1045,7 +1065,8 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith(Config.CommandSpecifier) && !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
+			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier)) 
+				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
 			{
 				try
 				{
@@ -1053,7 +1074,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("Command exception");
+					Log.ConsoleError("An exeption occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
