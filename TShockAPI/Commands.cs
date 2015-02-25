@@ -1711,29 +1711,51 @@ namespace TShockAPI
 
         #region Cause Events and Spawn Monsters Commands
 
-        private static void DropMeteor(CommandArgs args)
+    private static void DropMeteor(CommandArgs args)
 		{
 			WorldGen.spawnMeteor = false;
 			WorldGen.dropMeteor();
-            args.Player.SendInfoMessage("A meteor has been triggered.");
+      if (args.Silent) 
+      {
+      	args.Player.SendInfoMessage("A meteor has been triggered.");
+      }
+      else {
+      	TSPlayer.All.SendInfoMessage("{0} triggered a meteor.", args.Player.Name);
+      }
 		}
 
 		private static void Fullmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetFullMoon();
-			TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("Started a full moon.");
+			} else {
+				TSPlayer.All.SendInfoMessage("{0} started a full moon.", args.Player.Name);
+			}
 		}
 
 		private static void Bloodmoon(CommandArgs args)
 		{
 			TSPlayer.Server.SetBloodMoon(!Main.bloodMoon);
-			TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("{0}ed a blood moon.", Main.bloodMoon ? "start" : "stopp");
+			} else {
+				TSPlayer.All.SendInfoMessage("{0} {1}ed a blood moon.", args.Player.Name, Main.bloodMoon ? "start" : "stopp");
+			}
 		}
 
 		private static void Eclipse(CommandArgs args)
 		{
 			TSPlayer.Server.SetEclipse(!Main.eclipse);
-			TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
+			if (args.Silent) 
+			{
+				args.Player.SendInfoMessage("{0}ed an eclipse.", Main.eclipse ? "start" : "stopp");
+			}
+			else {
+				TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
+			}
 		}
 		
 		private static void Invade(CommandArgs args)
