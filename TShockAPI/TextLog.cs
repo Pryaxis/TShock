@@ -29,7 +29,12 @@ namespace TShockAPI
 	public class TextLog : ILog, IDisposable
 	{
 	    private readonly StreamWriter _logWriter;
-	    private readonly LogLevel _logLevel;
+		private readonly LogLevel _logLevel;
+
+		/// <summary>
+		/// Log file name
+		/// </summary>
+		public static string fileName;
 
         /// <summary>
         /// Name of the TextLog
@@ -51,7 +56,8 @@ namespace TShockAPI
         /// <param name="logLevel">The <see cref="LogLevel" /> value which sets the type of messages to output.</param>
         /// <param name="clear">Whether or not to clear the log file on initialization.</param>
 	    public TextLog(string filename, LogLevel logLevel, bool clear)
-        {
+	    {
+		    fileName = filename;
             _logLevel = logLevel;
 	        _logWriter = new StreamWriter(filename, !clear);
 	    }
