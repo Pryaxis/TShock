@@ -17,57 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 
 namespace TShockAPI
 {
-	[Flags]
-	public enum LogLevel
-	{
-		None = 0,
-		Debug = 1,
-		Info = 2,
-		Warning = 4,
-		Error = 8,
-		Data = 16,
-		All = 31
-	}
-
 	public static class Log
 	{
-		private static string _filename;
-		private static LogLevel _logLevel;
-		private static StreamWriter _logWriter;
-
-		/// <summary>
-		/// Creates the log file stream and sets the initial log level.
-		/// </summary>
-		/// <param name="filename">The output filename. This file will be overwritten if 'clear' is set.</param>
-		/// <param name="logLevel">The <see cref="LogLevel" /> value which sets the type of messages to output.</param>
-		/// <param name="clear">Whether or not to clear the log file on initialization.</param>
-		public static void Initialize(string filename, LogLevel logLevel, bool clear)
-		{
-			_filename = filename;
-			_logLevel = logLevel;
-
-			_logWriter = new StreamWriter(filename, !clear);
-		}
-
-		/// <summary>
-		/// Checks whether the log level contains the specified flag.
-		/// </summary>
-		/// <param name="type">The <see cref="LogLevel" /> value to check.</param>
-		private static bool MayWriteType(LogLevel type)
-		{
-			return ((_logLevel & type) == type);
-		}
-
 		/// <summary>
 		/// Writes data to the log file.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.Data")]
 		public static void Data(String message)
 		{
 			Write(message, LogLevel.Data);
@@ -77,7 +36,8 @@ namespace TShockAPI
 		/// Writes data to the log file.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.Data")]
 		public static void Data(string format, params object[] args)
 		{
 			Data(String.Format(format, args));
@@ -86,7 +46,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.Error")]
 		public static void Error(String message)
 		{
 			Write(message, LogLevel.Error);
@@ -96,7 +57,8 @@ namespace TShockAPI
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.Error")]
 		public static void Error(string format, params object[] args)
 		{
 			Error(String.Format(format, args));
@@ -105,7 +67,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.ConsoleError")]
 		public static void ConsoleError(String message)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
@@ -118,7 +81,8 @@ namespace TShockAPI
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.ConsoleError")]
 		public static void ConsoleError(string format, params object[] args)
 		{
 			ConsoleError(String.Format(format, args));
@@ -127,7 +91,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.Warn")]
 		public static void Warn(String message)
 		{
 			Write(message, LogLevel.Warning);
@@ -137,7 +102,8 @@ namespace TShockAPI
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.Warn")]
 		public static void Warn(string format, params object[] args)
 		{
 			Warn(String.Format(format, args));
@@ -146,7 +112,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an informative string to the log file.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.Info")]
 		public static void Info(String message)
 		{
 			Write(message, LogLevel.Info);
@@ -156,7 +123,8 @@ namespace TShockAPI
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.Info")]
 		public static void Info(string format, params object[] args)
 		{
 			Info(String.Format(format, args));
@@ -165,7 +133,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an informative string to the log file. Also outputs to the console.
 		/// </summary>
-		/// <param name="message">The message to be written.</param>
+        /// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.ConsoleInfo")]
 		public static void ConsoleInfo(String message)
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
@@ -178,7 +147,8 @@ namespace TShockAPI
 		/// Writes an informative string to the log file. Also outputs to the console.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
-		/// <param name="args">The format arguments.</param>
+        /// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.ConsoleInfo")]
 		public static void ConsoleInfo(string format, params object[] args)
 		{
 			ConsoleInfo(String.Format(format, args));
@@ -188,6 +158,7 @@ namespace TShockAPI
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
+        [Obsolete("Please use TShock.Log.Debug")]
 		public static void Debug(String message)
 		{
 			Write(message, LogLevel.Debug);
@@ -198,6 +169,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
+        [Obsolete("Please use TShock.Log.Debug")]
 		public static void Debug(string format, params object[] args)
 		{
 			Debug(String.Format(format, args));
@@ -208,7 +180,7 @@ namespace TShockAPI
 		/// </summary>
 		public static void Dispose()
 		{
-			_logWriter.Dispose();
+            TShock.Log.Dispose();
 		}
 
 		/// <summary>
@@ -216,35 +188,7 @@ namespace TShockAPI
 		/// </summary>
 		private static void Write(String message, LogLevel level)
 		{
-			if (!MayWriteType(level))
-			{
-				return;
-			}
-
-			string caller = "TShock";
-
-			StackFrame frame = new StackTrace().GetFrame(2);
-			if (frame != null)
-			{
-				var meth = frame.GetMethod();
-				if (meth != null)
-					caller = meth.DeclaringType.Name;
-			}
-
-		    try
-		    {
-                _logWriter.WriteLine(string.Format("{0} - {1}: {2}: {3}",
-                                   DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-                                   caller, level.ToString().ToUpper(), message));
-                _logWriter.Flush();
-		    }
-		    catch (ObjectDisposedException)
-		    {
-                Console.WriteLine("Unable to write to log as log has been disposed.");
-                Console.WriteLine("{0} - {1}: {2}: {3}",
-                                   DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-                                   caller, level.ToString().ToUpper(), message);
-		    }
+		    TShock.Log.Write(message, level);
 		}
 	}
 }

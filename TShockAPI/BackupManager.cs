@@ -67,7 +67,7 @@ namespace TShockAPI
 				SaveManager.Instance.SaveWorld();
 				Console.WriteLine("World backed up.");
 				Console.ForegroundColor = ConsoleColor.Gray;
-				Log.Info(string.Format("World backed up ({0}).", Main.worldPathName));
+				TShock.Log.Info(string.Format("World backed up ({0}).", Main.worldPathName));
 
 				Main.worldPathName = worldname;
 			}
@@ -76,8 +76,8 @@ namespace TShockAPI
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine("Backup failed!");
 				Console.ForegroundColor = ConsoleColor.Gray;
-				Log.Error("Backup failed!");
-				Log.Error(ex.ToString());
+				TShock.Log.Error("Backup failed!");
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 
