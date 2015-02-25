@@ -4500,7 +4500,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				string reason = "Banned by Administrator";
+				string reason = "No reason specified.";
 				if (args.Parameters.Count > 1)
 					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				var plr = players[0];
