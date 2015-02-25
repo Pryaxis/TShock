@@ -3554,7 +3554,7 @@ namespace TShockAPI
 			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
 			if (args.Silent) 
 			{
-				args.Player.SendInfoMessage("Changed the spawn rate to {0}."spawnRate);
+				args.Player.SendInfoMessage("Changed the spawn rate to {0}.", spawnRate);
 			}
 			else {
 				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
