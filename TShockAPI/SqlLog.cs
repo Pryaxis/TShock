@@ -17,19 +17,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using TShockAPI.DB;
 
 namespace TShockAPI
 {
-	public static class Log
+	/// <summary>
+	/// Class inheriting ILog for writing logs to TShock's SQL database
+	/// </summary>
+	public class SqlLog : ILog, IDisposable
 	{
-		public static string _filename { get; private set; }
+		private readonly LogLevel _logLevel;
+		private readonly IDbConnection _database;
+		private readonly TextLog _backupLog;
+		private int _failures;
+		private bool _useTextLog;
+
+		public string Name
+		{
+			get { return "SQL Log Writer"; }
+		}
+
+		public bool Sql
+		{
+			get { return true; }
+		}
+
+		public SqlLog(LogLevel logLevel, IDbConnection db, string textlogFilepath, bool clearTextLog)
+		{
+			_logLevel = logLevel;
+			_database = db;
+			_backupLog = new TextLog(textlogFilepath, logLevel, clearTextLog);
+		}
+
+		public bool MayWriteType(LogLevel type)
+		{
+			return ((_logLevel & type) == type);
+		}
 
 		/// <summary>
 		/// Writes data to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.Data")]
-		public static void Data(String message)
+		public void Data(String message)
 		{
 			Write(message, LogLevel.Data);
 		}
@@ -39,8 +71,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.Data")]
-		public static void Data(string format, params object[] args)
+		public void Data(string format, params object[] args)
 		{
 			Data(String.Format(format, args));
 		}
@@ -49,8 +80,7 @@ namespace TShockAPI
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.Error")]
-		public static void Error(String message)
+		public void Error(String message)
 		{
 			Write(message, LogLevel.Error);
 		}
@@ -60,8 +90,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.Error")]
-		public static void Error(string format, params object[] args)
+		public void Error(string format, params object[] args)
 		{
 			Error(String.Format(format, args));
 		}
@@ -70,8 +99,7 @@ namespace TShockAPI
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.ConsoleError")]
-		public static void ConsoleError(String message)
+		public void ConsoleError(String message)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(message);
@@ -84,8 +112,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.ConsoleError")]
-		public static void ConsoleError(string format, params object[] args)
+		public void ConsoleError(string format, params object[] args)
 		{
 			ConsoleError(String.Format(format, args));
 		}
@@ -94,8 +121,7 @@ namespace TShockAPI
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.Warn")]
-		public static void Warn(String message)
+		public void Warn(String message)
 		{
 			Write(message, LogLevel.Warning);
 		}
@@ -105,8 +131,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.Warn")]
-		public static void Warn(string format, params object[] args)
+		public void Warn(string format, params object[] args)
 		{
 			Warn(String.Format(format, args));
 		}
@@ -115,8 +140,7 @@ namespace TShockAPI
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.Info")]
-		public static void Info(String message)
+		public void Info(String message)
 		{
 			Write(message, LogLevel.Info);
 		}
@@ -126,8 +150,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.Info")]
-		public static void Info(string format, params object[] args)
+		public void Info(string format, params object[] args)
 		{
 			Info(String.Format(format, args));
 		}
@@ -136,8 +159,7 @@ namespace TShockAPI
 		/// Writes an informative string to the log file. Also outputs to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.ConsoleInfo")]
-		public static void ConsoleInfo(String message)
+		public void ConsoleInfo(String message)
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);
@@ -150,8 +172,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.ConsoleInfo")]
-		public static void ConsoleInfo(string format, params object[] args)
+		public void ConsoleInfo(string format, params object[] args)
 		{
 			ConsoleInfo(String.Format(format, args));
 		}
@@ -160,8 +181,7 @@ namespace TShockAPI
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		[Obsolete("Please use TShock.Log.Debug")]
-		public static void Debug(String message)
+		public void Debug(String message)
 		{
 			Write(message, LogLevel.Debug);
 		}
@@ -171,26 +191,58 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-		[Obsolete("Please use TShock.Log.Debug")]
-		public static void Debug(string format, params object[] args)
+		public void Debug(string format, params object[] args)
 		{
 			Debug(String.Format(format, args));
 		}
 
-		/// <summary>
-		/// Disposes objects that are being used.
-		/// </summary>
-		public static void Dispose()
+		public void Write(string message, LogLevel level)
 		{
-			TShock.Log.Dispose();
+			if (!MayWriteType(level))
+				return;
+
+			var caller = "TShock";
+
+			var frame = new StackTrace().GetFrame(2);
+			if (frame != null)
+			{
+				var meth = frame.GetMethod();
+				if (meth != null && meth.DeclaringType != null)
+					caller = meth.DeclaringType.Name;
+			}
+
+			try
+			{
+				if (_useTextLog)
+				{
+					_backupLog.Write(message, level);
+					return;
+				}
+				_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
+					level, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+					caller, message);
+
+				if (_failures > 0)
+					_failures--;
+			}
+			catch (Exception ex)
+			{
+				_backupLog.ConsoleError("SQL Log insert query failed: {0}", ex);
+				_failures++;
+				_backupLog.Error("SQL logging will revert to text logging if {0} more failures occur.",
+					TShock.Config.RevertToTextLogsOnSqlFailures - _failures);
+
+				if (_failures >= TShock.Config.RevertToTextLogsOnSqlFailures)
+				{
+					_useTextLog = true;
+					_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
+				}
+			}
 		}
 
-		/// <summary>
-		/// Internal method which writes a message directly to the log file.
-		/// </summary>
-		private static void Write(String message, LogLevel level)
+		public void Dispose()
 		{
-			TShock.Log.Write(message, level);
+			_backupLog.Dispose();
 		}
 	}
 }
