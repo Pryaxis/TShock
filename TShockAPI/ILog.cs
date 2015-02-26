@@ -42,11 +42,6 @@ namespace TShockAPI
         /// </summary>
 		string Name { get; }
 
-        /// <summary>
-        /// Returns true if the ILog is using SQL or false if not
-        /// </summary>
-        bool Sql { get; }
-
 		/// <summary>
 		/// Checks whether the log level contains the specified flag.
 		/// </summary>

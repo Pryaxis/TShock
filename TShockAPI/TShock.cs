@@ -157,9 +157,9 @@ namespace TShockAPI
 				{
 					logPathSetupWarning =
 						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine(logPathSetupWarning);
-					Console.ForegroundColor = ConsoleColor.Gray;
+					
+					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
 				}
@@ -197,9 +197,7 @@ namespace TShockAPI
 					}
 					catch (MySqlException ex)
 					{
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine(ex);
-						Console.ResetColor();
+						ServerApi.LogWriter.PluginWriteLine(this, ex.ToString(), TraceLevel.Error);
 						throw new Exception("MySql not setup correctly");
 					}
 				}

@@ -17,13 +17,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using TShockAPI.DB;
 
 namespace TShockAPI
 {
+	struct LogInfo
+	{
+		public string timestamp;
+		public string message;
+		public string caller;
+		public LogLevel logLevel;
+
+		public override string ToString()
+		{
+			return String.Format("Message: {0}: {1}: {2}",
+				caller, logLevel.ToString().ToUpper(), message);
+		}
+	}
+
 	/// <summary>
 	/// Class inheriting ILog for writing logs to TShock's SQL database
 	/// </summary>
@@ -32,17 +48,12 @@ namespace TShockAPI
 		private readonly LogLevel _logLevel;
 		private readonly IDbConnection _database;
 		private readonly TextLog _backupLog;
-		private int _failures;
+		private readonly List<LogInfo> _failures = new List<LogInfo>(TShock.Config.RevertToTextLogsOnSqlFailures);
 		private bool _useTextLog;
 
 		public string Name
 		{
 			get { return "SQL Log Writer"; }
-		}
-
-		public bool Sql
-		{
-			get { return true; }
 		}
 
 		public SqlLog(LogLevel logLevel, IDbConnection db, string textlogFilepath, bool clearTextLog)
@@ -218,25 +229,61 @@ namespace TShockAPI
 					_backupLog.Write(message, level);
 					return;
 				}
+
 				_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
 					level, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, message);
 
-				if (_failures > 0)
-					_failures--;
+				if (_failures.Count > 0)
+				{
+					var info = _failures.Last();
+					var success = true;
+
+					try
+					{
+						_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
+							info.logLevel, info.timestamp, info.caller, info.message);
+					}
+					catch (Exception ex)
+					{
+						success = false;
+						_failures.Add(new LogInfo
+						{
+							caller = "TShock",
+							logLevel = LogLevel.Error,
+							message = String.Format("SQL Log insert query failed: {0}", ex),
+							timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+						});
+					}
+
+					if (success)
+						_failures.RemoveAt(_failures.Count - 1);
+				}
 			}
 			catch (Exception ex)
 			{
 				_backupLog.ConsoleError("SQL Log insert query failed: {0}", ex);
-				_failures++;
-				_backupLog.Error("SQL logging will revert to text logging if {0} more failures occur.",
-					TShock.Config.RevertToTextLogsOnSqlFailures - _failures);
 
-				if (_failures >= TShock.Config.RevertToTextLogsOnSqlFailures)
+				_failures.Add(new LogInfo
 				{
-					_useTextLog = true;
-					_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
+					logLevel = level,
+					message = message,
+					caller = caller,
+					timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+				});
+			}
+
+			if (_failures.Count >= TShock.Config.RevertToTextLogsOnSqlFailures)
+			{
+				_useTextLog = true;
+				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
+
+				for (var i = _failures.Count - 1; i >= 0; --i)
+				{
+					_backupLog.Write(String.Format("SQL log failed at: {0}. {1}", _failures[i].timestamp, _failures[i]),
+						LogLevel.Error);
 				}
+				_failures.Clear();
 			}
 		}
 
