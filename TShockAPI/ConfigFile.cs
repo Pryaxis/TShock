@@ -394,6 +394,9 @@ namespace TShockAPI
 		[Description("The maximum allowable MP, before equipment buffs.")]
 		public int MaxMP = 200;
 
+		[Description("Determines if the server should save the world if the last player exits.")]
+		public bool SaveWorldOnLastPlayerExit = true;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>

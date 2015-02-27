@@ -1026,7 +1026,8 @@ namespace TShockAPI
 			// The last player will leave after this hook is executed.
 			if (Utils.ActivePlayers() == 1)
 			{
-				SaveManager.Instance.SaveWorld();
+				if (Config.SaveWorldOnLastPlayerExit)
+					SaveManager.Instance.SaveWorld();
 				SetConsoleTitle(true);
 			}
 		}
