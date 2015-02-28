@@ -372,28 +372,28 @@ namespace TShockAPI
 			}
 		}
 
-        /// <summary>
-        /// Saves the player's inventory to SSI
-        /// </summary>
-        /// <returns>bool - True/false if it saved successfully</returns>
-        public bool SaveServerCharacter()
-        {
-            if (!Main.ServerSideCharacter)
-            {
-                return false;
-            }
-            try
-            {
-                PlayerData.CopyCharacter(this);
-                TShock.CharacterDB.InsertPlayerData(this);
-                return true;
-            } catch (Exception e)
-            {
-                Log.Error(e.Message);
-                return false;
-            }
-
-        }
+		/// <summary>
+		/// Saves the player's inventory to SSI
+		/// </summary>
+		/// <returns>bool - True/false if it saved successfully</returns>
+		public bool SaveServerCharacter()
+		{
+			if (!Main.ServerSideCharacter)
+			{
+				return false;
+			}
+			try
+			{
+				PlayerData.CopyCharacter(this);
+				TShock.CharacterDB.InsertPlayerData(this);
+				return true;
+			}
+			catch (Exception e)
+			{
+				TShock.Log.Error(e.Message);
+				return false;
+			}
+		}
 
 		/// <summary>
 		/// Sends the players server side character to client
@@ -412,7 +412,7 @@ namespace TShockAPI
 			}
 			catch (Exception e)
 			{
-				Log.Error(e.Message);
+				TShock.Log.Error(e.Message);
 				return false;
 			}
 
@@ -707,7 +707,7 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
         }
@@ -836,11 +836,11 @@ namespace TShockAPI
 				{
 					if (displayConsole)
 					{
-						Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));	
+						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);	
 					}
 					else
 					{
-						Log.Info("Player {0} has been disabled for {1}.", Name, reason);
+						TShock.Log.Info("Player {0} has been disabled for {1}.", Name, reason);
 					}
 					LastDisableNotification = DateTime.UtcNow;
 				}
@@ -857,7 +857,7 @@ namespace TShockAPI
 			var time2 = (int) time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
-			SendMessage("You are now being annoyed.", Color.Red);
+			SendInfoMessage("You are now being annoyed.");
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
 				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);

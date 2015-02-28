@@ -1261,7 +1261,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex.ToString());
+					TShock.Log.Error(ex.ToString());
 					return true;
 				}
 			}
@@ -1469,7 +1469,7 @@ namespace TShockAPI
 						TShock.CharacterDB.InsertPlayerData(args.Player);
 					}
 					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
-					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
@@ -1547,7 +1547,7 @@ namespace TShockAPI
 				        TShock.CharacterDB.InsertPlayerData(args.Player);
 			        }
 			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
-					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					TShock.Users.SetUserUUID(user, args.Player.UUID);
                     Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
@@ -2239,27 +2239,23 @@ namespace TShockAPI
 					{
 						if (args.Player.IgnoreActionsForCheating != "none")
 						{
-							args.Player.SendMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating,
-													Color.Red);
+							args.Player.SendErrorMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating);
 						}
 						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
 						{
-							args.Player.SendMessage(
-								"Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor, Color.Red);
+							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
 						}
 						else if (args.Player.IgnoreActionsForInventory != "none")
 						{
-							args.Player.SendMessage(
-								"Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory,
-								Color.Red);
+							args.Player.SendErrorMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory);
 						}
 						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
 						{
-							args.Player.SendMessage("Please /register or /login to play!", Color.Red);
+							args.Player.SendErrorMessage("Please /register or /login to play!");
 						}
 						else if (args.Player.IgnoreActionsForClearingTrashCan)
 						{
-							args.Player.SendMessage("You need to rejoin to ensure your trash can is cleared!", Color.Red);
+							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
 						}
 						var lastTileX = args.Player.LastNetPosition.X;
 						var lastTileY = args.Player.LastNetPosition.Y - 48;
@@ -2299,9 +2295,8 @@ namespace TShockAPI
 				{
 					control[5] = false;
 					args.Player.Disable("Using banned item");
-					args.Player.SendMessage(
-						string.Format("You cannot use {0} on this server. Your actions are being ignored.",
-									  args.TPlayer.inventory[item].name), Color.Red);
+					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.",
+						args.TPlayer.inventory[item].name);
 				}
 
 				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
@@ -2579,7 +2574,7 @@ namespace TShockAPI
 			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-                Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
+                TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
 				return false;
 			}
 
@@ -2970,7 +2965,7 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.movenpc))
 			{
-				args.Player.SendMessage("You do not have permission to relocate NPCs.", Color.Red);
+				args.Player.SendErrorMessage("You do not have permission to relocate NPCs.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
@@ -2978,7 +2973,7 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-                args.Player.SendMessage( "You do not have access to modify this area.", Color.Red);
+                args.Player.SendErrorMessage( "You do not have access to modify this area.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
@@ -3099,7 +3094,7 @@ namespace TShockAPI
 			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
 			{
 			//Player is probably trying to sneak items onto the server in their hands!!!
-				Log.ConsoleInfo(string.Format("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name));
+				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name);
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			
@@ -3382,12 +3377,12 @@ namespace TShockAPI
 			}
 			if (spawnboss && !args.Player.Group.HasPermission(Permissions.summonboss))
 			{
-				args.Player.SendMessage("You don't have permission to summon a boss.", Color.Red);
+				args.Player.SendErrorMessage("You don't have permission to summon a boss.");
 				return true;
 			}
 			if (invasion && !args.Player.Group.HasPermission(Permissions.startinvasion))
 			{
-				args.Player.SendMessage("You don't have permission to start an invasion.", Color.Red);
+				args.Player.SendErrorMessage("You don't have permission to start an invasion.");
 				return true;
 			}
 			if (!spawnboss && !invasion)
