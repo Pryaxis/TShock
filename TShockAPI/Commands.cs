@@ -4327,8 +4327,7 @@ namespace TShockAPI
 
 		private static void GetVersion(CommandArgs args)
 		{
-			args.Player.SendInfoMessage(string.Format("TShock: {0} ({1}): ({2}/{3})", TShock.VersionNum, TShock.VersionCodename,
-												  TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+			args.Player.SendInfoMessage(string.Format("TShock: {0} ({1}).", TShock.VersionNum, TShock.VersionCodename);
 		}
 
 		private static void ListConnectedPlayers(CommandArgs args)
