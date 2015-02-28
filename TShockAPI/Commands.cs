@@ -4251,7 +4251,7 @@ namespace TShockAPI
 
     private static void ToggleAntiBuild(CommandArgs args)
 		{
-			TShock.Config.DisableBuild = (TShock.Config.DisableBuild == false);
+			TShock.Config.DisableBuild = !TShock.Config.DisableBuild;
 			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
 		}
 
