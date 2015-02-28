@@ -234,11 +234,11 @@ namespace TShockAPI
 					level, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, message);
 
-				if (_failures.Count > 0)
+				var success = true;
+				while (_failures.Count > 0 && success)
 				{
-					var info = _failures.Last();
-					var success = true;
-
+					var info = _failures.First();
+					
 					try
 					{
 						_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
@@ -257,7 +257,7 @@ namespace TShockAPI
 					}
 
 					if (success)
-						_failures.RemoveAt(_failures.Count - 1);
+						_failures.RemoveAt(0);
 				}
 			}
 			catch (Exception ex)
@@ -278,9 +278,9 @@ namespace TShockAPI
 				_useTextLog = true;
 				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
 
-				for (var i = _failures.Count - 1; i >= 0; --i)
+				foreach(var logInfo in _failures)
 				{
-					_backupLog.Write(String.Format("SQL log failed at: {0}. {1}", _failures[i].timestamp, _failures[i]),
+					_backupLog.Write(String.Format("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
 						LogLevel.Error);
 				}
 				_failures.Clear();
