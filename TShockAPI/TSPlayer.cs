@@ -372,10 +372,10 @@ namespace TShockAPI
 			}
 		}
 
-        /// <summary>
-        /// Saves the player's inventory to SSI
-        /// </summary>
-        /// <returns>bool - True/false if it saved successfully</returns>
+		/// <summary>
+		/// Saves the player's inventory to SSI
+		/// </summary>
+		/// <returns>bool - True/false if it saved successfully</returns>
 		public bool SaveServerCharacter()
 		{
 			if (!Main.ServerSideCharacter)

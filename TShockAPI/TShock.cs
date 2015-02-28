@@ -596,8 +596,8 @@ namespace TShockAPI
 				var r = new Random((int) DateTime.Now.ToBinary());
 				AuthToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
 				Console.ForegroundColor = ConsoleColor.Gray;
 				FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
 				using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
@@ -614,8 +614,8 @@ namespace TShockAPI
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine(
 					"TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
 				Console.ForegroundColor = ConsoleColor.Gray;
 			}
 			else
@@ -1140,7 +1140,7 @@ namespace TShockAPI
 				WorldGen.genRand = new Random();
 			}
 
-			if (args.Command.StartsWith("playing") || args.Command.StartsWith("/playing"))
+			if (args.Command.StartsWith("playing") || args.Command.StartsWith("{0}playing".SFormat(Commands.Specifier)))
 			{
 				int count = 0;
 				foreach (TSPlayer player in Players)
@@ -1159,7 +1159,7 @@ namespace TShockAPI
 				Main.autoSave = Config.AutoSave = !Config.AutoSave;
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 			}
-			else if (args.Command.StartsWith("/"))
+			else if (args.Command.StartsWith(Commands.Specifier))
 			{
 				Commands.HandleCommand(TSPlayer.Server, args.Command);
 			}
@@ -1251,12 +1251,12 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.SendErrorMessage(
-						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!");
+						player.IgnoreActionsForInventory = "Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
-					player.SendErrorMessage("Please /register or /login to play!");
+					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
 				}
 			}
