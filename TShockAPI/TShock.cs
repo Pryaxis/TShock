@@ -250,7 +250,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("TShock {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -829,7 +829,7 @@ namespace TShockAPI
 							player.SetBuff(36, 120); //Broken Armor
 							check = "Remove armor/accessory " + item.name;
 							
-							player.SendErrorMessage(string.Format("You are wearing banned equipment. {0}", check));
+							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 							break;
 						}
 					}
@@ -1015,7 +1015,7 @@ namespace TShockAPI
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
-				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
+				Log.Info("{0} disconnected.", tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
@@ -1114,7 +1114,7 @@ namespace TShockAPI
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					Log.Info(string.Format("Broadcast: {0}", msg));
+					Log.Info("Broadcast: {0}", msg);
 					args.Handled = true;
 				}
 			}
@@ -1148,11 +1148,11 @@ namespace TShockAPI
 					if (player != null && player.Active)
 					{
 						count++;
-						TSPlayer.Server.SendInfoMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
-																  player.Group.Name, player.UserAccountName));
+						TSPlayer.Server.SendInfoMessage("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+							player.Group.Name, player.UserAccountName);
 					}
 				}
-				TSPlayer.Server.SendInfoMessage(string.Format("{0} players connected.", count));
+				TSPlayer.Server.SendInfoMessage("{0} players connected.", count);
 			}
 			else if (args.Command == "autosave")
 			{
@@ -1219,16 +1219,16 @@ namespace TShockAPI
 
 			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
+				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
-									   TShock.Config.MaxSlots));
+									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
+									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
@@ -1250,14 +1250,13 @@ namespace TShockAPI
 			{
 				if (Main.ServerSideCharacter)
 				{
-					player.SendMessage(
-						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",
-						Color.Red);
+					player.SendErrorMessage(
+						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!");
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
-					player.SendMessage("Please /register or /login to play!", Color.Red);
+					player.SendErrorMessage("Please /register or /login to play!");
 					player.LoginHarassed = true;
 				}
 			}
@@ -1267,7 +1266,7 @@ namespace TShockAPI
 			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 				player.RPPending = 3;
-				player.SendMessage("You will be teleported to your last known location...", Color.Red);
+				player.SendInfoMessage("You will be teleported to your last known location...");
 			}
 
 			args.Handled = true;
@@ -1579,7 +1578,7 @@ namespace TShockAPI
 
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 					{
-						player.SendMessage("You do not have permission to build!", Color.Red);
+						player.SendErrorMessage("You do not have permission to build!");
 						player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1593,7 +1592,7 @@ namespace TShockAPI
 
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
-					player.SendMessage("You do not have permission to build!", Color.Red);
+					player.SendErrorMessage("You do not have permission to build!");
 					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1604,7 +1603,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
-					player.SendMessage("This region is protected from changes.", Color.Red);
+					player.SendErrorMessage("This region is protected from changes.");
 					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1616,7 +1615,7 @@ namespace TShockAPI
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
-						player.SendMessage("The world is protected from changes.", Color.Red);
+						player.SendErrorMessage("The world is protected from changes.");
 						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1631,7 +1630,7 @@ namespace TShockAPI
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000)
 						{
-							player.SendMessage("Spawn is protected from changes.", Color.Red);
+							player.SendErrorMessage("Spawn is protected from changes.");
 							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 						return true;
@@ -1648,7 +1647,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
-					player.SendMessage("You do not have permission to build!", Color.Red);
+					player.SendErrorMessage("You do not have permission to build!");
 					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1659,7 +1658,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
-					player.SendMessage("This region is protected from changes.", Color.Red);
+					player.SendErrorMessage("This region is protected from changes.");
 					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1671,7 +1670,7 @@ namespace TShockAPI
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
-						player.SendMessage("The world is protected from changes.", Color.Red);
+						player.SendErrorMessage("The world is protected from changes.");
 						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1686,7 +1685,7 @@ namespace TShockAPI
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000)
 						{
-							player.SendMessage("Spawn is protected from changes.", Color.Red);
+							player.SendErrorMessage("Spawn is protected from changes.");
 							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 						return true;
