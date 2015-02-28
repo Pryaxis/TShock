@@ -4257,7 +4257,7 @@ namespace TShockAPI
 
 		private static void ProtectSpawn(CommandArgs args)
 		{
-			TShock.Config.SpawnProtection = (TShock.Config.SpawnProtection == false);
+			TShock.Config.SpawnProtection = !TShock.Config.SpawnProtection;
 			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
 		}
 
