@@ -1,36 +1,40 @@
 ### Issue Guidelines
 Please follow these simple requirements before posting an issue:
 
-1. TShock version number
-2. Any stack traces that may have happened when the issue occurred
-3. How to reproduce the issue
+- TShock version number
+- Any stack traces that may have happened when the issue occurred
+- How to reproduce the issue
+- Screenshots of the issue (if applicable)
+
+### TShock Additions
+
+If something is better suited to be a plugin for TShock, rather than a TShock core feature, it should not be added!
 
 ### Pull Request Dev Guidelines
 
-These guidelines are for contributors. If you do not follow these guidelines your commits will be reverted.
+These guidelines are for all contributors.
 
 Required:
-- Follow the code style. We generally use microsofts except for m_ infront of private variables.
-- Do not push unfinished features to the master branch, instead create a remote branch and push to that.
-- Do not push untested code to the master branch, instead push to the test branch.
-- Document all compatibility issues in the COMPATIBILITY file. (IE file formats changing)
-- DO NOT MASS COMMIT. Commit changes as you go (without pushing). That way when you push we don't get a thousand changes with a 1-3 line commit message.
-
-Optional:
-- Build Version Increment (http://autobuildversion.codeplex.com/).
-
-----
+- Push code to the general-devel branch. Do not push it anywhere else.
+- Use tabs, not spaces.
+- Use UpperCamelCase for public function names.
+- Prior to developing, make sure your clone is up to date with general-devel. This means that we don't get merge commits in your pull request.
 
 ### Dev Team Guidelines
 
 These guidelines are to be followed by all developers with commit level access to this repository:
 
-- Do not, for any reason, submit code to the master branch before it hits the development branch first. If the development branch is far ahead, and a new bug fix is going out, branch master, then merge with master and remove your branch.
- - If you are found to do this, you will be the person merging and rebasing your code to fit general-devel.
 - Prior to posting any version on the website, you must tick the version in AssemblyInfo.cs. This is the versioning formula:
- - Major.Minor.Revision.BuildDate (tick Revision if you're fixing prior to an actual planned release)
+ - Major.Minor.Revision
 - Do not release any development builds on the forums without consulting another developer first.
-- __Document code prior to marking it done in JIRA__
-- Move any un-tested code to the "Needs Validation" section on JIRA prior to marking it as done.
-- Do not push changes to any branch without a proper issue being assigned in JIRA. If a feature isn't planned for this release, __it shouldn't be in the repo about to be released__.
-- Submit all pull requests to the general-devel branch prior to the master branch, or you will be ignored.
+- This is not a professional software product. Your results may vary with code quality, buginess, etc. Do not complain about something -- just fix it and move on.
+- __Do not force push the repo__, or you will be removed.
+- __Do not revert commits__, unless you have sign-off from one other developer (the two-man rule), or you will be removed.
+- __This is not a meritocracy.__
+
+#### Pull Request Acceptance Guidelines
+
+- Don't ruin someone's first time sending a pull request. They feel demotivated, and then they won't want to push any more code for us.
+- Don't accept untested pull requests from the outside world. Bamboo and Travis will at least make sure that something compiles, but actual code and execution tests are required.
+- Pull request acceptance from internal contributors (anyone with write access) requires only one other approval to merge.
+- Pull request acceptance from external contributors (anyone without write access) requires the [two-man rule](https://en.wikipedia.org/wiki/Two-man_rule) to be followed. If another man/woman/child in the two-man rule cannot be found within seven days, then this requirement is exempted.
