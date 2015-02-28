@@ -151,7 +151,7 @@ namespace TShockAPI
 			catch (Exception e)
 			{
 				ply.SendErrorMessage("Command failed, check logs for more details.");
-				Log.Error(e.ToString());
+				TShock.Log.Error(e.ToString());
 			}
 
 			return true;
@@ -711,7 +711,7 @@ namespace TShockAPI
 		{
 			if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
 			{
-				Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
+				TShock.Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
 					args.Player.IP, args.Player.Name, TShock.Config.MaximumLoginAttempts));
 				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
 				return;
@@ -799,7 +799,7 @@ namespace TShockAPI
 					}
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
-					Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
+					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
 					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos))
 					{
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
@@ -824,14 +824,14 @@ namespace TShockAPI
 					{
 						args.Player.SendErrorMessage("Invalid password!");
 					}
-					Log.Warn(args.Player.IP + " failed to authenticate as user: " + user.Name + ".");
+					TShock.Log.Warn(args.Player.IP + " failed to authenticate as user: " + user.Name + ".");
 					args.Player.LoginAttempts++;
 				}
 			}
 			catch (Exception ex)
 			{
 				args.Player.SendErrorMessage("There was an error processing your request.");
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 
@@ -847,12 +847,12 @@ namespace TShockAPI
 					{
 						args.Player.SendSuccessMessage("You changed your password!");
 						TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
-						Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + user.Name + ".");
+						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + user.Name + ".");
 					}
 					else
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
-						Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
+						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
 										 user.Name + ".");
 					}
 				}
@@ -864,7 +864,7 @@ namespace TShockAPI
 			catch (UserManagerException ex)
 			{
 				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
-				Log.ConsoleError("PasswordUser returned an error: " + ex);
+				TShock.Log.ConsoleError("PasswordUser returned an error: " + ex);
 			}
 		}
 
@@ -898,18 +898,18 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", user.Password);
 					TShock.Users.AddUser(user);
-					Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
+					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
 				}
 				else
 				{
 					args.Player.SendErrorMessage("Account " + user.Name + " has already been registered.");
-					Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
+					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
 				}
 			}
 			catch (UserManagerException ex)
 			{
 				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
-				Log.ConsoleError("RegisterUser returned an error: " + ex);
+				TShock.Log.ConsoleError("RegisterUser returned an error: " + ex);
 			}
 		}
 
@@ -939,7 +939,7 @@ namespace TShockAPI
 					{
 						TShock.Users.AddUser(user);
 						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
-						Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
+						TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
 					catch (GroupNotExistsException e)
 					{
@@ -952,7 +952,7 @@ namespace TShockAPI
 					catch (UserManagerException e)
 					{
 						args.Player.SendErrorMessage("User " + user.Name + " could not be added, check console for details.");
-						Log.ConsoleError(e.ToString());
+						TShock.Log.ConsoleError(e.ToString());
 					}
 				}
 				else
@@ -970,7 +970,7 @@ namespace TShockAPI
 				{
 					TShock.Users.RemoveUser(user);
 					args.Player.SendSuccessMessage("Account removed successfully.");
-					Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
+					TShock.Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
 				catch (UserNotExistException e)
 				{
@@ -979,7 +979,7 @@ namespace TShockAPI
 				catch (UserManagerException ex)
 				{
 					args.Player.SendMessage(ex.Message, Color.Red);
-					Log.ConsoleError(ex.ToString());
+					TShock.Log.ConsoleError(ex.ToString());
 				}
 			}
 			
@@ -994,7 +994,7 @@ namespace TShockAPI
 					try
 					{
 						TShock.Users.SetUserPassword(user, args.Parameters[2]);
-						Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
+						TShock.Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
 						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 					}
 					catch (UserNotExistException e)
@@ -1004,7 +1004,7 @@ namespace TShockAPI
 					catch (UserManagerException e)
 					{
 						args.Player.SendErrorMessage("Password change for " + user.Name + " failed! Check console!");
-						Log.ConsoleError(e.ToString());
+						TShock.Log.ConsoleError(e.ToString());
 					}
 				}
 				else
@@ -1023,7 +1023,7 @@ namespace TShockAPI
 					try
 					{
 						TShock.Users.SetUserGroup(user, args.Parameters[2]);
-						Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
+						TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 					}
 					catch (GroupNotExistsException e)
@@ -1626,7 +1626,7 @@ namespace TShockAPI
 		{
 			if (ServerApi.RunningMono)
 			{
-				Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono.");
+				TShock.Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono.");
 			}
 			else
 			{
@@ -3688,7 +3688,7 @@ namespace TShockAPI
 				}
 				plr.DamagePlayer(damage);
 				TSPlayer.All.SendInfoMessage("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
-				Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
+				TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
 			}
 		}
 
@@ -4380,7 +4380,7 @@ namespace TShockAPI
 			if (TShock.AuthToken == 0)
 			{
 				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
-				Log.Warn(args.Player.IP + " attempted to use /auth even though it's disabled.");
+				TShock.Log.Warn(args.Player.IP + " attempted to use /auth even though it's disabled.");
 				return;
 			}
 			int givenCode = Convert.ToInt32(args.Parameters[0]);
@@ -4397,7 +4397,7 @@ namespace TShockAPI
 				}
 				catch (UserManagerException ex)
 				{
-					Log.ConsoleError(ex.ToString());
+					TShock.Log.ConsoleError(ex.ToString());
 					args.Player.SendErrorMessage(ex.Message);
 				}
 				return;
@@ -4413,7 +4413,7 @@ namespace TShockAPI
 			}
 
 			args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
-			Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
+			TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
 		}
 
 		private static void AuthVerify(CommandArgs args)

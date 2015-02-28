@@ -325,6 +325,12 @@ namespace TShockAPI
 		[Description("The path of the directory where logs should be written into.")]
 		public string LogPath = "tshock";
 
+		[Description("Save logs to an SQL database instead of a text file. Default = false")]
+		public bool UseSqlLogs = false;
+
+		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log")] 
+		public int RevertToTextLogsOnSqlFailures = 10;
+
 		[Description("Prevents players from placing tiles with an invalid style.")]
 		public bool PreventInvalidPlaceStyle = true;
 

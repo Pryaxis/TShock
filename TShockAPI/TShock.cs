@@ -36,8 +36,6 @@ using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
@@ -53,7 +51,7 @@ namespace TShockAPI
 		private static string LogFormat = LogFormatDefault;
 		private const string LogPathDefault = "tshock";
 		private static string LogPath = LogPathDefault;
-		private static bool LogClear = false;
+		private static bool LogClear;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
@@ -77,6 +75,7 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
 		public static UpdateManager UpdateManager;
+		public static ILog Log;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -126,6 +125,9 @@ namespace TShockAPI
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
+			string logFilename;
+			string logPathSetupWarning;
+
 			try
 			{
 				HandleCommandLine(Environment.GetCommandLineArgs());
@@ -142,37 +144,29 @@ namespace TShockAPI
 				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
 
 				DateTime now = DateTime.Now;
-				string logFilename;
-				string logPathSetupWarning = null;
 				// Log path was not already set by the command line parameter?
 				if (LogPath == LogPathDefault)
 					LogPath = Config.LogPath;
 				try
 				{
-					logFilename = Path.Combine(LogPath, now.ToString(LogFormat)+".log");
+					logFilename = Path.Combine(LogPath, now.ToString(LogFormat) + ".log");
 					if (!Directory.Exists(LogPath))
 						Directory.CreateDirectory(LogPath);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
-					logPathSetupWarning = "Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine(logPathSetupWarning);
-					Console.ForegroundColor = ConsoleColor.Gray;
+					logPathSetupWarning =
+						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
+					
+					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
 				}
-#if DEBUG
-				Log.Initialize(logFilename, LogLevel.All, false);
-#else
-				Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
-#endif
-				if (logPathSetupWarning != null)
-					Log.Warn(logPathSetupWarning);
 
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				// Will be handled by the server api and written to its crashlog.txt.
 				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
@@ -181,16 +175,6 @@ namespace TShockAPI
 			// Further exceptions are written to TShock's log from now on.
 			try
 			{
-				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-				{
-					Log.ConsoleInfo(
-						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
-					File.Delete(Path.Combine(SavePath, "tshock.pid"));
-				}
-				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
-
-				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
-
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
@@ -204,16 +188,16 @@ namespace TShockAPI
 						DB = new MySqlConnection();
 						DB.ConnectionString =
 							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
-										  hostport[0],
-										  hostport.Length > 1 ? hostport[1] : "3306",
-										  Config.MySqlDbName,
-										  Config.MySqlUsername,
-										  Config.MySqlPassword
+								hostport[0],
+								hostport.Length > 1 ? hostport[1] : "3306",
+								Config.MySqlDbName,
+								Config.MySqlUsername,
+								Config.MySqlPassword
 								);
 					}
 					catch (MySqlException ex)
 					{
-						Log.Error(ex.ToString());
+						ServerApi.LogWriter.PluginWriteLine(this, ex.ToString(), TraceLevel.Error);
 						throw new Exception("MySql not setup correctly");
 					}
 				}
@@ -222,12 +206,34 @@ namespace TShockAPI
 					throw new Exception("Invalid storage type");
 				}
 
+#if DEBUG       
+                var level = LogLevel.All;
+#else
+				var level = LogLevel.All & ~LogLevel.Debug;
+#endif
+				if (Config.UseSqlLogs)
+					Log = new SqlLog(level, DB, logFilename, LogClear);
+				else
+					Log = new TextLog(logFilename, level, LogClear);
+
+				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+				{
+					Log.ConsoleInfo(
+						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
+					File.Delete(Path.Combine(SavePath, "tshock.pid"));
+				}
+				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"),
+					Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
+
+				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
+
+
 				Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 				Backups.KeepFor = Config.BackupKeepFor;
 				Backups.Interval = Config.BackupInterval;
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
-                Regions = new RegionManager(DB);
+				Regions = new RegionManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
@@ -294,7 +300,7 @@ namespace TShockAPI
 			}
 		}
 
-	    private static void getTShockAscii()
+		private static void getTShockAscii()
 	    {
 // ReSharper disable LocalizableElement
 	        Console.Write("              ___          ___          ___          ___          ___ \n" +
@@ -1211,24 +1217,24 @@ namespace TShockAPI
 
 			player.LoginMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-			if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
 									   TShock.Config.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
 				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
 									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
+					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
 
-			if (TShock.Config.DisplayIPToAdmins)
-				TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
+			if (Config.DisplayIPToAdmins)
+				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			Utils.ShowFileToUser(player, "motd.txt");
 
