@@ -74,6 +74,7 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
+		public static StatTracker StatTracker = new StatTracker();
 		public static UpdateManager UpdateManager;
 		public static ILog Log;
 		/// <summary>
@@ -631,6 +632,7 @@ namespace TShockAPI
 			FixChestStacks();
 			
 			UpdateManager = new UpdateManager();
+			StatTracker.Initialize();
 		}
 
 		private void ComputeMaxStyles()
