@@ -32,14 +32,14 @@ namespace TShockAPI
 		All = 31
 	}
 
-    /// <summary>
-    /// Logging interface
-    /// </summary>
+/// <summary>
+/// Logging interface
+/// </summary>
 	public interface ILog
 	{
-        /// <summary>
-        /// Log name
-        /// </summary>
+		/// <summary>
+		/// Log name
+		/// </summary>
 		string Name { get; }
 
 		/// <summary>
@@ -52,19 +52,21 @@ namespace TShockAPI
 		/// Writes an informative string to the log and to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-        void ConsoleInfo(string message);
+		void ConsoleInfo(string message);
+		
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
 		/// </summary>
 		/// <param name="message">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
-        void ConsoleInfo(string format, params object[] args);
+		void ConsoleInfo(string format, params object[] args);
 
 		/// <summary>
 		/// Writes an error message to the log and to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void ConsoleError(string message);
+
 		/// <summary>
 		/// Writes an error message to the log and to the console.
 		/// </summary>
@@ -77,6 +79,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Warn(string message);
+
 		/// <summary>
 		/// Writes a warning to the log.
 		/// </summary>
@@ -101,6 +104,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Info(string message);
+
 		/// <summary>
 		/// Writes an informative string to the log.
 		/// </summary>
@@ -113,6 +117,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Data(string message);
+
 		/// <summary>
 		/// Writes data to the log.
 		/// </summary>
@@ -120,11 +125,11 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		void Data(string format, params object[] args);
 
-        /// <summary>
-        /// Writes a message to the log
-        /// </summary>
-        /// <param name="message">Message to write</param>
-        /// <param name="level">LogLevel assosciated with the message</param>
+		/// <summary>
+		/// Writes a message to the log
+		/// </summary>
+		/// <param name="message">Message to write</param>
+		/// <param name="level">LogLevel assosciated with the message</param>
 		void Write(string message, LogLevel level);
 
 		/// <summary>
