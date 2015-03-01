@@ -115,7 +115,6 @@
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="PacketBufferer.cs" />
     <Compile Include="Permissions.cs" />
-    <Compile Include="RconHandler.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
