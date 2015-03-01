@@ -196,7 +196,7 @@ namespace TShockAPI
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
 			TSPlayer.Server.SendMessage(msg, red, green, blue);
-			Log.Info(string.Format("Broadcast: {0}", msg));
+			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
 		public void Broadcast(string msg, Color color)
@@ -216,7 +216,7 @@ namespace TShockAPI
         {
             TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
             TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
-            Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
+            TShock.Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
         }
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace TShockAPI
 		/// <param name="excludedPlayer">The player to not send the message to.</param>
 		public void SendLogs(string log, Color color, TSPlayer excludedPlayer = null)
 		{
-			Log.Info(log);
+			TShock.Log.Info(log);
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
@@ -638,7 +638,7 @@ namespace TShockAPI
                 if (player.IsLoggedIn && saveSSI)
                     player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
-				Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
+				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
                 if (!silent)
                 {
