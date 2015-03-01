@@ -66,7 +66,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 
 			return new Vector2();
@@ -88,7 +88,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 
 			return new Vector2();
@@ -105,7 +105,7 @@ namespace TShockAPI.DB
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex.ToString());
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 			else
@@ -117,7 +117,7 @@ namespace TShockAPI.DB
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex.ToString());
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 		}

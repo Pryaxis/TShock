@@ -271,7 +271,6 @@ namespace TShockAPI
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
-				//RconHandler.StartThread();
 
 				if (Config.RestApiEnabled)
 					RestApi.Start();
@@ -1780,9 +1779,6 @@ namespace TShockAPI
 			Main.maxNetPlayers = file.MaxSlots + 20;
 			Netplay.password = "";
 			Netplay.spamCheck = false;
-
-			RconHandler.Password = file.RconPassword;
-			RconHandler.ListenPort = file.RconPort;
 
 			Utils.HashAlgo = file.HashAlgorithm;
 		}

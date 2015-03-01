@@ -64,7 +64,7 @@ namespace TShockAPI
 			{
 				if (!failed)
 				{
-					Log.ConsoleError("StatTracker Exception: {0}", e);
+					TShock.Log.ConsoleError("StatTracker Exception: {0}", e);
 					failed = true;
 				}
 			}

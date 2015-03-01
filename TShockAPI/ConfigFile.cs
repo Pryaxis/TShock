@@ -106,11 +106,6 @@ namespace TShockAPI
 		[Description("Number of failed login attempts before kicking the player.")]
 		public int MaximumLoginAttempts = 3;
 
-		[Description("Not implemented.")]
-		public string RconPassword = "";
-		[Description("Not implemented.")]
-		public int RconPort = 7777;
-
 		[Description("Used when replying to a rest /status request or sent to the client when UseServerName is true.")]
 		public string ServerName = "";
 		[Description("Sends ServerName in place of the world name to clients.")]
