@@ -53,7 +53,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void ConsoleInfo(string message);
-		
+
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
 		/// </summary>
@@ -131,6 +131,19 @@ namespace TShockAPI
 		/// <param name="message">Message to write</param>
 		/// <param name="level">LogLevel assosciated with the message</param>
 		void Write(string message, LogLevel level);
+
+		/// <summary>
+		/// Writes a debug string to the log file.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		void Debug(String message);
+
+		/// <summary>
+		/// Writes a debug string to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		void Debug(string format, params object[] args);
 
 		/// <summary>
 		/// Dispose the Log
