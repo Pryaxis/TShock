@@ -567,7 +567,7 @@ namespace TShockAPI
 			{
 				HelpText = "Slaps a player, dealing damage."
 			});
-			add(new Command(Permissions.serverinfo, ServerInfo, "stats")
+			add(new Command(Permissions.serverinfo, ServerInfo, "serverinfo")
 			{
 				HelpText = "Shows the server information."
 			});
