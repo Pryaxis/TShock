@@ -951,11 +951,11 @@ namespace TShockAPI
 						args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 						TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 					}
-					catch (GroupNotExistsException e)
+					catch (GroupNotExistsException)
 					{
 						args.Player.SendErrorMessage("Group " + user.Group + " does not exist!");
 					}
-					catch (UserExistsException e)
+					catch (UserExistsException)
 					{
 						args.Player.SendErrorMessage("User " + user.Name + " already exists!");
 					}
@@ -982,7 +982,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account removed successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
-				catch (UserNotExistException e)
+				catch (UserNotExistException)
 				{
 					args.Player.SendErrorMessage("The user " + user.Name + " does not exist! Deleted nobody!");
 				}
@@ -1007,7 +1007,7 @@ namespace TShockAPI
 						TShock.Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
 						args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 					}
-					catch (UserNotExistException e)
+					catch (UserNotExistException)
 					{
 						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
 					}
@@ -1036,15 +1036,15 @@ namespace TShockAPI
 						TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 						args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 					}
-					catch (GroupNotExistsException e)
+					catch (GroupNotExistsException)
 					{
 						args.Player.SendErrorMessage("That group does not exist!");
 					}
-					catch (UserNotExistException e)
+					catch (UserNotExistException)
 					{
 						args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
 					}
-					catch (UserManagerException e)
+					catch (UserManagerException)
 					{
 						args.Player.SendErrorMessage("User " + user.Name + " could not be added. Check console for details.");
 					}
