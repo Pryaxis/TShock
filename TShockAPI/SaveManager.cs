@@ -58,8 +58,8 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.Error("World saved notification failed");
-					Log.Error(ex.ToString());
+					TShock.Log.Error("World saved notification failed");
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 		}
@@ -134,8 +134,8 @@ namespace TShockAPI
 							}
 							catch (Exception e)
 							{
-								Log.Error("World saved failed");
-								Log.Error(e.ToString());
+								TShock.Log.Error("World saved failed");
+								TShock.Log.Error(e.ToString());
 							}
 						}
 					}

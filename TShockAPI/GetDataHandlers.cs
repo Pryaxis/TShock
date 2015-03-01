@@ -62,10 +62,10 @@ namespace TShockAPI
 		/// </summary>
 		public class TileEditEventArgs : HandledEventArgs
 		{
-            /// <summary>
-            /// The TSPlayer who made the tile edit
-            /// </summary>
-            public TSPlayer Player { get; set; }
+						/// <summary>
+						/// The TSPlayer who made the tile edit
+						/// </summary>
+						public TSPlayer Player { get; set; }
 
 			/// <summary>
 			/// The tile coordinate on the X plane
@@ -87,10 +87,10 @@ namespace TShockAPI
 			/// </summary>
 			public EditAction Action { get; set; }
 
-            /// <summary>
-            /// Did the tile get destroyed successfully.
-            /// </summary>
-            public EditType editDetail { get; set; }
+						/// <summary>
+						/// Did the tile get destroyed successfully.
+						/// </summary>
+						public EditType editDetail { get; set; }
 
 			/// <summary>
 			/// Used when a tile is placed to denote a subtype of tile. (e.g. for tile id 21: Chest = 0, Gold Chest = 1)
@@ -109,12 +109,12 @@ namespace TShockAPI
 
 			var args = new TileEditEventArgs
 			{
-                Player = ply,
+								Player = ply,
 				X = x,
 				Y = y,
 				Action = action,
 				EditData = editData,
-                editDetail = editDetail,
+								editDetail = editDetail,
 				Style = style
 			};
 			TileEdit.Invoke(null, args);
@@ -152,37 +152,37 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-        /// <summary>
-        /// For use in a PlayerTeam event
-        /// </summary>
-        public class PlayerTeamEventArgs : HandledEventArgs
-        {
-            /// <summary>
-            /// The Terraria player ID of the player
-            /// </summary>
-            public byte PlayerId { get; set; }
-            /// <summary>
-            /// Enable/disable pvp?
-            /// </summary>
-            public byte Team { get; set; }
-        }
-        /// <summary>
-        /// TogglePvp - called when a player toggles pvp
-        /// </summary>
-        public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
-        private static bool OnPlayerTeam(byte _id, byte _team)
-        {
-            if (PlayerTeam == null)
-                return false;
+		/// <summary>
+		/// For use in a PlayerTeam event
+		/// </summary>
+		public class PlayerTeamEventArgs : HandledEventArgs
+		{
+				/// <summary>
+				/// The Terraria player ID of the player
+				/// </summary>
+				public byte PlayerId { get; set; }
+				/// <summary>
+				/// Enable/disable pvp?
+				/// </summary>
+				public byte Team { get; set; }
+		}
+		/// <summary>
+		/// TogglePvp - called when a player toggles pvp
+		/// </summary>
+		public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
+		private static bool OnPlayerTeam(byte _id, byte _team)
+		{
+				if (PlayerTeam == null)
+						return false;
 
-            var args = new PlayerTeamEventArgs
-            {
-                PlayerId = _id,
-                Team = _team,
-            };
-            PlayerTeam.Invoke(null, args);
-            return args.Handled;
-        }
+				var args = new PlayerTeamEventArgs
+				{
+						PlayerId = _id,
+						Team = _team,
+				};
+				PlayerTeam.Invoke(null, args);
+				return args.Handled;
+		}
 
 		/// <summary>
 		/// For use in a PlayerSlot event
@@ -1500,56 +1500,56 @@ namespace TShockAPI
 
 			string password = args.Data.ReadString();
 
-            if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
-                return true;
+						if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
+								return true;
 
 			var user = TShock.Users.GetUserByName(args.Player.Name);
-            if (user != null && !TShock.Config.DisableLoginBeforeJoin)
+						if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				string encrPass = TShock.Utils.HashPassword(password);
 				if (user.Password.ToUpper() == encrPass.ToUpper())
 				{
-				    args.Player.RequiresPassword = false;
-				    args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+						args.Player.RequiresPassword = false;
+						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
 
-				    if (args.Player.State == 1)
-				        args.Player.State = 2;
-				    NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
+						if (args.Player.State == 1)
+								args.Player.State = 2;
+						NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 
-				    var group = TShock.Utils.GetGroup(user.Group);
+						var group = TShock.Utils.GetGroup(user.Group);
 
-				    if (Main.ServerSideCharacter)
-				    {
-				        if (group.HasPermission(Permissions.bypassssc))
-				        {
-				            args.Player.IgnoreActionsForClearingTrashCan = false;
-				        }
+						if (Main.ServerSideCharacter)
+						{
+								if (group.HasPermission(Permissions.bypassssc))
+								{
+										args.Player.IgnoreActionsForClearingTrashCan = false;
+								}
 						args.Player.PlayerData.RestoreCharacter(args.Player);
-				    }
+						}
 					args.Player.LoginFailsBySsi = false;
 
-				    if (group.HasPermission(Permissions.ignorestackhackdetection))
-				        args.Player.IgnoreActionsForCheating = "none";
+						if (group.HasPermission(Permissions.ignorestackhackdetection))
+								args.Player.IgnoreActionsForCheating = "none";
 
-				    if (group.HasPermission(Permissions.usebanneditem))
-				        args.Player.IgnoreActionsForDisabledArmor = "none";
+						if (group.HasPermission(Permissions.usebanneditem))
+								args.Player.IgnoreActionsForDisabledArmor = "none";
 
-				    args.Player.Group = group;
-				    args.Player.tempGroup = null;
-				    args.Player.UserAccountName = args.Player.Name;
-				    args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
-				    args.Player.IsLoggedIn = true;
-				    args.Player.IgnoreActionsForInventory = "none";
+						args.Player.Group = group;
+						args.Player.tempGroup = null;
+						args.Player.UserAccountName = args.Player.Name;
+						args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+						args.Player.IsLoggedIn = true;
+						args.Player.IgnoreActionsForInventory = "none";
 
-				    if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
-                    {
-				        args.Player.PlayerData.CopyCharacter(args.Player);
-				        TShock.CharacterDB.InsertPlayerData(args.Player);
-			        }
-			        args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+						if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
+										{
+								args.Player.PlayerData.CopyCharacter(args.Player);
+								TShock.CharacterDB.InsertPlayerData(args.Player);
+							}
+							args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					TShock.Users.SetUserUUID(user, args.Player.UUID);
-                    Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+										Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
 				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
@@ -1577,7 +1577,7 @@ namespace TShockAPI
 		{
 			if (args.Player.RequestedSection)
 				return true;
-            args.Player.RequestedSection = true;
+						args.Player.RequestedSection = true;
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
 				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
@@ -2180,15 +2180,15 @@ namespace TShockAPI
 			return false;
 		}
 
-        private static bool HandlePlayerTeam(GetDataHandlerArgs args)
-        {
-            byte id = args.Data.ReadInt8();
-            byte team = args.Data.ReadInt8();
-            if (OnPlayerTeam(id, team))
-                return true;
+				private static bool HandlePlayerTeam(GetDataHandlerArgs args)
+				{
+						byte id = args.Data.ReadInt8();
+						byte team = args.Data.ReadInt8();
+						if (OnPlayerTeam(id, team))
+								return true;
 
-            if (id != args.Player.Index)
-                return true;
+						if (id != args.Player.Index)
+								return true;
 
 			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
@@ -2197,8 +2197,8 @@ namespace TShockAPI
 			}
 
 			args.Player.LastPvPTeamChange = DateTime.UtcNow;
-            return false;
-        }
+						return false;
+				}
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
@@ -2232,7 +2232,7 @@ namespace TShockAPI
 			if (!pos.Equals(args.Player.LastNetPosition))
 			{
 				float distance = Vector2.Distance(new Vector2(pos.X/16f, pos.Y/16f),
-												  new Vector2(args.Player.LastNetPosition.X/16f, args.Player.LastNetPosition.Y/16f));
+													new Vector2(args.Player.LastNetPosition.X/16f, args.Player.LastNetPosition.Y/16f));
 				if (TShock.CheckIgnores(args.Player))
 				{
 					if (distance > TShock.Config.MaxRangeForDisabled)
@@ -2414,7 +2414,7 @@ namespace TShockAPI
 			var owner = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
 			var bits = (BitsByte) args.Data.ReadInt8();
-		    owner = (byte)args.Player.Index;
+				owner = (byte)args.Player.Index;
 			float[] ai = new float[Projectile.maxAI];
 
 			for (int i = 0; i < Projectile.maxAI; i++)
@@ -2444,15 +2444,8 @@ namespace TShockAPI
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
-            // Server now checks owner + ident, if owner is different, server will create new projectile.
-			/*if (args.Player.Index != owner)
-			{
-                args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to update projectile", owner, args.Player.Index));
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}*/
-
-            if (dmg > TShock.Config.MaxProjDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
+			
+			if (dmg > TShock.Config.MaxProjDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
 				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage));
 				args.Player.RemoveProjectile(ident, owner);
@@ -2470,7 +2463,7 @@ namespace TShockAPI
 			{
 				if (type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352))
 				{	
-					Log.Debug("Certain projectiles have been ignored for cheat detection.");
+					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
 				else
 				{
@@ -2497,7 +2490,7 @@ namespace TShockAPI
 			{
 				if (type == 90 && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
-					Log.Debug("Ignoring shrapnel per config..");
+					TShock.Log.Debug("Ignoring shrapnel per config..");
 				}
 				else if (!Main.projectile[index].active)
 				{
@@ -2522,7 +2515,7 @@ namespace TShockAPI
 		{
 			var ident = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
-            owner = (byte)args.Player.Index;
+						owner = (byte)args.Player.Index;
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (index > Main.maxProjectiles || index < 0)
@@ -2532,7 +2525,7 @@ namespace TShockAPI
 
 			var type = Main.projectile[index].type;
 
-            // Players can no longer destroy projectiles that are not theirs as of 1.1.2
+						// Players can no longer destroy projectiles that are not theirs as of 1.1.2
 			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
 			{
 				args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to kill projectile of type: {3}", Main.projectile[index].owner, args.Player.Index, type));
@@ -2546,7 +2539,7 @@ namespace TShockAPI
 				return true;
 			}
 
-            if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
+						if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
 				args.Player.Disable("Does not have projectile permission to kill projectile.");
 				args.Player.RemoveProjectile(ident, owner);
@@ -2574,7 +2567,7 @@ namespace TShockAPI
 			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-                TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
+								TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
 				return false;
 			}
 
@@ -2605,18 +2598,18 @@ namespace TShockAPI
 				}
 			}
 
-            if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
-            {
-                if (TShock.Config.BanOnHardcoreDeath)
-                {
-                    if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-                        TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
-                }
-                else
-                {
-                    TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
-                }
-            }
+						if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+						{
+								if (TShock.Config.BanOnHardcoreDeath)
+								{
+										if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+												TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
+								}
+								else
+								{
+										TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
+								}
+						}
 			
 			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
@@ -2681,32 +2674,32 @@ namespace TShockAPI
 				}
 
 				if (type == 1 && !(bucket == 2 || bucket == 0))
-                {
-                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
-                    args.Player.Disable("Spreading lava without holding a lava bucket");
-                    args.Player.SendTileSquare(tileX, tileY, 1);
-                    return true;
-                } 
-                
-                if(type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-                {
-                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
-                    args.Player.Disable("Using banned lava bucket without permissions");
-                    args.Player.SendTileSquare(tileX, tileY, 1);
-                    return true;
-                }
+								{
+										args.Player.SendErrorMessage("You do not have permission to perform this action.");
+										args.Player.Disable("Spreading lava without holding a lava bucket");
+										args.Player.SendTileSquare(tileX, tileY, 1);
+										return true;
+								} 
+								
+								if(type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+								{
+										args.Player.SendErrorMessage("You do not have permission to perform this action.");
+										args.Player.Disable("Using banned lava bucket without permissions");
+										args.Player.SendTileSquare(tileX, tileY, 1);
+										return true;
+								}
 
-                if (type == 0 && !(bucket == 1 || bucket == 0))
-                {
-                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
-                    args.Player.Disable("Spreading water without holding a water bucket");
-                    args.Player.SendTileSquare(tileX, tileY, 1);
-                    return true;
-                } 
+								if (type == 0 && !(bucket == 1 || bucket == 0))
+								{
+										args.Player.SendErrorMessage("You do not have permission to perform this action.");
+										args.Player.Disable("Spreading water without holding a water bucket");
+										args.Player.SendTileSquare(tileX, tileY, 1);
+										return true;
+								} 
 
 				if (type == 0 &&  TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
-                    args.Player.SendErrorMessage("You do not have permission to perform this action.");
+										args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned water bucket without permissions");
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
@@ -2820,20 +2813,20 @@ namespace TShockAPI
 				args.Player.InitSpawn = true;
 				
 			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
-            {
+						{
 
 				args.Player.sX=args.TPlayer.SpawnX;
 				args.Player.sY=args.TPlayer.SpawnY;
 				
 				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
-            }
+						}
 			
-            else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
-            {
+						else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
+						{
 				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY -1)))
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) -48);
-            }
+						}
 			
 			args.Player.Dead = false;
 			return false;
@@ -2973,13 +2966,13 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-                args.Player.SendErrorMessage( "You do not have access to modify this area.");
+								args.Player.SendErrorMessage( "You do not have access to modify this area.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
 			}
 
-            //removed until NPC Home packet actually sends their home coords.
+						//removed until NPC Home packet actually sends their home coords.
 			/*if (TShock.CheckRangePermission(args.Player, x, y))
 			{
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
@@ -3209,7 +3202,7 @@ namespace TShockAPI
 			if (Main.npc[id] == null)
 				return true;
 
-            if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
+						if (dmg > TShock.Config.MaxDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
