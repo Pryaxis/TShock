@@ -56,7 +56,7 @@ namespace TShockAPI
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
 		public static WarpManager Warps;
-        public static RegionManager Regions;
+		public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
@@ -107,10 +107,6 @@ namespace TShockAPI
 			get { return "The administration modification of the future."; }
 		}
 
-        public override string UpdateURL
-        {
-            get { return ""; }
-        }
 		public TShock(Main game)
 			: base(game)
 		{
