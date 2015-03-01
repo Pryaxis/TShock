@@ -213,7 +213,7 @@ namespace Rests
 			object result = cmd.Execute(verbs, parms, request);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
-				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+				TShock.Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
 			}
 
 			return result;

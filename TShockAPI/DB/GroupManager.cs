@@ -137,7 +137,7 @@ namespace TShockAPI.DB
 					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
 					if (exceptions)
 						throw new GroupManagerException(error);
-					Log.ConsoleError(error);
+					TShock.Log.ConsoleError(error);
 					return error;
 				}
 				group.Parent = parent;
@@ -298,7 +298,7 @@ namespace TShockAPI.DB
 						string groupName = reader.Get<string>("GroupName");
 						if (groupName == "superadmin")
 						{
-							Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
+							TShock.Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
 							continue;
 						}
 
@@ -314,7 +314,7 @@ namespace TShockAPI.DB
 						catch (ArgumentException)
 						{
 							// Just in case somebody messed with the unique primary key.
-							Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
+							TShock.Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
 							return;
 						}
 					}
@@ -349,14 +349,14 @@ namespace TShockAPI.DB
 						group.Parent = groups.FirstOrDefault(g => g.Name == parentGroupName);
 						if (group.Parent == null)
 						{
-							Log.ConsoleError(
+							TShock.Log.ConsoleError(
 								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.", 
 								group.Name, parentGroupName);
 						}
 						else
 						{
 							if (group.Parent == group)
-								Log.ConsoleInfo(
+								TShock.Log.ConsoleInfo(
 									"WARNING: Group \"{0}\" is referencing itself as parent group, parent reference was removed.", group.Name);
 
 							List<Group> groupChain = new List<Group> { group };
@@ -365,7 +365,7 @@ namespace TShockAPI.DB
 							{
 								if (groupChain.Contains(checkingGroup.Parent))
 								{
-									Log.ConsoleError(
+									TShock.Log.ConsoleError(
 										"ERROR: Group \"{0}\" is referencing parent group \"{1}\" which is already part of the parent chain. Parent reference removed.",
 										checkingGroup.Name, checkingGroup.Parent.Name);
 
@@ -386,7 +386,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("Error on reloading groups: " + ex);
+				TShock.Log.ConsoleError("Error on reloading groups: " + ex);
 			}
 		}
 	}

@@ -72,7 +72,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace TShockAPI.DB
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex.ToString());
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 
@@ -155,7 +155,7 @@ namespace TShockAPI.DB
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex.ToString());
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 			return false;

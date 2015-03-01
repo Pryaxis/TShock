@@ -94,7 +94,7 @@ namespace TShockAPI
 			}
 			catch (Exception e)
 			{
-				Log.ConsoleError("UpdateManager Exception: {0}", e);
+				TShock.Log.ConsoleError("UpdateManager Exception: {0}", e);
 				throw e;
 			}
 

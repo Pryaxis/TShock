@@ -179,7 +179,7 @@ namespace TShockAPI
 			var msg = args.Parameters["msg"];
 			if (string.IsNullOrWhiteSpace(msg))
 				return RestMissingParam("msg");
-			TShock.Utils.Broadcast(msg);
+			TSPlayer.All.SendInfoMessage(msg);
 			return RestResponse("The message was broadcasted successfully");
 		}
 
@@ -660,7 +660,7 @@ namespace TShockAPI
 			TSPlayer player = (TSPlayer)ret;
 			player.DamagePlayer(999999);
 			var from = string.IsNullOrWhiteSpace(args.Parameters["from"]) ? "Server Admin" : args.Parameters["from"];
-			player.SendMessage(string.Format("{0} just killed you!", from));
+			player.SendInfoMessage(string.Format("{0} just killed you!", from));
 			return RestResponse("Player " + player.Name + " was killed");
 		}
 
@@ -916,7 +916,7 @@ namespace TShockAPI
 			TSPlayer player = (TSPlayer)ret;
 			player.mute = mute;
 			var verb = mute ? "muted" : "unmuted";
-			player.SendMessage("You have been remotely " + verb);
+			player.SendInfoMessage("You have been remotely " + verb);
 			return RestResponse("Player " + player.Name + " was " + verb);
 		}
 
