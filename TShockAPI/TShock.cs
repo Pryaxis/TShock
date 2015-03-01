@@ -221,7 +221,6 @@ namespace TShockAPI
 
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
-
 				Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 				Backups.KeepFor = Config.BackupKeepFor;
 				Backups.Interval = Config.BackupInterval;
@@ -285,6 +284,8 @@ namespace TShockAPI
 
 				if (Initialized != null)
 					Initialized();
+
+				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
 			}
 			catch (Exception ex)
 			{
