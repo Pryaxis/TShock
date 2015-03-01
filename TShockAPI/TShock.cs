@@ -129,9 +129,6 @@ namespace TShockAPI
 			{
 				HandleCommandLine(Environment.GetCommandLineArgs());
 
-				if (Version.Major >= 4)
-					getTShockAscii();
-
 				if (!Directory.Exists(SavePath))
 					Directory.CreateDirectory(SavePath);
 
@@ -204,7 +201,7 @@ namespace TShockAPI
 				}
 
 #if DEBUG       
-                var level = LogLevel.All;
+				var level = LogLevel.All;
 #else
 				var level = LogLevel.All & ~LogLevel.Debug;
 #endif
@@ -296,25 +293,6 @@ namespace TShockAPI
 				Environment.Exit(1);
 			}
 		}
-
-		private static void getTShockAscii()
-	    {
-// ReSharper disable LocalizableElement
-	        Console.Write("              ___          ___          ___          ___          ___ \n" +
-	                      "     ___     /  /\\        /__/\\        /  /\\        /  /\\        /__/|    \n" +
-	                      "    /  /\\   /  /:/_       \\  \\:\\      /  /::\\      /  /:/       |  |:|    \n" +
-	                      "   /  /:/  /  /:/ /\\       \\__\\:\\    /  /:/\\:\\    /  /:/        |  |:|    \n" +
-	                      "  /  /:/  /  /:/ /::\\  ___ /  /::\\  /  /:/  \\:\\  /  /:/  ___  __|  |:|    \n" +
-	                      " /  /::\\ /__/:/ /:/\\:\\/__/\\  /:/\\:\\/__/:/ \\__\\:\\/__/:/  /  /\\/__/\\_|:|____\n" +
-	                      "/__/:/\\:\\\\  \\:\\/:/~/:/\\  \\:\\/:/__\\/\\  \\:\\ /  /:/\\  \\:\\ /  /:/\\  \\:\\/:::::/\n" +
-	                      "\\__\\/  \\:\\\\  \\::/ /:/  \\  \\::/      \\  \\:\\  /:/  \\  \\:\\  /:/  \\  \\::/~~~~ \n" +
-	                      "     \\  \\:\\\\__\\/ /:/    \\  \\:\\       \\  \\:\\/:/    \\  \\:\\/:/    \\  \\:\\     \n" +
-	                      "      \\__\\/  /__/:/      \\  \\:\\       \\  \\::/      \\  \\::/      \\  \\:\\    \n" +
-	                      "             \\__\\/        \\__\\/        \\__\\/        \\__\\/        \\__\\/    \n" +
-	                      "");
-            Console.WriteLine("TShock for Terraria is open & free software. If you paid, you were scammed.");
-// ReSharper restore LocalizableElement
-	    }
 
 		protected override void Dispose(bool disposing)
 		{
