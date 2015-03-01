@@ -150,13 +150,6 @@ namespace TShockAPI.DB
 			return null;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool AddBan(string ip, string name, string reason)
-		{
-			return AddBan(ip, name, "", reason, false, "", "");
-		}
-#endif
 		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
 		{
 			try
@@ -172,13 +165,6 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool RemoveBan(string ip)
-		{
-			return RemoveBan(ip, false, true, false);
-		}
-#endif
 		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true, bool exceptions = false)
 		{
 			try

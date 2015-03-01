@@ -182,16 +182,6 @@ namespace TShockAPI
 			SaveManager.Instance.SaveWorld();
 		}
 
-		/// <summary>
-		/// Broadcasts a message to all players
-		/// </summary>
-		/// <param name="msg">string message</param>
-		[Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
-		public void Broadcast(string msg)
-		{
-			Broadcast(msg, Color.Green);
-		}
-
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
@@ -593,13 +583,6 @@ namespace TShockAPI
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public void ForceKick(TSPlayer player, string reason)
-		{
-			Kick(player, reason, true, false, string.Empty);
-		}
-#endif
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
@@ -611,13 +594,6 @@ namespace TShockAPI
 			Kick(player, reason, true, silent, null, saveSSI);
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool Kick(TSPlayer player, string reason, string adminUserName)
-		{
-			return Kick(player, reason, false, false, adminUserName);
-		}
-#endif
 		/// <summary>
 		/// Kicks a player from the server..
 		/// </summary>
@@ -652,13 +628,6 @@ namespace TShockAPI
 			return false;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool Ban(TSPlayer player, string reason, string adminUserName)
-		{
-			return Ban(player, reason, false, adminUserName);
-		}
-#endif
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>

@@ -162,19 +162,6 @@ namespace TShockAPI.DB
 			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public String AddGroup(String name, string parentname, String permissions)
-		{
-			return AddGroup(name, parentname, permissions, Group.defaultChatColor, false);
-		}
-
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public String AddGroup(String name, string parentname, String permissions, String chatcolor)
-		{
-			return AddGroup(name, parentname, permissions, chatcolor, false);
-		}
-#endif
 		/// <summary>
 		/// Updates a group including permissions
 		/// </summary>
@@ -224,13 +211,6 @@ namespace TShockAPI.DB
 			group.Suffix = suffix;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public String DeleteGroup(String name)
-		{
-			return DeleteGroup(name, false);
-		}
-#endif
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			if (!GroupExists(name))
