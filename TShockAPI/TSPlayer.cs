@@ -60,9 +60,9 @@ namespace TShockAPI
 		/// </summary>
 		public int PaintThreshold { get; set; }
 
-				/// <summary>
-				/// The number of projectiles created by the player in the last second.
-				/// </summary>
+		/// <summary>
+		/// The number of projectiles created by the player in the last second.
+		/// </summary>
 		public int ProjectileThreshold { get; set; }
 		
 		/// <summary>
@@ -83,14 +83,14 @@ namespace TShockAPI
 		public int sX = -1;
 		public int sY = -1;
 		
-				/// <summary>
-				/// A queue of tiles destroyed by the player for reverting.
-				/// </summary>
+		/// <summary>
+		/// A queue of tiles destroyed by the player for reverting.
+		/// </summary>
 		public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
 
-				/// <summary>
-				/// A queue of tiles placed by the player for reverting.
-				/// </summary>
+		/// <summary>
+		/// A queue of tiles placed by the player for reverting.
+		/// </summary>
 		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
 
 		/// <summary>
@@ -116,24 +116,24 @@ namespace TShockAPI
 
 		public bool ReceivedInfo { get; set; }
 
-				/// <summary>
-				/// The players index in the player array( Main.players[] ).
-				/// </summary>
+		/// <summary>
+		/// The players index in the player array( Main.players[] ).
+		/// </summary>
 		public int Index { get; protected set; }
 
-				/// <summary>
-				/// The last time the player changed their team or pvp status.  
-				/// </summary>
+		/// <summary>
+		/// The last time the player changed their team or pvp status.  
+		/// </summary>
 		public DateTime LastPvPTeamChange;
 
-				/// <summary>
-				/// Temp points for use in regions and other plugins.
-				/// </summary>
+		/// <summary>
+		/// Temp points for use in regions and other plugins.
+		/// </summary>
 		public Point[] TempPoints = new Point[2];
 
-				/// <summary>
-				/// Whether the player is waiting to place/break a tile to set as a temp point.
-				/// </summary>
+		/// <summary>
+		/// Whether the player is waiting to place/break a tile to set as a temp point.
+		/// </summary>
 		public int AwaitingTempPoint { get; set; }
 
 		/// <summary>
@@ -145,68 +145,68 @@ namespace TShockAPI
 
 		public string[] AwaitingNameParameters { get; set; }
 
-				/// <summary>
-				/// The last time a player broke a grief check.
-				/// </summary>
+		/// <summary>
+		/// The last time a player broke a grief check.
+		/// </summary>
 		public DateTime LastThreat { get; set; }
 
 		public bool InitSpawn;
 
-				/// <summary>
-				/// Whether the player should see logs.
-				/// </summary>
+		/// <summary>
+		/// Whether the player should see logs.
+		/// </summary>
 		public bool DisplayLogs = true;
 
-				/// <summary>
-				/// The last player that the player whispered with (to or from).
-				/// </summary>
+		/// <summary>
+		/// The last player that the player whispered with (to or from).
+		/// </summary>
 		public TSPlayer LastWhisper;
 
-				/// <summary>
-				/// The number of unsuccessful login attempts.
-				/// </summary>
+		/// <summary>
+		/// The number of unsuccessful login attempts.
+		/// </summary>
 		public int LoginAttempts { get; set; }
 
 		public Vector2 TeleportCoords = new Vector2(-1, -1);
 
 		public Vector2 LastNetPosition = Vector2.Zero;
 
-				/// <summary>
-				/// The player's login name.
-				/// </summary>
+		/// <summary>
+		/// The player's login name.
+		/// </summary>
 		public string UserAccountName { get; set; }
 
-				/// <summary>
-				/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
-				/// from logging in because of SSI.
-				/// </summary>
+		/// <summary>
+		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
+		/// from logging in because of SSI.
+		/// </summary>
 		public bool LoginFailsBySsi { get; set; }
 
-				/// <summary>
-				/// Whether the player is logged in or not.
-				/// </summary>
+		/// <summary>
+		/// Whether the player is logged in or not.
+		/// </summary>
 		public bool IsLoggedIn;
 
-				/// <summary>
-				/// Whether the player has sent their whole inventory to the server while connecting.
-				/// </summary>
+		/// <summary>
+		/// Whether the player has sent their whole inventory to the server while connecting.
+		/// </summary>
 		public bool HasSentInventory { get; set; }
 
-				/// <summary>
-				/// The player's user id( from the db ).
-				/// </summary>
+		/// <summary>
+		/// The player's user id( from the db ).
+		/// </summary>
 		public int UserID = -1;
 
-				/// <summary>
-				/// Whether the player has been nagged about logging in.
-				/// </summary>
+		/// <summary>
+		/// Whether the player has been nagged about logging in.
+		/// </summary>
 		public bool HasBeenNaggedAboutLoggingIn;
 
-				public bool TPAllow = true;
+		public bool TPAllow = true;
 
-				/// <summary>
-				/// Whether the player is muted or not.
-				/// </summary>
+		/// <summary>
+		/// Whether the player is muted or not.
+		/// </summary>
 		public bool mute;
 
 		private Player FakePlayer;
@@ -218,16 +218,16 @@ namespace TShockAPI
 		/// </summary>
 		public int RespawnTimer;
 
-				/// <summary>
-				/// Whether the player is dead or not.
-				/// </summary>
+		/// <summary>
+		/// Whether the player is dead or not.
+		/// </summary>
 		public bool Dead;
 
 		public string Country = "??";
 
-				/// <summary>
-				/// The players difficulty( normal[softcore], mediumcore, hardcore ).
-				/// </summary>
+		/// <summary>
+		/// The players difficulty( normal[softcore], mediumcore, hardcore ).
+		/// </summary>
 		public int Difficulty;
 
 		private string CacheIP;
@@ -240,38 +240,38 @@ namespace TShockAPI
 
 		public bool IgnoreActionsForClearingTrashCan;
 
-				/// <summary>
-				/// The player's server side inventory data.
-				/// </summary>
+		/// <summary>
+		/// The player's server side inventory data.
+		/// </summary>
 		public PlayerData PlayerData;
 
-				/// <summary>
-				/// Whether the player needs to specify a password upon connection( either server or user account ).
-				/// </summary>
+		/// <summary>
+		/// Whether the player needs to specify a password upon connection( either server or user account ).
+		/// </summary>
 		public bool RequiresPassword;
 
 		public bool SilentKickInProgress;
 
 		public bool SilentJoinInProgress;
 
-				/// <summary>
-				/// A list of points where ice tiles have been placed.
-				/// </summary>
+		/// <summary>
+		/// A list of points where ice tiles have been placed.
+		/// </summary>
 		public List<Point> IceTiles;
 
-			/// <summary>
-			/// Unused, can be removed.
-			/// </summary>
+		/// <summary>
+		/// Unused, can be removed.
+		/// </summary>
 		public long RPm = 1;
 
-			/// <summary>
-			/// World protection message cool down.
-			/// </summary>
+		/// <summary>
+		/// World protection message cool down.
+		/// </summary>
 		public long WPm = 1;
 
-			/// <summary>
-			/// Spawn protection message cool down.
-			/// </summary>
+		/// <summary>
+		/// Spawn protection message cool down.
+		/// </summary>
 		public long SPm = 1;
 			
 		/// <summary>
@@ -284,9 +284,9 @@ namespace TShockAPI
 		/// </summary>
 		public long LoginMS;
 
-				/// <summary>
-				/// Whether the player has been harrassed about logging in due to server side inventory or forced login.
-				/// </summary>
+		/// <summary>
+		/// Whether the player has been harrassed about logging in due to server side inventory or forced login.
+		/// </summary>
 		public bool LoginHarassed = false;
 
 		/// <summary>
@@ -304,9 +304,9 @@ namespace TShockAPI
 		/// </summary>
 		public int LastKilledProjectile = 0;
 		
-				/// <summary>
-				/// Whether the player is a real, human, player on the server.
-				/// </summary>
+		/// <summary>
+		/// Whether the player is a real, human, player on the server.
+		/// </summary>
 		public bool RealPlayer
 		{
 			get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
