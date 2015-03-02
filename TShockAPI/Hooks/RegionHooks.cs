@@ -22,7 +22,7 @@ namespace TShockAPI.Hooks
 {
 	public class RegionHooks
 	{
-		internal class RegionEnteredEventArgs
+		public class RegionEnteredEventArgs
 		{
 			public TSPlayer Player { get; private set; }
 
@@ -44,7 +44,7 @@ namespace TShockAPI.Hooks
 			RegionEntered(new RegionEnteredEventArgs(player));
 		}
 
-		internal class RegionLeftEventArgs
+		public class RegionLeftEventArgs
 		{
 			public TSPlayer Player { get; private set; }
 
@@ -66,7 +66,7 @@ namespace TShockAPI.Hooks
 			RegionLeft(new RegionLeftEventArgs(player));
 		}
 
-		internal class RegionCreatedEventArgs
+		public class RegionCreatedEventArgs
 		{
 			public Region Region { get; private set; }
 
@@ -86,7 +86,7 @@ namespace TShockAPI.Hooks
 			RegionCreated(new RegionCreatedEventArgs(region));
 		}
 
-		internal class RegionDeletedEventArgs
+		public class RegionDeletedEventArgs
 		{
 			public Region Region { get; private set; }
 
