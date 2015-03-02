@@ -20,7 +20,7 @@ using TShockAPI.DB;
 
 namespace TShockAPI.Hooks
 {
-	class RegionHooks
+	public class RegionHooks
 	{
 		internal class RegionEnteredEventArgs
 		{
