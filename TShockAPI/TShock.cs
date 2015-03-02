@@ -818,6 +818,22 @@ namespace TShockAPI
 					{
 						player.SetBuff(23, 120); //Cursed
 					}
+
+					var oldRegion = player.CurrentRegion;
+					player.CurrentRegion = Regions.GetTopRegion(Regions.InAreaRegion(player.TileX, player.TileY));
+
+					if (oldRegion != player.CurrentRegion)
+					{
+						if (oldRegion != null)
+						{
+							Hooks.RegionHooks.OnRegionLeft(player);
+						}
+
+						if (player.CurrentRegion != null)
+						{
+							Hooks.RegionHooks.OnRegionEntered(player);
+						}
+					}
 				}
 			}
 			SetConsoleTitle(false);

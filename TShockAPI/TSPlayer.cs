@@ -303,6 +303,11 @@ namespace TShockAPI
 		/// The last projectile type this player tried to kill.
 		/// </summary>
 		public int LastKilledProjectile = 0;
+
+		/// <summary>
+		/// The current region this player is in, or null if none.
+		/// </summary>
+		public Region CurrentRegion = null;
 		
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
