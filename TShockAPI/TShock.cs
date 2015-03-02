@@ -40,7 +40,7 @@ using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
-	[ApiVersion(1, 16)]
+	[ApiVersion(1, 17)]
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
