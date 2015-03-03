@@ -924,7 +924,7 @@ namespace TShockAPI
 
 		public override void SendMessage(string msg, Color color)
 		{
-			SendInfoMessage(msg, color.R, color.G, color.B);
+			SendMessage(msg, color.R, color.G, color.B);
 		}
 
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
