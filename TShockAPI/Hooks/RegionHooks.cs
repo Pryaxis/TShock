@@ -47,23 +47,25 @@ namespace TShockAPI.Hooks
 		public class RegionLeftEventArgs
 		{
 			public TSPlayer Player { get; private set; }
+			public Region Region { get; private set; }
 
-			public RegionLeftEventArgs(TSPlayer ply)
+			public RegionLeftEventArgs(TSPlayer ply, Region region)
 			{
 				Player = ply;
+				Region = region;
 			}
 		}
 
 		public delegate void RegionLeftD(RegionLeftEventArgs args);
 		public static event RegionLeftD RegionLeft;
-		public static void OnRegionLeft(TSPlayer player)
+		public static void OnRegionLeft(TSPlayer player, Region region)
 		{
 			if (RegionLeft == null)
 			{
 				return;
 			}
 
-			RegionLeft(new RegionLeftEventArgs(player));
+			RegionLeft(new RegionLeftEventArgs(player, region));
 		}
 
 		public class RegionCreatedEventArgs

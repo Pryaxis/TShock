@@ -826,7 +826,7 @@ namespace TShockAPI
 					{
 						if (oldRegion != null)
 						{
-							Hooks.RegionHooks.OnRegionLeft(player);
+							Hooks.RegionHooks.OnRegionLeft(player, oldRegion);
 						}
 
 						if (player.CurrentRegion != null)
