@@ -145,7 +145,7 @@ namespace TShockAPI
 		    }
 			catch (Exception e)
 			{
-				Log.ConsoleError(e.ToString());
+				TShock.Log.ConsoleError(e.ToString());
 			}
 			return false;
 		}
@@ -206,7 +206,7 @@ namespace TShockAPI
 			}
 			catch (ObjectDisposedException e)
 			{
-				Log.Warn(e.ToString());
+				TShock.Log.Warn(e.ToString());
 			}
 			catch (SocketException e)
 			{
@@ -216,7 +216,7 @@ namespace TShockAPI
 					case 10053:
 						break;
 					default:
-						Log.Warn(e.ToString());
+						TShock.Log.Warn(e.ToString());
 						break;
 				}
 			}
@@ -230,12 +230,12 @@ namespace TShockAPI
 						case SocketError.ConnectionReset:
 							break;
 						default:
-							Log.Warn(e.ToString());
+							TShock.Log.Warn(e.ToString());
 							break;
 					}
 				}
 				else
-					Log.Warn(e.ToString());
+					TShock.Log.Warn(e.ToString());
 			}
 			return false;
 		}

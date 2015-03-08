@@ -39,6 +39,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Debug\TShockAPI.XML</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -78,6 +79,11 @@
     <Compile Include="Hooks\AccountHooks.cs" />
     <Compile Include="Hooks\GeneralHooks.cs" />
     <Compile Include="Hooks\PlayerHooks.cs" />
+    <Compile Include="Hooks\RegionHooks.cs" />
+    <Compile Include="ILog.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="SqlLog.cs" />
+    <Compile Include="TextLog.cs" />
     <Compile Include="PaginationTools.cs" />
     <Compile Include="Rest\RestPermissions.cs" />
     <Compile Include="SaveManager.cs" />
@@ -102,7 +108,6 @@
     <Compile Include="GetDataHandlers.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Extensions\LinqExt.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Net\BaseMsg.cs" />
     <Compile Include="Net\DisconnectMsg.cs" />
     <Compile Include="Net\NetTile.cs" />
@@ -111,7 +116,6 @@
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="PacketBufferer.cs" />
     <Compile Include="Permissions.cs" />
-    <Compile Include="RconHandler.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -182,7 +186,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
+      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -36,29 +36,27 @@ using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
-	[ApiVersion(1, 16)]
+	[ApiVersion(1, 17)]
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "And the great beast rose from its slumber, ready to take on the world again.";
+		public static readonly string VersionCodename = "2015!!";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
 		private static string LogFormat = LogFormatDefault;
 		private const string LogPathDefault = "tshock";
 		private static string LogPath = LogPathDefault;
-		private static bool LogClear = false;
+		private static bool LogClear;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		public static BanManager Bans;
 		public static WarpManager Warps;
-        public static RegionManager Regions;
+		public static RegionManager Regions;
 		public static BackupManager Backups;
 		public static GroupManager Groups;
 		public static UserManager Users;
@@ -76,7 +74,9 @@ namespace TShockAPI
 		public static SecureRest RestApi;
 		public static RestManager RestManager;
 		public static Utils Utils = Utils.Instance;
+		public static StatTracker StatTracker = new StatTracker();
 		public static UpdateManager UpdateManager;
+		public static ILog Log;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -107,10 +107,6 @@ namespace TShockAPI
 			get { return "The administration modification of the future."; }
 		}
 
-        public override string UpdateURL
-        {
-            get { return ""; }
-        }
 		public TShock(Main game)
 			: base(game)
 		{
@@ -126,12 +122,12 @@ namespace TShockAPI
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
+			string logFilename;
+			string logPathSetupWarning;
+
 			try
 			{
 				HandleCommandLine(Environment.GetCommandLineArgs());
-
-				if (Version.Major >= 4)
-					getTShockAscii();
 
 				if (!Directory.Exists(SavePath))
 					Directory.CreateDirectory(SavePath);
@@ -142,37 +138,29 @@ namespace TShockAPI
 				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
 
 				DateTime now = DateTime.Now;
-				string logFilename;
-				string logPathSetupWarning = null;
 				// Log path was not already set by the command line parameter?
 				if (LogPath == LogPathDefault)
 					LogPath = Config.LogPath;
 				try
 				{
-					logFilename = Path.Combine(LogPath, now.ToString(LogFormat)+".log");
+					logFilename = Path.Combine(LogPath, now.ToString(LogFormat) + ".log");
 					if (!Directory.Exists(LogPath))
 						Directory.CreateDirectory(LogPath);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
-					logPathSetupWarning = "Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine(logPathSetupWarning);
-					Console.ForegroundColor = ConsoleColor.Gray;
+					logPathSetupWarning =
+						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
+					
+					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
 				}
-#if DEBUG
-				Log.Initialize(logFilename, LogLevel.All, false);
-#else
-				Log.Initialize(logFilename, LogLevel.All & ~LogLevel.Debug, LogClear);
-#endif
-				if (logPathSetupWarning != null)
-					Log.Warn(logPathSetupWarning);
 
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				// Will be handled by the server api and written to its crashlog.txt.
 				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
@@ -181,16 +169,6 @@ namespace TShockAPI
 			// Further exceptions are written to TShock's log from now on.
 			try
 			{
-				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-				{
-					Log.ConsoleInfo(
-						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
-					File.Delete(Path.Combine(SavePath, "tshock.pid"));
-				}
-				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"), Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
-
-				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
-
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
@@ -204,16 +182,16 @@ namespace TShockAPI
 						DB = new MySqlConnection();
 						DB.ConnectionString =
 							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
-										  hostport[0],
-										  hostport.Length > 1 ? hostport[1] : "3306",
-										  Config.MySqlDbName,
-										  Config.MySqlUsername,
-										  Config.MySqlPassword
+								hostport[0],
+								hostport.Length > 1 ? hostport[1] : "3306",
+								Config.MySqlDbName,
+								Config.MySqlUsername,
+								Config.MySqlPassword
 								);
 					}
 					catch (MySqlException ex)
 					{
-						Log.Error(ex.ToString());
+						ServerApi.LogWriter.PluginWriteLine(this, ex.ToString(), TraceLevel.Error);
 						throw new Exception("MySql not setup correctly");
 					}
 				}
@@ -222,12 +200,33 @@ namespace TShockAPI
 					throw new Exception("Invalid storage type");
 				}
 
+#if DEBUG       
+				var level = LogLevel.All;
+#else
+				var level = LogLevel.All & ~LogLevel.Debug;
+#endif
+				if (Config.UseSqlLogs)
+					Log = new SqlLog(level, DB, logFilename, LogClear);
+				else
+					Log = new TextLog(logFilename, level, LogClear);
+
+				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+				{
+					Log.ConsoleInfo(
+						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
+					File.Delete(Path.Combine(SavePath, "tshock.pid"));
+				}
+				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"),
+					Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
+
+				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
+
 				Backups = new BackupManager(Path.Combine(SavePath, "backups"));
 				Backups.KeepFor = Config.BackupKeepFor;
 				Backups.Interval = Config.BackupInterval;
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
-                Regions = new RegionManager(DB);
+				Regions = new RegionManager(DB);
 				Users = new UserManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
@@ -244,7 +243,7 @@ namespace TShockAPI
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo(string.Format("|> Version {0} ({1}) now running.", Version, VersionCodename));
+				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -262,15 +261,16 @@ namespace TShockAPI
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
-			    ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+			  ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
-				TShockAPI.Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
-				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
+				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
+				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
+				Hooks.AccountHooks.AccountCreate += OnAccountCreate;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
-				//RconHandler.StartThread();
 
 				if (Config.RestApiEnabled)
 					RestApi.Start();
@@ -283,6 +283,8 @@ namespace TShockAPI
 
 				if (Initialized != null)
 					Initialized();
+
+				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
 			}
 			catch (Exception ex)
 			{
@@ -291,25 +293,6 @@ namespace TShockAPI
 				Environment.Exit(1);
 			}
 		}
-
-	    private static void getTShockAscii()
-	    {
-// ReSharper disable LocalizableElement
-	        Console.Write("              ___          ___          ___          ___          ___ \n" +
-	                      "     ___     /  /\\        /__/\\        /  /\\        /  /\\        /__/|    \n" +
-	                      "    /  /\\   /  /:/_       \\  \\:\\      /  /::\\      /  /:/       |  |:|    \n" +
-	                      "   /  /:/  /  /:/ /\\       \\__\\:\\    /  /:/\\:\\    /  /:/        |  |:|    \n" +
-	                      "  /  /:/  /  /:/ /::\\  ___ /  /::\\  /  /:/  \\:\\  /  /:/  ___  __|  |:|    \n" +
-	                      " /  /::\\ /__/:/ /:/\\:\\/__/\\  /:/\\:\\/__/:/ \\__\\:\\/__/:/  /  /\\/__/\\_|:|____\n" +
-	                      "/__/:/\\:\\\\  \\:\\/:/~/:/\\  \\:\\/:/__\\/\\  \\:\\ /  /:/\\  \\:\\ /  /:/\\  \\:\\/:::::/\n" +
-	                      "\\__\\/  \\:\\\\  \\::/ /:/  \\  \\::/      \\  \\:\\  /:/  \\  \\:\\  /:/  \\  \\::/~~~~ \n" +
-	                      "     \\  \\:\\\\__\\/ /:/    \\  \\:\\       \\  \\:\\/:/    \\  \\:\\/:/    \\  \\:\\     \n" +
-	                      "      \\__\\/  /__/:/      \\  \\:\\       \\  \\::/      \\  \\::/      \\  \\:\\    \n" +
-	                      "             \\__\\/        \\__\\/        \\__\\/        \\__\\/        \\__\\/    \n" +
-	                      "");
-            Console.WriteLine("TShock for Terraria is open & free software. If you paid, you were scammed.");
-// ReSharper restore LocalizableElement
-	    }
 
 		protected override void Dispose(bool disposing)
 		{
@@ -342,7 +325,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -378,6 +361,16 @@ namespace TShockAPI
             u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 	        Users.UpdateLogin(u);
 	    }
+
+		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
+		{
+			CharacterDB.RemovePlayer(args.User.ID);
+		}
+
+		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
+		{
+			CharacterDB.SeedInitialData(Users.GetUser(args.User));
+		}
 
 		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
 		{
@@ -418,17 +411,17 @@ namespace TShockAPI
 			}
 		}
 
-        private void OnXmasCheck(ChristmasCheckEventArgs args)
-        {
-            if (args.Handled)
-                return;
+    private void OnXmasCheck(ChristmasCheckEventArgs args)
+    {
+        if (args.Handled)
+            return;
 
-            if(Config.ForceXmas)
-            {
-                args.Xmas = true;
-                args.Handled = true;
-            }
+        if(Config.ForceXmas)
+        {
+            args.Xmas = true;
+            args.Handled = true;
         }
+    }
 
 		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
 		{
@@ -572,14 +565,14 @@ namespace TShockAPI
 
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int) DateTime.Now.ToBinary());
 				AuthToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type /auth " + AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
 				Console.ForegroundColor = ConsoleColor.Gray;
 				FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
 				using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
@@ -596,8 +589,8 @@ namespace TShockAPI
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine(
 					"TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type /auth " + AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. (/auth-verify)");
+				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
 				Console.ForegroundColor = ConsoleColor.Gray;
 			}
 			else
@@ -613,6 +606,7 @@ namespace TShockAPI
 			FixChestStacks();
 			
 			UpdateManager = new UpdateManager();
+			StatTracker.Initialize();
 		}
 
 		private void ComputeMaxStyles()
@@ -811,7 +805,7 @@ namespace TShockAPI
 							player.SetBuff(36, 120); //Broken Armor
 							check = "Remove armor/accessory " + item.name;
 							
-							player.SendErrorMessage(string.Format("You are wearing banned equipment. {0}", check));
+							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 							break;
 						}
 					}
@@ -824,16 +818,32 @@ namespace TShockAPI
 					{
 						player.SetBuff(23, 120); //Cursed
 					}
+
+					var oldRegion = player.CurrentRegion;
+					player.CurrentRegion = Regions.GetTopRegion(Regions.InAreaRegion(player.TileX, player.TileY));
+
+					if (oldRegion != player.CurrentRegion)
+					{
+						if (oldRegion != null)
+						{
+							Hooks.RegionHooks.OnRegionLeft(player, oldRegion);
+						}
+
+						if (player.CurrentRegion != null)
+						{
+							Hooks.RegionHooks.OnRegionEntered(player);
+						}
+					}
 				}
 			}
-			SetConsoleTitle();
+			SetConsoleTitle(false);
 		}
 
-		private void SetConsoleTitle()
+		private void SetConsoleTitle(bool empty)
 		{
-		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TerrariaShock v{5})",
+		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TShock for Terraria v{5})",
 		                                  !string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-		                                  Utils.ActivePlayers(),
+		                                  empty ? 0 : Utils.ActivePlayers(),
 		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
@@ -997,7 +1007,7 @@ namespace TShockAPI
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
-				Log.Info(string.Format("{0} disconnected.", tsplr.Name));
+				Log.Info("{0} disconnected.", tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
@@ -1009,6 +1019,14 @@ namespace TShockAPI
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
+			}
+			
+			// The last player will leave after this hook is executed.
+			if (Utils.ActivePlayers() == 1)
+			{
+				if (Config.SaveWorldOnLastPlayerExit)
+					SaveManager.Instance.SaveWorld();
+				SetConsoleTitle(true);
 			}
 		}
 
@@ -1037,7 +1055,8 @@ namespace TShockAPI
 				return;
 			}*/
 
-			if (args.Text.StartsWith(Config.CommandSpecifier) && !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
+			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier)) 
+				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
 			{
 				try
 				{
@@ -1045,7 +1064,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("Command exception");
+					Log.ConsoleError("An exeption occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
@@ -1087,7 +1106,7 @@ namespace TShockAPI
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					Log.Info(string.Format("Broadcast: {0}", msg));
+					Log.Info("Broadcast: {0}", msg);
 					args.Handled = true;
 				}
 			}
@@ -1113,7 +1132,7 @@ namespace TShockAPI
 				WorldGen.genRand = new Random();
 			}
 
-			if (args.Command.StartsWith("playing") || args.Command.StartsWith("/playing"))
+			if (args.Command.StartsWith("playing") || args.Command.StartsWith("{0}playing".SFormat(Commands.Specifier)))
 			{
 				int count = 0;
 				foreach (TSPlayer player in Players)
@@ -1121,18 +1140,18 @@ namespace TShockAPI
 					if (player != null && player.Active)
 					{
 						count++;
-						TSPlayer.Server.SendInfoMessage(string.Format("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
-																  player.Group.Name, player.UserAccountName));
+						TSPlayer.Server.SendInfoMessage("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
+							player.Group.Name, player.UserAccountName);
 					}
 				}
-				TSPlayer.Server.SendInfoMessage(string.Format("{0} players connected.", count));
+				TSPlayer.Server.SendInfoMessage("{0} players connected.", count);
 			}
 			else if (args.Command == "autosave")
 			{
 				Main.autoSave = Config.AutoSave = !Config.AutoSave;
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 			}
-			else if (args.Command.StartsWith("/"))
+			else if (args.Command.StartsWith(Commands.Specifier))
 			{
 				Commands.HandleCommand(TSPlayer.Server, args.Command);
 			}
@@ -1190,24 +1209,24 @@ namespace TShockAPI
 
 			player.LoginMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-			if (TShock.Config.EnableGeoIP && TShock.Geo != null)
+			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
+				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
-									   TShock.Config.MaxSlots));
+									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
-				Log.Info(string.Format("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots));
+				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
+									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
-					TShock.Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
+					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
 
-			if (TShock.Config.DisplayIPToAdmins)
-				TShock.Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
+			if (Config.DisplayIPToAdmins)
+				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			Utils.ShowFileToUser(player, "motd.txt");
 
@@ -1223,14 +1242,13 @@ namespace TShockAPI
 			{
 				if (Main.ServerSideCharacter)
 				{
-					player.SendMessage(
-						player.IgnoreActionsForInventory = "Server side characters is enabled! Please /register or /login to play!",
-						Color.Red);
+					player.SendErrorMessage(
+						player.IgnoreActionsForInventory = "Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
 				{
-					player.SendMessage("Please /register or /login to play!", Color.Red);
+					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
 				}
 			}
@@ -1240,7 +1258,7 @@ namespace TShockAPI
 			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 				player.RPPending = 3;
-				player.SendMessage("You will be teleported to your last known location...", Color.Red);
+				player.SendInfoMessage("You will be teleported to your last known location...");
 			}
 
 			args.Handled = true;
@@ -1552,7 +1570,7 @@ namespace TShockAPI
 
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 					{
-						player.SendMessage("You do not have permission to build!", Color.Red);
+						player.SendErrorMessage("You do not have permission to build!");
 						player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1566,7 +1584,7 @@ namespace TShockAPI
 
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
-					player.SendMessage("You do not have permission to build!", Color.Red);
+					player.SendErrorMessage("You do not have permission to build!");
 					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1577,7 +1595,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
-					player.SendMessage("This region is protected from changes.", Color.Red);
+					player.SendErrorMessage("This region is protected from changes.");
 					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1589,7 +1607,7 @@ namespace TShockAPI
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
-						player.SendMessage("The world is protected from changes.", Color.Red);
+						player.SendErrorMessage("The world is protected from changes.");
 						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1604,7 +1622,7 @@ namespace TShockAPI
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000)
 						{
-							player.SendMessage("Spawn is protected from changes.", Color.Red);
+							player.SendErrorMessage("Spawn is protected from changes.");
 							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 						return true;
@@ -1621,7 +1639,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
-					player.SendMessage("You do not have permission to build!", Color.Red);
+					player.SendErrorMessage("You do not have permission to build!");
 					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1632,7 +1650,7 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
-					player.SendMessage("This region is protected from changes.", Color.Red);
+					player.SendErrorMessage("This region is protected from changes.");
 					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
@@ -1644,7 +1662,7 @@ namespace TShockAPI
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
-						player.SendMessage("The world is protected from changes.", Color.Red);
+						player.SendErrorMessage("The world is protected from changes.");
 						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					}
 					return true;
@@ -1659,7 +1677,7 @@ namespace TShockAPI
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000)
 						{
-							player.SendMessage("Spawn is protected from changes.", Color.Red);
+							player.SendErrorMessage("Spawn is protected from changes.");
 							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 						}
 						return true;
@@ -1777,9 +1795,6 @@ namespace TShockAPI
 			Main.maxNetPlayers = file.MaxSlots + 20;
 			Netplay.password = "";
 			Netplay.spamCheck = false;
-
-			RconHandler.Password = file.RconPassword;
-			RconHandler.ListenPort = file.RconPort;
 
 			Utils.HashAlgo = file.HashAlgorithm;
 		}

@@ -197,7 +197,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
+				TShock.Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
 			}
 			return -1;
 		}
@@ -285,7 +285,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return null;
 		}

@@ -35,17 +35,17 @@ namespace TShockAPI
 	/// </summary>
 	public class Utils
 	{
-	    /// <summary>
-	    /// The lowest id for a prefix.
-	    /// </summary>
-	    private const int FirstItemPrefix = 1;
+		/// <summary>
+		/// The lowest id for a prefix.
+		/// </summary>
+		private const int FirstItemPrefix = 1;
 
-	    /// <summary>
-	    /// The highest id for a prefix.
-	    /// </summary>
-	    private const int LastItemPrefix = 83;
+		/// <summary>
+		/// The highest id for a prefix.
+		/// </summary>
+		private const int LastItemPrefix = 83;
 
-	    // Utils is a Singleton
+		// Utils is a Singleton
 		private static readonly Utils instance = new Utils();
 		private Utils() {}
 		public static Utils Instance { get { return instance; } }
@@ -67,7 +67,7 @@ namespace TShockAPI
 		/// Used for some places where a list of players might be used.
 		/// </summary>
 		/// <returns>String of players seperated by commas.</returns>
-        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
+		[Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
 		public string GetPlayers()
 		{
 			var sb = new StringBuilder();
@@ -85,56 +85,56 @@ namespace TShockAPI
 			return sb.ToString();
 		}
 
-        /// <summary>
-        /// Returns a list of current players on the server
-        /// </summary>
-        /// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
-        /// <returns>List of strings with names</returns>
-        public List<string> GetPlayers(bool includeIDs)
-        {
-            var players = new List<string>();
+		/// <summary>
+		/// Returns a list of current players on the server
+		/// </summary>
+		/// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
+		/// <returns>List of strings with names</returns>
+		public List<string> GetPlayers(bool includeIDs)
+		{
+			var players = new List<string>();
 
-            foreach (TSPlayer ply in TShock.Players)
-            {
-                if (ply != null && ply.Active)
-                {
-                    if (includeIDs)
-                    {
-                        players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
-                    }
-                    else
-                    {
-                        players.Add(ply.Name);
-                    }
-                }
-            }
+			foreach (TSPlayer ply in TShock.Players)
+			{
+					if (ply != null && ply.Active)
+					{
+							if (includeIDs)
+							{
+									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
+							}
+							else
+							{
+									players.Add(ply.Name);
+							}
+					}
+			}
 
-            return players;
-        }
+			return players;
+		}
 
-        /// <summary>
-        /// Used for some places where a list of players might be used.
-        /// </summary>
-        /// <returns>String of players and their id seperated by commas.</returns>
-        [Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
-        public string GetPlayersWithIds()
-        {
-            var sb = new StringBuilder();
-            foreach (TSPlayer player in TShock.Players)
-            {
-                if (player != null && player.Active)
-                {
-                    if (sb.Length != 0)
-                    {
-                        sb.Append(", ");
-                    }
-                    sb.Append(player.Name);
-                    string id = "(ID: " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ", IX:" + player.Index + ")";
-                    sb.Append(id);
-                }
-            }
-            return sb.ToString();
-        }
+		/// <summary>
+		/// Used for some places where a list of players might be used.
+		/// </summary>
+		/// <returns>String of players and their id seperated by commas.</returns>
+		[Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
+		public string GetPlayersWithIds()
+		{
+			var sb = new StringBuilder();
+			foreach (TSPlayer player in TShock.Players)
+			{
+					if (player != null && player.Active)
+					{
+							if (sb.Length != 0)
+							{
+									sb.Append(", ");
+							}
+							sb.Append(player.Name);
+							string id = "(ID: " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ", IX:" + player.Index + ")";
+							sb.Append(id);
+					}
+			}
+			return sb.ToString();
+		}
 
 		/// <summary>
 		/// Finds a player and gets IP as string
@@ -182,21 +182,11 @@ namespace TShockAPI
 			SaveManager.Instance.SaveWorld();
 		}
 
-		/// <summary>
-		/// Broadcasts a message to all players
-		/// </summary>
-		/// <param name="msg">string message</param>
-		[Obsolete("Use TSPlayer.All and send a message via that method rather than using Broadcast.")]
-		public void Broadcast(string msg)
-		{
-			Broadcast(msg, Color.Green);
-		}
-
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
 			TSPlayer.Server.SendMessage(msg, red, green, blue);
-			Log.Info(string.Format("Broadcast: {0}", msg));
+			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
 		public void Broadcast(string msg, Color color)
@@ -204,20 +194,20 @@ namespace TShockAPI
 			Broadcast(msg, color.R, color.G, color.B);
 		}
 
-        /// <summary>
-        /// Broadcasts a message from a player, not TShock
-        /// </summary>
-        /// <param name="ply">TSPlayer ply - the player that will send the packet</param>
-        /// <param name="msg">string msg - the message</param>
-        /// <param name="red">r</param>
-        /// <param name="green">g</param>
-        /// <param name="blue">b</param>
-        public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
-        {
-            TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
-            TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
-            Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
-        }
+		/// <summary>
+		/// Broadcasts a message from a player, not TShock
+		/// </summary>
+		/// <param name="ply">TSPlayer ply - the player that will send the packet</param>
+		/// <param name="msg">string msg - the message</param>
+		/// <param name="red">r</param>
+		/// <param name="green">g</param>
+		/// <param name="blue">b</param>
+		public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
+		{
+			TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
+			TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
+			TShock.Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
+		}
 
 		/// <summary>
 		/// Sends message to all players with 'logs' permission.
@@ -227,12 +217,12 @@ namespace TShockAPI
 		/// <param name="excludedPlayer">The player to not send the message to.</param>
 		public void SendLogs(string log, Color color, TSPlayer excludedPlayer = null)
 		{
-			Log.Info(log);
+			TShock.Log.Info(log);
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
 				if (player != null && player != excludedPlayer && player.Active && player.Group.HasPermission(Permissions.logs) && 
-				    player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
+						player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
 					player.SendMessage(log, color);
 			}
 		}
@@ -293,7 +283,7 @@ namespace TShockAPI
 		/// <param name="tileX">X location</param>
 		/// <param name="tileY">Y location</param>
 		public void GetRandomClearTileWithInRange(int startTileX, int startTileY, int tileXRange, int tileYRange,
-		                                          out int tileX, out int tileY)
+																							out int tileX, out int tileY)
 		{
 			int j = 0;
 			do
@@ -509,8 +499,8 @@ namespace TShockAPI
 			}
 			return found;
 		}
-        
-        /// <summary>
+				
+				/// <summary>
 		/// Gets a prefix by ID or name
 		/// </summary>
 		/// <param name="idOrName">ID or name</param>
@@ -593,13 +583,6 @@ namespace TShockAPI
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public void ForceKick(TSPlayer player, string reason)
-		{
-			Kick(player, reason, true, false, string.Empty);
-		}
-#endif
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
@@ -611,13 +594,6 @@ namespace TShockAPI
 			Kick(player, reason, true, silent, null, saveSSI);
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool Kick(TSPlayer player, string reason, string adminUserName)
-		{
-			return Kick(player, reason, false, false, adminUserName);
-		}
-#endif
 		/// <summary>
 		/// Kicks a player from the server..
 		/// </summary>
@@ -635,30 +611,23 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-                if (player.IsLoggedIn && saveSSI)
-                    player.SaveServerCharacter();
+								if (player.IsLoggedIn && saveSSI)
+										player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
-				Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
+				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
-                if (!silent)
-                {
-                    if (string.IsNullOrWhiteSpace(adminUserName))
-                        Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
-                    else
+								if (!silent)
+								{
+										if (string.IsNullOrWhiteSpace(adminUserName))
+												Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
+										else
 						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
-                }
+								}
 				return true;
 			}
 			return false;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool Ban(TSPlayer player, string reason, string adminUserName)
-		{
-			return Ban(player, reason, false, adminUserName);
-		}
-#endif
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
@@ -687,28 +656,28 @@ namespace TShockAPI
 			return false;
 		}
 
-	    public bool HasBanExpired(Ban ban, bool byName = false)
-	    {
-            DateTime exp;
-            bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
+		public bool HasBanExpired(Ban ban, bool byName = false)
+		{
+					DateTime exp;
+					bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
 
-            if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) &&
-                (DateTime.UtcNow >= exp))
-            {
-                if (byName)
-                {
-                    TShock.Bans.RemoveBan(ban.Name, true, true, false);
-                }
-                else
-                {
-                    TShock.Bans.RemoveBan(ban.IP, false, false, false);
-                }
-                
-                return true;
-            }
+					if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) &&
+							(DateTime.UtcNow >= exp))
+					{
+							if (byName)
+							{
+									TShock.Bans.RemoveBan(ban.Name, true, true, false);
+							}
+							else
+							{
+									TShock.Bans.RemoveBan(ban.IP, false, false, false);
+							}
+							
+							return true;
+					}
 
-	        return false;
-	    }
+				return false;
+		}
 
 		/// <summary>
 		/// Shows a file to the user.
@@ -762,7 +731,7 @@ namespace TShockAPI
 					return TShock.Groups.groups[i];
 				}
 			}
-		    return Group.DefaultGroup;
+				return Group.DefaultGroup;
 		}
 
 		/// <summary>
@@ -796,23 +765,23 @@ namespace TShockAPI
 			ply.SendErrorMessage("Use \"my query\" for items with spaces");
 		}
 
-        /// <summary>
-        /// Default hashing algorithm.
-        /// </summary>
-        public string HashAlgo = "sha512";
+				/// <summary>
+				/// Default hashing algorithm.
+				/// </summary>
+				public string HashAlgo = "sha512";
 
-        /// <summary>
-        /// A dictionary of hashing algortihms and an implementation object.
-        /// </summary>
+				/// <summary>
+				/// A dictionary of hashing algortihms and an implementation object.
+				/// </summary>
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-		                                                                    	{
-		                                                                    		{"sha512", () => new SHA512Managed()},
-		                                                                    		{"sha256", () => new SHA256Managed()},
-		                                                                    		{"md5", () => new MD5Cng()},
-		                                                                    		{"sha512-xp", () => SHA512.Create()},
-		                                                                    		{"sha256-xp", () => SHA256.Create()},
-		                                                                    		{"md5-xp", () => MD5.Create()},
-		                                                                    	};
+																																					{
+																																						{"sha512", () => new SHA512Managed()},
+																																						{"sha256", () => new SHA256Managed()},
+																																						{"md5", () => new MD5Cng()},
+																																						{"sha512-xp", () => SHA512.Create()},
+																																						{"sha256-xp", () => SHA256.Create()},
+																																						{"md5-xp", () => MD5.Create()},
+																																					};
 
 		/// <summary>
 		/// Returns a Sha256 string for a given string

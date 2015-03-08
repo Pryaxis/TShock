@@ -21,7 +21,7 @@ namespace TShockAPI.Hooks
 {
 	public class AccountDeleteEventArgs
 	{
-		public User User { get; set; }
+		public User User { get; private set; }
 
 		public AccountDeleteEventArgs(User user)
 		{
@@ -31,7 +31,7 @@ namespace TShockAPI.Hooks
 
 	public class AccountCreateEventArgs
 	{
-		public User User { get; set; }
+		public User User { get; private set; }
 
 		public AccountCreateEventArgs(User user)
 		{

@@ -45,7 +45,7 @@ namespace TShockAPI
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 			var encoded = HttpUtility.UrlEncode(serialized);
-			var uri = String.Format("http://96.47.231.227:8000?data={0}", encoded);
+			var uri = String.Format("http://stats.tshock.co/publish/{0}", encoded);
 			var client = (HttpWebRequest)WebRequest.Create(uri);
 			client.Timeout = 5000;
 			try
@@ -64,7 +64,7 @@ namespace TShockAPI
 			{
 				if (!failed)
 				{
-					Log.ConsoleError("StatTracker Exception: {0}", e);
+					TShock.Log.ConsoleError("StatTracker Exception: {0}", e);
 					failed = true;
 				}
 			}

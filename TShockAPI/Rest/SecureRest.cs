@@ -68,7 +68,7 @@ namespace Rests
 					"The old model will be removed with the next maintenance release of TShock. In order to switch to the new model, ",
 					"change the config setting \"RestUseNewPermissionModel\" to true."
 				);
-				Log.Warn(warningMessage);
+				TShock.Log.Warn(warningMessage);
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine(warningMessage);
 				Console.ForegroundColor = ConsoleColor.Gray;
@@ -80,7 +80,7 @@ namespace Rests
 					"with existing REST services. If compatibility problems occur, you can switch back to the unsecure permission ",
 					"model by changing the config setting \"RestUseNewPermissionModel\" to false, which is not recommended."
 				);
-				Log.ConsoleInfo(warningMessage);
+				TShock.Log.ConsoleInfo(warningMessage);
 			}
 		}
 

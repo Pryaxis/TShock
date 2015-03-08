@@ -157,7 +157,8 @@ namespace Rests
 			e.Response.Connection.Type = ConnectionType.Close;
 			e.Response.ContentType = new ContentTypeHeader("application/json; charset=utf-8");
 			e.Response.Add(serverHeader);
-			e.Response.Body.Write(Encoding.UTF8.GetBytes(str), 0, str.Length);
+			var bytes = Encoding.UTF8.GetBytes(str);
+			e.Response.Body.Write(bytes, 0, bytes.Length);
 			e.Response.Status = HttpStatusCode.OK;
 		}
 
@@ -212,7 +213,7 @@ namespace Rests
 			object result = cmd.Execute(verbs, parms, request);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
-				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+				TShock.Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
 			}
 
 			return result;

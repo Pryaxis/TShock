@@ -106,11 +106,6 @@ namespace TShockAPI
 		[Description("Number of failed login attempts before kicking the player.")]
 		public int MaximumLoginAttempts = 3;
 
-		[Description("Not implemented.")]
-		public string RconPassword = "";
-		[Description("Not implemented.")]
-		public int RconPort = 7777;
-
 		[Description("Used when replying to a rest /status request or sent to the client when UseServerName is true.")]
 		public string ServerName = "";
 		[Description("Sends ServerName in place of the world name to clients.")]
@@ -325,6 +320,12 @@ namespace TShockAPI
 		[Description("The path of the directory where logs should be written into.")]
 		public string LogPath = "tshock";
 
+		[Description("Save logs to an SQL database instead of a text file. Default = false")]
+		public bool UseSqlLogs = false;
+
+		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log")] 
+		public int RevertToTextLogsOnSqlFailures = 10;
+
 		[Description("Prevents players from placing tiles with an invalid style.")]
 		public bool PreventInvalidPlaceStyle = true;
 
@@ -367,8 +368,11 @@ namespace TShockAPI
 		[Description("Allows anyone to break grass, pots, etc.")]
 		public bool AllowCutTilesAndBreakables = false;
 
-		[Description("Specifies which string starts a command")]
+		[Description("Specifies which string starts a command.")]
 		public string CommandSpecifier = "/";
+
+		[Description("Specifies which string starts a command silently.")]
+		public string CommandSilentSpecifier = ".";
 		
 		[Description("Kicks a hardcore player on death.")]
 		public bool KickOnHardcoreDeath;
@@ -390,6 +394,9 @@ namespace TShockAPI
 
 		[Description("The maximum allowable MP, before equipment buffs.")]
 		public int MaxMP = 200;
+
+		[Description("Determines if the server should save the world if the last player exits.")]
+		public bool SaveWorldOnLastPlayerExit = true;
 
 		/// <summary>
 		/// Reads a configuration file from a given path

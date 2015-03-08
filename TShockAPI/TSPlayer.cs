@@ -30,29 +30,29 @@ namespace TShockAPI
 {
 	public class TSPlayer
 	{
-        /// <summary>
-        /// This represents the server as a player.
-        /// </summary>
+		/// <summary>
+		/// This represents the server as a player.
+		/// </summary>
 		public static readonly TSServerPlayer Server = new TSServerPlayer();
 
-        /// <summary>
-        /// This player represents all the players.
-        /// </summary>
+		/// <summary>
+		/// This player represents all the players.
+		/// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
 
-        /// <summary>
-        /// The amount of tiles that the player has killed in the last second.
-        /// </summary>
+		/// <summary>
+		/// The amount of tiles that the player has killed in the last second.
+		/// </summary>
 		public int TileKillThreshold { get; set; }
 		
-        /// <summary>
-        /// The amount of tiles the player has placed in the last second.
-        /// </summary>
-        public int TilePlaceThreshold { get; set; }
+		/// <summary>
+		/// The amount of tiles the player has placed in the last second.
+		/// </summary>
+		public int TilePlaceThreshold { get; set; }
 
-        /// <summary>
-        /// The amount of liquid (in tiles) that the player has placed in the last second.
-        /// </summary>
+		/// <summary>
+		/// The amount of liquid (in tiles) that the player has placed in the last second.
+		/// </summary>
 		public int TileLiquidThreshold { get; set; }
 
 		/// <summary>
@@ -60,9 +60,9 @@ namespace TShockAPI
 		/// </summary>
 		public int PaintThreshold { get; set; }
 
-        /// <summary>
-        /// The number of projectiles created by the player in the last second.
-        /// </summary>
+		/// <summary>
+		/// The number of projectiles created by the player in the last second.
+		/// </summary>
 		public int ProjectileThreshold { get; set; }
 		
 		/// <summary>
@@ -83,130 +83,130 @@ namespace TShockAPI
 		public int sX = -1;
 		public int sY = -1;
 		
-        /// <summary>
-        /// A queue of tiles destroyed by the player for reverting.
-        /// </summary>
+		/// <summary>
+		/// A queue of tiles destroyed by the player for reverting.
+		/// </summary>
 		public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
 
-        /// <summary>
-        /// A queue of tiles placed by the player for reverting.
-        /// </summary>
+		/// <summary>
+		/// A queue of tiles placed by the player for reverting.
+		/// </summary>
 		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
 
-	    /// <summary>
-	    /// The player's group.
-	    /// </summary>
-	    public Group Group
-	    {
-	        get
-	        {
-	            if (tempGroup != null)
-	                return tempGroup;
-	            return group;
-	        }
-            set { group = value; }
-	    }
+		/// <summary>
+		/// The player's group.
+		/// </summary>
+		public Group Group
+		{
+				get
+				{
+						if (tempGroup != null)
+								return tempGroup;
+						return group;
+				}
+					set { group = value; }
+		}
 
-	    /// <summary>
-	    /// The player's temporary group.  This overrides the user's actual group.
-	    /// </summary>
-	    public Group tempGroup = null;
+		/// <summary>
+		/// The player's temporary group.  This overrides the user's actual group.
+		/// </summary>
+		public Group tempGroup = null;
 
-	    private Group group = null;
+		private Group group = null;
 
 		public bool ReceivedInfo { get; set; }
 
-        /// <summary>
-        /// The players index in the player array( Main.players[] ).
-        /// </summary>
+		/// <summary>
+		/// The players index in the player array( Main.players[] ).
+		/// </summary>
 		public int Index { get; protected set; }
 
-        /// <summary>
-        /// The last time the player changed their team or pvp status.  
-        /// </summary>
+		/// <summary>
+		/// The last time the player changed their team or pvp status.  
+		/// </summary>
 		public DateTime LastPvPTeamChange;
 
-        /// <summary>
-        /// Temp points for use in regions and other plugins.
-        /// </summary>
+		/// <summary>
+		/// Temp points for use in regions and other plugins.
+		/// </summary>
 		public Point[] TempPoints = new Point[2];
 
-        /// <summary>
-        /// Whether the player is waiting to place/break a tile to set as a temp point.
-        /// </summary>
+		/// <summary>
+		/// Whether the player is waiting to place/break a tile to set as a temp point.
+		/// </summary>
 		public int AwaitingTempPoint { get; set; }
 
-        /// <summary>
-        /// A list of command callbacks indexed by the command they need to do.
-        /// </summary>
-	    public Dictionary<string, Action<object>> AwaitingResponse;  
+		/// <summary>
+		/// A list of command callbacks indexed by the command they need to do.
+		/// </summary>
+		public Dictionary<string, Action<object>> AwaitingResponse;  
 
 		public bool AwaitingName { get; set; }
 
 		public string[] AwaitingNameParameters { get; set; }
 
-        /// <summary>
-        /// The last time a player broke a grief check.
-        /// </summary>
+		/// <summary>
+		/// The last time a player broke a grief check.
+		/// </summary>
 		public DateTime LastThreat { get; set; }
 
 		public bool InitSpawn;
 
-        /// <summary>
-        /// Whether the player should see logs.
-        /// </summary>
+		/// <summary>
+		/// Whether the player should see logs.
+		/// </summary>
 		public bool DisplayLogs = true;
 
-        /// <summary>
-        /// The last player that the player whispered with (to or from).
-        /// </summary>
+		/// <summary>
+		/// The last player that the player whispered with (to or from).
+		/// </summary>
 		public TSPlayer LastWhisper;
 
-        /// <summary>
-        /// The number of unsuccessful login attempts.
-        /// </summary>
+		/// <summary>
+		/// The number of unsuccessful login attempts.
+		/// </summary>
 		public int LoginAttempts { get; set; }
 
 		public Vector2 TeleportCoords = new Vector2(-1, -1);
 
 		public Vector2 LastNetPosition = Vector2.Zero;
 
-        /// <summary>
-        /// The player's login name.
-        /// </summary>
+		/// <summary>
+		/// The player's login name.
+		/// </summary>
 		public string UserAccountName { get; set; }
 
-        /// <summary>
-        /// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
-        /// from logging in because of SSI.
-        /// </summary>
+		/// <summary>
+		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
+		/// from logging in because of SSI.
+		/// </summary>
 		public bool LoginFailsBySsi { get; set; }
 
-        /// <summary>
-        /// Whether the player is logged in or not.
-        /// </summary>
+		/// <summary>
+		/// Whether the player is logged in or not.
+		/// </summary>
 		public bool IsLoggedIn;
 
-        /// <summary>
-        /// Whether the player has sent their whole inventory to the server while connecting.
-        /// </summary>
+		/// <summary>
+		/// Whether the player has sent their whole inventory to the server while connecting.
+		/// </summary>
 		public bool HasSentInventory { get; set; }
 
-        /// <summary>
-        /// The player's user id( from the db ).
-        /// </summary>
+		/// <summary>
+		/// The player's user id( from the db ).
+		/// </summary>
 		public int UserID = -1;
 
-        /// <summary>
-        /// Whether the player has been nagged about logging in.
-        /// </summary>
+		/// <summary>
+		/// Whether the player has been nagged about logging in.
+		/// </summary>
 		public bool HasBeenNaggedAboutLoggingIn;
 
-        public bool TPAllow = true;
+		public bool TPAllow = true;
 
-        /// <summary>
-        /// Whether the player is muted or not.
-        /// </summary>
+		/// <summary>
+		/// Whether the player is muted or not.
+		/// </summary>
 		public bool mute;
 
 		private Player FakePlayer;
@@ -218,16 +218,16 @@ namespace TShockAPI
 		/// </summary>
 		public int RespawnTimer;
 
-        /// <summary>
-        /// Whether the player is dead or not.
-        /// </summary>
+		/// <summary>
+		/// Whether the player is dead or not.
+		/// </summary>
 		public bool Dead;
 
 		public string Country = "??";
 
-        /// <summary>
-        /// The players difficulty( normal[softcore], mediumcore, hardcore ).
-        /// </summary>
+		/// <summary>
+		/// The players difficulty( normal[softcore], mediumcore, hardcore ).
+		/// </summary>
 		public int Difficulty;
 
 		private string CacheIP;
@@ -240,53 +240,53 @@ namespace TShockAPI
 
 		public bool IgnoreActionsForClearingTrashCan;
 
-        /// <summary>
-        /// The player's server side inventory data.
-        /// </summary>
+		/// <summary>
+		/// The player's server side inventory data.
+		/// </summary>
 		public PlayerData PlayerData;
 
-        /// <summary>
-        /// Whether the player needs to specify a password upon connection( either server or user account ).
-        /// </summary>
+		/// <summary>
+		/// Whether the player needs to specify a password upon connection( either server or user account ).
+		/// </summary>
 		public bool RequiresPassword;
 
 		public bool SilentKickInProgress;
 
 		public bool SilentJoinInProgress;
 
-        /// <summary>
-        /// A list of points where ice tiles have been placed.
-        /// </summary>
+		/// <summary>
+		/// A list of points where ice tiles have been placed.
+		/// </summary>
 		public List<Point> IceTiles;
 
-        /// <summary>
-        /// Unused, can be removed.
-        /// </summary>
-	    public long RPm = 1;
+		/// <summary>
+		/// Unused, can be removed.
+		/// </summary>
+		public long RPm = 1;
 
-        /// <summary>
-        /// World protection message cool down.
-        /// </summary>
-    	public long WPm = 1;
+		/// <summary>
+		/// World protection message cool down.
+		/// </summary>
+		public long WPm = 1;
 
-        /// <summary>
-        /// Spawn protection message cool down.
-        /// </summary>
-    	public long SPm = 1;
-       	
-        /// <summary>
-        /// Permission to build message cool down.
-        /// </summary>
-        public long BPm = 1;
+		/// <summary>
+		/// Spawn protection message cool down.
+		/// </summary>
+		public long SPm = 1;
+			
+		/// <summary>
+		/// Permission to build message cool down.
+		/// </summary>
+		public long BPm = 1;
 
-        /// <summary>
-        /// The time in ms when the player has logged in.  
-        /// </summary>
+		/// <summary>
+		/// The time in ms when the player has logged in.  
+		/// </summary>
 		public long LoginMS;
 
-        /// <summary>
-        /// Whether the player has been harrassed about logging in due to server side inventory or forced login.
-        /// </summary>
+		/// <summary>
+		/// Whether the player has been harrassed about logging in due to server side inventory or forced login.
+		/// </summary>
 		public bool LoginHarassed = false;
 
 		/// <summary>
@@ -303,10 +303,15 @@ namespace TShockAPI
 		/// The last projectile type this player tried to kill.
 		/// </summary>
 		public int LastKilledProjectile = 0;
+
+		/// <summary>
+		/// The current region this player is in, or null if none.
+		/// </summary>
+		public Region CurrentRegion = null;
 		
-        /// <summary>
-        /// Whether the player is a real, human, player on the server.
-        /// </summary>
+		/// <summary>
+		/// Whether the player is a real, human, player on the server.
+		/// </summary>
 		public bool RealPlayer
 		{
 			get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
@@ -317,7 +322,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer &&
-					   (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
+						 (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
 			}
 		}
 
@@ -372,28 +377,28 @@ namespace TShockAPI
 			}
 		}
 
-        /// <summary>
-        /// Saves the player's inventory to SSI
-        /// </summary>
-        /// <returns>bool - True/false if it saved successfully</returns>
-        public bool SaveServerCharacter()
-        {
-            if (!Main.ServerSideCharacter)
-            {
-                return false;
-            }
-            try
-            {
-                PlayerData.CopyCharacter(this);
-                TShock.CharacterDB.InsertPlayerData(this);
-                return true;
-            } catch (Exception e)
-            {
-                Log.Error(e.Message);
-                return false;
-            }
-
-        }
+		/// <summary>
+		/// Saves the player's inventory to SSI
+		/// </summary>
+		/// <returns>bool - True/false if it saved successfully</returns>
+		public bool SaveServerCharacter()
+		{
+			if (!Main.ServerSideCharacter)
+			{
+				return false;
+			}
+			try
+			{
+				PlayerData.CopyCharacter(this);
+				TShock.CharacterDB.InsertPlayerData(this);
+				return true;
+			}
+			catch (Exception e)
+			{
+				TShock.Log.Error(e.Message);
+				return false;
+			}
+		}
 
 		/// <summary>
 		/// Sends the players server side character to client
@@ -412,7 +417,7 @@ namespace TShockAPI
 			}
 			catch (Exception e)
 			{
-				Log.Error(e.Message);
+				TShock.Log.Error(e.Message);
 				return false;
 			}
 
@@ -488,9 +493,9 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = index;
-            Group = Group.DefaultGroup;
+						Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
-            AwaitingResponse = new Dictionary<string, Action<object>>();
+						AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -499,8 +504,8 @@ namespace TShockAPI
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmi = -1};
-		    Group = Group.DefaultGroup;
-            AwaitingResponse = new Dictionary<string, Action<object>>();
+				Group = Group.DefaultGroup;
+						AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public virtual void Disconnect(string reason)
@@ -622,7 +627,6 @@ namespace TShockAPI
 
 		public void Spawn()
 		{			
-//			TPlayer.FindSpawn();
 			if (this.sX > 0 && this.sY > 0)
 			{
 				Spawn(this.sX, this.sY);
@@ -662,8 +666,8 @@ namespace TShockAPI
 			}
 		}
 
-        public virtual bool SendTileSquare(int x, int y, int size = 10)
-        {
+		public virtual bool SendTileSquare(int x, int y, int size = 10)
+		{
 			try
 			{
 				int num = (size - 1)/2;
@@ -707,22 +711,22 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
-        }
+		}
 
-        public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
-        {
-            if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
-                (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-                return false;
+		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
+		{
+				if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+						(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+						return false;
 
-            GiveItem(type,name,width,height,stack,prefix);
-            return true;
-        }
+				GiveItem(type,name,width,height,stack,prefix);
+				return true;
+		}
 
-	    public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
+		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
 
@@ -730,7 +734,7 @@ namespace TShockAPI
 			Main.item[itemid].SetDefaults(name);
 			// The set default overrides the wet and stack set by NewItem
 			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
-														   Main.item[itemid].height);
+															 Main.item[itemid].height);
 			Main.item[itemid].stack = stack;
 			Main.item[itemid].owner = Index;
 			Main.item[itemid].prefix = (byte) prefix;
@@ -740,50 +744,44 @@ namespace TShockAPI
 			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
-        public virtual void SendInfoMessage(string msg)
-        {
-            SendMessage(msg, Color.Yellow);
-        }
-
-        public void SendInfoMessage(string format, params object[] args)
-        {
-            SendInfoMessage(string.Format(format, args));
-        }
-
-        public virtual void SendSuccessMessage(string msg)
-        {
-            SendMessage(msg, Color.Green);
-        }
-
-        public void SendSuccessMessage(string format, params object[] args)
-        {
-            SendSuccessMessage(string.Format(format, args));
-        }
-
-        public virtual void SendWarningMessage(string msg)
-        {
-            SendMessage(msg, Color.OrangeRed);
-        }
-
-        public void SendWarningMessage(string format, params object[] args)
-        {
-            SendWarningMessage(string.Format(format, args));
-        }
-
-        public virtual void SendErrorMessage(string msg)
-        {
-            SendMessage(msg, Color.Red);
-        }
-
-        public void SendErrorMessage(string format, params object[] args)
-        {
-            SendErrorMessage(string.Format(format, args));
-        }
-
-        [Obsolete("Use SendErrorMessage, SendInfoMessage, or SendWarningMessage, or a custom color instead.")]
-		public virtual void SendMessage(string msg)
+		public virtual void SendInfoMessage(string msg)
 		{
-			SendMessage(msg, 0, 255, 0);
+				SendMessage(msg, Color.Yellow);
+		}
+
+		public void SendInfoMessage(string format, params object[] args)
+		{
+				SendInfoMessage(string.Format(format, args));
+		}
+
+		public virtual void SendSuccessMessage(string msg)
+		{
+				SendMessage(msg, Color.Green);
+		}
+
+		public void SendSuccessMessage(string format, params object[] args)
+		{
+				SendSuccessMessage(string.Format(format, args));
+		}
+
+		public virtual void SendWarningMessage(string msg)
+		{
+				SendMessage(msg, Color.OrangeRed);
+		}
+
+		public void SendWarningMessage(string format, params object[] args)
+		{
+				SendWarningMessage(string.Format(format, args));
+		}
+
+		public virtual void SendErrorMessage(string msg)
+		{
+				SendMessage(msg, Color.Red);
+		}
+
+		public void SendErrorMessage(string format, params object[] args)
+		{
+				SendErrorMessage(string.Format(format, args));
 		}
 
 		public virtual void SendMessage(string msg, Color color)
@@ -796,10 +794,10 @@ namespace TShockAPI
 			SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
 		}
 
-        public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
-        {
-            SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
-        }
+		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
+		{
+				SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
+		}
 
 		public virtual void DamagePlayer(int damage)
 		{
@@ -836,11 +834,11 @@ namespace TShockAPI
 				{
 					if (displayConsole)
 					{
-						Log.ConsoleInfo(string.Format("Player {0} has been disabled for {1}.", Name, reason));	
+						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);	
 					}
 					else
 					{
-						Log.Info("Player {0} has been disabled for {1}.", Name, reason);
+						TShock.Log.Info("Player {0} has been disabled for {1}.", Name, reason);
 					}
 					LastDisableNotification = DateTime.UtcNow;
 				}
@@ -849,7 +847,7 @@ namespace TShockAPI
 			StackFrame frame = null;
 			frame = trace.GetFrame(1);
 			if (frame != null && frame.GetMethod().DeclaringType != null)
-				Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
+				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
 		}
 
 		public virtual void Whoopie(object time)
@@ -857,7 +855,7 @@ namespace TShockAPI
 			var time2 = (int) time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
-			SendMessage("You are now being annoyed.", Color.Red);
+			SendInfoMessage("You are now being annoyed.");
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
 				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
@@ -883,13 +881,13 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
 
-        public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
-        {
-            if (RealPlayer && !ConnectionAlive)
-                return;
+				public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
+				{
+						if (RealPlayer && !ConnectionAlive)
+								return;
 
-            NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
-        }
+						NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
+				}
 
 		public virtual void SendRawData(byte[] data)
 		{
@@ -898,20 +896,20 @@ namespace TShockAPI
 			NetMessage.SendBytes(Netplay.serverSock[Index], data, 0, data.Length, Netplay.serverSock[Index].ServerWriteCallBack, Netplay.serverSock[Index].networkStream);
 		}
 
-        /// <summary>
-        /// Adds a command callback to a specified command string.
-        /// </summary>
-        /// <param name="name">The string representing the command i.e "yes" == /yes</param>
-        /// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
-        public void AddResponse( string name, Action<object> callback)
-        {
-            if( AwaitingResponse.ContainsKey(name))
-            {
-                AwaitingResponse.Remove(name);
-            }
+		/// <summary>
+		/// Adds a command callback to a specified command string.
+		/// </summary>
+		/// <param name="name">The string representing the command i.e "yes" == /yes</param>
+		/// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
+		public void AddResponse( string name, Action<object> callback)
+		{
+				if( AwaitingResponse.ContainsKey(name))
+				{
+						AwaitingResponse.Remove(name);
+				}
 
-            AwaitingResponse.Add(name, callback);
-        }
+				AwaitingResponse.Add(name, callback);
+		}
 	}
 
 	public class TSRestPlayer : TSPlayer
@@ -922,11 +920,6 @@ namespace TShockAPI
 		{
 			Group = playerGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
-		}
-
-		public override void SendMessage(string msg)
-		{
-			SendMessage(msg, 0, 255, 0);
 		}
 
 		public override void SendMessage(string msg, Color color)
@@ -967,45 +960,40 @@ namespace TShockAPI
 
 	public class TSServerPlayer : TSPlayer
 	{
-        public static string AccountName = "ServerConsole";
+				public static string AccountName = "ServerConsole";
 		public TSServerPlayer()
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
-		    UserAccountName = AccountName;
+				UserAccountName = AccountName;
 		}
 
-        public override void SendErrorMessage(string msg)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(msg);
-            Console.ResetColor();
-        }
-
-        public override void SendInfoMessage(string msg)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(msg);
-            Console.ResetColor();
-        }
-
-        public override void SendSuccessMessage(string msg)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(msg);
-            Console.ResetColor();
-        }
-
-        public override void SendWarningMessage(string msg)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine(msg);
-            Console.ResetColor();
-        }
-
-		public override void SendMessage(string msg)
+		public override void SendErrorMessage(string msg)
 		{
-			SendMessage(msg, 0, 255, 0);
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine(msg);
+				Console.ResetColor();
+		}
+
+		public override void SendInfoMessage(string msg)
+		{
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine(msg);
+				Console.ResetColor();
+		}
+
+		public override void SendSuccessMessage(string msg)
+		{
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.WriteLine(msg);
+				Console.ResetColor();
+		}
+
+		public override void SendWarningMessage(string msg)
+		{
+				Console.ForegroundColor = ConsoleColor.DarkRed;
+				Console.WriteLine(msg);
+				Console.ResetColor();
 		}
 
 		public override void SendMessage(string msg, Color color)
@@ -1016,7 +1004,6 @@ namespace TShockAPI
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
 			Console.WriteLine(msg);
-			//RconHandler.Response += msg + "\n";
 		}
 
 		public void SetFullMoon()
@@ -1093,7 +1080,7 @@ namespace TShockAPI
 				int spawnTileX;
 				int spawnTileY;
 				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
-														   out spawnTileY);
+															 out spawnTileY);
 				int npcid = NPC.NewNPC(spawnTileX*16, spawnTileY*16, type, 0);
 				// This is for special slimes
 				Main.npc[npcid].SetDefaults(name);
@@ -1407,19 +1394,19 @@ namespace TShockAPI
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
 			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-            NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
+			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
 			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
@@ -1428,30 +1415,31 @@ namespace TShockAPI
 			{
 				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
 			}
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-            NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
+			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
 			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
