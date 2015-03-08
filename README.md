@@ -19,6 +19,7 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 * [Website & Forums](https://tshock.co/xf/)
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
 * [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
+
 ## Download
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
