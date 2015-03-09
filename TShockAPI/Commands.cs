@@ -623,7 +623,7 @@ namespace TShockAPI
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
-			if (Hooks.PlayerHooks.OnPlayerCommand(player, cmdName, cmdText, args, ref cmds))
+			if (Hooks.PlayerHooks.OnPlayerCommand(player, cmdName, cmdText, args, ref cmds, cmdPrefix))
 				return true;
 
 			if (cmds.Count() == 0)

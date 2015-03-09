@@ -1132,26 +1132,12 @@ namespace TShockAPI
 				WorldGen.genRand = new Random();
 			}
 
-			if (args.Command.StartsWith("playing") || args.Command.StartsWith("{0}playing".SFormat(Commands.Specifier)))
-			{
-				int count = 0;
-				foreach (TSPlayer player in Players)
-				{
-					if (player != null && player.Active)
-					{
-						count++;
-						TSPlayer.Server.SendInfoMessage("{0} ({1}) [{2}] <{3}>", player.Name, player.IP,
-							player.Group.Name, player.UserAccountName);
-					}
-				}
-				TSPlayer.Server.SendInfoMessage("{0} players connected.", count);
-			}
-			else if (args.Command == "autosave")
+			if (args.Command == "autosave")
 			{
 				Main.autoSave = Config.AutoSave = !Config.AutoSave;
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 			}
-			else if (args.Command.StartsWith(Commands.Specifier))
+			else if (args.Command.StartsWith(Commands.Specifier) || args.Command.StartsWith(Commands.SilentSpecifier))
 			{
 				Commands.HandleCommand(TSPlayer.Server, args.Command);
 			}

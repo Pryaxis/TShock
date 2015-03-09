@@ -1,4 +1,4 @@
-# TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock)
+# TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock) 
 
 TShock is a server modification for Terraria, written in C#, and based upon the [Terraria Server API](https://github.com/Deathmax/TerrariaAPI-Server). It uses JSON for configuration management, and offers several features not present in the Terraria Server normally.
 
@@ -18,6 +18,7 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
 * [Website & Forums](https://tshock.co/xf/)
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
+* [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
 
 ## Download
 
