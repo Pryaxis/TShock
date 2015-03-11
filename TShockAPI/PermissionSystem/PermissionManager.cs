@@ -32,23 +32,7 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
 			this.parents = new List<IPermissionManager>();
-
-			string[] perms = permissionlist.Split(',');
-			foreach (var permission in perms)
-			{
-				if (permission.StartsWith(NeverPrefix))
-				{
-					neverPermissions.AddPermission(permission);
-				}
-				else if (permission.StartsWith(NegatedPrefix))
-				{
-					negatedPermissions.AddPermission(permission);
-				}
-				else
-				{
-					permissions.AddPermission(permission);
-				}
-			}
+			Parse(permissionlist);
 		}
 
 		public PermissionManager(PermissionList permissions)
@@ -139,6 +123,7 @@ namespace TShockAPI.PermissionSystem
 		public IPermissionList GetPermissions()
 		{
 			List<String> perms = permissions.GetPermissions();
+
 			foreach (var parent in parents)
 			{
 				perms.AddRange(parent.GetPermissions().GetPermissions().Where(p => !perms.Contains(p)));
@@ -193,6 +178,49 @@ namespace TShockAPI.PermissionSystem
 		public void Refresh()
 		{
 			currentAllowPermissions = TotalPermissions().GetPermissions();
+		}
+
+		public void Parse(string list)
+		{
+			this.permissions = new PermissionList();
+			this.negatedPermissions = new PermissionList();
+			this.neverPermissions = new PermissionList();
+
+			if (String.IsNullOrWhiteSpace(list))
+				return;
+
+			string[] perms = list.Split(',');
+			foreach (var permission in perms)
+			{
+				if (permission.StartsWith(NeverPrefix))
+				{
+					var perm = permission.Substring(1);
+					neverPermissions.AddPermission(perm);
+				}
+				else if (permission.StartsWith(NegatedPrefix))
+				{
+					var perm = permission.Substring(1);
+					negatedPermissions.AddPermission(perm);
+				}
+				else
+				{
+					permissions.AddPermission(permission);
+				}
+			}
+		}
+
+		public void Parse(List<String> list)
+		{
+			Parse(String.Join(",", list));
+		}
+
+		public void Clone(IPermissionManager manager)
+		{
+			permissions = manager.GetPermissions();
+			negatedPermissions = manager.GetNegatedPermissions();
+			neverPermissions = manager.GetNeverPermissions();
+			parents = manager.GetParents();
+			Refresh();
 		}
 
 		private List<String> AllowedPermissions()

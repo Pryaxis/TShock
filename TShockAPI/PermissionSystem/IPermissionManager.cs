@@ -18,5 +18,8 @@ namespace TShockAPI.PermissionSystem
 		void RemoveParent(IPermissionManager parent);
 		List<IPermissionManager> GetParents(); 
 		void Refresh();
+		void Parse(String list);
+		void Parse(List<String> list);
+		void Clone(IPermissionManager manager);
 	}
 }

@@ -94,7 +94,7 @@ namespace TShockAPI
 		public string Permissions
 		{
 	        get { return permissionManager.ToString(); }
-			set { permissionManager = new PermissionManager(value); }
+			set { permissionManager.Parse(value); }
 		}
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace TShockAPI
 				HashSet<string> all = new HashSet<string>();
 				while (cur != null)
 				{
-					permissionManager.TotalPermissions().GetPermissions().All(p => all.Add(p));
+					cur.permissionManager.TotalPermissions().GetPermissions().All(p => all.Add(p));
 
 					if (traversed.Contains(cur))
 					{
@@ -145,15 +145,6 @@ namespace TShockAPI
         {
 	        return permissionManager.HasPermission(permission);
         }
-        
-        /// <summary>
-        /// Adds a permission to the list of negated permissions.
-        /// </summary>
-        /// <param name="permission">The permission to negate.</param>
-		public void NegatePermission(string permission)
-		{
-			permissionManager.GetNegatedPermissions().AddPermission(permission);
-		}
 
         /// <summary>
         /// Adds a permission to the list of permissions.
@@ -161,17 +152,7 @@ namespace TShockAPI
         /// <param name="permission">The permission to add.</param>
 		public void AddPermission(string permission)
 		{
-			if (permission.StartsWith("!"))
-			{
-				NegatePermission(permission.Substring(1));
-				return;
-			}
-			// Avoid duplicates
-			/*if (!permissions.Contains(permission))
-			{
-				permissions.Add(permission);
-				negatedpermissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
-			}*/
+			permissionManager.AddPermission(permission);
 		}
 
         /// <summary>
@@ -180,11 +161,9 @@ namespace TShockAPI
         /// </summary>
         /// <param name="permission"></param>
 		public void SetPermission(List<string> permission)
-		{
-			/*permissions.Clear();
-			negatedpermissions.Clear();
-			permission.ForEach(p => AddPermission(p));*/
-		}
+        {
+			permissionManager.Parse(permission);
+        }
 
         /// <summary>
         /// Will remove a permission from the respective list,
@@ -193,18 +172,13 @@ namespace TShockAPI
         /// <param name="permission"></param>
 		public void RemovePermission(string permission)
 		{
-			/*if (permission.StartsWith("!"))
-			{
-				negatedpermissions.Remove(permission.Substring(1));
-				return;
-			}
-			permissions.Remove(permission);*/
+			permissionManager.RemovePermission(permission);
 		}
 
 		/// <summary>
-    /// Assigns all fields of this instance to another.
-    /// </summary>
-    /// <param name="otherGroup">The other instance.</param>
+		/// Assigns all fields of this instance to another.
+		/// </summary>
+		/// <param name="otherGroup">The other instance.</param>
 		public void AssignTo(Group otherGroup)
 		{
 			otherGroup.Name = Name;
@@ -214,7 +188,7 @@ namespace TShockAPI
 			otherGroup.R = R;
 			otherGroup.G = G;
 			otherGroup.B = B;
-			//otherGroup.Permissions = Permissions;
+			permissionManager.Clone(otherGroup.permissionManager);
 		}
 
 		public override string ToString() {

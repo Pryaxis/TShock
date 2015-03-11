@@ -689,8 +689,8 @@ namespace TShockAPI
 				{"name", group.Name},
 				{"parent", group.ParentName},
 				{"chatcolor", string.Format("{0},{1},{2}", group.R, group.G, group.B)},
-				{"permissions", String.Join(",", group.permissionManager.GetPermissions())},
-				{"negatedpermissions", String.Join(",", group.permissionManager.GetNegatedPermissions().GetPermissions().Select(p => "!" + p))},
+				{"permissions", group.permissionManager.GetPermissions().GetPermissions()},
+				{"negatedpermissions", group.permissionManager.GetNegatedPermissions().GetPermissions()},
 				{"totalpermissions", group.TotalPermissions}
 			};
 		}
