@@ -13,6 +13,9 @@ namespace TShockAPI.PermissionSystem
 		private List<IPermissionManager> parents;
 
 		private List<String> currentAllowPermissions = new List<string>();
+
+		public const String NeverPrefix = "-";
+		public const String NegatedPrefix = "!";
  
 		public PermissionManager()
 		{
@@ -100,6 +103,51 @@ namespace TShockAPI.PermissionSystem
 			perms.RemoveAll(p => GetNegatedPermissions().GetPermissions().Contains(p));
 			perms.RemoveAll(p => GetNeverPermissions().GetPermissions().Contains(p));
 			return new PermissionList(perms);
+		}
+
+		public void Refresh()
+		{
+			currentAllowPermissions = TotalPermissions().GetPermissions();
+		}
+
+		private List<String> AllowedPermissions()
+		{
+			List<String> permissions = this.permissions.GetPermissions();
+			permissions.RemoveAll(
+				p => negatedPermissions.GetPermissions().Contains(p) || neverPermissions.GetPermissions().Contains(p));
+			return permissions;
+		}
+
+		public override String ToString()
+		{
+			StringBuilder builder = new StringBuilder();
+			foreach (var perm in neverPermissions.GetPermissions())
+			{
+				if (builder.Length > 0)
+					builder.Append(",");
+				builder.Append(NeverPrefix + perm);
+			}
+
+			foreach (var perm in negatedPermissions.GetPermissions())
+			{
+				if (builder.Length > 0)
+					builder.Append(",");
+				builder.Append(NegatedPrefix + perm);
+			}
+
+			foreach (var perm in AllowedPermissions())
+			{
+				if (builder.Length > 0)
+					builder.Append(",");
+				builder.Append(perm);
+			}
+
+			return builder.ToString();
+		}
+
+		public List<IPermissionManager> GetParents()
+		{
+			return parents;
 		}
 	}
 }

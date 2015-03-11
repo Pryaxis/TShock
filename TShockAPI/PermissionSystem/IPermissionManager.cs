@@ -12,6 +12,7 @@ namespace TShockAPI.PermissionSystem
 		IPermissionList GetNegatedPermissions();
 		IPermissionList GetNeverPermissions();
 		IPermissionList TotalPermissions();
-		String ToString();
+		List<IPermissionManager> GetParents(); 
+		void Refresh();
 	}
 }
