@@ -100,8 +100,7 @@ namespace TShockAPI.PermissionSystem
 		public IPermissionList TotalPermissions()
 		{
 			List<String> perms = GetPermissions().GetPermissions();
-			perms.RemoveAll(p => GetNegatedPermissions().GetPermissions().Contains(p));
-			perms.RemoveAll(p => GetNeverPermissions().GetPermissions().Contains(p));
+			perms.RemoveAll(p => GetNegatedPermissions().HasPermission(p) || GetNeverPermissions().HasPermission(p));
 			return new PermissionList(perms);
 		}
 

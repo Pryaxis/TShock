@@ -34,7 +34,22 @@ namespace TShockAPI.PermissionSystem
 
 		public bool HasPermission(string permission)
 		{
-			return permissions.Contains(permission);
+			if (String.IsNullOrEmpty(permission) || permissions.Contains(permission))
+			{
+				return true;
+			}
+
+			string[] nodes = permission.Split('.');
+			for (int i = nodes.Length - 1; i >= 0; i--)
+			{
+				nodes[i] = "*";
+				if (permissions.Contains(String.Join(".", nodes, 0, i + 1)))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public String ToString()
