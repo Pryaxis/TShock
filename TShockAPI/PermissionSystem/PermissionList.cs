@@ -19,17 +19,36 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = permissions;
 		}
 
-		public List<string> GetPermissions()
-		{
-			return permissions;
-		}
-
 		public void AddPermission(string permission)
 		{
 			if (permissions.Contains(permission))
 				return;
 
 			permissions.Add(permission);
+		}
+
+		public void RemovePermission(string permission)
+		{
+			if (permissions.Contains(permission))
+			{
+				permissions.Remove(permission);
+			}
+
+			string[] nodes = permission.Split('.');
+			for (int i = nodes.Length - 1; i >= 1; i--)
+			{
+				nodes[i] = "*";
+				var testPerm = String.Join(".", nodes, 0, i + 1);
+				if (permissions.Contains(testPerm))
+				{
+					permissions.Remove(testPerm);
+				}
+			}
+		}
+
+		public List<string> GetPermissions()
+		{
+			return permissions;
 		}
 
 		public bool HasPermission(string permission)

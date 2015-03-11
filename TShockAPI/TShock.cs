@@ -36,7 +36,7 @@ using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Net;
-using TShockAPI.PermissionManager;
+using TShockAPI.PermissionSystem;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI

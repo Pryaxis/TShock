@@ -23,7 +23,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using MySql.Data.MySqlClient;
-using TShockAPI.PermissionManager;
+using TShockAPI.PermissionSystem;
 
 namespace TShockAPI.DB
 {

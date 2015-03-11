@@ -23,7 +23,32 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
 			this.parents = new List<IPermissionManager>();
-			currentAllowPermissions = TotalPermissions().GetPermissions();
+			Refresh();
+		}
+
+		public PermissionManager(string permissionlist)
+		{
+			this.permissions = new PermissionList();
+			this.negatedPermissions = new PermissionList();
+			this.neverPermissions = new PermissionList();
+			this.parents = new List<IPermissionManager>();
+
+			string[] perms = permissionlist.Split(',');
+			foreach (var permission in perms)
+			{
+				if (permission.StartsWith(NeverPrefix))
+				{
+					neverPermissions.AddPermission(permission);
+				}
+				else if (permission.StartsWith(NegatedPrefix))
+				{
+					negatedPermissions.AddPermission(permission);
+				}
+				else
+				{
+					permissions.AddPermission(permission);
+				}
+			}
 		}
 
 		public PermissionManager(PermissionList permissions)
@@ -32,7 +57,7 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
 			this.parents = new List<IPermissionManager>();
-			currentAllowPermissions = TotalPermissions().GetPermissions();
+			Refresh();
 		}
 
 		public PermissionManager(PermissionList permissions, PermissionList negatedPermissions)
@@ -41,7 +66,7 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = negatedPermissions;
 			this.neverPermissions = new PermissionList();
 			this.parents = new List<IPermissionManager>();
-			currentAllowPermissions = TotalPermissions().GetPermissions();
+			Refresh();
 		}
 
 		public PermissionManager(PermissionList permissions, PermissionList negatedPermissions, PermissionList neverPermissions)
@@ -50,7 +75,7 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = negatedPermissions;
 			this.neverPermissions = neverPermissions;
 			this.parents = new List<IPermissionManager>();
-			currentAllowPermissions = TotalPermissions().GetPermissions();
+			Refresh();
 		}
 
 		public PermissionManager(PermissionList permissions, PermissionList negatedPermissions, PermissionList neverPermissions, List<IPermissionManager> parents)
@@ -59,7 +84,51 @@ namespace TShockAPI.PermissionSystem
 			this.negatedPermissions = negatedPermissions;
 			this.neverPermissions = neverPermissions;
 			this.parents = parents;
-			currentAllowPermissions = TotalPermissions().GetPermissions();
+			Refresh();
+		}
+
+		public void AddPermission(string permission)
+		{
+			if (permission.StartsWith(NeverPrefix))
+			{
+				var perm = permission.Substring(1);
+				neverPermissions.AddPermission(perm);
+				negatedPermissions.RemovePermission(perm);
+				permissions.RemovePermission(perm);
+			}
+			else if (permission.StartsWith(NegatedPrefix))
+			{
+				var perm = permission.Substring(1);
+				negatedPermissions.AddPermission(perm);
+				neverPermissions.RemovePermission(perm);
+				permissions.RemovePermission(perm);
+			}
+			else
+			{
+				permissions.AddPermission(permission);
+				negatedPermissions.RemovePermission(permission);
+				neverPermissions.RemovePermission(permission);
+			}
+			Refresh();
+		}
+
+		public void RemovePermission(string permission)
+		{
+			if (permission.StartsWith(NeverPrefix))
+			{
+				var perm = permission.Substring(1);
+				neverPermissions.RemovePermission(perm);
+			}
+			else if (permission.StartsWith(NegatedPrefix))
+			{
+				var perm = permission.Substring(1);
+				negatedPermissions.RemovePermission(perm);
+			}
+			else
+			{
+				permissions.RemovePermission(permission);
+			}
+			Refresh();
 		}
 
 		public bool HasPermission(string permission)
@@ -102,6 +171,23 @@ namespace TShockAPI.PermissionSystem
 			List<String> perms = GetPermissions().GetPermissions();
 			perms.RemoveAll(p => GetNegatedPermissions().HasPermission(p) || GetNeverPermissions().HasPermission(p));
 			return new PermissionList(perms);
+		}
+
+		public void AddParent(IPermissionManager parent)
+		{
+			if (parents.Contains(parent))
+			{
+				return;
+			}
+			
+			parents.Add(parent);
+			Refresh();
+		}
+
+		public void RemoveParent(IPermissionManager parent)
+		{
+			parents.Remove(parent);
+			Refresh();
 		}
 
 		public void Refresh()

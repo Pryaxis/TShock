@@ -28,7 +28,7 @@ using System.Threading;
 using Terraria;
 using TShockAPI.DB;
 using TerrariaApi.Server;
-using TShockAPI.PermissionManager;
+using TShockAPI.PermissionSystem;
 
 namespace TShockAPI
 {

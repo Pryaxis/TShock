@@ -7,6 +7,8 @@ namespace TShockAPI.PermissionSystem
 {
 	public interface IPermissionList
 	{
+		void AddPermission(String permission);
+		void RemovePermission(String permission);
 		List<String> GetPermissions();
 		bool HasPermission(String permission);
 		String ToString();

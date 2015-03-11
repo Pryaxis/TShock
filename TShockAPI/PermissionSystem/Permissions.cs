@@ -23,7 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TShockAPI.PermissionManager
+namespace TShockAPI.PermissionSystem
 {
 	public static class Permissions
 	{

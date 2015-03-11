@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using TShockAPI.PermissionSystem;
 
 namespace TShockAPI
 {
@@ -31,15 +32,7 @@ namespace TShockAPI
         /// </summary>
 		public const string defaultChatColor = "255,255,255";
 
-        /// <summary>
-        /// List of permissions available to the group.
-        /// </summary>
-		public readonly List<string> permissions = new List<string>();
-
-        /// <summary>
-        /// List of permissions that the group is explicitly barred from.
-        /// </summary>
-		public readonly List<string> negatedpermissions = new List<string>();
+		public IPermissionManager permissionManager;
 
         /// <summary>
         /// The group's name.
@@ -100,19 +93,8 @@ namespace TShockAPI
         /// </summary>
 		public string Permissions
 		{
-			get
-			{
-				List<string> all = new List<string>(permissions);
-				negatedpermissions.ForEach(p => all.Add("!" + p));
-				return string.Join(",", all);
-			}
-			set
-			{
-				permissions.Clear();
-				negatedpermissions.Clear();
-				if (null != value)
-					value.Split(',').ForEach(p => AddPermission(p.Trim()));
-			}
+	        get { return permissionManager.ToString(); }
+			set { permissionManager = new PermissionManager(value); }
 		}
 
         /// <summary>
@@ -127,15 +109,7 @@ namespace TShockAPI
 				HashSet<string> all = new HashSet<string>();
 				while (cur != null)
 				{
-					foreach (var perm in cur.permissions)
-					{
-						all.Add(perm);
-					}
-
-					foreach (var perm in cur.negatedpermissions)
-					{
-						all.Remove(perm);
-					}
+					permissionManager.TotalPermissions().GetPermissions().All(p => all.Add(p));
 
 					if (traversed.Contains(cur))
 					{
@@ -159,7 +133,7 @@ namespace TShockAPI
 			Name = groupname;
 			Parent = parentgroup;
 			ChatColor = chatcolor;
-			Permissions = permissions;
+			permissionManager = new PermissionManager(permissions);
 		}
 
         /// <summary>
@@ -169,65 +143,16 @@ namespace TShockAPI
         /// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
         {
-	        bool negated = false;
-			if (String.IsNullOrEmpty(permission) || (RealHasPermission(permission, ref negated) && !negated))
-			{
-				return true;
-			}
-
-	        if (negated)
-		        return false;
-
-			string[] nodes = permission.Split('.');
-			for (int i = nodes.Length - 1; i >= 0; i--)
-			{
-				nodes[i] = "*";
-				if (RealHasPermission(String.Join(".", nodes, 0, i + 1), ref negated))
-				{
-					return !negated;
-				}
-			}
-			return false;
-		}
-        private bool RealHasPermission(string permission, ref bool negated)
-        {
-	        negated = false;
-            if (string.IsNullOrEmpty(permission))
-                return true;
-
-            var cur = this;
-            var traversed = new List<Group>();
-            while (cur != null)
-            {
-	            if (cur.negatedpermissions.Contains(permission))
-	            {
-		            negated = true;
-		            return false;
-	            }
-	            if (cur.permissions.Contains(permission))
-                    return true;
-                if (traversed.Contains(cur))
-                {
-                    throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
-                }
-                traversed.Add(cur);
-                cur = cur.Parent;
-            }
-            return false;
+	        return permissionManager.HasPermission(permission);
         }
-
+        
         /// <summary>
         /// Adds a permission to the list of negated permissions.
         /// </summary>
         /// <param name="permission">The permission to negate.</param>
 		public void NegatePermission(string permission)
 		{
-			// Avoid duplicates
-			if (!negatedpermissions.Contains(permission))
-			{
-				negatedpermissions.Add(permission);
-				permissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
-			}
+			permissionManager.GetNegatedPermissions().AddPermission(permission);
 		}
 
         /// <summary>
@@ -242,11 +167,11 @@ namespace TShockAPI
 				return;
 			}
 			// Avoid duplicates
-			if (!permissions.Contains(permission))
+			/*if (!permissions.Contains(permission))
 			{
 				permissions.Add(permission);
 				negatedpermissions.Remove(permission); // Ensure we don't have conflicting definitions for a permissions
-			}
+			}*/
 		}
 
         /// <summary>
@@ -256,9 +181,9 @@ namespace TShockAPI
         /// <param name="permission"></param>
 		public void SetPermission(List<string> permission)
 		{
-			permissions.Clear();
+			/*permissions.Clear();
 			negatedpermissions.Clear();
-			permission.ForEach(p => AddPermission(p));
+			permission.ForEach(p => AddPermission(p));*/
 		}
 
         /// <summary>
@@ -268,12 +193,12 @@ namespace TShockAPI
         /// <param name="permission"></param>
 		public void RemovePermission(string permission)
 		{
-			if (permission.StartsWith("!"))
+			/*if (permission.StartsWith("!"))
 			{
 				negatedpermissions.Remove(permission.Substring(1));
 				return;
 			}
-			permissions.Remove(permission);
+			permissions.Remove(permission);*/
 		}
 
 		/// <summary>
@@ -289,7 +214,7 @@ namespace TShockAPI
 			otherGroup.R = R;
 			otherGroup.G = G;
 			otherGroup.B = B;
-			otherGroup.Permissions = Permissions;
+			//otherGroup.Permissions = Permissions;
 		}
 
 		public override string ToString() {
