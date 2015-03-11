@@ -23,7 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TShockAPI
+namespace TShockAPI.PermissionManager
 {
 	public static class Permissions
 	{
@@ -398,7 +398,7 @@ namespace TShockAPI
 				var strs =
 					commands.Select(
 						c =>
-						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+							c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
 				sb.AppendLine("{0}".SFormat(name));
 				sb.AppendLine("Description: {0}  ".SFormat(desc));
@@ -409,7 +409,10 @@ namespace TShockAPI
 			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
 		}
 	}
+}
 
+namespace TShockAPI
+{
 	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class TodoAttribute : Attribute
 	{

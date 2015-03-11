@@ -27,6 +27,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using TShockAPI.DB;
+using TShockAPI.PermissionManager;
 
 namespace TShockAPI
 {

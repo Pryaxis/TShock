@@ -29,6 +29,7 @@ using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
+using TShockAPI.PermissionManager;
 
 namespace TShockAPI
 {
