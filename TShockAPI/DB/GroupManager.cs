@@ -124,7 +124,7 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw new GroupExistsException(name);
-				return "Error: Group already exists. Use /modgroup to change permissions.";
+				return "Error: Group already exists; unable to add group.";
 			}
 
 			var group = new Group(name, null, chatcolor);
