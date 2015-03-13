@@ -804,8 +804,16 @@ namespace TShockAPI
 							player.SetBuff(30, 120); //Bleeding
 							player.SetBuff(36, 120); //Broken Armor
 							check = "Remove armor/accessory " + item.name;
-							
-							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+							string s;
+							ItemBan ban = TShock.Itembans.GetItemBanByName(item.name);
+							if (ban.AllowedGroups.Count == 0)
+								s = "You are wearing banned equipment. {0}".SFormat(check);
+							else
+							{
+								Group group = TShock.Groups.GetGroupByName(ban.AllowedGroups[0]);
+								s = "You must be at least {0} to use {1}.".SFormat(group.Name, ban.Name);
+							}
+							player.SendErrorMessage(s);
 							break;
 						}
 					}
