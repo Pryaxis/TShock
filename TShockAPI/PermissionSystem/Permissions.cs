@@ -73,6 +73,9 @@ namespace TShockAPI.PermissionSystem
 		[Description("User can manage groups.")]
 		public static readonly string managegroup = "tshock.admin.group";
 
+		[Description("User can manage permissions.")]
+		public static readonly string managepermissions = "tshock.admin.permissions";
+
 		[Description("User can manage regions.")]
 		public static readonly string manageregion = "tshock.admin.region";
 

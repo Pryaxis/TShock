@@ -24,10 +24,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Terraria;
-using TShockAPI.DB;
 using TerrariaApi.Server;
+using TShockAPI.DB;
 using TShockAPI.PermissionSystem;
 
 namespace TShockAPI
@@ -282,6 +283,10 @@ namespace TShockAPI
 			add(new Command(Permissions.mute, Mute, "mute", "unmute")
 			{
 				HelpText = "Prevents a player from talking."
+			});
+			add(new Command(Permissions.managepermissions, Permission, "permission")
+			{
+				HelpText = "Manages group and user permissions."
 			});
 			add(new Command(Permissions.savessc, OverrideSSC, "overridessc", "ossc")
 			{
@@ -1608,6 +1613,331 @@ namespace TShockAPI
         }
 
 		#endregion Player Management Commands
+
+		#region Permission Management Commands
+
+		private static void Permission(CommandArgs args)
+		{
+			/* 
+			 * Regex match groups:
+			 * group 1 - subCmd
+			 * group 2 - params (either 'g' or 'u')
+			 * group 3/4 - group or user
+			 * group 5 - permissions (or pagenum)
+			 */
+			Regex regex = new Regex(@"^.+? (\w+) (?:-([gu]) )?(?:""(.+)""|(\S+))(?: (.+))?$");
+			Match match = regex.Match(args.Message);
+			string subCmd = "help";
+
+			if (match.Success)
+				subCmd = match.Groups[1].Value.ToLower();
+
+			switch (subCmd)
+			{
+				case "add":
+					PermissionAdd(args.Player, match);
+					return;
+				case "del":
+					PermissionDel(args.Player, match);
+					return;
+				case "list":
+					PermissionList(args.Player, match);
+					return;
+				case "help":
+				default:
+					args.Player.SendInfoMessage("Syntax: {0}permission <subcommand> [-g|-u] <group or user> [permissions...]", Specifier);
+					args.Player.SendInfoMessage("Available Sub-Commands:");
+					args.Player.SendInfoMessage("add - Adds one or more permissions to a group or user");
+					args.Player.SendInfoMessage("del - Removes one or more permissions from a group or user");
+					args.Player.SendInfoMessage("list - Displays the list of permissions a group or user has");
+					return;
+			}
+		}
+
+		private static void PermissionAdd(TSPlayer player, Match match)
+		{
+			char param = ' ';
+			if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
+				param = match.Groups[2].Value[0];
+			string name = match.Groups[3].Value;
+			if (string.IsNullOrWhiteSpace(name))
+				name = match.Groups[4].Value;
+
+			bool all = name == "*";
+			User user = TShock.Users.GetUserByName(name);
+			Group group = TShock.Groups.GetGroupByName(name);
+
+			List<string> permissions;
+			if (string.IsNullOrWhiteSpace(match.Groups[5].Value))
+			{
+				player.SendErrorMessage("You must provide at least one permission. Separate multiple permissions with whitespaces");
+				return;
+			}
+			else
+				permissions = match.Groups[5].Value.Split(' ').ToList();
+
+			if (all)
+			{
+				if (IsWhiteSpace(param))
+				{
+					TShock.Groups.ForEach(g => TShock.Groups.AddPermissions(g.Name, permissions));
+					TShock.Users.GetUsers().ForEach(u => TShock.Users.AddPermissions(u.Name, permissions));
+					player.SendSuccessMessage("Modified all groups and users.");
+				}
+				else if (param == 'g')
+				{
+					TShock.Groups.ForEach(g => TShock.Groups.AddPermissions(g.Name, permissions));
+					player.SendSuccessMessage("Modified all groups.");
+				}
+				else
+				{
+					TShock.Users.GetUsers().ForEach(u => TShock.Users.AddPermissions(u.Name, permissions));
+					player.SendSuccessMessage("Modified all users.");
+				}
+			}
+			else
+			{
+				if (IsWhiteSpace(param))
+				{
+					if (group != null && user != null)
+						player.SendErrorMessage(
+							"Ambiguity between group '{0}' and user '{0}'. Use -g or -u to select either the group or the user", name);
+					else if (group == null && user == null)
+						player.SendErrorMessage("Invalid group or user!");
+					else if (group != null)
+					{
+						string response = TShock.Groups.AddPermissions(group.Name, permissions);
+						if (!string.IsNullOrWhiteSpace(response))
+							player.SendSuccessMessage(response);
+					}
+					else
+					{
+						string response = TShock.Users.AddPermissions(user.Name, permissions);
+						if (!string.IsNullOrWhiteSpace(response))
+							player.SendSuccessMessage(response);
+					}
+				}
+				else if (param == 'g')
+				{
+					if (group == null)
+					{
+						player.SendErrorMessage("Invalid group!");
+						return;
+					}
+					string response = TShock.Groups.AddPermissions(group.Name, permissions);
+					if (!string.IsNullOrWhiteSpace(response))
+						player.SendSuccessMessage(response);
+				}
+				else if (param == 'u')
+				{
+					if (user == null)
+					{
+						player.SendErrorMessage("Invalid user!");
+						return;
+					}
+					string response = TShock.Users.AddPermissions(user.Name, permissions);
+					if (!string.IsNullOrWhiteSpace(response))
+						player.SendSuccessMessage(response);
+				}
+			}
+		}
+
+		private static void PermissionDel(TSPlayer player, Match match)
+		{
+			char param = ' ';
+			if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
+				param = match.Groups[2].Value[0];
+			string name = match.Groups[3].Value;
+			if (string.IsNullOrWhiteSpace(name))
+				name = match.Groups[4].Value;
+
+			bool all = name == "*";
+			User user = TShock.Users.GetUserByName(name);
+			Group group = TShock.Groups.GetGroupByName(name);
+
+			List<string> permissions;
+			if (string.IsNullOrWhiteSpace(match.Groups[5].Value))
+			{
+				player.SendErrorMessage("You must provide at least one permission. Separate multiple permissions with whitespaces");
+				return;
+			}
+			else
+				permissions = match.Groups[5].Value.Split(' ').ToList();
+
+			if (all)
+			{
+				if (IsWhiteSpace(param))
+				{
+					TShock.Groups.ForEach(g => TShock.Groups.DeletePermissions(g.Name, permissions));
+					TShock.Users.GetUsers().ForEach(u => TShock.Users.DeletePermissions(u.Name, permissions));
+					player.SendSuccessMessage("Modified all groups and users.");
+				}
+				else if (param == 'g')
+				{
+					TShock.Groups.ForEach(g => TShock.Groups.DeletePermissions(g.Name, permissions));
+					player.SendSuccessMessage("Modified all groups.");
+				}
+				else
+				{
+					TShock.Users.GetUsers().ForEach(u => TShock.Users.DeletePermissions(u.Name, permissions));
+					player.SendSuccessMessage("Modified all users.");
+				}
+			}
+			else
+			{
+				if (IsWhiteSpace(param))
+				{
+					if (group != null && user != null)
+						player.SendErrorMessage(
+							"Ambiguity between group '{0}' and user '{0}'. Use -g or -u to select either the group or the user", name);
+					else if (group == null && user == null)
+						player.SendErrorMessage("Invalid group or user!");
+					else if (group != null)
+					{
+						string response = TShock.Groups.DeletePermissions(group.Name, permissions);
+						if (!string.IsNullOrWhiteSpace(response))
+							player.SendSuccessMessage(response);
+					}
+					else
+					{
+						string response = TShock.Users.DeletePermissions(user.Name, permissions);
+						if (!string.IsNullOrWhiteSpace(response))
+							player.SendSuccessMessage(response);
+					}
+				}
+				else if (param == 'g')
+				{
+					if (group == null)
+					{
+						player.SendErrorMessage("Invalid group!");
+						return;
+					}
+					string response = TShock.Groups.DeletePermissions(group.Name, permissions);
+					if (!string.IsNullOrWhiteSpace(response))
+						player.SendSuccessMessage(response);
+				}
+				else if (param == 'u')
+				{
+					if (user == null)
+					{
+						player.SendErrorMessage("Invalid user!");
+						return;
+					}
+					string response = TShock.Users.DeletePermissions(user.Name, permissions);
+					if (!string.IsNullOrWhiteSpace(response))
+						player.SendSuccessMessage(response);
+				}
+			}
+		}
+
+		private static void PermissionList(TSPlayer player, Match match)
+		{
+			char param = ' ';
+			if (!string.IsNullOrWhiteSpace(match.Groups[2].Value))
+				param = match.Groups[2].Value[0];
+			string name = match.Groups[3].Value;
+			if (string.IsNullOrWhiteSpace(name))
+				name = match.Groups[4].Value;
+
+			// We definitely don't need to print the entire permission system every time someone uses this command
+			if (name == "*")
+			{
+				player.SendErrorMessage("This sub-command doesn't take * as a parameter.");
+				return;
+			}
+
+			List<string> permissions = new List<string>();	// Permissions on the group/user's list
+			List<string> inherited = new List<string>();	// Permissions inherited from parent groups and the user's group
+			Group group = TShock.Groups.GetGroupByName(name);
+			User user = TShock.Users.GetUserByName(name);
+			if (param == 'g' && group == null)
+			{
+				player.SendErrorMessage("Invalid group!");
+				return;
+			}
+			else if (param == 'u' && user == null)
+			{
+				player.SendErrorMessage("Invalid user!");
+				return;
+			}
+			else if (group != null && user != null)
+			{
+				player.SendErrorMessage(
+					"Ambiguity between group '{0}' and user '{0}'. Use -g or -u to select either the group or the user", name);
+				return;
+			}
+			else if (group == null && user == null)
+			{
+				player.SendErrorMessage("Invalid group or user!");
+				return;
+			}
+			else if (group != null)
+			{
+				permissions = group.permissionManager.GetPermissions().GetPermissions();
+				inherited = group.TotalPermissions.FindAll(p => !permissions.Contains(p));
+			}
+			else
+			{
+				permissions = user.permissionManager.GetPermissions().GetPermissions();
+				if (TShock.Groups.GroupExists(user.Group))
+					inherited = TShock.Groups.GetGroupByName(user.Group).TotalPermissions;
+			}
+
+			string pageNumberRaw = match.Groups[5].Value;
+			int pageNumber = 1;
+			if (!string.IsNullOrWhiteSpace(pageNumberRaw) && !int.TryParse(pageNumberRaw, out pageNumber))
+			{
+				player.SendErrorMessage("\"{0}\" is not a valid page number.", pageNumberRaw);
+				return;
+			}
+
+			List<object> dataToPaginate = new List<object>();
+			var sb = new StringBuilder();
+			int charsPerLine = 80;
+			string separator = ", ";
+			foreach (string p in permissions)
+			{
+				if (sb.Length + p.Length + separator.Length < charsPerLine)
+					sb.Append(p).Append(separator);
+				else
+				{
+					dataToPaginate.Add(sb.ToString());
+					sb.Clear().Append(p).Append(separator);
+				}
+			}
+			if (sb.Length > 0)
+			{
+				dataToPaginate.Add(sb.ToString().Substring(0, sb.Length - separator.Length));
+				sb.Clear();
+			}
+
+			Color color = new Color(0, 255, 0);	// The color for inherited permissions
+			foreach (string p in inherited)
+			{
+				if (sb.Length + p.Length + separator.Length < charsPerLine)
+					sb.Append(p).Append(separator);
+				else
+				{
+					dataToPaginate.Add(new Tuple<string, Color>(sb.ToString().Trim(), color));
+					sb.Clear().Append(p).Append(separator);
+				}
+			}
+			if (sb.Length > 0)
+			{
+				dataToPaginate.Add(new Tuple<string, Color>(sb.ToString().Substring(0, sb.Length - separator.Length), color));
+				sb.Clear();
+			}
+
+			PaginationTools.SendPage(player, pageNumber, dataToPaginate,
+				new PaginationTools.Settings
+				{
+					HeaderFormat = "Permissions for " + name + " ({0}/{1}):",
+					FooterFormat = "Type {0}permission list {1} {2} {{0}} for more.".SFormat(Specifier, group == null ? "-u" : "-g", name),
+					NothingToDisplayString = "There are currently no permissions for " + name + "."
+				});
+		}
+
+		#endregion
 
 		#region Server Maintenence Commands
 

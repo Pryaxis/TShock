@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
+using TShockAPI.PermissionSystem;
 
 namespace TShockAPI.DB
 {
@@ -42,7 +43,8 @@ namespace TShockAPI.DB
 			                         new SqlColumn("Usergroup", MySqlDbType.Text),
 									 new SqlColumn("Registered", MySqlDbType.Text),
                                      new SqlColumn("LastAccessed", MySqlDbType.Text),
-                                     new SqlColumn("KnownIPs", MySqlDbType.Text)
+                                     new SqlColumn("KnownIPs", MySqlDbType.Text),
+									 new SqlColumn("Permissions", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 			                                  db.GetSqlType() == SqlType.Sqlite
@@ -183,6 +185,40 @@ namespace TShockAPI.DB
             }
 	    }
 
+		public String AddPermissions(String name, List<String> permissions)
+		{
+			User user = GetUserByName(name);
+			if (user == null)
+				return "Error: User doesn't exist.";
+
+			IPermissionList oldperms = user.permissionManager.GetPermissions(); // Store old permissions in case of error
+			permissions.ForEach(p => user.AddPermission(p));
+
+			if (database.Query("UPDATE Users SET Permissions = @0 WHERE Username = @1;", user.permissionManager, name) == 1)
+				return "User " + name + " has been modified successfully.";
+
+			// Restore old permissions so DB and internal object are in a consistent state
+			user.SetPermission(oldperms.GetPermissions());
+			return "";
+		}
+
+		public String DeletePermissions(String name, List<String> permissions)
+		{
+			User user = GetUserByName(name);
+			if (user == null)
+				return "Error: User doesn't exist.";
+
+			IPermissionList oldperms = user.permissionManager.GetPermissions(); // Store old permissions in case of error
+			permissions.ForEach(p => user.RemovePermission(p));
+
+			if (database.Query("UPDATE Users SET Permissions = @0 WHERE Username = @1;", user.permissionManager, name) == 1)
+				return "User " + name + " has been modified successfully.";
+
+			// Restore old permissions so DB and internal object are in a consistent state
+			user.SetPermission(oldperms.GetPermissions());
+			return "";
+		}
+
 		public int GetUserID(string username)
 		{
 			try
@@ -300,6 +336,7 @@ namespace TShockAPI.DB
 			user.Registered = result.Get<string>("Registered");
             user.LastAccessed = result.Get<string>("LastAccessed");
             user.KnownIps = result.Get<string>("KnownIps");
+			user.permissionManager = new PermissionManager(result.Get<string>("Permissions"));
 			return user;
 		}
 	}
@@ -314,8 +351,9 @@ namespace TShockAPI.DB
 		public string Registered { get; set; }
         public string LastAccessed { get; set; }
         public string KnownIps { get; set; }
+		public IPermissionManager permissionManager;
 
-		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
+		public User(string name, string pass, string uuid, string group, string registered, string last, string known, string permissions = null)
 		{
 			Name = name;
 			Password = pass;
@@ -324,6 +362,7 @@ namespace TShockAPI.DB
 			Registered = registered;
 		    LastAccessed = last;
 		    KnownIps = known;
+			permissionManager = new PermissionManager(permissions);
 		}
 
 		public User()
@@ -335,6 +374,47 @@ namespace TShockAPI.DB
 			Registered = "";
             LastAccessed = "";
             KnownIps = "";
+			permissionManager = new PermissionManager();
+		}
+
+		/// <summary>
+		/// Checks to see if an user has a specified permission.
+		/// </summary>
+		/// <param name="permission">The permission to check.</param>
+		/// <returns>Returns true if the user has that permission.</returns>
+		public virtual bool HasPermission(string permission)
+		{
+			return permissionManager.HasPermission(permission);
+		}
+
+		/// <summary>
+		/// Adds a permission to the list of permissions.
+		/// </summary>
+		/// <param name="permission">The permission to add.</param>
+		public void AddPermission(string permission)
+		{
+			permissionManager.AddPermission(permission);
+		}
+
+		/// <summary>
+		/// Clears the permission list and sets it to the list provided, 
+		/// will parse negated and never permissions.
+		/// </summary>
+		/// <param name="permission">The list of permissions to set.</param>
+		public void SetPermission(List<string> permission)
+		{
+			permissionManager.Parse(permission);
+		}
+
+		/// <summary>
+		/// Will remove a permission from the respective list,
+		/// removing negated and never permissions when prefixed
+		/// with the respective prefixes.
+		/// </summary>
+		/// <param name="permission">The permission to remove.</param>
+		public void RemovePermission(string permission)
+		{
+			permissionManager.RemovePermission(permission);
 		}
 	}
 

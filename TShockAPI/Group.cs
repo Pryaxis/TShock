@@ -140,7 +140,7 @@ namespace TShockAPI
         /// Checks to see if a group has a specified permission.
         /// </summary>
         /// <param name="permission">The permission to check.</param>
-        /// <returns>Returns true if the user has that permission.</returns>
+        /// <returns>Returns true if the group has that permission.</returns>
 		public virtual bool HasPermission(string permission)
         {
 	        return permissionManager.HasPermission(permission);
@@ -157,9 +157,9 @@ namespace TShockAPI
 
         /// <summary>
         /// Clears the permission list and sets it to the list provided, 
-        /// will parse "!permssion" and add it to the negated permissions.
+        /// will parse negated and never permissions.
         /// </summary>
-        /// <param name="permission"></param>
+        /// <param name="permission">The list of permissions to set.</param>
 		public void SetPermission(List<string> permission)
         {
 			permissionManager.Parse(permission);
@@ -167,9 +167,10 @@ namespace TShockAPI
 
         /// <summary>
         /// Will remove a permission from the respective list,
-        /// where "!permission" will remove a negated permission.
+        /// removing negated and never permissions when prefixed
+		/// with the respective prefixes.
         /// </summary>
-        /// <param name="permission"></param>
+        /// <param name="permission">The permission to remove.</param>
 		public void RemovePermission(string permission)
 		{
 			permissionManager.RemovePermission(permission);
