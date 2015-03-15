@@ -1285,11 +1285,11 @@ namespace TShockAPI
 									{
 										if (args.Silent)
 										{
-											args.Player.SendInfoMessage("[broken name] was {1}banned for '{2}'.", force ? "force " : "", reason);
+											args.Player.SendInfoMessage("[broken name] was {0}banned for '{1}'.", force ? "force " : "", reason);
 										}
 										else
 										{
-											TSPlayer.All.SendInfoMessage("{0} {1}banned [broken name] for '{3}'.", args.Player.Name, force ? "force " : "", reason);
+											TSPlayer.All.SendInfoMessage("{0} {1}banned [broken name] for '{2}'.", args.Player.Name, force ? "force " : "", reason);
 										}
 									}
 								}
@@ -4449,7 +4449,7 @@ namespace TShockAPI
 
 			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
 			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Thank you for using TShock! http://tshock.co/ & http://github.com/TShock/TShock");
+			args.Player.SendSuccessMessage("Thank you for using TShock! https://tshock.co/ & https://github.com/TShock/TShock");
 			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
 			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
 			TShock.AuthToken = 0;

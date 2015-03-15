@@ -483,7 +483,7 @@ namespace TShockAPI
 						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
 							SavePath = path;
-							Log.ConsoleInfo("Config path has been set to " + path);
+							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
 						}
 						break;
 
@@ -492,7 +492,7 @@ namespace TShockAPI
 						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
 							Main.WorldPath = path;
-							Log.ConsoleInfo("World path has been set to " + path);
+							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
 						}
 						break;
 
@@ -501,7 +501,7 @@ namespace TShockAPI
 						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
 							LogPath = path;
-							Log.ConsoleInfo("Log path has been set to " + path);
+							ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
 						}
 						break;
 
@@ -1229,7 +1229,7 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.SendErrorMessage(
-						player.IgnoreActionsForInventory = "Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
+						player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
