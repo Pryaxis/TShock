@@ -53,5 +53,5 @@ using System.Runtime.InteropServices;
 // Also, be sure to release on github with the exact assembly version tag as below
 // so that the update manager works correctly (via the Github releases api and mimic)
 
-[assembly: AssemblyVersion("4.2.8")]
-[assembly: AssemblyFileVersion("4.2.8")]
+[assembly: AssemblyVersion("4.2.9")]
+[assembly: AssemblyFileVersion("4.2.9")]

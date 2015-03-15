@@ -44,7 +44,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "2015!!";
+		public static readonly string VersionCodename = "nicatronTg hotfixes 4.2.8 in less than an hour edition";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
