@@ -1285,11 +1285,11 @@ namespace TShockAPI
 									{
 										if (args.Silent)
 										{
-											args.Player.SendInfoMessage("[broken name] was {0}banned for '{1}'.", force ? "force " : "", reason);
+											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
 										}
 										else
 										{
-											TSPlayer.All.SendInfoMessage("{0} {1}banned [broken name] for '{2}'.", args.Player.Name, force ? "force " : "", reason);
+											TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
 										}
 									}
 								}
