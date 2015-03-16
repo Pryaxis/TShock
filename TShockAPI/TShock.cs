@@ -44,7 +44,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "2015!!";
+		public static readonly string VersionCodename = "nicatronTg hotfixes 4.2.8 in less than an hour edition";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
@@ -1237,7 +1237,7 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.SendErrorMessage(
-						player.IgnoreActionsForInventory = "Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
+						player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
