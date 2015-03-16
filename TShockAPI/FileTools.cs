@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TShockAPI.ServerSideCharacters;
 
@@ -111,6 +112,19 @@ namespace TShockAPI
 			{
 				TShock.ServerSideCharacterConfig = ServerSideConfig.Read(ServerSideCharacterConfigPath);
 				// Add all the missing config properties in the json file
+			}
+			else
+			{
+				TShock.ServerSideCharacterConfig = new ServerSideConfig
+				{
+					StartingInventory =
+						new List<NetItem>()
+						{
+							new NetItem() {netID = -15, stack = 1, prefix = 0},
+							new NetItem() {netID = -13, stack = 1, prefix = 0},
+							new NetItem() {netID = -16, stack = 1, prefix = 0}
+						}
+				};
 			}
 			TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 		}

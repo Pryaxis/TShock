@@ -1140,18 +1140,6 @@ namespace TShockAPI
 			{
 				this.inventory[i] = new NetItem();
 			}
-			this.inventory[0].netID = -15;
-			this.inventory[0].stack = 1;
-			if (player.TPlayer.inventory[0] != null && player.TPlayer.inventory[0].netID == -15)
-				this.inventory[0].prefix = player.TPlayer.inventory[0].prefix;
-			this.inventory[1].netID = -13;
-			this.inventory[1].stack = 1;
-			if (player.TPlayer.inventory[1] != null && player.TPlayer.inventory[1].netID == -13)
-				this.inventory[1].prefix = player.TPlayer.inventory[1].prefix;
-			this.inventory[2].netID = -16;
-			this.inventory[2].stack = 1;
-			if (player.TPlayer.inventory[2] != null && player.TPlayer.inventory[2].netID == -16)
-				this.inventory[2].prefix = player.TPlayer.inventory[2].prefix;
 
 			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
 			{
