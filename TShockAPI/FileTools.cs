@@ -25,33 +25,35 @@ namespace TShockAPI
 {
 	public class FileTools
 	{
-        /// <summary>
-        /// Path to the file containing the rules.
-        /// </summary>
+		private const string MotdFormat =
+			"This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%";
+		/// <summary>
+		/// Path to the file containing the rules.
+		/// </summary>
 		internal static string RulesPath
 		{
 			get { return Path.Combine(TShock.SavePath, "rules.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the message of the day.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the message of the day.
+		/// </summary>
 		internal static string MotdPath
 		{
 			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the whitelist.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the whitelist.
+		/// </summary>
 		internal static string WhitelistPath
 		{
 			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the config.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the config.
+		/// </summary>
 		internal static string ConfigPath
 		{
 			get { return Path.Combine(TShock.SavePath, "config.json"); }
@@ -65,20 +67,20 @@ namespace TShockAPI
 			get { return Path.Combine(TShock.SavePath, "sscconfig.json"); }
 		}
 
-        /// <summary>
-        /// Creates an empty file at the given path.
-        /// </summary>
-        /// <param name="file">The path to the file.</param>
+		/// <summary>
+		/// Creates an empty file at the given path.
+		/// </summary>
+		/// <param name="file">The path to the file.</param>
 		public static void CreateFile(string file)
 		{
 			File.Create(file).Close();
 		}
 
-        /// <summary>
-        /// Creates a file if the files doesn't already exist.
-        /// </summary>
-        /// <param name="file">The path to the files</param>
-        /// <param name="data">The data to write to the file.</param>
+		/// <summary>
+		/// Creates a file if the files doesn't already exist.
+		/// </summary>
+		/// <param name="file">The path to the files</param>
+		/// <param name="data">The data to write to the file.</param>
 		public static void CreateIfNot(string file, string data = "")
 		{
 			if (!File.Exists(file))
@@ -98,8 +100,8 @@ namespace TShockAPI
 			}
 
 			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
-			CreateIfNot(MotdPath,
-			            "This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
+			CreateIfNot(MotdPath, MotdFormat);
+						
 			CreateIfNot(WhitelistPath);
 			if (File.Exists(ConfigPath))
 			{
