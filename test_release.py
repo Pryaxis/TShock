@@ -4,12 +4,12 @@ import os.path
 import zipfile
 
 def generate_release():
-    zip = zipfile.ZipFile("tshock_release", "r")
+    zip = zipfile.ZipFile("tshock_release.zip", "r")
     zip.extractall()
 
 def generate_configs():
     subprocess.call(['/usr/bin/mono', 'TerrariaServer.exe', '-dump'])
-    if (!os.path.isfile('ConfigDescriptions.txt') || !os.path.isfile('PermissionsDescriptions.txt') || !os.path.isfile('ServerSideConfigDescriptions.txt')):
+    if not os.path.isfile('ConfigDescriptions.txt') or not os.path.isfile('PermissionsDescriptions.txt') or not os.path.isfile('ServerSideConfigDescriptions.txt'):
         raise CalledProcessError(1)
 
 if __name__ == '__main__':
