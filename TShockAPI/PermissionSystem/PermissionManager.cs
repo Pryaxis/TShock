@@ -10,7 +10,6 @@ namespace TShockAPI.PermissionSystem
 		private IPermissionList permissions;
 		private IPermissionList negatedPermissions;
 		private IPermissionList neverPermissions;
-		private List<IPermissionManager> parents;
 
 		private List<String> currentAllowPermissions = new List<string>();
 
@@ -22,7 +21,6 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = new PermissionList();
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
-			this.parents = new List<IPermissionManager>();
 			Refresh();
 		}
 
@@ -31,7 +29,6 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = new PermissionList();
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
-			this.parents = new List<IPermissionManager>();
 			Parse(permissionlist);
 		}
 
@@ -40,7 +37,6 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = permissions;
 			this.negatedPermissions = new PermissionList();
 			this.neverPermissions = new PermissionList();
-			this.parents = new List<IPermissionManager>();
 			Refresh();
 		}
 
@@ -49,7 +45,6 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = permissions;
 			this.negatedPermissions = negatedPermissions;
 			this.neverPermissions = new PermissionList();
-			this.parents = new List<IPermissionManager>();
 			Refresh();
 		}
 
@@ -58,16 +53,6 @@ namespace TShockAPI.PermissionSystem
 			this.permissions = permissions;
 			this.negatedPermissions = negatedPermissions;
 			this.neverPermissions = neverPermissions;
-			this.parents = new List<IPermissionManager>();
-			Refresh();
-		}
-
-		public PermissionManager(PermissionList permissions, PermissionList negatedPermissions, PermissionList neverPermissions, List<IPermissionManager> parents)
-		{
-			this.permissions = permissions;
-			this.negatedPermissions = negatedPermissions;
-			this.neverPermissions = neverPermissions;
-			this.parents = parents;
 			Refresh();
 		}
 
@@ -122,57 +107,24 @@ namespace TShockAPI.PermissionSystem
 
 		public IPermissionList GetPermissions()
 		{
-			List<String> perms = permissions.GetPermissions();
-
-			foreach (var parent in parents)
-			{
-				perms.AddRange(parent.GetPermissions().GetPermissions().Where(p => !perms.Contains(p)));
-			}
-			return new PermissionList(perms);
+			return permissions;
 		}
 
 		public IPermissionList GetNegatedPermissions()
 		{
-			List<String> perms = negatedPermissions.GetPermissions();
-			foreach (var parent in parents)
-			{
-				perms.AddRange(parent.GetNegatedPermissions().GetPermissions().Where(p => !perms.Contains(p)));
-			}
-			return new PermissionList(perms);
+			return negatedPermissions;
 		}
 
 		public IPermissionList GetNeverPermissions()
 		{
-			List<String> perms = neverPermissions.GetPermissions();
-			foreach (var parent in parents)
-			{
-				perms.AddRange(parent.GetNeverPermissions().GetPermissions().Where(p => !perms.Contains(p)));
-			}
-			return new PermissionList(perms);
+			return neverPermissions;
 		}
 
 		public IPermissionList TotalPermissions()
 		{
-			List<String> perms = GetPermissions().GetPermissions();
+			List<String> perms = permissions.GetPermissions();
 			perms.RemoveAll(p => GetNegatedPermissions().HasPermission(p) || GetNeverPermissions().HasPermission(p));
 			return new PermissionList(perms);
-		}
-
-		public void AddParent(IPermissionManager parent)
-		{
-			if (parents.Contains(parent))
-			{
-				return;
-			}
-			
-			parents.Add(parent);
-			Refresh();
-		}
-
-		public void RemoveParent(IPermissionManager parent)
-		{
-			parents.Remove(parent);
-			Refresh();
 		}
 
 		public void Refresh()
@@ -219,7 +171,6 @@ namespace TShockAPI.PermissionSystem
 			permissions = manager.GetPermissions();
 			negatedPermissions = manager.GetNegatedPermissions();
 			neverPermissions = manager.GetNeverPermissions();
-			parents = manager.GetParents();
 			Refresh();
 		}
 
@@ -256,11 +207,6 @@ namespace TShockAPI.PermissionSystem
 			}
 
 			return builder.ToString();
-		}
-
-		public List<IPermissionManager> GetParents()
-		{
-			return parents;
 		}
 	}
 }
