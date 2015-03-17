@@ -29,7 +29,7 @@ namespace TShockAPI.ServerSideCharacters
 	public class ServerSideConfig
 	{
 		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")]
-		public bool Enabled;
+		public bool Enabled = false;
 
 		[Description("How often SSC should save, in minutes.")]
 		public int ServerSideCharacterSave = 5;
