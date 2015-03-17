@@ -1,5 +1,5 @@
 ### Issue Guidelines
-Please follow these simple requirements before posting an issue:
+Please follow these simple requirements before posting a bug report:
 
 - TShock version number
 - Any stack traces that may have happened when the issue occurred
