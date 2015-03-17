@@ -20,6 +20,8 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
 * [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
 
+If your intention is to send a pull request or code change, please join #pull-request in Slack to discuss your changes with the team. For more contributing guidelines, see the contributing file.
+
 ## Download
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
