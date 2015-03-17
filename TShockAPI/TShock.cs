@@ -518,6 +518,8 @@ namespace TShockAPI
 					case "-dump":
 						ConfigFile.DumpDescriptions();
 						Permissions.DumpDescriptions();
+						ServerSideConfig.DumpDescriptions();
+						Environment.Exit(1);
 						break;
 				}
 			}
