@@ -77,6 +77,7 @@ namespace TShockAPI
 		public static StatTracker StatTracker = new StatTracker();
 		public static UpdateManager UpdateManager;
 		public static ILog Log;
+		public static TerrariaPlugin instance;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -116,6 +117,7 @@ namespace TShockAPI
 			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -13, prefix = 0, stack = 1 });
 			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -16, prefix = 0, stack = 1 });
 			Order = 0;
+			instance = this;
 		}
 
 
@@ -261,7 +263,7 @@ namespace TShockAPI
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
-			  ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
@@ -516,6 +518,8 @@ namespace TShockAPI
 					case "-dump":
 						ConfigFile.DumpDescriptions();
 						Permissions.DumpDescriptions();
+						ServerSideConfig.DumpDescriptions();
+						Environment.Exit(1);
 						break;
 				}
 			}

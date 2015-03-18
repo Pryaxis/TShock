@@ -3,9 +3,49 @@ import json
 import sys 
 import os
 import subprocess
+import base64
+import urllib
 
 create_release_url = 'https://api.github.com/repos/NyxStudios/TShock/releases'
+config_doc_get_url = 'https://tshock.atlassian.net/wiki/rest/api/content/%s?expand=body.storage,version,ancestors'
+config_doc_put_url = 'https://tshock.atlassian.net/wiki/rest/api/content/%s'
 
+config_desc_page = "3047451"
+ssc_desc_page = "39845891"
+permissions_desc_page = "3047433"
+
+def get_confluence_page(id):
+    confluence_header = {"Content-Type":"application/json"}
+    r = requests.get(config_doc_get_url % id, auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header)
+    page = json.loads(r.text)
+    return page
+
+def put_confluence_page(page):
+    confluence_header = {"Content-Type":"application/json"}
+    page['version']['number'] = page['version']['number'] + 1    
+    r = requests.put(config_doc_put_url % page['id'], auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header, data=json.dumps(page))
+    page = json.loads(r.text)
+    return page
+
+def update_confluence_page(id, content):
+    page = get_confluence_page(id)
+    page['body']['storage']['value'] = content
+    page['body']['storage']['representation'] = 'storage'
+    put_confluence_page(page)
+    
+def read_and_update_config_on_confluence(id, file):
+    #Read the Config
+    config = ""
+    with open(file, "r") as f:
+        line = f.readline()
+        while (line is not ""):
+            if (config is not ""):
+                config = config + '<br />'
+            config = config + line
+            line = f.readline()
+    #update confluence page
+    update_confluence_page(id, config)
+    
 #Load variables from ENV, which are put there by the bamboo build.
 branch = os.environ["GIT_BRANCH"]
 tag_name = os.environ["bamboo_tag_name"]
@@ -17,7 +57,7 @@ release_name = 'tshock_' + tag_name[1:] + '.zip'
 
 #because we can't find any other secure way to get a token into this script run from bamboo :'(
 with open('/home/bamboo/scripts/token.py') as f:
-    token = f.read().rsplit('=', 1)[1].strip()
+  # token = f.read().rsplit('=', 1)[1].strip()
 
 #invoke the mv command on the artifact from bamboo to the new name above
 subprocess.call('mv tshock_release.zip ' + release_name, shell=True)
@@ -47,3 +87,7 @@ upload_headers = {'Authorization': 'token ' + token, 'Content-Type':'application
 #upload the binary, resulting in a complete binary
 r = requests.post(upload_url, data=open(release_name, 'rb'), headers = upload_headers, verify=False)
 
+
+read_and_update_config_on_confluence(config_desc_page, "ConfigDescriptions.txt")
+read_and_update_config_on_confluence(ssc_desc_page, "ServerSideConfigDescriptions.txt")
+read_and_update_config_on_confluence(permissions_desc_page, "PermissionsDescriptions.txt")

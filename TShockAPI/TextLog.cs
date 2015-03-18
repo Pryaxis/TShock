@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -226,15 +227,17 @@ namespace TShockAPI
 					caller = meth.DeclaringType.Name;
 			}
 
-			try
-			{
-				_logWriter.WriteLine("{0} - {1}: {2}: {3}",
+			var logEntry = String.Format("{0} - {1}: {2}: {3}",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, level.ToString().ToUpper(), message);
+			try
+			{
+				_logWriter.WriteLine(logEntry);
 				_logWriter.Flush();
 			}
 			catch (ObjectDisposedException)
 			{
+				ServerApi.LogWriter.PluginWriteLine(TShock.instance, logEntry, TraceLevel.Error);
 				Console.WriteLine("Unable to write to log as log has been disposed.");
 				Console.WriteLine("{0} - {1}: {2}: {3}",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
