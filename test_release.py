@@ -8,7 +8,7 @@ def generate_release():
     zip.extractall()
 
 def generate_configs():
-    subprocess.call(['/usr/bin/mono', 'TerrariaServer.exe', '-dump'])
+    subprocess.call(['/usr/local/bin/mono', 'TerrariaServer.exe', '-dump'])
     if not os.path.isfile('ConfigDescriptions.txt') or not os.path.isfile('PermissionsDescriptions.txt') or not os.path.isfile('ServerSideConfigDescriptions.txt'):
         raise CalledProcessError(1)
 
