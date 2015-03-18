@@ -34,7 +34,6 @@ These guidelines are to be followed by all developers with commit level access t
 - Deprecation of a function guarantees that it will exist in the given release, but may be removed, at any time following, from subsequent releases without further warning. Warning should be given in the release thread prior to it going live.
 - Updates should be discussed, via pull request of a version tick, prior to release. Only after consensus from active contributing community members has been given can a release happen.
 - Breaking API changes (excluding removal of already deprecated and warned code) should be forewarned with a one week notice on the forums, which may be given at any time prior to release (as soon as a pull request for a version push has been made, an update can be warned).
-- Major changes to the TShock architecture should be discussed in github issue form with the community. These changes include removal of commands, restructuring, improvements, and new features. For example, adding silent command processing or a new REST api level. Consensus is required from at minimum, a majority of contributors present and reachable in the community (plugin authors or commit players) during the last seven days.
 
 #### Pull Request Acceptance Guidelines
 
