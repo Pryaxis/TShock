@@ -20,27 +20,57 @@ using System;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Flags to define which types of message are logged
+	/// </summary>
 	[Flags]
 	public enum LogLevel
 	{
+		/// <summary>
+		/// No messages will be logged
+		/// </summary>
 		None = 0,
+
+		/// <summary>
+		/// Debug messages will be logged
+		/// </summary>
 		Debug = 1,
+
+		/// <summary>
+		/// Informative messages will be logged
+		/// </summary>
 		Info = 2,
+
+		/// <summary>
+		/// Warning message will be logged
+		/// </summary>
 		Warning = 4,
+
+		/// <summary>
+		/// Error messages will be logged
+		/// </summary>
 		Error = 8,
+
+		/// <summary>
+		/// Data messages will be logged
+		/// </summary>
 		Data = 16,
+
+		/// <summary>
+		/// All messages will be logged
+		/// </summary>
 		All = 31
 	}
 
-/// <summary>
-/// Logging interface
-/// </summary>
+	/// <summary>
+	/// Logging interface
+	/// </summary>
 	public interface ILog
 	{
 		/// <summary>
-		/// Log name
+		/// Log file name
 		/// </summary>
-		string Name { get; }
+		string FileName { get; set; }
 
 		/// <summary>
 		/// Checks whether the log level contains the specified flag.
@@ -57,7 +87,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
 		/// </summary>
-		/// <param name="message">The format of the message to be written.</param>
+		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
 		void ConsoleInfo(string format, params object[] args);
 
@@ -92,6 +122,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Error(string message);
+
 		/// <summary>
 		/// Writes an error to the log.
 		/// </summary>

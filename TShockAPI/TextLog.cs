@@ -33,22 +33,9 @@ namespace TShockAPI
 		private readonly LogLevel _logLevel;
 
 		/// <summary>
-		/// Log file name
+		/// File name of the Text log
 		/// </summary>
-		public static string fileName { get; private set; }
-
-		/// <summary>
-		/// Name of the TextLog
-		/// </summary>
-		public string Name
-		{
-			get { return "Text Log Writer"; }
-		}
-
-		public bool Sql
-		{
-			get { return false; }
-		}
+		public string FileName { get; set; }
 
 		/// <summary>
 		/// Creates the log file stream and sets the initial log level.
@@ -58,7 +45,7 @@ namespace TShockAPI
 		/// <param name="clear">Whether or not to clear the log file on initialization.</param>
 		public TextLog(string filename, LogLevel logLevel, bool clear)
 		{
-			fileName = filename;
+			FileName = filename;
 			_logLevel = logLevel;
 			_logWriter = new StreamWriter(filename, !clear);
 		}
