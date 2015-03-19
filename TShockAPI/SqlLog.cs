@@ -31,7 +31,7 @@ namespace TShockAPI
 		public string timestamp;
 		public string message;
 		public string caller;
-		public LogLevel logLevel;
+		public TraceLevel logLevel;
 
 		public override string ToString()
 		{
@@ -45,7 +45,6 @@ namespace TShockAPI
 	/// </summary>
 	public class SqlLog : ILog, IDisposable
 	{
-		private readonly LogLevel _logLevel;
 		private readonly IDbConnection _database;
 		private readonly TextLog _backupLog;
 		private readonly List<LogInfo> _failures = new List<LogInfo>(TShock.Config.RevertToTextLogsOnSqlFailures);
@@ -56,21 +55,19 @@ namespace TShockAPI
 		/// <summary>
 		/// Sets the database connection and the initial log level.
 		/// </summary>
-		/// <param name="logLevel"></param>
 		/// <param name="db"></param>
 		/// <param name="textlogFilepath">File path to a backup text log in case the SQL log fails</param>
 		/// <param name="clearTextLog"></param>
-		public SqlLog(LogLevel logLevel, IDbConnection db, string textlogFilepath, bool clearTextLog)
+		public SqlLog(IDbConnection db, string textlogFilepath, bool clearTextLog)
 		{
 			FileName = string.Format("{0}://database", db.GetSqlType());
-			_logLevel = logLevel;
 			_database = db;
-			_backupLog = new TextLog(textlogFilepath, logLevel, clearTextLog);
+			_backupLog = new TextLog(textlogFilepath, clearTextLog);
 		}
 
-		public bool MayWriteType(LogLevel type)
+		public bool MayWriteType(TraceLevel type)
 		{
-			return ((_logLevel & type) == type);
+			return type != TraceLevel.Off;
 		}
 
 		/// <summary>
@@ -79,7 +76,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Data(string message)
 		{
-			Write(message, LogLevel.Data);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -98,7 +95,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Error(string message)
 		{
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -120,7 +117,7 @@ namespace TShockAPI
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -139,7 +136,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Warn(string message)
 		{
-			Write(message, LogLevel.Warning);
+			Write(message, TraceLevel.Warning);
 		}
 
 		/// <summary>
@@ -158,7 +155,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Info(string message)
 		{
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -180,7 +177,7 @@ namespace TShockAPI
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -199,7 +196,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Debug(string message)
 		{
-			Write(message, LogLevel.Debug);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -212,7 +209,7 @@ namespace TShockAPI
 			Debug(string.Format(format, args));
 		}
 
-		public void Write(string message, LogLevel level)
+		public void Write(string message, TraceLevel level)
 		{
 			if (!MayWriteType(level))
 				return;
@@ -255,7 +252,7 @@ namespace TShockAPI
 						_failures.Add(new LogInfo
 						{
 							caller = "TShock",
-							logLevel = LogLevel.Error,
+							logLevel = TraceLevel.Error,
 							message = string.Format("SQL Log insert query failed: {0}", ex),
 							timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 						});
@@ -286,7 +283,7 @@ namespace TShockAPI
 				foreach (var logInfo in _failures)
 				{
 					_backupLog.Write(string.Format("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
-						LogLevel.Error);
+						TraceLevel.Error);
 				}
 				_failures.Clear();
 			}

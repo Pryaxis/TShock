@@ -30,7 +30,6 @@ namespace TShockAPI
 	public class TextLog : ILog, IDisposable
 	{
 		private readonly StreamWriter _logWriter;
-		private readonly LogLevel _logLevel;
 
 		/// <summary>
 		/// File name of the Text log
@@ -41,27 +40,25 @@ namespace TShockAPI
 		/// Creates the log file stream and sets the initial log level.
 		/// </summary>
 		/// <param name="filename">The output filename. This file will be overwritten if 'clear' is set.</param>
-		/// <param name="logLevel">The <see cref="LogLevel" /> value which sets the type of messages to output.</param>
 		/// <param name="clear">Whether or not to clear the log file on initialization.</param>
-		public TextLog(string filename, LogLevel logLevel, bool clear)
+		public TextLog(string filename, bool clear)
 		{
 			FileName = filename;
-			_logLevel = logLevel;
 			_logWriter = new StreamWriter(filename, !clear);
 		}
 
-		public bool MayWriteType(LogLevel type)
+		public bool MayWriteType(TraceLevel type)
 		{
-			return ((_logLevel & type) == type);
+			return type != TraceLevel.Off;
 		}
 
 		/// <summary>
 		/// Writes data to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Data(String message)
+		public void Data(string message)
 		{
-			Write(message, LogLevel.Data);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -71,16 +68,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Data(string format, params object[] args)
 		{
-			Data(String.Format(format, args));
+			Data(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Error(String message)
+		public void Error(string message)
 		{
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -90,19 +87,19 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Error(string format, params object[] args)
 		{
-			Error(String.Format(format, args));
+			Error(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void ConsoleError(String message)
+		public void ConsoleError(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -112,16 +109,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void ConsoleError(string format, params object[] args)
 		{
-			ConsoleError(String.Format(format, args));
+			ConsoleError(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Warn(String message)
+		public void Warn(string message)
 		{
-			Write(message, LogLevel.Warning);
+			Write(message, TraceLevel.Warning);
 		}
 
 		/// <summary>
@@ -131,16 +128,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Warn(string format, params object[] args)
 		{
-			Warn(String.Format(format, args));
+			Warn(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Info(String message)
+		public void Info(string message)
 		{
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -150,19 +147,19 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Info(string format, params object[] args)
 		{
-			Info(String.Format(format, args));
+			Info(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an informative string to the log file. Also outputs to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void ConsoleInfo(String message)
+		public void ConsoleInfo(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -172,16 +169,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void ConsoleInfo(string format, params object[] args)
 		{
-			ConsoleInfo(String.Format(format, args));
+			ConsoleInfo(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Debug(String message)
+		public void Debug(string message)
 		{
-			Write(message, LogLevel.Debug);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -191,7 +188,7 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Debug(string format, params object[] args)
 		{
-			Debug(String.Format(format, args));
+			Debug(string.Format(format, args));
 		}
 
 		/// <summary>
@@ -199,7 +196,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="level"></param>
-		public void Write(string message, LogLevel level)
+		public void Write(string message, TraceLevel level)
 		{
 			if (!MayWriteType(level))
 				return;
@@ -214,7 +211,7 @@ namespace TShockAPI
 					caller = meth.DeclaringType.Name;
 			}
 
-			var logEntry = String.Format("{0} - {1}: {2}: {3}",
+			var logEntry = string.Format("{0} - {1}: {2}: {3}",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, level.ToString().ToUpper(), message);
 			try

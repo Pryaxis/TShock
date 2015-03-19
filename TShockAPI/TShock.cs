@@ -202,15 +202,10 @@ namespace TShockAPI
 					throw new Exception("Invalid storage type");
 				}
 
-#if DEBUG       
-				var level = LogLevel.All;
-#else
-				var level = LogLevel.All & ~LogLevel.Debug;
-#endif
 				if (Config.UseSqlLogs)
-					Log = new SqlLog(level, DB, logFilename, LogClear);
+					Log = new SqlLog(DB, logFilename, LogClear);
 				else
-					Log = new TextLog(logFilename, level, LogClear);
+					Log = new TextLog(logFilename, LogClear);
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{

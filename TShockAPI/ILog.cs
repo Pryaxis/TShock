@@ -17,51 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Diagnostics;
 
 namespace TShockAPI
 {
-	/// <summary>
-	/// Flags to define which types of message are logged
-	/// </summary>
-	[Flags]
-	public enum LogLevel
-	{
-		/// <summary>
-		/// No messages will be logged
-		/// </summary>
-		None = 0,
-
-		/// <summary>
-		/// Debug messages will be logged
-		/// </summary>
-		Debug = 1,
-
-		/// <summary>
-		/// Informative messages will be logged
-		/// </summary>
-		Info = 2,
-
-		/// <summary>
-		/// Warning message will be logged
-		/// </summary>
-		Warning = 4,
-
-		/// <summary>
-		/// Error messages will be logged
-		/// </summary>
-		Error = 8,
-
-		/// <summary>
-		/// Data messages will be logged
-		/// </summary>
-		Data = 16,
-
-		/// <summary>
-		/// All messages will be logged
-		/// </summary>
-		All = 31
-	}
-
 	/// <summary>
 	/// Logging interface
 	/// </summary>
@@ -76,7 +35,7 @@ namespace TShockAPI
 		/// Checks whether the log level contains the specified flag.
 		/// </summary>
 		/// <param name="type">The <see cref="LogLevel" /> value to check.</param>
-		bool MayWriteType(LogLevel type);
+		bool MayWriteType(TraceLevel type);
 
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
@@ -161,13 +120,13 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">Message to write</param>
 		/// <param name="level">LogLevel assosciated with the message</param>
-		void Write(string message, LogLevel level);
+		void Write(string message, TraceLevel level);
 
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		void Debug(String message);
+		void Debug(string message);
 
 		/// <summary>
 		/// Writes a debug string to the log file.
