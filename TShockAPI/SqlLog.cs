@@ -22,6 +22,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using MySql.Data.MySqlClient;
 using TShockAPI.DB;
 
 namespace TShockAPI
@@ -55,7 +56,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Sets the database connection and the initial log level.
 		/// </summary>
-		/// <param name="db"></param>
+		/// <param name="db">Database connection</param>
 		/// <param name="textlogFilepath">File path to a backup text log in case the SQL log fails</param>
 		/// <param name="clearTextLog"></param>
 		public SqlLog(IDbConnection db, string textlogFilepath, bool clearTextLog)
@@ -63,6 +64,20 @@ namespace TShockAPI
 			FileName = string.Format("{0}://database", db.GetSqlType());
 			_database = db;
 			_backupLog = new TextLog(textlogFilepath, clearTextLog);
+
+			var table = new SqlTable("Logs",
+				new SqlColumn("ID", MySqlDbType.Int32) {AutoIncrement = true, Primary = true},
+				new SqlColumn("TimeStamp", MySqlDbType.Text),
+				new SqlColumn("LogLevel", MySqlDbType.Int32),
+				new SqlColumn("Caller", MySqlDbType.Text),
+				new SqlColumn("Message", MySqlDbType.Text)
+				);
+
+			var creator = new SqlTableCreator(db,
+											  db.GetSqlType() == SqlType.Sqlite
+												? (IQueryBuilder)new SqliteQueryCreator()
+												: new MysqlQueryCreator());
+			creator.EnsureTableStructure(table);
 		}
 
 		public bool MayWriteType(TraceLevel type)
@@ -232,9 +247,8 @@ namespace TShockAPI
 					return;
 				}
 
-				_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
-					level, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-					caller, message);
+				_database.Query("INSERT INTO Logs (TimeStamp, Caller, LogLevel, Message) VALUES (@0, @1, @2, @3)",
+					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), caller, (int)level, message);
 
 				var success = true;
 				while (_failures.Count > 0 && success)
@@ -243,8 +257,8 @@ namespace TShockAPI
 
 					try
 					{
-						_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
-							info.logLevel, info.timestamp, info.caller, info.message);
+						_database.Query("INSERT INTO Logs (TimeStamp, Caller, LogLevel, Message) VALUES (@0, @1, @2, @3)",
+							info.timestamp, info.caller, (int)info.logLevel, info.message);
 					}
 					catch (Exception ex)
 					{
