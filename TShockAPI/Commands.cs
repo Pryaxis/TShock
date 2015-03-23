@@ -4427,7 +4427,7 @@ namespace TShockAPI
 
 			if (args.Player.Group.Name == "superadmin")
 			{
-				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. http://tshock.co/");
+				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. https://tshock.co/");
 				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
 				args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
 				args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
@@ -4449,7 +4449,8 @@ namespace TShockAPI
 
 			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
 			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Thank you for using TShock! https://tshock.co/ & https://github.com/TShock/TShock");
+			args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+			args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
 			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
 			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
 			TShock.AuthToken = 0;
