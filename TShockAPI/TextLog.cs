@@ -212,7 +212,7 @@ namespace TShockAPI
 			}
 
 			var logEntry = string.Format("{0} - {1}: {2}: {3}",
-					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+					DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, level.ToString().ToUpper(), message);
 			try
 			{
@@ -224,7 +224,7 @@ namespace TShockAPI
 				ServerApi.LogWriter.PluginWriteLine(TShock.instance, logEntry, TraceLevel.Error);
 				Console.WriteLine("Unable to write to log as log has been disposed.");
 				Console.WriteLine("{0} - {1}: {2}: {3}",
-					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+					DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
 					caller, level.ToString().ToUpper(), message);
 			}
 		}

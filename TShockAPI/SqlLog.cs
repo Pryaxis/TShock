@@ -248,7 +248,7 @@ namespace TShockAPI
 				}
 
 				_database.Query("INSERT INTO Logs (TimeStamp, Caller, LogLevel, Message) VALUES (@0, @1, @2, @3)",
-					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), caller, (int)level, message);
+					DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), caller, (int)level, message);
 
 				var success = true;
 				while (_failures.Count > 0 && success)
@@ -268,7 +268,7 @@ namespace TShockAPI
 							caller = "TShock",
 							logLevel = TraceLevel.Error,
 							message = string.Format("SQL Log insert query failed: {0}", ex),
-							timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+							timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 						});
 					}
 
@@ -285,7 +285,7 @@ namespace TShockAPI
 					logLevel = level,
 					message = message,
 					caller = caller,
-					timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+					timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 				});
 			}
 
