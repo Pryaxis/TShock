@@ -35,6 +35,7 @@ using Rests;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
+using TShockAPI.Hooks;
 using TShockAPI.Net;
 using TShockAPI.ServerSideCharacters;
 
@@ -322,7 +323,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -335,29 +336,29 @@ namespace TShockAPI
 			base.Dispose(disposing);
 		}
 
-	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
-	    {
-	        User u = Users.GetUserByName(args.Player.UserAccountName);
-            List<String> KnownIps = new List<string>();
-	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
-	        {
-                KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
-	        }
+		private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
+		{
+			User u = Users.GetUserByName(args.Player.UserAccountName);
+			List<String> KnownIps = new List<string>();
+			if (!string.IsNullOrWhiteSpace(u.KnownIps))
+			{
+				KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
+			}
 
-	        bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
-	        if (!found)
-	        {
-	            if (KnownIps.Count == 100)
-	            {
-	                KnownIps.RemoveAt(0);
-	            }
+			bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
+			if (!found)
+			{
+				if (KnownIps.Count == 100)
+				{
+					KnownIps.RemoveAt(0);
+				}
 
-                KnownIps.Add(args.Player.IP);
-	        }
+				KnownIps.Add(args.Player.IP);
+			}
 
-            u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-	        Users.UpdateLogin(u);
-	    }
+			u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+			Users.UpdateLogin(u);
+		}
 
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
