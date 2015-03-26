@@ -28,6 +28,7 @@ using System.Threading;
 using Terraria;
 using TShockAPI.DB;
 using TerrariaApi.Server;
+using TShockAPI.Hooks;
 
 namespace TShockAPI
 {
@@ -227,6 +228,12 @@ namespace TShockAPI
 				AllowServer = false,
 				DoLog = false,
 				HelpText = "Logs you into an account."
+			});
+			add(new Command(Permissions.canlogout, Logout, "logout")
+			{
+				AllowServer = false,
+				DoLog = false,
+				HelpText = "Logs you out of your current account."
 			});
 			add(new Command(Permissions.canchangepassword, PasswordUser, "password")
 			{
@@ -441,6 +448,11 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Teleports you to tile coordinates."
+			});
+			add(new Command(Permissions.getpos, GetPos, "pos")
+			{
+				AllowServer = false,
+				HelpText = "Returns the user's or specified user's current position."
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
@@ -843,6 +855,26 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("There was an error processing your request.");
 				TShock.Log.Error(ex.ToString());
 			}
+		}
+
+		private static void Logout(CommandArgs args)
+		{
+			if (!args.Player.IsLoggedIn)
+			{
+				args.Player.SendErrorMessage("You are not logged in.");
+				return;
+			}
+
+			PlayerHooks.OnPlayerLogout(args.Player);
+
+			args.Player.PlayerData = new PlayerData(args.Player);
+			args.Player.Group = null;
+			args.Player.tempGroup = TShockAPI.Group.DefaultGroup;
+			args.Player.UserAccountName = null;
+			args.Player.UserID = -1;
+			args.Player.IsLoggedIn = false;
+
+			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 		}
 
 		private static void PasswordUser(CommandArgs args)
@@ -2322,6 +2354,29 @@ namespace TShockAPI
 			var target = matches[0];
 			args.Player.Teleport(target.position.X, target.position.Y);
 			args.Player.SendSuccessMessage("Teleported to the '{0}'.", target.name);
+		}
+
+		private static void GetPos(CommandArgs args)
+		{
+			var player = args.Player.Name;
+			if (args.Parameters.Count > 0)
+			{
+				player = String.Join(" ", args.Parameters);
+			}
+
+			var players = TShock.Utils.FindPlayer(player);
+			if (players.Count == 0)
+			{
+				args.Player.SendErrorMessage("Invalid player!");
+			}
+			else if (players.Count > 1)
+			{
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			}
+			else
+			{
+				args.Player.SendSuccessMessage("Location of {0} is ({1}, {2}).", players[0].Name, players[0].TileX, players[0].TileY);
+			}
 		}
 
 		private static void TPPos(CommandArgs args)

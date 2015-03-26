@@ -37,6 +37,16 @@ namespace TShockAPI.Hooks
 		public string Password { get; set; }
 	}
 
+	public class PlayerLogoutEventArgs
+	{
+		public TSPlayer Player { get; set; }
+
+		public PlayerLogoutEventArgs(TSPlayer player)
+		{
+			Player = player;
+		}
+	}
+
 	public class PlayerCommandEventArgs : HandledEventArgs
 	{
 		public TSPlayer Player { get; set; }
@@ -61,6 +71,9 @@ namespace TShockAPI.Hooks
 
 		public delegate void PlayerPreLoginD(PlayerPreLoginEventArgs e);
 		public static event PlayerPreLoginD PlayerPreLogin;
+
+		public delegate void PlayerLogoutD(PlayerLogoutEventArgs e);
+		public static event PlayerLogoutD PlayerLogout;
 
 		public delegate void PlayerCommandD(PlayerCommandEventArgs e);
 		public static event PlayerCommandD PlayerCommand;
@@ -106,6 +119,15 @@ namespace TShockAPI.Hooks
 			var args = new PlayerPreLoginEventArgs {Player = ply, LoginName = name, Password = pass};
 			PlayerPreLogin(args);
 			return args.Handled;
+		}
+
+		public static void OnPlayerLogout(TSPlayer ply)
+		{
+			if (PlayerLogout == null)
+				return;
+
+			var args = new PlayerLogoutEventArgs(ply);
+			PlayerLogout(args);
 		}
 
 		public static void OnPlayerChat(TSPlayer ply, string rawtext, ref string tshockText)
