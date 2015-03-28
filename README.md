@@ -12,6 +12,7 @@ TShock is a server modification for Terraria, written in C#, and based upon the 
 * Reserved slots
 * User punishment (kicking, banning, muting)
 * Server side characters
+* JSON based configuration management
 
 ## Community
 
