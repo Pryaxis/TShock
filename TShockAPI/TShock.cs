@@ -515,6 +515,7 @@ namespace TShockAPI
 						ConfigFile.DumpDescriptions();
 						Permissions.DumpDescriptions();
 						ServerSideConfig.DumpDescriptions();
+						RestManager.DumpDescriptions();
 						Environment.Exit(1);
 						break;
 				}

@@ -19,8 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using HttpServer;
 using Rests;
 using Terraria;
@@ -28,6 +31,43 @@ using TShockAPI.DB;
 
 namespace TShockAPI
 {
+	[AttributeUsage(AttributeTargets.Method)]
+	public class RouteAttribute : Attribute
+	{
+		public string Route { get; set; }
+
+		public RouteAttribute(string route)
+		{
+			Route = route;
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Verb : Attribute
+	{
+		public string Name { get; set; }
+		public bool Required { get; set; }
+
+		public Verb(string name, bool req)
+		{
+			Name = name;
+			Required = req;
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Noun : Attribute
+	{
+		public string Name { get; set; }
+		public bool Required { get; set; }
+
+		public Noun(string name, bool req)
+		{
+			Name = name;
+			Required = req;
+		}
+	}
+
 	public class RestManager
 	{
 		private Rest Rest;
@@ -106,6 +146,10 @@ namespace TShockAPI
 
 		#region RestServerMethods
 
+		[Description("Executes a remote command on the server, and returns the output of the command.")]
+		[RouteAttribute("/v2/server/rawcmd")]
+		[Noun("cmd", true)]
+		[Noun("token", true)]
 		private object ServerCommand(RestRequestArgs args)
 		{
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
@@ -756,6 +800,57 @@ namespace TShockAPI
 		#endregion
 
 		#region Utility Methods
+
+		public static void DumpDescriptions()
+		{
+			var sb = new StringBuilder();
+			var rest = new RestManager(null);
+
+			foreach (var method in rest.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static).OrderBy(f => f.Name))
+			{
+				if (method.IsStatic)
+					continue;
+
+				var name = method.Name;
+
+				var descattr =
+					method.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
+				var routeattr =
+					method.GetCustomAttributes(false).FirstOrDefault(o => o is RouteAttribute) as RouteAttribute;
+
+				if (descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) && routeattr != null && !string.IsNullOrWhiteSpace(routeattr.Route))
+				{
+					sb.AppendLine("{0}  ".SFormat(name));
+					sb.AppendLine("Description: {0}  ".SFormat(descattr.Description));
+
+
+					var verbs = method.GetCustomAttributes(false).Where(o => o is Verb);
+					if (verbs.Count() > 0)
+					{
+						sb.AppendLine("Verbs:");
+						foreach (Verb verb in verbs)
+						{
+							sb.AppendLine("\t{0} - {1}".SFormat(verb.Name, verb.Required ? "Required" : "Optional"));
+						}
+					}
+
+					var nouns = method.GetCustomAttributes(false).Where(o => o is Noun);
+					if (nouns.Count() > 0)
+					{
+						sb.AppendLine("Nouns:");
+						foreach (Noun noun in nouns)
+						{
+							sb.AppendLine("\t{0} - {1}".SFormat(noun.Name, noun.Required ? "Required" : "Optional"));
+						}
+					}
+					sb.AppendLine("Example Usage: {0}?{1}".SFormat(routeattr.Route,
+						string.Join("&", nouns.Select(n => String.Format("{0}={0}", ((Noun) n).Name)))));
+					sb.AppendLine();
+				}
+			}
+
+			File.WriteAllText("RestDescriptions.txt", sb.ToString());
+		}
 
 		private RestObject RestError(string message, string status = "400")
 		{
