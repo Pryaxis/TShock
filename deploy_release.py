@@ -13,6 +13,7 @@ config_doc_put_url = 'https://tshock.atlassian.net/wiki/rest/api/content/%s'
 config_desc_page = "3047451"
 ssc_desc_page = "39845891"
 permissions_desc_page = "3047433"
+rest_desc_page = "40632322"
 
 def get_confluence_page(id):
     confluence_header = {"Content-Type":"application/json"}
@@ -91,3 +92,4 @@ r = requests.post(upload_url, data=open(release_name, 'rb'), headers = upload_he
 read_and_update_config_on_confluence(config_desc_page, "ConfigDescriptions.txt")
 read_and_update_config_on_confluence(ssc_desc_page, "ServerSideConfigDescriptions.txt")
 read_and_update_config_on_confluence(permissions_desc_page, "PermissionsDescriptions.txt")
+read_and_update_config_on_confluence(rest_desc_page, "RestDescriptions.txt")

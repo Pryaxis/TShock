@@ -9,7 +9,7 @@ def generate_release():
 
 def generate_configs():
     subprocess.call(['/usr/local/bin/mono', 'TerrariaServer.exe', '-dump'])
-    if not os.path.isfile('ConfigDescriptions.txt') or not os.path.isfile('PermissionsDescriptions.txt') or not os.path.isfile('ServerSideConfigDescriptions.txt'):
+    if not os.path.isfile('ConfigDescriptions.txt') or not os.path.isfile('PermissionsDescriptions.txt') or not os.path.isfile('ServerSideConfigDescriptions.txt') or not os.path.isfile('RestDescriptions.txt'):
         raise CalledProcessError(1)
 
 if __name__ == '__main__':
