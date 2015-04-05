@@ -166,7 +166,7 @@ namespace TShockAPI
 
 		#region RestServerMethods
 
-		[Description("Deprecated: Executes a remote command on the server, and returns the output of the command.")]
+		[Description("Executes a remote command on the server, and returns the output of the command.")]
 		[RouteAttribute("/v2/server/rawcmd")]
 		[Permission(RestPermissions.restrawcommand)]
 		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
@@ -275,6 +275,9 @@ namespace TShockAPI
 			return RestResponse("The message was broadcasted successfully");
 		}
 
+		[Description("Returns the motd, if it exists.")]
+		[Route("/v3/server/motd")]
+		[Token]
 		private object ServerMotd(RestRequestArgs args)
 		{
 			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
@@ -287,6 +290,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Returns the rules, if they exist.")]
+		[Route("/v3/server/rules")]
+		[Token]
 		private object ServerRules(RestRequestArgs args)
 		{
 			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
@@ -299,6 +305,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Returns the current status of the server.")]
+		[Route("/status")]
+		[Token]
 		private object ServerStatus(RestRequestArgs args)
 		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
@@ -311,6 +320,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Get a list of information about the current TShock server.")]
+		[Route("/v2/server/status")]
+		[Token]
 		private object ServerStatusV2(RestRequestArgs args)
 		{
 			var ret = new RestObject()
@@ -553,6 +565,13 @@ namespace TShockAPI
 			return RestResponse("Ban created successfully");
 		}
 
+		[Description("Delete an existing ban entry.")]
+		[Route("/v2/bans/destroy")]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("ban", true, "The search criteria, either an IP address or a name.", typeof(String))]
+		[Noun("type", true, "The type of search criteria, 'ip' or 'name'.  Also used as the method of removing from the database.", typeof(String))]
+		[Noun("caseinsensitive", false, "Name lookups should be case insensitive.", typeof(bool))]
+		[Token]
 		private object BanDestroyV2(RestRequestArgs args)
 		{
 			var ret = BanFind(args.Parameters);
