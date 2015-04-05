@@ -375,11 +375,19 @@ namespace TShockAPI
 
 		#region RestUserMethods
 
+		[Description("Returns the list of user accounts that are currently in use on the server.")]
+		[Route("/v2/users/activelist")]
+		[Permission(RestPermissions.restviewusers)]
+		[Token]
 		private object UserActiveListV2(RestRequestArgs args)
 		{
 			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.UserAccountName && p.Active).Select(p => p.UserAccountName)) } };
 		}
 
+		[Description("Lists all user accounts in the TShock database.")]
+		[Route("/v2/users/list")]
+		[Permission(RestPermissions.restviewusers)]
+		[Token]
 		private object UserListV2(RestRequestArgs args)
 		{
 			return new RestObject() { { "users", TShock.Users.GetUsers().Select(p => new Dictionary<string,object>(){
@@ -389,6 +397,13 @@ namespace TShockAPI
 			}) } };
 		}
 
+		[Description("Create a new TShock user account.")]
+		[Route("/v2/users/create")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The user account name for the new account.", typeof(String))]
+		[Noun("group", false, "The group the new account should be assigned.", typeof(String))]
+		[Noun("password", true, "The password for the new account.", typeof(String))]
+		[Token]
 		private object UserCreateV2(RestRequestArgs args)
 		{
 			var username = args.Parameters["user"];
@@ -417,6 +432,14 @@ namespace TShockAPI
 			return RestResponse("User was successfully created");
 		}
 
+		[Description("Update a users information.")]
+		[Route("/v2/users/update")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Noun("password", false, "The users new password, and at least this or group must be defined.", typeof(String))]
+		[Noun("group", false, "The new group for the user, at least this or password must be defined.", typeof(String))]
+		[Token]
 		private object UserUpdateV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
@@ -459,6 +482,12 @@ namespace TShockAPI
 			return response;
 		}
 
+		[Description("Destroy a TShock user account.")]
+		[Route("/v2/users/destroy")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Token]
 		private object UserDestroyV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
@@ -477,6 +506,12 @@ namespace TShockAPI
 			return RestResponse("User deleted successfully");
 		}
 
+		[Description("List detailed information for a user account.")]
+		[Route("/v2/users/read")]
+		[Permission(RestPermissions.restviewusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Token]
 		private object UserInfoV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
