@@ -79,7 +79,7 @@ namespace TShockAPI
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class Verb : ParameterAttribute
 	{
-		public Verb(string name, bool req, string desc, Type type) : base(name, req, desc, type) { }
+		public Verb(string name, string desc, Type type) : base(name, true, desc, type) { }
 	}
 
 	[AttributeUsage(AttributeTargets.Method)]
@@ -140,9 +140,9 @@ namespace TShockAPI
 			// World Commands
 			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
 			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
-			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bloodmoon}", WorldBloodmoon, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{state}", WorldChangeSaveSettings, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
@@ -651,16 +651,24 @@ namespace TShockAPI
 
 		#region RestWorldMethods
 
+		[Route("/v2/world/autosave/state/{state}")]
+		[Permission(RestPermissions.restcfg)]
+		[Verb("state", "The status for autosave.", typeof(bool))]
+		[Token]
 		private object WorldChangeSaveSettings(RestRequestArgs args)
 		{
 			bool autoSave;
-			if (!bool.TryParse(args.Verbs["bool"], out autoSave))
+			if (!bool.TryParse(args.Verbs["state"], out autoSave))
 				return RestInvalidParam("state");
 			TShock.Config.AutoSave = autoSave;
 
 			return RestResponse("AutoSave has been set to " + autoSave);
 		}
 
+		[Description("Save the world.")]
+		[Route("/v2/world/save")]
+		[Permission(RestPermissions.restcfg)]
+		[Token]
 		private object WorldSave(RestRequestArgs args)
 		{
 			SaveManager.Instance.SaveWorld();
@@ -668,6 +676,11 @@ namespace TShockAPI
 			return RestResponse("World saved");
 		}
 
+		[Description("Butcher npcs.")]
+		[Route("/v2/world/butcher")]
+		[Permission(RestPermissions.restbutcher)]
+		[Noun("killfriendly", false, "Should friendly npcs be butchered.", typeof(bool))]
+		[Token]
 		private object WorldButcher(RestRequestArgs args)
 		{
 			bool killFriendly;
@@ -687,6 +700,9 @@ namespace TShockAPI
 			return RestResponse(killcount + " NPCs have been killed");
 		}
 
+		[Description("Get information regarding the world.")]
+		[Route("/world/read")]
+		[Token]
 		private object WorldRead(RestRequestArgs args)
 		{
 			return new RestObject()
@@ -700,6 +716,10 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Drops a meteor on the world.")]
+		[Route("/world/meteor")]
+		[Permission(RestPermissions.restcauseevents)]
+		[Token]
 		private object WorldMeteor(RestRequestArgs args)
 		{
 			if (null == WorldGen.genRand)
@@ -708,10 +728,15 @@ namespace TShockAPI
 			return RestResponse("Meteor has been spawned");
 		}
 
+		[Description("Toggle the status of blood moon.")]
+		[Route("/world/bloodmoon/{bloodmoon}")]
+		[Permission(RestPermissions.restcauseevents)]
+		[Verb("bloodmoon", "State of bloodmoon.", typeof(bool))]
+		[Token]
 		private object WorldBloodmoon(RestRequestArgs args)
 		{
 			bool bloodmoon;
-			if (!bool.TryParse(args.Verbs["bool"], out bloodmoon))
+			if (!bool.TryParse(args.Verbs["bloodmoon"], out bloodmoon))
 				return RestInvalidParam("bloodmoon");
 			Main.bloodMoon = bloodmoon;
 
