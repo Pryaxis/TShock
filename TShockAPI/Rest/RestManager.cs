@@ -747,22 +747,38 @@ namespace TShockAPI
 
 		#region RestPlayerMethods
 
+		[Description("Unmute a player.")]
+		[Route("/v2/players/unmute")]
+		[Permission(RestPermissions.restmute)]
+		[Noun("player", true, "The player to mute.", typeof(String))]
+		[Token]
 		private object PlayerUnMute(RestRequestArgs args)
 		{
 			return PlayerSetMute(args.Parameters, false);
 		}
 
+		[Description("Mute a player.")]
+		[Route("/v2/players/mute")]
+		[Permission(RestPermissions.restmute)]
+		[Noun("player", true, "The player to mute.", typeof(String))]
+		[Token]
 		private object PlayerMute(RestRequestArgs args)
 		{
 			return PlayerSetMute(args.Parameters, true);
 		}
 
+		[Description("List all player names that are currently on the server.")]
+		[Route("/lists/players")]
+		[Token]
 		private object PlayerList(RestRequestArgs args)
 		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
 			return new RestObject() { { "players", string.Join(", ", activeplayers.Select(p => p.name)) } };
 		}
 
+		[Description("Fetches detailed user information on all connected users, and can be filtered by specifying a key value pair filter users where the key is a field and the value is a users field value.")]
+		[Route("/v2/players/list")]
+		[Token]
 		private object PlayerListV2(RestRequestArgs args)
 		{
 			var playerList = new ArrayList();
@@ -775,6 +791,11 @@ namespace TShockAPI
 			return new RestObject() { { "players", playerList } };
 		}
 
+		[Description("Get information for a user.")]
+		[Route("/v2/players/read")]
+		[Permission(RestPermissions.restuserinfo)]
+		[Noun("player", true, "The player to lookup", typeof(String))]
+		[Token]
 		private object PlayerReadV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -795,6 +816,11 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Get information for a user.")]
+		[Route("/v3/players/read")]
+		[Permission(RestPermissions.restuserinfo)]
+		[Noun("player", true, "The player to lookup", typeof(String))]
+		[Token]
 		private object PlayerReadV3(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -819,6 +845,12 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Kick a player off the server.")]
+		[Route("/v2/players/kick")]
+		[Permission(RestPermissions.restkick)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("reason", false, "The reason the player was kicked.", typeof(String))]
+		[Token]
 		private object PlayerKickV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -830,6 +862,13 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
+		[Description("Add a ban to the database.")]
+		[Route("/v2/players/ban")]
+		[Permission(RestPermissions.restban)]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("reason", false, "The reason the user was banned.", typeof(String))]
+		[Token]
 		private object PlayerBanV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -843,6 +882,12 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 
+		[Description("Kill a player.")]
+		[Route("/v2/players/kill")]
+		[Permission(RestPermissions.restkill)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("from", false, "Who killed the player.", typeof(String))]
+		[Token]
 		private object PlayerKill(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
