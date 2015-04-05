@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using HttpServer;
 using Rests;
@@ -526,6 +527,13 @@ namespace TShockAPI
 
 		#region RestBanMethods
 
+		[Description("Create a new ban entry.")]
+		[Route("/bans/create")]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("ip", false, "The IP to ban, at least this or name must be specified.", typeof(String))]
+		[Noun("name", false, "The name to ban, at least this or ip must be specified.", typeof(String))]
+		[Noun("reason", false, "The reason to assign to the ban.", typeof(String))]
+		[Token]
 		private object BanCreate(RestRequestArgs args)
 		{
 			var ip = args.Parameters["ip"];
@@ -577,6 +585,13 @@ namespace TShockAPI
 			return RestResponse("Ban deleted successfully");
 		}
 
+		[Description("View the details of a specific ban.")]
+		[Route("/v2/bans/read")]
+		[Permission(RestPermissions.restviewbans)]
+		[Noun("ban", true, "The search criteria, either an IP address or a name.", typeof(String))]
+		[Noun("type", true, "The type of search criteria, 'ip' or 'name'.", typeof(String))]
+		[Noun("caseinsensitive", false, "Name lookups should be case insensitive.", typeof(bool))]
+		[Token]
 		private object BanInfoV2(RestRequestArgs args)
 		{
 			var ret = BanFind(args.Parameters);
@@ -591,6 +606,10 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("View all bans in the TShock database.")]
+		[Route("/v2/bans/list")]
+		[Permission(RestPermissions.restviewbans)]
+		[Token]
 		private object BanListV2(RestRequestArgs args)
 		{
 			var banList = new ArrayList();
