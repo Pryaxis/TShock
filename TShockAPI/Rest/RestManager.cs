@@ -905,6 +905,10 @@ namespace TShockAPI
 
 		#region RestGroupMethods
 
+		[Description("View all groups in the TShock database.")]
+		[Route("/v2/groups/list")]
+		[Permission(RestPermissions.restviewgroups)]
+		[Token]
 		private object GroupList(RestRequestArgs args)
 		{
 			var groups = new ArrayList();
@@ -915,6 +919,11 @@ namespace TShockAPI
 			return new RestObject() { { "groups", groups } };
 		}
 
+		[Description("Display information of a group.")]
+		[Route("/v2/groups/read")]
+		[Permission(RestPermissions.restviewgroups)]
+		[Noun("group", true, "The group name to get information on.", typeof(String))]
+		[Token]
 		private object GroupInfo(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -932,6 +941,11 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Delete a group.")]
+		[Route("/v2/groups/destroy")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The group name to delete.", typeof(String))]
+		[Token]
 		private object GroupDestroy(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -951,6 +965,14 @@ namespace TShockAPI
 			return RestResponse("Group '" + group.Name + "' deleted successfully");
 		}
 
+		[Description("Create a new group.")]
+		[Route("/v2/groups/create")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The name of the new group.", typeof(String))]
+		[Noun("parent", false, "The name of the parent group.", typeof(String))]
+		[Noun("permissions", false, "A comma seperated list of permissions for the new group.", typeof(String))]
+		[Noun("chatcolor", false, "A r,g,b string representing the color for this groups chat.", typeof(String))]
+		[Token]
 		private object GroupCreate(RestRequestArgs args)
 		{
 			var name = args.Parameters["group"];
@@ -968,6 +990,13 @@ namespace TShockAPI
 			return RestResponse("Group '" + name + "' created successfully");
 		}
 
+		[Route("/v2/groups/update")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The name of the group to modify.", typeof(String))]
+		[Noun("parent", false, "The name of the new parent for this group.", typeof(String))]
+		[Noun("chatcolor", false, "The new chat color r,g,b.", typeof(String))]
+		[Noun("permisisons", false, "The new comma seperated list of permissions.", typeof(String))]
+		[Token]
 		private object GroupUpdate(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -1016,6 +1045,15 @@ namespace TShockAPI
 					sb.AppendLine("{0}  ".SFormat(name));
 					sb.AppendLine("Description: {0}  ".SFormat(descattr.Description));
 
+					var permission = method.GetCustomAttributes(false).Where(o => o is Permission);
+					if (permission.Count() > 0)
+					{
+						sb.AppendLine("Permissions: {0}".SFormat(String.Join(", ", permission.Select(p => ((Permission)p).Name))));
+					}
+					else
+					{
+						sb.AppendLine("No special permissions are required for this route.");
+					}
 
 					var verbs = method.GetCustomAttributes(false).Where(o => o is Verb);
 					if (verbs.Count() > 0)
@@ -1023,7 +1061,7 @@ namespace TShockAPI
 						sb.AppendLine("Verbs:");
 						foreach (Verb verb in verbs)
 						{
-							sb.AppendLine("\t{0} - {1}".SFormat(verb.Name, verb.Required ? "Required" : "Optional"));
+							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(verb.Name, verb.Required ? "Required" : "Optional", verb.ArgumentType.Name, verb.Description));
 						}
 					}
 
@@ -1033,7 +1071,7 @@ namespace TShockAPI
 						sb.AppendLine("Nouns:");
 						foreach (Noun noun in nouns)
 						{
-							sb.AppendLine("\t{0} - {1}".SFormat(noun.Name, noun.Required ? "Required" : "Optional"));
+							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(noun.Name, noun.Required ? "Required" : "Optional", noun.ArgumentType.Name, noun.Description));
 						}
 					}
 					sb.AppendLine("Example Usage: {0}?{1}".SFormat(routeattr.Route,
