@@ -25,66 +25,66 @@ namespace Rests
 		// tshock.rest.bans nodes
 
 		[Description("REST user can list and get detailed information about bans.")]
-		public static readonly string restviewbans = "tshock.rest.bans.view";
+		public const string restviewbans = "tshock.rest.bans.view";
 
 		[Description("REST user can alter bans.")]
-		public static readonly string restmanagebans = "tshock.rest.bans.manage";
+		public const string restmanagebans = "tshock.rest.bans.manage";
 
 		// tshock.rest.groups nodes
 
 		[Description("REST user can list and get detailed information about groups.")]
-		public static readonly string restviewgroups = "tshock.rest.groups.view";
+		public const string restviewgroups = "tshock.rest.groups.view";
 
 		[Description("REST user can alter groups.")]
-		public static readonly string restmanagegroups = "tshock.rest.groups.manage";
+		public const string restmanagegroups = "tshock.rest.groups.manage";
 
 		// tshock.rest.users nodes
 
 		[Description("REST user can list and get detailed information about users.")]
-		public static readonly string restviewusers = "tshock.rest.users.view";
+		public const string restviewusers = "tshock.rest.users.view";
 
 		[Description("REST user can alter users.")]
-		public static readonly string restmanageusers = "tshock.rest.users.manage";
+		public const string restmanageusers = "tshock.rest.users.manage";
 
 		[Description("REST user can get user information.")]
-		public static readonly string restuserinfo = "tshock.rest.users.info";
+		public const string restuserinfo = "tshock.rest.users.info";
 
 		// Non-grouped nodes
 
 		[Description("User can create REST tokens.")]
-		public static readonly string restapi = "tshock.rest.useapi";
+		public const string restapi = "tshock.rest.useapi";
 
 		[Description("User or REST user can destroy all REST tokens.")]
-		public static readonly string restmanage = "tshock.rest.manage";
+		public const string restmanage = "tshock.rest.manage";
 
 		[Description("REST user can turn off / restart the server.")]
-		public static readonly string restmaintenance = "tshock.rest.maintenance";
+		public const string restmaintenance = "tshock.rest.maintenance";
 
 		[Description("REST user can reload configurations, save the world and set auto save settings.")]
-		public static readonly string restcfg = "tshock.rest.cfg";
+		public const string restcfg = "tshock.rest.cfg";
 
 		[Description("REST user can kick players.")]
-		public static readonly string restkick = "tshock.rest.kick";
+		public const string restkick = "tshock.rest.kick";
 
 		[Description("REST user can ban players.")]
-		public static readonly string restban = "tshock.rest.ban";
+		public const string restban = "tshock.rest.ban";
 
 		[Description("REST user can mute and unmute players.")]
-		public static readonly string restmute = "tshock.rest.mute";
+		public const string restmute = "tshock.rest.mute";
 
 		[Description("REST user can kill players.")]
-		public static readonly string restkill = "tshock.rest.kill";
+		public const string restkill = "tshock.rest.kill";
 
 		[Description("REST user can drop meteors or change bloodmoon.")]
-		public static readonly string restcauseevents = "tshock.rest.causeevents";
+		public const string restcauseevents = "tshock.rest.causeevents";
 
 		[Description("REST user can butcher npcs.")]
-		public static readonly string restbutcher = "tshock.rest.butcher";
+		public const string restbutcher = "tshock.rest.butcher";
 
 		[Description("REST user can run raw TShock commands (the raw command permissions are also checked though).")]
-		public static readonly string restrawcommand = "tshock.rest.command";
+		public const string restrawcommand = "tshock.rest.command";
 
 		[Description("REST user can view the ips of players.")] 
-		public static readonly string viewips = "tshock.rest.viewips";
+		public const string viewips = "tshock.rest.viewips";
 	}
 }

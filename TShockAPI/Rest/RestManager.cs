@@ -31,6 +31,17 @@ using TShockAPI.DB;
 
 namespace TShockAPI
 {
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Permission : Attribute
+	{
+		public string Name { get; set; }
+
+		public Permission(string name)
+		{
+			Name = name;
+		}
+	}
+
 	[AttributeUsage(AttributeTargets.Method)]
 	public class RouteAttribute : Attribute
 	{
@@ -42,30 +53,38 @@ namespace TShockAPI
 		}
 	}
 
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class Verb : Attribute
+	public class ParameterAttribute : Attribute
 	{
 		public string Name { get; set; }
 		public bool Required { get; set; }
+		public string Description { get; set; }
+		public Type ArgumentType { get; set; }
 
-		public Verb(string name, bool req)
+		public ParameterAttribute(string name, bool req, string desc, Type type)
 		{
 			Name = name;
 			Required = req;
+			Description = desc;
+			ArgumentType = type;
 		}
 	}
 
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class Noun : Attribute
+	public class Noun : ParameterAttribute
 	{
-		public string Name { get; set; }
-		public bool Required { get; set; }
+		public Noun(string name, bool req, string desc, Type type) : base(name, req, desc, type) { }
+	}
 
-		public Noun(string name, bool req)
-		{
-			Name = name;
-			Required = req;
-		}
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Verb : ParameterAttribute
+	{
+		public Verb(string name, bool req, string desc, Type type) : base(name, req, desc, type) { }
+	}
+
+	[AttributeUsage(AttributeTargets.Method)]
+	public class Token : Noun
+	{
+		public Token() : base("token", true, "The REST authentication token.", typeof(String)){}
 	}
 
 	public class RestManager
@@ -146,10 +165,11 @@ namespace TShockAPI
 
 		#region RestServerMethods
 
-		[Description("Executes a remote command on the server, and returns the output of the command.")]
+		[Description("Deprecated: Executes a remote command on the server, and returns the output of the command.")]
 		[RouteAttribute("/v2/server/rawcmd")]
-		[Noun("cmd", true)]
-		[Noun("token", true)]
+		[Permission(RestPermissions.restrawcommand)]
+		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
+		[Token]
 		private object ServerCommand(RestRequestArgs args)
 		{
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
@@ -167,6 +187,11 @@ namespace TShockAPI
 			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
 		}
 
+		[Description("Executes a remote command on the server, and returns the output of the command.")]
+		[RouteAttribute("/v3/server/rawcmd")]
+		[Permission(RestPermissions.restrawcommand)]
+		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
+		[Token]
 		private object ServerCommandV3(RestRequestArgs args)
 		{
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
@@ -187,6 +212,13 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Turn the server off.")]
+		[Route("/v2/server/off")]
+		[Permission(RestPermissions.restmaintenance)]
+		[Noun("confirm", true, "Required to confirm that actually want to turn the server off.", typeof(bool))]
+		[Noun("message", false, "The shutdown message.", typeof(String))]
+		[Noun("nosave", false, "Shutdown without saving.", typeof(bool))]
+		[Token]
 		private object ServerOff(RestRequestArgs args)
 		{
 			if (!GetBool(args.Parameters["confirm"], false))
@@ -199,6 +231,13 @@ namespace TShockAPI
 			return RestResponse("The server is shutting down");
 		}
 
+		[Description("Attempt to restart the server.")]
+		[Route("/v3/server/restart")]
+		[Permission(RestPermissions.restmaintenance)]
+		[Noun("confirm", true, "Confirm that you actually want to restart the server", typeof(bool))]
+		[Noun("message", false, "The shutdown message.", typeof(String))]
+		[Noun("nosave", false, "Shutdown without saving.", typeof(bool))]
+		[Token]
 		private object ServerRestart(RestRequestArgs args)
 		{
 			if (!GetBool(args.Parameters["confirm"], false))
@@ -211,6 +250,10 @@ namespace TShockAPI
 			return RestResponse("The server is shutting down and will attempt to restart");
 		}
 
+		[Description("Reload config files for the server.")]
+		[Route("/v3/server/reload")]
+		[Permission(RestPermissions.restcfg)]
+		[Token]
 		private object ServerReload(RestRequestArgs args)
 		{
 			TShock.Utils.Reload(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
@@ -218,6 +261,10 @@ namespace TShockAPI
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
 
+		[Description("Broadcast a server wide message.")]
+		[Route("/v2/server/broadcast")]
+		[Noun("msg", true, "The message to broadcast.", typeof(String))]
+		[Token]
 		private object ServerBroadcast(RestRequestArgs args)
 		{
 			var msg = args.Parameters["msg"];
@@ -312,6 +359,9 @@ namespace TShockAPI
 			return ret;
 		}
 
+		[Description("Test if a token is still valid.")]
+		[Route("/tokentest")]
+		[Token]
 		private object ServerTokenTest(RestRequestArgs args)
 		{
 			return new RestObject()
