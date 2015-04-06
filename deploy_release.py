@@ -52,13 +52,10 @@ branch = os.environ["GIT_BRANCH"]
 tag_name = os.environ["bamboo_tag_name"]
 name = os.environ["bamboo_release_name"]
 body = os.environ["bamboo_release_body"]
+token = os.environ["bamboo_github_oauth_password"]
 
 #build release file name using the tag, stripping the 'v' off the front ie 'v.1.2.3' => '.1.2.3' resulting in a file called 'tshock.1.2.3.zip'
 release_name = 'tshock_' + tag_name[1:] + '.zip'
-
-#because we can't find any other secure way to get a token into this script run from bamboo :'(
-with open('/home/bamboo/scripts/token.py') as f:
-  # token = f.read().rsplit('=', 1)[1].strip()
 
 #invoke the mv command on the artifact from bamboo to the new name above
 subprocess.call('mv tshock_release.zip ' + release_name, shell=True)
