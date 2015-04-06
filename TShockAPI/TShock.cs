@@ -1022,6 +1022,11 @@ namespace TShockAPI
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
 				}
+
+				if (tsplr.tempGroupTimer != null)
+				{
+					tsplr.tempGroupTimer.Stop();
+				}
 			}
 			
 			// The last player will leave after this hook is executed.
