@@ -530,6 +530,10 @@ namespace TShockAPI
 		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
 		{
 			tempGroup = null;
+			if (sender != null)
+			{
+				((Timer)sender).Stop();
+			}
 		}
 
 		public void SendWorldInfo(int tilex, int tiley, bool fakeid)
