@@ -870,6 +870,10 @@ namespace TShockAPI
 			args.Player.PlayerData = new PlayerData(args.Player);
 			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
 			args.Player.tempGroup = null;
+			if (args.Player.tempGroupTimer != null)
+			{
+				args.Player.tempGroupTimer.Stop();
+			}
 			args.Player.UserAccountName = null;
 			args.Player.UserID = -1;
 			args.Player.IsLoggedIn = false;
@@ -1629,6 +1633,21 @@ namespace TShockAPI
                 args.Player.SendErrorMessage("Could not find group {0}", args.Parameters[1]);
                 return;
             }
+
+			if (args.Parameters.Count > 2)
+			{
+				int time;
+				if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
+				{
+					args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
+					args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
+					return;
+				}
+
+				ply[0].tempGroupTimer = new System.Timers.Timer(time*1000);
+				ply[0].tempGroupTimer.Elapsed += ply[0].TempGroupTimerElapsed;
+				ply[0].tempGroupTimer.Start();
+			}
 
             Group g = TShock.Utils.GetGroup(args.Parameters[1]);
 

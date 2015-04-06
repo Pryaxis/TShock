@@ -22,9 +22,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Timers;
 using Terraria;
 using TShockAPI.DB;
 using TShockAPI.Net;
+using Timer = System.Timers.Timer;
 
 namespace TShockAPI
 {
@@ -111,6 +113,8 @@ namespace TShockAPI
 		/// The player's temporary group.  This overrides the user's actual group.
 		/// </summary>
 		public Group tempGroup = null;
+		
+		public Timer tempGroupTimer;
 
 		private Group group = null;
 
@@ -522,6 +526,17 @@ namespace TShockAPI
 			TShock.PacketBuffer.Flush(sock);
 		}
 
+
+		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
+		{
+			SendWarningMessage("Your temporary group access has expired.");
+
+			tempGroup = null;
+			if (sender != null)
+			{
+				((Timer)sender).Stop();
+			}
+		}
 
 		public void SendWorldInfo(int tilex, int tiley, bool fakeid)
 		{
