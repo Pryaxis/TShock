@@ -868,8 +868,8 @@ namespace TShockAPI
 			PlayerHooks.OnPlayerLogout(args.Player);
 
 			args.Player.PlayerData = new PlayerData(args.Player);
-			args.Player.Group = null;
-			args.Player.tempGroup = TShockAPI.Group.DefaultGroup;
+			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			args.Player.tempGroup = null;
 			args.Player.UserAccountName = null;
 			args.Player.UserID = -1;
 			args.Player.IsLoggedIn = false;
