@@ -529,6 +529,8 @@ namespace TShockAPI
 
 		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
 		{
+			SendWarningMessage("Your temporary group access has expired.");
+
 			tempGroup = null;
 			if (sender != null)
 			{
