@@ -45,7 +45,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "TY: Wolfje, Kro, DankBud, Atreon, Elevatorguy";
+		public static readonly string VersionCodename = "Please take our survey: http://bit.ly/ShockSurvey";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
@@ -283,6 +283,8 @@ namespace TShockAPI
 					Initialized();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
+				Log.ConsoleInfo("Please take a short survey about TShock: http://bit.ly/ShockSurvey");
+				Log.ConsoleInfo("You can win free stickers if you take it.");
 			}
 			catch (Exception ex)
 			{
