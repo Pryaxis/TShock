@@ -2469,7 +2469,9 @@ namespace TShockAPI
 			{
 				if (type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352))
 				{	
+#if DEBUG
 					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
+#endif
 				}
 				else
 				{
@@ -2496,7 +2498,9 @@ namespace TShockAPI
 			{
 				if (type == 90 && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
+#if DEBUG
 					TShock.Log.Debug("Ignoring shrapnel per config..");
+#endif
 				}
 				else if (!Main.projectile[index].active)
 				{

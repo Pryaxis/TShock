@@ -122,6 +122,7 @@ namespace TShockAPI
 		/// <param name="level">LogLevel assosciated with the message</param>
 		void Write(string message, TraceLevel level);
 
+#if DEBUG
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
@@ -134,6 +135,7 @@ namespace TShockAPI
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
 		void Debug(string format, params object[] args);
+#endif
 
 		/// <summary>
 		/// Dispose the Log

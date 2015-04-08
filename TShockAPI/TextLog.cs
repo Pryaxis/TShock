@@ -172,6 +172,7 @@ namespace TShockAPI
 			ConsoleInfo(string.Format(format, args));
 		}
 
+#if DEBUG
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
@@ -190,6 +191,7 @@ namespace TShockAPI
 		{
 			Debug(string.Format(format, args));
 		}
+#endif
 
 		/// <summary>
 		/// Writes a message to the log
