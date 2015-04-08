@@ -35,6 +35,7 @@ using Rests;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI.DB;
+using TShockAPI.Hooks;
 using TShockAPI.Net;
 using TShockAPI.ServerSideCharacters;
 
@@ -44,7 +45,7 @@ namespace TShockAPI
 	public class TShock : TerrariaPlugin
 	{
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
-		public static readonly string VersionCodename = "nicatronTg hotfixes 4.2.8 in less than an hour edition";
+		public static readonly string VersionCodename = "Please take our survey: http://bit.ly/ShockSurvey";
 
 		public static string SavePath = "tshock";
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
@@ -77,6 +78,7 @@ namespace TShockAPI
 		public static StatTracker StatTracker = new StatTracker();
 		public static UpdateManager UpdateManager;
 		public static ILog Log;
+		public static TerrariaPlugin instance;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
@@ -116,6 +118,7 @@ namespace TShockAPI
 			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -13, prefix = 0, stack = 1 });
 			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -16, prefix = 0, stack = 1 });
 			Order = 0;
+			instance = this;
 		}
 
 
@@ -200,15 +203,10 @@ namespace TShockAPI
 					throw new Exception("Invalid storage type");
 				}
 
-#if DEBUG       
-				var level = LogLevel.All;
-#else
-				var level = LogLevel.All & ~LogLevel.Debug;
-#endif
 				if (Config.UseSqlLogs)
-					Log = new SqlLog(level, DB, logFilename, LogClear);
+					Log = new SqlLog(DB, logFilename, LogClear);
 				else
-					Log = new TextLog(logFilename, level, LogClear);
+					Log = new TextLog(logFilename, LogClear);
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -261,7 +259,7 @@ namespace TShockAPI
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
 				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
 				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
-			  ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
+				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
@@ -285,6 +283,8 @@ namespace TShockAPI
 					Initialized();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
+				Log.ConsoleInfo("Please take a short survey about TShock: http://bit.ly/ShockSurvey");
+				Log.ConsoleInfo("You can win free stickers if you take it.");
 			}
 			catch (Exception ex)
 			{
@@ -325,7 +325,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -338,29 +338,29 @@ namespace TShockAPI
 			base.Dispose(disposing);
 		}
 
-	    private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
-	    {
-	        User u = Users.GetUserByName(args.Player.UserAccountName);
-            List<String> KnownIps = new List<string>();
-	        if (!string.IsNullOrWhiteSpace(u.KnownIps))
-	        {
-                KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
-	        }
+		private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
+		{
+			User u = Users.GetUserByName(args.Player.UserAccountName);
+			List<String> KnownIps = new List<string>();
+			if (!string.IsNullOrWhiteSpace(u.KnownIps))
+			{
+				KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
+			}
 
-	        bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
-	        if (!found)
-	        {
-	            if (KnownIps.Count == 100)
-	            {
-	                KnownIps.RemoveAt(0);
-	            }
+			bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
+			if (!found)
+			{
+				if (KnownIps.Count == 100)
+				{
+					KnownIps.RemoveAt(0);
+				}
 
-                KnownIps.Add(args.Player.IP);
-	        }
+				KnownIps.Add(args.Player.IP);
+			}
 
-            u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-	        Users.UpdateLogin(u);
-	    }
+			u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+			Users.UpdateLogin(u);
+		}
 
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
@@ -516,6 +516,9 @@ namespace TShockAPI
 					case "-dump":
 						ConfigFile.DumpDescriptions();
 						Permissions.DumpDescriptions();
+						ServerSideConfig.DumpDescriptions();
+						RestManager.DumpDescriptions();
+						Environment.Exit(1);
 						break;
 				}
 			}
@@ -1026,6 +1029,11 @@ namespace TShockAPI
 				if (Config.RememberLeavePos && !tsplr.LoginHarassed)
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int) (tsplr.X/16), (int) (tsplr.Y/16));
+				}
+
+				if (tsplr.tempGroupTimer != null)
+				{
+					tsplr.tempGroupTimer.Stop();
 				}
 			}
 			

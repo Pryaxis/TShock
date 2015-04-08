@@ -28,6 +28,7 @@ using System.Threading;
 using Terraria;
 using TShockAPI.DB;
 using TerrariaApi.Server;
+using TShockAPI.Hooks;
 
 namespace TShockAPI
 {
@@ -227,6 +228,12 @@ namespace TShockAPI
 				AllowServer = false,
 				DoLog = false,
 				HelpText = "Logs you into an account."
+			});
+			add(new Command(Permissions.canlogout, Logout, "logout")
+			{
+				AllowServer = false,
+				DoLog = false,
+				HelpText = "Logs you out of your current account."
 			});
 			add(new Command(Permissions.canchangepassword, PasswordUser, "password")
 			{
@@ -441,6 +448,11 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Teleports you to tile coordinates."
+			});
+			add(new Command(Permissions.getpos, GetPos, "pos")
+			{
+				AllowServer = false,
+				HelpText = "Returns the user's or specified user's current position."
 			});
 			add(new Command(Permissions.tpallow, TPAllow, "tpallow")
 			{
@@ -843,6 +855,30 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("There was an error processing your request.");
 				TShock.Log.Error(ex.ToString());
 			}
+		}
+
+		private static void Logout(CommandArgs args)
+		{
+			if (!args.Player.IsLoggedIn)
+			{
+				args.Player.SendErrorMessage("You are not logged in.");
+				return;
+			}
+
+			PlayerHooks.OnPlayerLogout(args.Player);
+
+			args.Player.PlayerData = new PlayerData(args.Player);
+			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			args.Player.tempGroup = null;
+			if (args.Player.tempGroupTimer != null)
+			{
+				args.Player.tempGroupTimer.Stop();
+			}
+			args.Player.UserAccountName = null;
+			args.Player.UserID = -1;
+			args.Player.IsLoggedIn = false;
+
+			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 		}
 
 		private static void PasswordUser(CommandArgs args)
@@ -1598,6 +1634,21 @@ namespace TShockAPI
                 return;
             }
 
+			if (args.Parameters.Count > 2)
+			{
+				int time;
+				if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
+				{
+					args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
+					args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
+					return;
+				}
+
+				ply[0].tempGroupTimer = new System.Timers.Timer(time*1000);
+				ply[0].tempGroupTimer.Elapsed += ply[0].TempGroupTimerElapsed;
+				ply[0].tempGroupTimer.Start();
+			}
+
             Group g = TShock.Utils.GetGroup(args.Parameters[1]);
 
             ply[0].tempGroup = g;
@@ -2322,6 +2373,29 @@ namespace TShockAPI
 			var target = matches[0];
 			args.Player.Teleport(target.position.X, target.position.Y);
 			args.Player.SendSuccessMessage("Teleported to the '{0}'.", target.name);
+		}
+
+		private static void GetPos(CommandArgs args)
+		{
+			var player = args.Player.Name;
+			if (args.Parameters.Count > 0)
+			{
+				player = String.Join(" ", args.Parameters);
+			}
+
+			var players = TShock.Utils.FindPlayer(player);
+			if (players.Count == 0)
+			{
+				args.Player.SendErrorMessage("Invalid player!");
+			}
+			else if (players.Count > 1)
+			{
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			}
+			else
+			{
+				args.Player.SendSuccessMessage("Location of {0} is ({1}, {2}).", players[0].Name, players[0].TileX, players[0].TileY);
+			}
 		}
 
 		private static void TPPos(CommandArgs args)
@@ -4427,7 +4501,7 @@ namespace TShockAPI
 
 			if (args.Player.Group.Name == "superadmin")
 			{
-				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. http://tshock.co/");
+				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. https://tshock.co/");
 				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
 				args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
 				args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
@@ -4449,7 +4523,8 @@ namespace TShockAPI
 
 			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
 			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Thank you for using TShock! https://tshock.co/ & https://github.com/TShock/TShock");
+			args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+			args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
 			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
 			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
 			TShock.AuthToken = 0;

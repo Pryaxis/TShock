@@ -22,6 +22,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using MySql.Data.MySqlClient;
 using TShockAPI.DB;
 
 namespace TShockAPI
@@ -31,11 +32,11 @@ namespace TShockAPI
 		public string timestamp;
 		public string message;
 		public string caller;
-		public LogLevel logLevel;
+		public TraceLevel logLevel;
 
 		public override string ToString()
 		{
-			return String.Format("Message: {0}: {1}: {2}",
+			return string.Format("Message: {0}: {1}: {2}",
 				caller, logLevel.ToString().ToUpper(), message);
 		}
 	}
@@ -45,36 +46,52 @@ namespace TShockAPI
 	/// </summary>
 	public class SqlLog : ILog, IDisposable
 	{
-		private readonly LogLevel _logLevel;
 		private readonly IDbConnection _database;
 		private readonly TextLog _backupLog;
 		private readonly List<LogInfo> _failures = new List<LogInfo>(TShock.Config.RevertToTextLogsOnSqlFailures);
 		private bool _useTextLog;
 
-		public string Name
-		{
-			get { return "SQL Log Writer"; }
-		}
+		public string FileName { get; set; }
 
-		public SqlLog(LogLevel logLevel, IDbConnection db, string textlogFilepath, bool clearTextLog)
+		/// <summary>
+		/// Sets the database connection and the initial log level.
+		/// </summary>
+		/// <param name="db">Database connection</param>
+		/// <param name="textlogFilepath">File path to a backup text log in case the SQL log fails</param>
+		/// <param name="clearTextLog"></param>
+		public SqlLog(IDbConnection db, string textlogFilepath, bool clearTextLog)
 		{
-			_logLevel = logLevel;
+			FileName = string.Format("{0}://database", db.GetSqlType());
 			_database = db;
-			_backupLog = new TextLog(textlogFilepath, logLevel, clearTextLog);
+			_backupLog = new TextLog(textlogFilepath, clearTextLog);
+
+			var table = new SqlTable("Logs",
+				new SqlColumn("ID", MySqlDbType.Int32) {AutoIncrement = true, Primary = true},
+				new SqlColumn("TimeStamp", MySqlDbType.Text),
+				new SqlColumn("LogLevel", MySqlDbType.Int32),
+				new SqlColumn("Caller", MySqlDbType.Text),
+				new SqlColumn("Message", MySqlDbType.Text)
+				);
+
+			var creator = new SqlTableCreator(db,
+				db.GetSqlType() == SqlType.Sqlite
+					? (IQueryBuilder) new SqliteQueryCreator()
+					: new MysqlQueryCreator());
+			creator.EnsureTableStructure(table);
 		}
 
-		public bool MayWriteType(LogLevel type)
+		public bool MayWriteType(TraceLevel type)
 		{
-			return ((_logLevel & type) == type);
+			return type != TraceLevel.Off;
 		}
 
 		/// <summary>
 		/// Writes data to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Data(String message)
+		public void Data(string message)
 		{
-			Write(message, LogLevel.Data);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -84,16 +101,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Data(string format, params object[] args)
 		{
-			Data(String.Format(format, args));
+			Data(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Error(String message)
+		public void Error(string message)
 		{
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -103,19 +120,19 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Error(string format, params object[] args)
 		{
-			Error(String.Format(format, args));
+			Error(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an error to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void ConsoleError(String message)
+		public void ConsoleError(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Error);
+			Write(message, TraceLevel.Error);
 		}
 
 		/// <summary>
@@ -125,16 +142,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void ConsoleError(string format, params object[] args)
 		{
-			ConsoleError(String.Format(format, args));
+			ConsoleError(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Warn(String message)
+		public void Warn(string message)
 		{
-			Write(message, LogLevel.Warning);
+			Write(message, TraceLevel.Warning);
 		}
 
 		/// <summary>
@@ -144,16 +161,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Warn(string format, params object[] args)
 		{
-			Warn(String.Format(format, args));
+			Warn(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an informative string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Info(String message)
+		public void Info(string message)
 		{
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -163,19 +180,19 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Info(string format, params object[] args)
 		{
-			Info(String.Format(format, args));
+			Info(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes an informative string to the log file. Also outputs to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void ConsoleInfo(String message)
+		public void ConsoleInfo(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);
 			Console.ForegroundColor = ConsoleColor.Gray;
-			Write(message, LogLevel.Info);
+			Write(message, TraceLevel.Info);
 		}
 
 		/// <summary>
@@ -185,16 +202,16 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void ConsoleInfo(string format, params object[] args)
 		{
-			ConsoleInfo(String.Format(format, args));
+			ConsoleInfo(string.Format(format, args));
 		}
 
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		public void Debug(String message)
+		public void Debug(string message)
 		{
-			Write(message, LogLevel.Debug);
+			Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -204,10 +221,10 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Debug(string format, params object[] args)
 		{
-			Debug(String.Format(format, args));
+			Debug(string.Format(format, args));
 		}
 
-		public void Write(string message, LogLevel level)
+		public void Write(string message, TraceLevel level)
 		{
 			if (!MayWriteType(level))
 				return;
@@ -230,19 +247,18 @@ namespace TShockAPI
 					return;
 				}
 
-				_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
-					level, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-					caller, message);
+				_database.Query("INSERT INTO Logs (TimeStamp, Caller, LogLevel, Message) VALUES (@0, @1, @2, @3)",
+					DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), caller, (int)level, message);
 
 				var success = true;
 				while (_failures.Count > 0 && success)
 				{
 					var info = _failures.First();
-					
+
 					try
 					{
-						_database.Query("INSERT INTO Logs (LogLevel, TimeStamp, Caller, Message) VALUES (@0, @1, @2, @3)",
-							info.logLevel, info.timestamp, info.caller, info.message);
+						_database.Query("INSERT INTO Logs (TimeStamp, Caller, LogLevel, Message) VALUES (@0, @1, @2, @3)",
+							info.timestamp, info.caller, (int)info.logLevel, info.message);
 					}
 					catch (Exception ex)
 					{
@@ -250,9 +266,9 @@ namespace TShockAPI
 						_failures.Add(new LogInfo
 						{
 							caller = "TShock",
-							logLevel = LogLevel.Error,
-							message = String.Format("SQL Log insert query failed: {0}", ex),
-							timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+							logLevel = TraceLevel.Error,
+							message = string.Format("SQL Log insert query failed: {0}", ex),
+							timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 						});
 					}
 
@@ -269,7 +285,7 @@ namespace TShockAPI
 					logLevel = level,
 					message = message,
 					caller = caller,
-					timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+					timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 				});
 			}
 
@@ -278,10 +294,10 @@ namespace TShockAPI
 				_useTextLog = true;
 				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
 
-				foreach(var logInfo in _failures)
+				foreach (var logInfo in _failures)
 				{
-					_backupLog.Write(String.Format("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
-						LogLevel.Error);
+					_backupLog.Write(string.Format("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
+						TraceLevel.Error);
 				}
 				_failures.Clear();
 			}

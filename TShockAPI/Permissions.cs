@@ -35,6 +35,9 @@ namespace TShockAPI
 		[Description("User can login in game")]
 		public static readonly string canlogin = "tshock.account.login";
 
+		[Description("User can logout in game")]
+		public static readonly string canlogout = "tshock.account.logout";
+
 		[Description("User can change password in game")]
 		public static readonly string canchangepassword = "tshock.account.changepassword";
 
@@ -224,6 +227,9 @@ namespace TShockAPI
 
 		[Description("User can teleport to tile positions.")]
 		public static readonly string tppos = "tshock.tp.pos";
+
+		[Description("User can get the position of players.")]
+		public static readonly string getpos = "tshock.tp.getpos";
 
 		[Description("User can teleport to an NPC.")]
 		public static readonly string tpnpc = "tshock.tp.npc";

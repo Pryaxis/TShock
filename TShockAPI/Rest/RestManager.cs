@@ -19,8 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
 using HttpServer;
 using Rests;
 using Terraria;
@@ -28,6 +32,62 @@ using TShockAPI.DB;
 
 namespace TShockAPI
 {
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Permission : Attribute
+	{
+		public string Name { get; set; }
+
+		public Permission(string name)
+		{
+			Name = name;
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Method)]
+	public class RouteAttribute : Attribute
+	{
+		public string Route { get; set; }
+
+		public RouteAttribute(string route)
+		{
+			Route = route;
+		}
+	}
+
+	public class ParameterAttribute : Attribute
+	{
+		public string Name { get; set; }
+		public bool Required { get; set; }
+		public string Description { get; set; }
+		public Type ArgumentType { get; set; }
+
+		public ParameterAttribute(string name, bool req, string desc, Type type)
+		{
+			Name = name;
+			Required = req;
+			Description = desc;
+			ArgumentType = type;
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Noun : ParameterAttribute
+	{
+		public Noun(string name, bool req, string desc, Type type) : base(name, req, desc, type) { }
+	}
+
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class Verb : ParameterAttribute
+	{
+		public Verb(string name, string desc, Type type) : base(name, true, desc, type) { }
+	}
+
+	[AttributeUsage(AttributeTargets.Method)]
+	public class Token : Noun
+	{
+		public Token() : base("token", true, "The REST authentication token.", typeof(String)){}
+	}
+
 	public class RestManager
 	{
 		private Rest Rest;
@@ -80,9 +140,9 @@ namespace TShockAPI
 			// World Commands
 			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
 			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
-			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bool}", WorldBloodmoon, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bloodmoon}", WorldBloodmoon, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
-			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{bool}", WorldChangeSaveSettings, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{state}", WorldChangeSaveSettings, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
@@ -106,6 +166,11 @@ namespace TShockAPI
 
 		#region RestServerMethods
 
+		[Description("Executes a remote command on the server, and returns the output of the command.")]
+		[RouteAttribute("/v2/server/rawcmd")]
+		[Permission(RestPermissions.restrawcommand)]
+		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
+		[Token]
 		private object ServerCommand(RestRequestArgs args)
 		{
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
@@ -123,6 +188,11 @@ namespace TShockAPI
 			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
 		}
 
+		[Description("Executes a remote command on the server, and returns the output of the command.")]
+		[RouteAttribute("/v3/server/rawcmd")]
+		[Permission(RestPermissions.restrawcommand)]
+		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
+		[Token]
 		private object ServerCommandV3(RestRequestArgs args)
 		{
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
@@ -143,6 +213,13 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Turn the server off.")]
+		[Route("/v2/server/off")]
+		[Permission(RestPermissions.restmaintenance)]
+		[Noun("confirm", true, "Required to confirm that actually want to turn the server off.", typeof(bool))]
+		[Noun("message", false, "The shutdown message.", typeof(String))]
+		[Noun("nosave", false, "Shutdown without saving.", typeof(bool))]
+		[Token]
 		private object ServerOff(RestRequestArgs args)
 		{
 			if (!GetBool(args.Parameters["confirm"], false))
@@ -155,6 +232,13 @@ namespace TShockAPI
 			return RestResponse("The server is shutting down");
 		}
 
+		[Description("Attempt to restart the server.")]
+		[Route("/v3/server/restart")]
+		[Permission(RestPermissions.restmaintenance)]
+		[Noun("confirm", true, "Confirm that you actually want to restart the server", typeof(bool))]
+		[Noun("message", false, "The shutdown message.", typeof(String))]
+		[Noun("nosave", false, "Shutdown without saving.", typeof(bool))]
+		[Token]
 		private object ServerRestart(RestRequestArgs args)
 		{
 			if (!GetBool(args.Parameters["confirm"], false))
@@ -167,6 +251,10 @@ namespace TShockAPI
 			return RestResponse("The server is shutting down and will attempt to restart");
 		}
 
+		[Description("Reload config files for the server.")]
+		[Route("/v3/server/reload")]
+		[Permission(RestPermissions.restcfg)]
+		[Token]
 		private object ServerReload(RestRequestArgs args)
 		{
 			TShock.Utils.Reload(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
@@ -174,6 +262,10 @@ namespace TShockAPI
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
 
+		[Description("Broadcast a server wide message.")]
+		[Route("/v2/server/broadcast")]
+		[Noun("msg", true, "The message to broadcast.", typeof(String))]
+		[Token]
 		private object ServerBroadcast(RestRequestArgs args)
 		{
 			var msg = args.Parameters["msg"];
@@ -183,6 +275,9 @@ namespace TShockAPI
 			return RestResponse("The message was broadcasted successfully");
 		}
 
+		[Description("Returns the motd, if it exists.")]
+		[Route("/v3/server/motd")]
+		[Token]
 		private object ServerMotd(RestRequestArgs args)
 		{
 			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
@@ -195,6 +290,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Returns the rules, if they exist.")]
+		[Route("/v3/server/rules")]
+		[Token]
 		private object ServerRules(RestRequestArgs args)
 		{
 			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
@@ -207,6 +305,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Returns the current status of the server.")]
+		[Route("/status")]
+		[Token]
 		private object ServerStatus(RestRequestArgs args)
 		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
@@ -219,6 +320,9 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Get a list of information about the current TShock server.")]
+		[Route("/v2/server/status")]
+		[Token]
 		private object ServerStatusV2(RestRequestArgs args)
 		{
 			var ret = new RestObject()
@@ -268,6 +372,9 @@ namespace TShockAPI
 			return ret;
 		}
 
+		[Description("Test if a token is still valid.")]
+		[Route("/tokentest")]
+		[Token]
 		private object ServerTokenTest(RestRequestArgs args)
 		{
 			return new RestObject()
@@ -281,11 +388,19 @@ namespace TShockAPI
 
 		#region RestUserMethods
 
+		[Description("Returns the list of user accounts that are currently in use on the server.")]
+		[Route("/v2/users/activelist")]
+		[Permission(RestPermissions.restviewusers)]
+		[Token]
 		private object UserActiveListV2(RestRequestArgs args)
 		{
 			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.UserAccountName && p.Active).Select(p => p.UserAccountName)) } };
 		}
 
+		[Description("Lists all user accounts in the TShock database.")]
+		[Route("/v2/users/list")]
+		[Permission(RestPermissions.restviewusers)]
+		[Token]
 		private object UserListV2(RestRequestArgs args)
 		{
 			return new RestObject() { { "users", TShock.Users.GetUsers().Select(p => new Dictionary<string,object>(){
@@ -295,6 +410,13 @@ namespace TShockAPI
 			}) } };
 		}
 
+		[Description("Create a new TShock user account.")]
+		[Route("/v2/users/create")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The user account name for the new account.", typeof(String))]
+		[Noun("group", false, "The group the new account should be assigned.", typeof(String))]
+		[Noun("password", true, "The password for the new account.", typeof(String))]
+		[Token]
 		private object UserCreateV2(RestRequestArgs args)
 		{
 			var username = args.Parameters["user"];
@@ -323,6 +445,14 @@ namespace TShockAPI
 			return RestResponse("User was successfully created");
 		}
 
+		[Description("Update a users information.")]
+		[Route("/v2/users/update")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Noun("password", false, "The users new password, and at least this or group must be defined.", typeof(String))]
+		[Noun("group", false, "The new group for the user, at least this or password must be defined.", typeof(String))]
+		[Token]
 		private object UserUpdateV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
@@ -365,6 +495,12 @@ namespace TShockAPI
 			return response;
 		}
 
+		[Description("Destroy a TShock user account.")]
+		[Route("/v2/users/destroy")]
+		[Permission(RestPermissions.restmanageusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Token]
 		private object UserDestroyV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
@@ -383,6 +519,12 @@ namespace TShockAPI
 			return RestResponse("User deleted successfully");
 		}
 
+		[Description("List detailed information for a user account.")]
+		[Route("/v2/users/read")]
+		[Permission(RestPermissions.restviewusers)]
+		[Noun("user", true, "The search criteria (name or id of account to lookup).", typeof(String))]
+		[Noun("type", true, "The search criteria type (name for name lookup, id for id lookup).", typeof(String))]
+		[Token]
 		private object UserInfoV2(RestRequestArgs args)
 		{
 			var ret = UserFind(args.Parameters);
@@ -397,6 +539,13 @@ namespace TShockAPI
 
 		#region RestBanMethods
 
+		[Description("Create a new ban entry.")]
+		[Route("/bans/create")]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("ip", false, "The IP to ban, at least this or name must be specified.", typeof(String))]
+		[Noun("name", false, "The name to ban, at least this or ip must be specified.", typeof(String))]
+		[Noun("reason", false, "The reason to assign to the ban.", typeof(String))]
+		[Token]
 		private object BanCreate(RestRequestArgs args)
 		{
 			var ip = args.Parameters["ip"];
@@ -416,6 +565,13 @@ namespace TShockAPI
 			return RestResponse("Ban created successfully");
 		}
 
+		[Description("Delete an existing ban entry.")]
+		[Route("/v2/bans/destroy")]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("ban", true, "The search criteria, either an IP address or a name.", typeof(String))]
+		[Noun("type", true, "The type of search criteria, 'ip' or 'name'.  Also used as the method of removing from the database.", typeof(String))]
+		[Noun("caseinsensitive", false, "Name lookups should be case insensitive.", typeof(bool))]
+		[Token]
 		private object BanDestroyV2(RestRequestArgs args)
 		{
 			var ret = BanFind(args.Parameters);
@@ -448,6 +604,13 @@ namespace TShockAPI
 			return RestResponse("Ban deleted successfully");
 		}
 
+		[Description("View the details of a specific ban.")]
+		[Route("/v2/bans/read")]
+		[Permission(RestPermissions.restviewbans)]
+		[Noun("ban", true, "The search criteria, either an IP address or a name.", typeof(String))]
+		[Noun("type", true, "The type of search criteria, 'ip' or 'name'.", typeof(String))]
+		[Noun("caseinsensitive", false, "Name lookups should be case insensitive.", typeof(bool))]
+		[Token]
 		private object BanInfoV2(RestRequestArgs args)
 		{
 			var ret = BanFind(args.Parameters);
@@ -462,6 +625,10 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("View all bans in the TShock database.")]
+		[Route("/v2/bans/list")]
+		[Permission(RestPermissions.restviewbans)]
+		[Token]
 		private object BanListV2(RestRequestArgs args)
 		{
 			var banList = new ArrayList();
@@ -484,16 +651,24 @@ namespace TShockAPI
 
 		#region RestWorldMethods
 
+		[Route("/v2/world/autosave/state/{state}")]
+		[Permission(RestPermissions.restcfg)]
+		[Verb("state", "The status for autosave.", typeof(bool))]
+		[Token]
 		private object WorldChangeSaveSettings(RestRequestArgs args)
 		{
 			bool autoSave;
-			if (!bool.TryParse(args.Verbs["bool"], out autoSave))
+			if (!bool.TryParse(args.Verbs["state"], out autoSave))
 				return RestInvalidParam("state");
 			TShock.Config.AutoSave = autoSave;
 
 			return RestResponse("AutoSave has been set to " + autoSave);
 		}
 
+		[Description("Save the world.")]
+		[Route("/v2/world/save")]
+		[Permission(RestPermissions.restcfg)]
+		[Token]
 		private object WorldSave(RestRequestArgs args)
 		{
 			SaveManager.Instance.SaveWorld();
@@ -501,6 +676,11 @@ namespace TShockAPI
 			return RestResponse("World saved");
 		}
 
+		[Description("Butcher npcs.")]
+		[Route("/v2/world/butcher")]
+		[Permission(RestPermissions.restbutcher)]
+		[Noun("killfriendly", false, "Should friendly npcs be butchered.", typeof(bool))]
+		[Token]
 		private object WorldButcher(RestRequestArgs args)
 		{
 			bool killFriendly;
@@ -520,6 +700,9 @@ namespace TShockAPI
 			return RestResponse(killcount + " NPCs have been killed");
 		}
 
+		[Description("Get information regarding the world.")]
+		[Route("/world/read")]
+		[Token]
 		private object WorldRead(RestRequestArgs args)
 		{
 			return new RestObject()
@@ -533,6 +716,10 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Drops a meteor on the world.")]
+		[Route("/world/meteor")]
+		[Permission(RestPermissions.restcauseevents)]
+		[Token]
 		private object WorldMeteor(RestRequestArgs args)
 		{
 			if (null == WorldGen.genRand)
@@ -541,10 +728,15 @@ namespace TShockAPI
 			return RestResponse("Meteor has been spawned");
 		}
 
+		[Description("Toggle the status of blood moon.")]
+		[Route("/world/bloodmoon/{bloodmoon}")]
+		[Permission(RestPermissions.restcauseevents)]
+		[Verb("bloodmoon", "State of bloodmoon.", typeof(bool))]
+		[Token]
 		private object WorldBloodmoon(RestRequestArgs args)
 		{
 			bool bloodmoon;
-			if (!bool.TryParse(args.Verbs["bool"], out bloodmoon))
+			if (!bool.TryParse(args.Verbs["bloodmoon"], out bloodmoon))
 				return RestInvalidParam("bloodmoon");
 			Main.bloodMoon = bloodmoon;
 
@@ -555,22 +747,38 @@ namespace TShockAPI
 
 		#region RestPlayerMethods
 
+		[Description("Unmute a player.")]
+		[Route("/v2/players/unmute")]
+		[Permission(RestPermissions.restmute)]
+		[Noun("player", true, "The player to mute.", typeof(String))]
+		[Token]
 		private object PlayerUnMute(RestRequestArgs args)
 		{
 			return PlayerSetMute(args.Parameters, false);
 		}
 
+		[Description("Mute a player.")]
+		[Route("/v2/players/mute")]
+		[Permission(RestPermissions.restmute)]
+		[Noun("player", true, "The player to mute.", typeof(String))]
+		[Token]
 		private object PlayerMute(RestRequestArgs args)
 		{
 			return PlayerSetMute(args.Parameters, true);
 		}
 
+		[Description("List all player names that are currently on the server.")]
+		[Route("/lists/players")]
+		[Token]
 		private object PlayerList(RestRequestArgs args)
 		{
 			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
 			return new RestObject() { { "players", string.Join(", ", activeplayers.Select(p => p.name)) } };
 		}
 
+		[Description("Fetches detailed user information on all connected users, and can be filtered by specifying a key value pair filter users where the key is a field and the value is a users field value.")]
+		[Route("/v2/players/list")]
+		[Token]
 		private object PlayerListV2(RestRequestArgs args)
 		{
 			var playerList = new ArrayList();
@@ -583,6 +791,11 @@ namespace TShockAPI
 			return new RestObject() { { "players", playerList } };
 		}
 
+		[Description("Get information for a user.")]
+		[Route("/v2/players/read")]
+		[Permission(RestPermissions.restuserinfo)]
+		[Noun("player", true, "The player to lookup", typeof(String))]
+		[Token]
 		private object PlayerReadV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -603,6 +816,11 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Get information for a user.")]
+		[Route("/v3/players/read")]
+		[Permission(RestPermissions.restuserinfo)]
+		[Noun("player", true, "The player to lookup", typeof(String))]
+		[Token]
 		private object PlayerReadV3(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -627,6 +845,12 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Kick a player off the server.")]
+		[Route("/v2/players/kick")]
+		[Permission(RestPermissions.restkick)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("reason", false, "The reason the player was kicked.", typeof(String))]
+		[Token]
 		private object PlayerKickV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -638,6 +862,13 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
+		[Description("Add a ban to the database.")]
+		[Route("/v2/players/ban")]
+		[Permission(RestPermissions.restban)]
+		[Permission(RestPermissions.restmanagebans)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("reason", false, "The reason the user was banned.", typeof(String))]
+		[Token]
 		private object PlayerBanV2(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -651,6 +882,12 @@ namespace TShockAPI
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 
+		[Description("Kill a player.")]
+		[Route("/v2/players/kill")]
+		[Permission(RestPermissions.restkill)]
+		[Noun("player", true, "The player to kick.", typeof(String))]
+		[Noun("from", false, "Who killed the player.", typeof(String))]
+		[Token]
 		private object PlayerKill(RestRequestArgs args)
 		{
 			var ret = PlayerFind(args.Parameters);
@@ -668,6 +905,10 @@ namespace TShockAPI
 
 		#region RestGroupMethods
 
+		[Description("View all groups in the TShock database.")]
+		[Route("/v2/groups/list")]
+		[Permission(RestPermissions.restviewgroups)]
+		[Token]
 		private object GroupList(RestRequestArgs args)
 		{
 			var groups = new ArrayList();
@@ -678,6 +919,11 @@ namespace TShockAPI
 			return new RestObject() { { "groups", groups } };
 		}
 
+		[Description("Display information of a group.")]
+		[Route("/v2/groups/read")]
+		[Permission(RestPermissions.restviewgroups)]
+		[Noun("group", true, "The group name to get information on.", typeof(String))]
+		[Token]
 		private object GroupInfo(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -695,6 +941,11 @@ namespace TShockAPI
 			};
 		}
 
+		[Description("Delete a group.")]
+		[Route("/v2/groups/destroy")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The group name to delete.", typeof(String))]
+		[Token]
 		private object GroupDestroy(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -714,6 +965,14 @@ namespace TShockAPI
 			return RestResponse("Group '" + group.Name + "' deleted successfully");
 		}
 
+		[Description("Create a new group.")]
+		[Route("/v2/groups/create")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The name of the new group.", typeof(String))]
+		[Noun("parent", false, "The name of the parent group.", typeof(String))]
+		[Noun("permissions", false, "A comma seperated list of permissions for the new group.", typeof(String))]
+		[Noun("chatcolor", false, "A r,g,b string representing the color for this groups chat.", typeof(String))]
+		[Token]
 		private object GroupCreate(RestRequestArgs args)
 		{
 			var name = args.Parameters["group"];
@@ -731,6 +990,13 @@ namespace TShockAPI
 			return RestResponse("Group '" + name + "' created successfully");
 		}
 
+		[Route("/v2/groups/update")]
+		[Permission(RestPermissions.restmanagegroups)]
+		[Noun("group", true, "The name of the group to modify.", typeof(String))]
+		[Noun("parent", false, "The name of the new parent for this group.", typeof(String))]
+		[Noun("chatcolor", false, "The new chat color r,g,b.", typeof(String))]
+		[Noun("permisisons", false, "The new comma seperated list of permissions.", typeof(String))]
+		[Token]
 		private object GroupUpdate(RestRequestArgs args)
 		{
 			var ret = GroupFind(args.Parameters);
@@ -756,6 +1022,66 @@ namespace TShockAPI
 		#endregion
 
 		#region Utility Methods
+
+		public static void DumpDescriptions()
+		{
+			var sb = new StringBuilder();
+			var rest = new RestManager(null);
+
+			foreach (var method in rest.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static).OrderBy(f => f.Name))
+			{
+				if (method.IsStatic)
+					continue;
+
+				var name = method.Name;
+
+				var descattr =
+					method.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
+				var routeattr =
+					method.GetCustomAttributes(false).FirstOrDefault(o => o is RouteAttribute) as RouteAttribute;
+
+				if (descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) && routeattr != null && !string.IsNullOrWhiteSpace(routeattr.Route))
+				{
+					sb.AppendLine("{0}  ".SFormat(name));
+					sb.AppendLine("Description: {0}  ".SFormat(descattr.Description));
+
+					var permission = method.GetCustomAttributes(false).Where(o => o is Permission);
+					if (permission.Count() > 0)
+					{
+						sb.AppendLine("Permissions: {0}".SFormat(String.Join(", ", permission.Select(p => ((Permission)p).Name))));
+					}
+					else
+					{
+						sb.AppendLine("No special permissions are required for this route.");
+					}
+
+					var verbs = method.GetCustomAttributes(false).Where(o => o is Verb);
+					if (verbs.Count() > 0)
+					{
+						sb.AppendLine("Verbs:");
+						foreach (Verb verb in verbs)
+						{
+							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(verb.Name, verb.Required ? "Required" : "Optional", verb.ArgumentType.Name, verb.Description));
+						}
+					}
+
+					var nouns = method.GetCustomAttributes(false).Where(o => o is Noun);
+					if (nouns.Count() > 0)
+					{
+						sb.AppendLine("Nouns:");
+						foreach (Noun noun in nouns)
+						{
+							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(noun.Name, noun.Required ? "Required" : "Optional", noun.ArgumentType.Name, noun.Description));
+						}
+					}
+					sb.AppendLine("Example Usage: {0}?{1}".SFormat(routeattr.Route,
+						string.Join("&", nouns.Select(n => String.Format("{0}={0}", ((Noun) n).Name)))));
+					sb.AppendLine();
+				}
+			}
+
+			File.WriteAllText("RestDescriptions.txt", sb.ToString());
+		}
 
 		private RestObject RestError(string message, string status = "400")
 		{

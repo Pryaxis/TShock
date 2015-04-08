@@ -1284,9 +1284,15 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 || slot > NetItem.maxNetInventory || args.Player.IgnoreSSCPackets)
+			if (OnPlayerSlot(plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
+				slot > NetItem.maxNetInventory)
 				return true;
-
+			if (args.Player.IgnoreSSCPackets)
+			{
+				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot);
+				return true;
+			}
+				
 			// Garabage? Or will it cause some internal initialization or whatever?
 			var item = new Item();
 			item.netDefaults(type);
