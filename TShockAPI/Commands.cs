@@ -1211,6 +1211,13 @@ namespace TShockAPI
 							if (user != null)
 							{
 								bool force = !args.Player.RealPlayer;
+
+								if (user.Name == args.Player.Name && !force)
+								{
+									args.Player.SendErrorMessage("You can't ban yourself!");
+									return;
+								}
+
 								if (TShock.Groups.GetGroupByName(user.Group).HasPermission(Permissions.immunetoban) && !force)
 									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
 								else
