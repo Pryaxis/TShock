@@ -212,7 +212,7 @@ namespace TShockAPI
 		public void Debug(string message)
 		{
 #if DEBUG
-			Write(message, TraceLevel.Verbose);\
+			Write(message, TraceLevel.Verbose);
 #endif
 		}
 
