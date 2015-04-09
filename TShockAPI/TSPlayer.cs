@@ -849,7 +849,7 @@ namespace TShockAPI
 				{
 					if (displayConsole)
 					{
-						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);	
+						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
 					}
 					else
 					{
