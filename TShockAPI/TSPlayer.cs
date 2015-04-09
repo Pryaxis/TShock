@@ -858,13 +858,11 @@ namespace TShockAPI
 					LastDisableNotification = DateTime.UtcNow;
 				}
 			}
-#if DEBUG
 			var trace = new StackTrace();
 			StackFrame frame = null;
 			frame = trace.GetFrame(1);
 			if (frame != null && frame.GetMethod().DeclaringType != null)
 				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
-#endif
 		}
 
 		public virtual void Whoopie(object time)

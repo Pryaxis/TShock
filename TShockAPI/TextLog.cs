@@ -172,14 +172,15 @@ namespace TShockAPI
 			ConsoleInfo(string.Format(format, args));
 		}
 
-#if DEBUG
 		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public void Debug(string message)
 		{
+#if DEBUG
 			Write(message, TraceLevel.Verbose);
+#endif
 		}
 
 		/// <summary>
@@ -189,9 +190,10 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Debug(string format, params object[] args)
 		{
+#if DEBUG
 			Debug(string.Format(format, args));
-		}
 #endif
+		}
 
 		/// <summary>
 		/// Writes a message to the log
