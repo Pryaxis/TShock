@@ -17,36 +17,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Diagnostics;
 
 namespace TShockAPI
 {
-	[Flags]
-	public enum LogLevel
-	{
-		None = 0,
-		Debug = 1,
-		Info = 2,
-		Warning = 4,
-		Error = 8,
-		Data = 16,
-		All = 31
-	}
-
-/// <summary>
-/// Logging interface
-/// </summary>
+	/// <summary>
+	/// Logging interface
+	/// </summary>
 	public interface ILog
 	{
 		/// <summary>
-		/// Log name
+		/// Log file name
 		/// </summary>
-		string Name { get; }
+		string FileName { get; set; }
 
 		/// <summary>
 		/// Checks whether the log level contains the specified flag.
 		/// </summary>
 		/// <param name="type">The <see cref="LogLevel" /> value to check.</param>
-		bool MayWriteType(LogLevel type);
+		bool MayWriteType(TraceLevel type);
 
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
@@ -57,7 +46,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Writes an informative string to the log and to the console.
 		/// </summary>
-		/// <param name="message">The format of the message to be written.</param>
+		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
 		void ConsoleInfo(string format, params object[] args);
 
@@ -92,6 +81,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Error(string message);
+
 		/// <summary>
 		/// Writes an error to the log.
 		/// </summary>
@@ -130,16 +120,16 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="message">Message to write</param>
 		/// <param name="level">LogLevel assosciated with the message</param>
-		void Write(string message, LogLevel level);
+		void Write(string message, TraceLevel level);
 
 		/// <summary>
-		/// Writes a debug string to the log file.
+		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
-		void Debug(String message);
+		void Debug(string message);
 
 		/// <summary>
-		/// Writes a debug string to the log file.
+		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>

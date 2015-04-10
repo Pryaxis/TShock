@@ -65,28 +65,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Used for some places where a list of players might be used.
-		/// </summary>
-		/// <returns>String of players seperated by commas.</returns>
-		[Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
-		public string GetPlayers()
-		{
-			var sb = new StringBuilder();
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					if (sb.Length != 0)
-					{
-						sb.Append(", ");
-					}
-					sb.Append(player.Name);
-				}
-			}
-			return sb.ToString();
-		}
-
-		/// <summary>
 		/// Returns a list of current players on the server
 		/// </summary>
 		/// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
@@ -111,30 +89,6 @@ namespace TShockAPI
 			}
 
 			return players;
-		}
-
-		/// <summary>
-		/// Used for some places where a list of players might be used.
-		/// </summary>
-		/// <returns>String of players and their id seperated by commas.</returns>
-		[Obsolete("Use GetPlayers and manually create strings. This should never have been kept as far as actual functions go.")]
-		public string GetPlayersWithIds()
-		{
-			var sb = new StringBuilder();
-			foreach (TSPlayer player in TShock.Players)
-			{
-					if (player != null && player.Active)
-					{
-							if (sb.Length != 0)
-							{
-									sb.Append(", ");
-							}
-							sb.Append(player.Name);
-							string id = "(ID: " + Convert.ToString(TShock.Users.GetUserID(player.UserAccountName)) + ", IX:" + player.Index + ")";
-							sb.Append(id);
-					}
-			}
-			return sb.ToString();
 		}
 
 		/// <summary>
@@ -698,7 +652,7 @@ namespace TShockAPI
 					}
 
 					foo = foo.Replace("%map%", Main.worldName);
-					foo = foo.Replace("%players%", GetPlayers());
+					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
 					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
 					var matches = reg.Matches(foo);
 					Color c = Color.White;

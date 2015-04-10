@@ -11,6 +11,8 @@ TShock is a server modification for Terraria, written in C#, and based upon the 
 * User registration
 * Reserved slots
 * User punishment (kicking, banning, muting)
+* Server side characters
+* JSON based configuration management
 
 ## Community
 
@@ -19,6 +21,8 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 * [Website & Forums](https://tshock.co/xf/)
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
 * [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
+
+If your intention is to send a pull request or code change, please join #pull-request in Slack to discuss your changes with the team. For more contributing guidelines, see the contributing file.
 
 ## Download
 
