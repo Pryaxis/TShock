@@ -2987,7 +2987,7 @@ namespace TShockAPI
 							return;
 						}
 						Group grp = TShock.Utils.GetGroup(args.Parameters[1]);
-						List<string> permissions = grp.TotalPermissions;
+						List<string> permissions = grp.permissionManager.GetPermissions(PermissionType.Allowed).GetPermissions();
 
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(permissions),
 							new PaginationTools.Settings
