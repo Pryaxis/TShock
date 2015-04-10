@@ -650,7 +650,7 @@ namespace TShockAPI
 						continue;
 					}
 
-					foo = foo.Replace("%map%", Main.worldName);
+					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
 					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
 					var matches = reg.Matches(foo);
