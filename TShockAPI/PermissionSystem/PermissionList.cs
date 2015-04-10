@@ -5,20 +5,37 @@ using System.Text;
 
 namespace TShockAPI.PermissionSystem
 {
+	/// <summary>
+	/// A concreate permission list.
+	/// </summary>
 	public class PermissionList : IPermissionList
 	{
+		/// <summary>
+		/// This set's list of permissions.
+		/// </summary>
 		private List<String> permissions;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public PermissionList()
 		{
 			permissions = new List<string>();
 		}
 
+		/// <summary>
+		/// Constructor that assigns the list of permissions.
+		/// </summary>
+		/// <param name="permissions">The list of permissions to assign.</param>
 		public PermissionList(List<String> permissions)
 		{
 			this.permissions = permissions;
 		}
 
+		/// <summary>
+		/// Adds a permission to this set.
+		/// </summary>
+		/// <param name="permission">The permission to add.</param>
 		public void AddPermission(string permission)
 		{
 			if (permissions.Contains(permission))
@@ -27,6 +44,10 @@ namespace TShockAPI.PermissionSystem
 			permissions.Add(permission);
 		}
 
+		/// <summary>
+		/// Removes a permission from this set.
+		/// </summary>
+		/// <param name="permission">The permission to remove.</param>
 		public void RemovePermission(string permission)
 		{
 			if (permissions.Contains(permission))
@@ -46,11 +67,20 @@ namespace TShockAPI.PermissionSystem
 			}
 		}
 
+		/// <summary>
+		/// Returns all the permissions in this set.
+		/// </summary>
+		/// <returns>The permissions in this set.</returns>
 		public List<string> GetPermissions()
 		{
 			return permissions;
 		}
 
+		/// <summary>
+		/// Check to see if a permission is in this set.
+		/// </summary>
+		/// <param name="permission">The permission to check for.</param>
+		/// <returns>Returns if this permission is present in this set.</returns>
 		public bool HasPermission(string permission)
 		{
 			if (String.IsNullOrEmpty(permission) || permissions.Contains(permission))
@@ -71,7 +101,7 @@ namespace TShockAPI.PermissionSystem
 			return false;
 		}
 
-		public String ToString()
+		public override String ToString()
 		{
 			return String.Join(",", permissions);
 		}

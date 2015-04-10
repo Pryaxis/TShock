@@ -16,16 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using TShockAPI.PermissionSystem;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Representation of a user group.
+	/// </summary>
 	public class Group
 	{
-		public IPermissionManager permissionManager;
+		/// <summary>
+		/// Manager of this groups permissions.
+		/// </summary>
+		public IPermissionManager PermissionManager { get; private set; }
 
 		/// <summary>
 		/// The group's name.
@@ -84,7 +88,6 @@ namespace TShockAPI
 							R = r;
 							G = g;
 							B = b;
-							return;
 						}
 					}
 				}
@@ -96,12 +99,18 @@ namespace TShockAPI
 		/// </summary>
 		public string Permissions
 		{
-			get { return permissionManager.ToString(); }
-			set { permissionManager.Parse(value); }
+			get { return PermissionManager.ToString(); }
+			set { PermissionManager.Parse(value); }
 		}
 
+		/// <summary>
+		/// The parent group for this parent.
+		/// </summary>
 		public Group Parent { get; set; } 
 
+		/// <summary>
+		/// The name of the parent group, or "" if there is none.
+		/// </summary>
 		public string ParentName {get { return Parent == null ? "" : Parent.Name; }}
 
 		/// <summary>
@@ -109,6 +118,13 @@ namespace TShockAPI
 		/// </summary>
 		public static Group DefaultGroup = null;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="groupname">The name of this group.</param>
+		/// <param name="parentgroup">The parent group.</param>
+		/// <param name="chatcolor">The color of this groups chat.</param>
+		/// <param name="permissions">The permission list this group has.</param>
 		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255", string permissions = null)
 		{
 			Name = groupname;
@@ -116,7 +132,7 @@ namespace TShockAPI
 			Parent = parentgroup;
 
 			ChatColor = chatcolor;
-			permissionManager = new NegatedPermissionManager(permissions);
+			PermissionManager = new NegatedPermissionManager(permissions);
 		}
 
 		/// <summary>
@@ -126,7 +142,7 @@ namespace TShockAPI
 		/// <returns>Returns true if the user has that permission.</returns>
 		public virtual bool HasPermission(string permission)
 		{
-			return permissionManager.HasPermission(new PermissionNode(permission, PermissionType.Normal));
+			return PermissionManager.HasPermission(new PermissionNode(permission));
 		}
 
 		/// <summary>
@@ -135,7 +151,7 @@ namespace TShockAPI
 		/// <param name="permission">The permission to add.</param>
 		public void AddPermission(string permission)
 		{
-			permissionManager.AddPermission(new PermissionNode(permission, PermissionType.Negated));
+			PermissionManager.AddPermission(new PermissionNode(permission, PermissionType.Negated));
 		}
 
 		/// <summary>
@@ -145,7 +161,7 @@ namespace TShockAPI
 		/// <param name="permission"></param>
 		public void SetPermission(List<string> permission)
 		{
-			permissionManager.Parse(permission);
+			PermissionManager.Parse(permission);
 		}
 
 		/// <summary>
@@ -155,7 +171,7 @@ namespace TShockAPI
 		/// <param name="permission"></param>
 		public void RemovePermission(string permission)
 		{
-			permissionManager.RemovePermission(permission);
+			PermissionManager.RemovePermission(permission);
 		}
 
 		/// <summary>
@@ -171,11 +187,11 @@ namespace TShockAPI
 			otherGroup.R = R;
 			otherGroup.G = G;
 			otherGroup.B = B;
-			permissionManager.Clone(otherGroup.permissionManager);
+			PermissionManager.Clone(otherGroup.PermissionManager);
 		}
 
 		public override string ToString() {
-			return this.Name;
+			return Name;
 		}
 	}
 
@@ -184,6 +200,9 @@ namespace TShockAPI
 	/// </summary>
 	public class SuperAdminGroup : Group
 	{
+		/// <summary>
+		/// Superadmin group shim.
+		/// </summary>
 		public SuperAdminGroup()
 			: base("superadmin")
 		{
@@ -192,7 +211,7 @@ namespace TShockAPI
 			B = (byte) TShock.Config.SuperAdminChatRGB[2];
 			Prefix = TShock.Config.SuperAdminChatPrefix;
 			Suffix = TShock.Config.SuperAdminChatSuffix;
-			permissionManager.AddPermission(new PermissionNode("*"));
+			PermissionManager.AddPermission(new PermissionNode("*"));
 		}
 	}
 }

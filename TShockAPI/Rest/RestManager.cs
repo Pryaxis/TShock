@@ -936,9 +936,9 @@ namespace TShockAPI
 				{"name", group.Name},
 				{"parent", group.ParentName},
 				{"chatcolor", string.Format("{0},{1},{2}", group.R, group.G, group.B)},
-				{"permissions", group.permissionManager.GetPermissions(PermissionType.Normal).GetPermissions()},
-				{"negatedpermissions", group.permissionManager.GetPermissions(PermissionType.Negated).GetPermissions()},
-				{"totalpermissions", group.permissionManager.GetPermissions(PermissionType.Allowed).GetPermissions()}
+				{"permissions", group.PermissionManager.GetPermissions(PermissionType.Normal).GetPermissions()},
+				{"negatedpermissions", group.PermissionManager.GetPermissions(PermissionType.Negated).GetPermissions()},
+				{"totalpermissions", group.PermissionManager.GetPermissions(PermissionType.Allowed).GetPermissions()}
 			};
 		}
 
