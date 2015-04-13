@@ -409,6 +409,8 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <param name="password">string password - the plain text password to hash</param>
 		public void CreateBCryptHash(string password) {
 			try {
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
