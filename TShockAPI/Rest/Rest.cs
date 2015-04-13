@@ -73,9 +73,8 @@ namespace Rests
 		{
 			Ip = ip;
 			Port = port;
-			string appName = this.GetType().Assembly.GetName().Version.ToString();
-			AssemblyName ass = this.GetType().Assembly.GetName();
-			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", ass.Name, ass.Version));
+			AssemblyName assembly = this.GetType().Assembly.GetName();
+			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", assembly.Name, assembly.Version));
 		}
 
 		public virtual void Start()
