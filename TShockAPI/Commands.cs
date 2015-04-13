@@ -2599,11 +2599,12 @@ namespace TShockAPI
 
 						try
 						{
-							string response = TShock.Groups.AddGroup(groupName, permissions);
-							if (response.Length > 0)
-							{
-								args.Player.SendSuccessMessage(response);
-							}
+							TShock.Groups.AddGroup(groupName, null, permissions, TShockAPI.Group.defaultChatColor);
+							args.Player.SendSuccessMessage("The group was added successfully!");
+						}
+						catch (GroupExistsException e)
+						{
+							args.Player.SendErrorMessage("That group already exists!");
 						}
 						catch (GroupManagerException ex)
 						{
