@@ -398,6 +398,9 @@ namespace TShockAPI
 		[Description("Determines if the server should save the world if the last player exits.")]
 		public bool SaveWorldOnLastPlayerExit = true;
 
+		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. Range: 5-31.")]
+		public int WorkFactor = 10;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>

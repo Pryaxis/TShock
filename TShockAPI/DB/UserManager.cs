@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
+using BCrypt.Net;
 
 namespace TShockAPI.DB
 {
@@ -309,32 +310,101 @@ namespace TShockAPI.DB
 		public int ID { get; set; }
 		public string Name { get; set; }
 		public string Password { get; set; }
-        public string UUID { get; set; }
+		public string UUID { get; set; }
 		public string Group { get; set; }
 		public string Registered { get; set; }
-        public string LastAccessed { get; set; }
-        public string KnownIps { get; set; }
+		public string LastAccessed { get; set; }
+		public string KnownIps { get; set; }
 
 		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
-            UUID = uuid;
+			UUID = uuid;
 			Group = group;
 			Registered = registered;
-		    LastAccessed = last;
-		    KnownIps = known;
+			LastAccessed = last;
+			KnownIps = known;
 		}
 
 		public User()
 		{
 			Name = "";
 			Password = "";
-            UUID = "";
+			UUID = "";
 			Group = "";
 			Registered = "";
-            LastAccessed = "";
-            KnownIps = "";
+			LastAccessed = "";
+			KnownIps = "";
+		}
+
+		/// <summary>
+		/// Verifies if a password matches the one stored in the database.
+		/// If the password is stored in an unsafe hashing algorithm, it will be converted to BCrypt.
+		/// If the password is stored using BCrypt, it will be re-saved if the work factor in the config
+		/// is greater than the existing work factor with the new work factor.
+		/// </summary>
+		/// <param name="password">string password - The password to check against the user object.</param>
+		/// <returns>bool true, if the password matched, or false, if it didn't.</returns>
+		public bool VerifyPassword(string password) {
+			try {
+				if (BCrypt.Net.BCrypt.Verify(password, this.Password)) {
+					// If necessary, perform an upgrade to the highest work factor.
+					upgradePasswordWorkFactor(password);
+					return true;
+				}
+			} catch (SaltParseException) {
+				if (TShock.Utils.HashPassword(password).ToUpper() == this.Password.ToUpper()) {
+					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
+					upgradePasswordToBCrypt(password);
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
+		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
+		internal void upgradePasswordToBCrypt(string password) {
+			// Save the old password, in the event that we have to revert changes.
+			string oldpassword = this.Password;
+			
+			// Convert the password to BCrypt, and save it.
+			try {
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+			} catch (ArgumentOutOfRangeException) {
+				TShock.Log.ConsoleError("Invalid BCrypt work factor! Upgrading user password to BCrypt using default work factor.");
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
+			}
+
+			try {
+				TShock.Users.SetUserPassword(this, this.Password);
+			} catch (UserManagerException e) {
+				TShock.Log.ConsoleError(e.ToString());
+				this.Password = oldpassword; // Revert changes
+			}
+		}
+
+		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
+		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
+		internal void upgradePasswordWorkFactor(string password) {
+			// If the destination work factor is not greater, we won't upgrade it or re-hash it
+			int currentWorkFactor = Convert.ToInt32(this.Password.Split(new Char[] {'$'})[1]);
+
+			if (currentWorkFactor < TShock.Config.WorkFactor) {
+				try {
+					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+				} catch (ArgumentOutOfRangeException) {
+					TShock.Log.ConsoleError("Invalid BCrypt work factor! Refusing to change work-factor on exsting password.");
+				}
+
+				try {
+					TShock.Users.SetUserPassword(this, this.Password);
+				} catch (UserManagerException e) {
+					TShock.Log.ConsoleError(e.ToString());
+				}
+			}
 		}
 	}
 
