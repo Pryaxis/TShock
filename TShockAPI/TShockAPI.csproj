@@ -81,7 +81,6 @@
     <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="Hooks\RegionHooks.cs" />
     <Compile Include="ILog.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="SqlLog.cs" />
     <Compile Include="TextLog.cs" />
     <Compile Include="PaginationTools.cs" />
