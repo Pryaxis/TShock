@@ -401,6 +401,9 @@ namespace TShockAPI
 		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. Range: 5-31.")]
 		public int BCryptWorkFactor = 7;
 
+		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
+		public int MinimumPasswordLength = 4;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>

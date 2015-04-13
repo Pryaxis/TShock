@@ -412,11 +412,15 @@ namespace TShockAPI.DB
 		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
 		/// <param name="password">string password - the plain text password to hash</param>
 		public void CreateBCryptHash(string password) {
+
+			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength)) {
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+			}
 			try {
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
 			} catch (ArgumentOutOfRangeException) {
 				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
 			}
 		}
 
