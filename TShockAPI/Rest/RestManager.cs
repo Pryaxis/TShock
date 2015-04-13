@@ -980,7 +980,7 @@ namespace TShockAPI
 				return RestMissingParam("group");
 			try
 			{
-				TShock.Groups.AddGroup(name, args.Parameters["parent"], args.Parameters["permissions"], args.Parameters["chatcolor"], true);
+				TShock.Groups.AddGroup(name, args.Parameters["parent"], args.Parameters["permissions"], args.Parameters["chatcolor"]);
 			}
 			catch (Exception e)
 			{
