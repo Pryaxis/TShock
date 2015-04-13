@@ -82,7 +82,7 @@ namespace TShockAPI.DB
 		private void AddDefaultGroup(string name, string parent, string permissions)
 		{
 			if (!GroupExists(name))
-				AddGroup(name, parent, permissions);
+				AddGroup(name, parent, permissions, Group.defaultChatColor);
 		}
 
 
@@ -197,6 +197,7 @@ namespace TShockAPI.DB
 			return "";
 		}
 
+		[Obsolete("Use AddGroup(name, parentname, permissions, chatcolor) instead.")]
 		public String AddGroup(String name, String permissions)
 		{
 			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
