@@ -971,7 +971,7 @@ namespace TShockAPI
 			string subcmd = args.Parameters[0];
 
 			// Add requires a username, password, and a group specified.
-			if (subcmd == "add")
+			if (subcmd == "add"  && args.Parameters.Count == 4)
 			{
 				var user = new User();
 
@@ -1059,7 +1059,7 @@ namespace TShockAPI
 				}
 			}
 			// Group changing requires a username or IP address, and a new group to set
-			else if (subcmd == "group")
+			else if (subcmd == "group" && args.Parameters.Count == 3)
 			{
 	      var user = new User();
 	      user.Name = args.Parameters[1];
