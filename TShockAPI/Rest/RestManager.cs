@@ -333,7 +333,7 @@ namespace TShockAPI
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},
-				{"world", Main.worldName},
+				{"world", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
 				{"uptime", (DateTime.Now - System.Diagnostics.Process.GetCurrentProcess().StartTime).ToString(@"d'.'hh':'mm':'ss")},
 				{"serverpassword", !string.IsNullOrEmpty(TShock.Config.ServerPassword)}
 			};
@@ -707,7 +707,7 @@ namespace TShockAPI
 		{
 			return new RestObject()
 			{
-				{"name", Main.worldName},
+				{"name", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
 				{"size", Main.maxTilesX + "*" + Main.maxTilesY},
 				{"time", Main.time},
 				{"daytime", Main.dayTime},

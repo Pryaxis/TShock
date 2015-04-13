@@ -1358,9 +1358,6 @@ namespace TShockAPI
 			}
 			else if (e.MsgId == PacketTypes.WorldInfo)
 			{
-				if (e.remoteClient == -1) return;
-				var player = Players[e.remoteClient];
-				if (player == null) return;
 				using (var ms = new MemoryStream())
 				{
 					var msg = new WorldInfoMsg
@@ -1422,12 +1419,21 @@ namespace TShockAPI
 									 (Main.cloudBGActive >= 1f ? BossFlags2.CloudBg : BossFlags2.None) |
 									 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
 									 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
-									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None) ,
+									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None),
 						Rain = Main.maxRaining,
 						WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 					};
 					msg.PackFull(ms);
-					player.SendRawData(ms.ToArray());
+					if (e.remoteClient == -1)
+					{
+						TSPlayer.All.SendRawData(ms.ToArray());
+					}
+					else
+					{
+						var player = Players[e.remoteClient];
+						if (player == null) return;
+						player.SendRawData(ms.ToArray());
+					}
 				}
 				e.Handled = true;
 				return;
