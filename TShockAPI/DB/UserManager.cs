@@ -462,17 +462,17 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// A dictionary of hashing algortihms and an implementation object.
+		/// A dictionary of hashing algorithms and an implementation object.
 		/// </summary>
 		protected internal readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-																																					{
-																																						{"sha512", () => new SHA512Managed()},
-																																						{"sha256", () => new SHA256Managed()},
-																																						{"md5", () => new MD5Cng()},
-																																						{"sha512-xp", () => SHA512.Create()},
-																																						{"sha256-xp", () => SHA256.Create()},
-																																						{"md5-xp", () => MD5.Create()},
-																																					};
+			{
+					{"sha512", () => new SHA512Managed()},
+					{"sha256", () => new SHA256Managed()},
+					{"md5", () => new MD5Cng()},
+					{"sha512-xp", () => SHA512.Create()},
+					{"sha256-xp", () => SHA256.Create()},
+					{"md5-xp", () => MD5.Create()},
+			};
 
 		/// <summary>
 		/// Returns a hashed string for a given string based on the config file's hash algo
