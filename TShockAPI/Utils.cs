@@ -801,7 +801,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Attempts to parse a string as a timespan (_d_m_h_s).
 		/// </summary>
-		/// <param name="string">The time string.</param>
+		/// <param name="str">The time string.</param>
 		/// <param name="seconds">The seconds.</param>
 		/// <returns>Whether the string was parsed successfully.</returns>
 		public bool TryParseTime(string str, out int seconds)
