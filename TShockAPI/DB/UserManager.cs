@@ -21,9 +21,11 @@ using System.CodeDom.Compiler;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using BCrypt.Net;
+using System.Security.Cryptography;
 
 namespace TShockAPI.DB
 {
@@ -309,7 +311,7 @@ namespace TShockAPI.DB
 	{
 		public int ID { get; set; }
 		public string Name { get; set; }
-		public string Password { get; set; }
+		public string Password { get; internal set; }
 		public string UUID { get; set; }
 		public string Group { get; set; }
 		public string Registered { get; set; }
@@ -354,7 +356,7 @@ namespace TShockAPI.DB
 					return true;
 				}
 			} catch (SaltParseException) {
-				if (TShock.Utils.HashPassword(password).ToUpper() == this.Password.ToUpper()) {
+				if (hashPassword(password).ToUpper() == this.Password.ToUpper()) {
 					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
 					upgradePasswordToBCrypt(password);
 					return true;
@@ -406,6 +408,61 @@ namespace TShockAPI.DB
 				}
 			}
 		}
+
+		public void CreateBCryptHash(string password) {
+			try {
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+			} catch (ArgumentOutOfRangeException) {
+				TShock.Log.ConsoleError("Invalid BCrypt work factor! Creating new hash using default work factor.");
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
+			}
+		}
+
+		/// <summary>
+		/// A dictionary of hashing algortihms and an implementation object.
+		/// </summary>
+		internal readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
+																																					{
+																																						{"sha512", () => new SHA512Managed()},
+																																						{"sha256", () => new SHA256Managed()},
+																																						{"md5", () => new MD5Cng()},
+																																						{"sha512-xp", () => SHA512.Create()},
+																																						{"sha256-xp", () => SHA256.Create()},
+																																						{"md5-xp", () => MD5.Create()},
+																																					};
+
+		/// <summary>
+		/// Returns a Sha256 string for a given string
+		/// </summary>
+		/// <param name="bytes">bytes to hash</param>
+		/// <returns>string sha256</returns>
+		internal string hashPassword(byte[] bytes)
+		{
+			if (bytes == null)
+				throw new NullReferenceException("bytes");
+			Func<HashAlgorithm> func;
+			if (!HashTypes.TryGetValue(TShock.Config.HashAlgorithm.ToLower(), out func))
+				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.HashAlgorithm.ToLower()));
+
+			using (var hash = func())
+			{
+				var ret = hash.ComputeHash(bytes);
+				return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
+			}
+		}
+
+		/// <summary>
+		/// Returns a hashed password string for a given string
+		/// </summary>
+		/// <param name="password">string to hash</param>
+		/// <returns>string sha256</returns>
+		internal string hashPassword(string password)
+		{
+			if (string.IsNullOrEmpty(password) || password == "non-existant password")
+				return null;
+			return hashPassword(Encoding.UTF8.GetBytes(password));
+		}
+
 	}
 
 	[Serializable]

@@ -27,6 +27,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using TShockAPI.DB;
+using BCrypt.Net;
 
 namespace TShockAPI
 {
@@ -719,14 +720,16 @@ namespace TShockAPI
 			ply.SendErrorMessage("Use \"my query\" for items with spaces");
 		}
 
-				/// <summary>
-				/// Default hashing algorithm.
-				/// </summary>
-				public string HashAlgo = "sha512";
+		/// <summary>
+		/// Default hashing algorithm.
+		/// </summary>
+		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead.")]
+		public string HashAlgo = "sha512";
 
-				/// <summary>
-				/// A dictionary of hashing algortihms and an implementation object.
-				/// </summary>
+		/// <summary>
+		/// A dictionary of hashing algortihms and an implementation object.
+		/// </summary>
+		[Obsolete("This is no longer necessary, after switching to User.VerifyPassword(password) instead.")]
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
 																																					{
 																																						{"sha512", () => new SHA512Managed()},
@@ -742,6 +745,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="bytes">bytes to hash</param>
 		/// <returns>string sha256</returns>
+		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
 		public string HashPassword(byte[] bytes)
 		{
 			if (bytes == null)
@@ -762,6 +766,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="password">string to hash</param>
 		/// <returns>string sha256</returns>
+		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
 		public string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")

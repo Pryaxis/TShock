@@ -919,16 +919,18 @@ namespace TShockAPI
 			try
 			{
 				var user = new User();
-
+				string echoPassword = "";
 				if (args.Parameters.Count == 1)
 				{
 					user.Name = args.Player.Name;
-					user.Password = args.Parameters[0];
+					echoPassword = args.Parameters[0];
+					user.CreateBCryptHash(args.Parameters[0]);
 				}
 				else if (args.Parameters.Count == 2 && TShock.Config.AllowRegisterAnyUsername)
 				{
 					user.Name = args.Parameters[0];
-					user.Password = args.Parameters[1];
+					echoPassword = args.Parameters[1];
+					user.CreateBCryptHash(args.Parameters[1]);
 				}
 				else
 				{
@@ -942,7 +944,7 @@ namespace TShockAPI
                 if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
-					args.Player.SendSuccessMessage("Your password is {0}.", user.Password);
+					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
 					TShock.Users.AddUser(user);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
 				}
@@ -976,7 +978,7 @@ namespace TShockAPI
 				var user = new User();
 
 				user.Name = args.Parameters[1];
-				user.Password = args.Parameters[2];
+				user.CreateBCryptHash(args.Parameters[2]);
 				user.Group = args.Parameters[3];
 				
 				try
