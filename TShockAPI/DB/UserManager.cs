@@ -374,7 +374,7 @@ namespace TShockAPI.DB
 			
 			// Convert the password to BCrypt, and save it.
 			try {
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			} catch (ArgumentOutOfRangeException) {
 				TShock.Log.ConsoleError("Invalid BCrypt work factor! Upgrading user password to BCrypt using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
@@ -394,9 +394,9 @@ namespace TShockAPI.DB
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
 			int currentWorkFactor = Convert.ToInt32((this.Password.Split('$')[2]));
 
-			if (currentWorkFactor < TShock.Config.WorkFactor) {
+			if (currentWorkFactor < TShock.Config.BCryptWorkFactor) {
 				try {
-					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 				} catch (ArgumentOutOfRangeException) {
 					TShock.Log.ConsoleError("Invalid BCrypt work factor! Refusing to change work-factor on exsting password.");
 				}
@@ -411,7 +411,7 @@ namespace TShockAPI.DB
 
 		public void CreateBCryptHash(string password) {
 			try {
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.WorkFactor);
+				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			} catch (ArgumentOutOfRangeException) {
 				TShock.Log.ConsoleError("Invalid BCrypt work factor! Creating new hash using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password);

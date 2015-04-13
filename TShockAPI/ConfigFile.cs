@@ -399,7 +399,7 @@ namespace TShockAPI
 		public bool SaveWorldOnLastPlayerExit = true;
 
 		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. Range: 5-31.")]
-		public int WorkFactor = 10;
+		public int BCryptWorkFactor = 7;
 
 		/// <summary>
 		/// Reads a configuration file from a given path
