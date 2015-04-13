@@ -132,7 +132,7 @@ namespace Rests
             if (userAccount == null)
                 return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 			
-			if (!TShock.Utils.HashPassword(password).Equals(userAccount.Password, StringComparison.InvariantCultureIgnoreCase))
+			if (!userAccount.VerifyPassword(password))
 				return new RestObject("401")
 					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 

@@ -740,7 +740,7 @@ namespace TShockAPI
 			}
             
 			User user = TShock.Users.GetUserByName(args.Player.Name);
-			string encrPass = "";
+			string password = "";
 			bool usingUUID = false;
 			if (args.Parameters.Count == 0 && !TShock.Config.DisableUUIDLogin)
 			{
@@ -754,7 +754,7 @@ namespace TShockAPI
 				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
 					return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
-				encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
+				password = args.Parameters[0];
 			}
 			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
 			{
@@ -762,7 +762,7 @@ namespace TShockAPI
 					return;
 
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
-				encrPass = TShock.Utils.HashPassword(args.Parameters[1]);
+				password = args.Parameters[1];
 				if (String.IsNullOrEmpty(args.Parameters[0]))
 				{
 					args.Player.SendErrorMessage("Bad login attempt.");
@@ -783,7 +783,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("A user by that name does not exist.");
 				}
-				else if (user.Password.ToUpper() == encrPass.ToUpper() ||
+				else if (user.VerifyPassword(password) ||
 						(usingUUID && user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
@@ -888,8 +888,8 @@ namespace TShockAPI
 				if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
 				{
 					var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
-					string encrPass = TShock.Utils.HashPassword(args.Parameters[0]);
-					if (user.Password.ToUpper() == encrPass.ToUpper())
+					string password = args.Parameters[0];
+					if (user.VerifyPassword(password))
 					{
 						args.Player.SendSuccessMessage("You changed your password!");
 						TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.

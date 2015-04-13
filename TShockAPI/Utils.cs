@@ -723,7 +723,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Default hashing algorithm.
 		/// </summary>
-		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead.")]
+		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead if you really need it (but use User.VerifyPassword(password)) for verifying passwords.")]
 		public string HashAlgo = "sha512";
 
 		/// <summary>

@@ -115,7 +115,7 @@ namespace TShockAPI.DB
 			try
 			{
 				if (
-					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", TShock.Utils.HashPassword(password),
+					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
 					               user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}

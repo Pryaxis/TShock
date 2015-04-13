@@ -1512,8 +1512,7 @@ namespace TShockAPI
 			var user = TShock.Users.GetUserByName(args.Player.Name);
 						if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
-				string encrPass = TShock.Utils.HashPassword(password);
-				if (user.Password.ToUpper() == encrPass.ToUpper())
+				if (user.VerifyPassword(password))
 				{
 						args.Player.RequiresPassword = false;
 						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
