@@ -348,15 +348,21 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="password">string password - The password to check against the user object.</param>
 		/// <returns>bool true, if the password matched, or false, if it didn't.</returns>
-		public bool VerifyPassword(string password) {
-			try {
-				if (BCrypt.Net.BCrypt.Verify(password, this.Password)) {
+		public bool VerifyPassword(string password)
+		{
+			try
+			{
+				if (BCrypt.Net.BCrypt.Verify(password, this.Password)) 
+				{
 					// If necessary, perform an upgrade to the highest work factor.
 					upgradePasswordWorkFactor(password);
 					return true;
 				}
-			} catch (SaltParseException) {
-				if (hashPassword(password).ToUpper() == this.Password.ToUpper()) {
+			} 
+			catch (SaltParseException)
+			{
+				if (hashPassword(password).ToUpper() == this.Password.ToUpper())
+				{
 					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
 					upgradePasswordToBCrypt(password);
 					return true;
@@ -368,21 +374,28 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void upgradePasswordToBCrypt(string password) {
+		protected internal void upgradePasswordToBCrypt(string password)
+		{
 			// Save the old password, in the event that we have to revert changes.
 			string oldpassword = this.Password;
 			
 			// Convert the password to BCrypt, and save it.
-			try {
+			try 
+			{
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
-			} catch (ArgumentOutOfRangeException) {
+			}
+			catch (ArgumentOutOfRangeException)
+			{
 				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Upgrading user password to BCrypt using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
 			}
 
-			try {
+			try
+			{
 				TShock.Users.SetUserPassword(this, this.Password);
-			} catch (UserManagerException e) {
+			}
+			catch (UserManagerException e)
+			{
 				TShock.Log.ConsoleError(e.ToString());
 				this.Password = oldpassword; // Revert changes
 			}
@@ -390,20 +403,28 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void upgradePasswordWorkFactor(string password) {
+		protected internal void upgradePasswordWorkFactor(string password)
+		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
 			int currentWorkFactor = Convert.ToInt32((this.Password.Split('$')[2]));
 
-			if (currentWorkFactor < TShock.Config.BCryptWorkFactor) {
-				try {
+			if (currentWorkFactor < TShock.Config.BCryptWorkFactor)
+			{
+				try
+				{
 					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
-				} catch (ArgumentOutOfRangeException) {
+				}
+				catch (ArgumentOutOfRangeException)
+				{
 					TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Refusing to change work-factor on exsting password.");
 				}
 
-				try {
+				try
+				{
 					TShock.Users.SetUserPassword(this, this.Password);
-				} catch (UserManagerException e) {
+				}
+				catch (UserManagerException e)
+				{
 					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
@@ -411,17 +432,33 @@ namespace TShockAPI.DB
 
 		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
 		/// <param name="password">string password - the plain text password to hash</param>
-		public void CreateBCryptHash(string password) {
-
-			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength)) {
+		public void CreateBCryptHash(string password)
+		{
+			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			{
 				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
 			}
-			try {
+			try
+			{
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
-			} catch (ArgumentOutOfRangeException) {
+			}
+			catch (ArgumentOutOfRangeException)
+			{
 				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
 			}
+		}
+
+		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <param name="password">string password - the plain text password to hash</param>
+		/// <param name="workFactor">int workFactor - the work factor to use in generating the password hash</param>
+		public void CreateBCryptHash(string password, int workFactor)
+		{
+			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			{
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+			}
+			this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
 		}
 
 		/// <summary>

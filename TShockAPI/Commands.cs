@@ -924,10 +924,12 @@ namespace TShockAPI
 				{
 					user.Name = args.Player.Name;
 					echoPassword = args.Parameters[0];
-					try {
+					try
+					{
 						user.CreateBCryptHash(args.Parameters[0]);
 					}
-					catch (ArgumentOutOfRangeException) {
+					catch (ArgumentOutOfRangeException)
+					{
 						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
 						return;
 					}
@@ -936,9 +938,12 @@ namespace TShockAPI
 				{
 					user.Name = args.Parameters[0];
 					echoPassword = args.Parameters[1];
-					try {
+					try
+					{
 						user.CreateBCryptHash(args.Parameters[1]);
-					} catch (ArgumentOutOfRangeException) {
+					}
+					catch (ArgumentOutOfRangeException)
+					{
 						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
 						return;
 					}
@@ -991,7 +996,9 @@ namespace TShockAPI
 				user.Name = args.Parameters[1];
 				try {
 					user.CreateBCryptHash(args.Parameters[2]);
-				} catch (ArgumentOutOfRangeException) {
+				}
+				catch (ArgumentOutOfRangeException)
+				{
 					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
 					return;
 				}
