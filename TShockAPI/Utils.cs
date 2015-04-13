@@ -472,7 +472,6 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks all player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		public void ForceKickAll(string reason)
 		{
@@ -540,9 +539,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
+		/// <param name="saveSSI">bool saveSSI (default: false)</param>
 		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
 			Kick(player, reason, true, silent, null, saveSSI);
@@ -551,7 +551,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server..
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
@@ -585,10 +585,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
+		/// <param name="adminUserName">string adminUserName (default: null)</param>
 		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
@@ -636,7 +636,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="ply">TSPlayer player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
@@ -674,7 +674,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Group from the name of the group
 		/// </summary>
-		/// <param name="ply">string groupName</param>
+		/// <param name="groupName">string groupName</param>
 		public Group GetGroup(string groupName)
 		{
 			//first attempt on cached groups
@@ -760,7 +760,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Sha256 string for a given string
 		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
+		/// <param name="password">string to hash</param>
 		/// <returns>string sha256</returns>
 		public string HashPassword(string password)
 		{
@@ -801,7 +801,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Attempts to parse a string as a timespan (_d_m_h_s).
 		/// </summary>
-		/// <param name="time">The time string.</param>
+		/// <param name="string">The time string.</param>
 		/// <param name="seconds">The seconds.</param>
 		/// <returns>Whether the string was parsed successfully.</returns>
 		public bool TryParseTime(string str, out int seconds)

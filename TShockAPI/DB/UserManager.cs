@@ -106,7 +106,7 @@ namespace TShockAPI.DB
 		/// Sets the Hashed Password for a given username
 		/// </summary>
 		/// <param name="user">User user</param>
-		/// <param name="group">string password</param>
+		/// <param name="password">string password</param>
 		public void SetUserPassword(User user, string password)
 		{
 			try
@@ -126,7 +126,7 @@ namespace TShockAPI.DB
 		/// Sets the UUID for a given username
 		/// </summary>
 		/// <param name="user">User user</param>
-		/// <param name="group">string uuid</param>
+		/// <param name="uuid">string uuid</param>
 		public void SetUserUUID(User user, string uuid)
 		{
 			try

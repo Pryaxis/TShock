@@ -210,6 +210,8 @@ namespace TShockAPI.DB
 		/// <param name="parentname">parent of group</param>
 		/// <param name="permissions">permissions</param>
 		/// <param name="chatcolor">chatcolor</param>
+		/// <param name="suffix">suffix</param>
+		/// <param name="prefix">prefix</param> //why is suffix before prefix?!
 		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
 		{
 			Group group = GetGroupByName(name);

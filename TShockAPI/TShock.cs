@@ -1123,8 +1123,7 @@ namespace TShockAPI
 		/// <summary>
 		/// When a server command is run.
 		/// </summary>
-		/// <param name="cmd"></param>
-		/// <param name="e"></param>
+		/// <param name="args">The CommandEventArgs object</param>
 		private void ServerHooks_OnCommand(CommandEventArgs args)
 		{
 			if (args.Handled)

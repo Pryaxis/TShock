@@ -34,8 +34,7 @@ namespace Rests
 	/// <summary>
 	/// Rest command delegate
 	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
+	/// <param name="args">RestRequestArgs object containing Verbs, Parameters, Request, and TokenData</param>
 	/// <returns>Response object or null to not handle request</returns>
 	public delegate object RestCommandD(RestRequestArgs args);
 
