@@ -34,7 +34,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Checks whether the log level contains the specified flag.
 		/// </summary>
-		/// <param name="type">The <see cref="LogLevel" /> value to check.</param>
+		/// <param name="type">The <see cref="TraceLevel" /> value to check.</param>
 		bool MayWriteType(TraceLevel type);
 
 		/// <summary>
