@@ -1379,16 +1379,13 @@ namespace TShockAPI
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 			BitsByte hideVisual = args.Data.ReadInt8();
-			// We have to read in some values so we can read in sequence; but they aren't all used.
-			#pragma warning disable 0219
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-			Color skinColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-			Color eyeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			args.Data.ReadInt8(); args.Data.ReadInt8(); args.Data.ReadInt8(); // skin color
+			args.Data.ReadInt8(); args.Data.ReadInt8(); args.Data.ReadInt8(); // eye color
 			Color shirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-			#pragma warning restore 0219
 			var difficulty = args.Data.ReadInt8();
 
 			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
@@ -2757,11 +2754,7 @@ namespace TShockAPI
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
-			// We have to read in some values so we can read in sequence; but they aren't all used.
-			#pragma warning disable 0219
-			int style = args.Data.ReadInt16();
-			#pragma warning restore 0219
-
+			args.Data.ReadInt16(); // Ignore style
 
 			if (OnTileKill(tileX, tileY))
 				return true;
@@ -2877,14 +2870,10 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var b = args.Data.ReadInt8();
-			// Hide warning for not using name
-			#pragma warning disable 0219
-			var name = "";
 
 			if (b != 0 && b <= 20)
-				name = args.Data.ReadString();
+				args.Data.ReadString(); // Ignore the name
 
-			#pragma warning restore 0219
 			args.Player.ActiveChest = id;
 
 			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
@@ -2943,9 +2932,7 @@ namespace TShockAPI
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			#pragma warning disable 0219
-			var text = args.Data.ReadString();
-			#pragma warning restore 0219
+			args.Data.ReadString(); // Ignore sign text
 
 			if (OnSignEvent(id, x, y))
 				return true;
@@ -3141,10 +3128,7 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var dmg = args.Data.ReadInt16();
-			// Ignore text not being read
-			#pragma warning disable 0219
-			var text = args.Data.ReadString();
-			#pragma warning restore 0219
+			args.Data.ReadString(); // don't store damage text
 			var bits = (BitsByte)args.Data.ReadInt8();
 			var pvp = bits[0];
 			var crit = bits[1];
@@ -3568,13 +3552,10 @@ namespace TShockAPI
 
 		private static bool HandleDoorUse(GetDataHandlerArgs args)
 		{
-			// close and dir aren't read; ignore warnings for them
-			#pragma warning disable 0219
-			var close = args.Data.ReadByte();
+			args.Data.ReadByte(); // Ignore close
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var dir = args.Data.ReadByte() == 0 ? -1 : 1;
-			#pragma warning restore 0219
+			/* var dir = */ args.Data.ReadByte(); //== 0 ? -1 : 1; // Ignore direction
 
 			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
 				return true;
