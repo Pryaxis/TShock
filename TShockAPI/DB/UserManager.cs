@@ -392,7 +392,7 @@ namespace TShockAPI.DB
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
 		internal void upgradePasswordWorkFactor(string password) {
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
-			int currentWorkFactor = Convert.ToInt32(this.Password.Split(new Char[] {'$'})[1]);
+			int currentWorkFactor = Convert.ToInt32((this.Password.Split('$')[2]));
 
 			if (currentWorkFactor < TShock.Config.WorkFactor) {
 				try {
