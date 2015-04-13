@@ -1030,7 +1030,7 @@ namespace TShockAPI
 			}
 			
 			// Password changing requires a username, and a new password to set
-			else if (subcmd == "password")
+			else if (subcmd == "password" && args.Parameters.Count == 3)
 			{
 				var user = new User();
 				user.Name = args.Parameters[1];
