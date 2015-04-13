@@ -67,7 +67,7 @@ namespace TShockAPI.DB
 			try
 			{
 				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
+								   user.Password, user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
