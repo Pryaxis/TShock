@@ -232,6 +232,8 @@ namespace TShockAPI.DB
 			WarpPos = position;
 			IsPrivate = isPrivate;
 		}
+
+		/// <summary>Creates a warp with a default coordinate of zero, an empty name, public.</summary>
 		public Warp()
 		{
 			Position = Point.Zero;
