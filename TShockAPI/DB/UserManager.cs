@@ -376,7 +376,7 @@ namespace TShockAPI.DB
 			try {
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			} catch (ArgumentOutOfRangeException) {
-				TShock.Log.ConsoleError("Invalid BCrypt work factor! Upgrading user password to BCrypt using default work factor.");
+				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Upgrading user password to BCrypt using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
 			}
 
@@ -398,7 +398,7 @@ namespace TShockAPI.DB
 				try {
 					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 				} catch (ArgumentOutOfRangeException) {
-					TShock.Log.ConsoleError("Invalid BCrypt work factor! Refusing to change work-factor on exsting password.");
+					TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Refusing to change work-factor on exsting password.");
 				}
 
 				try {
@@ -415,7 +415,7 @@ namespace TShockAPI.DB
 			try {
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			} catch (ArgumentOutOfRangeException) {
-				TShock.Log.ConsoleError("Invalid BCrypt work factor! Creating new hash using default work factor.");
+				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
 			}
 		}
@@ -434,10 +434,10 @@ namespace TShockAPI.DB
 																																					};
 
 		/// <summary>
-		/// Returns a Sha256 string for a given string
+		/// Returns a hashed string for a given string based on the config file's hash algo
 		/// </summary>
 		/// <param name="bytes">bytes to hash</param>
-		/// <returns>string sha256</returns>
+		/// <returns>string hash</returns>
 		internal string hashPassword(byte[] bytes)
 		{
 			if (bytes == null)
@@ -454,10 +454,10 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Returns a hashed password string for a given string
+		/// Returns a hashed string for a given string based on the config file's hash algo
 		/// </summary>
 		/// <param name="password">string to hash</param>
-		/// <returns>string sha256</returns>
+		/// <returns>string hash</returns>
 		internal string hashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
