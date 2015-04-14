@@ -374,7 +374,7 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void upgradePasswordToBCrypt(string password)
+		protected internal void UpgradePasswordToBCrypt(string password)
 		{
 			// Save the old password, in the event that we have to revert changes.
 			string oldpassword = this.Password;
@@ -403,10 +403,17 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void upgradePasswordWorkFactor(string password)
+		protected internal void UpgradePasswordWorkFactor(string password)
 		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
-			int currentWorkFactor = Convert.ToInt32((this.Password.Split('$')[2]));
+			try
+			{
+				int currentWorkFactor = Int32.Parse((this.Password.Split('$')[2]));
+			}
+			catch (FormatException)
+			{
+				TShock.Log.ConsoleError("Warning: Not upgrading work factor because bcrypt hash in an invalid format.");
+			}
 
 			if (currentWorkFactor < TShock.Config.BCryptWorkFactor)
 			{
@@ -479,7 +486,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="bytes">bytes to hash</param>
 		/// <returns>string hash</returns>
-		protected internal string hashPassword(byte[] bytes)
+		protected internal string HashPassword(byte[] bytes)
 		{
 			if (bytes == null)
 				throw new NullReferenceException("bytes");
@@ -499,7 +506,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="password">string to hash</param>
 		/// <returns>string hash</returns>
-		protected internal string hashPassword(string password)
+		protected internal string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
 				return null;

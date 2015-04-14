@@ -994,7 +994,8 @@ namespace TShockAPI
 				var user = new User();
 
 				user.Name = args.Parameters[1];
-				try {
+				try
+				{
 					user.CreateBCryptHash(args.Parameters[2]);
 				}
 				catch (ArgumentOutOfRangeException)
