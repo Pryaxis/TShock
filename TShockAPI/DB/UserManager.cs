@@ -355,16 +355,16 @@ namespace TShockAPI.DB
 				if (BCrypt.Net.BCrypt.Verify(password, this.Password)) 
 				{
 					// If necessary, perform an upgrade to the highest work factor.
-					upgradePasswordWorkFactor(password);
+					UpgradePasswordWorkFactor(password);
 					return true;
 				}
 			} 
 			catch (SaltParseException)
 			{
-				if (hashPassword(password).ToUpper() == this.Password.ToUpper())
+				if (HashPassword(password).ToUpper() == this.Password.ToUpper())
 				{
 					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
-					upgradePasswordToBCrypt(password);
+					UpgradePasswordToBCrypt(password);
 					return true;
 				}
 				return false;
@@ -406,13 +406,15 @@ namespace TShockAPI.DB
 		protected internal void UpgradePasswordWorkFactor(string password)
 		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
+			int currentWorkFactor = 0;
 			try
 			{
-				int currentWorkFactor = Int32.Parse((this.Password.Split('$')[2]));
+				currentWorkFactor = Int32.Parse((this.Password.Split('$')[2]));
 			}
 			catch (FormatException)
 			{
 				TShock.Log.ConsoleError("Warning: Not upgrading work factor because bcrypt hash in an invalid format.");
+				return;
 			}
 
 			if (currentWorkFactor < TShock.Config.BCryptWorkFactor)
@@ -510,7 +512,7 @@ namespace TShockAPI.DB
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
 				return null;
-			return hashPassword(Encoding.UTF8.GetBytes(password));
+			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
 
 	}
