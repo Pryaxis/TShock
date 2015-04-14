@@ -398,7 +398,7 @@ namespace TShockAPI
 		[Description("Determines if the server should save the world if the last player exits.")]
 		public bool SaveWorldOnLastPlayerExit = true;
 
-		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. Range: 5-31.")]
+		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. The number computational rounds is 2^n. Increase with caution. Range: 5-31.")]
 		public int BCryptWorkFactor = 7;
 
 		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
