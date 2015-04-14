@@ -374,7 +374,7 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void UpgradePasswordToBCrypt(string password)
+		protected void UpgradePasswordToBCrypt(string password)
 		{
 			// Save the old password, in the event that we have to revert changes.
 			string oldpassword = this.Password;
@@ -403,7 +403,7 @@ namespace TShockAPI.DB
 
 		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
 		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
-		protected internal void UpgradePasswordWorkFactor(string password)
+		protected void UpgradePasswordWorkFactor(string password)
 		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
 			int currentWorkFactor = 0;
@@ -473,7 +473,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// A dictionary of hashing algorithms and an implementation object.
 		/// </summary>
-		protected internal readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
+		protected readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
 			{
 					{"sha512", () => new SHA512Managed()},
 					{"sha256", () => new SHA256Managed()},
@@ -488,7 +488,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="bytes">bytes to hash</param>
 		/// <returns>string hash</returns>
-		protected internal string HashPassword(byte[] bytes)
+		protected string HashPassword(byte[] bytes)
 		{
 			if (bytes == null)
 				throw new NullReferenceException("bytes");
@@ -508,7 +508,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="password">string to hash</param>
 		/// <returns>string hash</returns>
-		protected internal string HashPassword(string password)
+		protected string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
 				return null;
