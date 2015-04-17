@@ -779,6 +779,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str">String to check</param>
 		/// <returns>True if the string only contains printable characters</returns>
+		[Obsolete("ValidString is being removed as it serves no purpose to TShock at this time.")]
 		public bool ValidString(string str)
 		{
 			foreach (var c in str)
@@ -870,6 +871,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str">string</param>
 		/// <returns>sanitized string</returns>
+		[Obsolete("SanitizeString is being removed from TShock as it currently serves no purpose.")]
 		public string SanitizeString(string str)
 		{
 			var returnstr = str.ToCharArray();
