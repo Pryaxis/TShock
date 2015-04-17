@@ -34,7 +34,7 @@ namespace TShockAPI.PermissionSystem
 		/// <summary>
 		/// The permission of this node.
 		/// </summary>
-		public String Permission { get; private set; }
+		public string Permission { get; private set; }
 
 		/// <summary>
 		/// The type of permission.
@@ -46,7 +46,7 @@ namespace TShockAPI.PermissionSystem
 		/// </summary>
 		/// <param name="permission">The permission string without specifier.</param>
 		/// <param name="type">The type of permission.</param>
-		public PermissionNode(String permission, PermissionType type = PermissionType.Normal)
+		public PermissionNode(string permission, PermissionType type = PermissionType.Normal)
 		{
 			Permission = permission;
 			PermissionType = type;

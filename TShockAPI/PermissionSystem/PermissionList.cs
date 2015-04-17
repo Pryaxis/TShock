@@ -13,7 +13,7 @@ namespace TShockAPI.PermissionSystem
 		/// <summary>
 		/// This set's list of permissions.
 		/// </summary>
-		private List<String> permissions;
+		private List<string> permissions;
 
 		/// <summary>
 		/// Default constructor.
@@ -27,7 +27,7 @@ namespace TShockAPI.PermissionSystem
 		/// Constructor that assigns the list of permissions.
 		/// </summary>
 		/// <param name="permissions">The list of permissions to assign.</param>
-		public PermissionList(List<String> permissions)
+		public PermissionList(List<string> permissions)
 		{
 			this.permissions = permissions;
 		}
@@ -101,7 +101,7 @@ namespace TShockAPI.PermissionSystem
 			return false;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return String.Join(",", permissions);
 		}

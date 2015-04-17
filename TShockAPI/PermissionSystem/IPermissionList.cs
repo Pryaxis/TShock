@@ -14,25 +14,25 @@ namespace TShockAPI.PermissionSystem
 		/// Add a permission to this set.
 		/// </summary>
 		/// <param name="permission">The permission to add.</param>
-		void AddPermission(String permission);
+		void AddPermission(string permission);
 
 		/// <summary>
 		/// Remove a permission from this set.
 		/// </summary>
 		/// <param name="permission">The permission to remove.</param>
-		void RemovePermission(String permission);
+		void RemovePermission(string permission);
 
 		/// <summary>
 		/// Gets a List of permission string that are in this set.
 		/// </summary>
 		/// <returns>The list of permissions.</returns>
-		List<String> GetPermissions();
+		List<string> GetPermissions();
 
 		/// <summary>
 		/// Checks to see if a permission string is present in this set.
 		/// </summary>
 		/// <param name="permission">The permission string to check for.</param>
 		/// <returns>Returns if the permission string is contained in this set.</returns>
-		bool HasPermission(String permission);
+		bool HasPermission(string permission);
 	}
 }

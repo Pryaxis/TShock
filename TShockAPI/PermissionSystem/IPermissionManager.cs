@@ -45,13 +45,13 @@ namespace TShockAPI.PermissionSystem
 		/// Parse a CSV string into the lists of permissions.
 		/// </summary>
 		/// <param name="list">A comma seperated list of permissions, ie "node.permission,!node.permission"</param>
-		void Parse(String list);
+		void Parse(string list);
 
 		/// <summary>
 		/// Parse permissions from the list into their specified permission list.
 		/// </summary>
 		/// <param name="list">A list of permissions, ie ["node.permission", "!node.permission"]</param>
-		void Parse(List<String> list);
+		void Parse(List<string> list);
 
 		/// <summary>
 		/// Get the specified list of permissions

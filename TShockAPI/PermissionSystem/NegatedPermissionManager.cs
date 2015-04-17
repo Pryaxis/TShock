@@ -23,7 +23,7 @@ namespace TShockAPI.PermissionSystem
 		/// <summary>
 		/// The prefix to string based permissions that define that they are negated.
 		/// </summary>
-		public const String NegatedPrefix = "!";
+		public const char NegatedPrefix = '!';
  
 		/// <summary>
 		/// Default constructor that news up the permission lists.
@@ -49,7 +49,7 @@ namespace TShockAPI.PermissionSystem
 		/// Constructor that takes a list of permission strings, and parses it.
 		/// </summary>
 		/// <param name="permissionlist">The list of permissions to be parsed.</param>
-		public NegatedPermissionManager(List<String> permissionlist)
+		public NegatedPermissionManager(List<string> permissionlist)
 		{
 			this.permissions = new PermissionList();
 			this.negatedPermissions = new PermissionList();
@@ -165,7 +165,7 @@ namespace TShockAPI.PermissionSystem
 		/// <returns></returns>
 		public IPermissionList TotalPermissions()
 		{
-			List<String> perms = permissions.GetPermissions();
+			List<string> perms = permissions.GetPermissions();
 			perms.RemoveAll(p => negatedPermissions.HasPermission(p));
 			return new PermissionList(perms);
 		}
@@ -178,7 +178,7 @@ namespace TShockAPI.PermissionSystem
 		/// <returns>Returns the permission set this permission belongs to.</returns>
 		private PermissionType ParsePermission(string permission, out string realPermission)
 		{
-			if (permission.StartsWith(NegatedPrefix))
+			if (!String.IsNullOrWhiteSpace(permission) && permission[0] == NegatedPrefix)
 			{
 				realPermission = permission.Substring(1);
 				return PermissionType.Negated;
@@ -221,7 +221,7 @@ namespace TShockAPI.PermissionSystem
 		/// Parses a List of strings, into an allowed and negated permission set.
 		/// </summary>
 		/// <param name="list">The list of strings to parse.</param>
-		public void Parse(List<String> list)
+		public void Parse(List<string> list)
 		{
 			Parse(String.Join(",", list));
 		}
@@ -262,7 +262,7 @@ namespace TShockAPI.PermissionSystem
 		/// Outputs all the permissions in comma seperated list form with specifiers.
 		/// </summary>
 		/// <returns>The output string.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			StringBuilder builder = new StringBuilder();
 

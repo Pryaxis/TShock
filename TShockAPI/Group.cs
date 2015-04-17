@@ -111,7 +111,10 @@ namespace TShockAPI
 		/// <summary>
 		/// The name of the parent group, or "" if there is none.
 		/// </summary>
-		public string ParentName {get { return Parent == null ? "" : Parent.Name; }}
+		public string ParentName
+		{
+			get { return Parent == null ? "" : Parent.Name; }
+		}
 
 		/// <summary>
 		/// The default group a new group should be dumped into.
@@ -140,7 +143,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="permission">The permission to check.</param>
 		/// <returns>Returns true if the user has that permission.</returns>
-		public virtual bool HasPermission(string permission)
+		public bool HasPermission(string permission)
 		{
 			return PermissionManager.HasPermission(new PermissionNode(permission));
 		}
@@ -151,7 +154,7 @@ namespace TShockAPI
 		/// <param name="permission">The permission to add.</param>
 		public void AddPermission(string permission)
 		{
-			PermissionManager.AddPermission(new PermissionNode(permission, PermissionType.Negated));
+			PermissionManager.AddPermission(permission);
 		}
 
 		/// <summary>
@@ -187,10 +190,11 @@ namespace TShockAPI
 			otherGroup.R = R;
 			otherGroup.G = G;
 			otherGroup.B = B;
-			PermissionManager.Clone(otherGroup.PermissionManager);
+			otherGroup.PermissionManager.Clone(PermissionManager);
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			return Name;
 		}
 	}
