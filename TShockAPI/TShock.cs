@@ -1004,6 +1004,7 @@ namespace TShockAPI
 		private void OnLeave(LeaveEventArgs args)
 		{
 			var tsplr = Players[args.Who];
+			Hooks.PlayerHooks.OnPlayerLogout(tsplr);
 			Players[args.Who] = null;
 
 			if (tsplr != null && tsplr.ReceivedInfo)
@@ -1028,7 +1029,7 @@ namespace TShockAPI
 					tsplr.tempGroupTimer.Stop();
 				}
 			}
-			
+
 			// The last player will leave after this hook is executed.
 			if (Utils.ActivePlayers() == 1)
 			{
