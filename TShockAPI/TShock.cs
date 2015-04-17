@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
@@ -67,30 +67,55 @@ namespace TShockAPI
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
 
+		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
+		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
 		public static BanManager Bans;
+		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
 		public static WarpManager Warps;
+		/// <summary>Regions - Static reference to the region manager for accessing the region system.</summary>
 		public static RegionManager Regions;
+		/// <summary>Backups - Static reference to the backup manager for accessing the backup system.</summary>
 		public static BackupManager Backups;
+		/// <summary>Groups - Static reference to the group manager for accessing the group system.</summary>
 		public static GroupManager Groups;
+		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
 		public static UserManager Users;
+		/// <summary>Itembans - Static reference to the item ban system.</summary>
 		public static ItemManager Itembans;
+		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
 		public static ProjectileManagager ProjectileBans;
+		/// <summary>TileBans - Static reference to the tile ban system.</summary>
 		public static TileManager TileBans;
+		/// <summary>RememberedPos - Static reference to the remembered position manager.</summary>
 		public static RememberedPosManager RememberedPos;
+		/// <summary>CharacterDB - Static reference to the SSC character manager.</summary>
 		public static CharacterManager CharacterDB;
+		/// <summary>Config - Static reference to the config system, for accessing values set in users' config files.</summary>
 		public static ConfigFile Config { get; set; }
+		/// <summary>ServerSideCharacterConfig - Static reference to the server side character config, for accessing values set by users to modify SSC.</summary>
 		public static ServerSideConfig ServerSideCharacterConfig;
+		/// <summary>DB - Static reference to the database.</summary>
 		public static IDbConnection DB;
+		/// <summary>OverridePort - Determines if TShock should override the server port.</summary>
 		public static bool OverridePort;
+		/// <summary>PacketBuffer - Static reference to the packet bufferer system, which buffers packets to clients for better performance.</summary>
 		public static PacketBufferer PacketBuffer;
+		/// <summary>Geo - Static reference to the GeoIP system which determines the location of an IP address.</summary>
 		public static GeoIPCountry Geo;
+		/// <summary>RestApi - Static reference to the Rest API authentication manager.</summary>
 		public static SecureRest RestApi;
+		/// <summary>RestManager - Static reference to the Rest API manager.</summary>
 		public static RestManager RestManager;
+		/// <summary>Utils - Static reference to the utilities class, which contains a variety of utility functions.</summary>
 		public static Utils Utils = Utils.Instance;
+		/// <summary>StatTracker - Static reference to the stat tracker, which is created immediately when declared.</summary>
 		public static StatTracker StatTracker = new StatTracker();
+		/// <summary>UpdateManager - Static reference to the update checker, which checks for updates and notifies server admins of updates.</summary>
 		public static UpdateManager UpdateManager;
+		/// <summary>Log - Static reference to the log system, which outputs to either SQL or a text file, depending on user config.</summary>
 		public static ILog Log;
+		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
 		public static TerrariaPlugin instance;
 		/// <summary>
 		/// Used for implementing REST Tokens prior to the REST system starting up.
