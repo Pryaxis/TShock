@@ -127,26 +127,36 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
+		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking & loading the plugin.</summary>
+		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
 		{
 			get { return VersionNum; }
 		}
 
+		/// <summary>Name - The plugin name.</summary>
+		/// <value>value - "TShock"</value>
 		public override string Name
 		{
 			get { return "TShock"; }
 		}
 
+		/// <summary>Author - The author of the plugin.</summary>
+		/// <value>value - "The TShock Team"</value>
 		public override string Author
 		{
-			get { return "The Nyx Team"; }
+			get { return "The TShock Team"; }
 		}
 
+		/// <summary>Description - The plugin description.</summary>
+		/// <value>value - "The administration modification of the future."</value>
 		public override string Description
 		{
 			get { return "The administration modification of the future."; }
 		}
 
+		/// <summary>TShock - The constructor for the TShock plugin.</summary>
+		/// <param name="game">game - The Terraria main game.</param>
 		public TShock(Main game)
 			: base(game)
 		{
@@ -159,7 +169,7 @@ namespace TShockAPI
 			instance = this;
 		}
 
-
+		/// <summary>Initialize - Called by the TerrariaServerAPI during initialization.</summary>
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
 		{
@@ -332,6 +342,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Dispose - Called when disposing.</summary>
+		/// <param name="disposing">disposing - If set, disposes of all hooks and other systems.</param>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -342,7 +354,6 @@ namespace TShockAPI
 					Geo.Dispose();
 				}
 				SaveManager.Instance.Dispose();
-
 
 				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
@@ -376,6 +387,8 @@ namespace TShockAPI
 			base.Dispose(disposing);
 		}
 
+		/// <summary>OnPlayerLogin - Fires the PlayerLogin hook to listening plugins.</summary>
+		/// <param name="args">args - The PlayerPostLoginEventArgs object.</param>
 		private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
 		{
 			User u = Users.GetUserByName(args.Player.UserAccountName);
@@ -400,16 +413,22 @@ namespace TShockAPI
 			Users.UpdateLogin(u);
 		}
 
+		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
+		/// <param name="args">args - The AccountDeleteEventArgs object.</param>
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
 			CharacterDB.RemovePlayer(args.User.ID);
 		}
 
+		/// <summary>OnAccountCreate - Internal hook fired on account creation.</summary>
+		/// <param name="args">args - The AccountCreateEventArgs object.</param>
 		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
 		{
 			CharacterDB.SeedInitialData(Users.GetUser(args.User));
 		}
 
+		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
+		/// <param name="args">args - The PlayerPreLoginEventArgs object.</param>
 		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
 		{
 			if (args.Player.IsLoggedIn)
@@ -422,6 +441,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>NetHooks_NameCollision - Internal hook fired when a name collision happens.</summary>
+		/// <param name="args">args - The NameCollisionEventArgs object.</param>
 		private void NetHooks_NameCollision(NameCollisionEventArgs args)
 		{
 			string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
@@ -449,6 +470,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnXmasCheck - Internal hook fired when the XMasCheck happens.</summary>
+		/// <param name="args">args - The ChristmasCheckEventArgs object.</param>
     private void OnXmasCheck(ChristmasCheckEventArgs args)
     {
         if (args.Handled)
@@ -461,6 +484,8 @@ namespace TShockAPI
         }
     }
 
+    /// <summary>OnHalloweenCheck - Internal hook fired when the HalloweenCheck happens.</summary>
+    /// <param name="args">args - The HalloweenCheckEventArgs object.</param>
 		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
 		{
 			if (args.Handled)
@@ -473,10 +498,10 @@ namespace TShockAPI
 			}
 		}
 		/// <summary>
-		/// Handles exceptions that we didn't catch or that Red fucked up
+		/// Handles exceptions that we didn't catch earlier in the code, or in Terraria.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
+		/// <param name="sender">sender - The object that sent the exception.</param>
+		/// <param name="e">e - The UnhandledExceptionEventArgs object.</param>
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			Log.Error(e.ExceptionObject.ToString());
@@ -509,6 +534,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>HandleCommandLine - Handles the command line parameters passed to the server.</summary>
+		/// <param name="parms">parms - The array of arguments passed in through the command line.</param>
 		private void HandleCommandLine(string[] parms)
 		{
 			string path;
@@ -562,6 +589,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>HandleCommandLinePostConfigLoad - Handles additional command line options after the config file is read.</summary>
+		/// <param name="parms">parms - The array of arguments passed in through the command line.</param>
 		public static void HandleCommandLinePostConfigLoad(string[] parms)
 		{
 			for (int i = 0; i < parms.Length; i++)
@@ -597,13 +626,11 @@ namespace TShockAPI
 			}
 		}
 
-		/*
-		 * Hooks:
-		 * 
-		 */
-
+		/// <summary>AuthToken - The auth token used by the /auth system to grant temporary superadmin access to new admins.</summary>
 		public static int AuthToken = -1;
 
+		/// <summary>OnPostInit - Fired when the server loads a map, to perform world specific operations.</summary>
+		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
 			SetConsoleTitle(false);
