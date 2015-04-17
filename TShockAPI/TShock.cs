@@ -41,17 +41,30 @@ using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
+	/// TShock also complies with the API versioning system, and defines its required API version here.
+	/// </summary>
 	[ApiVersion(1, 17)]
 	public class TShock : TerrariaPlugin
 	{
+		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
+		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
 		public static readonly string VersionCodename = "Please take our survey: http://bit.ly/ShockSurvey";
 
+		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
+		/// <summary>LogFormatDefault - This is the default log file naming format. Actually, this is the only log format, because it never gets set again.</summary>
 		private const string LogFormatDefault = "yyyy-MM-dd_HH-mm-ss";
+		//TODO: Set the log path in the config file.
+		/// <summary>LogFormat - This is the log format, which is never set again.</summary>
 		private static string LogFormat = LogFormatDefault;
+		/// <summary>LogPathDefault - The default log path.</summary>
 		private const string LogPathDefault = "tshock";
+		/// <summary>This is the log path, which is initially set to the default log path, and then to the config file log path later.</summary>
 		private static string LogPath = LogPathDefault;
+		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
 
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
@@ -1004,7 +1017,6 @@ namespace TShockAPI
 		private void OnLeave(LeaveEventArgs args)
 		{
 			var tsplr = Players[args.Who];
-			Hooks.PlayerHooks.OnPlayerLogout(tsplr);
 			Players[args.Who] = null;
 
 			if (tsplr != null && tsplr.ReceivedInfo)
@@ -1028,6 +1040,11 @@ namespace TShockAPI
 				{
 					tsplr.tempGroupTimer.Stop();
 				}
+			}
+
+			if (tsplr != null && tsplr.IsLoggedIn)
+			{
+				Hooks.PlayerHooks.OnPlayerLogout(tsplr);
 			}
 
 			// The last player will leave after this hook is executed.
