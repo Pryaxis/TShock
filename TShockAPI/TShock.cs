@@ -677,6 +677,7 @@ namespace TShockAPI
 			StatTracker.Initialize();
 		}
 
+		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
 		private void ComputeMaxStyles()
 		{
 			var item = new Item();
@@ -695,10 +696,12 @@ namespace TShockAPI
 				}
 			}
 		}
+		
+		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
 		private void FixChestStacks()
 		{
-            if (Config.IgnoreChestStacksOnLoad)
-                return;
+			if (Config.IgnoreChestStacksOnLoad)
+				return;
 
 			foreach (Chest chest in Main.chest)
 			{
@@ -713,9 +716,14 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>
 		private DateTime LastCheck = DateTime.UtcNow;
+
+		/// <summary>LastSave - Used to keep track of SSC save intervals.</summary>
 		private DateTime LastSave = DateTime.UtcNow;
 
+		/// <summary>OnUpdate - Called when ever the server ticks.</summary>
+		/// <param name="args">args - EventArgs args</param>
 		private void OnUpdate(EventArgs args)
 		{
 			if (Backups.IsBackupTime)
@@ -742,6 +750,7 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
 		private void OnSecondUpdate()
 		{
 			if (Config.ForceTime != "normal")
@@ -907,14 +916,18 @@ namespace TShockAPI
 			SetConsoleTitle(false);
 		}
 
+		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
+		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
 		private void SetConsoleTitle(bool empty)
 		{
 		    Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TShock for Terraria v{5})",
-		                                  !string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-		                                  empty ? 0 : Utils.ActivePlayers(),
-		                                  Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
+					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
+					empty ? 0 : Utils.ActivePlayers(),
+					Config.MaxSlots, Netplay.serverListenIP, Netplay.serverPort, Version);
 		}
 
+		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
+		/// <param name="args">args - The HardmodeTileUpdateEventArgs object.</param>
 		private void OnHardUpdate(HardmodeTileUpdateEventArgs args)
 		{
 			if (args.Handled)
@@ -941,6 +954,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnStatueSpawn - Fired when a statue spawns.</summary>
+		/// <param name="args">args - The StatueSpawnEventArgs object.</param>
 		private void OnStatueSpawn(StatueSpawnEventArgs args)
 		{
 			if (args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld)
@@ -953,6 +968,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnConnect - Fired when a player connects to the server.</summary>
+		/// <param name="args">args - The ConnectEventArgs object.</param>
 		private void OnConnect(ConnectEventArgs args)
 		{
 			var player = new TSPlayer(args.Who);
@@ -988,6 +1005,8 @@ namespace TShockAPI
 			Players[args.Who] = player;
 		}
 
+		/// <summary>OnJoin - Internal hook called when a player joins. This is called after OnConnect.</summary>
+		/// <param name="args">args - The JoinEventArgs object.</param>
 		private void OnJoin(JoinEventArgs args)
 		{
 			var player = Players[args.Who];
@@ -1066,6 +1085,8 @@ namespace TShockAPI
 			}            
 		}
 
+		/// <summary>OnLeave - Called when a player leaves the server.</summary>
+		/// <param name="args">args - The LeaveEventArgs object.</param>
 		private void OnLeave(LeaveEventArgs args)
 		{
 			var tsplr = Players[args.Who];
@@ -1094,6 +1115,7 @@ namespace TShockAPI
 				}
 			}
 
+			// Fire the OnPlayerLogout hook too, if the player was logged in and they have a TSPlayer object.
 			if (tsplr != null && tsplr.IsLoggedIn)
 			{
 				Hooks.PlayerHooks.OnPlayerLogout(tsplr);
@@ -1108,6 +1130,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnChat - Fired when a player chats. Used for handling chat and commands.</summary>
+		/// <param name="args">args - The ServerChatEventArgs object.</param>
 		private void OnChat(ServerChatEventArgs args)
 		{
 			if (args.Handled)
@@ -1122,16 +1146,10 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				Utils.Kick(tsplr, "Crash attempt", true);
+				Utils.Kick(tsplr, "Crash attempt via long chat packet.", true);
 				args.Handled = true;
 				return;
 			}
-
-			/*if (!Utils.ValidString(text))
-			{
-				e.Handled = true;
-				return;
-			}*/
 
 			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier)) 
 				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
@@ -1191,7 +1209,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// When a server command is run.
+		/// Called when a command is issued from the server console.
 		/// </summary>
 		/// <param name="args">The CommandEventArgs object</param>
 		private void ServerHooks_OnCommand(CommandEventArgs args)
@@ -1225,6 +1243,8 @@ namespace TShockAPI
 			args.Handled = true;
 		}
 
+		/// <summary>OnGetData - Called when the server gets raw data packets.</summary>
+		/// <param name="e">e - The GetDataEventArgs object.</param>
 		private void OnGetData(GetDataEventArgs e)
 		{
 			if (e.Handled)
@@ -1261,6 +1281,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnGreetPlayer - Fired when a player is greeted by the server. Handles things like the MOTD, join messages, etc.</summary>
+		/// <param name="args">args - The GreetPlayerEventArgs object.</param>
 		private void OnGreetPlayer(GreetPlayerEventArgs args)
 		{
 			var player = Players[args.Who];
@@ -1327,6 +1349,8 @@ namespace TShockAPI
 			args.Handled = true;
 		}
 
+		/// <summary>NpcHooks_OnStrikeNpc - Fired when an NPC strike packet happens.</summary>
+		/// <param name="e">e - The NpcStrikeEventArgs object.</param>
 		private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
 		{
 			if (Config.InfiniteInvasion)
@@ -1339,6 +1363,8 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnProjectileSetDefaults - Called when a projectile sets the default attributes for itself.</summary>
+		/// <param name="e">e - The SetDefaultsEventArgs object praameterized with Projectile and int.</param>
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.
@@ -1392,6 +1418,8 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>NetHooks_SendData - Fired when the server sends data.</summary>
+		/// <param name="e">e - The SendDataEventArgs object.</param>
 		private void NetHooks_SendData(SendDataEventArgs e)
 		{
 			if (e.MsgId == PacketTypes.Disconnect)
@@ -1517,16 +1545,18 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>OnStartHardMode - Fired when hard mode is started.</summary>
+		/// <param name="e">e - The HandledEventArgs object.</param>
 		private void OnStartHardMode(HandledEventArgs e)
 		{
 			if (Config.DisableHardmode)
 				e.Handled = true;
 		}
 
-	    /*
-		 * Useful stuff:
-		 * */
 
+		/// <summary>StartInvasion - Starts an invasion on the server.</summary>
+		/// <param name="type">type - The invasion type id.</param>
+		//TODO: Why is this in TShock's main class?
 		public static void StartInvasion(int type)
 		{
 			Main.invasionType = type;
@@ -1550,8 +1580,11 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>KillCount - Invasion kill count local storage variable.</summary>
 		private static int KillCount;
 
+		/// <summary>IncrementKills - Increments the number of kills used in invasion tracking.</summary>
+		//TODO: Why is this in TShock at all, still?
 		public static void IncrementKills()
 		{
 			KillCount++;
@@ -1583,6 +1616,11 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
+		/// <param name="player">player - The TSPlayer object that created the projectile.</param>
+		/// <param name="index">index - The projectile index.</param>
+		/// <param name="type">type - The projectile type.</param>
+		/// <returns>bool - True if the player does not have permission to use a projectile.</returns>
 		public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
 		{
 			if (type == 43)
@@ -1613,6 +1651,12 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <param name="x">x - The x coordinate of the tile.</param>
+		/// <param name="y">y - The y coordinate of the tile.</param>
+		/// <param name="range">range - The range to check for.</param>
+		/// <returns>bool - True if the player should not be able to place the tile. False if they can, or if range checks are off.</returns>
 		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
 		{
 			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > range) || (Math.Abs(player.TileY - y) > range)))
@@ -1622,6 +1666,13 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>CheckTilePermission - Checks to see if a player has permission to modify a tile in general.</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <param name="tileX">tileX - The x coordinate of the tile.</param>
+		/// <param name="tileY">tileY - The y coordinate of the tile.</param>
+		/// <param name="tileType">tileType - The tile type.</param>
+		/// <param name="actionType">actionType - The type of edit that took place.</param>
+		/// <returns>bool - True if the player should not be able to modify a tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, short tileType, GetDataHandlers.EditAction actionType)
 		{
 			if (!player.Group.HasPermission(Permissions.canbuild))
@@ -1701,6 +1752,12 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>CheckTilePermission - Checks to see if a player has the ability to modify a tile at a given position.</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <param name="tileX">tileX - The x coordinate of the tile.</param>
+		/// <param name="tileY">tileY - The y coordinate of the tile.</param>
+		/// <param name="paint">paint - Whether or not the tile is paint.</param>
+		/// <returns>bool - True if the player should not be able to modify a the tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, bool paint = false)
 		{
 			if ((!paint && !player.Group.HasPermission(Permissions.canbuild)) ||
@@ -1756,6 +1813,10 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>CheckSpawn - Checks to see if a location is inside the spawn protection zone.</summary>
+		/// <param name="x">x - The x coordinate to check.</param>
+		/// <param name="y">y - The y coordinate to check.</param>
+		/// <returns>bool - True if the location is inside the spawn protection zone.</returns>
 		public static bool CheckSpawn(int x, int y)
 		{
 			Vector2 tile = new Vector2(x, y);
@@ -1763,6 +1824,10 @@ namespace TShockAPI
 			return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
 		}
 
+		/// <summary>Distance - Determines the distance between two vectors.</summary>
+		/// <param name="value1">value1 - The first vector location.</param>
+		/// <param name="value2">value2 - The second vector location.</param>
+		/// <returns>float - The distance between the two vectors.</returns>
 		public static float Distance(Vector2 value1, Vector2 value2)
 		{
 			float num2 = value1.X - value2.X;
@@ -1771,6 +1836,9 @@ namespace TShockAPI
 			return (float) Math.Sqrt(num3);
 		}
 
+		/// <summary>HackedInventory - Checks to see if a user has a hacked inventory. In addition, messages players the result.</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <returns>bool - True if the player has a hacked inventory.</returns>
 		public static bool HackedInventory(TSPlayer player)
 		{
 			bool check = false;
@@ -1838,11 +1906,16 @@ namespace TShockAPI
 			return check;
 		}
 
+		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
 		public static bool CheckIgnores(TSPlayer player)
 		{
 			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
 		}
 
+		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
+		/// <param name="file">file - The config file object.</param>
 		public void OnConfigRead(ConfigFile file)
 		{
 			NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
