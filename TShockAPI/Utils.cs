@@ -731,14 +731,14 @@ namespace TShockAPI
 		/// </summary>
 		[Obsolete("This is no longer necessary, after switching to User.VerifyPassword(password) instead.")]
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-																																					{
-																																						{"sha512", () => new SHA512Managed()},
-																																						{"sha256", () => new SHA256Managed()},
-																																						{"md5", () => new MD5Cng()},
-																																						{"sha512-xp", () => SHA512.Create()},
-																																						{"sha256-xp", () => SHA256.Create()},
-																																						{"md5-xp", () => MD5.Create()},
-																																					};
+			{
+					{"sha512", () => new SHA512Managed()},
+					{"sha256", () => new SHA256Managed()},
+					{"md5", () => new MD5Cng()},
+					{"sha512-xp", () => SHA512.Create()},
+					{"sha256-xp", () => SHA256.Create()},
+					{"md5-xp", () => MD5.Create()},
+			};
 
 		/// <summary>
 		/// Returns a Sha256 string for a given string
