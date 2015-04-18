@@ -675,7 +675,8 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Group from the name of the group
 		/// </summary>
-		/// <param name="ply">string groupName</param>
+		/// <param name="groupName">The group's name.</param>
+		[Obsolete("Use TShock.Groups.GetGroupByName(string group) and manually null check the result.")]
 		public Group GetGroup(string groupName)
 		{
 			//first attempt on cached groups
@@ -686,7 +687,7 @@ namespace TShockAPI
 					return TShock.Groups.groups[i];
 				}
 			}
-				return Group.DefaultGroup;
+			return Group.DefaultGroup;
 		}
 
 		/// <summary>
