@@ -32,46 +32,53 @@ namespace TShockAPI.DB
 		private IDbConnection database;
 		public readonly List<Group> groups = new List<Group>();
 
+		/// <summary>
+		/// Creates a new GroupManager instance and connects to a database.
+		/// </summary>
+		/// <param name="db">The database connection to use.</param>
 		public GroupManager(IDbConnection db)
 		{
 			database = db;
 
 			var table = new SqlTable("GroupList",
-			                         new SqlColumn("GroupName", MySqlDbType.VarChar, 32) {Primary = true},
-			                         new SqlColumn("Parent", MySqlDbType.VarChar, 32),
-			                         new SqlColumn("Commands", MySqlDbType.Text),
-			                         new SqlColumn("ChatColor", MySqlDbType.Text),
-			                         new SqlColumn("Prefix", MySqlDbType.Text),
-			                         new SqlColumn("Suffix", MySqlDbType.Text)
-				);
+							new SqlColumn("GroupName", MySqlDbType.VarChar, 32) { Primary = true },
+							new SqlColumn("Parent", MySqlDbType.VarChar, 32),
+							new SqlColumn("Commands", MySqlDbType.Text),
+							new SqlColumn("ChatColor", MySqlDbType.Text),
+							new SqlColumn("Prefix", MySqlDbType.Text),
+							new SqlColumn("Suffix", MySqlDbType.Text)
+						);
+
 			var creator = new SqlTableCreator(db,
-			                                  db.GetSqlType() == SqlType.Sqlite
-			                                  	? (IQueryBuilder) new SqliteQueryCreator()
-			                                  	: new MysqlQueryCreator());
+							db.GetSqlType() == SqlType.Sqlite
+							? (IQueryBuilder)new SqliteQueryCreator()
+							: new MysqlQueryCreator()
+						);
+
 			if (creator.EnsureTableStructure(table))
 			{
 				// Add default groups if they don't exist
 				AddDefaultGroup("guest", "",
-					string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
+					String.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
 						Permissions.cantalkinthird, Permissions.canchat));
 
 				AddDefaultGroup("default", "guest",
-					string.Join(",", Permissions.warp, Permissions.canchangepassword));
+					String.Join(",", Permissions.warp, Permissions.canchangepassword));
 
 				AddDefaultGroup("newadmin", "default",
-					string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
+					String.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
 
 				AddDefaultGroup("admin", "newadmin",
-					string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
+					String.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
 						Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
 						Permissions.kill, Permissions.logs,
 						Permissions.immunetokick, Permissions.tpothers));
 
 				AddDefaultGroup("trustedadmin", "admin",
-					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
+					String.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
 						Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
 
-				AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
+				AddDefaultGroup("vip", "default", Permissions.reservedslot);
 			}
 
 			// Load Permissions from the DB
@@ -80,13 +87,17 @@ namespace TShockAPI.DB
 			Group.DefaultGroup = GetGroupByName(TShock.Config.DefaultGuestGroupName);
 		}
 
-		private void AddDefaultGroup(string name, string parent, string permissions)
+		private void AddDefaultGroup(string name, string parent, string permissions, string chatcolor = Group.defaultChatColor)
 		{
 			if (!GroupExists(name))
-				AddGroup(name, parent, permissions);
+				AddGroup(name, parent, permissions, chatcolor);
 		}
 
-
+		/// <summary>
+		/// Determines whether a group exists.
+		/// </summary>
+		/// <param name="group">The group's name.</param>
+		/// <returns>True if the group exists.</returns>
 		public bool GroupExists(string group)
 		{
 			if (group == "superadmin")
@@ -105,34 +116,39 @@ namespace TShockAPI.DB
 			return groups.GetEnumerator();
 		}
 
+		/// <summary>
+		/// Gets a group with the given name.
+		/// </summary>
+		/// <param name="name">The name of the group.</param>
+		/// <returns>A matching group, or null if none or more than one are found.</returns>
 		public Group GetGroupByName(string name)
 		{
-			var ret = groups.Where(g => g.Name == name);
-			return 1 == ret.Count() ? ret.ElementAt(0) : null;
+			var ret = groups.FindAll(g => g.Name == name);
+			return ret.Count == 1 ? ret[0] : null;
 		}
 
 		/// <summary>
-		/// Adds group with name and permissions if it does not exist.
+		/// Adds a group with name and permissions if it does not exist.
 		/// </summary>
-		/// <param name="name">name of group</param>
-		/// <param name="parentname">parent of group</param>
-		/// <param name="permissions">permissions</param>
-		/// <param name="chatcolor">chatcolor</param>
-		public void AddGroup(String name, string parentname, String permissions, String chatcolor)
+		/// <param name="name">The name of the group.</param>
+		/// <param name="parentname">The parent group's name.</param>
+		/// <param name="permissions">A CSV string containing a list of permissions.</param>
+		/// <param name="chatcolor">The chat color in the RRR,GGG,BBB format.</param>
+		/// <returns>Whether the group was successfully added.</returns>
+		public bool AddGroup(string name, string parentname, string permissions, string chatcolor)
 		{
 			if (GroupExists(name))
 			{
 				throw new GroupExistsException(name);
 			}
 
-			var group = new Group(name, null, chatcolor);
-			group.Permissions = permissions;
-			if (!string.IsNullOrWhiteSpace(parentname))
+			var group = new Group(name, null, chatcolor, permissions);
+			if (!String.IsNullOrWhiteSpace(parentname))
 			{
 				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
 				if (parent == null || name == parentname)
 				{
-					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
+					var error = "Invalid parent '{0}' for group '{1}'.".SFormat(parentname, group.Name);
 					TShock.Log.ConsoleError(error);
 					throw new GroupManagerException(error);
 				}
@@ -142,12 +158,20 @@ namespace TShockAPI.DB
 			string query = (TShock.Config.StorageType.ToLower() == "sqlite")
 							? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
 							: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
-			if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
+			try
 			{
-				groups.Add(group);
+				if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
+				{
+					groups.Add(group);
+					return true;
+				}
+				else
+					return false;
 			}
-			else
-				throw new GroupManagerException("Failed to add group '" + name + ".'");
+			catch (Exception ex)
+			{
+				throw new GroupManagerException("Failed to add group '" + name + "'.", ex);
+			}
 		}
 
 		/// <summary>
@@ -198,30 +222,32 @@ namespace TShockAPI.DB
 			return "";
 		}
 
+		[Obsolete("Use AddGroup(name, parentname, permissions, chatcolor) instead.")]
 		public String AddGroup(String name, String permissions)
 		{
 			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
 		}
 
 		/// <summary>
-		/// Updates a group including permissions
+		/// Updates a group including permissions.
 		/// </summary>
-		/// <param name="name">name of the group to update</param>
-		/// <param name="parentname">parent of group</param>
-		/// <param name="permissions">permissions</param>
-		/// <param name="chatcolor">chatcolor</param>
-		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
+		/// <param name="name">The name of the group to update.</param>
+		/// <param name="parentname">The group's parent group.</param>
+		/// <param name="permissions">The group's permissions as a CSV string.</param>
+		/// <param name="chatcolor">The chat color in the RRR,GGG,BBB format.</param><
+		/// <returns>Whether the group was successfully updated.</returns>
+		public bool UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
 		{
 			Group group = GetGroupByName(name);
 			if (group == null)
 				throw new GroupNotExistException(name);
 
 			Group parent = null;
-			if (!string.IsNullOrWhiteSpace(parentname))
+			if (!String.IsNullOrWhiteSpace(parentname))
 			{
 				parent = GetGroupByName(parentname);
 				if (parent == null || parent == group)
-					throw new GroupManagerException("Invalid parent \"{0}\" for group \"{1}\".".SFormat(parentname, name));
+					throw new GroupManagerException("Invalid parent '{0}' for group '{1}'.".SFormat(parentname, name));
 
 				// Check if the new parent would cause loops.
 				List<Group> groupChain = new List<Group> { group, parent };
@@ -230,7 +256,7 @@ namespace TShockAPI.DB
 				{
 					if (groupChain.Contains(checkingGroup))
 						throw new GroupManagerException(
-							string.Format("Invalid parent \"{0}\" for group \"{1}\" would cause loops in the parent chain.", parentname, name));
+							String.Format("Invalid parent '{0}' for group '{1}' would cause loops in the parent chain.", parentname, name));
 
 					groupChain.Add(checkingGroup);
 					checkingGroup = checkingGroup.Parent;
@@ -242,16 +268,55 @@ namespace TShockAPI.DB
 			newGroup.Prefix = prefix;
 			newGroup.Suffix = suffix;
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2, Suffix=@3, Prefix=@4 WHERE GroupName=@5";
-			if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) != 1)
-				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
-
-			group.ChatColor = chatcolor;
-			group.Permissions = permissions;
-			group.Parent = parent;
-			group.Prefix = prefix;
-			group.Suffix = suffix;
+			try
+			{
+				if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) == 1)
+				{
+					group.ChatColor = chatcolor;
+					group.Permissions = permissions;
+					group.Parent = parent;
+					group.Prefix = prefix;
+					group.Suffix = suffix;
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new GroupManagerException(String.Format("Failed to update group '{0}'.", name), ex);
+			}
 		}
 
+		/// <summary>
+		/// Removes a group.
+		/// </summary>
+		/// <param name="name">The name of the group to remove.</param>
+		/// <returns>Whether the group was successfully removed.</returns>
+		public bool RemoveGroup(string name)
+		{
+			Group group = GetGroupByName(name);
+			if (group == null)
+				throw new GroupNotExistException(name);
+
+			string query = "DELETE FROM GroupList WHERE GroupName=@0";
+			try
+			{
+				if (database.Query(query, name) == 1)
+				{
+					groups.Remove(group);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new GroupManagerException("Failed to remove group '" + name + "'.", ex);
+			}
+		}
+
+		[Obsolete("Use RemoveGroup(string name) instead.")]
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			if (!GroupExists(name))
@@ -272,6 +337,51 @@ namespace TShockAPI.DB
 			return "";
 		}
 
+		/// <summary>
+		/// Adds permissions to an existing group.
+		/// </summary>
+		/// <param name="name">The group's name.</param>
+		/// <param name="permissions">The list of permissions to add.</param>
+		/// <returns>Whether the permissions were successfully added.</returns>
+		public bool AddPermissions(string name, List<string> permissions)
+		{
+			return AddPermissions(name, new PermissionList(permissions));
+		}
+
+		/// <summary>
+		/// Adds permissions to an existing group.
+		/// </summary>
+		/// <param name="name">The group's name.</param>
+		/// <param name="permissions">The list of permissions to add.</param>
+		/// <returns>Whether the permissions were successfully added.</returns>
+		public bool AddPermissions(string name, PermissionList permissions)
+		{
+			Group group = GetGroupByName(name);
+			if (group == null)
+				throw new GroupNotExistException(name);
+
+			string query = "UPDATE GroupList SET Commands=@1 WHERE GroupName=@0";
+			try
+			{
+				// Add the new permissions to a separate manager in case the transaction fails
+				IPermissionManager tempManager = new NegatedPermissionManager();
+				tempManager.Clone(group.PermissionManager);
+				permissions.GetPermissions().ForEach(p => tempManager.AddPermission(p));
+				if (database.Query(query, name, tempManager) == 1)
+				{
+					group.PermissionManager.Clone(tempManager);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new GroupManagerException("Failed to add permissions to group '{0}'.".SFormat(name), ex);
+			}
+		}
+
+		[Obsolete("Use bool AddPermissions(string name, List<permission>) instead.")]
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
@@ -287,6 +397,50 @@ namespace TShockAPI.DB
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
 			return "";
+		}
+
+		/// <summary>
+		/// Removes permissions from an existing group.
+		/// </summary>
+		/// <param name="name">The group's name.</param>
+		/// <param name="permissions">The list of permissions to remove.</param>
+		/// <returns>Whether the permissions were successfully removed.</returns>
+		public bool RemovePermissions(string name, List<string> permissions)
+		{
+			return RemovePermissions(name, new PermissionList(permissions));
+		}
+
+		/// <summary>
+		/// Removes permissions from an existing group.
+		/// </summary>
+		/// <param name="name">The group's name.</param>
+		/// <param name="permissions">The list of permissions to remove.</param>
+		/// <returns>Whether the permissions were successfully removed.</returns>
+		public bool RemovePermissions(string name, PermissionList permissions)
+		{
+			Group group = GetGroupByName(name);
+			if (group == null)
+				throw new GroupNotExistException(name);
+
+			string query = "UPDATE GroupList SET Commands=@1 WHERE GroupName=@0";
+			try
+			{
+				// Remove the permissions from a separate manager in case the transaction fails
+				IPermissionManager tempManager = new NegatedPermissionManager();
+				tempManager.Clone(group.PermissionManager);
+				permissions.GetPermissions().ForEach(p => tempManager.RemovePermission(p));
+				if (database.Query(query, name, tempManager) == 1)
+				{
+					group.PermissionManager.Clone(tempManager);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new GroupManagerException("Failed to remove permissions from group '{0}'.".SFormat(name), ex);
+			}
 		}
 
 		public String DeletePermissions(String name, List<String> permissions)
@@ -306,6 +460,9 @@ namespace TShockAPI.DB
 			return "";
 		}
 
+		/// <summary>
+		/// Reloads the group list by reading from the database.
+		/// </summary>
 		public void LoadPermisions()
 		{
 			try
@@ -319,7 +476,7 @@ namespace TShockAPI.DB
 						string groupName = reader.Get<string>("GroupName");
 						if (groupName == "superadmin")
 						{
-							TShock.Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
+							TShock.Log.ConsoleInfo("WARNING: Group 'superadmin' is defined in the database even though it's a reserved group name.");
 							continue;
 						}
 
@@ -335,7 +492,7 @@ namespace TShockAPI.DB
 						catch (ArgumentException)
 						{
 							// Just in case somebody messed with the unique primary key.
-							TShock.Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
+							TShock.Log.ConsoleError("ERROR: Group name '{0}' occurs more than once. Keeping current group settings.");
 							return;
 						}
 					}
@@ -364,21 +521,21 @@ namespace TShockAPI.DB
 					{
 						Group group = groups[i];
 						string parentGroupName;
-						if (!newGroupParents.TryGetValue(group.Name, out parentGroupName) || string.IsNullOrEmpty(parentGroupName))
+						if (!newGroupParents.TryGetValue(group.Name, out parentGroupName) || String.IsNullOrEmpty(parentGroupName))
 							continue;
 
 						group.Parent = groups.FirstOrDefault(g => g.Name == parentGroupName);
 						if (group.Parent == null)
 						{
 							TShock.Log.ConsoleError(
-								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.", 
+								"ERROR: Group '{0}' is referencing non existent parent group '{1}', parent reference was removed.", 
 								group.Name, parentGroupName);
 						}
 						else
 						{
 							if (group.Parent == group)
 								TShock.Log.ConsoleInfo(
-									"WARNING: Group \"{0}\" is referencing itself as parent group, parent reference was removed.", group.Name);
+									"WARNING: Group '{0}' is referencing itself as parent group, parent reference was removed.", group.Name);
 
 							List<Group> groupChain = new List<Group> { group };
 							Group checkingGroup = group;
@@ -387,7 +544,7 @@ namespace TShockAPI.DB
 								if (groupChain.Contains(checkingGroup.Parent))
 								{
 									TShock.Log.ConsoleError(
-										"ERROR: Group \"{0}\" is referencing parent group \"{1}\" which is already part of the parent chain. Parent reference removed.",
+										"ERROR: Group '{0}' is referencing parent group '{1}' which is already part of the parent chain. Parent reference removed.",
 										checkingGroup.Name, checkingGroup.Parent.Name);
 
 									checkingGroup.Parent = null;
@@ -430,7 +587,7 @@ namespace TShockAPI.DB
 	public class GroupExistsException : GroupManagerException
 	{
 		public GroupExistsException(string name)
-			: base("Group '" + name + "' already exists")
+			: base("Group '" + name + "' already exists.")
 		{
 		}
 	}
@@ -439,7 +596,7 @@ namespace TShockAPI.DB
 	public class GroupNotExistException : GroupManagerException
 	{
 		public GroupNotExistException(string name)
-			: base("Group '" + name + "' does not exist")
+			: base("Group '" + name + "' does not exist.")
 		{
 		}
 	}
