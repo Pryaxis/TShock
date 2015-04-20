@@ -46,13 +46,19 @@ namespace TShockAPI
 		/// </summary>
 		private const int LastItemPrefix = 83;
 
-		// Utils is a Singleton
+		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
+
+		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
+
+		/// <summary>Instance - An instance of the utils class.</summary>
+		/// <value>value - the Utils instance</value>
 		public static Utils Instance { get { return instance; } }
 
+		/// <summary>Random - An instance of random for generating random data.</summary>
+		[Obsolete("Please create your own random objects; this will be removed in the next version of TShock.")]
 		public Random Random = new Random();
-		//private static List<Group> groups = new List<Group>();
 
 		/// <summary>
 		/// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -130,13 +136,18 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Saves the map data
+		/// Saves the map data by calling the SaveManager and instructing it to save the world.
 		/// </summary>
 		public void SaveWorld()
 		{
 			SaveManager.Instance.SaveWorld();
 		}
 
+		/// <summary>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="red">red - The amount of red (0-255) in the color for supported destinations.</param>
+		/// <param name="green">green - The amount of green (0-255) in the color for supported destinations.</param>
+		/// <param name="blue">blue - The amount of blue (0-255) in the color for the supported destinations.</param>
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
@@ -144,19 +155,22 @@ namespace TShockAPI
 			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
+		/// <summary>>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="color">color - The color object for supported destinations.</param>
 		public void Broadcast(string msg, Color color)
 		{
 			Broadcast(msg, color.R, color.G, color.B);
 		}
 
 		/// <summary>
-		/// Broadcasts a message from a player, not TShock
+		/// Broadcasts a message from a Terraria playerplayer, not TShock
 		/// </summary>
-		/// <param name="ply">TSPlayer ply - the player that will send the packet</param>
-		/// <param name="msg">string msg - the message</param>
-		/// <param name="red">r</param>
-		/// <param name="green">g</param>
-		/// <param name="blue">b</param>
+		/// <param name="ply">ply - the Terraria player index that will send the packet</param>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="red">red - The amount of red (0-255) in the color for supported destinations.</param>
+		/// <param name="green">green - The amount of green (0-255) in the color for supported destinations.</param>
+		/// <param name="blue">blue - The amount of blue (0-255) in the color for the supported destinations.</param>
 		public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
@@ -183,9 +197,9 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// The number of active players on the server.
+		/// Gets the number of active players on the server.
 		/// </summary>
-		/// <returns>int playerCount</returns>
+		/// <returns>The number of active players on the server.</returns>
 		public int ActivePlayers()
 		{
 			return Main.player.Where(p => null != p && p.active).Count();
@@ -195,7 +209,7 @@ namespace TShockAPI
 		/// Finds a TSPlayer based on name or ID
 		/// </summary>
 		/// <param name="plr">Player name or ID</param>
-		/// <returns></returns>
+		/// <returns>A list of matching players</returns>
 		public List<TSPlayer> FindPlayer(string plr)
 		{
 			var found = new List<TSPlayer>();
@@ -249,9 +263,9 @@ namespace TShockAPI
 					tileY = startTileY;
 					break;
 				}
-
-				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
-				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
+				Random r = new Random();
+				tileX = startTileX + r.Next(tileXRange*-1, tileXRange);
+				tileY = startTileY + r.Next(tileYRange*-1, tileYRange);
 				j++;
 			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
@@ -611,6 +625,10 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
+		/// <param name="ban">ban - The ban object to check.</param>
+		/// <param name="byName">byName - Defines whether or not the ban should be checked by name.</param>
+		/// <returns>bool - True if the ban has expired.</returns>
 		public bool HasBanExpired(Ban ban, bool byName = false)
 		{
 					DateTime exp;
@@ -903,6 +921,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>EncodeColor - Encodes a color as an int.</summary>
+		/// <param name="color">color - The color to encode</param>
+		/// <returns>int? - The encoded color</returns>
 		public int? EncodeColor(Color? color)
 		{
 			if (color == null)
@@ -911,6 +932,9 @@ namespace TShockAPI
 			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
 		}
 
+		/// <summary>DecodeColor - Decodes a color encoded by the EncodeColor function.</summary>
+		/// <param name="encodedColor">encodedColor - The encoded color</param>
+		/// <returns>Color? - The decoded color</returns>
 		public Color? DecodeColor(int? encodedColor)
 		{
 			if (encodedColor == null)
@@ -920,6 +944,9 @@ namespace TShockAPI
 			return new Color(data[0], data[1], data[2], data[3]);
 		}
 
+		/// <summary>EncodeBitsByte - Encodes a BitsByte as a byte.</summary>
+		/// <param name="bitsByte">bitsByte - The BitsByte object</param>
+		/// <returns>byte? - The converted byte</returns>
 		public byte? EncodeBitsByte(BitsByte? bitsByte)
 		{
 			if (bitsByte == null)
@@ -933,6 +960,9 @@ namespace TShockAPI
 			return result;
 		}
 
+		/// <summary>DecodeBitsByte - Decodes a bitsbyte from an int.</summary>
+		/// <param name="encodedBitsByte">encodedBitsByte - The encoded bitsbyte object.</param>
+		/// <returns>BitsByte? - The decoded bitsbyte object</returns>
 		public BitsByte? DecodeBitsByte(int? encodedBitsByte)
 		{
 			if (encodedBitsByte == null)
@@ -945,6 +975,9 @@ namespace TShockAPI
 			return result;
 		}
 
+		/// <summary>GetResponseNoException - Gets a web response without generating an exception.</summary>
+		/// <param name="req">req - The request to send.</param>
+		/// <returns>HttpWebResponse - The response object.</returns>
 		public HttpWebResponse GetResponseNoException(HttpWebRequest req)
 		{
 			try
