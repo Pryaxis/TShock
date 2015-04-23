@@ -314,6 +314,35 @@ namespace TShockAPI.DB
 			return null;
 		}
 
+		/// <summary>
+		/// GetUsersByName - Gets all users from the database with a username that starts with or contains <see cref="username"/>
+		/// </summary>
+		/// <param name="username">String - Rough username search. "n" will match "n", "na", "nam", "name", etc</param>
+		/// <param name="notAtStart">Boolean - If <see cref="username"/> is not the first part of the username. If true then "name" would match "name", "username", "wordsnamewords", etc</param>
+		/// <returns>List or null - Matching users or null if exception is thrown</returns>
+		public List<User> GetUsersByName(string username, bool notAtStart = false)
+		{
+			try
+			{
+				List<User> users = new List<User>();
+				string search = notAtStart ? string.Format("%{0}%", username) : string.Format("{0}%", username);
+				using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username LIKE @0",
+					search))
+				{
+					while (reader.Read())
+					{
+						users.Add(LoadUserFromResult(new User(), reader));
+					}
+				}
+				return users;
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
 		/// <summary>LoadUserFromResult - Fills out the fields of a User object with the results from a QueryResult object.</summary>
 		/// <param name="user">user - The user to add data to.</param>
 		/// <param name="result">result - The QueryResult object to add data from.</param>
