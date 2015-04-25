@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ namespace TShockAPI
 		    }
 			catch (Exception e)
 			{
-				Log.ConsoleError(e.ToString());
+				TShock.Log.ConsoleError(e.ToString());
 			}
 			return false;
 		}
@@ -206,7 +206,7 @@ namespace TShockAPI
 			}
 			catch (ObjectDisposedException e)
 			{
-				Log.Warn(e.ToString());
+				TShock.Log.Warn(e.ToString());
 			}
 			catch (SocketException e)
 			{
@@ -216,7 +216,7 @@ namespace TShockAPI
 					case 10053:
 						break;
 					default:
-						Log.Warn(e.ToString());
+						TShock.Log.Warn(e.ToString());
 						break;
 				}
 			}
@@ -230,12 +230,12 @@ namespace TShockAPI
 						case SocketError.ConnectionReset:
 							break;
 						default:
-							Log.Warn(e.ToString());
+							TShock.Log.Warn(e.ToString());
 							break;
 					}
 				}
 				else
-					Log.Warn(e.ToString());
+					TShock.Log.Warn(e.ToString());
 			}
 			return false;
 		}

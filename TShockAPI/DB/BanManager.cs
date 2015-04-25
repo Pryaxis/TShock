@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ namespace TShockAPI.DB
 			                                  	: new MysqlQueryCreator());
 			try
 			{
-				creator.EnsureExists(table);
+				creator.EnsureTableStructure(table);
 			}
 			catch (DllNotFoundException)
 			{
@@ -72,7 +72,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return null;
 		}
@@ -96,7 +96,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 				Console.WriteLine(ex.StackTrace);
 			}
 			return null;
@@ -123,7 +123,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return null;
 		}
@@ -145,18 +145,11 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return null;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool AddBan(string ip, string name, string reason)
-		{
-			return AddBan(ip, name, "", reason, false, "", "");
-		}
-#endif
 		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
 		{
 			try
@@ -167,18 +160,11 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw ex;
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
 
-#if COMPAT_SIGS
-		[Obsolete("This method is for signature compatibility for external code only")]
-		public bool RemoveBan(string ip)
-		{
-			return RemoveBan(ip, false, true, false);
-		}
-#endif
 		public bool RemoveBan(string match, bool byName = false, bool casesensitive = true, bool exceptions = false)
 		{
 			try
@@ -193,7 +179,7 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw ex;
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
@@ -206,7 +192,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}

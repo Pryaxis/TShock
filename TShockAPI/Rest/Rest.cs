@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ namespace Rests
 	/// <summary>
 	/// Rest command delegate
 	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
+	/// <param name="args">RestRequestArgs object containing Verbs, Parameters, Request, and TokenData</param>
 	/// <returns>Response object or null to not handle request</returns>
 	public delegate object RestCommandD(RestRequestArgs args);
 
@@ -74,9 +73,8 @@ namespace Rests
 		{
 			Ip = ip;
 			Port = port;
-			string appName = this.GetType().Assembly.GetName().Version.ToString();
-			AssemblyName ass = this.GetType().Assembly.GetName();
-			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", ass.Name, ass.Version));
+			AssemblyName assembly = this.GetType().Assembly.GetName();
+			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", assembly.Name, assembly.Version));
 		}
 
 		public virtual void Start()
@@ -155,9 +153,10 @@ namespace Rests
 				str = string.Format("{0}({1});", jsonp, str);
 			}
 			e.Response.Connection.Type = ConnectionType.Close;
-			e.Response.ContentType = new ContentTypeHeader("application/json");
+			e.Response.ContentType = new ContentTypeHeader("application/json; charset=utf-8");
 			e.Response.Add(serverHeader);
-			e.Response.Body.Write(Encoding.ASCII.GetBytes(str), 0, str.Length);
+			var bytes = Encoding.UTF8.GetBytes(str);
+			e.Response.Body.Write(bytes, 0, bytes.Length);
 			e.Response.Status = HttpStatusCode.OK;
 		}
 
@@ -212,7 +211,7 @@ namespace Rests
 			object result = cmd.Execute(verbs, parms, request);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
-				Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
+				TShock.Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
 			}
 
 			return result;

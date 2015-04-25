@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,30 +21,41 @@ using System.ComponentModel;
 
 namespace TShockAPI.Hooks
 {
-    public class PlayerPostLoginEventArgs
-    {
-        public TSPlayer Player { get; set; }
-        public PlayerPostLoginEventArgs(TSPlayer ply)
-        {
-            Player = ply;
-        }
-    }
+	public class PlayerPostLoginEventArgs
+	{
+		public TSPlayer Player { get; set; }
+		public PlayerPostLoginEventArgs(TSPlayer ply)
+		{
+			Player = ply;
+		}
+	}
 
-    public class PlayerPreLoginEventArgs : HandledEventArgs
-    {
-        public TSPlayer Player { get; set; }
-        public string LoginName { get; set; }
-        public string Password { get; set; }
-    }
+	public class PlayerPreLoginEventArgs : HandledEventArgs
+	{
+		public TSPlayer Player { get; set; }
+		public string LoginName { get; set; }
+		public string Password { get; set; }
+	}
 
-    public class PlayerCommandEventArgs : HandledEventArgs
-    {
-        public TSPlayer Player { get; set; }
-        public string CommandName { get; set; }
-        public string CommandText { get; set; }
-        public List<string> Parameters { get; set; }
+	public class PlayerLogoutEventArgs
+	{
+		public TSPlayer Player { get; set; }
+
+		public PlayerLogoutEventArgs(TSPlayer player)
+		{
+			Player = player;
+		}
+	}
+
+	public class PlayerCommandEventArgs : HandledEventArgs
+	{
+		public TSPlayer Player { get; set; }
+		public string CommandName { get; set; }
+		public string CommandText { get; set; }
+		public List<string> Parameters { get; set; }
 		public IEnumerable<Command> CommandList { get; set; }
-    }
+		public string CommandPrefix { get; set; }
+	}
 
 	public class PlayerChatEventArgs : HandledEventArgs
 	{
@@ -53,59 +64,71 @@ namespace TShockAPI.Hooks
 		public string TShockFormattedText { get; set; }
 	}
 
-    public static class PlayerHooks
-    {
-        public delegate void PlayerPostLoginD(PlayerPostLoginEventArgs e);
-        public static event PlayerPostLoginD PlayerPostLogin;
+	public static class PlayerHooks
+	{
+		public delegate void PlayerPostLoginD(PlayerPostLoginEventArgs e);
+		public static event PlayerPostLoginD PlayerPostLogin;
 
-        public delegate void PlayerPreLoginD(PlayerPreLoginEventArgs e);
-        public static event PlayerPreLoginD PlayerPreLogin;
+		public delegate void PlayerPreLoginD(PlayerPreLoginEventArgs e);
+		public static event PlayerPreLoginD PlayerPreLogin;
 
-        public delegate void PlayerCommandD(PlayerCommandEventArgs e);
-        public static event PlayerCommandD PlayerCommand;
+		public delegate void PlayerLogoutD(PlayerLogoutEventArgs e);
+		public static event PlayerLogoutD PlayerLogout;
+
+		public delegate void PlayerCommandD(PlayerCommandEventArgs e);
+		public static event PlayerCommandD PlayerCommand;
 
 		public delegate void PlayerChatD(PlayerChatEventArgs e);
 		public static event PlayerChatD PlayerChat;
 
-        public static void OnPlayerPostLogin(TSPlayer ply)
-        {
-            if (PlayerPostLogin == null)
-            {
-                return;
-            }
+		public static void OnPlayerPostLogin(TSPlayer ply)
+		{
+			if (PlayerPostLogin == null)
+			{
+					return;
+			}
 
-            PlayerPostLoginEventArgs args = new PlayerPostLoginEventArgs(ply);
-            PlayerPostLogin(args);
-        }
+			PlayerPostLoginEventArgs args = new PlayerPostLoginEventArgs(ply);
+			PlayerPostLogin(args);
+		}
 
-        public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands)
-        {
-            if (PlayerCommand == null)
-            {
-                return false;
-            }
-            PlayerCommandEventArgs playerCommandEventArgs = new PlayerCommandEventArgs()
-            {
-                Player = player,
-                CommandName = cmdName,
-                CommandText = cmdText,
-                Parameters = args,
-				CommandList = commands
-            };
-            PlayerCommand(playerCommandEventArgs);
-        	commands = playerCommandEventArgs.CommandList;
-            return playerCommandEventArgs.Handled;
-        }
+		public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands, string cmdPrefix)
+		{
+			if (PlayerCommand == null)
+			{
+				return false;
+			}
+			PlayerCommandEventArgs playerCommandEventArgs = new PlayerCommandEventArgs()
+			{
+				Player = player,
+				CommandName = cmdName,
+				CommandText = cmdText,
+				Parameters = args,
+				CommandList = commands,
+				CommandPrefix = cmdPrefix,
+			};
+			PlayerCommand(playerCommandEventArgs);
+			return playerCommandEventArgs.Handled;
+		}
 
-        public static bool OnPlayerPreLogin(TSPlayer ply, string name, string pass)
-        {
-            if (PlayerPreLogin == null)
-                return false;
+		public static bool OnPlayerPreLogin(TSPlayer ply, string name, string pass)
+		{
+			if (PlayerPreLogin == null)
+				return false;
 
-            var args = new PlayerPreLoginEventArgs {Player = ply, LoginName = name, Password = pass};
-            PlayerPreLogin(args);
-            return args.Handled;
-        }
+			var args = new PlayerPreLoginEventArgs {Player = ply, LoginName = name, Password = pass};
+			PlayerPreLogin(args);
+			return args.Handled;
+		}
+
+		public static void OnPlayerLogout(TSPlayer ply)
+		{
+			if (PlayerLogout == null)
+				return;
+
+			var args = new PlayerLogoutEventArgs(ply);
+			PlayerLogout(args);
+		}
 
 		public static void OnPlayerChat(TSPlayer ply, string rawtext, ref string tshockText)
 		{
@@ -116,5 +139,5 @@ namespace TShockAPI.Hooks
 			PlayerChat(args);
 			tshockText = args.TShockFormattedText;
 		}
-    }
+	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,74 +27,103 @@ using Rests;
 
 namespace TShockAPI
 {
+	/// <summary>ConfigFile - The config file class, which contains the configuration for a server that is serialized into JSON and deserialized on load.</summary>
 	public class ConfigFile
 	{
+		/// <summary>InvasionMultiplier - The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
 		[Description(
 			"The equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health))."
 			)]
 		public int InvasionMultiplier = 1;
 
+		/// <summary>DefaultMaximumSpawns - The default max spawns per wave.</summary>
 		[Description("The default maximum mobs that will spawn per wave. Higher means more mobs in that wave.")]
 		public int DefaultMaximumSpawns = 5;
 
+		/// <summary>DefaultSpawnRate - The default spawn rate.</summary>
 		[Description("The delay between waves. Lower values lead to more mobs.")]
 		public int DefaultSpawnRate = 600;
+
+		/// <summary>ServerPort - The configured server port.</summary>
 		[Description("The port the server runs on.")]
 		public int ServerPort = 7777;
+
+		/// <summary>EnableWhitelist - boolean if the whitelist functionality should be turned on.</summary>
 		[Description("Enable or disable the whitelist based on IP addresses in whitelist.txt")]
 		public bool EnableWhitelist;
 
+		/// <summary>InfiniteInvasion - Whether or not infinite invasion mode should be on.</summary>
 		[Description(
 			"Enable the ability for invasion size to never decrease. Make sure to run /invade, and note that this adds 2 million+ goblins to the spawn queue for the map."
 			)]
 		public bool InfiniteInvasion;
 
+		/// <summary>PvPMode - The server PvP mode (normal, always, or disabled).</summary>
 		[Description("Set the server pvp mode. Valid types are, \"normal\", \"always\", and \"disabled.\"")]
-		public string PvPMode
-			= "normal";
+		public string PvPMode = "normal";
 
+		/// <summary>SpawnProtection - Enables the spawn protection system.</summary>
 		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
 		public bool SpawnProtection = true;
 
+		/// <summary>SpawnProtectionRadius - The spawn protection tile radius.</summary>
 		[Description("Radius from spawn tile for SpawnProtection.")]
 		public int SpawnProtectionRadius = 10;
 
+		/// <summary>MaxSlots - The server's max slots.</summary>
 		[Description(
 			"Max slots for the server. If you want people to be kicked with \"Server is full\" set this to how many players you want max and then set Terraria max players to 2 higher."
 			)]
 		public int MaxSlots = 8;
 
+		/// <summary>RangeChecks - Whether or not the anti-grief system based on range should be enabled.</summary>
 		[Description("Global protection agent for any block distance based anti-grief check.")]
 		public bool RangeChecks = true;
+
+		/// <summary>DisableBuild - Whether or not building should be enabled.</summary>
 		[Description("Disables any building; placing of blocks")]
 		public bool DisableBuild;
 
+		/// <summary>SuperAdminChatRGB - The chat color for the superadmin group.</summary>
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")]
 		public float[] SuperAdminChatRGB = { 255, 0, 0 };
 
+		/// <summary>SuperAdminChatPrefix - The superadmin chat prefix.</summary>
 		[Description("Super admin group chat prefix")]
 		public string SuperAdminChatPrefix = "(Admin) ";
+
+		/// <summary>SuperAdminChatSuffix - The superadmin chat suffix.</summary>
 		[Description("Super admin group chat suffix")]
 		public string SuperAdminChatSuffix = "";
 
+		/// <summary>BackupInterval - The backup frequency in minutes.</summary>
 		[Description(
 			"Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")]
 		public int BackupInterval;
 
+		/// <summary>BackupKeepFor - Backup max age in minutes.</summary>
 		[Description("How long backups are kept in minutes. 2880 = 2 days.")]
 		public int BackupKeepFor = 60;
 
+		/// <summary>RememberLeavePos - Whether or not to remember where an IP player was when they left.</summary>
 		[Description(
 			"Remembers where a player left off. It works by remembering the IP, NOT the character.  \neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location. Note: Won't save after server restarts."
 			)]
 		public bool RememberLeavePos;
 
+		/// <summary>HardcoreOnly - Whether or not HardcoreOnly should be enabled.</summary>
 		[Description("Hardcore players ONLY. This means softcore players cannot join.")]
 		public bool HardcoreOnly;
+
+		/// <summary>MediumcoreOnly - Whether or not MediumCore only players should be enabled.</summary>
 		[Description("Mediumcore players ONLY. This means softcore players cannot join.")]
 		public bool MediumcoreOnly;
+
 		[Description("Kicks a mediumcore player on death.")]
+		/// <summary>KickOnMediumcoreDeath - Whether or not to kick mediumcore players on death.</summary>
 		public bool KickOnMediumcoreDeath;
+
+		/// <summary>BanOnMediumcoreDeath - Whether or not to ban mediumcore players on death.</summary>
 		[Description("Bans a mediumcore player on death.")]
 		public bool BanOnMediumcoreDeath;
 
@@ -105,11 +134,6 @@ namespace TShockAPI
 
 		[Description("Number of failed login attempts before kicking the player.")]
 		public int MaximumLoginAttempts = 3;
-
-		[Description("Not implemented.")]
-		public string RconPassword = "";
-		[Description("Not implemented.")]
-		public int RconPort = 7777;
 
 		[Description("Used when replying to a rest /status request or sent to the client when UseServerName is true.")]
 		public string ServerName = "";
@@ -271,6 +295,9 @@ namespace TShockAPI
 		[Description("The maximum damage a projectile can inflict.")]
 		public int MaxProjDamage = 175;
 
+		[Description("Kicks a user if set to true, if they inflict more damage then the max damage.")]
+		public bool KickOnDamageThresholdBroken = false;
+
 		[Description("Ignores checking to see if player 'can' update a projectile.")]
 		public bool IgnoreProjUpdate = false;
 
@@ -322,6 +349,12 @@ namespace TShockAPI
 		[Description("The path of the directory where logs should be written into.")]
 		public string LogPath = "tshock";
 
+		[Description("Save logs to an SQL database instead of a text file. Default = false")]
+		public bool UseSqlLogs = false;
+
+		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log")] 
+		public int RevertToTextLogsOnSqlFailures = 10;
+
 		[Description("Prevents players from placing tiles with an invalid style.")]
 		public bool PreventInvalidPlaceStyle = true;
 
@@ -364,8 +397,11 @@ namespace TShockAPI
 		[Description("Allows anyone to break grass, pots, etc.")]
 		public bool AllowCutTilesAndBreakables = false;
 
-		[Description("Specifies which string starts a command")]
+		[Description("Specifies which string starts a command.")]
 		public string CommandSpecifier = "/";
+
+		[Description("Specifies which string starts a command silently.")]
+		public string CommandSilentSpecifier = ".";
 		
 		[Description("Kicks a hardcore player on death.")]
 		public bool KickOnHardcoreDeath;
@@ -387,6 +423,15 @@ namespace TShockAPI
 
 		[Description("The maximum allowable MP, before equipment buffs.")]
 		public int MaxMP = 200;
+
+		[Description("Determines if the server should save the world if the last player exits.")]
+		public bool SaveWorldOnLastPlayerExit = true;
+
+		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. The number of computational rounds is 2^n. Increase with caution. Range: 5-31.")]
+		public int BCryptWorkFactor = 7;
+
+		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
+		public int MinimumPasswordLength = 4;
 
 		/// <summary>
 		/// Reads a configuration file from a given path

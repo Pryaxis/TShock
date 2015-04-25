@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ namespace TShockAPI.DB
 											  db.GetSqlType() == SqlType.Sqlite
 											  	? (IQueryBuilder) new SqliteQueryCreator()
 											  	: new MysqlQueryCreator());
-			creator.EnsureExists(table);
+			creator.EnsureTableStructure(table);
 		}
 
 		/// <summary>
@@ -94,15 +94,15 @@ namespace TShockAPI.DB
 								if (Int32.TryParse(splitids[i], out id)) // if unparsable, it's not an int, so silently skip
 									r.AllowedIDs.Add(id);
 								else
-									Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
+									TShock.Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
 							}
 						}
 						catch (Exception e)
 						{
-							Log.Error("Your database contains invalid UserIDs (they should be ints).");
-							Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
-							Log.Error(e.ToString());
-							Log.Error(e.StackTrace);
+							TShock.Log.Error("Your database contains invalid UserIDs (they should be ints).");
+							TShock.Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+							TShock.Log.Error(e.ToString());
+							TShock.Log.Error(e.StackTrace);
 						}
 
 						Regions.Add(r);
@@ -111,10 +111,22 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 
+		/// <summary>
+		/// Adds a region to the database.
+		/// </summary>
+		/// <param name="tx">TileX of the top left corner.</param>
+		/// <param name="ty">TileY of the top left corner.</param>
+		/// <param name="width">Width of the region in tiles.</param>
+		/// <param name="height">Height of the region in tiles.</param>
+		/// <param name="regionname">The name of the region.</param>
+		/// <param name="owner">The User Account Name of the person who created this region.</param>
+		/// <param name="worldid">The world id that this region is in.</param>
+		/// <param name="z">The Z index of the region.</param>
+		/// <returns>Whether the region was created and added successfully.</returns>
 		public bool AddRegion(int tx, int ty, int width, int height, string regionname, string owner, string worldid, int z = 0)
 		{
 			if (GetRegionByName(regionname) != null)
@@ -126,28 +138,37 @@ namespace TShockAPI.DB
 				database.Query(
 					"INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, Groups, Owner, Z) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10);",
 					tx, ty, width, height, regionname, worldid, "", 1, "", owner, z);
-				Regions.Add(new Region(new Rectangle(tx, ty, width, height), regionname, owner, true, worldid, z));
+				var region = new Region(new Rectangle(tx, ty, width, height), regionname, owner, true, worldid, z);
+				Regions.Add(region);
+				Hooks.RegionHooks.OnRegionCreated(region);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// Deletes the region from this world with a given name.
+		/// </summary>
+		/// <param name="name">The name of the region to delete.</param>
+		/// <returns>Whether the region was successfully deleted.</returns>
 		public bool DeleteRegion(string name)
 		{
 			try
 			{
 				database.Query("DELETE FROM Regions WHERE RegionName=@0 AND WorldID=@1", name, Main.worldID.ToString());
 				var worldid = Main.worldID.ToString();
+				var region = Regions.FirstOrDefault(r => r.Name == name && r.WorldID == worldid);
 				Regions.RemoveAll(r => r.Name == name && r.WorldID == worldid);
+				Hooks.RegionHooks.OnRegionDeleted(region);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
@@ -165,7 +186,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 				return false;
 			}
 		}
@@ -182,7 +203,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 				return false;
 			}
 		}
@@ -308,7 +329,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
@@ -363,7 +384,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
@@ -390,7 +411,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return false;
 		}
@@ -413,7 +434,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 			}
 			return regions;
 		}
@@ -518,7 +539,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex.ToString());
+				TShock.Log.Error(ex.ToString());
 				return false;
 			}
 		}

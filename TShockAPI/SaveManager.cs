@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.Error("World saved notification failed");
-					Log.Error(ex.ToString());
+					TShock.Log.Error("World saved notification failed");
+					TShock.Log.Error(ex.ToString());
 				}
 			}
 		}
@@ -130,12 +130,12 @@ namespace TShockAPI
 								else
 									WorldFile.saveWorld(task.resetTime);
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
-									Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
 							catch (Exception e)
 							{
-								Log.Error("World saved failed");
-								Log.Error(e.ToString());
+								TShock.Log.Error("World saved failed");
+								TShock.Log.Error(e.ToString());
 							}
 						}
 					}

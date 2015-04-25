@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.IO;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace TShockAPI.ServerSideCharacters
@@ -27,7 +29,7 @@ namespace TShockAPI.ServerSideCharacters
 	public class ServerSideConfig
 	{
 		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")]
-		public bool Enabled;
+		public bool Enabled = false;
 
 		[Description("How often SSC should save, in minutes.")]
 		public int ServerSideCharacterSave = 5;
@@ -60,6 +62,38 @@ namespace TShockAPI.ServerSideCharacters
 			{
 				writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
 			}
+		}
+
+		/// <summary>
+		/// Dumps all configuration options to a text file in Markdown format
+		/// </summary>
+		public static void DumpDescriptions()
+		{
+			var sb = new StringBuilder();
+			var defaults = new ServerSideConfig();
+
+			foreach (var field in defaults.GetType().GetFields().OrderBy(f => f.Name))
+			{
+				if (field.IsStatic)
+					continue;
+
+				var name = field.Name;
+				var type = field.FieldType.Name;
+
+				var descattr =
+					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
+				var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : "None";
+
+				var def = field.GetValue(defaults);
+
+				sb.AppendLine("{0}  ".SFormat(name));
+				sb.AppendLine("Type: {0}  ".SFormat(type));
+				sb.AppendLine("Description: {0}  ".SFormat(desc));
+				sb.AppendLine("Default: \"{0}\"  ".SFormat(def));
+				sb.AppendLine();
+			}
+
+			File.WriteAllText("ServerSideConfigDescriptions.txt", sb.ToString());
 		}
 	}
 }

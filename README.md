@@ -1,4 +1,4 @@
-# TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock)
+# TShock [![Build Status](https://travis-ci.org/NyxStudios/TShock.png?branch=general-devel)](https://travis-ci.org/NyxStudios/TShock) 
 
 TShock is a server modification for Terraria, written in C#, and based upon the [Terraria Server API](https://github.com/Deathmax/TerrariaAPI-Server). It uses JSON for configuration management, and offers several features not present in the Terraria Server normally.
 
@@ -11,16 +11,21 @@ TShock is a server modification for Terraria, written in C#, and based upon the 
 * User registration
 * Reserved slots
 * User punishment (kicking, banning, muting)
+* Server side characters
+* JSON based configuration management
 
 ## Community
 
 Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
-* [Website & Forums](http://tshock.co/xf/)
+* [Website & Forums](https://tshock.co/xf/)
 * [Wiki](https://tshock.atlassian.net/wiki/display/TSHOCKPLUGINS/Home)
-* [IRC: #tshock @ irc.rizon.net](http://tshock.co/xf/index.php?ezirc/)
+* [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
+
+If your intention is to send a pull request or code change, please join #pull-request in Slack to discuss your changes with the team. For more contributing guidelines, see the contributing file.
 
 ## Download
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
-* [Download Archive](https://github.com/TShock/TShock/downloads)
+* [Plugins](https://tshock.co/xf/index.php?resources/)
+* [Very, very old versions of TShock](https://github.com/TShock/TShock/downloads)

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ namespace TShockAPI
 {
 	public class UpdateManager
 	{
-		private string updateUrl = "https://github.com/NyxStudios/TShock/blob/general-devel/tshock_update.json?raw=true";
+		private string updateUrl = "http://update.tshock.co/latest/";
 
 		/// <summary>
 		/// Check once every X minutes.
 		/// </summary>
-		private readonly int CheckXMinutes = 30;
+		private int CheckXMinutes = 30;
 
 		public UpdateManager()
 		{
@@ -44,11 +44,12 @@ namespace TShockAPI
 			try
 			{
 				UpdateCheck(state);
+				CheckXMinutes = 30;
 			}
 			catch (Exception)
 			{
-				//swallow the exception
-				return;
+				// Skip this run and check more frequently...
+				CheckXMinutes = 5;
 			}
 			
 			Thread.Sleep(CheckXMinutes * 60 * 1000);
@@ -93,7 +94,7 @@ namespace TShockAPI
 			}
 			catch (Exception e)
 			{
-				Log.ConsoleError("UpdateManager Exception: {0}", e);
+				TShock.Log.ConsoleError("UpdateManager Exception: {0}", e);
 				throw e;
 			}
 
@@ -115,7 +116,7 @@ namespace TShockAPI
 
 		private void NotifyAdministrator(TSPlayer player, string[] changes)
 		{
-			player.SendMessage("The server is out of date.", Color.Red);
+			player.SendMessage("The server is out of date. Latest version: ", Color.Red);
 			for (int j = 0; j < changes.Length; j++)
 			{
 				player.SendMessage(changes[j], Color.Red);

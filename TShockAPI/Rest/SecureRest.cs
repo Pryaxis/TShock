@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ namespace Rests
 					"The old model will be removed with the next maintenance release of TShock. In order to switch to the new model, ",
 					"change the config setting \"RestUseNewPermissionModel\" to true."
 				);
-				Log.Warn(warningMessage);
+				TShock.Log.Warn(warningMessage);
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine(warningMessage);
 				Console.ForegroundColor = ConsoleColor.Gray;
@@ -80,7 +80,7 @@ namespace Rests
 					"with existing REST services. If compatibility problems occur, you can switch back to the unsecure permission ",
 					"model by changing the config setting \"RestUseNewPermissionModel\" to false, which is not recommended."
 				);
-				Log.ConsoleInfo(warningMessage);
+				TShock.Log.ConsoleInfo(warningMessage);
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace Rests
             if (userAccount == null)
                 return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 			
-			if (!TShock.Utils.HashPassword(password).Equals(userAccount.Password, StringComparison.InvariantCultureIgnoreCase))
+			if (!userAccount.VerifyPassword(password))
 				return new RestObject("401")
 					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
 

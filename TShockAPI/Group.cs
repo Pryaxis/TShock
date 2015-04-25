@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -153,13 +153,6 @@ namespace TShockAPI
 		public byte B = 255;
 
 	    public static Group DefaultGroup = null;
-#if COMPAT_SIGS
-		[Obsolete("This constructor is for signature compatibility for external code only")]
-		public Group(string groupname, Group parentgroup, string chatcolor)
-			: this(groupname, parentgroup, chatcolor, null)
-		{
-		}
-#endif
 
 		public Group(string groupname, Group parentgroup = null, string chatcolor = "255,255,255", string permissions = null)
 		{

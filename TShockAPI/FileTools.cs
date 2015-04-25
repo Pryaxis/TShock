@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TShockAPI.ServerSideCharacters;
 
@@ -24,33 +25,35 @@ namespace TShockAPI
 {
 	public class FileTools
 	{
-        /// <summary>
-        /// Path to the file containing the rules.
-        /// </summary>
+		private const string MotdFormat =
+			"This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%";
+		/// <summary>
+		/// Path to the file containing the rules.
+		/// </summary>
 		internal static string RulesPath
 		{
 			get { return Path.Combine(TShock.SavePath, "rules.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the message of the day.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the message of the day.
+		/// </summary>
 		internal static string MotdPath
 		{
 			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the whitelist.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the whitelist.
+		/// </summary>
 		internal static string WhitelistPath
 		{
 			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
 		}
 
-        /// <summary>
-        /// Path to the file containing the config.
-        /// </summary>
+		/// <summary>
+		/// Path to the file containing the config.
+		/// </summary>
 		internal static string ConfigPath
 		{
 			get { return Path.Combine(TShock.SavePath, "config.json"); }
@@ -64,20 +67,20 @@ namespace TShockAPI
 			get { return Path.Combine(TShock.SavePath, "sscconfig.json"); }
 		}
 
-        /// <summary>
-        /// Creates an empty file at the given path.
-        /// </summary>
-        /// <param name="file">The path to the file.</param>
+		/// <summary>
+		/// Creates an empty file at the given path.
+		/// </summary>
+		/// <param name="file">The path to the file.</param>
 		public static void CreateFile(string file)
 		{
 			File.Create(file).Close();
 		}
 
-        /// <summary>
-        /// Creates a file if the files doesn't already exist.
-        /// </summary>
-        /// <param name="file">The path to the files</param>
-        /// <param name="data">The data to write to the file.</param>
+		/// <summary>
+		/// Creates a file if the files doesn't already exist.
+		/// </summary>
+		/// <param name="file">The path to the files</param>
+		/// <param name="data">The data to write to the file.</param>
 		public static void CreateIfNot(string file, string data = "")
 		{
 			if (!File.Exists(file))
@@ -97,8 +100,8 @@ namespace TShockAPI
 			}
 
 			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
-			CreateIfNot(MotdPath,
-			            "This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%");
+			CreateIfNot(MotdPath, MotdFormat);
+						
 			CreateIfNot(WhitelistPath);
 			if (File.Exists(ConfigPath))
 			{
@@ -111,6 +114,19 @@ namespace TShockAPI
 			{
 				TShock.ServerSideCharacterConfig = ServerSideConfig.Read(ServerSideCharacterConfigPath);
 				// Add all the missing config properties in the json file
+			}
+			else
+			{
+				TShock.ServerSideCharacterConfig = new ServerSideConfig
+				{
+					StartingInventory =
+						new List<NetItem>()
+						{
+							new NetItem() {netID = -15, stack = 1, prefix = 0},
+							new NetItem() {netID = -13, stack = 1, prefix = 0},
+							new NetItem() {netID = -16, stack = 1, prefix = 0}
+						}
+				};
 			}
 			TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 		}

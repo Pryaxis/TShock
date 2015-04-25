@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ namespace TShockAPI
 
 		[Description("User can login in game")]
 		public static readonly string canlogin = "tshock.account.login";
+
+		[Description("User can logout in game")]
+		public static readonly string canlogout = "tshock.account.logout";
 
 		[Description("User can change password in game")]
 		public static readonly string canchangepassword = "tshock.account.changepassword";
@@ -225,6 +228,9 @@ namespace TShockAPI
 		[Description("User can teleport to tile positions.")]
 		public static readonly string tppos = "tshock.tp.pos";
 
+		[Description("User can get the position of players.")]
+		public static readonly string getpos = "tshock.tp.getpos";
+
 		[Description("User can teleport to an NPC.")]
 		public static readonly string tpnpc = "tshock.tp.npc";
 
@@ -348,6 +354,9 @@ namespace TShockAPI
 
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
 		public static readonly string godmode = "tshock.godmode";
+
+		[Description("User can godmode other players")]
+		public static readonly string godmodeother = "tshock.godmode.other";
 
 		[Description("Player can chat")] 
 		public static readonly string canchat = "tshock.canchat";

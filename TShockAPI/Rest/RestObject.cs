@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2014 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,8 +57,7 @@ namespace Rests
 		/// <summary>
 		/// Gets value safely, if it does not exist, return null. Sets/Adds value safely, if null it will remove.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
+		/// <param name="key">the key</param>
 		/// <returns>Returns null if key does not exist.</returns>
 		public new object this[string key]
 		{

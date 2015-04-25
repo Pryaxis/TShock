@@ -1,9 +1,7 @@
-language: c
-install:
-- sudo apt-get install mono-devel mono-gmcs nunit-console
-script:
-- xbuild ./TShockAPI/TShockAPI.csproj
+language: csharp
+solution: ./TShockAPI/TShockAPI.csproj
 notifications:
-  irc: irc.rizon.net#tshock
   hipchat:
     secure: hpRLWiHF2j6O2qJOVs++aqAmryN6G5kY0SF26/rKCpQ7klhMlDZIgI1V1dbkKqlculFtW1neS0EBJyV9lmcV5b26H+KhlZYGN0j7q1VcOTM3rvtU6wW0Ap22uRLl2RrnA4kEsgDAsNouPOkyLZ19hlHAISlsId6G4+Rfqg6k+zQ=
+  slack:
+    secure: O4Nibe2fdaUa2ZxuETUg6WEoQKvNM2CotnfaIVgm3fjfe61dfE1P+EgTpbwDG8646jSmpTqMDw8Z6I/WJwGTlXV/ZQsbwu63Cps4MgOTvPHZ0Lsye5azySlJZs1iI4ItYSj2czXfcnJ+qAl1SOOkXJrjB5uyTMWtDpCrSCFB3MA=
