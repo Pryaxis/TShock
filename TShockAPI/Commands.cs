@@ -4498,7 +4498,7 @@ namespace TShockAPI
 				{
 					args.Player.Group = TShock.Utils.GetGroup("superadmin");
 					args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
-					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.")
+					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
 					args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
 					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
 					args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
