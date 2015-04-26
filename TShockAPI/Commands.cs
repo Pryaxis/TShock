@@ -4497,11 +4497,12 @@ namespace TShockAPI
 				try
 				{
 					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("You are now superadmin, please do the following to finish your install:");
+					args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
+					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.")
 					args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
 					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
-					args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
-					args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type /auth-verify.", Specifier);
+					args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
+					args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
 				}
 				catch (UserManagerException ex)
 				{
