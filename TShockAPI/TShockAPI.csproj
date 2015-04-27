@@ -39,7 +39,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Debug\TShockAPI.XML</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
-    <NoWarn>1591</NoWarn>
+    <!-- <NoWarn>1591</NoWarn> -->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -67,6 +67,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="BCrypt.Net">
+      <HintPath>..\BCryptBins\BCrypt.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
@@ -81,7 +84,6 @@
     <Compile Include="Hooks\PlayerHooks.cs" />
     <Compile Include="Hooks\RegionHooks.cs" />
     <Compile Include="ILog.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="PermissionSystem\IPermissionList.cs" />
     <Compile Include="PermissionSystem\IPermissionManager.cs" />
     <Compile Include="PermissionSystem\Permission.cs" />

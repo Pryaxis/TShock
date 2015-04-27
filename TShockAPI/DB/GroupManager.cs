@@ -83,7 +83,7 @@ namespace TShockAPI.DB
 		private void AddDefaultGroup(string name, string parent, string permissions)
 		{
 			if (!GroupExists(name))
-				AddGroup(name, parent, permissions);
+				AddGroup(name, parent, permissions, Group.defaultChatColor);
 		}
 
 
@@ -198,6 +198,7 @@ namespace TShockAPI.DB
 			return "";
 		}
 
+		[Obsolete("Use AddGroup(name, parentname, permissions, chatcolor) instead.")]
 		public String AddGroup(String name, String permissions)
 		{
 			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
@@ -210,6 +211,8 @@ namespace TShockAPI.DB
 		/// <param name="parentname">parent of group</param>
 		/// <param name="permissions">permissions</param>
 		/// <param name="chatcolor">chatcolor</param>
+		/// <param name="suffix">suffix</param>
+		/// <param name="prefix">prefix</param> //why is suffix before prefix?!
 		public void UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
 		{
 			Group group = GetGroupByName(name);
