@@ -234,7 +234,9 @@ namespace TShockAPI.DB
 		/// <param name="name">The name of the group to update.</param>
 		/// <param name="parentname">The group's parent group.</param>
 		/// <param name="permissions">The group's permissions as a CSV string.</param>
-		/// <param name="chatcolor">The chat color in the RRR,GGG,BBB format.</param><
+		/// <param name="chatcolor">The chat color in the RRR,GGG,BBB format.</param>
+		/// <param name="suffix">The group's suffix.</param>
+		/// <param name="prefix">The group's prefix.</param>
 		/// <returns>Whether the group was successfully updated.</returns>
 		public bool UpdateGroup(string name, string parentname, string permissions, string chatcolor, string suffix, string prefix)
 		{
