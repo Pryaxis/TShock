@@ -18,43 +18,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.CodeDom.Compiler;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using BCrypt.Net;
-using System.Security.Cryptography;
+using MySql.Data.MySqlClient;
+using TShockAPI.Hooks;
+using TShockAPI.PermissionSystem;
 
 namespace TShockAPI.DB
 {
-	/// <summary>UserManager - Methods for dealing with database users and other user functionality within TShock.</summary>
+	/// <summary>
+	/// Methods for dealing with database users and other user functionality within TShock.
+	/// </summary>
 	public class UserManager
 	{
-		/// <summary>database - The database object to use for connections.</summary>
+		/// <summary>
+		/// The database object to use for connections.
+		/// </summary>
 		private IDbConnection database;
 
-		/// <summary>UserManager - Creates a UserManager object. During instantiation, this method will verify the table structure against the format below.</summary>
-		/// <param name="db">db - The database to connect to.</param>
-		/// <returns>A UserManager object.</returns>
+		/// <summary>
+		/// Contains users which were added or have been retrieved from the database at least once
+		/// during this session.
+		/// </summary>
+		private List<User> userCache = new List<User>();
+
+		/// <summary>
+		/// Creates a UserManager object.
+		/// During instantiation, this method will verify the table structure against the format below.
+		/// </summary>
+		/// <param name="db">The database to connect to.</param>
 		public UserManager(IDbConnection db)
 		{
 			database = db;
 
 			var table = new SqlTable("Users",
-				new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
-				new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
+				new SqlColumn("ID", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
+				new SqlColumn("Username", MySqlDbType.VarChar, 32) { Unique = true },
 				new SqlColumn("Password", MySqlDbType.VarChar, 128),
 				new SqlColumn("UUID", MySqlDbType.VarChar, 128),
 				new SqlColumn("Usergroup", MySqlDbType.Text),
 				new SqlColumn("Registered", MySqlDbType.Text),
 				new SqlColumn("LastAccessed", MySqlDbType.Text),
-				new SqlColumn("KnownIPs", MySqlDbType.Text)
+				new SqlColumn("KnownIPs", MySqlDbType.Text),
+				new SqlColumn("Permissions", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 				db.GetSqlType() == SqlType.Sqlite
-				? (IQueryBuilder) new SqliteQueryCreator()
+				? (IQueryBuilder)new SqliteQueryCreator()
 				: new MysqlQueryCreator());
 			creator.EnsureTableStructure(table);
 		}
@@ -63,10 +78,11 @@ namespace TShockAPI.DB
 		/// Adds a given username to the database
 		/// </summary>
 		/// <param name="user">User user</param>
+		[Obsolete("Use SaveUser() instead.")]
 		public void AddUser(User user)
 		{
 			if (!TShock.Groups.GroupExists(user.Group))
-				throw new GroupNotExistsException(user.Group);
+				throw new GroupNotFoundException(user.Group);
 
 			int ret;
 			try
@@ -89,9 +105,41 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
+		/// Removes an user from the database.
+		/// </summary>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to remove.</param>
+		/// <returns>True if the user was removed, or false if the query affected an unexpected amount of rows.</returns>
+		public bool RemoveUser(string username)
+		{
+			User user = GetUserByName(username);
+			if (user == null)
+				throw new UserNotFoundException(username);
+
+			string query = "DELETE FROM Users WHERE Username=@0";
+			try
+			{
+				if (database.Query(query, username) == 1)
+				{
+					userCache.RemoveAll(u => u.Name == username);
+					AccountHooks.OnAccountDelete(user);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to remove user '{0}'.".SFormat(username), ex);
+			}
+		}
+
+		/// <summary>
 		/// Removes a given username from the database
 		/// </summary>
 		/// <param name="user">User user</param>
+		[Obsolete("Use bool RemoveUser() instead.")]
 		public void RemoveUser(User user)
 		{
 			try
@@ -100,7 +148,7 @@ namespace TShockAPI.DB
 				int affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
 
 				if (affected < 1)
-					throw new UserNotExistException(user.Name);
+					throw new UserNotFoundException(user.Name);
 
 				Hooks.AccountHooks.OnAccountDelete(tempuser);
 			}
@@ -111,42 +159,77 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Sets the Hashed Password for a given username
+		/// Saves an user to the database.
+		/// Using this for an existing user will update the data.
 		/// </summary>
-		/// <param name="user">User user</param>
-		/// <param name="password">string password</param>
-		public void SetUserPassword(User user, string password)
+		/// <exception cref="GroupNotFoundException">Thrown when the user group doesn't exist.</exception>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <param name="user">The user to save.</param>
+		/// <returns>True if the user was saved, or false if the query affected an unexpected amount of rows.</returns>
+		public bool SaveUser(User user)
 		{
+			if (!TShock.Groups.GroupExists(user.Group))
+				throw new GroupNotExistException(user.Group);
+
+			string query;
+			if (UserExists(user.Name))
+				query = "UPDATE Users SET Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7 WHERE Username=@0";
+			else
+			{
+				query = TShock.Config.StorageType.ToLower() == "sqlite"
+					? "INSERT OR IGNORE INTO Users (Username, Password, UUID, UserGroup, Registered, LastAccessed, KnownIPs, Permissions) VALUES (@0, @1, @2, @3, @4)"
+					: "INSERT IGNORE INTO Users SET Username=@0, Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7";
+			}
 			try
 			{
-				if (
-					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
-					               user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+				if (database.Query(query, user.Name, user.Password, user.UUID, user.Group, user.Registered, user.LastAccessed,
+					user.KnownIps, user.Permissions) == 1)
+				{
+					userCache.RemoveAll(u => u.Name == user.Name);
+					userCache.Add(user);
+					AccountHooks.OnAccountCreate(user);
+					return true;
+				}
+				else
+					return false;
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("SetUserPassword SQL returned an error", ex);
+				throw new UserManagerException("Failed to save user '{0}'.".SFormat(user.Name), ex);
 			}
 		}
 
 		/// <summary>
-		/// Sets the UUID for a given username
+		/// Updates the group of an user.
 		/// </summary>
-		/// <param name="user">User user</param>
-		/// <param name="uuid">string uuid</param>
-		public void SetUserUUID(User user, string uuid)
+		/// <exception cref="GroupNotFoundException">Thrown when the given group doesn't exist.</exception>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to modify.</param>
+		/// <param name="groupname">The name of the user group.</param>
+		/// <returns></returns>
+		public bool SetUserGroup(string username, string groupname)
 		{
+			if (!UserExists(username))
+				throw new UserNotFoundException(username);
+			if (!TShock.Groups.GroupExists(groupname))
+				throw new GroupNotFoundException(groupname);
+
+			string query = "UPDATE Users SET UserGroup=@1 WHERE Username=@0";
 			try
 			{
-				if (
-					database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
-								   user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+				if (database.Query(query, username, groupname) == 1)
+				{
+					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
+					userCache.FindAll(u => u.Name == username).ForEach(u => u.Group = groupname);
+					return true;
+				}
+				else
+					return false;
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("SetUserUUID SQL returned an error", ex);
+				throw new UserManagerException("Failed to set the group for '{0}'.".SFormat(groupname), ex);
 			}
 		}
 
@@ -155,17 +238,18 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="user">User user</param>
 		/// <param name="group">string group</param>
+		[Obsolete("Use bool SetUserGroup() instead.")]
 		public void SetUserGroup(User user, string group)
 		{
 			try
 			{
 				Group grp = TShock.Groups.GetGroupByName(group);
 				if (null == grp)
-					throw new GroupNotExistsException(group);
+					throw new GroupNotFoundException(group);
 
 				if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
-					throw new UserNotExistException(user.Name);
-				
+					throw new UserNotFoundException(user.Name);
+
 				// Update player group reference for any logged in player
 				foreach (var player in TShock.Players.Where(p => null != p && p.UserAccountName == user.Name))
 				{
@@ -178,14 +262,155 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>
+		/// Updates the hashed password of an user.
+		/// </summary>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to modify.</param>
+		/// <param name="password">The new hashed password.</param>
+		/// <returns>True if the password was modified, or false if the query affected an unexpected amount of rows.</returns>
+		public bool SetUserPassword(string username, string password)
+		{
+			if (!UserExists(username))
+				throw new UserNotFoundException(username);
+
+			string query = "UPDATE Users SET Password=@1 WHERE Username=@0";
+			try
+			{
+				if (database.Query(query, username, password) == 1)
+				{
+					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
+					userCache.FindAll(u => u.Name == username).ForEach(u => u.Password = password);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to set the hashed password for '{0}'.".SFormat(username), ex);
+			}
+		}
+
+		/// <summary>
+		/// Sets the Hashed Password for a given username
+		/// </summary>
+		/// <param name="user">User user</param>
+		/// <param name="password">string password</param>
+		[Obsolete("Use bool SetUserPassword() instead.")]
+		public void SetUserPassword(User user, string password)
+		{
+			try
+			{
+				if (
+					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
+								   user.Name) == 0)
+					throw new UserNotFoundException(user.Name);
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("SetUserPassword SQL returned an error", ex);
+			}
+		}
+
+		/// <summary>
+		/// Updates the UUID of an user.
+		/// </summary>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to modify.</param>
+		/// <param name="uuid">The Universally Unique Identifier string to set.</param>
+		/// <returns>True if the UUID was modified, or false if the query affected an unexpected amount of rows.</returns>
+		public bool SetUserUUID(string username, string uuid)
+		{
+			if (!UserExists(username))
+				throw new UserNotFoundException(username);
+
+			string query = "UPDATE Users SET UUID=@1 WHERE Username=@0";
+			try
+			{
+				if (database.Query(query, username, uuid) == 1)
+				{
+					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
+					userCache.FindAll(u => u.Name == username).ForEach(u => u.UUID = uuid);
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to set the UUID for '{0}'.".SFormat(username), ex);
+			}
+		}
+
+		/// <summary>
+		/// Sets the UUID for a given username
+		/// </summary>
+		/// <param name="user">User user</param>
+		/// <param name="uuid">string uuid</param>
+		[Obsolete("Use bool SetUserUUID() instead.")]
+		public void SetUserUUID(User user, string uuid)
+		{
+			try
+			{
+				if (
+					database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
+								   user.Name) == 0)
+					throw new UserNotFoundException(user.Name);
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("SetUserUUID SQL returned an error", ex);
+			}
+		}
+
+		/// <summary>
+		/// Updates an user's list of known IPs and sets the user's last accessed time to the current time.
+		/// </summary>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to update.</param>
+		/// <param name="knownIPs">A JSON serialized list of strings.</param>
+		/// <returns>True if the user got updated, or false if the query affected an unexpected amount of rows.</returns>
+		public bool UpdateLogin(string username, string knownIPs)
+		{
+			if (!UserExists(username))
+				throw new UserNotFoundException(username);
+
+			string query = "UPDATE Users SET LastAccessed=@1, KnownIps=@2 WHERE Username=@0";
+			try
+			{
+				string date = DateTime.UtcNow.ToString("s");
+				if (database.Query(query, username, date, knownIPs) == 1)
+				{
+					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
+					userCache.FindAll(u => u.Name == username).ForEach(u =>
+					{
+						u.KnownIps = knownIPs;
+						u.LastAccessed = date;
+					});
+					return true;
+				}
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to update login for '{0}'.".SFormat(username), ex);
+			}
+		}
+
 		/// <summary>UpdateLogin - Updates the last accessed time for a database user to the current time.</summary>
 		/// <param name="user">user - The user object to modify.</param>
+		[Obsolete("Use bool UpdateLogin() instead.")]
 		public void UpdateLogin(User user)
 		{
 			try
 			{
 				if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+					throw new UserNotFoundException(user.Name);
 			}
 			catch (Exception ex)
 			{
@@ -193,61 +418,10 @@ namespace TShockAPI.DB
 			}
 		}
 
-		/// <summary>GetUserID - Gets the database ID of a given user object from the database.</summary>
-		/// <param name="username">username - The username of the user to query for.</param>
-		/// <returns>int - The user's ID</returns>
-		public int GetUserID(string username)
-		{
-			try
-			{
-				using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
-				{
-					if (reader.Read())
-					{
-						return reader.Get<int>("ID");
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				TShock.Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
-			}
-			return -1;
-		}
-
-		/// <summary>GetUserByName - Gets a user object by name.</summary>
-		/// <param name="name">name - The user's name.</param>
-		/// <returns>User - The user object returned from the search.</returns>
-		public User GetUserByName(string name)
-		{
-			try
-			{
-				return GetUser(new User {Name = name});
-			}
-			catch (UserManagerException)
-			{
-				return null;
-			}
-		}
-
-		/// <summary>GetUserByID - Gets a user object by their user ID.</summary>
-		/// <param name="id">id - The user's ID.</param>
-		/// <returns>User - The user object returned from the search.</returns>
-		public User GetUserByID(int id)
-		{
-			try
-			{
-				return GetUser(new User {ID = id});
-			}
-			catch (UserManagerException)
-			{
-				return null;
-			}
-		}
-
 		/// <summary>GetUser - Gets a user object by a user object.</summary>
 		/// <param name="user">user - The user object to search by.</param>
 		/// <returns>User - The user object that is returned from the search.</returns>
+		[Obsolete("Use GetUserByID() or GetUserByName() instead.")]
 		public User GetUser(User user)
 		{
 			bool multiple = false;
@@ -288,46 +462,145 @@ namespace TShockAPI.DB
 			if (multiple)
 				throw new UserManagerException(String.Format("Multiple users found for {0} '{1}'", type, arg));
 
-			throw new UserNotExistException(user.Name);
+			throw new UserNotFoundException(user.Name);
 		}
 
-		/// <summary>GetUsers - Gets all users from the database.</summary>
-		/// <returns>List - The users from the database.</returns>
-		public List<User> GetUsers()
+		/// <summary>
+		/// Gets a user object by their user ID.
+		/// </summary>
+		/// <param name="id">The user's ID.</param>
+		/// <returns>The user object returned from the search.</returns>
+		public User GetUserByID(int id)
 		{
+			User user;
+
+			// Check the user cache before resorting to database queries
+			if ((user = userCache.Find(u => u.ID == id)) != null)
+				return user;
+
+			string query = "SELECT * FROM Users WHERE ID=@0";
 			try
 			{
-				List<User> users = new List<User>();
-				using (var reader = database.QueryReader("SELECT * FROM Users"))
+				using (var reader = database.QueryReader(query, id))
 				{
-					while (reader.Read())
+					if (reader.Read())
 					{
-						users.Add(LoadUserFromResult(new User(), reader));
+						user = LoadUserFromResult(new User(), reader);
+						userCache.Add(user);
 					}
-					return users;
+					return user;
 				}
 			}
 			catch (Exception ex)
 			{
 				TShock.Log.Error(ex.ToString());
+				return null;
 			}
-			return null;
 		}
 
 		/// <summary>
-		/// GetUsersByName - Gets all users from the database with a username that starts with or contains <see cref="username"/>
+		/// Gets a user object by name.
 		/// </summary>
-		/// <param name="username">String - Rough username search. "n" will match "n", "na", "nam", "name", etc</param>
-		/// <param name="notAtStart">Boolean - If <see cref="username"/> is not the first part of the username. If true then "name" would match "name", "username", "wordsnamewords", etc</param>
-		/// <returns>List or null - Matching users or null if exception is thrown</returns>
+		/// <param name="name">The user's name.</param>
+		/// <returns>The user object returned from the search.</returns>
+		public User GetUserByName(string name)
+		{
+			User user;
+
+			// Check the user cache before resorting to database queries
+			if ((user = userCache.Find(u => u.Name == name)) != null)
+				return user;
+
+			string query = "SELECT * FROM Users WHERE Username=@0";
+			try
+			{
+				using (var reader = database.QueryReader(query, name))
+				{
+					if (reader.Read())
+					{
+						user = LoadUserFromResult(new User(), reader);
+						userCache.Add(user);
+					}
+					return user;
+				}
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the database ID of a given user object from the database.</summary>
+		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
+		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
+		/// <param name="username">The name of the user to look for.</param>
+		/// <returns>The user's ID.</returns>
+		public int GetUserID(string username)
+		{
+			if (!UserExists(username))
+				throw new UserNotFoundException(username);
+
+			string query = "SELECT ID FROM Users WHERE Username=@0";
+			try
+			{
+				using (var reader = database.QueryReader(query, username))
+				{
+					if (reader.Read())
+						return reader.Get<int>("ID");
+					else
+						// This really shouldn't happen
+						return -1;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to get the user ID for '{0}'.".SFormat(username), ex);
+			}
+		}
+
+		/// <summary>
+		/// Gets all users from the database. Also loads up the user cache.
+		/// </summary>
+		/// <exception cref="UserManagerException">Thrown if the query operation fails. Contains the inner exception.</exception>
+		/// <returns>The users from the database.</returns>
+		public List<User> GetUsers()
+		{
+			try
+			{
+				userCache.Clear();
+				using (var reader = database.QueryReader("SELECT * FROM Users"))
+				{
+					while (reader.Read())
+					{
+						userCache.Add(LoadUserFromResult(new User(), reader));
+					}
+					return userCache;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("Failed to get all users.", ex);
+			}
+		}
+
+		/// <summary>
+		/// Gets all users from the database with a username that starts with or contains <see cref="username"/>.
+		/// </summary>
+		/// <param name="username">Rough username search. "n" will match "n", "na", "nam", "name", etc.</param>
+		/// <param name="notAtStart">
+		/// If <see cref="username"/> is not the first part of the username.
+		/// If true then "name" would match "name", "username", "wordsnamewords", etc.
+		/// </param>
+		/// <returns>The list of matching users or null if an exception is thrown.</returns>
 		public List<User> GetUsersByName(string username, bool notAtStart = false)
 		{
 			try
 			{
 				List<User> users = new List<User>();
 				string search = notAtStart ? string.Format("%{0}%", username) : string.Format("{0}%", username);
-				using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username LIKE @0",
-					search))
+				using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username LIKE @0", search))
 				{
 					while (reader.Read())
 					{
@@ -343,10 +616,32 @@ namespace TShockAPI.DB
 			return null;
 		}
 
-		/// <summary>LoadUserFromResult - Fills out the fields of a User object with the results from a QueryResult object.</summary>
-		/// <param name="user">user - The user to add data to.</param>
-		/// <param name="result">result - The QueryResult object to add data from.</param>
-		/// <returns>User - The 'filled out' user object.</returns>
+		/// <summary>
+		/// Returns whether an user exists or not.
+		/// </summary>
+		/// <param name="id">The user ID to look for.</param>
+		/// <returns>True if the user exists, or false if it doesn't.</returns>
+		public bool UserExists(int id)
+		{
+			return GetUserByID(id) != null;
+		}
+
+		/// <summary>
+		/// Returns whether an user exists or not.
+		/// </summary>
+		/// <param name="user">The exact user name to look for.</param>
+		/// <returns>True if the user exists, or false if it doesn't.</returns>
+		public bool UserExists(string user)
+		{
+			return GetUserByName(user) != null;
+		}
+
+		/// <summary>
+		/// Fills out the fields of a User object with the results from a QueryResult object.
+		/// </summary>
+		/// <param name="user">The user to add data to.</param>
+		/// <param name="result">The QueryResult object to add data from.</param>
+		/// <returns>The 'filled out' user object.</returns>
 		private User LoadUserFromResult(User user, QueryResult result)
 		{
 			user.ID = result.Get<int>("ID");
@@ -357,47 +652,82 @@ namespace TShockAPI.DB
 			user.Registered = result.Get<string>("Registered");
 			user.LastAccessed = result.Get<string>("LastAccessed");
 			user.KnownIps = result.Get<string>("KnownIps");
+			user.Permissions = result.Get<string>("Permissions");
 			return user;
 		}
 	}
 
-	/// <summary>User - A database user.</summary>
+	/// <summary>
+	/// A database user.
+	/// </summary>
 	public class User
 	{
-		/// <summary>ID - The database ID of the user.</summary>
+		/// <summary>
+		/// The database ID of the user.
+		/// </summary>
 		public int ID { get; set; }
 
-		/// <summary>Name - The user's name.</summary>
+		/// <summary>
+		/// The user's name.
+		/// </summary>
 		public string Name { get; set; }
 
-		/// <summary>Password - The hashed password for the user.</summary>
+		/// <summary>
+		/// The hashed password for the user.
+		/// </summary>
 		public string Password { get; internal set; }
 
-		/// <summary>UUID - The user's saved Univerally Unique Identifier token.</summary>
+		/// <summary>
+		/// The user's saved Universally Unique Identifier token.
+		/// </summary>
 		public string UUID { get; set; }
-		
-		/// <summary>Group - The group object that the user is a part of.</summary>
+
+		/// <summary>
+		/// The name of the group the user is part of.
+		/// </summary>
 		public string Group { get; set; }
 
-		/// <summary>Registered - The unix epoch corresponding to the registration date of the user.</summary>
+		/// <summary>
+		/// The unix epoch corresponding to the registration date of the user.
+		/// </summary>
 		public string Registered { get; set; }
 
-		/// <summary>LastAccessed - The unix epoch corresponding to the last access date of the user.</summary>
+		/// <summary>
+		/// The unix epoch corresponding to the last access date of the user.
+		/// </summary>
 		public string LastAccessed { get; set; }
 
-		/// <summary>KnownIps - A JSON serialized list of known IP addresses for a user.</summary>
+		/// <summary>
+		/// A JSON serialized list of known IP addresses for a user.
+		/// </summary>
 		public string KnownIps { get; set; }
 
-		/// <summary>User - Constructor for the user object, assuming you define everything yourself.</summary>
-		/// <param name="name">name - The user's name.</param>
-		/// <param name="pass">pass - The user's password hash.</param>
-		/// <param name="uuid">uuid - The user's UUID.</param>
-		/// <param name="group">group - The user's group name.</param>
-		/// <param name="registered">registered - The unix epoch for the registration date.</param>
-		/// <param name="last">last - The unix epoch for the last access date.</param>
-		/// <param name="known">known - The known IPs for the user, serialized as a JSON object</param>
-		/// <returns>A completed user object.</returns>
-		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
+		/// <summary>
+		/// The permissions of the user in string form.
+		/// </summary>
+		public string Permissions
+		{
+			get { return PermissionManager.ToString(); }
+			set { PermissionManager.Parse(value); }
+		}
+
+		/// <summary>
+		/// Manages the user's permissions.
+		/// </summary>
+		public IPermissionManager PermissionManager { get; private set; }
+
+		/// <summary>
+		/// Constructor for the user object, assuming you define everything yourself.
+		/// </summary>
+		/// <param name="name">The user's name.</param>
+		/// <param name="pass">The user's password hash.</param>
+		/// <param name="uuid">The user's UUID.</param>
+		/// <param name="group">The user's group name.</param>
+		/// <param name="registered">The unix epoch for the registration date.</param>
+		/// <param name="last">The unix epoch for the last access date.</param>
+		/// <param name="known">The known IPs for the user, serialized as a JSON object.</param>
+		/// <param name="permissions">The user's list of permissions as a CSV string.</param>
+		public User(string name, string pass, string uuid, string group, string registered, string last, string known, string permissions)
 		{
 			Name = name;
 			Password = pass;
@@ -406,10 +736,13 @@ namespace TShockAPI.DB
 			Registered = registered;
 			LastAccessed = last;
 			KnownIps = known;
+			PermissionManager = new NegatedPermissionManager(permissions);
 		}
 
-		/// <summary>User - Default constructor for a user object; holds no data.</summary>
-		/// <returns>A user object.</returns>
+		/// <summary>
+		/// Default constructor for a user object.
+		/// Holds no data.
+		/// </summary>
 		public User()
 		{
 			Name = "";
@@ -419,6 +752,66 @@ namespace TShockAPI.DB
 			Registered = "";
 			LastAccessed = "";
 			KnownIps = "";
+			PermissionManager = new NegatedPermissionManager();
+		}
+
+		/// <summary>
+		/// Adds a permission to the list of permissions.
+		/// </summary>
+		/// <param name="permission">The permission to add.</param>
+		public void AddPermission(string permission)
+		{
+			PermissionManager.AddPermission(permission);
+		}
+
+		/// <summary>
+		/// Determines whether the user has a specified permission.
+		/// </summary>
+		/// <param name="permission">The permission to check.</param>
+		/// <returns>True if the user has the specified permission.</returns>
+		public bool HasPermission(string permission)
+		{
+			return PermissionManager.HasPermission(new PermissionNode(permission));
+		}
+
+		/// <summary>
+		/// Removes a permission from the list of permissions.
+		/// </summary>
+		/// <param name="permission">The permission to remove.</param>
+		public void RemovePermission(string permission)
+		{
+			PermissionManager.RemovePermission(permission);
+		}
+
+		/// <summary>
+		/// Clears the permission list and sets it to the list provided.
+		/// </summary>
+		/// <param name="permissions">The permission list to set.</param>
+		public void SetPermissions(List<string> permissions)
+		{
+			PermissionManager.Parse(permissions);
+		}
+
+		/// <summary>
+		/// Gets the user ID.
+		/// Will query the database for the correct ID in case it still has a value of 0.
+		/// </summary>
+		/// <returns></returns>
+		public int GetID()
+		{
+			if (ID != 0)
+				return ID;
+
+			try
+			{
+				ID = TShock.Users.GetUserID(Name);
+				return ID;
+			}
+			catch (UserManagerException ex)
+			{
+				TShock.Log.Error(ex.ToString());
+				return -1;
+			}
 		}
 
 		/// <summary>
@@ -427,19 +820,19 @@ namespace TShockAPI.DB
 		/// If the password is stored using BCrypt, it will be re-saved if the work factor in the config
 		/// is greater than the existing work factor with the new work factor.
 		/// </summary>
-		/// <param name="password">string password - The password to check against the user object.</param>
-		/// <returns>bool true, if the password matched, or false, if it didn't.</returns>
+		/// <param name="password">The password to check against the user object.</param>
+		/// <returns>True if the password matched, or false if it didn't.</returns>
 		public bool VerifyPassword(string password)
 		{
 			try
 			{
-				if (BCrypt.Net.BCrypt.Verify(password, this.Password)) 
+				if (BCrypt.Net.BCrypt.Verify(password, this.Password))
 				{
 					// If necessary, perform an upgrade to the highest work factor.
 					UpgradePasswordWorkFactor(password);
 					return true;
 				}
-			} 
+			}
 			catch (SaltParseException)
 			{
 				if (HashPassword(password).ToUpper() == this.Password.ToUpper())
@@ -453,15 +846,17 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
-		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
+		/// <summary>
+		/// Upgrades a password to BCrypt, from an insecure hashing algorithm.
+		/// </summary>
+		/// <param name="password">The raw user password (unhashed) to upgrade.</param>
 		protected void UpgradePasswordToBCrypt(string password)
 		{
 			// Save the old password, in the event that we have to revert changes.
 			string oldpassword = this.Password;
-			
+
 			// Convert the password to BCrypt, and save it.
-			try 
+			try
 			{
 				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			}
@@ -482,8 +877,10 @@ namespace TShockAPI.DB
 			}
 		}
 
-		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
-		/// <param name="password">string password - the raw user password (unhashed) to upgrade</param>
+		/// <summary>
+		/// Upgrades a password to the highest work factor available in the config.
+		/// </summary>
+		/// <param name="password">The raw user password (unhashed) to upgrade.</param>
 		protected void UpgradePasswordWorkFactor(string password)
 		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
@@ -520,8 +917,10 @@ namespace TShockAPI.DB
 			}
 		}
 
-		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
-		/// <param name="password">string password - the plain text password to hash</param>
+		/// <summary>
+		/// Creates a BCrypt hash for a user and stores it in this object.
+		/// </summary>
+		/// <param name="password">The plain text password to hash.</param>
 		public void CreateBCryptHash(string password)
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
@@ -539,9 +938,11 @@ namespace TShockAPI.DB
 			}
 		}
 
-		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
-		/// <param name="password">string password - the plain text password to hash</param>
-		/// <param name="workFactor">int workFactor - the work factor to use in generating the password hash</param>
+		/// <summary>
+		/// Creates a BCrypt hash for a user and stores it in this object.
+		/// </summary>
+		/// <param name="password">The plain text password to hash.</param>
+		/// <param name="workFactor">The work factor to use in generating the password hash.</param>
 		public void CreateBCryptHash(string password, int workFactor)
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
@@ -565,10 +966,10 @@ namespace TShockAPI.DB
 			};
 
 		/// <summary>
-		/// Returns a hashed string for a given string based on the config file's hash algo
+		/// Returns a hashed string for a given string based on the config file's hash algo.
 		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
-		/// <returns>string hash</returns>
+		/// <param name="bytes">Bytes to hash.</param>
+		/// <returns>A hashed string.</returns>
 		protected string HashPassword(byte[] bytes)
 		{
 			if (bytes == null)
@@ -585,10 +986,10 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Returns a hashed string for a given string based on the config file's hash algo
+		/// Returns a hashed string for a given string based on the config file's hash algo.
 		/// </summary>
-		/// <param name="password">string to hash</param>
-		/// <returns>string hash</returns>
+		/// <param name="password">String to hash.</param>
+		/// <returns>A hashed string.</returns>
 		protected string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
@@ -596,65 +997,86 @@ namespace TShockAPI.DB
 			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
 
+		/// <summary>
+		/// Returns the user's name.
+		/// </summary>
+		/// <returns>The user's name.</returns>
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 
-	/// <summary>UserManagerException - An exception generated by the user manager.</summary>
+	/// <summary>
+	/// An exception generated by the user manager.
+	/// </summary>
 	[Serializable]
 	public class UserManagerException : Exception
 	{
-		/// <summary>UserManagerException - Creates a new UserManagerException object.</summary>
-		/// <param name="message">message - The message for the object.</param>
-		/// <returns>public - a new UserManagerException object.</returns>
+		/// <summary>
+		/// Creates a new UserManagerException object.
+		/// </summary>
+		/// <param name="message">The message for the object.</param>
 		public UserManagerException(string message)
 			: base(message)
 		{
 		}
 
-		/// <summary>UserManagerException - Creates a new UserManagerObject with an internal exception.</summary>
-		/// <param name="message">message - The message for the object.</param>
-		/// <param name="inner">inner - The inner exception for the object.</param>
-		/// <returns>public - a nwe UserManagerException with a defined inner exception.</returns>
+		/// <summary>
+		/// Creates a new UserManagerObject with an internal exception.
+		/// </summary>
+		/// <param name="message">The message for the object.</param>
+		/// <param name="inner">The inner exception for the object.</param>
 		public UserManagerException(string message, Exception inner)
 			: base(message, inner)
 		{
 		}
 	}
 
-	/// <summary>UserExistsException - A UserExistsException object, used when a user already exists when attempting to create a new one.</summary>
+	/// <summary>
+	/// A UserExistsException object, used when a user already exists when attempting to create a new one.
+	/// </summary>
 	[Serializable]
 	public class UserExistsException : UserManagerException
 	{
-		/// <summary>UserExistsException - Creates a new UserExistsException object.</summary>
-		/// <param name="name">name - The name of the user that already exists.</param>
-		/// <returns>public - a UserExistsException object with the user's name passed in the message.</returns>
+		/// <summary>
+		/// Creates a new UserExistsException object.
+		/// </summary>
+		/// <param name="name">The name of the user that already exists.</param>
 		public UserExistsException(string name)
-			: base("User '" + name + "' already exists")
+			: base("User '" + name + "' already exists.")
 		{
 		}
 	}
 
-	/// <summary>UserNotExistException - A UserNotExistException, used when a user does not exist and a query failed as a result of it.</summary>
+	/// <summary>
+	/// A UserNotFoundException, used when a user does not exist and a query failed as a result of it.
+	/// </summary>
 	[Serializable]
-	public class UserNotExistException : UserManagerException
+	public class UserNotFoundException : UserManagerException
 	{
-		/// <summary>UserNotExistException - Creates a new UserNotExistException object, with the user's name in the message.</summary>
-		/// <param name="name">name - The user's name to be pasesd in the message.</param>
-		/// <returns>public - a new UserNotExistException object with a message containing the user's name that does not exist.</returns>
-		public UserNotExistException(string name)
-			: base("User '" + name + "' does not exist")
+		/// <summary>
+		/// Creates a new UserNotFoundException object, with the user's name in the message.
+		/// </summary>
+		/// <param name="name">The user's name to be passed in the message.</param>
+		public UserNotFoundException(string name)
+			: base("User '" + name + "' does not exist.")
 		{
 		}
 	}
 
-	/// <summary>GroupNotExistsException - A GroupNotExistsException, used when a group does not exist.</summary>
+	/// <summary>
+	/// A GroupNotFoundException, used when a group does not exist.
+	/// </summary>
 	[Serializable]
-	public class GroupNotExistsException : UserManagerException
+	public class GroupNotFoundException : UserManagerException
 	{
-		/// <summary>GroupNotExistsException - Creates a new GroupNotExistsException object with the group's name in the message.</summary>
-		/// <param name="group">group - The group name.</param>
-		/// <returns>public - a new GroupNotExistsException with the group that does not exist's name in the message.</returns>
-		public GroupNotExistsException(string group)
-			: base("Group '" + group + "' does not exist")
+		/// <summary>
+		/// Creates a new GroupNotFoundException object with the group's name in the message.
+		/// </summary>
+		/// <param name="group">The group name.</param>
+		public GroupNotFoundException(string group)
+			: base("Group '" + group + "' does not exist.")
 		{
 		}
 	}
