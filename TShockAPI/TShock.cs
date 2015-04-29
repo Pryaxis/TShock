@@ -389,13 +389,12 @@ namespace TShockAPI
 
 		/// <summary>OnPlayerLogin - Fires the PlayerLogin hook to listening plugins.</summary>
 		/// <param name="args">args - The PlayerPostLoginEventArgs object.</param>
-		private void OnPlayerLogin(Hooks.PlayerPostLoginEventArgs args)
+		private void OnPlayerLogin(PlayerPostLoginEventArgs args)
 		{
-			User u = Users.GetUserByName(args.Player.UserAccountName);
 			List<String> KnownIps = new List<string>();
-			if (!string.IsNullOrWhiteSpace(u.KnownIps))
+			if (!string.IsNullOrWhiteSpace(args.Player.User.KnownIps))
 			{
-				KnownIps = JsonConvert.DeserializeObject<List<String>>(u.KnownIps);
+				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
 			}
 
 			bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
@@ -409,8 +408,8 @@ namespace TShockAPI
 				KnownIps.Add(args.Player.IP);
 			}
 
-			u.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-			Users.UpdateLogin(u);
+			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+			Users.UpdateLogin(args.Player.User);
 		}
 
 		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
@@ -445,9 +444,9 @@ namespace TShockAPI
 		/// <param name="args">args - The NameCollisionEventArgs object.</param>
 		private void NetHooks_NameCollision(NameCollisionEventArgs args)
 		{
-			string ip = TShock.Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
+			string ip = Utils.GetRealIP(Netplay.serverSock[args.Who].tcpClient.Client.RemoteEndPoint.ToString());
 
-			var player = TShock.Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
+			var player = Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
 			if (player != null)
 			{
 				if (player.IP == ip)
@@ -456,15 +455,13 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
-				else if (player.IsLoggedIn)
+				if (player.IsLoggedIn)
 				{
-					User user = TShock.Users.GetUserByName(player.UserAccountName);
-					var ips = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+					var ips = JsonConvert.DeserializeObject<List<string>>(player.User.KnownIps);
 					if (ips.Contains(ip))
 					{
 						Netplay.serverSock[player.Index].kill = true;
 						args.Handled = true;
-						return;
 					}
 				}
 			}
@@ -472,20 +469,20 @@ namespace TShockAPI
 
 		/// <summary>OnXmasCheck - Internal hook fired when the XMasCheck happens.</summary>
 		/// <param name="args">args - The ChristmasCheckEventArgs object.</param>
-    private void OnXmasCheck(ChristmasCheckEventArgs args)
-    {
-        if (args.Handled)
-            return;
+		private void OnXmasCheck(ChristmasCheckEventArgs args)
+		{
+			if (args.Handled)
+				return;
 
-        if(Config.ForceXmas)
-        {
-            args.Xmas = true;
-            args.Handled = true;
-        }
-    }
+			if (Config.ForceXmas)
+			{
+				args.Xmas = true;
+				args.Handled = true;
+			}
+		}
 
-    /// <summary>OnHalloweenCheck - Internal hook fired when the HalloweenCheck happens.</summary>
-    /// <param name="args">args - The HalloweenCheckEventArgs object.</param>
+		/// <summary>OnHalloweenCheck - Internal hook fired when the HalloweenCheck happens.</summary>
+		/// <param name="args">args - The HalloweenCheckEventArgs object.</param>
 		private void OnHalloweenCheck(HalloweenCheckEventArgs args)
 		{
 			if (args.Handled)
@@ -497,6 +494,7 @@ namespace TShockAPI
 				args.Handled = true;
 			}
 		}
+
 		/// <summary>
 		/// Handles exceptions that we didn't catch earlier in the code, or in Terraria.
 		/// </summary>
