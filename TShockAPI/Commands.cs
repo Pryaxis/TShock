@@ -885,19 +885,18 @@ namespace TShockAPI
 			{
 				if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
 				{
-					var user = TShock.Users.GetUserByName(args.Player.User.Name);
 					string password = args.Parameters[0];
-					if (user.VerifyPassword(password))
+					if (args.Player.User.VerifyPassword(password))
 					{
 						args.Player.SendSuccessMessage("You changed your password!");
-						TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
-						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + user.Name + ".");
+						TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
+						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + args.Player.User.Name + ".");
 					}
 					else
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
 						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
-										 user.Name + ".");
+										 args.Player.User.Name + ".");
 					}
 				}
 				else
