@@ -178,7 +178,17 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's login name.
 		/// </summary>
-		public string UserAccountName { get; set; }
+		[Obsolete("Use User.Name instead")]
+		public string UserAccountName
+		{
+			get { return User == null ? null : User.Name; }
+		}
+
+		/// <summary>
+		/// User object associated with the player.
+		/// Set when the player logs in.
+		/// </summary>
+		public User User { get; set; }
 
 		/// <summary>
 		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
@@ -199,7 +209,11 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's user id( from the db ).
 		/// </summary>
-		public int UserID = -1;
+		[Obsolete("Use User.ID instead")]
+		public int UserID
+		{
+			get { return User == null ? -1 : User.ID; }
+		}
 
 		/// <summary>
 		/// Whether the player has been nagged about logging in.
@@ -903,12 +917,13 @@ namespace TShockAPI
 
 	public class TSServerPlayer : TSPlayer
 	{
-				public static string AccountName = "ServerConsole";
+		public static string AccountName = "ServerConsole";
+
 		public TSServerPlayer()
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
-				UserAccountName = AccountName;
+			User = new User{Name = AccountName};
 		}
 
 		public override void SendErrorMessage(string msg)

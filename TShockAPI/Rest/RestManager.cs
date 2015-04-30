@@ -394,7 +394,7 @@ namespace TShockAPI
 		[Token]
 		private object UserActiveListV2(RestRequestArgs args)
 		{
-			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.UserAccountName && p.Active).Select(p => p.UserAccountName)) } };
+			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.User && p.Active).Select(p => p.User.Name)) } };
 		}
 
 		[Description("Lists all user accounts in the TShock database.")]
@@ -807,7 +807,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.UserAccountName ? "" : player.UserAccountName},
+				{"username", null == player.User ? "" : player.User.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
 				{"position", player.TileX + "," + player.TileY},
@@ -834,7 +834,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.UserAccountName ? "" : player.UserAccountName},
+				{"username", null == player.User ? "" : player.User.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
 				{"position", player.TileX + "," + player.TileY},
@@ -1214,7 +1214,7 @@ namespace TShockAPI
 			var player = new Dictionary<string, object>
 				{
 					{"nickname", tsPlayer.Name},
-					{"username", tsPlayer.UserAccountName ?? ""},
+					{"username", tsPlayer.User == null ? "" : tsPlayer.User.Name},
 					{"group", tsPlayer.Group.Name},
 					{"active", tsPlayer.Active},
 					{"state", tsPlayer.State},

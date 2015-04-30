@@ -615,7 +615,7 @@ namespace TShockAPI.DB
 				return true;
 			}
 
-			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName;
+			return AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
 		}
 
 		public void setAllowedIDs(String ids)
