@@ -744,21 +744,21 @@ namespace TShockAPI
 			bool usingUUID = false;
 			if (args.Parameters.Count == 0 && !TShock.Config.DisableUUIDLogin)
 			{
-				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
+				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
 					return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
 				usingUUID = true;
 			}
 			else if (args.Parameters.Count == 1)
 			{
-				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
+				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
 					return;
 				user = TShock.Users.GetUserByName(args.Player.Name);
 				password = args.Parameters[0];
 			}
 			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
 			{
-				if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
+				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
 					return;
 
 				user = TShock.Users.GetUserByName(args.Parameters[0]);
@@ -809,8 +809,7 @@ namespace TShockAPI
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
-					args.Player.UserAccountName = user.Name;
-					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+					args.Player.User = user;
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
@@ -874,8 +873,7 @@ namespace TShockAPI
 			{
 				args.Player.tempGroupTimer.Stop();
 			}
-			args.Player.UserAccountName = null;
-			args.Player.UserID = -1;
+			args.Player.User = null;
 			args.Player.IsLoggedIn = false;
 
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
@@ -887,19 +885,18 @@ namespace TShockAPI
 			{
 				if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
 				{
-					var user = TShock.Users.GetUserByName(args.Player.UserAccountName);
 					string password = args.Parameters[0];
-					if (user.VerifyPassword(password))
+					if (args.Player.User.VerifyPassword(password))
 					{
 						args.Player.SendSuccessMessage("You changed your password!");
-						TShock.Users.SetUserPassword(user, args.Parameters[1]); // SetUserPassword will hash it for you.
-						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + user.Name + ".");
+						TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
+						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + args.Player.User.Name + ".");
 					}
 					else
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
 						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
-										 user.Name + ".");
+										 args.Player.User.Name + ".");
 					}
 				}
 				else
@@ -1150,7 +1147,7 @@ namespace TShockAPI
 			}
 			try
 			{
-				args.Player.SendSuccessMessage("IP Address: " + players[0].IP + " Logged in as: " + players[0].UserAccountName + " group: " + players[0].Group.Name);
+				args.Player.SendSuccessMessage("IP Address: " + players[0].IP + " Logged in as: " + players[0].User.Name + " group: " + players[0].Group.Name);
 			}
 			catch (Exception)
 			{
@@ -1227,8 +1224,8 @@ namespace TShockAPI
 								else
 								{
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName);
-									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
+									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name);
+									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
 									{
 										if (args.Silent)
 										{
@@ -1259,7 +1256,7 @@ namespace TShockAPI
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 						else
 						{
-							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.UserAccountName))
+							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.User.Name))
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
 						}
 					}
@@ -1278,7 +1275,7 @@ namespace TShockAPI
 						string reason = args.Parameters.Count > 2
 											? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
 											: "Manually added IP address ban.";
-						TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.UserAccountName);
+						TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.User.Name);
 						args.Player.SendSuccessMessage("Banned IP {0}.", ip);
 					}
 					#endregion
@@ -1316,8 +1313,8 @@ namespace TShockAPI
 								else
 								{
 									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.UserAccountName, DateTime.UtcNow.AddSeconds(time).ToString("s"));
-									if (String.IsNullOrWhiteSpace(args.Player.UserAccountName))
+									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name, DateTime.UtcNow.AddSeconds(time).ToString("s"));
+									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
 									{
 										if (args.Silent)
 										{
@@ -1636,7 +1633,7 @@ namespace TShockAPI
 
             if (ply.Count > 1)
             {
-				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.UserAccountName));
+				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.User.Name));
             }
 
             if(!TShock.Groups.GroupExists(args.Parameters[1]))
@@ -3872,7 +3869,7 @@ namespace TShockAPI
 								var width = Math.Abs(args.Player.TempPoints[0].X - args.Player.TempPoints[1].X);
 								var height = Math.Abs(args.Player.TempPoints[0].Y - args.Player.TempPoints[1].Y);
 
-								if (TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.UserAccountName,
+								if (TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.User.Name,
 															 Main.worldID.ToString()))
 								{
 									args.Player.TempPoints[0] = Point.Zero;

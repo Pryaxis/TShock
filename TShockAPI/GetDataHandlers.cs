@@ -1464,8 +1464,7 @@ namespace TShockAPI
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
-					args.Player.UserAccountName = args.Player.Name;
-					args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
+					args.Player.User = user;
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
@@ -1506,55 +1505,54 @@ namespace TShockAPI
 
 			string password = args.Data.ReadString();
 
-						if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
-								return true;
+			if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
+				return true;
 
 			var user = TShock.Users.GetUserByName(args.Player.Name);
-						if (user != null && !TShock.Config.DisableLoginBeforeJoin)
+			if (user != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				if (user.VerifyPassword(password))
 				{
-						args.Player.RequiresPassword = false;
-						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+					args.Player.RequiresPassword = false;
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
 
-						if (args.Player.State == 1)
-								args.Player.State = 2;
-						NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
+					if (args.Player.State == 1)
+						args.Player.State = 2;
+					NetMessage.SendData((int) PacketTypes.WorldInfo, args.Player.Index);
 
-						var group = TShock.Utils.GetGroup(user.Group);
+					var group = TShock.Utils.GetGroup(user.Group);
 
-						if (Main.ServerSideCharacter)
+					if (Main.ServerSideCharacter)
+					{
+						if (group.HasPermission(Permissions.bypassssc))
 						{
-								if (group.HasPermission(Permissions.bypassssc))
-								{
-										args.Player.IgnoreActionsForClearingTrashCan = false;
-								}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
+							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
+						args.Player.PlayerData.RestoreCharacter(args.Player);
+					}
 					args.Player.LoginFailsBySsi = false;
 
-						if (group.HasPermission(Permissions.ignorestackhackdetection))
-								args.Player.IgnoreActionsForCheating = "none";
+					if (group.HasPermission(Permissions.ignorestackhackdetection))
+						args.Player.IgnoreActionsForCheating = "none";
 
-						if (group.HasPermission(Permissions.usebanneditem))
-								args.Player.IgnoreActionsForDisabledArmor = "none";
+					if (group.HasPermission(Permissions.usebanneditem))
+						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-						args.Player.Group = group;
-						args.Player.tempGroup = null;
-						args.Player.UserAccountName = args.Player.Name;
-						args.Player.UserID = TShock.Users.GetUserID(args.Player.UserAccountName);
-						args.Player.IsLoggedIn = true;
-						args.Player.IgnoreActionsForInventory = "none";
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.User = user;
+					args.Player.IsLoggedIn = true;
+					args.Player.IgnoreActionsForInventory = "none";
 
-						if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
-										{
-								args.Player.PlayerData.CopyCharacter(args.Player);
-								TShock.CharacterDB.InsertPlayerData(args.Player);
-							}
-							args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
+					{
+						args.Player.PlayerData.CopyCharacter(args.Player);
+						TShock.CharacterDB.InsertPlayerData(args.Player);
+					}
+					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					TShock.Users.SetUserUUID(user, args.Player.UUID);
-										Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
 				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
@@ -2618,10 +2616,9 @@ namespace TShockAPI
 			
 			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
-				User user = TShock.Users.GetUserByName(args.Player.UserAccountName);
-				if (TShock.CharacterDB.RemovePlayer(user.ID))
+				if (TShock.CharacterDB.RemovePlayer(args.Player.User.ID))
 				{
-					TShock.CharacterDB.SeedInitialData(user);
+					TShock.CharacterDB.SeedInitialData(args.Player.User);
 				}
 			}
 
