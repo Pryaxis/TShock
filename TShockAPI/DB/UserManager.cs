@@ -595,7 +595,7 @@ namespace TShockAPI.DB
 		/// <returns>string hash</returns>
 		protected string HashPassword(string password)
 		{
-			if (string.IsNullOrEmpty(password) || password == "non-existant password")
+			if (string.IsNullOrEmpty(password) && this.Password == "non-existant password")
 				return "non-existant password";
 			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
