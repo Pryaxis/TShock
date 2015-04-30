@@ -444,6 +444,10 @@ namespace TShockAPI.DB
 			{
 				if (HashPassword(password).ToUpper() == this.Password.ToUpper())
 				{
+					// Return true to keep blank passwords working but don't convert them to bcrypt.
+					if (this.Password == "non-existant password") {
+						return true;
+					}
 					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
 					UpgradePasswordToBCrypt(password);
 					return true;
@@ -592,7 +596,7 @@ namespace TShockAPI.DB
 		protected string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
-				return null;
+				return "non-existant password";
 			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
 
