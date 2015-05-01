@@ -85,7 +85,7 @@ namespace TShockAPI
 					{
 							if (includeIDs)
 							{
-									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
+									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.User.ID + ")");
 							}
 							else
 							{

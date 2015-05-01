@@ -787,7 +787,7 @@ namespace TShockAPI
 						(usingUUID && user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(user.Name));
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
@@ -4137,8 +4137,8 @@ namespace TShockAPI
 								User user = TShock.Users.GetUserByID(userId);
 								if (user != null)
 									return user.Name;
-								else
-									return string.Concat("{ID: ", userId, "}");
+
+								return string.Concat("{ID: ", userId, "}");
 							});
 							List<string> extraLines = PaginationTools.BuildLinesFromTerms(sharedUsersSelector.Distinct());
 							extraLines[0] = "Shared with: " + extraLines[0];
@@ -4201,10 +4201,8 @@ namespace TShockAPI
 									if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
 										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
 
-								// ReSharper disable AccessToModifiedClosure
 								Debug.Assert(boundaryHideTimer != null);
 								boundaryHideTimer.Dispose();
-								// ReSharper restore AccessToModifiedClosure
 							},
 								null, 5000, Timeout.Infinite
 							);
