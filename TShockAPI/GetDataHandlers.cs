@@ -1438,7 +1438,7 @@ namespace TShockAPI
 			{
 				if(user.UUID == args.Player.UUID)
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
 
 					if (args.Player.State == 1)
 						args.Player.State = 2;
@@ -1514,7 +1514,7 @@ namespace TShockAPI
 				if (user.VerifyPassword(password))
 				{
 					args.Player.RequiresPassword = false;
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, TShock.Users.GetUserID(args.Player.Name));
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
 
 					if (args.Player.State == 1)
 						args.Player.State = 2;
