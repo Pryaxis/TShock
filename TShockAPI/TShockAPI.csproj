@@ -54,21 +54,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HttpServer">
-      <HintPath>..\HttpBins\HttpServer.dll</HintPath>
+      <HintPath>..\prebuilts\HttpServer.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\SqlBins\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\prebuilts\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SqlBins\MySql.Data.dll</HintPath>
+      <HintPath>..\prebuilts\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\prebuilts\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="BCrypt.Net">
-      <HintPath>..\BCryptBins\BCrypt.Net.dll</HintPath>
+      <HintPath>..\prebuilts\BCrypt.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
