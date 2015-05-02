@@ -2298,7 +2298,7 @@ namespace TShockAPI
 				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
 				{
 					control[5] = false;
-					args.Player.Disable("Using banned item ({0})".SFormat(itemName));
+					args.Player.Disable("using a banned item ({0})".SFormat(itemName));
 					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
 				}
 
@@ -2606,7 +2606,7 @@ namespace TShockAPI
 				if (TShock.Config.BanOnHardcoreDeath)
 				{
 					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
+						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
 				}
 				else
 				{
@@ -2801,7 +2801,7 @@ namespace TShockAPI
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
 							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
-								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but can't ban you.", true);
+								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
 						}
 						else
 						{

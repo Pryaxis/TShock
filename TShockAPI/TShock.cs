@@ -871,6 +871,7 @@ namespace TShockAPI
 					}
 					player.IgnoreActionsForCheating = check;
 					check = "none";
+					// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 					foreach (Item item in player.TPlayer.armor)
 					{
 						if (Itembans.ItemIsBanned(item.name, player))
