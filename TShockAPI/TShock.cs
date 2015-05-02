@@ -410,7 +410,15 @@ namespace TShockAPI
 			}
 
 			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-			Users.UpdateLogin(args.Player.User);
+			try
+			{
+				Users.UpdateLogin(args.Player.User);
+			}
+			catch (UserManagerException ex)
+			{
+				TShock.Log.ConsoleError("Error while updating user login: {0}. Check logs for details.", ex.Message);
+				TShock.Log.Error(ex.ToString());
+			}
 		}
 
 		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>

@@ -878,7 +878,7 @@ namespace TShockAPI.DB
 			int currentWorkFactor = 0;
 			try
 			{
-				currentWorkFactor = Int32.Parse((this.Password.Split('$')[2]));
+				currentWorkFactor = Int32.Parse((Password.Split('$')[2]));
 			}
 			catch (FormatException)
 			{
@@ -890,7 +890,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
+					Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 				}
 				catch (ArgumentOutOfRangeException)
 				{
@@ -899,7 +899,8 @@ namespace TShockAPI.DB
 
 				try
 				{
-					TShock.Users.SetUserPassword(this, this.Password);
+					if (!TShock.Users.SetUserPassword(Name, Password))
+						throw new UserManagerException("SQL query affected an unexpected number of rows.");
 				}
 				catch (UserManagerException e)
 				{
@@ -920,12 +921,12 @@ namespace TShockAPI.DB
 			}
 			try
 			{
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
+				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
 			}
 			catch (ArgumentOutOfRangeException)
 			{
 				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
+				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
 			}
 		}
 
@@ -940,7 +941,7 @@ namespace TShockAPI.DB
 			{
 				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
 			}
-			this.Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
+			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
 		}
 
 		/// <summary>

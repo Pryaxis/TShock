@@ -482,7 +482,8 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.SetUserPassword(user, password);
+					if (!TShock.Users.SetUserPassword(user.Name, password))
+						throw new UserManagerException("SQL query affected an unexpected number of rows.");
 					response.Add("password-response", "Password updated successfully");
 				}
 				catch (Exception e)
