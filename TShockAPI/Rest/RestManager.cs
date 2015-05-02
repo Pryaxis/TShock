@@ -425,18 +425,29 @@ namespace TShockAPI
 				return RestMissingParam("user");
 
 			var group = args.Parameters["group"];
-		    if (string.IsNullOrWhiteSpace(group))
-		        group = TShock.Config.DefaultRegistrationGroupName;
+			if (string.IsNullOrWhiteSpace(group))
+				group = TShock.Config.DefaultRegistrationGroupName;
 
 			var password = args.Parameters["password"];
 			if (string.IsNullOrWhiteSpace(password))
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, "", group, "", "", "");
+			User user = new User();
+			user.Name = username;
 			try
 			{
-				TShock.Users.AddUser(user);
+				user.CreateBCryptHash(password);
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				return RestError("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+			}
+			user.Group = group;
+			try
+			{
+				user.Registered = DateTime.UtcNow.ToString("s");
+				TShock.Users.SaveUser(user);
 			}
 			catch (Exception e)
 			{
@@ -484,12 +495,13 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.SetUserGroup(user, group);
+					if (!TShock.Users.SetUserGroup(user.Name, group))
+						throw new UserManagerException("SQL query affected an unexpected number of rows.");
 					response.Add("group-response", "Group updated successfully");
 				}
 				catch (Exception e)
 				{
-					return RestError("Failed to update user group (" + e.Message + ")");
+					return RestError("Failed to update user group (" + e.Message + ").");
 				}
 			}
 
@@ -510,7 +522,8 @@ namespace TShockAPI
 
 			try
 			{
-				TShock.Users.RemoveUser((User)ret);
+				if (!TShock.Users.RemoveUser(((User)ret).Name))
+					throw new UserManagerException("SQL query affected an unexpected number of rows.");
 			}
 			catch (Exception e)
 			{

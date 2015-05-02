@@ -1009,7 +1009,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
 					TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
 				}
-				catch (GroupNotExistsException)
+				catch (GroupNotFoundException)
 				{
 					args.Player.SendErrorMessage("Group " + user.Group + " does not exist!");
 				}
@@ -1035,7 +1035,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account removed successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
-				catch (UserNotExistException)
+				catch (UserNotFoundException)
 				{
 					args.Player.SendErrorMessage("The user " + user.Name + " does not exist! Deleted nobody!");
 				}
@@ -1058,7 +1058,7 @@ namespace TShockAPI
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
 					args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
 				}
-				catch (UserNotExistException)
+				catch (UserNotFoundException)
 				{
 					args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
 				}
@@ -1080,11 +1080,11 @@ namespace TShockAPI
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
 				}
-				catch (GroupNotExistsException)
+				catch (GroupNotFoundException)
 				{
 					args.Player.SendErrorMessage("That group does not exist!");
 				}
-				catch (UserNotExistException)
+				catch (UserNotFoundException)
 				{
 					args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
 				}

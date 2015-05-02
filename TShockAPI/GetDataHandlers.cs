@@ -1552,7 +1552,16 @@ namespace TShockAPI
 					}
 					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
-					TShock.Users.SetUserUUID(user, args.Player.UUID);
+					try
+					{
+						if (!TShock.Users.SetUserUUID(user.Name, args.Player.UUID))
+							throw new UserManagerException("SQL query affected an unexpected number of rows.");
+					}
+					catch (UserManagerException ex)
+					{
+						TShock.Log.ConsoleError("Error while updating user UUID: {0}. Check logs for details.", ex.Message);
+						TShock.Log.Error(ex.ToString());
+					}
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}

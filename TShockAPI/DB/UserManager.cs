@@ -843,27 +843,28 @@ namespace TShockAPI.DB
 		protected void UpgradePasswordToBCrypt(string password)
 		{
 			// Save the old password, in the event that we have to revert changes.
-			string oldpassword = this.Password;
+			string oldpassword = Password;
 
 			// Convert the password to BCrypt, and save it.
 			try
 			{
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
+				Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
 			}
 			catch (ArgumentOutOfRangeException)
 			{
 				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Upgrading user password to BCrypt using default work factor.");
-				this.Password = BCrypt.Net.BCrypt.HashPassword(password);
+				Password = BCrypt.Net.BCrypt.HashPassword(password);
 			}
 
 			try
 			{
-				TShock.Users.SetUserPassword(this, this.Password);
+				if (!TShock.Users.SetUserPassword(Name, Password))
+					throw new UserManagerException("SQL query affected an unexpected number of rows.");
 			}
 			catch (UserManagerException e)
 			{
 				TShock.Log.ConsoleError(e.ToString());
-				this.Password = oldpassword; // Revert changes
+				Password = oldpassword; // Revert changes
 			}
 		}
 
