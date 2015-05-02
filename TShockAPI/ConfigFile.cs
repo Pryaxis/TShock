@@ -86,7 +86,7 @@ namespace TShockAPI
 
 		/// <summary>SuperAdminChatRGB - The chat color for the superadmin group.</summary>
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255")]
-		public float[] SuperAdminChatRGB = { 255, 0, 0 };
+		public int[] SuperAdminChatRGB = { 255, 0, 0 };
 
 		/// <summary>SuperAdminChatPrefix - The superadmin chat prefix.</summary>
 		[Description("Super admin group chat prefix")]
@@ -359,7 +359,7 @@ namespace TShockAPI
 		public bool PreventInvalidPlaceStyle = true;
 
 		[Description("#.#.#. = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")]
-		public float[] BroadcastRGB = { 127, 255, 212 };
+		public int[] BroadcastRGB = { 127, 255, 212 };
 
 		// TODO: Get rid of this when the old REST permission model is removed.
 		[Description(

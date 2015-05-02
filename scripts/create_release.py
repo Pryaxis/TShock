@@ -21,10 +21,10 @@ bcrypt_bin_name = "BCrypt.Net.dll"
 
 terraria_release_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Release", terraria_bin_name)
 terraria_debug_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Debug", terraria_bin_name)
-sql_dep = os.path.join(cur_wd, "SqlBins")
-http_bin = os.path.join(cur_wd, "HttpBins", http_bin_name)
-json_bin = os.path.join(cur_wd, "TShockAPI", json_bin_name)
-bcrypt_bin = os.path.join(cur_wd, "BCryptBins", bcrypt_bin_name)
+sql_dep = os.path.join(cur_wd, "prebuilts")
+http_bin = os.path.join(cur_wd, "prebuilts", http_bin_name)
+json_bin = os.path.join(cur_wd, "prebuilts", json_bin_name)
+bcrypt_bin = os.path.join(cur_wd, "prebuilts", bcrypt_bin_name)
 release_bin = os.path.join(cur_wd, "TShockAPI", "bin", "Release", tshock_bin_name)
 debug_folder = os.path.join(cur_wd, "TShockAPI", "bin", "Debug")
 

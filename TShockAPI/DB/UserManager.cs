@@ -105,7 +105,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Removes an user from the database.
+		/// Removes a user from the database.
 		/// </summary>
 		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
 		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
@@ -159,7 +159,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Saves an user to the database.
+		/// Saves a user to the database.
 		/// Using this for an existing user will update the data.
 		/// </summary>
 		/// <exception cref="GroupNotFoundException">Thrown when the user group doesn't exist.</exception>
@@ -212,7 +212,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Updates the group of an user.
+		/// Updates the group of a user.
 		/// </summary>
 		/// <exception cref="GroupNotFoundException">Thrown when the given group doesn't exist.</exception>
 		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
@@ -275,7 +275,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Updates the hashed password of an user.
+		/// Updates the hashed password of a user.
 		/// </summary>
 		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
 		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
@@ -327,7 +327,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Updates the UUID of an user.
+		/// Updates the UUID of a user.
 		/// </summary>
 		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
 		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
@@ -379,7 +379,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Updates an user's list of known IPs and sets the user's last accessed time to the current time.
+		/// Updates a user's list of known IPs and sets the user's last accessed time to the current time.
 		/// </summary>
 		/// <exception cref="UserManagerException">Thrown when the query operation fails. Contains the inner exception.</exception>
 		/// <exception cref="UserNotFoundException">Thrown if no user by the given name is found in the database.</exception>
@@ -629,7 +629,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Returns whether an user exists or not.
+		/// Returns whether a user exists or not.
 		/// </summary>
 		/// <param name="id">The user ID to look for.</param>
 		/// <returns>True if the user exists, or false if it doesn't.</returns>
@@ -639,7 +639,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Returns whether an user exists or not.
+		/// Returns whether a user exists or not.
 		/// </summary>
 		/// <param name="user">The exact user name to look for.</param>
 		/// <returns>True if the user exists, or false if it doesn't.</returns>
