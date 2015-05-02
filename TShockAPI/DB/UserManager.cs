@@ -171,27 +171,39 @@ namespace TShockAPI.DB
 			if (!TShock.Groups.GroupExists(user.Group))
 				throw new GroupNotExistException(user.Group);
 
-			string query;
-			if (UserExists(user.Name))
-				query = "UPDATE Users SET Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7 WHERE Username=@0";
+			var querybuilder = new StringBuilder();
+			bool updating = UserExists(user.Name);
+			if (updating)
+				querybuilder.Append("UPDATE Users SET Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7 WHERE Username=@0");
 			else
 			{
-				query = TShock.Config.StorageType.ToLower() == "sqlite"
-					? "INSERT OR IGNORE INTO Users (Username, Password, UUID, UserGroup, Registered, LastAccessed, KnownIPs, Permissions) VALUES (@0, @1, @2, @3, @4)"
-					: "INSERT IGNORE INTO Users SET Username=@0, Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7";
+				querybuilder.Append(TShock.Config.StorageType.ToLower() == "sqlite"
+					? "INSERT OR IGNORE INTO Users (Username, Password, UUID, UserGroup, Registered, LastAccessed, KnownIPs, Permissions) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);"
+					: "INSERT IGNORE INTO Users SET Username=@0, Password=@1, UUID=@2, UserGroup=@3, Registered=@4, LastAccessed=@5, KnownIPs=@6, Permissions=@7;");
 			}
+
+			// Add query for obtaining the user id
+			querybuilder.Append(TShock.Config.StorageType.ToLower() == "sqlite"
+				? "SELECT ID FROM Users WHERE Username=@0;"
+				: "SELECT LAST_INSERT_ID();");
+
 			try
 			{
-				if (database.Query(query, user.Name, user.Password, user.UUID, user.Group, user.Registered, user.LastAccessed,
-					user.KnownIps, user.Permissions) == 1)
+				using (QueryResult result = database.QueryReader(querybuilder.ToString(), user.Name, user.Password, user.UUID, user.Group,
+					user.Registered, user.LastAccessed, user.KnownIps, user.Permissions))
 				{
-					userCache.RemoveAll(u => u.Name == user.Name);
-					userCache.Add(user);
-					AccountHooks.OnAccountCreate(user);
-					return true;
+					if (result.Read())
+					{
+						user.ID = result.Get<int>("ID");
+						userCache.RemoveAll(u => u.Name == user.Name);
+						userCache.Add(user);
+						if (!updating)
+							AccountHooks.OnAccountCreate(user);
+						return true;
+					}
+					else
+						return false;
 				}
-				else
-					return false;
 			}
 			catch (Exception ex)
 			{
@@ -790,28 +802,6 @@ namespace TShockAPI.DB
 		public void SetPermissions(List<string> permissions)
 		{
 			PermissionManager.Parse(permissions);
-		}
-
-		/// <summary>
-		/// Gets the user ID.
-		/// Will query the database for the correct ID in case it still has a value of 0.
-		/// </summary>
-		/// <returns></returns>
-		public int GetID()
-		{
-			if (ID != 0)
-				return ID;
-
-			try
-			{
-				ID = TShock.Users.GetUserID(Name);
-				return ID;
-			}
-			catch (UserManagerException ex)
-			{
-				TShock.Log.Error(ex.ToString());
-				return -1;
-			}
 		}
 
 		/// <summary>
