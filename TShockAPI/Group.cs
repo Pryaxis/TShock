@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using TShockAPI.PermissionSystem;
 
@@ -162,16 +163,26 @@ namespace TShockAPI
 		/// will parse "!permssion" and add it to the negated permissions.
 		/// </summary>
 		/// <param name="permission"></param>
+		[Obsolete("Use SetPermissions() instead.")]
 		public void SetPermission(List<string> permission)
 		{
 			PermissionManager.Parse(permission);
 		}
 
 		/// <summary>
+		/// Clears the permission list and sets it to the list provided.
+		/// </summary>
+		/// <param name="permissions">The list of permissions to set.</param>
+		public void SetPermissions(List<string> permissions)
+		{
+			PermissionManager.Parse(permissions);
+		}
+
+		/// <summary>
 		/// Will remove a permission from the respective list,
 		/// where "!permission" will remove a negated permission.
 		/// </summary>
-		/// <param name="permission"></param>
+		/// <param name="permission">The permission to remove.</param>
 		public void RemovePermission(string permission)
 		{
 			PermissionManager.RemovePermission(permission);
@@ -193,6 +204,10 @@ namespace TShockAPI
 			otherGroup.PermissionManager.Clone(PermissionManager);
 		}
 
+		/// <summary>
+		/// Returns the group's name.
+		/// </summary>
+		/// <returns>The group's name.</returns>
 		public override string ToString()
 		{
 			return Name;
