@@ -117,12 +117,12 @@ namespace TShockAPI.DB
 			if (user == null)
 				throw new UserNotFoundException(username);
 
-			string query = "DELETE FROM Users WHERE Username=@0";
+			string query = "DELETE FROM Users WHERE ID=@0";
 			try
 			{
-				if (database.Query(query, username) == 1)
+				if (database.Query(query, user.ID) == 1)
 				{
-					userCache.RemoveAll(u => u.Name == username);
+					userCache.RemoveAll(u => u.ID == user.ID);
 					AccountHooks.OnAccountDelete(user);
 					return true;
 				}
@@ -169,7 +169,7 @@ namespace TShockAPI.DB
 		public bool SaveUser(User user)
 		{
 			if (!TShock.Groups.GroupExists(user.Group))
-				throw new GroupNotExistException(user.Group);
+				throw new GroupNotFoundException(user.Group);
 
 			var querybuilder = new StringBuilder();
 			bool updating = UserExists(user.Name);
@@ -222,18 +222,19 @@ namespace TShockAPI.DB
 		/// <returns></returns>
 		public bool SetUserGroup(string username, string groupname)
 		{
-			if (!UserExists(username))
+			User user = GetUserByName(username);
+			if (user == null)
 				throw new UserNotFoundException(username);
 			if (!TShock.Groups.GroupExists(groupname))
 				throw new GroupNotFoundException(groupname);
 
-			string query = "UPDATE Users SET UserGroup=@1 WHERE Username=@0";
+			string query = "UPDATE Users SET UserGroup=@1 WHERE ID=@0";
 			try
 			{
-				if (database.Query(query, username, groupname) == 1)
+				if (database.Query(query, user.ID, groupname) == 1)
 				{
 					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
-					userCache.FindAll(u => u.Name == username).ForEach(u => u.Group = groupname);
+					userCache.FindAll(u => u.ID == user.ID).ForEach(u => u.Group = groupname);
 					return true;
 				}
 				else
@@ -284,16 +285,17 @@ namespace TShockAPI.DB
 		/// <returns>True if the password was modified, or false if the query affected an unexpected amount of rows.</returns>
 		public bool SetUserPassword(string username, string password)
 		{
-			if (!UserExists(username))
+			User user = GetUserByName(username);
+			if (user == null)
 				throw new UserNotFoundException(username);
 
-			string query = "UPDATE Users SET Password=@1 WHERE Username=@0";
+			string query = "UPDATE Users SET Password=@1 WHERE ID=@0";
 			try
 			{
-				if (database.Query(query, username, password) == 1)
+				if (database.Query(query, user.ID, password) == 1)
 				{
 					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
-					userCache.FindAll(u => u.Name == username).ForEach(u => u.Password = password);
+					userCache.FindAll(u => u.ID == user.ID).ForEach(u => u.Password = password);
 					return true;
 				}
 				else
@@ -336,16 +338,17 @@ namespace TShockAPI.DB
 		/// <returns>True if the UUID was modified, or false if the query affected an unexpected amount of rows.</returns>
 		public bool SetUserUUID(string username, string uuid)
 		{
-			if (!UserExists(username))
+			User user = GetUserByName(username);
+			if (user == null)
 				throw new UserNotFoundException(username);
 
-			string query = "UPDATE Users SET UUID=@1 WHERE Username=@0";
+			string query = "UPDATE Users SET UUID=@1 WHERE ID=@0";
 			try
 			{
-				if (database.Query(query, username, uuid) == 1)
+				if (database.Query(query, user.ID, uuid) == 1)
 				{
 					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
-					userCache.FindAll(u => u.Name == username).ForEach(u => u.UUID = uuid);
+					userCache.FindAll(u => u.ID == user.ID).ForEach(u => u.UUID = uuid);
 					return true;
 				}
 				else
@@ -388,17 +391,18 @@ namespace TShockAPI.DB
 		/// <returns>True if the user got updated, or false if the query affected an unexpected amount of rows.</returns>
 		public bool UpdateLogin(string username, string knownIPs)
 		{
-			if (!UserExists(username))
+			User user = GetUserByName(username);
+			if (user == null)
 				throw new UserNotFoundException(username);
 
-			string query = "UPDATE Users SET LastAccessed=@1, KnownIps=@2 WHERE Username=@0";
+			string query = "UPDATE Users SET LastAccessed=@1, KnownIps=@2 WHERE ID=@0";
 			try
 			{
 				string date = DateTime.UtcNow.ToString("s");
-				if (database.Query(query, username, date, knownIPs) == 1)
+				if (database.Query(query, user.ID, date, knownIPs) == 1)
 				{
 					// Using FindAll followed by ForEach removes the need of checking if userCache contains the user
-					userCache.FindAll(u => u.Name == username).ForEach(u =>
+					userCache.FindAll(u => u.ID == user.ID).ForEach(u =>
 					{
 						u.KnownIps = knownIPs;
 						u.LastAccessed = date;
