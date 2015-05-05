@@ -162,9 +162,9 @@ namespace TShockAPI
 		{
 			Config = new ConfigFile();
 			ServerSideCharacterConfig = new ServerSideConfig();
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -15, prefix = 0, stack = 1 });
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -13, prefix = 0, stack = 1 });
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem { netID = -16, prefix = 0, stack = 1 });
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-15, 1, 0));
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-13, 1, 0));
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-16, 1, 0));
 			Order = 0;
 			instance = this;
 		}
@@ -1844,9 +1844,9 @@ namespace TShockAPI
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
+				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
 				{
 					Item item = new Item();
 					if (inventory[i] != null && inventory[i].netID != 0)
@@ -1863,10 +1863,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if(i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
+				else if(i < (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots)))
 				{
 					Item item = new Item();
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
+					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
 					if (armor[index] != null && armor[index].netID != 0)
 					{
 						item.netDefaults(armor[index].netID);
@@ -1881,10 +1881,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots)))
+				else if (i < (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots)))
 				{
 					Item item = new Item();
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
+					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
 					if (dye[index] != null && dye[index].netID != 0)
 					{
 						item.netDefaults(dye[index].netID);
