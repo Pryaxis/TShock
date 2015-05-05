@@ -120,11 +120,11 @@ namespace TShockAPI
 				TShock.ServerSideCharacterConfig = new ServerSideConfig
 				{
 					StartingInventory =
-						new List<NetItem>()
+						new List<NetItem>
 						{
-							new NetItem() {netID = -15, stack = 1, prefix = 0},
-							new NetItem() {netID = -13, stack = 1, prefix = 0},
-							new NetItem() {netID = -16, stack = 1, prefix = 0}
+							new NetItem(-15, 1, 0),
+							new NetItem(-13, 1, 0),
+							new NetItem(-16, 1, 0)
 						}
 				};
 			}

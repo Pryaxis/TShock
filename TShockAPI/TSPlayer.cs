@@ -1072,7 +1072,7 @@ namespace TShockAPI
 
 	public class PlayerData
 	{
-		public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+		public NetItem[] inventory = new NetItem[NetItem.MaxInventory];
 		public int health = TShock.ServerSideCharacterConfig.StartingHealth;
 		public int maxHealth = TShock.ServerSideCharacterConfig.StartingHealth;
 		public int mana = TShock.ServerSideCharacterConfig.StartingMana;
@@ -1094,7 +1094,7 @@ namespace TShockAPI
 
 		public PlayerData(TSPlayer player)
 		{
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
 				this.inventory[i] = new NetItem();
 			}
@@ -1102,28 +1102,18 @@ namespace TShockAPI
 			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
 			{
 				var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
-				StoreSlot(i, item.netID, item.prefix, item.stack);
+				StoreSlot(i, item.NetId, item.PrefixId, item.Stack);
 			}
 		}
 
-		public void StoreSlot(int slot, int netID, int prefix, int stack)
+		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
 			if(slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
 			{
 				return;
-			}	
-			
-			this.inventory[slot].netID = netID;
-			if (this.inventory[slot].netID != 0)
-			{
-				this.inventory[slot].stack = stack;
-				this.inventory[slot].prefix = prefix;
 			}
-			else
-			{
-				this.inventory[slot].stack = 0;
-				this.inventory[slot].prefix = 0;
-			}
+
+			this.inventory[slot] = new NetItem(netID, stack, prefix);
 		}
 
 		public void CopyCharacter(TSPlayer player)
@@ -1157,75 +1147,21 @@ namespace TShockAPI
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
+				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
 				{
-					if (player.TPlayer.inventory[i] != null)
-					{
-						this.inventory[i].netID = inventory[i].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = inventory[i].stack;
-						this.inventory[i].prefix = inventory[i].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					this.inventory[i] = (NetItem)inventory[i];
 				}
-				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
+				else if (i < NetItem.MaxInventory - NetItem.DyeSlots)
 				{
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
-					if (player.TPlayer.armor[index] != null)
-					{
-						this.inventory[i].netID = armor[index].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = armor[index].stack;
-						this.inventory[i].prefix = armor[index].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
+					this.inventory[i] = (NetItem)armor[index];
 				}
 				else
 				{
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
-					if (player.TPlayer.dye[index] != null)
-					{
-						this.inventory[i].netID = dye[index].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = dye[index].stack;
-						this.inventory[i].prefix = dye[index].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
+					this.inventory[i] = (NetItem)dye[index];
 				}
 			}
 		}
@@ -1268,59 +1204,38 @@ namespace TShockAPI
 			else
 				player.TPlayer.hideVisual.ClearAll();
 			
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
+				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
 				{
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.inventory[i].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.inventory[i].netDefaults(0);
-					}
+					player.TPlayer.inventory[i].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.inventory[i].netID != 0)
 					{
-						player.TPlayer.inventory[i].stack = this.inventory[i].stack;
-						player.TPlayer.inventory[i].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.inventory[i].stack = this.inventory[i].Stack;
+						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;
 					}
 				}
-				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
+				else if (i < NetItem.MaxInventory - NetItem.DyeSlots)
 				{
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.armor[index].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.armor[index].netDefaults(0);
-					}
+					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
+					player.TPlayer.armor[index].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.armor[index].netID != 0)
 					{
-						player.TPlayer.armor[index].stack = this.inventory[i].stack;
-						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.armor[index].stack = this.inventory[i].Stack;
+						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
 				else
 				{
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.dye[index].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.dye[index].netDefaults(0);
-					}
+					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
+					player.TPlayer.dye[index].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.dye[index].netID != 0)
 					{
-						player.TPlayer.dye[index].stack = this.inventory[i].stack;
-						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.dye[index].stack = this.inventory[i].Stack;
+						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
 			}
@@ -1399,51 +1314,6 @@ namespace TShockAPI
 			NetMessage.SendData(76, -1, -1, "", player.Index);
 
 			NetMessage.SendData(39, player.Index, -1, "", 400);
-		}
-	}
-
-	public class NetItem
-	{
-		public static readonly int maxNetInventory = 83;
-		public static readonly int armorSlots = 16;
-		public static readonly int dyeSlots = 8;
-		public int netID;
-		public int stack;
-		public int prefix;
-		
-		public static string ToString(NetItem[] inventory)
-		{
-			StringBuilder items = new StringBuilder();
-			for (int i = 0; i < maxNetInventory; i++)
-			{
-				items.Append(inventory[i].netID).Append(",");
-				if (inventory[i].netID != 0)
-					items.Append(inventory[i].stack).Append(",").Append(inventory[i].prefix).Append("~");
-				else
-					items.Append("0,0~");
-			}
-			return items.ToString(0, items.Length - 1);
-		}
-
-		public static NetItem[] Parse(string data)
-		{
-			NetItem[] inventory = new NetItem[maxNetInventory];
-			int i;
-			for (i = 0; i < maxNetInventory; i++)
-			{
-				inventory[i] = new NetItem();
-			}
-			string[] items = data.Split('~');
-			i = 0;
-			foreach (string item in items)
-			{
-				string[] idata = item.Split(',');
-				inventory[i].netID = int.Parse(idata[0]);
-				inventory[i].stack = int.Parse(idata[1]);
-				inventory[i].prefix = int.Parse(idata[2]);
-				i++;
-			}
-			return inventory;
 		}
 	}
 }
