@@ -77,7 +77,7 @@ namespace TShockAPI.DB
 						playerData.maxHealth = reader.Get<int>("MaxHealth");
 						playerData.mana = reader.Get<int>("Mana");
 						playerData.maxMana = reader.Get<int>("MaxMana");
-					    playerData.inventory = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse).ToArray();
+						playerData.inventory = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse).ToArray();
 						playerData.spawnX = reader.Get<int>("spawnX");
 						playerData.spawnY = reader.Get<int>("spawnY");
 						playerData.hair = reader.Get<int?>("hair");
@@ -107,7 +107,7 @@ namespace TShockAPI.DB
 		{
 			var inventory = new StringBuilder();
 
-			var items = TShock.ServerSideCharacterConfig.StartingInventory;
+			var items = new List<NetItem>(TShock.ServerSideCharacterConfig.StartingInventory);
 			if (items.Count < NetItem.MaxInventory)
 				items.AddRange(new NetItem[NetItem.MaxInventory - items.Count]);
 

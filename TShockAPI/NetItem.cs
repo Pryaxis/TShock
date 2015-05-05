@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Terraria;
 
 namespace TShockAPI
@@ -9,6 +10,7 @@ namespace TShockAPI
 	/// <summary>
 	/// Represents an item.
 	/// </summary>
+	[JsonObject(MemberSerialization.OptIn)]
 	public struct NetItem
 	{
 		/// <summary>
@@ -26,9 +28,12 @@ namespace TShockAPI
 		/// </summary>
 		public static readonly int MaxInventory = 83;
 
-		private readonly int _netId;
-		private readonly byte _prefixId;
-		private readonly int _stack;
+		[JsonProperty("netID")]
+		private int _netId;
+		[JsonProperty("prefix")]
+		private byte _prefixId;
+		[JsonProperty("stack")]
+		private int _stack;
 
 		/// <summary>
 		/// Gets the net ID.
