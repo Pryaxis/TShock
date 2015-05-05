@@ -20,9 +20,13 @@ Required:
 - Use UpperCamelCase for public function names.
 - Prior to developing, make sure your clone is up to date with general-devel. This means that we don't get merge commits in your pull request.
 - Document all code with public access at minimum. Use the ```<param name="Name">Description</param>``` style -- do not repeat the param type or name in the xml comment field.
+- Document functions that can throw exceptions with ```<exception cref="NameOfException"/>```.
 - Use explicit type declaration (```int, long, float```) when the type is not easily inferred (such as return types).
 - Use implicit type declaration (```var```) when the type is easily inferred (such as private lists, temporary values, etc).
 - Use Microsoft code conventions on variable naming (including ```_name``` for private members).
+- When using static methods on primitives, use the CLR type. E.g. ```String.Format``` instead of ```string.Format```.
+- Always use properties, not public fields.
+- Document deprecations and fail compilation if they're included with ```[Obsolete("Use blah instead of blahx...", true)]```.
 
 ### Dev Team Guidelines
 
