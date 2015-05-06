@@ -16,4 +16,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Deprecated ```ValidString``` and ```SanitizeString``` methods in Utils. (@nicatronTg)
 * Added BCrypt password hashing and related systems for it. BCrypt replaces the old system using non-password hashing algorithms for storing passwords. It breaks implementations of the login code that were manually recreated, but is otherwise seamless in transition. (@nicatronTg)
 * API: Added ```User.VerifyPassword(string password)``` which verifies if the user's password matches their stored hash. It automatically upgrades a users' password to BCrypt if called and the password stored is not a BCrypt hash. (@nicatronTg)
-* API: Deprecated ```Utils.HashPassword``` and related password hashing functions as those are no longer needed for plugin access.
+* API: Deprecated ```Utils.HashPassword``` and related password hashing functions as those are no longer needed for plugin access. (@nicatronTg)
+* Fixed ```UseServerName``` config option so that it correctly sends the config server name any time that Main.WorldName is used. (@Olink)
+* Fixed a bug where people could ban themselves. (@nicatronTg)
