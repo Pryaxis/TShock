@@ -26,6 +26,7 @@ using System.Timers;
 using Terraria;
 using TShockAPI.DB;
 using TShockAPI.Net;
+using TShockAPI.PermissionSystem;
 using Timer = System.Timers.Timer;
 
 namespace TShockAPI
@@ -1067,6 +1068,32 @@ namespace TShockAPI
 			{
 				All.SendTileSquare((int) coords.X, (int) coords.Y, 3);
 			}
+		}
+
+		/// <summary>
+		/// Checks to see if the player has a specified permission.
+		/// Checks both the player's group and user permissions.
+		/// </summary>
+		/// <param name="permission">The permission to check.</param>
+		/// <returns>True if the player has that permission.</returns>
+		public bool HasPermission(string permission)
+		{
+			IPermissionManager groupManager = Group.PermissionManager;
+			IPermissionManager userManager = User.PermissionManager;
+
+			/* This will create a new permission manager which is made of the
+			 * intersection between the group and user managers, with the user
+			 * permissions always overriding the group's whenever possible (ex:
+			 * even if a group cancels out a permission, if the user adds that same
+			 * permission, it will get added). */
+			var manager = new NegatedPermissionManager();
+			manager.Clone(userManager);
+			foreach (string p in groupManager.GetPermissions(PermissionType.Allowed).GetPermissions())
+			{
+				if (!manager.GetPermissions(PermissionType.Negated).HasPermission(p))
+					manager.AddPermission(p);
+			}
+			return manager.HasPermission(new PermissionNode(permission));
 		}
 	}
 
