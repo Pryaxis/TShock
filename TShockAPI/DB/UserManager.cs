@@ -118,6 +118,8 @@ namespace TShockAPI.DB
 		{
 			try
 			{
+				user.CreateBCryptHash(password);
+
 				if (
 					_database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
 					               user.Name) == 0)

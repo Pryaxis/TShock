@@ -888,15 +888,23 @@ namespace TShockAPI
 					string password = args.Parameters[0];
 					if (args.Player.User.VerifyPassword(password))
 					{
-						args.Player.SendSuccessMessage("You changed your password!");
-						TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
-						TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " + args.Player.User.Name + ".");
+						try
+						{
+							args.Player.SendSuccessMessage("You changed your password!");
+							TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
+							TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " +
+							                       args.Player.User.Name + ".");
+						}
+						catch (ArgumentOutOfRangeException)
+						{
+							args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+						}
 					}
 					else
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
 						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
-										 args.Player.User.Name + ".");
+						                        args.Player.User.Name + ".");
 					}
 				}
 				else
@@ -1066,12 +1074,16 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("Password change for " + user.Name + " failed! Check console!");
 					TShock.Log.ConsoleError(e.ToString());
 				}
+				catch (ArgumentOutOfRangeException)
+				{
+					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+				}
 			}
 			// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group" && args.Parameters.Count == 3)
 			{
-	      var user = new User();
-	      user.Name = args.Parameters[1];
+				var user = new User();
+				user.Name = args.Parameters[1];
 
 				try
 				{
