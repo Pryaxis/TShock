@@ -464,17 +464,6 @@ namespace TShockAPI.DB
 		{
 			// Save the old password, in the event that we have to revert changes.
 			string oldpassword = Password;
-			
-			// Convert the password to BCrypt, and save it.
-			try 
-			{
-				Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
-			}
-			catch (ArgumentOutOfRangeException)
-			{
-				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Upgrading user password to BCrypt using default work factor.");
-				Password = BCrypt.Net.BCrypt.HashPassword(password);
-			}
 
 			try
 			{
