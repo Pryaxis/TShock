@@ -746,28 +746,27 @@ namespace TShockAPI
 			{
 				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
 					return;
-				user = TShock.Users.GetUserByName(args.Player.Name);
 				usingUUID = true;
 			}
 			else if (args.Parameters.Count == 1)
 			{
 				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, args.Parameters[0]))
 					return;
-				user = TShock.Users.GetUserByName(args.Player.Name);
 				password = args.Parameters[0];
 			}
 			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
 			{
-				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
-					return;
-
-				user = TShock.Users.GetUserByName(args.Parameters[0]);
-				password = args.Parameters[1];
 				if (String.IsNullOrEmpty(args.Parameters[0]))
 				{
 					args.Player.SendErrorMessage("Bad login attempt.");
 					return;
 				}
+
+				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
+					return;
+
+				user = TShock.Users.GetUserByName(args.Parameters[0]);
+				password = args.Parameters[1];
 			}
 			else
 			{

@@ -122,7 +122,7 @@ namespace TShockAPI.DB
 
 				if (
 					_database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
-					               user.Name) == 0)
+						user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}
 			catch (Exception ex)
@@ -443,7 +443,7 @@ namespace TShockAPI.DB
 			} 
 			catch (SaltParseException)
 			{
-				if (HashPassword(password).ToUpper() == Password.ToUpper())
+				if (String.Equals(HashPassword(password), Password, StringComparison.InvariantCultureIgnoreCase))
 				{
 					// Return true to keep blank passwords working but don't convert them to bcrypt.
 					if (Password == "non-existant password") {
@@ -507,16 +507,7 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					Password = BCrypt.Net.BCrypt.HashPassword(password, TShock.Config.BCryptWorkFactor);
-				}
-				catch (ArgumentOutOfRangeException)
-				{
-					TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Refusing to change work-factor on exsting password.");
-				}
-
-				try
-				{
-					TShock.Users.SetUserPassword(this, Password);
+					TShock.Users.SetUserPassword(this, password);
 				}
 				catch (UserManagerException e)
 				{
