@@ -467,7 +467,7 @@ namespace TShockAPI.DB
 
 			try
 			{
-				TShock.Users.SetUserPassword(this, Password);
+				TShock.Users.SetUserPassword(this, password);
 			}
 			catch (UserManagerException e)
 			{
