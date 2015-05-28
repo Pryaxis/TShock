@@ -1631,7 +1631,7 @@ namespace TShockAPI
             if (args.Parameters.Count < 2)
             {
                 args.Player.SendInfoMessage("Invalid usage");
-                args.Player.SendInfoMessage("Usage: {0}tempgroup <username> <new group>", Specifier);
+                args.Player.SendInfoMessage("Usage: {0}tempgroup <username> <new group> [time]", Specifier);
                 return;
             }
 
@@ -1672,8 +1672,18 @@ namespace TShockAPI
 
             ply[0].tempGroup = g;
 
-            args.Player.SendSuccessMessage(string.Format("You have changed {0}'s group to {1}", ply[0].Name, g.Name));
-            ply[0].SendSuccessMessage(string.Format("Your group has temporarily been changed to {0}", g.Name));
+			if (args.Parameters.Count > 2)
+			{
+				args.Player.SendSuccessMessage(String.Format("You have changed {0}'s group to {1}", ply[0].Name, g.Name));
+				ply[0].SendSuccessMessage(String.Format("Your group has temporarily been changed to {0}", g.Name));
+			}
+			else
+			{
+				args.Player.SendSuccessMessage(String.Format("You have changed {0}'s group to {1} for {2}",
+					ply[0].Name, g.Name, args.Parameters[2]));
+				ply[0].SendSuccessMessage(String.Format("Your group has been changed to {0} for {1}",
+					g.Name, args.Parameters[2]));
+			}
         }
 
 		#endregion Player Management Commands
