@@ -1672,7 +1672,7 @@ namespace TShockAPI
 
             ply[0].tempGroup = g;
 
-			if (args.Parameters.Count < 2)
+			if (args.Parameters.Count < 3)
 			{
 				args.Player.SendSuccessMessage(String.Format("You have changed {0}'s group to {1}", ply[0].Name, g.Name));
 				ply[0].SendSuccessMessage(String.Format("Your group has temporarily been changed to {0}", g.Name));
