@@ -51,7 +51,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Please take our survey: http://bit.ly/ShockSurvey";
+		public static readonly string VersionCodename = "TShock 5.x Series";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -331,8 +331,6 @@ namespace TShockAPI
 					Initialized();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
-				Log.ConsoleInfo("Please take a short survey about TShock: http://bit.ly/ShockSurvey");
-				Log.ConsoleInfo("You can win free stickers if you take it.");
 			}
 			catch (Exception ex)
 			{
