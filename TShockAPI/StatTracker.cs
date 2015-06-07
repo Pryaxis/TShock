@@ -21,11 +21,12 @@ namespace TShockAPI
 
 		public void Initialize()
 		{
-			if (!initialized)
+			if (!initialized && TShock.Config.EnableSendStatsToTShockToHelpTheProject)
 			{
-				initialized = true;
+				
 				ThreadPool.QueueUserWorkItem(SendUpdate);
 			}
+			initialized = true;
 		}
 
 		private void SendUpdate(object info)
