@@ -36,7 +36,7 @@ namespace TShockAPI
 
 		private readonly TShock plugin;
 
-		private PacketBuffer[] buffers = new PacketBuffer[Netplay.serverSock.Length];
+		private PacketBuffer[] buffers = new PacketBuffer[Netplay.Clients.Length];
 
 		private int[] Bytes = new int[52];
 		private int[] Packets = new int[52];
@@ -117,29 +117,32 @@ namespace TShockAPI
 
 		public void FlushAll()
 		{
-			for (int i = 0; i < Netplay.serverSock.Length; i++)
+			for (int i = 0; i < Netplay.Clients.Length; i++)
 			{
-				Flush(Netplay.serverSock[i]);
+				Flush(Netplay.Clients[i]);
 			}
 		}
 
-		public bool Flush(ServerSock socket)
+		public bool Flush(RemoteClient client)
 		{
 		    try
 		    {
-		        if (socket == null || !socket.active)
+		        if (client == null || !client.IsActive)
 		            return false;
 
-		        if (buffers[socket.whoAmI].Count < 1)
+				if (!client.Socket.IsConnected())
+					return false;
+
+		        if (buffers[client.Id].Count < 1)
 		            return false;
 
-		        byte[] buff = buffers[socket.whoAmI].GetBytes(BytesPerUpdate);
+		        byte[] buff = buffers[client.Id].GetBytes(BytesPerUpdate);
 		        if (buff == null)
 		            return false;
 
-		        if (SendBytes(socket, buff))
+		        if (SendBytes(client, buff))
 		        {
-		            buffers[socket.whoAmI].Pop(buff.Length);
+		            buffers[client.Id].Pop(buff.Length);
 		            return true;
 		        }
 		    }
@@ -153,22 +156,22 @@ namespace TShockAPI
 
 		private void ServerHooks_SocketReset(SocketResetEventArgs args)
 		{
-			buffers[args.Socket.whoAmI] = new PacketBuffer();
+			buffers[args.Socket.Id] = new PacketBuffer();
 		}
 
-		public bool SendBytes(ServerSock socket, byte[] buffer)
+		public bool SendBytes(RemoteClient client, byte[] buffer)
 		{
-			return SendBytes(socket, buffer, 0, buffer.Length);
+			return SendBytes(client, buffer, 0, buffer.Length);
 		}
 
-		public void BufferBytes(ServerSock socket, byte[] buffer)
+		public void BufferBytes(RemoteClient client, byte[] buffer)
 		{
-			BufferBytes(socket, buffer, 0, buffer.Length);
+			BufferBytes(client, buffer, 0, buffer.Length);
 		}
 
-		public void BufferBytes(ServerSock socket, byte[] buffer, int offset, int count)
+		public void BufferBytes(RemoteClient client, byte[] buffer, int offset, int count)
 		{
-			lock (buffers[socket.whoAmI])
+			lock (buffers[client.Id])
 			{
 #if DEBUG_NET
 				int size = (count - offset);
@@ -180,27 +183,27 @@ namespace TShockAPI
 #endif
 				using (var ms = new MemoryStream(buffer, offset, count))
 				{
-					buffers[socket.whoAmI].AddRange(ms.ToArray());
+					buffers[client.Id].AddRange(ms.ToArray());
 				}
 
-				if (TShock.Config.EnableMaxBytesInBuffer && buffers[socket.whoAmI].Count > TShock.Config.MaxBytesInBuffer)
+				if (TShock.Config.EnableMaxBytesInBuffer && buffers[client.Id].Count > TShock.Config.MaxBytesInBuffer)
 				{
-					buffers[socket.whoAmI].Clear();
-					socket.kill = true;
+					buffers[client.Id].Clear();
+					client.PendingTermination = true;
 				}
 			}
 		}
 
-		public bool SendBytes(ServerSock socket, byte[] buffer, int offset, int count)
+		public bool SendBytes(RemoteClient client, byte[] buffer, int offset, int count)
 		{
 			try
 			{
-				if (socket.tcpClient.Client != null && socket.tcpClient.Client.Poll(0, SelectMode.SelectWrite))
+				if (client.Socket != null && client.Socket.IsConnected())
 				{
-					if (ServerApi.RunningMono && !ServerApi.UseAsyncSocketsInMono)
-						socket.networkStream.Write(buffer, offset, count);
-					else
-						socket.networkStream.BeginWrite(buffer, offset, count, socket.ServerWriteCallBack, socket.networkStream);
+					//if (ServerApi.RunningMono && !ServerApi.UseAsyncSocketsInMono)
+						client.Socket.AsyncSend(buffer, offset, count, null);
+					//else
+						//client.networkStream.BeginWrite(buffer, offset, count, socket.ServerWriteCallBack, socket.networkStream);
 					return true;
 				}
 			}
