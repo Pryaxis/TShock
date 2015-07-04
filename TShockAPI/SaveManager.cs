@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Terraria;
+using Terraria.Map;
 using TerrariaApi.Server;
 
 namespace TShockAPI
@@ -125,10 +126,10 @@ namespace TShockAPI
 								if (task.direct)
 								{
 									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.RealSaveWorld(task.resetTime);
+									Main.Map.Save();
 								}
 								else
-									WorldFile.saveWorld(task.resetTime);
+									Main.Map.Save();
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
