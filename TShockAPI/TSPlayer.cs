@@ -100,13 +100,13 @@ namespace TShockAPI
 		/// </summary>
 		public Group Group
 		{
-				get
-				{
-						if (tempGroup != null)
-								return tempGroup;
-						return group;
-				}
-					set { group = value; }
+			get
+			{
+				if (tempGroup != null)
+					return tempGroup;
+				return group;
+			}
+			set { group = value; }
 		}
 
 		/// <summary>
@@ -339,8 +339,8 @@ namespace TShockAPI
 		{
 			get
 			{
-				return RealPlayer &&
-						 (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
+				return RealPlayer
+					&& (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -354,8 +354,8 @@ namespace TShockAPI
 
 		public int State
 		{
-			get { return Netplay.serverSock[Index].state; }
-			set { Netplay.serverSock[Index].state = value; }
+			get { return Netplay.Clients[Index].State; }
+			set { Netplay.Clients[Index].State = value; }
 		}
 
 		/// <summary>
@@ -363,7 +363,7 @@ namespace TShockAPI
 		/// </summary>
 		public string UUID
 		{
-			get { return RealPlayer ? Netplay.serverSock[Index].clientUUID : ""; }
+			get { return RealPlayer ? Netplay.Clients[Index].ClientUUID : ""; }
 		}
 
 		/// <summary>
@@ -375,12 +375,10 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-						CacheIP =
-						RealPlayer
-							? (Netplay.serverSock[Index].tcpClient.Connected
-								? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString())
-								: "")
-							: "";
+				CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
+						? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+						: "")
+					: "";
 				else
 					return CacheIP;
 			}
@@ -511,9 +509,9 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = index;
-						Group = Group.DefaultGroup;
+			Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
-						AwaitingResponse = new Dictionary<string, Action<object>>();
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -521,9 +519,9 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = -1;
-			FakePlayer = new Player {name = playerName, whoAmi = -1};
-				Group = Group.DefaultGroup;
-						AwaitingResponse = new Dictionary<string, Action<object>>();
+			FakePlayer = new Player {name = playerName, whoAmI = -1};
+			Group = Group.DefaultGroup;
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public virtual void Disconnect(string reason)
@@ -533,11 +531,11 @@ namespace TShockAPI
 
 		public virtual void Flush()
 		{
-			var sock = Netplay.serverSock[Index];
-			if (sock == null)
+			var client = Netplay.Clients[Index];
+			if (client == null)
 				return;
 
-			TShock.PacketBuffer.Flush(sock);
+			TShock.PacketBuffer.Flush(client);
 		}
 
 
@@ -573,13 +571,13 @@ namespace TShockAPI
 
 			SendTileSquare((int) (x/16), (int) (y/16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
-			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmI, x, y, style);
 			return true;
 		}
 
 		public void Heal(int health = 600)
 		{
-			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, health);
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmI, health);
 		}
 
 		public void Spawn()
@@ -675,12 +673,12 @@ namespace TShockAPI
 
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-				if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
-						(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-						return false;
+			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+					return false;
 
-				GiveItem(type,name,width,height,stack,prefix);
-				return true;
+			GiveItem(type,name,width,height,stack,prefix);
+			return true;
 		}
 
 		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
@@ -703,42 +701,42 @@ namespace TShockAPI
 
 		public virtual void SendInfoMessage(string msg)
 		{
-				SendMessage(msg, Color.Yellow);
+			SendMessage(msg, Color.Yellow);
 		}
 
 		public void SendInfoMessage(string format, params object[] args)
 		{
-				SendInfoMessage(string.Format(format, args));
+			SendInfoMessage(string.Format(format, args));
 		}
 
 		public virtual void SendSuccessMessage(string msg)
 		{
-				SendMessage(msg, Color.Green);
+			SendMessage(msg, Color.Green);
 		}
 
 		public void SendSuccessMessage(string format, params object[] args)
 		{
-				SendSuccessMessage(string.Format(format, args));
+			SendSuccessMessage(string.Format(format, args));
 		}
 
 		public virtual void SendWarningMessage(string msg)
 		{
-				SendMessage(msg, Color.OrangeRed);
+			SendMessage(msg, Color.OrangeRed);
 		}
 
 		public void SendWarningMessage(string format, params object[] args)
 		{
-				SendWarningMessage(string.Format(format, args));
+			SendWarningMessage(string.Format(format, args));
 		}
 
 		public virtual void SendErrorMessage(string msg)
 		{
-				SendMessage(msg, Color.Red);
+			SendMessage(msg, Color.Red);
 		}
 
 		public void SendErrorMessage(string format, params object[] args)
 		{
-				SendErrorMessage(string.Format(format, args));
+			SendErrorMessage(string.Format(format, args));
 		}
 
 		public virtual void SendMessage(string msg, Color color)
@@ -753,7 +751,7 @@ namespace TShockAPI
 
 		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
 		{
-				SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
+			SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
 		}
 
 		public virtual void DamagePlayer(int damage)
@@ -830,7 +828,7 @@ namespace TShockAPI
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
 		public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f,
-									 float number3 = 0f, float number4 = 0f, int number5 = 0)
+			float number3 = 0f, float number4 = 0f, int number5 = 0)
 		{
 			if (RealPlayer && !ConnectionAlive)
 				return;
@@ -838,19 +836,21 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
 
-				public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
-				{
-						if (RealPlayer && !ConnectionAlive)
-								return;
+		public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f,
+			float number3 = 0f, float number4 = 0f, int number5 = 0)
+		{
+			if (RealPlayer && !ConnectionAlive)
+				return;
 
-						NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
-				}
+			NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
+		}
 
 		public virtual void SendRawData(byte[] data)
 		{
 			if (!RealPlayer || !ConnectionAlive)
 				return;
-			NetMessage.SendBytes(Netplay.serverSock[Index], data, 0, data.Length, Netplay.serverSock[Index].ServerWriteCallBack, Netplay.serverSock[Index].networkStream);
+
+			Netplay.Clients[Index].Socket.AsyncSend(data, 0, data.Length, Netplay.Clients[Index].ServerWriteCallBack);
 		}
 
 		/// <summary>
@@ -860,12 +860,12 @@ namespace TShockAPI
 		/// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
 		public void AddResponse( string name, Action<object> callback)
 		{
-				if( AwaitingResponse.ContainsKey(name))
-				{
-						AwaitingResponse.Remove(name);
-				}
+			if( AwaitingResponse.ContainsKey(name))
+			{
+				AwaitingResponse.Remove(name);
+			}
 
-				AwaitingResponse.Add(name, callback);
+			AwaitingResponse.Add(name, callback);
 		}
 	}
 
@@ -928,30 +928,30 @@ namespace TShockAPI
 
 		public override void SendErrorMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendInfoMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendSuccessMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Green;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendWarningMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.DarkRed;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendMessage(string msg, Color color)
@@ -1031,7 +1031,7 @@ namespace TShockAPI
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
-							 int tileYRange = 50)
+			int tileYRange = 50)
 		{
 			for (int i = 0; i < amount; i++)
 			{
@@ -1089,7 +1089,7 @@ namespace TShockAPI
 		public Color? shoeColor;
 		public Color? skinColor;
 		public Color? eyeColor;
-		public BitsByte? hideVisuals;
+		public bool[] hideVisuals;
 		public int questsCompleted;
 
 		public PlayerData(TSPlayer player)
@@ -1200,9 +1200,9 @@ namespace TShockAPI
 				player.TPlayer.eyeColor = this.eyeColor.Value;
 
 			if (this.hideVisuals != null)
-				player.TPlayer.hideVisual = this.hideVisuals.Value;
+				player.TPlayer.hideVisual = this.hideVisuals;
 			else
-				player.TPlayer.hideVisual.ClearAll();
+				player.TPlayer.hideVisual = new bool[player.TPlayer.hideVisual.Length];
 			
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
