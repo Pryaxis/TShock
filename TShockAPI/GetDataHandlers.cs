@@ -1606,7 +1606,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", 0, 0, Main.sunModY, Main.moonModY);
+			NetMessage.SendData((int) PacketTypes.TimeSet, -1, -1, "", Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
 			return false;
 		}
 
@@ -2212,10 +2212,10 @@ namespace TShockAPI
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
-			var plr = args.Data.ReadInt8();
-			var control = (BitsByte)args.Data.ReadInt8();
-			var pulley = (BitsByte)args.Data.ReadInt8();
-			var item = args.Data.ReadInt8();
+			byte plr = args.Data.ReadInt8();
+			BitsByte control = args.Data.ReadInt8();
+			BitsByte pulley = args.Data.ReadInt8();
+			byte item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = Vector2.Zero;
 			if(pulley[2])

@@ -919,7 +919,7 @@ namespace TShockAPI
 			Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TShock for Terraria v{5})",
 					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
 					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Netplay.ServerIPText, Netplay.ListenPort, Version);
+					Config.MaxSlots, Netplay.ServerIP.MapToIPv4().ToString(), Netplay.ListenPort, Version);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
@@ -1475,6 +1475,21 @@ namespace TShockAPI
 									 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
 									 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
 									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None),
+						BossFlags3 = (Main.expertMode ? BossFlags3.ExpertMode : BossFlags3.None) |
+									 (Main.fastForwardTime ? BossFlags3.FastForwardTime : BossFlags3.None) |
+									 (Main.slimeRain ? BossFlags3.SlimeRain : BossFlags3.None) |
+									 (NPC.downedSlimeKing ? BossFlags3.DownedKingSlime : BossFlags3.None) |
+									 (NPC.downedQueenBee ? BossFlags3.DownedQueenBee : BossFlags3.None) |
+									 (NPC.downedFishron ? BossFlags3.DownedFishron : BossFlags3.None) |
+									 (NPC.downedMartians ? BossFlags3.DownedMartians : BossFlags3.None) |
+									 (NPC.downedAncientCultist ? BossFlags3.DownedAncientCultist : BossFlags3.None),
+						BossFlags4 = (NPC.downedMoonlord ? BossFlags4.DownedMoonLord : BossFlags4.None) |
+									 (NPC.downedHalloweenKing ? BossFlags4.DownedHalloweenKing : BossFlags4.None) |
+									 (NPC.downedHalloweenTree ? BossFlags4.DownedHalloweenTree : BossFlags4.None) |
+									 (NPC.downedChristmasIceQueen ? BossFlags4.DownedChristmasIceQueen : BossFlags4.None) |
+									 (NPC.downedChristmasSantank ? BossFlags4.DownedChristmasSantank : BossFlags4.None) |
+									 (NPC.downedChristmasTree ? BossFlags4.DownedChristmasTree : BossFlags4.None),
+							
 						Rain = Main.maxRaining,
 						WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
 					};
