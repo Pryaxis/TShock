@@ -944,6 +944,41 @@ namespace TShockAPI
 			return new Color(data[0], data[1], data[2], data[3]);
 		}
 
+		/// <summary>
+		/// Encodes a Boolean Array as an int.
+		/// </summary>
+		/// <param name="bools">The boolean array to encode.</param>
+		/// <returns>The encoded int.</returns>
+		public int? EncodeBoolArray(bool[] bools)
+		{
+			if (bools == null)
+				return null;
+
+			int result = 0;
+			for (int i = 0; i < bools.Length; i++)
+				if (bools[i])
+					result |= (1 << i);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Decodes a Boolean Array from an int.
+		/// </summary>
+		/// <param name="encodedbools">The encoded Boolean Array.</param>
+		/// <returns>The resulting Boolean Array.</returns>
+		public bool[] DecodeBoolArray(int? encodedbools)
+		{
+			if (encodedbools == null)
+				return null;
+
+			bool[] result = new bool[10];
+			for (int i = 0; i < result.Length; i++)
+				result[i] = (encodedbools & 1 << i) != 0;
+
+			return result;
+		}
+
 		/// <summary>EncodeBitsByte - Encodes a BitsByte as a byte.</summary>
 		/// <param name="bitsByte">bitsByte - The BitsByte object</param>
 		/// <returns>byte? - The converted byte</returns>
