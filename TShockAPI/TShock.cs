@@ -919,7 +919,7 @@ namespace TShockAPI
 			Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TShock for Terraria v{5})",
 					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
 					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Netplay.ServerIP.MapToIPv4().ToString(), Netplay.ListenPort, Version);
+					Config.MaxSlots, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
