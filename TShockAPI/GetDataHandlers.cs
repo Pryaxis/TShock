@@ -1914,19 +1914,19 @@ namespace TShockAPI
 				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[tile.type] && (selectedItem.axe == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					if (Main.tileAxe[tile.type] && (selectedItem.axe == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
 					// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
-					else if (Main.tileHammer[tile.type] && (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					else if (Main.tileHammer[tile.type] && (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && (selectedItem.pick == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0))
+					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && (selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -1935,7 +1935,7 @@ namespace TShockAPI
 				else if (action == EditAction.KillWall)
 				{
 					// If they aren't selecting an hammer, they're hacking.
-					if (selectedItem.hammer == 0 && selectedItem.explosive == 0 && args.Player.RecentFuse == 0)
+					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2396,7 +2396,7 @@ namespace TShockAPI
 				}
 
 
-				args.TPlayer.UpdatePlayer(args.TPlayer.whoAmi);
+				args.TPlayer.Update(args.TPlayer.whoAmI);
 				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, "", args.Player.Index);
 				return true;
 			}
@@ -2594,7 +2594,7 @@ namespace TShockAPI
 			foreach (NPC npc in Main.npc)
 			{
 				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
-					Math.Abs(args.TPlayer.center().X - npc.center().X) + Math.Abs(args.TPlayer.center().Y - npc.center().Y) < 4000f)
+					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
 				{
 					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
 					break;

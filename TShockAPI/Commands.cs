@@ -1619,7 +1619,7 @@ namespace TShockAPI
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
-			Main.checkXMas();
+			Main.CheckXMas();
 			if (args.Silent)
 				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
 			else
@@ -1627,31 +1627,31 @@ namespace TShockAPI
 		}
 
 		private static void TempGroup(CommandArgs args)
-        {
-            if (args.Parameters.Count < 2)
-            {
-                args.Player.SendInfoMessage("Invalid usage");
-                args.Player.SendInfoMessage("Usage: {0}tempgroup <username> <new group> [time]", Specifier);
-                return;
-            }
+		{
+			if (args.Parameters.Count < 2)
+			{
+				args.Player.SendInfoMessage("Invalid usage");
+				args.Player.SendInfoMessage("Usage: {0}tempgroup <username> <new group> [time]", Specifier);
+				return;
+			}
 
-            List<TSPlayer> ply = TShock.Utils.FindPlayer(args.Parameters[0]);
-            if(ply.Count < 1)
-            {
-                args.Player.SendErrorMessage("Could not find player {0}.", args.Parameters[0]);
-                return;
-            }
+			List<TSPlayer> ply = TShock.Utils.FindPlayer(args.Parameters[0]);
+			if (ply.Count < 1)
+			{
+				args.Player.SendErrorMessage("Could not find player {0}.", args.Parameters[0]);
+				return;
+			}
 
-            if (ply.Count > 1)
-            {
+			if (ply.Count > 1)
+			{
 				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.User.Name));
-            }
+			}
 
-            if(!TShock.Groups.GroupExists(args.Parameters[1]))
-            {
-                args.Player.SendErrorMessage("Could not find group {0}", args.Parameters[1]);
-                return;
-            }
+			if (!TShock.Groups.GroupExists(args.Parameters[1]))
+			{
+				args.Player.SendErrorMessage("Could not find group {0}", args.Parameters[1]);
+				return;
+			}
 
 			if (args.Parameters.Count > 2)
 			{
@@ -1663,14 +1663,14 @@ namespace TShockAPI
 					return;
 				}
 
-				ply[0].tempGroupTimer = new System.Timers.Timer(time*1000);
+				ply[0].tempGroupTimer = new System.Timers.Timer(time * 1000);
 				ply[0].tempGroupTimer.Elapsed += ply[0].TempGroupTimerElapsed;
 				ply[0].tempGroupTimer.Start();
 			}
 
-            Group g = TShock.Utils.GetGroup(args.Parameters[1]);
+			Group g = TShock.Utils.GetGroup(args.Parameters[1]);
 
-            ply[0].tempGroup = g;
+			ply[0].tempGroup = g;
 
 			if (args.Parameters.Count < 3)
 			{
@@ -1684,7 +1684,7 @@ namespace TShockAPI
 				ply[0].SendSuccessMessage(String.Format("Your group has been changed to {0} for {1}",
 					g.Name, args.Parameters[2]));
 			}
-        }
+		}
 
 		#endregion Player Management Commands
 

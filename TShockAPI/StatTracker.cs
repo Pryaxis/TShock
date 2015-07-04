@@ -33,7 +33,7 @@ namespace TShockAPI
 			Thread.Sleep(1000*60*15);
 			var data = new JsonData
 			{
-				port = Terraria.Netplay.serverPort,
+				port = Terraria.Netplay.ListenPort,
 				currentPlayers = TShock.Utils.ActivePlayers(),
 				maxPlayers = TShock.Config.MaxSlots,
 				systemRam = 0,

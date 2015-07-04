@@ -314,7 +314,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"name", TShock.Config.ServerName},
-				{"port", Convert.ToString(Netplay.serverPort)},
+				{"port", Convert.ToString(Netplay.ListenPort)},
 				{"playercount", Convert.ToString(activeplayers.Count())},
 				{"players", string.Join(", ", activeplayers.Select(p => p.name))},
 			};
