@@ -62,10 +62,10 @@ namespace TShockAPI
 		/// </summary>
 		public class TileEditEventArgs : HandledEventArgs
 		{
-						/// <summary>
-						/// The TSPlayer who made the tile edit
-						/// </summary>
-						public TSPlayer Player { get; set; }
+			/// <summary>
+			/// The TSPlayer who made the tile edit
+			/// </summary>
+			public TSPlayer Player { get; set; }
 
 			/// <summary>
 			/// The tile coordinate on the X plane
@@ -76,7 +76,7 @@ namespace TShockAPI
 			/// The tile coordinate on the Y plane
 			/// </summary>
 			public int Y { get; set; }
-			
+
 			/// <summary>
 			/// The Tile ID being edited.
 			/// </summary>
@@ -87,16 +87,16 @@ namespace TShockAPI
 			/// </summary>
 			public EditAction Action { get; set; }
 
-						/// <summary>
-						/// Did the tile get destroyed successfully.
-						/// </summary>
-						public EditType editDetail { get; set; }
+			/// <summary>
+			/// Did the tile get destroyed successfully.
+			/// </summary>
+			public EditType editDetail { get; set; }
 
 			/// <summary>
 			/// Used when a tile is placed to denote a subtype of tile. (e.g. for tile id 21: Chest = 0, Gold Chest = 1)
 			/// </summary>
 			public byte Style { get; set; }
-		} 
+		}
 
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
@@ -109,12 +109,12 @@ namespace TShockAPI
 
 			var args = new TileEditEventArgs
 			{
-								Player = ply,
+				Player = ply,
 				X = x,
 				Y = y,
 				Action = action,
 				EditData = editData,
-								editDetail = editDetail,
+				editDetail = editDetail,
 				Style = style
 			};
 			TileEdit.Invoke(null, args);
@@ -157,14 +157,14 @@ namespace TShockAPI
 		/// </summary>
 		public class PlayerTeamEventArgs : HandledEventArgs
 		{
-				/// <summary>
-				/// The Terraria player ID of the player
-				/// </summary>
-				public byte PlayerId { get; set; }
-				/// <summary>
-				/// Enable/disable pvp?
-				/// </summary>
-				public byte Team { get; set; }
+			/// <summary>
+			/// The Terraria player ID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Enable/disable pvp?
+			/// </summary>
+			public byte Team { get; set; }
 		}
 		/// <summary>
 		/// TogglePvp - called when a player toggles pvp
@@ -172,16 +172,16 @@ namespace TShockAPI
 		public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
 		private static bool OnPlayerTeam(byte _id, byte _team)
 		{
-				if (PlayerTeam == null)
-						return false;
+			if (PlayerTeam == null)
+				return false;
 
-				var args = new PlayerTeamEventArgs
-				{
-						PlayerId = _id,
-						Team = _team,
-				};
-				PlayerTeam.Invoke(null, args);
-				return args.Handled;
+			var args = new PlayerTeamEventArgs
+			{
+				PlayerId = _id,
+				Team = _team,
+			};
+			PlayerTeam.Invoke(null, args);
+			return args.Handled;
 		}
 
 		/// <summary>
@@ -2681,6 +2681,10 @@ namespace TShockAPI
 				{
 					bucket = 3;
 				}
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3031)
+				{
+					bucket = 4;
+				}
 
 				if (type == 1 && !(bucket == 2 || bucket == 0))
 				{
@@ -2698,7 +2702,7 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (type == 0 && !(bucket == 1 || bucket == 0))
+				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Spreading water without holding a water bucket");
