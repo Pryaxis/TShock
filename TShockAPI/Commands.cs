@@ -1234,7 +1234,12 @@ namespace TShockAPI
 									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
 								else
 								{
-									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+									if (user.KnownIps == null)
+									{
+										args.Player.SendErrorMessage("Cannot ban {0} because they have no IPs to ban.", user.Name);
+										return;
+									}
+									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);										
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name);
 									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
 									{
