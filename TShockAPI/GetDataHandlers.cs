@@ -309,9 +309,9 @@ namespace TShockAPI
 			/// </summary>
 			public byte Hair { get; set; }
 			/// <summary>
-			/// Gender (male = true)
+			/// Clothing style. 0-3 are for male characters, and 4-7 are for female characters.
 			/// </summary>
-			public bool Male { get; set; }
+			public int Style { get; set; }
 			/// <summary>
 			/// Character difficulty
 			/// </summary>
@@ -327,7 +327,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
 
-		private static bool OnPlayerInfo(byte _plrid, byte _hair, bool _male, byte _difficulty, string _name)
+		private static bool OnPlayerInfo(byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
 		{
 			if (PlayerInfo == null)
 				return false;
@@ -336,7 +336,7 @@ namespace TShockAPI
 			{
 				PlayerId = _plrid,
 				Hair = _hair,
-				Male = _male,
+				Style = _style,
 				Difficulty = _difficulty,
 				Name = _name,
 			};
@@ -1373,8 +1373,9 @@ namespace TShockAPI
 
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
 		{
-			var playerid = args.Data.ReadInt8();
-			var male = args.Data.ReadByte() == 0;
+			byte playerid = args.Data.ReadInt8();
+			// 0-3 male; 4-7 female
+			int skinVariant = args.Data.ReadByte();
 			var hair = args.Data.ReadInt8();
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
@@ -1382,15 +1383,15 @@ namespace TShockAPI
 			BitsByte hideVisual2 = args.Data.ReadInt8();
 			BitsByte hideMisc = args.Data.ReadInt8();
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-			args.Data.ReadInt8(); args.Data.ReadInt8(); args.Data.ReadInt8(); // skin color
-			args.Data.ReadInt8(); args.Data.ReadInt8(); args.Data.ReadInt8(); // eye color
+			Color skinColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
+			Color eyeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color shirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			var difficulty = args.Data.ReadInt8();
 
-			if (OnPlayerInfo(playerid, hair, male, difficulty, name))
+			if (OnPlayerInfo(playerid, hair, skinVariant, difficulty, name))
 			{
 				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
 				return true;
@@ -1407,6 +1408,9 @@ namespace TShockAPI
 				args.Player.TPlayer.hair = hair;
 				args.Player.TPlayer.hairColor = hairColor;
 				args.Player.TPlayer.hairDye = hairDye;
+				args.Player.TPlayer.skinVariant = skinVariant;
+				args.Player.TPlayer.skinColor = skinColor;
+				args.Player.TPlayer.eyeColor = eyeColor;
 				args.Player.TPlayer.pantsColor = pantsColor;
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
