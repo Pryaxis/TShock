@@ -1027,5 +1027,30 @@ namespace TShockAPI
 				return resp;
 			}
 		}
+
+		/// <summary>
+		/// Colors the given text by correctly applying the color chat tag.
+		/// </summary>
+		/// <param name="text">The text to color.</param>
+		/// <param name="color">The color to apply.</param>
+		/// <returns>The <paramref name="text"/>, surrounded by the color tag with the appropriated hex code.</returns>
+		public string ColorTag(string text, Color color)
+		{
+			return String.Format("[c/{0}:{1}]", color.Hex3(), text);
+		}
+
+		/// <summary>
+		/// Converts an item into its text representation using the item chat tag.
+		/// </summary>
+		/// <param name="item">The item to convert.</param>
+		/// <returns>The <paramref name="item"/> NetID surrounded by the item tag with proper stack/prefix data.</returns>
+		public string ItemTag(Item item)
+		{
+			int netID = item.netID;
+			int stack = item.stack;
+			int prefix = item.prefix;
+			string options = stack > 1 ? "/s" + stack : prefix != 0 ? "/p" + prefix : "";
+			return String.Format("[i{0}:{1}]", options, netID);
+		}
 	}
 }
