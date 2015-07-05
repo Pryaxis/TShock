@@ -3039,6 +3039,12 @@ namespace TShockAPI
 				return false;
 			}
 
+			if (type == BuffID.DrillMount && TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
+			{
+				TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
+				return true;
+			}
+
 			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 			return true;
 		}
@@ -3332,7 +3338,14 @@ namespace TShockAPI
 				{
 					args.TPlayer.buffTime[i] = 0;
 				}
+
+				if (buff == BuffID.DrillMount && TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
+				{
+					TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
+					return true;
+				}
 			}
+
 
 			NetMessage.SendData((int) PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
 			return true;
