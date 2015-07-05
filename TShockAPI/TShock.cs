@@ -1351,7 +1351,6 @@ namespace TShockAPI
 		{
 			if (Config.InfiniteInvasion)
 			{
-				IncrementKills();
 				if (Main.invasionSize < 10)
 				{
 					Main.invasionSize = 20000000;
@@ -1550,42 +1549,6 @@ namespace TShockAPI
 			else
 			{
 				Main.invasionX = Main.maxTilesX;
-			}
-		}
-
-		/// <summary>KillCount - Invasion kill count local storage variable.</summary>
-		private static int KillCount;
-
-		/// <summary>IncrementKills - Increments the number of kills used in invasion tracking.</summary>
-		//TODO: Why is this in TShock at all, still?
-		public static void IncrementKills()
-		{
-			KillCount++;
-			Random r = new Random();
-			int random = r.Next(5);
-			if (KillCount % 100 == 0)
-			{
-				switch (random)
-				{
-					case 0:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
-						break;
-					case 1:
-						Utils.Broadcast(string.Format("Fatality! {0} goblins killed!", KillCount), Color.Green);
-						break;
-					case 2:
-						Utils.Broadcast(string.Format("Number of 'noobs' killed to date: {0}", KillCount), Color.Green);
-						break;
-					case 3:
-						Utils.Broadcast(string.Format("Duke Nukem would be proud. {0} goblins killed.", KillCount), Color.Green);
-						break;
-					case 4:
-						Utils.Broadcast(string.Format("You call that a lot? {0} goblins killed!", KillCount), Color.Green);
-						break;
-					case 5:
-						Utils.Broadcast(string.Format("{0} copies of Call of Duty smashed.", KillCount), Color.Green);
-						break;
-				}
 			}
 		}
 
@@ -1819,10 +1782,14 @@ namespace TShockAPI
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
+			Item[] miscEquips = player.TPlayer.miscEquips;
+			Item[] miscDyes = player.TPlayer.miscDyes;
+
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
+				if (i < NetItem.InventorySlots)
 				{
+					//0-58
 					Item item = new Item();
 					if (inventory[i] != null && inventory[i].netID != 0)
 					{
@@ -1838,10 +1805,12 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots)))
+				else if (i < NetItem.InventorySlots
+					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
 				{
+					//59-78
 					Item item = new Item();
-					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
+					var index = i - NetItem.InventorySlots;
 					if (armor[index] != null && armor[index].netID != 0)
 					{
 						item.netDefaults(armor[index].netID);
@@ -1856,10 +1825,12 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots)))
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
 				{
+					//79-88
 					Item item = new Item();
-					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
+					var index = i - (NetItem.MaxInventory -
+						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
 					if (dye[index] != null && dye[index].netID != 0)
 					{
 						item.netDefaults(dye[index].netID);
@@ -1870,6 +1841,44 @@ namespace TShockAPI
 							check = true;
 							player.SendMessage(
 								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				{
+					//89-93
+					Item item = new Item();
+					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					if (miscEquips[index] != null && miscEquips[index].netID != 0)
+					{
+						item.netDefaults(miscEquips[index].netID);
+						item.Prefix(miscEquips[index].prefix);
+						item.AffixName();
+						if (miscEquips[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else
+				{
+					//93-98
+					Item item = new Item();
+					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					if (miscDyes[index] != null && miscDyes[index].netID != 0)
+					{
+						item.netDefaults(miscDyes[index].netID);
+						item.Prefix(miscDyes[index].prefix);
+						item.AffixName();
+						if (miscDyes[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
 								Color.Cyan);
 						}
 					}

@@ -1443,23 +1443,22 @@ namespace TShockAPI
 
 			if (user != null && !TShock.Config.DisableUUIDLogin)
 			{
-				if(user.UUID == args.Player.UUID)
+				if (user.UUID == args.Player.UUID)
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
-
 					if (args.Player.State == 1)
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
 					if (Main.ServerSideCharacter)
 					{
-						if (group.HasPermission(Permissions.bypassssc))
+						if (!group.HasPermission(Permissions.bypassssc))
 						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
+							return true;
 						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
 					args.Player.LoginFailsBySsi = false;
 
@@ -1480,7 +1479,7 @@ namespace TShockAPI
 						args.Player.PlayerData.CopyCharacter(args.Player);
 						TShock.CharacterDB.InsertPlayerData(args.Player);
 					}
-					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;

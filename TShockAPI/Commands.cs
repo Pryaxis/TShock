@@ -405,14 +405,6 @@ namespace TShockAPI
 			{
 				HelpText = "Sets the spawn rate of NPCs."
 			});
-			add(new Command(Permissions.invade, PumpkinMoon, "pumpkinmoon", "pmoon")
-			{
-				HelpText = "Starts a Pumpkin Moon at the specified wave."
-			});
-			add(new Command(Permissions.invade, FrostMoon, "frostmoon", "fmoon")
-			{
-				HelpText = "Starts a Frost Moon at the specified wave."
-			});
 			add(new Command(Permissions.clearangler, ClearAnglerQuests, "clearangler")
 			{
 				HelpText = "Resets the list of users who have completed an angler quest that day."
@@ -1864,81 +1856,86 @@ namespace TShockAPI
 				TSPlayer.All.SendInfoMessage("{0} {1}ed an eclipse.", args.Player.Name, Main.eclipse ? "start" : "stopp");
 			}
 		}
-		
+
 		private static void Invade(CommandArgs args)
 		{
 			if (Main.invasionSize <= 0)
 			{
-				if (args.Parameters.Count != 1)
+				if (args.Parameters.Count < 1)
 				{
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}invade <invasion type>", Specifier);
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}invade <invasion type> [wave]", Specifier);
 					return;
 				}
 
+				int wave = 1;
 				switch (args.Parameters[0].ToLower())
 				{
 					case "goblin":
 					case "goblins":
-					case "goblin army":
 						TSPlayer.All.SendInfoMessage("{0} has started a goblin army invasion.", args.Player.Name);
 						TShock.StartInvasion(1);
 						break;
+
 					case "snowman":
 					case "snowmen":
-					case "snow legion":
 						TSPlayer.All.SendInfoMessage("{0} has started a snow legion invasion.", args.Player.Name);
 						TShock.StartInvasion(2);
 						break;
+
 					case "pirate":
 					case "pirates":
 						TSPlayer.All.SendInfoMessage("{0} has started a pirate invasion.", args.Player.Name);
 						TShock.StartInvasion(3);
 						break;
+
+					case "pumpkin":
+					case "pumpkinmoon":
+						if (args.Parameters.Count > 1)
+						{
+							if (!int.TryParse(args.Parameters[1], out wave) || wave <= 0)
+							{
+								args.Player.SendErrorMessage("Invalid wave!");
+								break;
+							}
+						}
+
+						TSPlayer.Server.SetPumpkinMoon(true);
+						Main.bloodMoon = false;
+						NPC.waveKills = 0f;
+						NPC.waveCount = wave;
+						TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
+						break;
+
+					case "frost":
+					case "frostmoon":
+						if (args.Parameters.Count > 1)
+						{
+							if (!int.TryParse(args.Parameters[1], out wave) || wave <= 0)
+							{
+								args.Player.SendErrorMessage("Invalid wave!");
+								return;
+							}
+						}
+
+						TSPlayer.Server.SetFrostMoon(true);
+						Main.bloodMoon = false;
+						NPC.waveKills = 0f;
+						NPC.waveCount = wave;
+						TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
+						break;
+
+					case "martian":
+					case "martians":
+						TSPlayer.All.SendInfoMessage("{0} has started a martian invasion.", args.Player.Name);
+						TShock.StartInvasion(4);
+						break;
 				}
 			}
 			else
 			{
-                TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
+				TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
 				Main.invasionSize = 0;
 			}
-		}
-
-		private static void PumpkinMoon(CommandArgs args)
-		{
-			int wave = 1;
-			if (args.Parameters.Count != 0)
-			{
-				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
-				{
-					args.Player.SendErrorMessage("Invalid wave!");
-					return;
-				}
-			}
-
-			TSPlayer.Server.SetPumpkinMoon(true);
-			Main.bloodMoon = false;
-			NPC.waveKills = 0f;
-			NPC.waveCount = wave;
-			TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
-		}
-
-		private static void FrostMoon(CommandArgs args)
-		{
-			int wave = 1;
-			if (args.Parameters.Count != 0)
-			{
-				if (!int.TryParse(args.Parameters[0], out wave) || wave <= 0)
-				{
-					args.Player.SendErrorMessage("Invalid wave!");
-					return;
-				}
-			}
-
-			TSPlayer.Server.SetFrostMoon(true);
-			Main.bloodMoon = false;
-			NPC.waveKills = 0f;
-			NPC.waveCount = wave;
-			TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 		}
 
 		private static void ClearAnglerQuests(CommandArgs args)

@@ -14,19 +14,34 @@ namespace TShockAPI
 	public struct NetItem
 	{
 		/// <summary>
+		/// The size of the player's inventory (inventory, coins, ammo, trash)
+		/// </summary>
+		public static readonly int InventorySlots = 59;
+
+		/// <summary>
 		/// The number of armor slots.
 		/// </summary>
-		public static readonly int ArmorSlots = 16;
+		public static readonly int ArmorSlots = 20;
+
+		/// <summary>
+		/// The number of other equippable items
+		/// </summary>
+		public static readonly int MiscEquipSlots = 5;
 
 		/// <summary>
 		/// The number of dye slots.
 		/// </summary>
-		public static readonly int DyeSlots = 8;
+		public static readonly int DyeSlots = 10;
 
 		/// <summary>
-		/// The inventory size.
+		/// The number of other dye slots (for <see cref="MiscEquipSlots"/>)
 		/// </summary>
-		public static readonly int MaxInventory = 83;
+		public static readonly int MiscDyeSlots = 5;
+
+		/// <summary>
+		/// The inventory size (including armour, dies, coins, ammo, and trash)
+		/// </summary>
+		public static readonly int MaxInventory = 99;
 
 		[JsonProperty("netID")]
 		private int _netId;

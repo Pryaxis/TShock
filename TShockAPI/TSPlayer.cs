@@ -1108,7 +1108,7 @@ namespace TShockAPI
 
 		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
-			if(slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
+			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
 			{
 				return;
 			}
@@ -1147,21 +1147,40 @@ namespace TShockAPI
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
+			Item[] miscEqups = player.TPlayer.miscEquips;
+			Item[] miscDyes = player.TPlayer.miscDyes;
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
+				if (i < NetItem.InventorySlots)
 				{
+					//0-58
 					this.inventory[i] = (NetItem)inventory[i];
 				}
-				else if (i < NetItem.MaxInventory - NetItem.DyeSlots)
+				else if (i < NetItem.InventorySlots
+					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
 				{
-					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
+					//59-78
+					var index = i - NetItem.InventorySlots;
 					this.inventory[i] = (NetItem)armor[index];
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
+				{
+					//79-88
+					var index = i - (NetItem.MaxInventory -
+						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					this.inventory[i] = (NetItem)dye[index];
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				{
+					//89-93
+					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					this.inventory[i] = (NetItem)miscEqups[index];
 				}
 				else
 				{
-					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
-					this.inventory[i] = (NetItem)dye[index];
+					//93-98
+					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					this.inventory[i] = (NetItem)miscDyes[index];
 				}
 			}
 		}
@@ -1206,8 +1225,9 @@ namespace TShockAPI
 			
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots))
+				if (i < NetItem.InventorySlots)
 				{
+					//0-58
 					player.TPlayer.inventory[i].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.inventory[i].netID != 0)
@@ -1216,9 +1236,11 @@ namespace TShockAPI
 						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;
 					}
 				}
-				else if (i < NetItem.MaxInventory - NetItem.DyeSlots)
+				else if (i < NetItem.InventorySlots 
+					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
 				{
-					var index = i - (NetItem.MaxInventory - (NetItem.ArmorSlots + NetItem.DyeSlots));
+					//59-78
+					var index = i - NetItem.InventorySlots;
 					player.TPlayer.armor[index].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.armor[index].netID != 0)
@@ -1227,9 +1249,11 @@ namespace TShockAPI
 						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
-				else
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
 				{
-					var index = i - (NetItem.MaxInventory - NetItem.DyeSlots);
+					//79-88
+					var index = i - (NetItem.MaxInventory - 
+						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
 					player.TPlayer.dye[index].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.dye[index].netID != 0)
@@ -1238,69 +1262,89 @@ namespace TShockAPI
 						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				{
+					//89-93
+					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					player.TPlayer.miscEquips[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.miscEquips[index].netID != 0)
+					{
+						player.TPlayer.miscEquips[index].stack = this.inventory[i].Stack;
+						player.TPlayer.miscEquips[index].prefix = (byte)this.inventory[i].PrefixId;
+					}
+				}
+				else
+				{
+					//93-98
+					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					player.TPlayer.miscDyes[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.miscDyes[index].netID != 0)
+					{
+						player.TPlayer.miscDyes[index].stack = this.inventory[i].Stack;
+						player.TPlayer.miscDyes[index].prefix = (byte)this.inventory[i].PrefixId;
+					}
+				}
 			}
 
-			for (int k = 0; k < 59; k++)
+			float slot = 0f;
+			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				slot++;
 			}
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+			for (int k = 0; k < NetItem.ArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.DyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix, 0f, 0);
+				slot++;
+			}
+
 			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 
-			for (int k = 0; k < 59; k++)
+			slot = 0f;
+			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				slot++;
 			}
-
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+			for (int k = 0; k < NetItem.ArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.DyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix, 0f, 0);
+				slot++;
+			}
 			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
