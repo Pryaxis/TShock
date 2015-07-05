@@ -1379,7 +1379,7 @@ namespace TShockAPI
 		/// <param name="e">e - The SendDataEventArgs object.</param>
 		private void NetHooks_SendData(SendDataEventArgs e)
 		{
-			if (e.MsgId == PacketTypes.Disconnect)
+			/*if (e.MsgId == PacketTypes.Disconnect)
 			{
 				Action<RemoteClient, string> disconnect = (client, str) =>
 					{
@@ -1411,7 +1411,7 @@ namespace TShockAPI
 				e.Handled = true;
 				return;
 			}
-			else if (e.MsgId == PacketTypes.WorldInfo)
+			else */if (e.MsgId == PacketTypes.WorldInfo)
 			{
 				using (var ms = new MemoryStream())
 				{

@@ -580,18 +580,18 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-								if (player.IsLoggedIn && saveSSI)
-										player.SaveServerCharacter();
+				if (player.IsLoggedIn && saveSSI)
+					player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
-								if (!silent)
-								{
-										if (string.IsNullOrWhiteSpace(adminUserName))
-												Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
-										else
+				if (!silent)
+				{
+					if (string.IsNullOrWhiteSpace(adminUserName))
+						Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
+					else
 						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
-								}
+				}
 				return true;
 			}
 			return false;
