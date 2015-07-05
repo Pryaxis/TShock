@@ -665,7 +665,6 @@ namespace TShockAPI
 			Regions.Reload();
 			Warps.ReloadWarps();
 
-			Lighting.lightMode = 2;
 			ComputeMaxStyles();
 			FixChestStacks();
 
