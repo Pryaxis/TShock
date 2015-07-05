@@ -3035,7 +3035,7 @@ namespace TShockAPI
 				return false;
 			}
 
-			if (type == BuffID.DrillMount)
+			if (type == BuffID.DrillMount && TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
 			{
 				TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
 				return true;
@@ -3335,7 +3335,7 @@ namespace TShockAPI
 					args.TPlayer.buffTime[i] = 0;
 				}
 
-				if (buff == BuffID.DrillMount)
+				if (buff == BuffID.DrillMount && TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
 				{
 					TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
 					return true;

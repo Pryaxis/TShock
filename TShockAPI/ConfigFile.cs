@@ -433,6 +433,9 @@ namespace TShockAPI
 		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
 		public int MinimumPasswordLength = 4;
 
+		[Description("Enable the DCU. Very dangerous; can destroy world without consequence.")] public bool
+			VeryDangerousDoNotChangeEnableDrillContainmentUnit = false;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>
