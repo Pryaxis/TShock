@@ -3739,14 +3739,19 @@ namespace TShockAPI
 						return;
 					}
 
-					decimal time = hours + minutes / 60.0m;
+					decimal time = hours + (minutes / 60.0m);
 					time -= 4.50m;
 					if (time < 0.00m)
 						time += 24.00m;
+
 					if (time >= 15.00m)
+					{
 						TSPlayer.Server.SetTime(false, (double)((time - 15.00m) * 3600.0m));
+					}
 					else
+					{
 						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
+					}
 					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
 					break;
 			}
