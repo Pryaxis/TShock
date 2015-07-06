@@ -453,7 +453,7 @@ namespace TShockAPI
 			});
 			#endregion
 			#region World Commands
-			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert")
+			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert", "expertmode")
 			{
 					HelpText = "Toggles expert mode."
 			});
