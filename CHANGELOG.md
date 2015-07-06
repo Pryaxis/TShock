@@ -7,6 +7,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed a bug where /user group failing would output no error. (@nicatronTg)
 * Fixed a bug where /user group would fail. @(Enerdy)
 * Added the ability to disable backup autosave messages. (@nicatronTg)
+* Fixed /buff malfunctioning when entering an invalid buff name. (@Enerdy)
+* Fixed projectiles 435-438 (martian invasion) freezing everyone under certain conditions. (@Enerdy)
+* DisableTombstones now works properly with the new golden gravestones. (@Enerdy)
+* REST module now properly catches exceptions during Start(). (@Patrikkk)
+* Added /expert command to toggle expert mode. (@WhiteXZ)
 
 ## TShock 4.3.0.0
 
