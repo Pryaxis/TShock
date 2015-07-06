@@ -2419,15 +2419,15 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			var ident = args.Data.ReadInt16();
+			short ident = args.Data.ReadInt16();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var knockback = args.Data.ReadSingle();
-			var dmg = args.Data.ReadInt16();
-			var owner = args.Data.ReadInt8();
-			var type = args.Data.ReadInt16();
-			var bits = (BitsByte) args.Data.ReadInt8();
-				owner = (byte)args.Player.Index;
+			float knockback = args.Data.ReadSingle();
+			short dmg = args.Data.ReadInt16();
+			byte owner = args.Data.ReadInt8();
+			short type = args.Data.ReadInt16();
+			BitsByte bits = args.Data.ReadInt8();
+			//owner = (byte)args.Player.Index;
 			float[] ai = new float[Projectile.maxAI];
 
 			for (int i = 0; i < Projectile.maxAI; i++)
@@ -2474,7 +2474,7 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if (type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352))
+				if (type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352) || (type >= 435 && type <= 438))
 				{	
 					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
