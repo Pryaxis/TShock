@@ -6,6 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * Fixed a bug where /user group failing would output no error. (@nicatronTg)
 * Fixed a bug where /user group would fail. @(Enerdy)
+* Added the ability to disable backup autosave messages. (@nicatronTg)
 
 ## TShock 4.3.0.0
 
