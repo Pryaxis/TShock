@@ -1090,9 +1090,10 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
 				}
-				catch (UserManagerException)
+				catch (UserManagerException e)
 				{
 					args.Player.SendErrorMessage("User " + user.Name + " could not be added. Check console for details.");
+					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
 			else if (subcmd == "help")
