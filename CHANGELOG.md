@@ -4,7 +4,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Unreleased
 
-* Fixed a bug where /user group failing would output no error.
+* Fixed a bug where /user group failing would output no error. (@nicatronTg)
+* Fixed a bug where /user group would fail. @(Enerdy)
 
 ## TShock 4.3.0.0
 
