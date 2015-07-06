@@ -168,7 +168,7 @@ namespace TShockAPI.DB
 					throw new UserNotExistException(user.Name);
 				
 				// Update player group reference for any logged in player
-				foreach (var player in TShock.Players.Where(p => null != p && p.User.Name == user.Name))
+				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.User.Name == user.Name))
 				{
 					player.Group = grp;
 				}
