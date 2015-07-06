@@ -422,15 +422,18 @@ namespace TShockAPI
 		public List<int> GetBuffByName(string name)
 		{
 			string nameLower = name.ToLower();
+			string buffname;
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				if (Main.buffName[i].ToLower() == nameLower)
+				buffname = Main.buffName[i];
+				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				if (Main.buffName[i].ToLower().StartsWith(nameLower))
+				buffname = Main.buffName[i];
+				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
 					found.Add(i);
 			}
 			return found;
