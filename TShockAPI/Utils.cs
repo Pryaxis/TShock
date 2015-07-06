@@ -27,6 +27,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using TShockAPI.DB;
+using BCrypt.Net;
 
 namespace TShockAPI
 {
@@ -45,13 +46,19 @@ namespace TShockAPI
 		/// </summary>
 		private const int LastItemPrefix = 83;
 
-		// Utils is a Singleton
+		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
+
+		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
+
+		/// <summary>Instance - An instance of the utils class.</summary>
+		/// <value>value - the Utils instance</value>
 		public static Utils Instance { get { return instance; } }
 
+		/// <summary>Random - An instance of random for generating random data.</summary>
+		[Obsolete("Please create your own random objects; this will be removed in the next version of TShock.")]
 		public Random Random = new Random();
-		//private static List<Group> groups = new List<Group>();
 
 		/// <summary>
 		/// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -78,7 +85,7 @@ namespace TShockAPI
 					{
 							if (includeIDs)
 							{
-									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.UserID + ")");
+									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.User.ID + ")");
 							}
 							else
 							{
@@ -129,13 +136,18 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Saves the map data
+		/// Saves the map data by calling the SaveManager and instructing it to save the world.
 		/// </summary>
 		public void SaveWorld()
 		{
 			SaveManager.Instance.SaveWorld();
 		}
 
+		/// <summary>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="red">red - The amount of red (0-255) in the color for supported destinations.</param>
+		/// <param name="green">green - The amount of green (0-255) in the color for supported destinations.</param>
+		/// <param name="blue">blue - The amount of blue (0-255) in the color for the supported destinations.</param>
 		public void Broadcast(string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
@@ -143,19 +155,22 @@ namespace TShockAPI
 			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
 		}
 
+		/// <summary>>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="color">color - The color object for supported destinations.</param>
 		public void Broadcast(string msg, Color color)
 		{
 			Broadcast(msg, color.R, color.G, color.B);
 		}
 
 		/// <summary>
-		/// Broadcasts a message from a player, not TShock
+		/// Broadcasts a message from a Terraria playerplayer, not TShock
 		/// </summary>
-		/// <param name="ply">TSPlayer ply - the player that will send the packet</param>
-		/// <param name="msg">string msg - the message</param>
-		/// <param name="red">r</param>
-		/// <param name="green">g</param>
-		/// <param name="blue">b</param>
+		/// <param name="ply">ply - the Terraria player index that will send the packet</param>
+		/// <param name="msg">msg - The message to send</param>
+		/// <param name="red">red - The amount of red (0-255) in the color for supported destinations.</param>
+		/// <param name="green">green - The amount of green (0-255) in the color for supported destinations.</param>
+		/// <param name="blue">blue - The amount of blue (0-255) in the color for the supported destinations.</param>
 		public void Broadcast(int ply, string msg, byte red, byte green, byte blue)
 		{
 			TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
@@ -182,9 +197,9 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// The number of active players on the server.
+		/// Gets the number of active players on the server.
 		/// </summary>
-		/// <returns>int playerCount</returns>
+		/// <returns>The number of active players on the server.</returns>
 		public int ActivePlayers()
 		{
 			return Main.player.Where(p => null != p && p.active).Count();
@@ -194,7 +209,7 @@ namespace TShockAPI
 		/// Finds a TSPlayer based on name or ID
 		/// </summary>
 		/// <param name="plr">Player name or ID</param>
-		/// <returns></returns>
+		/// <returns>A list of matching players</returns>
 		public List<TSPlayer> FindPlayer(string plr)
 		{
 			var found = new List<TSPlayer>();
@@ -248,9 +263,9 @@ namespace TShockAPI
 					tileY = startTileY;
 					break;
 				}
-
-				tileX = startTileX + Random.Next(tileXRange*-1, tileXRange);
-				tileY = startTileY + Random.Next(tileYRange*-1, tileYRange);
+				Random r = new Random();
+				tileX = startTileX + r.Next(tileXRange*-1, tileXRange);
+				tileY = startTileY + r.Next(tileYRange*-1, tileYRange);
 				j++;
 			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
@@ -407,15 +422,18 @@ namespace TShockAPI
 		public List<int> GetBuffByName(string name)
 		{
 			string nameLower = name.ToLower();
+			string buffname;
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				if (Main.buffName[i].ToLower() == nameLower)
+				buffname = Main.buffName[i];
+				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				if (Main.buffName[i].ToLower().StartsWith(nameLower))
+				buffname = Main.buffName[i];
+				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
 					found.Add(i);
 			}
 			return found;
@@ -472,7 +490,6 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks all player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
 		/// <param name="reason">string reason</param>
 		public void ForceKickAll(string reason)
 		{
@@ -540,9 +557,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server without checking for immunetokick permission.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="silent">bool silent (default: false)</param>
+		/// <param name="saveSSI">bool saveSSI (default: false)</param>
 		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
 			Kick(player, reason, true, silent, null, saveSSI);
@@ -551,7 +569,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Kicks a player from the server..
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
 		/// <param name="silent">bool silent (default: false)</param>
@@ -565,18 +583,18 @@ namespace TShockAPI
 			{
 				string playerName = player.Name;
 				player.SilentKickInProgress = silent;
-								if (player.IsLoggedIn && saveSSI)
-										player.SaveServerCharacter();
+				if (player.IsLoggedIn && saveSSI)
+					player.SaveServerCharacter();
 				player.Disconnect(string.Format("Kicked: {0}", reason));
 				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
 				string verb = force ? "force " : "";
-								if (!silent)
-								{
-										if (string.IsNullOrWhiteSpace(adminUserName))
-												Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
-										else
+				if (!silent)
+				{
+					if (string.IsNullOrWhiteSpace(adminUserName))
+						Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
+					else
 						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
-								}
+				}
 				return true;
 			}
 			return false;
@@ -585,10 +603,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Bans and kicks a player from the server.
 		/// </summary>
-		/// <param name="ply">int player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="reason">string reason</param>
 		/// <param name="force">bool force (default: false)</param>
-		/// <param name="adminUserName">bool silent (default: null)</param>
+		/// <param name="adminUserName">string adminUserName (default: null)</param>
 		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
 		{
 			if (!player.ConnectionAlive)
@@ -610,6 +628,10 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
+		/// <param name="ban">ban - The ban object to check.</param>
+		/// <param name="byName">byName - Defines whether or not the ban should be checked by name.</param>
+		/// <returns>bool - True if the ban has expired.</returns>
 		public bool HasBanExpired(Ban ban, bool byName = false)
 		{
 					DateTime exp;
@@ -636,7 +658,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="ply">TSPlayer player</param>
+		/// <param name="player">TSPlayer player</param>
 		/// <param name="file">string filename reletave to savedir</param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
@@ -650,7 +672,7 @@ namespace TShockAPI
 						continue;
 					}
 
-					foo = foo.Replace("%map%", Main.worldName);
+					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
 					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
 					var matches = reg.Matches(foo);
@@ -674,7 +696,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Group from the name of the group
 		/// </summary>
-		/// <param name="ply">string groupName</param>
+		/// <param name="groupName">string groupName</param>
 		public Group GetGroup(string groupName)
 		{
 			//first attempt on cached groups
@@ -719,29 +741,32 @@ namespace TShockAPI
 			ply.SendErrorMessage("Use \"my query\" for items with spaces");
 		}
 
-				/// <summary>
-				/// Default hashing algorithm.
-				/// </summary>
-				public string HashAlgo = "sha512";
+		/// <summary>
+		/// Default hashing algorithm.
+		/// </summary>
+		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead if you really need it (but use User.VerifyPassword(password)) for verifying passwords.")]
+		public string HashAlgo = "sha512";
 
-				/// <summary>
-				/// A dictionary of hashing algortihms and an implementation object.
-				/// </summary>
+		/// <summary>
+		/// A dictionary of hashing algortihms and an implementation object.
+		/// </summary>
+		[Obsolete("This is no longer necessary, after switching to User.VerifyPassword(password) instead.")]
 		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-																																					{
-																																						{"sha512", () => new SHA512Managed()},
-																																						{"sha256", () => new SHA256Managed()},
-																																						{"md5", () => new MD5Cng()},
-																																						{"sha512-xp", () => SHA512.Create()},
-																																						{"sha256-xp", () => SHA256.Create()},
-																																						{"md5-xp", () => MD5.Create()},
-																																					};
+			{
+					{"sha512", () => new SHA512Managed()},
+					{"sha256", () => new SHA256Managed()},
+					{"md5", () => new MD5Cng()},
+					{"sha512-xp", () => SHA512.Create()},
+					{"sha256-xp", () => SHA256.Create()},
+					{"md5-xp", () => MD5.Create()},
+			};
 
 		/// <summary>
 		/// Returns a Sha256 string for a given string
 		/// </summary>
 		/// <param name="bytes">bytes to hash</param>
 		/// <returns>string sha256</returns>
+		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
 		public string HashPassword(byte[] bytes)
 		{
 			if (bytes == null)
@@ -760,8 +785,9 @@ namespace TShockAPI
 		/// <summary>
 		/// Returns a Sha256 string for a given string
 		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
+		/// <param name="password">string to hash</param>
 		/// <returns>string sha256</returns>
+		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
 		public string HashPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password) || password == "non-existant password")
@@ -774,6 +800,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str">String to check</param>
 		/// <returns>True if the string only contains printable characters</returns>
+		[Obsolete("ValidString is being removed as it serves no purpose to TShock at this time.")]
 		public bool ValidString(string str)
 		{
 			foreach (var c in str)
@@ -801,7 +828,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Attempts to parse a string as a timespan (_d_m_h_s).
 		/// </summary>
-		/// <param name="time">The time string.</param>
+		/// <param name="str">The time string.</param>
 		/// <param name="seconds">The seconds.</param>
 		/// <returns>Whether the string was parsed successfully.</returns>
 		public bool TryParseTime(string str, out int seconds)
@@ -865,6 +892,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="str">string</param>
 		/// <returns>sanitized string</returns>
+		[Obsolete("SanitizeString is being removed from TShock as it currently serves no purpose.")]
 		public string SanitizeString(string str)
 		{
 			var returnstr = str.ToCharArray();
@@ -896,6 +924,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>EncodeColor - Encodes a color as an int.</summary>
+		/// <param name="color">color - The color to encode</param>
+		/// <returns>int? - The encoded color</returns>
 		public int? EncodeColor(Color? color)
 		{
 			if (color == null)
@@ -904,6 +935,9 @@ namespace TShockAPI
 			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
 		}
 
+		/// <summary>DecodeColor - Decodes a color encoded by the EncodeColor function.</summary>
+		/// <param name="encodedColor">encodedColor - The encoded color</param>
+		/// <returns>Color? - The decoded color</returns>
 		public Color? DecodeColor(int? encodedColor)
 		{
 			if (encodedColor == null)
@@ -913,6 +947,44 @@ namespace TShockAPI
 			return new Color(data[0], data[1], data[2], data[3]);
 		}
 
+		/// <summary>
+		/// Encodes a Boolean Array as an int.
+		/// </summary>
+		/// <param name="bools">The boolean array to encode.</param>
+		/// <returns>The encoded int.</returns>
+		public int? EncodeBoolArray(bool[] bools)
+		{
+			if (bools == null)
+				return null;
+
+			int result = 0;
+			for (int i = 0; i < bools.Length; i++)
+				if (bools[i])
+					result |= (1 << i);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Decodes a Boolean Array from an int.
+		/// </summary>
+		/// <param name="encodedbools">The encoded Boolean Array.</param>
+		/// <returns>The resulting Boolean Array.</returns>
+		public bool[] DecodeBoolArray(int? encodedbools)
+		{
+			if (encodedbools == null)
+				return null;
+
+			bool[] result = new bool[10];
+			for (int i = 0; i < result.Length; i++)
+				result[i] = (encodedbools & 1 << i) != 0;
+
+			return result;
+		}
+
+		/// <summary>EncodeBitsByte - Encodes a BitsByte as a byte.</summary>
+		/// <param name="bitsByte">bitsByte - The BitsByte object</param>
+		/// <returns>byte? - The converted byte</returns>
 		public byte? EncodeBitsByte(BitsByte? bitsByte)
 		{
 			if (bitsByte == null)
@@ -926,6 +998,9 @@ namespace TShockAPI
 			return result;
 		}
 
+		/// <summary>DecodeBitsByte - Decodes a bitsbyte from an int.</summary>
+		/// <param name="encodedBitsByte">encodedBitsByte - The encoded bitsbyte object.</param>
+		/// <returns>BitsByte? - The decoded bitsbyte object</returns>
 		public BitsByte? DecodeBitsByte(int? encodedBitsByte)
 		{
 			if (encodedBitsByte == null)
@@ -938,6 +1013,9 @@ namespace TShockAPI
 			return result;
 		}
 
+		/// <summary>GetResponseNoException - Gets a web response without generating an exception.</summary>
+		/// <param name="req">req - The request to send.</param>
+		/// <returns>HttpWebResponse - The response object.</returns>
 		public HttpWebResponse GetResponseNoException(HttpWebRequest req)
 		{
 			try
@@ -951,6 +1029,31 @@ namespace TShockAPI
 					throw;
 				return resp;
 			}
+		}
+
+		/// <summary>
+		/// Colors the given text by correctly applying the color chat tag.
+		/// </summary>
+		/// <param name="text">The text to color.</param>
+		/// <param name="color">The color to apply.</param>
+		/// <returns>The <paramref name="text"/>, surrounded by the color tag with the appropriated hex code.</returns>
+		public string ColorTag(string text, Color color)
+		{
+			return String.Format("[c/{0}:{1}]", color.Hex3(), text);
+		}
+
+		/// <summary>
+		/// Converts an item into its text representation using the item chat tag.
+		/// </summary>
+		/// <param name="item">The item to convert.</param>
+		/// <returns>The <paramref name="item"/> NetID surrounded by the item tag with proper stack/prefix data.</returns>
+		public string ItemTag(Item item)
+		{
+			int netID = item.netID;
+			int stack = item.stack;
+			int prefix = item.prefix;
+			string options = stack > 1 ? "/s" + stack : prefix != 0 ? "/p" + prefix : "";
+			return String.Format("[i{0}:{1}]", options, netID);
 		}
 	}
 }

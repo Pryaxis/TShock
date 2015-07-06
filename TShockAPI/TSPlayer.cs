@@ -100,13 +100,13 @@ namespace TShockAPI
 		/// </summary>
 		public Group Group
 		{
-				get
-				{
-						if (tempGroup != null)
-								return tempGroup;
-						return group;
-				}
-					set { group = value; }
+			get
+			{
+				if (tempGroup != null)
+					return tempGroup;
+				return group;
+			}
+			set { group = value; }
 		}
 
 		/// <summary>
@@ -178,7 +178,17 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's login name.
 		/// </summary>
-		public string UserAccountName { get; set; }
+		[Obsolete("Use User.Name instead")]
+		public string UserAccountName
+		{
+			get { return User == null ? null : User.Name; }
+		}
+
+		/// <summary>
+		/// User object associated with the player.
+		/// Set when the player logs in.
+		/// </summary>
+		public User User { get; set; }
 
 		/// <summary>
 		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
@@ -199,7 +209,11 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's user id( from the db ).
 		/// </summary>
-		public int UserID = -1;
+		[Obsolete("Use User.ID instead")]
+		public int UserID
+		{
+			get { return User == null ? -1 : User.ID; }
+		}
 
 		/// <summary>
 		/// Whether the player has been nagged about logging in.
@@ -325,8 +339,8 @@ namespace TShockAPI
 		{
 			get
 			{
-				return RealPlayer &&
-						 (Netplay.serverSock[Index] != null && Netplay.serverSock[Index].active && !Netplay.serverSock[Index].kill);
+				return RealPlayer
+					&& (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -340,8 +354,8 @@ namespace TShockAPI
 
 		public int State
 		{
-			get { return Netplay.serverSock[Index].state; }
-			set { Netplay.serverSock[Index].state = value; }
+			get { return Netplay.Clients[Index].State; }
+			set { Netplay.Clients[Index].State = value; }
 		}
 
 		/// <summary>
@@ -349,7 +363,7 @@ namespace TShockAPI
 		/// </summary>
 		public string UUID
 		{
-			get { return RealPlayer ? Netplay.serverSock[Index].clientUUID : ""; }
+			get { return RealPlayer ? Netplay.Clients[Index].ClientUUID : ""; }
 		}
 
 		/// <summary>
@@ -361,12 +375,10 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-						CacheIP =
-						RealPlayer
-							? (Netplay.serverSock[Index].tcpClient.Connected
-								? TShock.Utils.GetRealIP(Netplay.serverSock[Index].tcpClient.Client.RemoteEndPoint.ToString())
-								: "")
-							: "";
+				CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
+						? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+						: "")
+					: "";
 				else
 					return CacheIP;
 			}
@@ -497,9 +509,9 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = index;
-						Group = Group.DefaultGroup;
+			Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
-						AwaitingResponse = new Dictionary<string, Action<object>>();
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		protected TSPlayer(String playerName)
@@ -507,9 +519,9 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
 			TilesCreated = new Dictionary<Vector2, Tile>();
 			Index = -1;
-			FakePlayer = new Player {name = playerName, whoAmi = -1};
-				Group = Group.DefaultGroup;
-						AwaitingResponse = new Dictionary<string, Action<object>>();
+			FakePlayer = new Player {name = playerName, whoAmI = -1};
+			Group = Group.DefaultGroup;
+			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
 		public virtual void Disconnect(string reason)
@@ -519,11 +531,11 @@ namespace TShockAPI
 
 		public virtual void Flush()
 		{
-			var sock = Netplay.serverSock[Index];
-			if (sock == null)
+			var client = Netplay.Clients[Index];
+			if (client == null)
 				return;
 
-			TShock.PacketBuffer.Flush(sock);
+			TShock.PacketBuffer.Flush(client);
 		}
 
 
@@ -535,78 +547,6 @@ namespace TShockAPI
 			if (sender != null)
 			{
 				((Timer)sender).Stop();
-			}
-		}
-
-		public void SendWorldInfo(int tilex, int tiley, bool fakeid)
-		{
-			using (var ms = new MemoryStream())
-			{
-				var msg = new WorldInfoMsg
-				{
-					Time = (int)Main.time,
-					DayTime = Main.dayTime,
-					MoonPhase = (byte)Main.moonPhase,
-					BloodMoon = Main.bloodMoon,
-					Eclipse = Main.eclipse,
-					MaxTilesX = (short)Main.maxTilesX,
-					MaxTilesY = (short)Main.maxTilesY,
-					SpawnX = (short)Main.spawnTileX,
-					SpawnY = (short)Main.spawnTileY,
-					WorldSurface = (short)Main.worldSurface,
-					RockLayer = (short)Main.rockLayer,
-					//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
-					//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
-					WorldID = Main.worldID,
-					MoonType = (byte)Main.moonType,
-					TreeX0 = Main.treeX[0],
-					TreeX1 = Main.treeX[1],
-					TreeX2 = Main.treeX[2],
-					TreeStyle0 = (byte)Main.treeStyle[0],
-					TreeStyle1 = (byte)Main.treeStyle[1],
-					TreeStyle2 = (byte)Main.treeStyle[2],
-					TreeStyle3 = (byte)Main.treeStyle[3],
-					CaveBackX0 = Main.caveBackX[0],
-					CaveBackX1 = Main.caveBackX[1],
-					CaveBackX2 = Main.caveBackX[2],
-					CaveBackStyle0 = (byte)Main.caveBackStyle[0],
-					CaveBackStyle1 = (byte)Main.caveBackStyle[1],
-					CaveBackStyle2 = (byte)Main.caveBackStyle[2],
-					CaveBackStyle3 = (byte)Main.caveBackStyle[3],
-					SetBG0 = (byte)WorldGen.treeBG,
-					SetBG1 = (byte)WorldGen.corruptBG,
-					SetBG2 = (byte)WorldGen.jungleBG,
-					SetBG3 = (byte)WorldGen.snowBG,
-					SetBG4 = (byte)WorldGen.hallowBG,
-					SetBG5 = (byte)WorldGen.crimsonBG,
-					SetBG6 = (byte)WorldGen.desertBG,
-					SetBG7 = (byte)WorldGen.oceanBG,
-					IceBackStyle = (byte)Main.iceBackStyle,
-					JungleBackStyle = (byte)Main.jungleBackStyle,
-					HellBackStyle = (byte)Main.hellBackStyle,
-					WindSpeed = Main.windSpeed,
-					NumberOfClouds = (byte)Main.numClouds,
-					BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
-								(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
-								(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
-								(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
-								(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
-								(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
-								(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None) |
-								(NPC.downedPlantBoss ? BossFlags.DownedPlantBoss : BossFlags.None),
-					BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
-								 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
-								 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
-								 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
-								 (Main.cloudBGActive == 1f ? BossFlags2.CloudBg : BossFlags2.None) |
-								 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
-								 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
-								 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None),
-					Rain = Main.maxRaining,
-					WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
-				};
-				msg.PackFull(ms);
-				SendRawData(ms.ToArray());
 			}
 		}
 
@@ -631,13 +571,13 @@ namespace TShockAPI
 
 			SendTileSquare((int) (x/16), (int) (y/16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
-			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmi, x, y, style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmI, x, y, style);
 			return true;
 		}
 
 		public void Heal(int health = 600)
 		{
-			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmi, health);
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmI, health);
 		}
 
 		public void Spawn()
@@ -733,12 +673,12 @@ namespace TShockAPI
 
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-				if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
-						(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-						return false;
+			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+					return false;
 
-				GiveItem(type,name,width,height,stack,prefix);
-				return true;
+			GiveItem(type,name,width,height,stack,prefix);
+			return true;
 		}
 
 		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
@@ -761,42 +701,42 @@ namespace TShockAPI
 
 		public virtual void SendInfoMessage(string msg)
 		{
-				SendMessage(msg, Color.Yellow);
+			SendMessage(msg, Color.Yellow);
 		}
 
 		public void SendInfoMessage(string format, params object[] args)
 		{
-				SendInfoMessage(string.Format(format, args));
+			SendInfoMessage(string.Format(format, args));
 		}
 
 		public virtual void SendSuccessMessage(string msg)
 		{
-				SendMessage(msg, Color.Green);
+			SendMessage(msg, Color.Green);
 		}
 
 		public void SendSuccessMessage(string format, params object[] args)
 		{
-				SendSuccessMessage(string.Format(format, args));
+			SendSuccessMessage(string.Format(format, args));
 		}
 
 		public virtual void SendWarningMessage(string msg)
 		{
-				SendMessage(msg, Color.OrangeRed);
+			SendMessage(msg, Color.OrangeRed);
 		}
 
 		public void SendWarningMessage(string format, params object[] args)
 		{
-				SendWarningMessage(string.Format(format, args));
+			SendWarningMessage(string.Format(format, args));
 		}
 
 		public virtual void SendErrorMessage(string msg)
 		{
-				SendMessage(msg, Color.Red);
+			SendMessage(msg, Color.Red);
 		}
 
 		public void SendErrorMessage(string format, params object[] args)
 		{
-				SendErrorMessage(string.Format(format, args));
+			SendErrorMessage(string.Format(format, args));
 		}
 
 		public virtual void SendMessage(string msg, Color color)
@@ -811,7 +751,7 @@ namespace TShockAPI
 
 		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
 		{
-				SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
+			SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
 		}
 
 		public virtual void DamagePlayer(int damage)
@@ -849,7 +789,7 @@ namespace TShockAPI
 				{
 					if (displayConsole)
 					{
-						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);	
+						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
 					}
 					else
 					{
@@ -888,7 +828,7 @@ namespace TShockAPI
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
 		public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f,
-									 float number3 = 0f, float number4 = 0f, int number5 = 0)
+			float number3 = 0f, float number4 = 0f, int number5 = 0)
 		{
 			if (RealPlayer && !ConnectionAlive)
 				return;
@@ -896,19 +836,21 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
 
-				public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0)
-				{
-						if (RealPlayer && !ConnectionAlive)
-								return;
+		public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f,
+			float number3 = 0f, float number4 = 0f, int number5 = 0)
+		{
+			if (RealPlayer && !ConnectionAlive)
+				return;
 
-						NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
-				}
+			NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
+		}
 
 		public virtual void SendRawData(byte[] data)
 		{
 			if (!RealPlayer || !ConnectionAlive)
 				return;
-			NetMessage.SendBytes(Netplay.serverSock[Index], data, 0, data.Length, Netplay.serverSock[Index].ServerWriteCallBack, Netplay.serverSock[Index].networkStream);
+
+			Netplay.Clients[Index].Socket.AsyncSend(data, 0, data.Length, Netplay.Clients[Index].ServerWriteCallBack);
 		}
 
 		/// <summary>
@@ -918,12 +860,12 @@ namespace TShockAPI
 		/// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
 		public void AddResponse( string name, Action<object> callback)
 		{
-				if( AwaitingResponse.ContainsKey(name))
-				{
-						AwaitingResponse.Remove(name);
-				}
+			if( AwaitingResponse.ContainsKey(name))
+			{
+				AwaitingResponse.Remove(name);
+			}
 
-				AwaitingResponse.Add(name, callback);
+			AwaitingResponse.Add(name, callback);
 		}
 	}
 
@@ -975,40 +917,41 @@ namespace TShockAPI
 
 	public class TSServerPlayer : TSPlayer
 	{
-				public static string AccountName = "ServerConsole";
+		public static string AccountName = "ServerConsole";
+
 		public TSServerPlayer()
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
-				UserAccountName = AccountName;
+			User = new User{Name = AccountName};
 		}
 
 		public override void SendErrorMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendInfoMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendSuccessMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.Green;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendWarningMessage(string msg)
 		{
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.WriteLine(msg);
-				Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.DarkRed;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 
 		public override void SendMessage(string msg, Color color)
@@ -1084,11 +1027,11 @@ namespace TShockAPI
 		{
 			Main.dayTime = dayTime;
 			Main.time = time;
-			TSPlayer.All.SendData(PacketTypes.TimeSet, "", 0, 0, Main.sunModY, Main.moonModY);
+			TSPlayer.All.SendData(PacketTypes.TimeSet, "", dayTime ? 1 : 0, (int)time, Main.sunModY, Main.moonModY);
 		}
 
 		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
-							 int tileYRange = 50)
+			int tileYRange = 50)
 		{
 			for (int i = 0; i < amount; i++)
 			{
@@ -1129,7 +1072,7 @@ namespace TShockAPI
 
 	public class PlayerData
 	{
-		public NetItem[] inventory = new NetItem[NetItem.maxNetInventory];
+		public NetItem[] inventory = new NetItem[NetItem.MaxInventory];
 		public int health = TShock.ServerSideCharacterConfig.StartingHealth;
 		public int maxHealth = TShock.ServerSideCharacterConfig.StartingHealth;
 		public int mana = TShock.ServerSideCharacterConfig.StartingMana;
@@ -1146,12 +1089,12 @@ namespace TShockAPI
 		public Color? shoeColor;
 		public Color? skinColor;
 		public Color? eyeColor;
-		public BitsByte? hideVisuals;
+		public bool[] hideVisuals;
 		public int questsCompleted;
 
 		public PlayerData(TSPlayer player)
 		{
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
 				this.inventory[i] = new NetItem();
 			}
@@ -1159,28 +1102,18 @@ namespace TShockAPI
 			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
 			{
 				var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
-				StoreSlot(i, item.netID, item.prefix, item.stack);
+				StoreSlot(i, item.NetId, item.PrefixId, item.Stack);
 			}
 		}
 
-		public void StoreSlot(int slot, int netID, int prefix, int stack)
+		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
-			if(slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
+			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
 			{
 				return;
-			}	
-			
-			this.inventory[slot].netID = netID;
-			if (this.inventory[slot].netID != 0)
-			{
-				this.inventory[slot].stack = stack;
-				this.inventory[slot].prefix = prefix;
 			}
-			else
-			{
-				this.inventory[slot].stack = 0;
-				this.inventory[slot].prefix = 0;
-			}
+
+			this.inventory[slot] = new NetItem(netID, stack, prefix);
 		}
 
 		public void CopyCharacter(TSPlayer player)
@@ -1214,75 +1147,40 @@ namespace TShockAPI
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
 			Item[] dye = player.TPlayer.dye;
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			Item[] miscEqups = player.TPlayer.miscEquips;
+			Item[] miscDyes = player.TPlayer.miscDyes;
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
+				if (i < NetItem.InventorySlots)
 				{
-					if (player.TPlayer.inventory[i] != null)
-					{
-						this.inventory[i].netID = inventory[i].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = inventory[i].stack;
-						this.inventory[i].prefix = inventory[i].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					//0-58
+					this.inventory[i] = (NetItem)inventory[i];
 				}
-				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
+				else if (i < NetItem.InventorySlots
+					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
 				{
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
-					if (player.TPlayer.armor[index] != null)
-					{
-						this.inventory[i].netID = armor[index].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = armor[index].stack;
-						this.inventory[i].prefix = armor[index].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					//59-78
+					var index = i - NetItem.InventorySlots;
+					this.inventory[i] = (NetItem)armor[index];
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
+				{
+					//79-88
+					var index = i - (NetItem.MaxInventory -
+						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					this.inventory[i] = (NetItem)dye[index];
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				{
+					//89-93
+					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					this.inventory[i] = (NetItem)miscEqups[index];
 				}
 				else
 				{
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
-					if (player.TPlayer.dye[index] != null)
-					{
-						this.inventory[i].netID = dye[index].netID;
-					}
-					else
-					{
-						this.inventory[i].netID = 0;
-					}
-
-					if (this.inventory[i].netID != 0)
-					{
-						this.inventory[i].stack = dye[index].stack;
-						this.inventory[i].prefix = dye[index].prefix;
-					}
-					else
-					{
-						this.inventory[i].stack = 0;
-						this.inventory[i].prefix = 0;
-					}
+					//93-98
+					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					this.inventory[i] = (NetItem)miscDyes[index];
 				}
 			}
 		}
@@ -1321,128 +1219,132 @@ namespace TShockAPI
 				player.TPlayer.eyeColor = this.eyeColor.Value;
 
 			if (this.hideVisuals != null)
-				player.TPlayer.hideVisual = this.hideVisuals.Value;
+				player.TPlayer.hideVisual = this.hideVisuals;
 			else
-				player.TPlayer.hideVisual.ClearAll();
+				player.TPlayer.hideVisual = new bool[player.TPlayer.hideVisual.Length];
 			
-			for (int i = 0; i < NetItem.maxNetInventory; i++)
+			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots))
+				if (i < NetItem.InventorySlots)
 				{
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.inventory[i].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.inventory[i].netDefaults(0);
-					}
+					//0-58
+					player.TPlayer.inventory[i].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.inventory[i].netID != 0)
 					{
-						player.TPlayer.inventory[i].stack = this.inventory[i].stack;
-						player.TPlayer.inventory[i].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.inventory[i].stack = this.inventory[i].Stack;
+						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;
 					}
 				}
-				else if (i < NetItem.maxNetInventory - NetItem.dyeSlots)
+				else if (i < NetItem.InventorySlots 
+					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
 				{
-					var index = i - (NetItem.maxNetInventory - (NetItem.armorSlots + NetItem.dyeSlots));
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.armor[index].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.armor[index].netDefaults(0);
-					}
+					//59-78
+					var index = i - NetItem.InventorySlots;
+					player.TPlayer.armor[index].netDefaults(this.inventory[i].NetId);
 
 					if (player.TPlayer.armor[index].netID != 0)
 					{
-						player.TPlayer.armor[index].stack = this.inventory[i].stack;
-						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.armor[index].stack = this.inventory[i].Stack;
+						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].PrefixId;
+					}
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
+				{
+					//79-88
+					var index = i - (NetItem.MaxInventory - 
+						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					player.TPlayer.dye[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.dye[index].netID != 0)
+					{
+						player.TPlayer.dye[index].stack = this.inventory[i].Stack;
+						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].PrefixId;
+					}
+				}
+				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				{
+					//89-93
+					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					player.TPlayer.miscEquips[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.miscEquips[index].netID != 0)
+					{
+						player.TPlayer.miscEquips[index].stack = this.inventory[i].Stack;
+						player.TPlayer.miscEquips[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
 				else
 				{
-					var index = i - (NetItem.maxNetInventory - NetItem.dyeSlots);
-					if (this.inventory[i] != null)
-					{
-						player.TPlayer.dye[index].netDefaults(this.inventory[i].netID);
-					}
-					else
-					{
-						player.TPlayer.dye[index].netDefaults(0);
-					}
+					//93-98
+					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					player.TPlayer.miscDyes[index].netDefaults(this.inventory[i].NetId);
 
-					if (player.TPlayer.dye[index].netID != 0)
+					if (player.TPlayer.miscDyes[index].netID != 0)
 					{
-						player.TPlayer.dye[index].stack = this.inventory[i].stack;
-						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].prefix;
+						player.TPlayer.miscDyes[index].stack = this.inventory[i].Stack;
+						player.TPlayer.miscDyes[index].prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
 			}
 
-			for (int k = 0; k < 59; k++)
+			float slot = 0f;
+			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				slot++;
 			}
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+			for (int k = 0; k < NetItem.ArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.DyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix, 0f, 0);
+				slot++;
+			}
+
 			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 
-			for (int k = 0; k < 59; k++)
+			slot = 0f;
+			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].inventory[k].name, player.Index, (float)k, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix, 0f, 0);
+				slot++;
 			}
-
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[0].name, player.Index, 59f, (float)Main.player[player.Index].armor[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[1].name, player.Index, 60f, (float)Main.player[player.Index].armor[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[2].name, player.Index, 61f, (float)Main.player[player.Index].armor[2].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[3].name, player.Index, 62f, (float)Main.player[player.Index].armor[3].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[4].name, player.Index, 63f, (float)Main.player[player.Index].armor[4].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[5].name, player.Index, 64f, (float)Main.player[player.Index].armor[5].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[6].name, player.Index, 65f, (float)Main.player[player.Index].armor[6].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[7].name, player.Index, 66f, (float)Main.player[player.Index].armor[7].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[8].name, player.Index, 67f, (float)Main.player[player.Index].armor[8].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[9].name, player.Index, 68f, (float)Main.player[player.Index].armor[9].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[10].name, player.Index, 69f, (float)Main.player[player.Index].armor[10].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[11].name, player.Index, 70f, (float)Main.player[player.Index].armor[11].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[12].name, player.Index, 71f, (float)Main.player[player.Index].armor[12].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[13].name, player.Index, 72f, (float)Main.player[player.Index].armor[13].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[14].name, player.Index, 73f, (float)Main.player[player.Index].armor[14].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[15].name, player.Index, 74f, (float)Main.player[player.Index].armor[15].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[0].name, player.Index, 75f, (float)Main.player[player.Index].dye[0].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[1].name, player.Index, 76f, (float)Main.player[player.Index].dye[1].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[2].name, player.Index, 77f, (float)Main.player[player.Index].dye[2].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[3].name, player.Index, 78f, (float)Main.player[player.Index].dye[3].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[4].name, player.Index, 79f, (float)Main.player[player.Index].dye[4].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[5].name, player.Index, 80f, (float)Main.player[player.Index].dye[5].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[6].name, player.Index, 81f, (float)Main.player[player.Index].dye[6].prefix, 0f, 0);
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[7].name, player.Index, 82f, (float)Main.player[player.Index].dye[7].prefix, 0f, 0);
+			for (int k = 0; k < NetItem.ArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.DyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix, 0f, 0);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix, 0f, 0);
+				slot++;
+			}
 			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
@@ -1456,51 +1358,6 @@ namespace TShockAPI
 			NetMessage.SendData(76, -1, -1, "", player.Index);
 
 			NetMessage.SendData(39, player.Index, -1, "", 400);
-		}
-	}
-
-	public class NetItem
-	{
-		public static readonly int maxNetInventory = 83;
-		public static readonly int armorSlots = 16;
-		public static readonly int dyeSlots = 8;
-		public int netID;
-		public int stack;
-		public int prefix;
-		
-		public static string ToString(NetItem[] inventory)
-		{
-			StringBuilder items = new StringBuilder();
-			for (int i = 0; i < maxNetInventory; i++)
-			{
-				items.Append(inventory[i].netID).Append(",");
-				if (inventory[i].netID != 0)
-					items.Append(inventory[i].stack).Append(",").Append(inventory[i].prefix).Append("~");
-				else
-					items.Append("0,0~");
-			}
-			return items.ToString(0, items.Length - 1);
-		}
-
-		public static NetItem[] Parse(string data)
-		{
-			NetItem[] inventory = new NetItem[maxNetInventory];
-			int i;
-			for (i = 0; i < maxNetInventory; i++)
-			{
-				inventory[i] = new NetItem();
-			}
-			string[] items = data.Split('~');
-			i = 0;
-			foreach (string item in items)
-			{
-				string[] idata = item.Split(',');
-				inventory[i].netID = int.Parse(idata[0]);
-				inventory[i].stack = int.Parse(idata[1]);
-				inventory[i].prefix = int.Parse(idata[2]);
-				i++;
-			}
-			return inventory;
 		}
 	}
 }

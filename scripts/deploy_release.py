@@ -9,29 +9,40 @@ import urllib
 create_release_url = 'https://api.github.com/repos/NyxStudios/TShock/releases'
 config_doc_get_url = 'https://tshock.atlassian.net/wiki/rest/api/content/%s?expand=body.storage,version,ancestors'
 config_doc_put_url = 'https://tshock.atlassian.net/wiki/rest/api/content/%s'
+conversion_page_url = 'https://tshock.atlassian.net/wiki/rest/api/contentbody/convert/storage'
 
 config_desc_page = "3047451"
 ssc_desc_page = "39845891"
 permissions_desc_page = "3047433"
 rest_desc_page = "40632322"
 
-def get_confluence_page(id):
+def convert_view_to_storage(page):
+    print("Converting " + str(page['id']))
     confluence_header = {"Content-Type":"application/json"}
-    r = requests.get(config_doc_get_url % id, auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header)
+    r = requests.post(conversion_page_url, auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header, data=json.dumps(page['body']['storage']), verify=True)
+    page['body']['storage'] = json.loads(r.text)
+    return page
+
+def get_confluence_page(id):
+    print("Fetching page " + str(id))
+    confluence_header = {"Content-Type":"application/json"}
+    r = requests.get(config_doc_get_url % id, auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header, verify=True)
     page = json.loads(r.text)
     return page
 
 def put_confluence_page(page):
+    print("Storing page " + str(page['id']))
     confluence_header = {"Content-Type":"application/json"}
-    page['version']['number'] = page['version']['number'] + 1    
-    r = requests.put(config_doc_put_url % page['id'], auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header, data=json.dumps(page))
+    page['version']['number'] = page['version']['number'] + 1
+    page = convert_view_to_storage(page)
+    r = requests.put(config_doc_put_url % page['id'], auth=(os.environ["bamboo_confluence_username"], os.environ["bamboo_confluence_password"]), headers=confluence_header, data=json.dumps(page), verify=True)
     page = json.loads(r.text)
     return page
 
 def update_confluence_page(id, content):
     page = get_confluence_page(id)
     page['body']['storage']['value'] = content
-    page['body']['storage']['representation'] = 'storage'
+    page['body']['storage']['representation'] = 'wiki'
     put_confluence_page(page)
     
 def read_and_update_config_on_confluence(id, file):
@@ -40,11 +51,14 @@ def read_and_update_config_on_confluence(id, file):
     with open(file, "r") as f:
         line = f.readline()
         while (line is not ""):
-            if (config is not ""):
-                config = config + '<br />'
             config = config + line
             line = f.readline()
     #update confluence page
+    config = config.replace("{", "\{")
+    config = config.replace("}", "\}")
+    config = config.replace("[", "\[")
+    config = config.replace("]", "\]")
+    config = config.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;")
     update_confluence_page(id, config)
     
 #Load variables from ENV, which are put there by the bamboo build.
@@ -84,7 +98,6 @@ upload_headers = {'Authorization': 'token ' + token, 'Content-Type':'application
 
 #upload the binary, resulting in a complete binary
 r = requests.post(upload_url, data=open(release_name, 'rb'), headers = upload_headers, verify=False)
-
 
 read_and_update_config_on_confluence(config_desc_page, "ConfigDescriptions.txt")
 read_and_update_config_on_confluence(ssc_desc_page, "ServerSideConfigDescriptions.txt")

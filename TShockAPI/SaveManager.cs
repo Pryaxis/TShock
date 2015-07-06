@@ -17,9 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading;
 using Terraria;
+using Terraria.IO;
 using TerrariaApi.Server;
 
 namespace TShockAPI
@@ -125,10 +125,10 @@ namespace TShockAPI
 								if (task.direct)
 								{
 									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.RealSaveWorld(task.resetTime);
+									WorldFile.saveWorld(WorldFile.IsWorldOnCloud, task.resetTime);
 								}
 								else
-									WorldFile.saveWorld(task.resetTime);
+									WorldFile.saveWorld(WorldFile.IsWorldOnCloud, task.resetTime);
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}

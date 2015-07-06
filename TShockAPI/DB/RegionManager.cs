@@ -334,6 +334,12 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Removes an allowed user from a region
+		/// </summary>
+		/// <param name="regionName">Name of the region to modify</param>
+		/// <param name="userName">Username to remove</param>
+		/// <returns>true if removed successfully</returns>
 		public bool RemoveUser(string regionName, string userName)
 		{
 			Region r = GetRegionByName(regionName);
@@ -349,6 +355,12 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Adds a user to a region's allowed user list
+		/// </summary>
+		/// <param name="regionName">Name of the region to modify</param>
+		/// <param name="userName">Username to add</param>
+		/// <returns>true if added successfully</returns>
 		public bool AddNewUser(string regionName, string userName)
 		{
 			try
@@ -615,7 +627,7 @@ namespace TShockAPI.DB
 				return true;
 			}
 
-			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName;
+			return AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
 		}
 
 		public void setAllowedIDs(String ids)

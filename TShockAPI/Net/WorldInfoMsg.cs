@@ -52,6 +52,32 @@ namespace TShockAPI.Net
 		SnowMoon = 128
 	}
 
+	[Flags]
+	public enum BossFlags3 : byte
+	{
+		None = 0,
+		ExpertMode = 1,
+		FastForwardTime = 2,
+		SlimeRain = 4,
+		DownedKingSlime = 8,
+		DownedQueenBee = 16,
+		DownedFishron = 32,
+		DownedMartians = 64,
+		DownedAncientCultist = 128
+	}
+
+	[Flags]
+	public enum BossFlags4 : byte
+	{
+		None = 0,
+		DownedMoonLord = 1,
+		DownedHalloweenKing = 2,
+		DownedHalloweenTree = 4,
+		DownedChristmasIceQueen = 8,
+		DownedChristmasSantank = 16,
+		DownedChristmasTree = 32
+	}
+
 	public class WorldInfoMsg : BaseMsg
 	{
 		public int Time { get; set; }
@@ -96,6 +122,8 @@ namespace TShockAPI.Net
 		public byte NumberOfClouds { get; set; }
 		public BossFlags BossFlags { get; set; }
 		public BossFlags2 BossFlags2 { get; set; }
+		public BossFlags3 BossFlags3 { get; set; }
+		public BossFlags4 BossFlags4 { get; set; }
 		public float Rain { get; set; }
 		public string WorldName { get; set; }
 
@@ -171,6 +199,27 @@ namespace TShockAPI.Net
 				(BossFlags2 & BossFlags2.PumpkinMoon) == BossFlags2.PumpkinMoon,
 				(BossFlags2 & BossFlags2.SnowMoon) == BossFlags2.SnowMoon);
 			writer.Write(bosses2);
+
+			BitsByte bosses3 = new BitsByte((BossFlags3 & BossFlags3.ExpertMode) == BossFlags3.ExpertMode,
+				(BossFlags3 & BossFlags3.FastForwardTime) == BossFlags3.FastForwardTime,
+				(BossFlags3 & BossFlags3.SlimeRain) == BossFlags3.SlimeRain,
+				(BossFlags3 & BossFlags3.DownedKingSlime) == BossFlags3.DownedKingSlime,
+				(BossFlags3 & BossFlags3.DownedQueenBee) == BossFlags3.DownedQueenBee,
+				(BossFlags3 & BossFlags3.DownedFishron) == BossFlags3.DownedFishron,
+				(BossFlags3 & BossFlags3.DownedMartians) == BossFlags3.DownedMartians,
+				(BossFlags3 & BossFlags3.DownedAncientCultist) == BossFlags3.DownedAncientCultist);
+			writer.Write(bosses3);
+
+			BitsByte bosses4 = new BitsByte((BossFlags4 & BossFlags4.DownedMoonLord) == BossFlags4.DownedMoonLord,
+				(BossFlags4 & BossFlags4.DownedHalloweenKing) == BossFlags4.DownedHalloweenKing,
+				(BossFlags4 & BossFlags4.DownedHalloweenTree) == BossFlags4.DownedHalloweenTree,
+				(BossFlags4 & BossFlags4.DownedChristmasIceQueen) == BossFlags4.DownedChristmasIceQueen,
+				(BossFlags4 & BossFlags4.DownedChristmasSantank) == BossFlags4.DownedChristmasSantank,
+				(BossFlags4 & BossFlags4.DownedChristmasTree) == BossFlags4.DownedChristmasTree);
+			writer.Write(bosses4);
+
+			writer.Write((sbyte)Main.invasionType);
+			writer.Write(Main.LobbyId);
 		}
 	}
 }

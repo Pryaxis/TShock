@@ -1,3 +1,6 @@
+# Sublime Text #
+*.sublime-*
+
 # Compiled source #
 ###################
 *.com
@@ -37,8 +40,9 @@ ehthumbs.db
 Icon?
 Thumbs.db
 
-# Visual Studio shit Motherfucka #
+# Visual Studio #
 ##################################
+*.userprefs
 *.suo
 *.sdf
 *.opensdf

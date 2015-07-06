@@ -17,37 +17,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.CodeDom.Compiler;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
+using BCrypt.Net;
+using System.Security.Cryptography;
 
 namespace TShockAPI.DB
 {
+	/// <summary>UserManager - Methods for dealing with database users and other user functionality within TShock.</summary>
 	public class UserManager
 	{
-		private IDbConnection database;
+		/// <summary>database - The database object to use for connections.</summary>
+		private IDbConnection _database;
 
+		/// <summary>Creates a UserManager object. During instantiation, this method will verify the table structure against the format below.</summary>
+		/// <param name="db">The database to connect to.</param>
+		/// <returns>A UserManager object.</returns>
 		public UserManager(IDbConnection db)
 		{
-			database = db;
+			_database = db;
 
 			var table = new SqlTable("Users",
-			                         new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
-			                         new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
-			                         new SqlColumn("Password", MySqlDbType.VarChar, 128),
-                                     new SqlColumn("UUID", MySqlDbType.VarChar, 128),
-			                         new SqlColumn("Usergroup", MySqlDbType.Text),
-									 new SqlColumn("Registered", MySqlDbType.Text),
-                                     new SqlColumn("LastAccessed", MySqlDbType.Text),
-                                     new SqlColumn("KnownIPs", MySqlDbType.Text)
+				new SqlColumn("ID", MySqlDbType.Int32) {Primary = true, AutoIncrement = true},
+				new SqlColumn("Username", MySqlDbType.VarChar, 32) {Unique = true},
+				new SqlColumn("Password", MySqlDbType.VarChar, 128),
+				new SqlColumn("UUID", MySqlDbType.VarChar, 128),
+				new SqlColumn("Usergroup", MySqlDbType.Text),
+				new SqlColumn("Registered", MySqlDbType.Text),
+				new SqlColumn("LastAccessed", MySqlDbType.Text),
+				new SqlColumn("KnownIPs", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
-			                                  db.GetSqlType() == SqlType.Sqlite
-			                                  	? (IQueryBuilder) new SqliteQueryCreator()
-			                                  	: new MysqlQueryCreator());
+				db.GetSqlType() == SqlType.Sqlite
+				? (IQueryBuilder) new SqliteQueryCreator()
+				: new MysqlQueryCreator());
 			creator.EnsureTableStructure(table);
 		}
 
@@ -63,8 +70,8 @@ namespace TShockAPI.DB
 			int ret;
 			try
 			{
-				ret = database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
-								   TShock.Utils.HashPassword(user.Password), user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
+				ret = _database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
+					user.Password, user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
@@ -89,7 +96,7 @@ namespace TShockAPI.DB
 			try
 			{
 				var tempuser = GetUser(user);
-				int affected = database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
+				int affected = _database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
 
 				if (affected < 1)
 					throw new UserNotExistException(user.Name);
@@ -106,14 +113,16 @@ namespace TShockAPI.DB
 		/// Sets the Hashed Password for a given username
 		/// </summary>
 		/// <param name="user">User user</param>
-		/// <param name="group">string password</param>
+		/// <param name="password">string password</param>
 		public void SetUserPassword(User user, string password)
 		{
 			try
 			{
+				user.CreateBCryptHash(password);
+
 				if (
-					database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", TShock.Utils.HashPassword(password),
-					               user.Name) == 0)
+					_database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
+						user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}
 			catch (Exception ex)
@@ -126,13 +135,13 @@ namespace TShockAPI.DB
 		/// Sets the UUID for a given username
 		/// </summary>
 		/// <param name="user">User user</param>
-		/// <param name="group">string uuid</param>
+		/// <param name="uuid">string uuid</param>
 		public void SetUserUUID(User user, string uuid)
 		{
 			try
 			{
 				if (
-					database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
+					_database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
 								   user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 			}
@@ -155,11 +164,11 @@ namespace TShockAPI.DB
 				if (null == grp)
 					throw new GroupNotExistsException(group);
 
-				if (database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
+				if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
 					throw new UserNotExistException(user.Name);
 				
 				// Update player group reference for any logged in player
-				foreach (var player in TShock.Players.Where(p => null != p && p.UserAccountName == user.Name))
+				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.User.Name == user.Name))
 				{
 					player.Group = grp;
 				}
@@ -170,24 +179,29 @@ namespace TShockAPI.DB
 			}
 		}
 
-	    public void UpdateLogin(User user)
-	    {
-            try
-            {
-                if (database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
-                    throw new UserNotExistException(user.Name);
-            }
-            catch (Exception ex)
-            {
-                throw new UserManagerException("UpdateLogin SQL returned an error", ex);
-            }
-	    }
+		/// <summary>Updates the last accessed time for a database user to the current time.</summary>
+		/// <param name="user">The user object to modify.</param>
+		public void UpdateLogin(User user)
+		{
+			try
+			{
+				if (_database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
+					throw new UserNotExistException(user.Name);
+			}
+			catch (Exception ex)
+			{
+				throw new UserManagerException("UpdateLogin SQL returned an error", ex);
+			}
+		}
 
+		/// <summary>Gets the database ID of a given user object from the database.</summary>
+		/// <param name="username">The username of the user to query for.</param>
+		/// <returns>The user's ID</returns>
 		public int GetUserID(string username)
 		{
 			try
 			{
-				using (var reader = database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
+				using (var reader = _database.QueryReader("SELECT * FROM Users WHERE Username=@0", username))
 				{
 					if (reader.Read())
 					{
@@ -202,6 +216,9 @@ namespace TShockAPI.DB
 			return -1;
 		}
 
+		/// <summary>Gets a user object by name.</summary>
+		/// <param name="name">The user's name.</param>
+		/// <returns>The user object returned from the search.</returns>
 		public User GetUserByName(string name)
 		{
 			try
@@ -214,6 +231,9 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>Gets a user object by their user ID.</summary>
+		/// <param name="id">The user's ID.</param>
+		/// <returns>The user object returned from the search.</returns>
 		public User GetUserByID(int id)
 		{
 			try
@@ -226,6 +246,9 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>Gets a user object by a user object.</summary>
+		/// <param name="user">The user object to search by.</param>
+		/// <returns>The user object that is returned from the search.</returns>
 		public User GetUser(User user)
 		{
 			bool multiple = false;
@@ -247,7 +270,7 @@ namespace TShockAPI.DB
 
 			try
 			{
-				using (var result = database.QueryReader(query, arg))
+				using (var result = _database.QueryReader(query, arg))
 				{
 					if (result.Read())
 					{
@@ -269,12 +292,14 @@ namespace TShockAPI.DB
 			throw new UserNotExistException(user.Name);
 		}
 
+		/// <summary>Gets all users from the database.</summary>
+		/// <returns>The users from the database.</returns>
 		public List<User> GetUsers()
 		{
 			try
 			{
 				List<User> users = new List<User>();
-				using (var reader = database.QueryReader("SELECT * FROM Users"))
+				using (var reader = _database.QueryReader("SELECT * FROM Users"))
 				{
 					while (reader.Read())
 					{
@@ -290,89 +315,329 @@ namespace TShockAPI.DB
 			return null;
 		}
 
+		/// <summary>
+		/// Gets all users from the database with a username that starts with or contains <see cref="username"/>
+		/// </summary>
+		/// <param name="username">Rough username search. "n" will match "n", "na", "nam", "name", etc</param>
+		/// <param name="notAtStart">If <see cref="username"/> is not the first part of the username. If true then "name" would match "name", "username", "wordsnamewords", etc</param>
+		/// <returns>Matching users or null if exception is thrown</returns>
+		public List<User> GetUsersByName(string username, bool notAtStart = false)
+		{
+			try
+			{
+				List<User> users = new List<User>();
+				string search = notAtStart ? string.Format("%{0}%", username) : string.Format("{0}%", username);
+				using (var reader = _database.QueryReader("SELECT * FROM Users WHERE Username LIKE @0",
+					search))
+				{
+					while (reader.Read())
+					{
+						users.Add(LoadUserFromResult(new User(), reader));
+					}
+				}
+				return users;
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
+		/// <summary>Fills out the fields of a User object with the results from a QueryResult object.</summary>
+		/// <param name="user">The user to add data to.</param>
+		/// <param name="result">The QueryResult object to add data from.</param>
+		/// <returns>The 'filled out' user object.</returns>
 		private User LoadUserFromResult(User user, QueryResult result)
 		{
 			user.ID = result.Get<int>("ID");
 			user.Group = result.Get<string>("Usergroup");
 			user.Password = result.Get<string>("Password");
-            user.UUID = result.Get<string>("UUID");
+			user.UUID = result.Get<string>("UUID");
 			user.Name = result.Get<string>("Username");
 			user.Registered = result.Get<string>("Registered");
-            user.LastAccessed = result.Get<string>("LastAccessed");
-            user.KnownIps = result.Get<string>("KnownIps");
+			user.LastAccessed = result.Get<string>("LastAccessed");
+			user.KnownIps = result.Get<string>("KnownIps");
 			return user;
 		}
 	}
 
+	/// <summary>A database user.</summary>
 	public class User
 	{
+		/// <summary>The database ID of the user.</summary>
 		public int ID { get; set; }
-		public string Name { get; set; }
-		public string Password { get; set; }
-        public string UUID { get; set; }
-		public string Group { get; set; }
-		public string Registered { get; set; }
-        public string LastAccessed { get; set; }
-        public string KnownIps { get; set; }
 
+		/// <summary>The user's name.</summary>
+		public string Name { get; set; }
+
+		/// <summary>The hashed password for the user.</summary>
+		public string Password { get; internal set; }
+
+		/// <summary>The user's saved Univerally Unique Identifier token.</summary>
+		public string UUID { get; set; }
+		
+		/// <summary>The group object that the user is a part of.</summary>
+		public string Group { get; set; }
+
+		/// <summary>The unix epoch corresponding to the registration date of the user.</summary>
+		public string Registered { get; set; }
+
+		/// <summary>The unix epoch corresponding to the last access date of the user.</summary>
+		public string LastAccessed { get; set; }
+
+		/// <summary>A JSON serialized list of known IP addresses for a user.</summary>
+		public string KnownIps { get; set; }
+
+		/// <summary>Constructor for the user object, assuming you define everything yourself.</summary>
+		/// <param name="name">The user's name.</param>
+		/// <param name="pass">The user's password hash.</param>
+		/// <param name="uuid">The user's UUID.</param>
+		/// <param name="group">The user's group name.</param>
+		/// <param name="registered">The unix epoch for the registration date.</param>
+		/// <param name="last">The unix epoch for the last access date.</param>
+		/// <param name="known">The known IPs for the user, serialized as a JSON object</param>
+		/// <returns>A completed user object.</returns>
 		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
-            UUID = uuid;
+			UUID = uuid;
 			Group = group;
 			Registered = registered;
-		    LastAccessed = last;
-		    KnownIps = known;
+			LastAccessed = last;
+			KnownIps = known;
 		}
 
+		/// <summary>Default constructor for a user object; holds no data.</summary>
+		/// <returns>A user object.</returns>
 		public User()
 		{
 			Name = "";
 			Password = "";
-            UUID = "";
+			UUID = "";
 			Group = "";
 			Registered = "";
-            LastAccessed = "";
-            KnownIps = "";
+			LastAccessed = "";
+			KnownIps = "";
 		}
+
+		/// <summary>
+		/// Verifies if a password matches the one stored in the database.
+		/// If the password is stored in an unsafe hashing algorithm, it will be converted to BCrypt.
+		/// If the password is stored using BCrypt, it will be re-saved if the work factor in the config
+		/// is greater than the existing work factor with the new work factor.
+		/// </summary>
+		/// <param name="password">The password to check against the user object.</param>
+		/// <returns>bool true, if the password matched, or false, if it didn't.</returns>
+		public bool VerifyPassword(string password)
+		{
+			try
+			{
+				if (BCrypt.Net.BCrypt.Verify(password, Password)) 
+				{
+					// If necessary, perform an upgrade to the highest work factor.
+					UpgradePasswordWorkFactor(password);
+					return true;
+				}
+			} 
+			catch (SaltParseException)
+			{
+				if (String.Equals(HashPassword(password), Password, StringComparison.InvariantCultureIgnoreCase))
+				{
+					// Return true to keep blank passwords working but don't convert them to bcrypt.
+					if (Password == "non-existant password") {
+						return true;
+					}
+					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
+					UpgradePasswordToBCrypt(password);
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
+		/// <param name="password">The raw user password (unhashed) to upgrade</param>
+		protected void UpgradePasswordToBCrypt(string password)
+		{
+			// Save the old password, in the event that we have to revert changes.
+			string oldpassword = Password;
+
+			try
+			{
+				TShock.Users.SetUserPassword(this, password);
+			}
+			catch (UserManagerException e)
+			{
+				TShock.Log.ConsoleError(e.ToString());
+				Password = oldpassword; // Revert changes
+			}
+		}
+
+		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
+		/// <param name="password">The raw user password (unhashed) to upgrade</param>
+		protected void UpgradePasswordWorkFactor(string password)
+		{
+			// If the destination work factor is not greater, we won't upgrade it or re-hash it
+			int currentWorkFactor;
+			try
+			{
+				currentWorkFactor = Int32.Parse((Password.Split('$')[2]));
+			}
+			catch (FormatException)
+			{
+				TShock.Log.ConsoleError("Warning: Not upgrading work factor because bcrypt hash in an invalid format.");
+				return;
+			}
+
+			if (currentWorkFactor < TShock.Config.BCryptWorkFactor)
+			{
+				try
+				{
+					TShock.Users.SetUserPassword(this, password);
+				}
+				catch (UserManagerException e)
+				{
+					TShock.Log.ConsoleError(e.ToString());
+				}
+			}
+		}
+
+		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <param name="password">The plain text password to hash</param>
+		public void CreateBCryptHash(string password)
+		{
+			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			{
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+			}
+			try
+			{
+				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
+				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
+			}
+		}
+
+		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <param name="password">The plain text password to hash</param>
+		/// <param name="workFactor">The work factor to use in generating the password hash</param>
+		public void CreateBCryptHash(string password, int workFactor)
+		{
+			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			{
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+			}
+			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
+		}
+
+		/// <summary>
+		/// A dictionary of hashing algorithms and an implementation object.
+		/// </summary>
+		protected readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
+			{
+					{"sha512", () => new SHA512Managed()},
+					{"sha256", () => new SHA256Managed()},
+					{"md5", () => new MD5Cng()},
+					{"sha512-xp", () => SHA512.Create()},
+					{"sha256-xp", () => SHA256.Create()},
+					{"md5-xp", () => MD5.Create()},
+			};
+
+		/// <summary>
+		/// Returns a hashed string for a given string based on the config file's hash algo
+		/// </summary>
+		/// <param name="bytes">bytes to hash</param>
+		/// <returns>string hash</returns>
+		protected string HashPassword(byte[] bytes)
+		{
+			if (bytes == null)
+				throw new NullReferenceException("bytes");
+			Func<HashAlgorithm> func;
+			if (!HashTypes.TryGetValue(TShock.Config.HashAlgorithm.ToLower(), out func))
+				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.HashAlgorithm.ToLower()));
+
+			using (var hash = func())
+			{
+				var ret = hash.ComputeHash(bytes);
+				return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
+			}
+		}
+
+		/// <summary>
+		/// Returns a hashed string for a given string based on the config file's hash algo
+		/// </summary>
+		/// <param name="password">string to hash</param>
+		/// <returns>string hash</returns>
+		protected string HashPassword(string password)
+		{
+			if (string.IsNullOrEmpty(password) && Password == "non-existant password")
+				return "non-existant password";
+			return HashPassword(Encoding.UTF8.GetBytes(password));
+		}
+
 	}
 
+	/// <summary>UserManagerException - An exception generated by the user manager.</summary>
 	[Serializable]
 	public class UserManagerException : Exception
 	{
+		/// <summary>Creates a new UserManagerException object.</summary>
+		/// <param name="message">The message for the object.</param>
+		/// <returns>A new UserManagerException object.</returns>
 		public UserManagerException(string message)
 			: base(message)
 		{
 		}
 
+		/// <summary>Creates a new UserManagerObject with an internal exception.</summary>
+		/// <param name="message">The message for the object.</param>
+		/// <param name="inner">The inner exception for the object.</param>
+		/// <returns>A new UserManagerException with a defined inner exception.</returns>
 		public UserManagerException(string message, Exception inner)
 			: base(message, inner)
 		{
 		}
 	}
 
+	/// <summary>A UserExistsException object, used when a user already exists when attempting to create a new one.</summary>
 	[Serializable]
 	public class UserExistsException : UserManagerException
 	{
+		/// <summary>Creates a new UserExistsException object.</summary>
+		/// <param name="name">The name of the user that already exists.</param>
+		/// <returns>A UserExistsException object with the user's name passed in the message.</returns>
 		public UserExistsException(string name)
 			: base("User '" + name + "' already exists")
 		{
 		}
 	}
 
+	/// <summary>A UserNotExistException, used when a user does not exist and a query failed as a result of it.</summary>
 	[Serializable]
 	public class UserNotExistException : UserManagerException
 	{
+		/// <summary>Creates a new UserNotExistException object, with the user's name in the message.</summary>
+		/// <param name="name">The user's name to be pasesd in the message.</param>
+		/// <returns>A new UserNotExistException object with a message containing the user's name that does not exist.</returns>
 		public UserNotExistException(string name)
 			: base("User '" + name + "' does not exist")
 		{
 		}
 	}
 
+	/// <summary>A GroupNotExistsException, used when a group does not exist.</summary>
 	[Serializable]
 	public class GroupNotExistsException : UserManagerException
 	{
+		/// <summary>Creates a new GroupNotExistsException object with the group's name in the message.</summary>
+		/// <param name="group">The group name.</param>
+		/// <returns>A new GroupNotExistsException with the group that does not exist's name in the message.</returns>
 		public GroupNotExistsException(string group)
 			: base("Group '" + group + "' does not exist")
 		{
