@@ -453,6 +453,10 @@ namespace TShockAPI
 			});
 			#endregion
 			#region World Commands
+			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert")
+			{
+					HelpText = "Toggles expert mode."
+			});
 			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
 				HelpText = "Toggles build protection."
@@ -1963,6 +1967,13 @@ namespace TShockAPI
 				NetMessage.SendAnglerQuest();
 				args.Player.SendSuccessMessage("Cleared all users from the angler quest completion list for today.");
 			}
+		}
+
+		private static void ToggleExpert(CommandArgs args)
+		{
+			Main.expertMode = !Main.expertMode;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
+			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
 
 		private static void Hardmode(CommandArgs args)
