@@ -2,7 +2,13 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Unreleased (slated for 5.0)
+## Unreleased
+
+* Fixed a bug where /user group failing would output no error. (@nicatronTg)
+* Fixed a bug where /user group would fail. @(Enerdy)
+* Added the ability to disable backup autosave messages. (@nicatronTg)
+
+## TShock 4.3.0.0
 
 * API: Modifed NetItem so that it's actually useful. (@MarioE)
 * Updated prebuilts (SQLite, JSON, MySQL) to latest versions. (@nicatronTg)
@@ -19,3 +25,5 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Deprecated ```Utils.HashPassword``` and related password hashing functions as those are no longer needed for plugin access. (@nicatronTg)
 * Fixed ```UseServerName``` config option so that it correctly sends the config server name any time that Main.WorldName is used. (@Olink)
 * Fixed a bug where people could ban themselves. (@nicatronTg)
+* Fixed a bug where banning a player who never logged in caused problems. (@nicatronTg)
+* Terraria 1.3.0.3 support.

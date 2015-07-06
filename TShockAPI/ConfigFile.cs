@@ -436,6 +436,8 @@ namespace TShockAPI
 		[Description("Enable the DCU. Very dangerous; can destroy world without consequence.")] public bool
 			VeryDangerousDoNotChangeEnableDrillContainmentUnit = false;
 
+		[Description("Show backup autosave messages.")] public bool ShowBackupAutosaveMessages = true;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>
