@@ -2,7 +2,7 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Unreleased
+## TShock 4.3.0.1
 
 * Fixed a bug where /user group failing would output no error. (@nicatronTg)
 * Fixed a bug where /user group would fail. @(Enerdy)
@@ -12,6 +12,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * DisableTombstones now works properly with the new golden gravestones. (@Enerdy)
 * REST module now properly catches exceptions during Start(). (@Patrikkk)
 * Added /expert command to toggle expert mode. (@WhiteXZ)
+* Fixed pirate invasions. (@patrik)
+* Fixed worldinfo packet. (@WhiteXZ)
+* Fixed server passwords. (@Enerdy)
 
 ## TShock 4.3.0.0
 
