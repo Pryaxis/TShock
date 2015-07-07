@@ -2684,7 +2684,8 @@ namespace TShockAPI
 				{
 					bucket = 3;
 				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3031)
+				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3031 ||
+					args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3032)
 				{
 					bucket = 4;
 				}
