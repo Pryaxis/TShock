@@ -668,6 +668,11 @@ namespace TShockAPI
 			ComputeMaxStyles();
 			FixChestStacks();
 
+			if (Config.UseServerName)
+			{
+				Main.worldName = Config.ServerName;
+			}
+
 			UpdateManager = new UpdateManager();
 			StatTracker.Initialize();
 		}
@@ -1377,136 +1382,7 @@ namespace TShockAPI
 		/// <param name="e">e - The SendDataEventArgs object.</param>
 		private void NetHooks_SendData(SendDataEventArgs e)
 		{
-			/*if (e.MsgId == PacketTypes.Disconnect)
-			{
-				Action<RemoteClient, string> disconnect = (client, str) =>
-					{
-						if (client == null || !client.IsActive || client.Socket.IsConnected())
-							return;
-						using (var ms = new MemoryStream())
-						{
-							var msg = new DisconnectMsg() { Reason = str };
-							msg.PackFull(ms);
-							client.Socket.AsyncSend(ms.ToArray(), 0, (int)ms.Length, client.ServerWriteCallBack);
-							client.Socket.Close();
-						}
-					};
-
-				if (e.remoteClient != -1)
-				{
-					disconnect(Netplay.Clients[e.remoteClient], e.text);
-				}
-				else
-				{
-					for (int i = 0; i < Netplay.Clients.Length; i++)
-					{
-						if (e.ignoreClient != -1 && e.ignoreClient == i)
-							continue;
-
-						disconnect(Netplay.Clients[i], e.text);
-					}
-				}
-				e.Handled = true;
-				return;
-			}
-			else */if (e.MsgId == PacketTypes.WorldInfo)
-			{
-				using (var ms = new MemoryStream())
-				{
-					var msg = new WorldInfoMsg
-					{
-						Time = (int)Main.time,
-						DayTime = Main.dayTime,
-						MoonPhase = (byte)Main.moonPhase,
-						BloodMoon = Main.bloodMoon,
-						Eclipse = Main.eclipse,
-						MaxTilesX = (short)Main.maxTilesX,
-						MaxTilesY = (short)Main.maxTilesY,
-						SpawnX = (short)Main.spawnTileX,
-						SpawnY = (short)Main.spawnTileY,
-						WorldSurface = (short)Main.worldSurface,
-						RockLayer = (short)Main.rockLayer,
-						//Sending a fake world id causes the client to not be able to find a stored spawnx/y.
-						//This fixes the bed spawn point bug. With a fake world id it wont be able to find the bed spawn.
-						WorldID = Main.worldID,
-						MoonType = (byte)Main.moonType,
-						TreeX0 = Main.treeX[0],
-						TreeX1 = Main.treeX[1],
-						TreeX2 = Main.treeX[2],
-						TreeStyle0 = (byte)Main.treeStyle[0],
-						TreeStyle1 = (byte)Main.treeStyle[1],
-						TreeStyle2 = (byte)Main.treeStyle[2],
-						TreeStyle3 = (byte)Main.treeStyle[3],
-						CaveBackX0 = Main.caveBackX[0],
-						CaveBackX1 = Main.caveBackX[1],
-						CaveBackX2 = Main.caveBackX[2],
-						CaveBackStyle0 = (byte)Main.caveBackStyle[0],
-						CaveBackStyle1 = (byte)Main.caveBackStyle[1],
-						CaveBackStyle2 = (byte)Main.caveBackStyle[2],
-						CaveBackStyle3 = (byte)Main.caveBackStyle[3],
-						SetBG0 = (byte)WorldGen.treeBG,
-						SetBG1 = (byte)WorldGen.corruptBG,
-						SetBG2 = (byte)WorldGen.jungleBG,
-						SetBG3 = (byte)WorldGen.snowBG,
-						SetBG4 = (byte)WorldGen.hallowBG,
-						SetBG5 = (byte)WorldGen.crimsonBG,
-						SetBG6 = (byte)WorldGen.desertBG,
-						SetBG7 = (byte)WorldGen.oceanBG,
-						IceBackStyle = (byte)Main.iceBackStyle,
-						JungleBackStyle = (byte)Main.jungleBackStyle,
-						HellBackStyle = (byte)Main.hellBackStyle,
-						WindSpeed = Main.windSpeed,
-						NumberOfClouds = (byte)Main.numClouds,
-						BossFlags = (WorldGen.shadowOrbSmashed ? BossFlags.OrbSmashed : BossFlags.None) |
-									(NPC.downedBoss1 ? BossFlags.DownedBoss1 : BossFlags.None) |
-									(NPC.downedBoss2 ? BossFlags.DownedBoss2 : BossFlags.None) |
-									(NPC.downedBoss3 ? BossFlags.DownedBoss3 : BossFlags.None) |
-									(Main.hardMode ? BossFlags.HardMode : BossFlags.None) |
-									(NPC.downedClown ? BossFlags.DownedClown : BossFlags.None) |
-									(Main.ServerSideCharacter ? BossFlags.ServerSideCharacter : BossFlags.None) |
-									(NPC.downedPlantBoss ? BossFlags.DownedPlantBoss : BossFlags.None),
-						BossFlags2 = (NPC.downedMechBoss1 ? BossFlags2.DownedMechBoss1 : BossFlags2.None) |
-									 (NPC.downedMechBoss2 ? BossFlags2.DownedMechBoss2 : BossFlags2.None) |
-									 (NPC.downedMechBoss3 ? BossFlags2.DownedMechBoss3 : BossFlags2.None) |
-									 (NPC.downedMechBossAny ? BossFlags2.DownedMechBossAny : BossFlags2.None) |
-									 (Main.cloudBGActive >= 1f ? BossFlags2.CloudBg : BossFlags2.None) |
-									 (WorldGen.crimson ? BossFlags2.Crimson : BossFlags2.None) |
-									 (Main.pumpkinMoon ? BossFlags2.PumpkinMoon : BossFlags2.None) |
-									 (Main.snowMoon ? BossFlags2.SnowMoon : BossFlags2.None),
-						BossFlags3 = (Main.expertMode ? BossFlags3.ExpertMode : BossFlags3.None) |
-									 (Main.fastForwardTime ? BossFlags3.FastForwardTime : BossFlags3.None) |
-									 (Main.slimeRain ? BossFlags3.SlimeRain : BossFlags3.None) |
-									 (NPC.downedSlimeKing ? BossFlags3.DownedKingSlime : BossFlags3.None) |
-									 (NPC.downedQueenBee ? BossFlags3.DownedQueenBee : BossFlags3.None) |
-									 (NPC.downedFishron ? BossFlags3.DownedFishron : BossFlags3.None) |
-									 (NPC.downedMartians ? BossFlags3.DownedMartians : BossFlags3.None) |
-									 (NPC.downedAncientCultist ? BossFlags3.DownedAncientCultist : BossFlags3.None),
-						BossFlags4 = (NPC.downedMoonlord ? BossFlags4.DownedMoonLord : BossFlags4.None) |
-									 (NPC.downedHalloweenKing ? BossFlags4.DownedHalloweenKing : BossFlags4.None) |
-									 (NPC.downedHalloweenTree ? BossFlags4.DownedHalloweenTree : BossFlags4.None) |
-									 (NPC.downedChristmasIceQueen ? BossFlags4.DownedChristmasIceQueen : BossFlags4.None) |
-									 (NPC.downedChristmasSantank ? BossFlags4.DownedChristmasSantank : BossFlags4.None) |
-									 (NPC.downedChristmasTree ? BossFlags4.DownedChristmasTree : BossFlags4.None),
-							
-						Rain = Main.maxRaining,
-						WorldName = TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName
-					};
-					msg.PackFull(ms);
-					if (e.remoteClient == -1)
-					{
-						TSPlayer.All.SendRawData(ms.ToArray());
-					}
-					else
-					{
-						var player = Players[e.remoteClient];
-						if (player == null) return;
-						player.SendRawData(ms.ToArray());
-					}
-				}
-				e.Handled = true;
-				return;
-			}
-			else if (e.MsgId == PacketTypes.PlayerHp)
+			if (e.MsgId == PacketTypes.PlayerHp)
 			{
 				if (Main.player[(byte)e.number].statLife <= 0)
 				{
