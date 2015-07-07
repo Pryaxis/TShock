@@ -1274,6 +1274,11 @@ namespace TShockAPI
 				return;
 			}
 
+			int length = e.Length - 1;
+			if (length < 0)
+			{
+				length = 0;
+			}
 			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
 			{
 				// Exceptions are already handled
