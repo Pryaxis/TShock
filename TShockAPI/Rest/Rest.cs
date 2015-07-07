@@ -79,11 +79,19 @@ namespace Rests
 
 		public virtual void Start()
 		{
-			if (listener == null)
+			try
 			{
 				listener = HttpListener.Create(Ip, Port);
 				listener.RequestReceived += OnRequest;
 				listener.Start(int.MaxValue);
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error("Fatal Startup Exception");
+				TShock.Log.Error(ex.ToString());
+				TShock.Log.ConsoleError("Invalid REST configuration: \nYou may already have a REST service bound to port {0}. \nPlease adjust your configuration and restart the server. \nPress any key to exit.", Port);
+				Console.ReadLine();
+				Environment.Exit(1);
 			}
 		}
 
