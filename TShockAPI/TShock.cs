@@ -430,12 +430,6 @@ namespace TShockAPI
 		{
 			if (args.Player.IsLoggedIn)
 				args.Player.SaveServerCharacter();
-
-			if (args.Player.ItemInHand.type != 0)
-			{
-				args.Player.SendErrorMessage("Attempting to bypass SSC with item in hand.");
-				args.Handled = true;
-			}
 		}
 
 		/// <summary>NetHooks_NameCollision - Internal hook fired when a name collision happens.</summary>
@@ -1664,6 +1658,9 @@ namespace TShockAPI
 			Item[] dye = player.TPlayer.dye;
 			Item[] miscEquips = player.TPlayer.miscEquips;
 			Item[] miscDyes = player.TPlayer.miscDyes;
+			Item[] piggy = player.TPlayer.bank.item;
+			Item[] safe = player.TPlayer.bank2.item;
+			Item trash = player.TPlayer.trashItem;
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
@@ -1685,8 +1682,7 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.InventorySlots
-					+ NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots)
+				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
 				{
 					//59-78
 					Item item = new Item();
@@ -1700,17 +1696,16 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[i - 48].stack),
+								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[index].stack),
 								Color.Cyan);
 						}
 					}
 				}
-				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots - NetItem.MiscDyeSlots)
+				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
 				{
 					//79-88
 					Item item = new Item();
-					var index = i - (NetItem.MaxInventory -
-						(NetItem.DyeSlots + NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
 					if (dye[index] != null && dye[index].netID != 0)
 					{
 						item.netDefaults(dye[index].netID);
@@ -1725,11 +1720,12 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.MaxInventory - NetItem.MiscEquipSlots)
+				else if (i <
+					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
 				{
 					//89-93
 					Item item = new Item();
-					var index = i - (NetItem.MaxInventory - (NetItem.MiscDyeSlots + NetItem.MiscEquipSlots));
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
 					if (miscEquips[index] != null && miscEquips[index].netID != 0)
 					{
 						item.netDefaults(miscEquips[index].netID);
@@ -1739,16 +1735,19 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, miscEquips[index].stack),
 								Color.Cyan);
 						}
 					}
 				}
-				else
+				else if (i <
+					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots
+					+ NetItem.MiscDyeSlots)
 				{
 					//93-98
 					Item item = new Item();
-					var index = i - (NetItem.MaxInventory - NetItem.MiscDyeSlots);
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
+						+ NetItem.MiscEquipSlots);
 					if (miscDyes[index] != null && miscDyes[index].netID != 0)
 					{
 						item.netDefaults(miscDyes[index].netID);
@@ -1758,7 +1757,71 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.name, miscDyes[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else if (i <
+				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
+				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
+				{
+					//98-138
+					Item item = new Item();
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
+						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
+					if (piggy[index] != null && piggy[index].netID != 0)
+					{
+						item.netDefaults(piggy[index].netID);
+						item.Prefix(piggy[index].prefix);
+						item.AffixName();
+
+						if (piggy[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.name, piggy[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else if (i <
+					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
+					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
+				{
+					//138-178
+					Item item = new Item();
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
+						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
+					if (safe[index] != null && safe[index].netID != 0)
+					{
+						item.netDefaults(safe[index].netID);
+						item.Prefix(safe[index].prefix);
+						item.AffixName();
+
+						if (safe[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.name, safe[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else
+				{
+					Item item = new Item();
+					if (trash != null && trash.netID != 0)
+					{
+						item.netDefaults(trash.netID);
+						item.Prefix(trash.prefix);
+						item.AffixName();
+
+						if (trash.stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.name, trash.stack),
 								Color.Cyan);
 						}
 					}

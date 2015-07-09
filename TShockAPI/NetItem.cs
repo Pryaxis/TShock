@@ -14,34 +14,44 @@ namespace TShockAPI
 	public struct NetItem
 	{
 		/// <summary>
-		/// The size of the player's inventory (inventory, coins, ammo, trash)
+		/// 40 - The number of slots in a piggy bank
+		/// </summary>
+		public static readonly int PiggySlots = 40;
+
+		/// <summary>
+		/// 40 - The number of slots in a safe
+		/// </summary>
+		public static readonly int SafeSlots = PiggySlots;
+
+		/// <summary>
+		/// 59 - The size of the player's inventory (inventory, coins, ammo)
 		/// </summary>
 		public static readonly int InventorySlots = 59;
 
 		/// <summary>
-		/// The number of armor slots.
+		/// 20 - The number of armor slots.
 		/// </summary>
 		public static readonly int ArmorSlots = 20;
 
 		/// <summary>
-		/// The number of other equippable items
+		/// 5 - The number of other equippable items
 		/// </summary>
 		public static readonly int MiscEquipSlots = 5;
 
 		/// <summary>
-		/// The number of dye slots.
+		/// 10 - The number of dye slots.
 		/// </summary>
 		public static readonly int DyeSlots = 10;
 
 		/// <summary>
-		/// The number of other dye slots (for <see cref="MiscEquipSlots"/>)
+		/// 5 - The number of other dye slots (for <see cref="MiscEquipSlots"/>)
 		/// </summary>
-		public static readonly int MiscDyeSlots = 5;
+		public static readonly int MiscDyeSlots = MiscEquipSlots;
 
 		/// <summary>
-		/// The inventory size (including armour, dies, coins, ammo, and trash)
+		/// 179 - The inventory size (including armour, dies, coins, ammo, piggy, safe, and trash)
 		/// </summary>
-		public static readonly int MaxInventory = 99;
+		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + 1;
 
 		[JsonProperty("netID")]
 		private int _netId;
