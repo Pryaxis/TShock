@@ -902,7 +902,7 @@ namespace TShockAPI
 
 						if (player.CurrentRegion != null)
 						{
-							Hooks.RegionHooks.OnRegionEntered(player);
+							Hooks.RegionHooks.OnRegionEntered(player, player.CurrentRegion);
 						}
 					}
 				}
