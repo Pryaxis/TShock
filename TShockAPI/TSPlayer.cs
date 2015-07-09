@@ -24,7 +24,6 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using Terraria;
-using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
@@ -771,17 +770,13 @@ namespace TShockAPI
 		public int ActiveChest = -1;
 		public Item ItemInHand = new Item();
 
-		/// <summary>
-		/// Disables the player for the given <paramref name="reason"/>.
-		/// </summary>
-		/// <param name="reason">The reason why the player was disabled.</param>
-		/// <param name="displayConsole">Whether or not to log this event to the console.</param>
 		public virtual void Disable(string reason = "", bool displayConsole = true)
 		{
 			LastThreat = DateTime.UtcNow;
-			SetBuff(BuffID.Frozen, 330, true);
-			SetBuff(BuffID.Stoned, 330, true);
-			SetBuff(BuffID.Webbed, 330, true);
+			SetBuff(33, 330, true); //Weak
+			SetBuff(32, 330, true); //Slow
+			SetBuff(23, 330, true); //Cursed
+			SetBuff(47, 330, true); //Frozen
 
 			if (ActiveChest != -1)
 			{
@@ -803,6 +798,11 @@ namespace TShockAPI
 					LastDisableNotification = DateTime.UtcNow;
 				}
 			}
+			var trace = new StackTrace();
+			StackFrame frame = null;
+			frame = trace.GetFrame(1);
+			if (frame != null && frame.GetMethod().DeclaringType != null)
+				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
 		}
 
 		public virtual void Whoopie(object time)
