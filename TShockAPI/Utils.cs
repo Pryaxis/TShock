@@ -81,17 +81,17 @@ namespace TShockAPI
 
 			foreach (TSPlayer ply in TShock.Players)
 			{
-					if (ply != null && ply.Active)
+				if (ply != null && ply.Active)
+				{
+					if (includeIDs)
 					{
-							if (includeIDs)
-							{
-									players.Add(ply.Name + " (IX: " + ply.Index + ", ID: " + ply.User.ID + ")");
-							}
-							else
-							{
-									players.Add(ply.Name);
-							}
+						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.User != null ? ", ID: " + ply.User.ID : ""));
 					}
+					else
+					{
+						players.Add(ply.Name);
+					}
+				}
 			}
 
 			return players;

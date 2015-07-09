@@ -1148,18 +1148,17 @@ namespace TShockAPI
 			}
 
 			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
-			if (players.Count > 1)
-			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-				return;
-			}
-			try
-			{
-				args.Player.SendSuccessMessage("IP Address: " + players[0].IP + " Logged in as: " + players[0].User.Name + " group: " + players[0].Group.Name);
-			}
-			catch (Exception)
-			{
+			if (players.Count < 1)
 				args.Player.SendErrorMessage("Invalid player.");
+			else if (players.Count > 1)
+				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+			else
+			{
+				var message = new StringBuilder();
+				message.Append("IP Address: ").Append(players[0].IP);
+				if (players[0].User != null && players[0].IsLoggedIn)
+					message.Append(" | Logged in as: ").Append(players[0].User.Name).Append(" | Group: ").Append(players[0].Group.Name);
+				args.Player.SendSuccessMessage(message.ToString());
 			}
 		}
 
@@ -1236,7 +1235,7 @@ namespace TShockAPI
 										args.Player.SendErrorMessage("Cannot ban {0} because they have no IPs to ban.", user.Name);
 										return;
 									}
-									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);										
+									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
 									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name);
 									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
 									{
