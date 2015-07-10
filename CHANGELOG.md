@@ -19,6 +19,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed world delete in server (@benjiro)
 * Fixed disappearing NPCs (@WhiteXZ)
 * Added much more performant code, SendQ, to server module. Reduces downstream network overhead by at least 40% (@tylerjwatson)
+* API: Updated TSPlayer.Disable to use new buffs (@Enerdy)
 
 ## TShock 4.3.1
 
