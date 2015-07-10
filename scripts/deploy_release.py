@@ -99,7 +99,7 @@ upload_headers = {'Authorization': 'token ' + token, 'Content-Type':'application
 #upload the binary, resulting in a complete binary
 r = requests.post(upload_url, data=open(release_name, 'rb'), headers = upload_headers, verify=False)
 
-read_and_update_config_on_confluence(config_desc_page, "ConfigDescriptions.txt")
-read_and_update_config_on_confluence(ssc_desc_page, "ServerSideConfigDescriptions.txt")
-read_and_update_config_on_confluence(permissions_desc_page, "PermissionsDescriptions.txt")
-read_and_update_config_on_confluence(rest_desc_page, "RestDescriptions.txt")
+# read_and_update_config_on_confluence(config_desc_page, "ConfigDescriptions.txt")
+# read_and_update_config_on_confluence(ssc_desc_page, "ServerSideConfigDescriptions.txt")
+# read_and_update_config_on_confluence(permissions_desc_page, "PermissionsDescriptions.txt")
+# read_and_update_config_on_confluence(rest_desc_page, "RestDescriptions.txt")
