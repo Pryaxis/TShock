@@ -77,7 +77,20 @@ namespace TShockAPI.DB
 						playerData.maxHealth = reader.Get<int>("MaxHealth");
 						playerData.mana = reader.Get<int>("Mana");
 						playerData.maxMana = reader.Get<int>("MaxMana");
-						playerData.inventory = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse).ToArray();
+						List<NetItem> inventory = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse).ToList();
+						if (inventory.Count < NetItem.MaxInventory)
+						{
+							//TODO: unhardcode this - stop using magic numbers and use NetItem numbers
+							//Set new armour slots empty
+							inventory.InsertRange(67, new NetItem[2]);
+							//Set new vanity slots empty
+							inventory.InsertRange(77, new NetItem[2]);
+							//Set new dye slots empty
+							inventory.InsertRange(87, new NetItem[2]);
+							//Set the rest of the new slots empty
+							inventory.AddRange(new NetItem[NetItem.MaxInventory - inventory.Count]);
+						}
+						playerData.inventory = inventory.ToArray();
 						playerData.spawnX = reader.Get<int>("spawnX");
 						playerData.spawnY = reader.Get<int>("spawnY");
 						playerData.hair = reader.Get<int?>("hair");

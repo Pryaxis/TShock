@@ -24,7 +24,7 @@ namespace TShockAPI
 		public static readonly int SafeSlots = PiggySlots;
 
 		/// <summary>
-		/// 59 - The size of the player's inventory (inventory, coins, ammo)
+		/// 59 - The size of the player's inventory (inventory, coins, ammo, held item)
 		/// </summary>
 		public static readonly int InventorySlots = 59;
 
@@ -49,7 +49,7 @@ namespace TShockAPI
 		public static readonly int MiscDyeSlots = MiscEquipSlots;
 
 		/// <summary>
-		/// 179 - The inventory size (including armour, dies, coins, ammo, piggy, safe, and trash)
+		/// 180 - The inventory size (inventory, held item, armour, dies, coins, ammo, piggy, safe, and trash)
 		/// </summary>
 		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + 1;
 
