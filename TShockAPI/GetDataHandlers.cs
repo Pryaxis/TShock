@@ -2778,7 +2778,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (flag != 0 && Main.tile[tileX, tileY].type != 21 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
+			if (flag != 0 && Main.tile[tileX, tileY].type != 21 && Main.tile[tileX, tileY].type != 88 && (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != 0)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				return true;
