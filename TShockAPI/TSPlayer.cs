@@ -1106,6 +1106,13 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Stores an item at the specific storage slot
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="netID"></param>
+		/// <param name="prefix"></param>
+		/// <param name="stack"></param>
 		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
 			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
@@ -1116,6 +1123,10 @@ namespace TShockAPI
 			this.inventory[slot] = new NetItem(netID, stack, prefix);
 		}
 
+		/// <summary>
+		/// Copies a characters data to this object
+		/// </summary>
+		/// <param name="player"></param>
 		public void CopyCharacter(TSPlayer player)
 		{
 			this.health = player.TPlayer.statLife > 0 ? player.TPlayer.statLife : 1;
@@ -1192,6 +1203,7 @@ namespace TShockAPI
 				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
 				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
 				{
+					//98-138
 					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
 						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
 					this.inventory[i] = (NetItem)piggy[index];
@@ -1200,17 +1212,23 @@ namespace TShockAPI
 					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
 					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
 				{
+					//138-178
 					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
 						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
 					this.inventory[i] = (NetItem)safe[index];
 				}
 				else
 				{
+					//179
 					this.inventory[i] = (NetItem)trash;
 				}
 			}
 		}
 
+		/// <summary>
+		/// Restores a player's character to the state stored in the database
+		/// </summary>
+		/// <param name="player"></param>
 		public void RestoreCharacter(TSPlayer player)
 		{
 			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
