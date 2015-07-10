@@ -293,7 +293,7 @@ namespace TShockAPI
 		public int MaxDamage = 175;
 
 		[Description("The maximum damage a projectile can inflict.")]
-		public int MaxProjDamage = 175;
+		public int MaxProjDamage = 1175;
 
 		[Description("Kicks a user if set to true, if they inflict more damage then the max damage.")]
 		public bool KickOnDamageThresholdBroken = false;

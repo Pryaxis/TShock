@@ -20,6 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed disappearing NPCs (@WhiteXZ)
 * Added much more performant code, SendQ, to server module. Reduces downstream network overhead by at least 40% (@tylerjwatson)
 * API: Updated TSPlayer.Disable to use new buffs (@Enerdy)
+* Updated default max projectile damage to 1,175 (based on 625 people)
 
 ## TShock 4.3.1
 
