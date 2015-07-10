@@ -80,6 +80,14 @@ namespace TShockAPI.DB
 						List<NetItem> inventory = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse).ToList();
 						if (inventory.Count < NetItem.MaxInventory)
 						{
+							//TODO: unhardcode this - stop using magic numbers and use NetItem numbers
+							//Set new armour slots empty
+							inventory.InsertRange(67, new NetItem[2]);
+							//Set new vanity slots empty
+							inventory.InsertRange(77, new NetItem[2]);
+							//Set new dye slots empty
+							inventory.InsertRange(87, new NetItem[2]);
+							//Set the rest of the new slots empty
 							inventory.AddRange(new NetItem[NetItem.MaxInventory - inventory.Count]);
 						}
 						playerData.inventory = inventory.ToArray();
