@@ -1944,9 +1944,10 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.KillWall)
 				{
-					// If they aren't selecting an hammer, they're hacking.
-					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+					// If they aren't selecting an hammer, they could be hacking.
+					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
+
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
 					}
