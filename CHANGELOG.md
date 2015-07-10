@@ -2,7 +2,7 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## TShock 4.3.2 (Unreleased)
+## TShock 4.3.2
 
 * Fixed the issue where using the Super Absorbent Sponge would disable users (@WhiteXZ)
 * Fixed an issue in NetGetData where e.Length - 1 would be -1 (@WhiteXZ)
@@ -21,6 +21,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added much more performant code, SendQ, to server module. Reduces downstream network overhead by at least 40% (@tylerjwatson)
 * API: Updated TSPlayer.Disable to use new buffs (@Enerdy)
 * Updated default max damage & projectile damage to 1,175 (based on 625 people)
+* Fixed support for SSC (@WhiteXZ)
 
 ## TShock 4.3.1
 
