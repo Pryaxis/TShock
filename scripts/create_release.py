@@ -11,7 +11,7 @@ cur_wd = os.getcwd()
 release_dir = os.path.join(cur_wd, "releases")
 
 terraria_bin_name = "TerrariaServer.exe"
-sql_bins_names = ["Mono.Data.Sqlite.dll", "MySql.Data.dll", "MySql.Web.dll"]
+sql_bins_names = ["Mono.Data.Sqlite.dll", "MySql.Data.dll"]
 sqlite_dep = "sqlite3.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
@@ -56,7 +56,7 @@ def create_base_zip(name):
   zip.write(terraria_bin_name)
   zip.write(sqlite_dep)
   zip.write(http_bin_name, os.path.join("ServerPlugins", http_bin_name))
-  zip.write(json_bin_name, os.path.join("ServerPlugins", json_bin_name))
+  zip.write(json_bin_name, json_bin_name)
   zip.write(bcrypt_bin_name, os.path.join("ServerPlugins", bcrypt_bin_name))
   for f in sql_bins_names:
     zip.write(f, os.path.join("ServerPlugins", f))

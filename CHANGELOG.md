@@ -2,7 +2,27 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## TShock 4.3.0.1
+## TShock 4.3.2 (Unreleased)
+
+* Fixed the issue where using the Super Absorbent Sponge would disable users (@WhiteXZ)
+* Fixed an issue in NetGetData where e.Length - 1 would be -1 (@WhiteXZ)
+* Fixed /who -i and /userinfo (@Enerdy)
+* API: OnRegionEntered hook now returns the region entered (@Patrikkk)
+* Support for Terraria 1.3.0.4 (@nicatronTg)
+* Fixed dressers being unbreakable. (@nicatronTg)
+* Fixed wall placement mechanics (@nicatronTg, @Ijwu, @WhiteXZ)
+* Fixed Moon Lord projectiles disabling players (@k0rd, @nicatronTg)
+* Fixed several potential crashes in server (@Patrikkk)
+* Fixed -autocreate command line argument (@WhiteXZ, @nicatronTg)
+* Added more world data to world load menu (@WhiteXZ)
+* Moved server password to TShock config (@Enerdy)
+* Fixed world delete in server (@benjiro)
+* Fixed disappearing NPCs (@WhiteXZ)
+* Added much more performant code, SendQ, to server module. Reduces downstream network overhead by at least 40% (@tylerjwatson)
+* API: Updated TSPlayer.Disable to use new buffs (@Enerdy)
+* Updated default max projectile damage to 1,175 (based on 625 people)
+
+## TShock 4.3.1
 
 * Fixed a bug where /user group failing would output no error. (@nicatronTg)
 * Fixed a bug where /user group would fail. @(Enerdy)
