@@ -3362,8 +3362,8 @@ namespace TShockAPI
 
 			var spawnboss = false;
 			var invasion = false;
-			var plr = args.Data.ReadInt32();
-			var Type = args.Data.ReadInt32();
+			var plr = args.Data.ReadInt16();
+			var Type = args.Data.ReadInt16();
 			NPC npc = new NPC();
 			npc.SetDefaults(Type);
 			spawnboss = npc.boss;
@@ -3376,23 +3376,32 @@ namespace TShockAPI
 					case -3:
 					case -4:
 					case -5:
+                    case -6:
+                    case -7:
 						invasion = true;
 						break;
-					case 4:
-					case 13:
-					case 35:
-					case 50:
-					case 113:
-					case 125:
-					case 126:
-					case 127:
-					case 128:
-					case 134:
-					case 222:
-					case 245:
-					case 262:
-					case 266:
-					case 370:
+                    case 4:
+                    case 13:
+                    case 50:
+                    case 126:
+                    case 125:
+                    case 134:
+                    case 127:
+                    case 128:
+                    case 131:
+                    case 129:
+                    case 130:
+                    case 222:
+                    case 245:
+                    case 266:
+                    case 370:
+                    case 75:
+                    case 398:
+                    case 439:
+                    case 493:
+                    case 507:
+                    case 422:
+                    case 517:
 						spawnboss = true;
 						break;
 				}
