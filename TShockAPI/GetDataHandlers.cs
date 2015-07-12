@@ -1289,7 +1289,7 @@ namespace TShockAPI
 				return true;
 			if (args.Player.IgnoreSSCPackets)
 			{
-				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot);
+				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, prefix);
 				return true;
 			}
 				
