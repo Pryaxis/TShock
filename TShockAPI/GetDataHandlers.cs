@@ -3362,8 +3362,8 @@ namespace TShockAPI
 
 			var spawnboss = false;
 			var invasion = false;
-			var plr = args.Data.ReadInt16();
-			var Type = args.Data.ReadInt16();
+			var plr = args.Data.ReadInt32();
+			var Type = args.Data.ReadInt32();
 			NPC npc = new NPC();
 			npc.SetDefaults(Type);
 			spawnboss = npc.boss;
