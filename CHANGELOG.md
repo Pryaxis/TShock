@@ -2,6 +2,11 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+
+## TShock 4.3.5
+
+* Fixe bosses & invasions not spawning invasions due to packet change (@stealownz)
+
 ## TShock 4.3.4
 
 * Fix invasion progress messages (@WhiteXZ)
