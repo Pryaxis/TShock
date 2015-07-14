@@ -3,7 +3,10 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## TShock 4.3.5 (Unreleased)
-* Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items.
+
+* Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items. (@Ijwu)
+* Rewrite SendQ for more network stack improvements (@tylerjwatson)
+* Update to Terraria 1.3.0.5 (@Patrikkk)S
 
 ## TShock 4.3.4
 
