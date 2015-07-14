@@ -6,7 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items. (@Ijwu)
 * Rewrite SendQ for more network stack improvements (@tylerjwatson)
-* Update to Terraria 1.3.0.5 (@Patrikkk)S
+* Update to Terraria 1.3.0.5 (@Patrikkk)
 
 ## TShock 4.3.4
 
