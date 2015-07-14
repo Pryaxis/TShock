@@ -433,8 +433,9 @@ namespace TShockAPI
 		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
 		public int MinimumPasswordLength = 4;
 
+		[Obsolete("This is being removed in future versions of TShock due to Terraria fixes.")]
 		[Description("Enable the DCU. Very dangerous; can destroy world without consequence.")] public bool
-			VeryDangerousDoNotChangeEnableDrillContainmentUnit = false;
+			VeryDangerousDoNotChangeEnableDrillContainmentUnit = true;
 
 		[Description("Show backup autosave messages.")] public bool ShowBackupAutosaveMessages = true;
 
