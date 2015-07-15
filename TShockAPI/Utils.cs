@@ -26,6 +26,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
+using Terraria.ID;
 using TShockAPI.DB;
 using BCrypt.Net;
 
@@ -291,7 +292,8 @@ namespace TShockAPI
 		{
 			return TilePlacementValid(tileX, tileY) && Main.tile[tileX, tileY] != null &&
 				Main.tile[tileX, tileY].active() && Main.tileSolid[Main.tile[tileX, tileY].type] &&
-				!Main.tile[tileX, tileY].inActive() && !Main.tile[tileX, tileY].halfBrick() && Main.tile[tileX, tileY].slope() == 0;
+				!Main.tile[tileX, tileY].inActive() && !Main.tile[tileX, tileY].halfBrick() &&
+				Main.tile[tileX, tileY].slope() == 0 && Main.tile[tileX, tileY].type != TileID.Bubble;
 		}
 
 		/// <summary>
