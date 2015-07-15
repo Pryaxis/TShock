@@ -12,7 +12,7 @@ If something is better suited to be a plugin for TShock, rather than a TShock co
 
 ### Pull Request Dev Guidelines
 
-These guidelines are for all contributors. Please join #pull-request on our Slack instance and ask about your idea first, if you're implementing a new feature, system, or changing an existing implementation. Pull requests that change large feature sets or swathes of code will be dissected for quality and purpose prior to approval, and requests that conflict with a team developer's work may be declined if the project is already being worked on internally, but not released. In addition, issues assigned to Nyx developers that are recent and fresh should be considered a no-go zone, while that developer works on their solution outside the scope of Github.
+These guidelines are for all contributors. Please join our Slack instance and ask about your idea first, if you're implementing a new feature, system, or changing an existing implementation. Pull requests that change large feature sets or swathes of code will be dissected for quality and purpose prior to approval, and requests that conflict with a team developer's work may be declined if the project is already being worked on internally, but not released. In addition, issues assigned to Nyx developers that are recent and fresh should be considered a no-go zone, while that developer works on their solution outside the scope of Github.
 
 Even if you have write access to the repository, follow [Github flow](https://guides.github.com/introduction/flow/) when sending commits. Don't send commits directly to either ```master``` or ```general-devel``` unless those commits modify either the deploy scripts or non-code components. If it compiles, follow Github Flow.
 
@@ -48,7 +48,7 @@ These guidelines are to be followed by all developers with commit level access t
 
 #### Pull Request Acceptance Guidelines
 
-- Don't ruin someone's first time sending a pull request. They feel de-motivated, and then they won't want to push any more code for us.
+- Don't ruin someone's first time sending a pull request. Be civil and welcoming.
 - Don't accept untested pull requests from the outside world. Bamboo and Travis will at least make sure that something compiles, but actual code and execution tests are required.
 - Pull request acceptance from internal contributors (anyone with write access) requires only one other approval to merge.
 - Pull request acceptance from external contributors (anyone without write access) requires the [two-man rule](https://en.wikipedia.org/wiki/Two-man_rule) to be followed. If another man/woman/child in the two-man rule cannot be found within seven days, then this requirement is exempted.
