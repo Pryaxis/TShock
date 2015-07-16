@@ -3496,7 +3496,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller && 
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 && i.type == ItemID.PaintSprayer))
+				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
+					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
@@ -3539,7 +3540,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 && i.type == ItemID.PaintSprayer))
+				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
+					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
 				return true;

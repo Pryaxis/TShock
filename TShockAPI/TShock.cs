@@ -1574,7 +1574,14 @@ namespace TShockAPI
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
-					player.SendErrorMessage("You do not have permission to build!");
+					if (paint)
+					{
+						player.SendErrorMessage("You do not have permission to paint!");
+					}
+					else
+					{
+						player.SendErrorMessage("You do not have permission to build!");
+					}
 					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				return true;
