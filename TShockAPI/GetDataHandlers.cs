@@ -2475,7 +2475,16 @@ namespace TShockAPI
 			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if (type == 622 || type == 452 || (type >= 638 && type <= 642) || type == 100 || type == 164 || type == 180 || type == 261 || (type > 289 && type < 298) || (type >= 325 && type <= 328) || (type >= 345 && type <= 352) || (type >= 435 && type <= 438))
+				if (type == ProjectileID.BlowupSmokeMoonlord 
+					|| type == ProjectileID.PhantasmalEye
+					|| type == ProjectileID.CultistBossIceMist
+					|| (type >= ProjectileID.MoonlordBullet && type <= ProjectileID.MoonlordTurretLaser)
+					|| type == ProjectileID.DeathLaser || type == ProjectileID.Landmine
+					|| type == ProjectileID.BulletDeadeye || type == ProjectileID.BoulderStaffOfEarth
+					|| (type > ProjectileID.ConfettiMelee && type < ProjectileID.SpiritHeal)
+					|| (type >= ProjectileID.FlamingWood && ProjectileID.GreekFire3 <= 328)
+					|| (type >= ProjectileID.PineNeedleHostile && type <= ProjectileID.Spike)
+					|| (type >= ProjectileID.MartianTurretBolt && type <= ProjectileID.RayGunnerLaser))
 				{	
 					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
@@ -2502,7 +2511,7 @@ namespace TShockAPI
 
 			if (!args.Player.Group.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if (type == 90 && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
+				if (type == ProjectileID.CrystalShard && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
 					TShock.Log.Debug("Ignoring shrapnel per config..");
 				}
@@ -2512,14 +2521,18 @@ namespace TShockAPI
 				}
 			}
 
-			// force all explosives server-side.  -- DOES NOT WORK DUE TO LATENCY
-			if (hasPermission && (type == 28 || type == 29 || type == 37))
+			// force all explosives server-side.  -- DOES NOT WORK DUE TO LATENCY(?)
+			if (hasPermission && 
+				(type == ProjectileID.Bomb 
+				|| type == ProjectileID.Dynamite 
+				|| type == ProjectileID.StickyBomb
+				|| type == ProjectileID.StickyDynamite))
 			{
 			//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;				
-			//	args.Player.RemoveProjectile(ident, owner);
-			//	Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
-			//	return true;
+				args.Player.RemoveProjectile(ident, owner);
+				Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
+				return true;
 			}
 
 			return false;
@@ -2878,12 +2891,16 @@ namespace TShockAPI
 
 		private static bool HandleChestActive(GetDataHandlerArgs args)
 		{
+			//chest ID
 			var id = args.Data.ReadInt16();
+			//chest x
 			var x = args.Data.ReadInt16();
+			//chest y
 			var y = args.Data.ReadInt16();
-			var b = args.Data.ReadInt8();
+			//chest name length
+			var nameLen = args.Data.ReadInt8();
 
-			if (b != 0 && b <= 20)
+			if (nameLen != 0 && nameLen <= 20)
 				args.Data.ReadString(); // Ignore the name
 
 			args.Player.ActiveChest = id;
