@@ -3600,7 +3600,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1)
 			{
-                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}serverpassword \"<new password>\"", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}serverpassword \"<new password>\"", Specifier);
 				return;
 			}
 			string passwd = args.Parameters[0];
