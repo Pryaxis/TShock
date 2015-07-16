@@ -1627,7 +1627,8 @@ namespace TShockAPI
 		/// WaterFountain,
 		/// Womannequin,
 		/// MinecartTrack,
-		/// WeaponsRack
+		/// WeaponsRack,
+		/// LunarMonolith
 		/// </summary>
 		private static int[] orientableTiles = new int[] 
 		{ 
@@ -1643,7 +1644,9 @@ namespace TShockAPI
 			TileID.WaterFountain,
 			TileID.Womannequin,
 			TileID.MinecartTrack,
-			TileID.WeaponsRack
+			TileID.WeaponsRack,
+			TileID.ItemFrame,
+			TileID.LunarMonolith
 		};
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
