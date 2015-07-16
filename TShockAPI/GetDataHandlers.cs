@@ -1614,18 +1614,54 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Tiles that can be oriented (e.g., beds, chairs, bathtubs, etc).
+		/// Tile IDs that can be oriented:
+		/// Cannon,
+		/// Chairs,
+		/// Beds,
+		/// Bathtubs,
+		/// Statues,
+		/// Mannequin,
+		/// Traps,
+		/// MusicBoxes,
+		/// ChristmasTree,
+		/// WaterFountain,
+		/// Womannequin,
+		/// MinecartTrack,
+		/// WeaponsRack
 		/// </summary>
-		private static int[] orientableTiles = new int[] { TileID.Cannon, 15, 79, 90, 105, TileID.Mannequin, 137, 139, 171, 207, 314, TileID.Womannequin, TileID.MinecartTrack, TileID.WeaponsRack };
+		private static int[] orientableTiles = new int[] 
+		{ 
+			TileID.Cannon,
+			TileID.Chairs,
+			TileID.Beds, 
+			TileID.Bathtubs, 
+			TileID.Statues, 
+			TileID.Mannequin,
+			TileID.Traps,
+			TileID.MusicBoxes,
+			TileID.ChristmasTree, 
+			TileID.WaterFountain,
+			TileID.Womannequin,
+			TileID.MinecartTrack,
+			TileID.WeaponsRack
+		};
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
-			if (args.Player.Group.HasPermission(Permissions.allowclientsideworldedit))
-				return false;
-
 			var size = args.Data.ReadInt16();
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
+
+			bool isTrapdoor = false;
+
+			if (Main.tile[tileX, tileY].type == TileID.TrapdoorClosed 
+				|| Main.tile[tileX, tileY].type == TileID.TrapdoorOpen)
+			{
+				isTrapdoor = true;
+			}
+
+			if (args.Player.Group.HasPermission(Permissions.allowclientsideworldedit) && !isTrapdoor)
+				return false;
 
 			if (OnSendTileSquare(size, tileX, tileY))
 				return true;
@@ -1806,7 +1842,10 @@ namespace TShockAPI
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
-		private static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>{{TileID.MinecartTrack, 3}};
+		private static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
+		{
+			{TileID.MinecartTrack, 3}
+		};
 
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
@@ -3628,16 +3667,29 @@ namespace TShockAPI
 
 		private static bool HandleDoorUse(GetDataHandlerArgs args)
 		{
-			args.Data.ReadByte(); // Ignore close
-			var x = args.Data.ReadInt16();
-			var y = args.Data.ReadInt16();
-			/* var dir = */ args.Data.ReadByte(); //== 0 ? -1 : 1; // Ignore direction
+			byte type = (byte)args.Data.ReadByte();
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			args.Data.ReadByte(); //Ignore direction
 
 			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
+			{
 				return true;
+			}
 
-			if (Main.tile[x, y].type != 10 && Main.tile[x, y].type != 11) // Check for tile types
+			if (type < 0 || type > 5)
+			{
 				return true;
+			}
+			
+			ushort tileType = Main.tile[x, y].type;
+
+			if (tileType != TileID.ClosedDoor && tileType != TileID.OpenDoor
+				&& tileType != TileID.TallGateClosed && tileType != TileID.TallGateOpen
+				&& tileType != TileID.TrapdoorClosed && tileType != TileID.TrapdoorOpen)
+			{
+				return true;
+			}
 
 			return false;
 		}
