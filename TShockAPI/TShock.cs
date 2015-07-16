@@ -281,7 +281,6 @@ namespace TShockAPI
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
-				RestApi.Port = Config.RestApiPort;
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 
@@ -1567,7 +1566,7 @@ namespace TShockAPI
 		/// <param name="tileX">tileX - The x coordinate of the tile.</param>
 		/// <param name="tileY">tileY - The y coordinate of the tile.</param>
 		/// <param name="paint">paint - Whether or not the tile is paint.</param>
-		/// <returns>bool - True if the player should not be able to modify a the tile.</returns>
+		/// <returns>bool - True if the player should not be able to modify the tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, bool paint = false)
 		{
 			if ((!paint && !player.Group.HasPermission(Permissions.canbuild)) ||
