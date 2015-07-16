@@ -243,6 +243,9 @@ namespace TShockAPI
 			return found;
 		}
 
+		//Random should not be generated in a method
+		Random r = new Random();
+
 		/// <summary>
 		/// Gets a random clear tile in range
 		/// </summary>
@@ -264,7 +267,6 @@ namespace TShockAPI
 					tileY = startTileY;
 					break;
 				}
-				Random r = new Random();
 				tileX = startTileX + r.Next(tileXRange*-1, tileXRange);
 				tileY = startTileY + r.Next(tileYRange*-1, tileYRange);
 				j++;

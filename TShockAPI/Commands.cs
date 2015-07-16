@@ -2014,7 +2014,7 @@ namespace TShockAPI
 			{
 				case "*":
 				case "all":
-					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370 };
+					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370, 398 };
 					TSPlayer.Server.SetTime(false, 0.0);
 					foreach (int i in npcIds)
 					{
@@ -2057,7 +2057,6 @@ namespace TShockAPI
 					return;
 				case "golem":
 					npc.SetDefaults(245);
-					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Golem {1} time(s).", args.Player.Name, amount);
 					return;
@@ -2082,7 +2081,6 @@ namespace TShockAPI
 				case "queen":
 				case "queen bee":
 					npc.SetDefaults(222);
-					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Bee {1} time(s).", args.Player.Name, amount);
 					return;
@@ -2114,6 +2112,12 @@ namespace TShockAPI
 					}
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Wall of Flesh.", args.Player.Name);
+					return;
+				case "moon":
+				case "moon lord":
+					npc.SetDefaults(398);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Moon Lord {1} time(s).", args.Player.Name, amount);
 					return;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");
