@@ -177,11 +177,8 @@ namespace TShockAPI
 				return RestMissingParam("cmd");
 
 			Group restPlayerGroup;
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
-				restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
-			else
-				restPlayerGroup = new SuperAdminGroup();
+			
+            restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
 
 			TSRestPlayer tr = new TSRestPlayer(args.TokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, args.Parameters["cmd"]);
@@ -199,11 +196,8 @@ namespace TShockAPI
 				return RestMissingParam("cmd");
 
 			Group restPlayerGroup;
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
-				restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
-			else
-				restPlayerGroup = new SuperAdminGroup();
+            
+            restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
 
 			TSRestPlayer tr = new TSRestPlayer(args.TokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, args.Parameters["cmd"]);
