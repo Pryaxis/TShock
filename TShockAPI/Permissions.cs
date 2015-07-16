@@ -252,6 +252,9 @@ namespace TShockAPI
 		[Description("User can use the Rod of Discor.")] 
 		public static readonly string rod = "tshock.tp.rod";
 
+		[Description("User can use wormhole potions.")]
+		public static readonly string wormhole = "tshock.tp.wormhole";
+
 		// tshock.world nodes
 
 		[Description("User can change expert state.")]

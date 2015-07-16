@@ -3564,40 +3564,58 @@ namespace TShockAPI
 
 		private static bool HandleTeleport(GetDataHandlerArgs args)
 		{
-			var flag = (BitsByte)args.Data.ReadInt8();
-			var id = args.Data.ReadInt16();
+			BitsByte flag = (BitsByte)args.Data.ReadByte();
+			short id = args.Data.ReadInt16();
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
 
 			if (OnTeleport(id, flag, x, y))
 				return true;
 
+			int type = 0;
 			byte style = 0;
-			var isNPC = false || (flag & 1) == 1;
+			bool isNPC = type == 1;
 
-			if ((flag & 2) != 2)
+			if (flag[0])
 			{
-				if ((flag & 4) == 4)
-				{
-					style++;
-				}
+				type = 1;
+			}
+			if (flag[1])
+			{
+				type = 2;
+			}
+			if (flag[2])
+			{
+				style++;
+			}
+			if (flag[3])
+			{
+				style += 2;
+			}
 
-				if ((flag & 8) == 8)
-				{
-					style++;
-				}
+			//Rod of Discord teleport (usually (may be used by modded clients to teleport))
+			if (type == 0 && !args.Player.Group.HasPermission(Permissions.rod))
+			{
+				args.Player.SendErrorMessage("You do not have permission to teleport.");
+				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
+				return true;
+			}	
 
-				if (id > (isNPC ? 200 : 255))
-				{
-					return true;
-				}
+			//NPC teleport
+			if (type == 1 && id >= Main.maxNPCs)
+			{
+				return true;
+			}
 
+			//Player to player teleport (wormhole potion, usually (may be used by modded clients to teleport))
+			if (type == 2)
+			{
 				if (id >= Main.maxPlayers || Main.player[id] == null || TShock.Players[id] == null)
 				{
 					return true;
 				}
 
-				if (!isNPC && !args.Player.Group.HasPermission(Permissions.rod))
+				if (!args.Player.Group.HasPermission(Permissions.wormhole))
 				{
 					args.Player.SendErrorMessage("You do not have permission to teleport.");
 					args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
