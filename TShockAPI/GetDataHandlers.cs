@@ -2264,7 +2264,7 @@ namespace TShockAPI
 			byte item = args.Data.ReadInt8();
 			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var vel = Vector2.Zero;
-			if(pulley[2])
+			if (pulley[2])
 				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
 			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
@@ -2387,9 +2387,17 @@ namespace TShockAPI
 			args.TPlayer.controlJump = false;
 			args.TPlayer.controlUseItem = false;
 			args.TPlayer.pulley = pulley[0];
-			if(pulley[0])
+
+			if (pulley[0])
 				args.TPlayer.pulleyDir = (byte)(pulley[1] ? 2 : 1);
+
+			if (pulley[3])
+				args.TPlayer.vortexStealthActive = true;
+
+			args.TPlayer.gravDir = pulley[4] ? 1f : -1f;
+
 			args.TPlayer.direction = -1;
+
 			if (control[0])
 			{
 				args.TPlayer.controlUp = true;
