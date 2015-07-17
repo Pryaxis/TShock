@@ -125,10 +125,10 @@ namespace TShockAPI
 								if (task.direct)
 								{
 									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.saveWorld(WorldFile.IsWorldOnCloud, task.resetTime);
+									WorldFile.saveWorld(task.resetTime);
 								}
 								else
-									WorldFile.saveWorld(WorldFile.IsWorldOnCloud, task.resetTime);
+									WorldFile.saveWorld(task.resetTime);
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
