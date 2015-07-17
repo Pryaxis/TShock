@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Terraria;
+using Terraria.ID;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
@@ -5003,7 +5004,7 @@ namespace TShockAPI
 			int kills = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
-				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || Main.npc[i].netID == npcId))
+				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC && Main.npc[i].netID != NPCID.TargetDummy) || Main.npc[i].netID == npcId))
 				{
 					TSPlayer.Server.StrikeNPC(i, 99999, 0, 0);
 					kills++;
