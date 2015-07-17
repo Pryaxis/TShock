@@ -2571,7 +2571,6 @@ namespace TShockAPI
 				}
 			}
 
-			// force all explosives server-side.  -- DOES NOT WORK DUE TO LATENCY(?)
 			if (hasPermission && 
 				(type == ProjectileID.Bomb 
 				|| type == ProjectileID.Dynamite 
@@ -2580,8 +2579,6 @@ namespace TShockAPI
 			{
 			//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;				
-				args.Player.RemoveProjectile(ident, owner);
-				Projectile.NewProjectile(pos.X, pos.Y, vel.X, vel.Y, type, dmg, knockback);
 				return true;
 			}
 
