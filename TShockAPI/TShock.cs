@@ -680,32 +680,6 @@ namespace TShockAPI
 
 							break;
 						}
-					case "-ignoreversion":
-						{
-							ServerApi.IgnoreVersion = true;
-							ServerApi.LogWriter.PluginWriteLine(this, 
-								"Plugin versions are no longer being regarded, you are on your own! If problems arise, TShock developers will not help you with issues regarding this.",
-								TraceLevel.Warning);
-
-							break;
-						}
-					case "-forceupdate":
-						{
-							ServerApi.ForceUpdate = true;
-							ServerApi.LogWriter.PluginWriteLine(this, 
-								"Forcing game updates regardless of players! This is experimental, and will cause constant CPU usage, you are on your own.",
-								TraceLevel.Warning);
-
-							break;
-						}
-					case "-asyncmono":
-						{
-							ServerApi.UseAsyncSocketsInMono = true;
-							ServerApi.LogWriter.PluginWriteLine(this, 
-								"Forcing Mono to use asynchronous sockets.  This is highly experimental and may not work on all versions of Mono.",
-								TraceLevel.Warning);
-							break;
-						}
 				}
 			}
 		}
