@@ -29,6 +29,7 @@ using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
+using Terraria.ObjectData;
 
 namespace TShockAPI
 {
@@ -1212,6 +1213,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
 					{ PacketTypes.PlayerUpdate, HandlePlayerUpdate },
 					{ PacketTypes.Tile, HandleTile },
+					{ PacketTypes.PlaceObject, HandlePlaceObject },
 					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
@@ -2136,6 +2138,94 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, 4);
 				return true;
 			}
+		}
+
+
+		/// <summary>
+		/// Handle PlaceObject event
+		/// </summary>
+		private static bool HandlePlaceObject(GetDataHandlerArgs args)
+		{
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			short type = args.Data.ReadInt16();
+			short style = args.Data.ReadInt16();
+			byte alternate = args.Data.ReadInt8();
+			bool direction = args.Data.ReadBoolean();
+
+			if (type < 0 || type >= Main.maxTileSets)
+				return true;
+
+			if (x < 0 || x >= Main.maxTilesX)
+				return true;
+
+			if (y < 0 || y >= Main.maxTilesY)
+				return true;
+
+			if (TShock.TileBans.TileIsBanned(type, args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendErrorMessage("You do not have permission to place this tile.");
+				return true;
+			}
+
+			if (!TShock.Utils.TilePlacementValid(x, y))
+				return true;
+			if (args.Player.Dead && TShock.Config.PreventDeadModification)
+				return true;
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
+
+			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
+			if (tileData == null)
+				return true;
+
+			if (tileData.Width == 3 && tileData.Height == 2) { x -= 1; y -= 1; }
+			else if (tileData.Width == 4 && tileData.Height == 2) { x -= 1; y -= 1; }
+			else if (tileData.Width == 6 && tileData.Height == 3) { x -= 2; y -= 2; }
+			else if (tileData.Width == 6 && tileData.Height == 4) { x -= 2; y -= 3; }
+			else if (tileData.Width == 3 && tileData.Height == 3) { x -= 1; y -= 2; }
+			else if (tileData.Width == 3 && tileData.Height == 4) { x -= 1; y -= 3; }
+
+			for (int i = x; i < x + tileData.Width; i++)
+			{
+				for (int j = y; j < y + tileData.Height; j++)
+				{
+					if (TShock.CheckTilePermission(args.Player, i, j, type, EditAction.PlaceTile))
+					{
+						args.Player.SendTileSquare(i, j, 4);
+						return true;
+					}
+				}
+			}
+
+			// Ignore rope placement range
+			if (type != TileID.Rope && TShock.CheckRangePermission(args.Player, x, y))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
+
+			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
+			{
+				args.Player.Disable("Reached TilePlace threshold.");
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
+
+			if (!args.Player.Group.HasPermission(Permissions.ignoreplacetiledetection))
+			{
+				args.Player.TilePlaceThreshold++;
+				var coords = new Vector2(x, y);
+				if (!args.Player.TilesCreated.ContainsKey(coords))
+					args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
+			}
+
+			return false;
 		}
 
 		/// <summary>
