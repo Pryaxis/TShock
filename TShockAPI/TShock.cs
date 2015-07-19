@@ -533,47 +533,153 @@ namespace TShockAPI
 				switch (parms[i].ToLower())
 				{
 					case "-configpath":
-						path = parms[++i];
-						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
-							SavePath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+							path = parms[++i];
+							if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+							{
+								SavePath = path;
+								ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+							}
+							break;
 						}
-						break;
-
 					case "-worldpath":
-						path = parms[++i];
-						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
-							Main.WorldPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
+							path = parms[++i];
+							if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+							{
+								Main.WorldPath = path;
+								ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
+							}
+							break;
 						}
-						break;
-
 					case "-logpath":
-						path = parms[++i];
-						if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 						{
-							LogPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
+							path = parms[++i];
+							if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+							{
+								LogPath = path;
+								ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
+							}
+							break;
 						}
-						break;
-
 					case "-logformat":
-						LogFormat = parms[++i];
-						break;
-
+						{
+							LogFormat = parms[++i];
+							break;
+						}
 					case "-logclear":
-						bool.TryParse(parms[++i], out LogClear);
-						break;
-
+						{
+							bool.TryParse(parms[++i], out LogClear);
+							break;
+						}
 					case "-dump":
-						ConfigFile.DumpDescriptions();
-						Permissions.DumpDescriptions();
-						ServerSideConfig.DumpDescriptions();
-						RestManager.DumpDescriptions();
-						Environment.Exit(1);
-						break;
+						{
+							ConfigFile.DumpDescriptions();
+							Permissions.DumpDescriptions();
+							ServerSideConfig.DumpDescriptions();
+							RestManager.DumpDescriptions();
+							Environment.Exit(1);
+							break;
+						}
+					case "-config":
+						{
+							string filePath = parms[++i];
+							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Loading dedicated config file: {0}", filePath), TraceLevel.Verbose);
+							Main.instance.LoadDedConfig(filePath);
+							break;
+						}
+					case "-port":
+						{
+							int serverPort;
+							if (int.TryParse(parms[++i], out serverPort))
+							{
+								Netplay.ListenPort = serverPort;
+								ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on port {0}.", serverPort), TraceLevel.Verbose);
+							}
+							else
+							{
+								// The server should not start up if this argument is invalid.
+								throw new InvalidOperationException("Invalid value given for command line argument \"-ip\".");
+							}
+
+							break;
+						}
+					case "-world":
+						{
+							string worldPath = parms[++i];
+							Main.instance.SetWorld(worldPath);;
+							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World set for auto loading: {0}", worldPath), TraceLevel.Verbose);
+
+							break;
+						}
+					case "-worldname":
+						{
+							string worldName = parms[++i];
+							Main.instance.SetWorldName(worldName);
+							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World name will be overridden by: {0}", worldName), TraceLevel.Verbose);
+
+							break;
+						}
+					case "-autoshutdown":
+						{
+							Main.instance.autoShut();
+							break;
+						}
+					case "-autocreate":
+						{
+							string newOpt = parms[++i];
+							Main.instance.autoCreate(newOpt);
+							break;
+						}
+					case "-ip":
+						{
+							IPAddress ip;
+							if (IPAddress.TryParse(parms[++i], out ip))
+							{
+								Netplay.ServerIP = ip;
+								ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on IP {0}.", ip), TraceLevel.Verbose);
+							}
+							else
+							{
+								// The server should not start up if this argument is invalid.
+								throw new InvalidOperationException("Invalid value given for command line argument \"-ip\".");
+							}
+
+							break;
+						}
+					case "-connperip":
+						{
+							int limit;
+							if (int.TryParse(parms[++i], out limit))
+							{
+								Netplay.MaxConnections = limit;
+								ServerApi.LogWriter.PluginWriteLine(this, string.Format(
+									"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);
+							}
+							else
+								ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-connperip\".", TraceLevel.Warning);
+
+							break;
+						}
+					case "-killinactivesocket":
+						{
+							//							Netplay.killInactive = true;
+							ServerApi.LogWriter.PluginWriteLine(this, "The argument -killinactivesocket is no longer present in Terraria.", TraceLevel.Warning);
+							break;
+						}
+					case "-lang":
+						{
+							int langIndex;
+							if (int.TryParse(parms[++i], out langIndex))
+							{
+								Lang.lang = langIndex;
+								ServerApi.LogWriter.PluginWriteLine(this, string.Format("Language index set to {0}.", langIndex), TraceLevel.Verbose);
+							}
+							else
+								ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-lang\".", TraceLevel.Warning);
+
+							break;
+						}
 				}
 			}
 		}
