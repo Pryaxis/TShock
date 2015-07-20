@@ -988,7 +988,7 @@ namespace TShockAPI
 					player.IgnoreActionsForDisabledArmor = check;
 					if (CheckIgnores(player))
 					{
-						player.Disable("check ignores failed in SecondUpdate()", false);
+						player.Disable("check ignores failed in OnSecondUpdate()", false);
 					}
 					else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 					{
