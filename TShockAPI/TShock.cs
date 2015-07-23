@@ -604,14 +604,6 @@ namespace TShockAPI
 
 							break;
 						}
-					case "-world":
-						{
-							string worldPath = parms[++i];
-							Main.instance.SetWorld(worldPath);;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World set for auto loading: {0}", worldPath), TraceLevel.Verbose);
-
-							break;
-						}
 					case "-worldname":
 						{
 							string worldName = parms[++i];
