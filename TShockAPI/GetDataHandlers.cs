@@ -2622,9 +2622,10 @@ namespace TShockAPI
 					|| type == ProjectileID.DeathLaser || type == ProjectileID.Landmine
 					|| type == ProjectileID.BulletDeadeye || type == ProjectileID.BoulderStaffOfEarth
 					|| (type > ProjectileID.ConfettiMelee && type < ProjectileID.SpiritHeal)
-					|| (type >= ProjectileID.FlamingWood && ProjectileID.GreekFire3 <= 328)
+					|| (type >= ProjectileID.FlamingWood && type <= ProjectileID.GreekFire3)
 					|| (type >= ProjectileID.PineNeedleHostile && type <= ProjectileID.Spike)
-					|| (type >= ProjectileID.MartianTurretBolt && type <= ProjectileID.RayGunnerLaser))
+					|| (type >= ProjectileID.MartianTurretBolt && type <= ProjectileID.RayGunnerLaser)
+					|| type == ProjectileID.CultistBossLightningOrb)
 				{	
 					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
 				}
