@@ -33,10 +33,10 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
 using Terraria;
+using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
-using TShockAPI.Net;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
@@ -1023,23 +1023,22 @@ namespace TShockAPI
 		{
 			if (args.Handled)
 				return;
-
-			if (!Config.AllowCrimsonCreep && (args.Type == 0 || args.Type == 199 || args.Type == 200 || args.Type == 203
-						|| args.Type == 234))
+			
+			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
+				|| TileID.Sets.Crimson[args.Type]))
 			{
 				args.Handled = true;
 				return;
 			}
 
-			if (!Config.AllowCorruptionCreep && (args.Type == 23 || args.Type == 25 || args.Type == 0 ||
-				args.Type == 112 || args.Type == 32))
+			if (!Config.AllowCorruptionCreep && (args.Type == TileID.Dirt || args.Type == TileID.CorruptThorns
+				|| TileID.Sets.Corrupt[args.Type]))
 			{
 				args.Handled = true;
 				return;
 			}
 
-			if (!Config.AllowHallowCreep && (args.Type == 109 || args.Type == 117 || args.Type == 116 || args.Type == 115
-						|| args.Type == 164))
+			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[args.Type]))
 			{
 				args.Handled = true;
 			}
