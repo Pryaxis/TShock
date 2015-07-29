@@ -299,20 +299,23 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gets a list of items by ID or name
+		/// Gets a list of items by ID, Name or Tag.
 		/// </summary>
-		/// <param name="idOrName">Item ID or name</param>
-		/// <returns>List of Items</returns>
-		public List<Item> GetItemByIdOrName(string idOrName)
+		/// <param name="text">Item ID, Name or Tag.</param>
+		/// <returns>A list of matching items.</returns>
+		public List<Item> GetItemByIdOrName(string text)
 		{
 			int type = -1;
-			if (int.TryParse(idOrName, out type))
+			if (Int32.TryParse(text, out type))
 			{
 				if (type >= Main.maxItemTypes)
 					return new List<Item>();
 				return new List<Item> {GetItemById(type)};
 			}
-			return GetItemByName(idOrName);
+			Item item = GetItemFromTag(text);
+			if (item != null)
+				return new List<Item>() { item };
+			return GetItemByName(text);
 		}
 
 		/// <summary>
@@ -340,12 +343,34 @@ namespace TShockAPI
 			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
+				if (String.IsNullOrWhiteSpace(item.name))
+					continue;
 				if (item.name.ToLower() == nameLower)
-					return new List<Item> {item};
+					return new List<Item> { item };
 				if (item.name.ToLower().StartsWith(nameLower))
-					found.Add((Item)item.Clone());
+					found.Add(item.Clone());
 			}
 			return found;
+		}
+
+		/// <summary>
+		/// Gets an item based on a chat item tag.
+		/// </summary>
+		/// <param name="tag">A tag in the [i/s#/p#:netid] format.</param>
+		/// <returns>The item represented by the tag.</returns>
+		public Item GetItemFromTag(string tag)
+		{
+			Regex regex = new Regex(@"\[i(tem)?(?:\/s(?<Stack>\d{1,3}))?(?:\/p(?<Prefix>\d{1,3}))?:(?<NetID>-?\d{1,4})\]");
+			Match match = regex.Match(tag);
+			if (!match.Success)
+				return null;
+			Item item = new Item();
+			item.netDefaults(Int32.Parse(match.Groups["NetID"].Value));
+			if (!String.IsNullOrWhiteSpace(match.Groups["Stack"].Value))
+				item.stack = Int32.Parse(match.Groups["Stack"].Value);
+			if (!String.IsNullOrWhiteSpace(match.Groups["Prefix"].Value))
+				item.prefix = Byte.Parse(match.Groups["Prefix"].Value);
+			return item;
 		}
 
 		/// <summary>
