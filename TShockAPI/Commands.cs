@@ -4542,6 +4542,7 @@ namespace TShockAPI
 			if (TShock.AuthToken == 0)
 			{
 				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
+				TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
 				TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
 				return;
 			}
