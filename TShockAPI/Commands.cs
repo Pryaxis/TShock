@@ -735,6 +735,12 @@ namespace TShockAPI
 				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
 				return;
 			}
+
+			if (args.Player.IsLoggedIn)
+			{
+				args.Player.SendErrorMessage("You are already logged in, and cannot login again.");
+				return;
+			}
             
 			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string password = "";
