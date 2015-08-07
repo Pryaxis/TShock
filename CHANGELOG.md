@@ -6,6 +6,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * Auth system kicks players if system is disabled. (@nicatronTg)
 * Fixed /login permitting multiple logins without a logout in between. (@nicatronTg)
+* Allow[Hallow/Corruption/Crimson]Creep in config now work. (@WhiteXZ)
+* API: Treasure bags are now named properly. (@WhiteXZ)
+* API: Clients no longer close on disconnect. (@Wolfje)
+* API: Add server broadcast hook. (@Patrikk)
+* API: Fixed pressure plate hook triggering multiple times. (@Patrikk)
+* API: Fixed issues with SendQ writes failing. (@Wolfje)
 
 ## TShock 4.3.6 (Pre-Release)
 
