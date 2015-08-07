@@ -2,7 +2,7 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Unreleased
+## TShock 4.3.7
 
 * Auth system kicks players if system is disabled. (@nicatronTg)
 * Fixed /login permitting multiple logins without a logout in between. (@nicatronTg)
@@ -11,7 +11,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Clients no longer close on disconnect. (@Wolfje)
 * API: Add server broadcast hook. (@Patrikk)
 * API: Fixed pressure plate hook triggering multiple times. (@Patrikk)
-* API: Fixed issues with SendQ writes failing. (@Wolfje)
+* API: Fixed issues with SendQ writes failing. (@Wolfje)\
+* API: Version tick to 1.21
 
 ## TShock 4.3.6 (Pre-Release)
 
