@@ -176,6 +176,8 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
+			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
+
 			try
 			{
 				HandleCommandLine(Environment.GetCommandLineArgs());
@@ -336,6 +338,14 @@ namespace TShockAPI
 				Log.Error("Fatal Startup Exception");
 				Log.Error(ex.ToString());
 				Environment.Exit(1);
+			}
+		}
+
+		protected void CrashReporter_HeapshotRequesting(object sender, EventArgs e)
+		{
+			foreach (TSPlayer player in TShock.Players)
+			{
+				player.User = null;
 			}
 		}
 
