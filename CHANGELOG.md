@@ -2,6 +2,16 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## TShock 4.3.8
+* API: Update to Terraria 1.3.0.8 (@Patrikkk)
+* **API: Added a crash reporter which collects memory dumps on Windows** (@Wolfje)
+* API: New commandline param: `-crashdir` - Writes crash reports to the specified directory (@Wolfje)
+* API: Sendq now doesn't disconnect people when it cant send a packet (@Wolfje)
+* API: Fixed more crashes on disconnect in sendq (@Wolfje)
+* API: Now ignores unknown server packets (@Wolfje)
+* API: Potentially removed arithmetic overflows in server (@Wolfje)
+
+
 ## TShock 4.3.7
 
 * Auth system kicks players if system is disabled. (@nicatronTg)
