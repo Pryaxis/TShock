@@ -11,6 +11,17 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Now ignores unknown server packets (@Wolfje)
 * API: Potentially removed arithmetic overflows in server (@Wolfje)
 
+### Using the Crash Reporter
+
+TShock now has a crash reporter built in which writes crash logs to the `crashes` directory
+in the event of a catastrophic failure.  **To change where TShock writes its crash logs,
+specify the `-crashdir` parameter on the command line**.
+
+1. In the event of a crash, look for a file called `crash_xxxx.zip` in the `crashes` directory
+2. Upload the file somewhere, beware the crash file may be quite large (>100MB), anywhere like google drive, dropbox or mega will be fine
+3. Post a link to the crash with reproduction steps in the TShock support forum
+
+Alternatively, if you do not want to report the crash, just delete the file.
 
 ## TShock 4.3.7
 
