@@ -1463,7 +1463,7 @@ namespace TShockAPI
 					{
 						if (!group.HasPermission(Permissions.bypassssc))
 						{
-							return true;
+							args.Player.PlayerData.RestoreCharacter(args.Player);
 						}
 					}
 					args.Player.LoginFailsBySsi = false;
