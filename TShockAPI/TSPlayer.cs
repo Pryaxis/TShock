@@ -747,11 +747,29 @@ namespace TShockAPI
 
 		public virtual void SendMessage(string msg, byte red, byte green, byte blue)
 		{
+			if (msg.Contains("\n"))
+			{
+				string[] msgs = msg.Split('\n');
+				foreach (string message in msgs)
+				{
+					SendMessage(message, red, green, blue);
+				}
+				return;
+			}
 			SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
 		}
 
 		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
 		{
+			if (msg.Contains("\n"))
+			{
+				string[] msgs = msg.Split('\n');
+				foreach (string message in msgs)
+				{
+					SendMessageFromPlayer(message, red, green, blue, ply);
+				}
+				return;
+			}
 			SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
 		}
 
