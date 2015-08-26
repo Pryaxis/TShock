@@ -979,9 +979,49 @@ namespace TShockAPI
 					{
 						if (Itembans.ItemIsBanned(item.name, player))
 						{
-							player.SetBuff(30, 120); //Bleeding
-							player.SetBuff(36, 120); //Broken Armor
+							player.SetBuff(BuffID.Frozen, 330, true);
+							player.SetBuff(BuffID.Stoned, 330, true);
+							player.SetBuff(BuffID.Webbed, 330, true);
 							check = "Remove armor/accessory " + item.name;
+
+							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+							break;
+						}
+					}
+					foreach (Item item in player.TPlayer.dye)
+					{
+						if (Itembans.ItemIsBanned(item.name, player))
+						{
+							player.SetBuff(BuffID.Frozen, 330, true);
+							player.SetBuff(BuffID.Stoned, 330, true);
+							player.SetBuff(BuffID.Webbed, 330, true);
+							check = "Remove dye " + item.name;
+
+							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+							break;
+						}
+					}
+					foreach (Item item in player.TPlayer.miscEquips)
+					{
+						if (Itembans.ItemIsBanned(item.name, player))
+						{
+							player.SetBuff(BuffID.Frozen, 330, true);
+							player.SetBuff(BuffID.Stoned, 330, true);
+							player.SetBuff(BuffID.Webbed, 330, true);
+							check = "Remove misc equip " + item.name;
+
+							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+							break;
+						}
+					}
+					foreach (Item item in player.TPlayer.miscDyes)
+					{
+						if (Itembans.ItemIsBanned(item.name, player))
+						{
+							player.SetBuff(BuffID.Frozen, 330, true);
+							player.SetBuff(BuffID.Stoned, 330, true);
+							player.SetBuff(BuffID.Webbed, 330, true);
+							check = "Remove misc dye " + item.name;
 
 							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 							break;
