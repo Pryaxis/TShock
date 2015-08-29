@@ -1551,25 +1551,18 @@ namespace TShockAPI
 		//TODO: Why is this in TShock's main class?
 		public static void StartInvasion(int type)
 		{
-			Main.invasionType = type;
+			int invasionSize = 0;
+
 			if (Config.InfiniteInvasion)
 			{
-				Main.invasionSize = 20000000;
+				invasionSize = 20000000;
 			}
 			else
 			{
-				Main.invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
+				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
 			}
 
-			Main.invasionWarn = 0;
-			if (new Random().Next(2) == 0)
-			{
-				Main.invasionX = 0.0;
-			}
-			else
-			{
-				Main.invasionX = Main.maxTilesX;
-			}
+			Main.StartInvasion(type, invasionSize);
 		}
 
 		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
