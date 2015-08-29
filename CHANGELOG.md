@@ -6,6 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * API: Added crash protection around malicious and/or invalid packets (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
+* Fixed /invade martian (@Wolfje)
 
 ## TShock 4.3.8
 * API: Update to Terraria 1.3.0.8 (@Patrikkk)
