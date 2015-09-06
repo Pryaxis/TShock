@@ -4335,7 +4335,7 @@ namespace TShockAPI
 							}
 							int addAmount;
 							int.TryParse(args.Parameters[3], out addAmount);
-							if (TShock.Regions.resizeRegion(args.Parameters[1], addAmount, direction))
+							if (TShock.Regions.ResizeRegion(args.Parameters[1], addAmount, direction))
 							{
 								args.Player.SendInfoMessage("Region Resized Successfully!");
 								TShock.Regions.Reload();
