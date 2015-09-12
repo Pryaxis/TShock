@@ -854,6 +854,8 @@ namespace TShockAPI
 		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
 		private void OnSecondUpdate()
 		{
+			DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+
 			if (Config.ForceTime != "normal")
 			{
 				switch (Config.ForceTime)
@@ -875,7 +877,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable("Reached TileKill threshold.");
+							player.Disable("Reached TileKill threshold.", flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -891,7 +893,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold");
+							player.Disable("Reached TilePlace threshold", flags);
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -932,7 +934,7 @@ namespace TShockAPI
 
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold");
+						player.Disable("Reached TileLiquid threshold", flags);
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -941,7 +943,7 @@ namespace TShockAPI
 
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable("Reached projectile threshold");
+						player.Disable("Reached projectile threshold", flags);
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -950,7 +952,7 @@ namespace TShockAPI
 
 					if (player.PaintThreshold >= Config.TilePaintThreshold)
 					{
-						player.Disable("Reached paint threshold");
+						player.Disable("Reached paint threshold", flags);
 					}
 					if (player.PaintThreshold > 0)
 					{
@@ -961,80 +963,98 @@ namespace TShockAPI
 					{
 						player.Spawn();
 					}
-					string check = "none";
-					foreach (Item item in player.TPlayer.inventory)
-					{
-						if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
-							item.type != 0)
-						{
-							check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-							player.SendErrorMessage(check);
-							break;
-						}
-					}
-					player.IgnoreActionsForCheating = check;
-					check = "none";
-					// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
-					foreach (Item item in player.TPlayer.armor)
-					{
-						if (Itembans.ItemIsBanned(item.name, player))
-						{
-							player.SetBuff(BuffID.Frozen, 330, true);
-							player.SetBuff(BuffID.Stoned, 330, true);
-							player.SetBuff(BuffID.Webbed, 330, true);
-							check = "Remove armor/accessory " + item.name;
 
-							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-							break;
-						}
-					}
-					foreach (Item item in player.TPlayer.dye)
+					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						if (Itembans.ItemIsBanned(item.name, player))
+						if (CheckIgnores(player))
 						{
-							player.SetBuff(BuffID.Frozen, 330, true);
-							player.SetBuff(BuffID.Stoned, 330, true);
-							player.SetBuff(BuffID.Webbed, 330, true);
-							check = "Remove dye " + item.name;
-
-							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-							break;
+							player.Disable("not being logged in while SSC is enabled", flags);
 						}
-					}
-					foreach (Item item in player.TPlayer.miscEquips)
-					{
-						if (Itembans.ItemIsBanned(item.name, player))
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
-							player.SetBuff(BuffID.Frozen, 330, true);
-							player.SetBuff(BuffID.Stoned, 330, true);
-							player.SetBuff(BuffID.Webbed, 330, true);
-							check = "Remove misc equip " + item.name;
-
-							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-							break;
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
 						}
 					}
-					foreach (Item item in player.TPlayer.miscDyes)
+					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
-						if (Itembans.ItemIsBanned(item.name, player))
+						string check = "none";
+						foreach (Item item in player.TPlayer.inventory)
 						{
-							player.SetBuff(BuffID.Frozen, 330, true);
-							player.SetBuff(BuffID.Stoned, 330, true);
-							player.SetBuff(BuffID.Webbed, 330, true);
-							check = "Remove misc dye " + item.name;
-
-							player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-							break;
+							if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
+								item.type != 0)
+							{
+								check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+								player.SendErrorMessage(check);
+								break;
+							}
 						}
-					}
-					player.IgnoreActionsForDisabledArmor = check;
-					if (CheckIgnores(player))
-					{
-						player.Disable("check ignores failed in OnSecondUpdate()", false);
-					}
-					else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
-					{
-						player.SetBuff(23, 120); //Cursed
+						player.IgnoreActionsForCheating = check;
+						check = "none";
+						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
+						foreach (Item item in player.TPlayer.armor)
+						{
+							if (Itembans.ItemIsBanned(item.name, player))
+							{
+								player.SetBuff(BuffID.Frozen, 330, true);
+								player.SetBuff(BuffID.Stoned, 330, true);
+								player.SetBuff(BuffID.Webbed, 330, true);
+								check = "Remove armor/accessory " + item.name;
+
+								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+								break;
+							}
+						}
+						foreach (Item item in player.TPlayer.dye)
+						{
+							if (Itembans.ItemIsBanned(item.name, player))
+							{
+								player.SetBuff(BuffID.Frozen, 330, true);
+								player.SetBuff(BuffID.Stoned, 330, true);
+								player.SetBuff(BuffID.Webbed, 330, true);
+								check = "Remove dye " + item.name;
+
+								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+								break;
+							}
+						}
+						foreach (Item item in player.TPlayer.miscEquips)
+						{
+							if (Itembans.ItemIsBanned(item.name, player))
+							{
+								player.SetBuff(BuffID.Frozen, 330, true);
+								player.SetBuff(BuffID.Stoned, 330, true);
+								player.SetBuff(BuffID.Webbed, 330, true);
+								check = "Remove misc equip " + item.name;
+
+								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+								break;
+							}
+						}
+						foreach (Item item in player.TPlayer.miscDyes)
+						{
+							if (Itembans.ItemIsBanned(item.name, player))
+							{
+								player.SetBuff(BuffID.Frozen, 330, true);
+								player.SetBuff(BuffID.Stoned, 330, true);
+								player.SetBuff(BuffID.Webbed, 330, true);
+								check = "Remove misc dye " + item.name;
+
+								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
+								break;
+							}
+						}
+						player.IgnoreActionsForDisabledArmor = check;
+
+						if (CheckIgnores(player))
+						{
+							player.Disable("check ignores failed in OnSecondUpdate()", flags);
+						}
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						{
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+						}
 					}
 
 					var oldRegion = player.CurrentRegion;
@@ -1044,12 +1064,12 @@ namespace TShockAPI
 					{
 						if (oldRegion != null)
 						{
-							Hooks.RegionHooks.OnRegionLeft(player, oldRegion);
+							RegionHooks.OnRegionLeft(player, oldRegion);
 						}
 
 						if (player.CurrentRegion != null)
 						{
-							Hooks.RegionHooks.OnRegionEntered(player, player.CurrentRegion);
+							RegionHooks.OnRegionEntered(player, player.CurrentRegion);
 						}
 					}
 				}
