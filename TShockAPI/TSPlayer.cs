@@ -31,6 +31,30 @@ using Timer = System.Timers.Timer;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Bitflags used with the <see cref="Disable(string, DisableFlags)"></see> method
+	/// </summary>
+	[Flags]
+	public enum DisableFlags
+	{
+		/// <summary>
+		/// Disable the player and leave no messages
+		/// </summary>
+		None,
+		/// <summary>
+		/// Write the Disable message to the console
+		/// </summary>
+		WriteToConsole,
+		/// <summary>
+		/// Write the Disable message to the log
+		/// </summary>
+		WriteToLog,
+		/// <summary>
+		/// Equivalent to WriteToConsole | WriteToLog
+		/// </summary>
+		WriteToLogAndConsole
+	}
+
 	public class TSPlayer
 	{
 		/// <summary>
@@ -794,7 +818,25 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="reason">The reason why the player was disabled.</param>
 		/// <param name="displayConsole">Whether or not to log this event to the console.</param>
+		[Obsolete("Use Disable(string, DisableFlags)")]
 		public virtual void Disable(string reason = "", bool displayConsole = true)
+		{
+			if (displayConsole)
+			{
+				Disable(reason, DisableFlags.WriteToConsole);
+			}
+			else
+			{
+				Disable(reason, DisableFlags.WriteToLog);
+			}
+		}
+
+		/// <summary>
+		/// Disables the player for the given <paramref name="reason"/>
+		/// </summary>
+		/// <param name="reason">The reason why the player was disabled.</param>
+		/// <param name="flags">Flags to dictate where this event is logged to.</param>
+		public virtual void Disable(string reason = "", DisableFlags flags = DisableFlags.WriteToLog)
 		{
 			LastThreat = DateTime.UtcNow;
 			SetBuff(BuffID.Frozen, 330, true);
@@ -810,14 +852,18 @@ namespace TShockAPI
 			{
 				if ((DateTime.UtcNow - LastDisableNotification).TotalMilliseconds > 5000)
 				{
-					if (displayConsole)
+					if (flags.HasFlag(DisableFlags.WriteToConsole))
 					{
-						TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
+						if (flags.HasFlag(DisableFlags.WriteToLog))
+						{
+							TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
+						}
+						else
+						{
+							Server.SendInfoMessage("Player {0} has been disabled for {1}.", Name, reason);
+						}
 					}
-					else
-					{
-						TShock.Log.Info("Player {0} has been disabled for {1}.", Name, reason);
-					}
+
 					LastDisableNotification = DateTime.UtcNow;
 				}
 			}

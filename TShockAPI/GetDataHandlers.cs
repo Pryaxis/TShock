@@ -1331,7 +1331,7 @@ namespace TShockAPI
 
 			if (max > TShock.Config.MaxHP && !args.Player.Group.HasPermission(Permissions.ignorehp))
 			{
-				args.Player.Disable("Maximum HP beyond limit");
+				args.Player.Disable("Maximum HP beyond limit", DisableFlags.WriteToLogAndConsole);
 				return true;
 			}
 
@@ -1360,7 +1360,7 @@ namespace TShockAPI
 
 			if (max > TShock.Config.MaxMP && !args.Player.Group.HasPermission(Permissions.ignoremp))
 			{
-				args.Player.Disable("Maximum MP beyond limit");
+				args.Player.Disable("Maximum MP beyond limit", DisableFlags.WriteToLogAndConsole);
 				return true;
 			}
 
@@ -2099,14 +2099,14 @@ namespace TShockAPI
 
 				if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
 				{
-					args.Player.Disable("Reached TileKill threshold.");
+					args.Player.Disable("Reached TileKill threshold.", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
 
 				if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
 				{
-					args.Player.Disable("Reached TilePlace threshold.");
+					args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
@@ -2214,7 +2214,7 @@ namespace TShockAPI
 
 			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
 			{
-				args.Player.Disable("Reached TilePlace threshold.");
+				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
 				args.Player.SendTileSquare(x, y, 4);
 				return true;
 			}
@@ -2443,7 +2443,7 @@ namespace TShockAPI
 				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
 				{
 					control[5] = false;
-					args.Player.Disable("using a banned item ({0})".SFormat(itemName));
+					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
 					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
 				}
 
@@ -2595,7 +2595,7 @@ namespace TShockAPI
 
 			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
 			{
-				args.Player.Disable("Player does not have permission to create that projectile.", true);
+				args.Player.Disable("Player does not have permission to create that projectile.", DisableFlags.WriteToLogAndConsole);
 				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
@@ -2603,7 +2603,7 @@ namespace TShockAPI
 			
 			if (dmg > TShock.Config.MaxProjDamage && !args.Player.Group.HasPermission(Permissions.ignoredamagecap))
 			{
-				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage));
+				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2633,7 +2633,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type));
+					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
 					args.Player.RemoveProjectile(ident, owner);
 				}
 				return true;
@@ -2641,7 +2641,7 @@ namespace TShockAPI
 
 			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
 			{
-				args.Player.Disable("Reached projectile update threshold.");
+				args.Player.Disable("Reached projectile update threshold.", DisableFlags.WriteToLogAndConsole);
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2708,7 +2708,7 @@ namespace TShockAPI
 
 			if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
-				args.Player.Disable("Does not have projectile permission to kill projectile.");
+				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2810,7 +2810,7 @@ namespace TShockAPI
 
 			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
 			{
-				args.Player.Disable("Reached TileLiquid threshold.");
+				args.Player.Disable("Reached TileLiquid threshold.", DisableFlags.WriteToLogAndConsole);
 				args.Player.SendTileSquare(tileX, tileY, 1);
 				return true;
 			}
@@ -2847,7 +2847,7 @@ namespace TShockAPI
 				if (type == 1 && !(bucket == 2 || bucket == 0))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading lava without holding a lava bucket");
+					args.Player.Disable("Spreading lava without holding a lava bucket", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -2855,7 +2855,7 @@ namespace TShockAPI
 				if (type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned lava bucket without permissions");
+					args.Player.Disable("Using banned lava bucket without permissions", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -2863,7 +2863,7 @@ namespace TShockAPI
 				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading water without holding a water bucket");
+					args.Player.Disable("Spreading water without holding a water bucket", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -2871,7 +2871,7 @@ namespace TShockAPI
 				if (type == 0 && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned water bucket without permissions");
+					args.Player.Disable("Using banned water bucket without permissions", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -2879,7 +2879,7 @@ namespace TShockAPI
 				if (type == 2 && !(bucket == 3 || bucket == 0))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading honey without holding a honey bucket");
+					args.Player.Disable("Spreading honey without holding a honey bucket", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -2887,7 +2887,7 @@ namespace TShockAPI
 				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned honey bucket without permissions");
+					args.Player.Disable("Using banned honey bucket without permissions", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					return true;
 				}
@@ -3328,7 +3328,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}			
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -3394,7 +3394,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;

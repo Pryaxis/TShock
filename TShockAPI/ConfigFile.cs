@@ -119,8 +119,8 @@ namespace TShockAPI
 		[Description("Mediumcore players ONLY. This means softcore players cannot join.")]
 		public bool MediumcoreOnly;
 
-		[Description("Kicks a mediumcore player on death.")]
 		/// <summary>KickOnMediumcoreDeath - Whether or not to kick mediumcore players on death.</summary>
+		[Description("Kicks a mediumcore player on death.")]
 		public bool KickOnMediumcoreDeath;
 
 		/// <summary>BanOnMediumcoreDeath - Whether or not to ban mediumcore players on death.</summary>
@@ -179,6 +179,9 @@ namespace TShockAPI
 
 		[Description("Force-disable printing logs to players with the log permission.")]
 		public bool DisableSpewLogs = true;
+
+		[Description("Prevents OnSecondUpdate checks from writing to the log file")]
+		public bool DisableSecondUpdateLogs = false;
 
 		[Description("Valid types are \"sha512\", \"sha256\", \"md5\", append with \"-xp\" for the xp supported algorithms.")]
 		public string HashAlgorithm = "sha512";
