@@ -15,6 +15,7 @@ by up to 70% on all worlds and CPU requirements up to 10% in the running process
 * API: Fixed some possible packet leaks in sendq (@Wolfje)
 * API: APIVersion 1.22
 * API: Added crash protection around malicious and/or invalid packets (@Wolfje)
+* Fixed an issue preventing some players from joining when the world is saving (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
 * Fixed /invade martian (@Wolfje)
 
