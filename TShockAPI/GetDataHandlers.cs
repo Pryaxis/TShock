@@ -1648,7 +1648,8 @@ namespace TShockAPI
 			TileID.MinecartTrack,
 			TileID.WeaponsRack,
 			TileID.ItemFrame,
-			TileID.LunarMonolith
+			TileID.LunarMonolith,
+			TileID.TargetDummy
 		};
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
