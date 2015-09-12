@@ -4,9 +4,20 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## TShock 4.3.10
 
+This version features a drop-in tile replacement system by @Wolfje that reduces RAM requirements
+by up to 70% on all worlds and CPU requirements up to 10% in the running process.
+
+* Large worlds: from 700MB-1GB -> ~325MB
+* Medium worlds: from 500MB -> ~200MB
+* Small worlds: from 400MB -> ~125MB
+
+* API: **Drop-in tile storage replacement system** (@Wolfje)
+* API: Fixed some possible packet leaks in sendq (@Wolfje)
+* API: APIVersion 1.22
 * API: Added crash protection around malicious and/or invalid packets (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
 * Fixed /invade martian (@Wolfje)
+
 
 ## TShock 4.3.8
 * API: Update to Terraria 1.3.0.8 (@Patrikkk)
