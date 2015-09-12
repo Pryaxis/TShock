@@ -961,7 +961,22 @@ namespace TShockAPI
 					{
 						player.Spawn();
 					}
-					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+
+					if (Main.ServerSideCharacter && !player.IsLoggedIn)
+					{
+						DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+
+						if (CheckIgnores(player))
+						{
+							player.Disable("not being logged in while SSC is enabled", flags);
+						}
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						{
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+						}
+					}
+					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
 						string check = "none";
 						foreach (Item item in player.TPlayer.inventory)
@@ -1030,10 +1045,16 @@ namespace TShockAPI
 							}
 						}
 						player.IgnoreActionsForDisabledArmor = check;
-						if (CheckIgnores(player) || Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+
+						if (CheckIgnores(player))
 						{
-							DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 							player.Disable("check ignores failed in OnSecondUpdate()", flags);
+						}
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						{
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
 						}
 					}
 
