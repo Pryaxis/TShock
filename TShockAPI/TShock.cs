@@ -854,6 +854,8 @@ namespace TShockAPI
 		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
 		private void OnSecondUpdate()
 		{
+			DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+
 			if (Config.ForceTime != "normal")
 			{
 				switch (Config.ForceTime)
@@ -875,7 +877,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.TileKillThreshold)
 						{
-							player.Disable("Reached TileKill threshold.", DisableFlags.WriteToLogAndConsole);
+							player.Disable("Reached TileKill threshold.", flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -891,7 +893,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold", DisableFlags.WriteToLogAndConsole);
+							player.Disable("Reached TilePlace threshold", flags);
 							TSPlayer.Server.RevertTiles(player.TilesCreated);
 							player.TilesCreated.Clear();
 						}
@@ -932,7 +934,7 @@ namespace TShockAPI
 
 					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold", DisableFlags.WriteToLogAndConsole);
+						player.Disable("Reached TileLiquid threshold", flags);
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -941,7 +943,7 @@ namespace TShockAPI
 
 					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
 					{
-						player.Disable("Reached projectile threshold", DisableFlags.WriteToLogAndConsole);
+						player.Disable("Reached projectile threshold", flags);
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -950,7 +952,7 @@ namespace TShockAPI
 
 					if (player.PaintThreshold >= Config.TilePaintThreshold)
 					{
-						player.Disable("Reached paint threshold", DisableFlags.WriteToLogAndConsole);
+						player.Disable("Reached paint threshold", flags);
 					}
 					if (player.PaintThreshold > 0)
 					{
@@ -964,8 +966,6 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
-
 						if (CheckIgnores(player))
 						{
 							player.Disable("not being logged in while SSC is enabled", flags);
@@ -1045,7 +1045,6 @@ namespace TShockAPI
 							}
 						}
 						player.IgnoreActionsForDisabledArmor = check;
-						DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
 						if (CheckIgnores(player))
 						{
