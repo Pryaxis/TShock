@@ -11,6 +11,8 @@ by up to 70% on all worlds and CPU requirements up to 10% in the running process
 * Medium worlds: from 500MB -> ~200MB
 * Small worlds: from 400MB -> ~125MB
 
+Other notable changes include:
+
 * API: **Drop-in tile storage replacement system** (@Wolfje)
 * API: Fixed some possible packet leaks in sendq (@Wolfje)
 * API: APIVersion 1.22
