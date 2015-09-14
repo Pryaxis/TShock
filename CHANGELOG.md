@@ -20,6 +20,9 @@ Other notable changes include:
 * Fixed an issue preventing some players from joining when the world is saving (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
 * Fixed /invade martian (@Wolfje)
+* Fixed target dummies not working properly (@WhiteXZ)
+* Added a config option (DisableSecondUpdateLogs) to prevent log spam from OnSecondUpdate() (@WhiteXZ)
+* **DEPRECATION**: Deprecated Disable(string, bool) and added Disable(string, DisableFlags). Please update your plugins accordingly (@WhiteXZ)
 
 
 ## TShock 4.3.8
