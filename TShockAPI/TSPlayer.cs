@@ -430,6 +430,11 @@ namespace TShockAPI
 			}
 			try
 			{
+		                if ((tempGroup != null && tempGroup.HasPermission(Permissions.bypassssc)) || Group.HasPermission(Permissions.bypassssc))
+                		{
+                    		TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
+            			return true;
+        			}
 				PlayerData.CopyCharacter(this);
 				TShock.CharacterDB.InsertPlayerData(this);
 				return true;
