@@ -580,6 +580,8 @@ namespace TShockAPI
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.Reload();
 			TShock.Itembans.UpdateItemBans();
+			TShock.ProjectileBans.UpdateBans();
+    			TShock.TileBans.UpdateBans();
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
