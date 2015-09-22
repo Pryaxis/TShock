@@ -36,14 +36,14 @@ namespace Rests
 			public string UserGroupName { get; set; }
 		}
 
-		public Dictionary<string,TokenData> Tokens { get; protected set; }
-        public Dictionary<string, TokenData> AppTokens { get; protected set; }
+		public Dictionary<string, TokenData> Tokens { get; protected set; }
+		public Dictionary<string, TokenData> AppTokens { get; protected set; }
 
 		public SecureRest(IPAddress ip, int port)
 			: base(ip, port)
 		{
 			Tokens = new Dictionary<string, TokenData>();
-            AppTokens = new Dictionary<string, TokenData>();
+			AppTokens = new Dictionary<string, TokenData>();
 
 			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
 			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { DoLog = false });
@@ -55,10 +55,10 @@ namespace Rests
 				AppTokens.Add(t.Key, t.Value);
 			}
 
-            foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
-            {
-                AppTokens.Add(t.Key, t.Value);
-            }
+			foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
+			{
+				AppTokens.Add(t.Key, t.Value);
+			}
 
 			// TODO: Get rid of this when the old REST permission model is removed.
 			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
@@ -84,6 +84,18 @@ namespace Rests
 			}
 		}
 
+		private void AddTokenToBucket(string ip)
+		{
+			if (tokenBucket.ContainsKey(ip))
+			{
+				tokenBucket[ip] += 1;
+			}
+			else
+			{
+				tokenBucket.Add(ip, 1);
+			}
+		}
+
 		private object DestroyToken(RestRequestArgs args)
 		{
 			var token = args.Verbs["token"];
@@ -94,10 +106,10 @@ namespace Rests
 			catch (Exception)
 			{
 				return new RestObject("400")
-				       	{ Error = "The specified token queued for destruction failed to be deleted." };
+				{ Error = "The specified token queued for destruction failed to be deleted." };
 			}
 			return new RestObject()
-			       	{ Response = "Requested token was successfully destroyed." };
+			{ Response = "Requested token was successfully destroyed." };
 		}
 
 		private object DestroyAllTokens(RestRequestArgs args)
@@ -105,42 +117,73 @@ namespace Rests
 			Tokens.Clear();
 
 			return new RestObject()
-			       	{ Response = "All tokens were successfully destroyed." };
+			{ Response = "All tokens were successfully destroyed." };
 		}
 
 		private object NewTokenV2(RestRequestArgs args)
 		{
 			var user = args.Parameters["username"];
 			var pass = args.Verbs["password"];
+			var context = args.Context;
 
-			return this.NewTokenInternal(user, pass);
+			return this.NewTokenInternal(user, pass, context);
 		}
 
 		private object NewToken(RestRequestArgs args)
 		{
 			var user = args.Verbs["username"];
 			var pass = args.Verbs["password"];
+			var context = args.Context;
 
-			RestObject response = this.NewTokenInternal(user, pass);
+			RestObject response = this.NewTokenInternal(user, pass, context);
 			response["deprecated"] = "This endpoint is depracted and will be removed in the future.";
 			return response;
 		}
 
-		private RestObject NewTokenInternal(string username, string password)
+		private RestObject NewTokenInternal(string username, string password, IHttpContext context)
 		{
+			int tokens = 0;
+			if (tokenBucket.TryGetValue(context.RemoteEndPoint.Address.ToString(), out tokens))
+			{
+				if (tokens >= Math.Max(TShock.Config.RESTMaximumRequestsPerInterval, 5))
+				{
+					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} tokens", context.RemoteEndPoint.Address.ToString(), tokens);
+					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens over limit, increment by one and reject request
+					return new RestObject("403")
+					{
+						Error = "Username or password may be incorrect or this account may not have sufficient privileges."
+					};
+				}
+				if (!TShock.Config.RESTLimitOnlyFailedLoginRequests)
+					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens under limit, increment by one and process request
+			}
+			else
+			{
+				if (!TShock.Config.RESTLimitOnlyFailedLoginRequests)
+					tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
+			}
+
 			User userAccount = TShock.Users.GetUserByName(username);
-            if (userAccount == null)
-                return new RestObject("401") { Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
-			
+			if (userAccount == null)
+			{
+				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
+				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+			}
+
 			if (!userAccount.VerifyPassword(password))
-				return new RestObject("401")
-					{ Error = "Invalid username/password combination provided. Please re-submit your query with a correct pair." };
+			{
+				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
+				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+			}
 
 			Group userGroup = TShock.Utils.GetGroup(userAccount.Group);
 			if (!userGroup.HasPermission(RestPermissions.restapi) && userAccount.Group != "superadmin")
+			{
+				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
 				return new RestObject("403")
-					{ Error = "Although your account was successfully found and identified, your account lacks the permission required to use the API. (restapi)" };
-			
+				{ Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+			}
+
 			string tokenHash;
 			var rand = new Random();
 			var randbytes = new byte[32];
@@ -152,29 +195,32 @@ namespace Rests
 
 			Tokens.Add(tokenHash, new TokenData { Username = userAccount.Name, UserGroupName = userGroup.Name });
 
+			AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
+
 			RestObject response = new RestObject() { Response = "Successful login" };
 			response["token"] = tokenHash;
 			return response;
 		}
 
-		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request)
+		protected override object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request, IHttpContext context)
 		{
 			if (!cmd.RequiresToken)
-				return base.ExecuteCommand(cmd, verbs, parms, request);
-			
+				return base.ExecuteCommand(cmd, verbs, parms, request, context);
+
 			var token = parms["token"];
 			if (token == null)
 				return new RestObject("401")
-					{ Error = "Not authorized. The specified API endpoint requires a token." };
+				{ Error = "Not authorized. The specified API endpoint requires a token." };
 
 			SecureRestCommand secureCmd = (SecureRestCommand)cmd;
 			TokenData tokenData;
-            if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
+			if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
 				return new RestObject("403")
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
 			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel) {
+			if (TShock.Config.RestUseNewPermissionModel)
+			{
 				Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
 				if (userGroup == null)
 				{
@@ -191,10 +237,10 @@ namespace Rests
 				}
 			}
 
-			object result = secureCmd.Execute(verbs, parms, tokenData, request);
+			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);
 			if (cmd.DoLog && TShock.Config.LogRest)
 				TShock.Utils.SendLogs(string.Format(
-					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)), 
+					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)),
 					Color.PaleVioletRed);
 
 			return result;

@@ -22,6 +22,8 @@ Other notable changes include:
 * Fixed /invade martian (@Wolfje)
 * Fixed target dummies not working properly (@WhiteXZ)
 * Added a config option (DisableSecondUpdateLogs) to prevent log spam from OnSecondUpdate() (@WhiteXZ)
+* Added RESTful API login rate limiting (@George)
+* Added config options (MaximumRequestsPerInterval, RequestBucketDecreaseIntervalMinutes, LimitOnlyFailedLoginRequests) for rate limiting (@George)
 * **DEPRECATION**: Deprecated Disable(string, bool) and added Disable(string, DisableFlags). Please update your plugins accordingly (@WhiteXZ)
 
 

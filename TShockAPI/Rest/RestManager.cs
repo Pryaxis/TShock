@@ -109,10 +109,10 @@ namespace TShockAPI
 			}
 			else
 			{
-				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/status", (a) => this.ServerStatus(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
+				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/status", (a) => this.ServerStatus(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 			}
 
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
