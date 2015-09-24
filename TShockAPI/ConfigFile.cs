@@ -436,6 +436,15 @@ namespace TShockAPI
 		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
 		public int MinimumPasswordLength = 4;
 
+		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
+		public int RESTMaximumRequestsPerInterval = 5;
+
+		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
+		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
+
+		[Description("Whether we should limit only the max failed login requests, or all login requests")]
+		public bool RESTLimitOnlyFailedLoginRequests = true;
+
 		[Obsolete("This is being removed in future versions of TShock due to Terraria fixes.")]
 		[Description("Enable the DCU. Very dangerous; can destroy world without consequence.")] public bool
 			VeryDangerousDoNotChangeEnableDrillContainmentUnit = true;
