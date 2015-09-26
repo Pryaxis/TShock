@@ -972,8 +972,8 @@ namespace TShockAPI
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							player.Disable(String.Format("holding banned item: {0}", player.TPlayer.inventory[player.TPlayer.selectedItem].name), flags);
+							player.SendErrorMessage(String.Format("You are holding a banned item: {0}", player.TPlayer.inventory[player.TPlayer.selectedItem].name));
 						}
 					}
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
@@ -1052,8 +1052,8 @@ namespace TShockAPI
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							player.Disable(String.Format("holding banned item: {0}", player.TPlayer.inventory[player.TPlayer.selectedItem].name), flags);
+							player.SendErrorMessage(String.Format("You are holding a banned item: {0}", player.TPlayer.inventory[player.TPlayer.selectedItem].name));
 						}
 					}
 
@@ -1093,7 +1093,7 @@ namespace TShockAPI
 		{
 			if (args.Handled)
 				return;
-			
+
 			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
 				|| TileID.Sets.Crimson[args.Type]))
 			{
