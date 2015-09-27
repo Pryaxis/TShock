@@ -44,15 +44,16 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"'{0}' {1} {2} {3} {4}".SFormat(c.Name, 
-													DbTypeToString(c.Type, c.Length), 
-													c.Primary ? "PRIMARY KEY" : "",
-													c.AutoIncrement ? "AUTOINCREMENT" : "", 
+					"'{0}' {1} {2} {3}".SFormat(c.Name,
+													DbTypeToString(c.Type, c.Length),
+													c.AutoIncrement ? "AUTOINCREMENT" : "",
 													c.NotNull ? "NOT NULL" : ""));
 			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), 
+			var primaryKeys = table.Columns.Where(c => c.Primary).Select(c => c.Name);
+			return "CREATE TABLE {0} ({1} {2} {3})".SFormat(EscapeTableName(table.Name),
 														string.Join(", ", columns),
-														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
+														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "",
+														primaryKeys.Count() > 0 ? ", PRIMARY KEY ({0})".SFormat(string.Join(", ", primaryKeys)) : "");
 		}
 
 		public override string RenameTable(string from, string to)
@@ -96,12 +97,16 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"{0} {1} {2} {3} {4}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
+					"{0} {1} {2} {3}".SFormat(c.Name, DbTypeToString(c.Type, c.Length),
 											  c.AutoIncrement ? "AUTO_INCREMENT" : "", c.NotNull ? "NOT NULL" : ""));
 			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
+			var primaryKeys = table.Columns.Where(c => c.Primary).Select(c => c.Name);
 			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), string.Join(", ", columns),
 														uniques.Count() > 0
 															? ", UNIQUE({0})".SFormat(string.Join(", ", uniques))
+															: "",
+														primaryKeys.Count() > 0
+															? ", PRIMARY KEY ({0})".SFormat(string.Join(", ", primaryKeys))
 															: "");
 		}
 
@@ -159,7 +164,7 @@ namespace TShockAPI.DB
 				CREATE TABLE "main"."Bans" ("IP" TEXT PRIMARY KEY ,"Name" TEXT)
 				INSERT INTO "main"."Bans" SELECT "IP","Name" FROM "main"."oXHFcGcd04oXHFcGcd04_Bans"
 				DROP TABLE "main"."oXHFcGcd04oXHFcGcd04_Bans"
-			 * 
+			 *
 			 * Twitchy - Oh. I get it!
 			 */
 			var rstr = rand.NextString(20);
