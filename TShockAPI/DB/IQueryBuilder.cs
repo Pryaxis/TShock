@@ -41,19 +41,26 @@ namespace TShockAPI.DB
 	{
 		public override string CreateTable(SqlTable table)
 		{
+
+			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
+			var primaryKeys = table.Columns.Where(c => c.Primary).Select(c => c.Name);
+			var hasAutoIncrement = table.Columns.Any(c => c.AutoIncrement);
+
+			if (primaryKeys.Count() > 1 && hasAutoIncrement)
+				throw new Exception("AUTOINCREMENT cannot be used with multiple primary keys in SQLite");
+
 			var columns =
 				table.Columns.Select(
 					c =>
 					"'{0}' {1} {2} {3}".SFormat(c.Name,
 													DbTypeToString(c.Type, c.Length),
-													c.AutoIncrement ? "AUTOINCREMENT" : "",
+													c.Primary && c.AutoIncrement ? "PRIMARY KEY AUTOINCREMENT" : "",
 													c.NotNull ? "NOT NULL" : ""));
-			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-			var primaryKeys = table.Columns.Where(c => c.Primary).Select(c => c.Name);
+
 			return "CREATE TABLE {0} ({1} {2} {3})".SFormat(EscapeTableName(table.Name),
 														string.Join(", ", columns),
 														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "",
-														primaryKeys.Count() > 0 ? ", PRIMARY KEY ({0})".SFormat(string.Join(", ", primaryKeys)) : "");
+														primaryKeys.Count() > 0 && !hasAutoIncrement ? ", PRIMARY KEY ({0})".SFormat(string.Join(", ", primaryKeys)) : "");
 		}
 
 		public override string RenameTable(string from, string to)
