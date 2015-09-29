@@ -850,6 +850,7 @@ namespace TShockAPI
 
 			if (ActiveChest != -1)
 			{
+				ActiveChest = -1;
 				SendData(PacketTypes.ChestOpen, "", -1);
 			}
 
