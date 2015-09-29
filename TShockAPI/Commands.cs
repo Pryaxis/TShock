@@ -338,7 +338,7 @@ namespace TShockAPI
 			{
 				HelpText = "Shuts down the server without saving."
 			});
-			add(new Command(Permissions.maintenance, Reload, "reload")
+			add(new Command(Permissions.cfgreload, Reload, "reload")
 			{
 				HelpText = "Reloads the server configuration file."
 			});
