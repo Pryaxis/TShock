@@ -139,6 +139,7 @@
     <Compile Include="UpdateManager.cs" />
     <Compile Include="DB\WarpsManager.cs" />
     <Compile Include="DB\SqlConstraint.cs" />
+    <Compile Include="DB\SqlIndex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TShockAPI.licenseheader" />

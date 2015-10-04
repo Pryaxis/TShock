@@ -241,6 +241,40 @@ namespace TShockAPI.DB
 
 			throw new NotImplementedException();
 		}
+
+		/// <summary>
+		/// Performs the collection of queries within a transaction.
+		/// </summary>
+		/// <returns><c>true</c>, if transaction was successful, <c>false</c> otherwise.</returns>
+		/// <param name="olddb">A database instance.</param>
+		/// <param name="queries">A list of SQL queries.</param>
+		public static bool AsTransaction(this IDbConnection olddb, IEnumerable<string> queries)
+		{
+			using (var db = olddb.CloneEx())
+			{
+				db.Open();
+				using (var transaction = db.BeginTransaction())
+				using (var com = db.CreateCommand())
+				{
+					try
+					{
+						queries.ForEach(query => {
+							com.CommandText = query;
+							com.ExecuteNonQuery();
+						});
+
+						transaction.Commit();
+					}
+					catch (Exception ex)
+					{
+						TShock.Log.Error(ex.ToString());
+						transaction.Rollback();
+						return false;
+					}
+					return true;
+				}
+			}
+		}
 	}
 
 	public enum SqlType

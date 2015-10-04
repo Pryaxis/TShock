@@ -34,9 +34,41 @@ namespace TShockAPI.DB
 		/// </summary>
 		public List<SqlForeignKey> ForeignKeys = new List<SqlForeignKey>();
 
+		/// <summary>
+		/// The indexes.
+		/// </summary>
+		public List<SqlIndex> Indexes = new List<SqlIndex>();
+
 		public SqlTable(string name, params SqlColumn[] columns)
 			: this(name, new List<SqlColumn>(columns))
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTable"/> class.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="columns">Columns.</param>
+		/// <param name="fkeys">Foreign keys.</param>
+		/// <param name="indexes">Indexes.</param>
+		public SqlTable(string name, SqlColumn[] columns, SqlForeignKey[] fkeys, SqlIndex[] indexes)
+			: this(name, new List<SqlColumn>(columns), new List<SqlForeignKey>(fkeys), new List<SqlIndex>(indexes))
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTable"/> class.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="columns">Columns.</param>
+		/// <param name="fkeys">Foreign keys.</param>
+		/// <param name="indexes">Indexes.</param>
+		public SqlTable(string name, List<SqlColumn> columns, List<SqlForeignKey> fkeys, List<SqlIndex> indexes)
+		{
+			Name = name;
+			Columns = columns;
+			ForeignKeys = fkeys;
+			Indexes = indexes;
 		}
 
 		public SqlTable(string name, List<SqlColumn> columns)
@@ -53,6 +85,17 @@ namespace TShockAPI.DB
 		public SqlTable AddForeignKey(SqlForeignKey foreignKey)
 		{
 			ForeignKeys.Add(foreignKey);
+			return this;
+		}
+
+		/// <summary>
+		/// Adds an index.
+		/// </summary>
+		/// <returns>The instance of <see cref="TShockAPI.DB.SqlTable"/> to provide a fluent interface for method chaining.</returns>
+		/// <param name="index">An index.</param>
+		public SqlTable AddIndex(SqlIndex index)
+		{
+			Indexes.Add(index);
 			return this;
 		}
 	}
@@ -82,8 +125,13 @@ namespace TShockAPI.DB
 			}
 			else
 			{
-				database.Query(creator.CreateTable(table));
-				return true;
+				/* 
+				 * Use a transaction for creating the table. MySQL and Oracle allow defining INDEXes
+				 * in CREATE TABLE, but SQLite and PostgreSQL do not. For this, we need a transaction.
+				 */
+				var queries = new List<string>();
+				queries.Add(creator.CreateTable(table));
+				return database.AsTransaction(queries);
 			}
 			return false;
 		}
