@@ -145,6 +145,9 @@ namespace TShockAPI
 		[Description("Valid types are \"sqlite\" and \"mysql\"")]
 		public string StorageType = "sqlite";
 
+		[Description("Enables enforcing foreign key constraints in SQLite.")]
+		public bool SqliteEnforceForeignKeys = true;
+
 		[Description("The MySQL hostname and port to direct connections to")]
 		public string MySqlHost = "localhost:3306";
 		[Description("Database name to connect to")]

@@ -227,6 +227,7 @@ namespace TShockAPI
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
 
 					DB = new SqliteConnection(String.Format("uri=file://{0},Version=3,Pooling=True", sql));
+					((SqliteConnection)DB).EnforceForeignKeys();
 				}
 				else if (Config.StorageType.ToLower() == "mysql")
 				{

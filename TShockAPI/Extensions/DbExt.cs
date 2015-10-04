@@ -19,12 +19,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Mono.Data.Sqlite;
 
 namespace TShockAPI.DB
 {
 	public static class DbExt
 	{
+		/// <summary>
+		/// Enforces the foreign key support for SQLite,
+		/// </summary>
+		/// <param name="db">The database instance.</param>
+		internal static void EnforceForeignKeys(this SqliteConnection db)
+		{
+			if (db.GetSqlType() == SqlType.Sqlite && TShock.Config.SqliteEnforceForeignKeys)
+			{
+				((SqliteConnection)db).StateChange += delegate(object sender, StateChangeEventArgs e)
+				{
+					if (e.CurrentState != ConnectionState.Open)
+						return;
+
+					// Important: use a new connection, do not Clone() or CloneEx()
+					using (var conn = new SqliteConnection(db.ConnectionString))
+					{
+						conn.Open();
+						using (var cmd = conn.CreateCommand())
+						{
+							cmd.CommandText = "PRAGMA foreign_keys = ON";
+							cmd.ExecuteNonQuery();
+
+							cmd.CommandText = "PRAGMA foreign_keys";
+							bool? enabled = SqliteConvert.ToBoolean(cmd.ExecuteScalar());
+							if (!enabled.HasValue || enabled == false)
+								TerrariaApi.Server.ServerApi.LogWriter.PluginWriteLine(TShock.instance,
+										"SQLite isn't enforcing foreign keys, data integrity can't be guaranteed!", TraceLevel.Warning);
+						}
+					}
+				};
+			}
+		}
+
 		/// <summary>
 		/// Executes a query on a database.
 		/// </summary>
@@ -96,8 +131,11 @@ namespace TShockAPI.DB
 
 		public static IDbConnection CloneEx(this IDbConnection conn)
 		{
-			var clone = (IDbConnection) Activator.CreateInstance(conn.GetType());
-			clone.ConnectionString = conn.ConnectionString;
+			var clone = (IDbConnection)Activator.CreateInstance(conn.GetType(), conn.ConnectionString);
+
+			if (conn.GetSqlType() == SqlType.Sqlite)
+				((SqliteConnection)clone).EnforceForeignKeys();
+
 			return clone;
 		}
 

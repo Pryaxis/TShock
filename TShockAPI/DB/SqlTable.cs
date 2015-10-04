@@ -29,6 +29,11 @@ namespace TShockAPI.DB
 		public List<SqlColumn> Columns { get; protected set; }
 		public string Name { get; protected set; }
 
+		/// <summary>
+		/// The foreign keys.
+		/// </summary>
+		public List<SqlForeignKey> ForeignKeys = new List<SqlForeignKey>();
+
 		public SqlTable(string name, params SqlColumn[] columns)
 			: this(name, new List<SqlColumn>(columns))
 		{
@@ -38,6 +43,17 @@ namespace TShockAPI.DB
 		{
 			Name = name;
 			Columns = columns;
+		}
+
+		/// <summary>
+		/// Adds a foreign key.
+		/// </summary>
+		/// <returns>The instance of <see cref="TShockAPI.DB.SqlTable"/> to provide a fluent interface for method chaining.</returns>
+		/// <param name="foreignKey">Foreign key.</param>
+		public SqlTable AddForeignKey(SqlForeignKey foreignKey)
+		{
+			ForeignKeys.Add(foreignKey);
+			return this;
 		}
 	}
 
