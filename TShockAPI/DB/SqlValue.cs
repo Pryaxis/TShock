@@ -21,11 +21,28 @@ using System.Data;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Represents an SQL name-value pair.
+	/// </summary>
 	public class SqlValue
 	{
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		/// <value>The name.</value>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Gets or sets the value.
+		/// </summary>
+		/// <value>The value.</value>
 		public object Value { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlValue"/> class.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="value">Value.</param>
 		public SqlValue(string name, object value)
 		{
 			Name = name;
@@ -33,32 +50,65 @@ namespace TShockAPI.DB
 		}
 	}
 
+	/// <summary>
+	/// Sql table editor.
+	/// </summary>
 	public class SqlTableEditor
 	{
-		private IDbConnection database;
-		private IQueryBuilder creator;
+		/// <summary>
+		/// A database connection.
+		/// </summary>
+		private IDbConnection _database;
 
+		/// <summary>
+		/// A query builder.
+		/// </summary>
+		private IQueryBuilder _creator;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTableEditor"/> class.
+		/// </summary>
+		/// <param name="db">Database connection.</param>
+		/// <param name="provider">Query builder.</param>
 		public SqlTableEditor(IDbConnection db, IQueryBuilder provider)
 		{
-			database = db;
-			creator = provider;
+			_database = db;
+			_creator = provider;
 		}
 
+		/// <summary>
+		/// Updates values.
+		/// </summary>
+		/// <param name="table">Table to update.</param>
+		/// <param name="values">List of name-value pairs.</param>
+		/// <param name="wheres">A list of where conditions.</param>
 		public void UpdateValues(string table, List<SqlValue> values, List<SqlValue> wheres)
 		{
-			database.Query(creator.UpdateValue(table, values, wheres));
+			_database.Query(_creator.UpdateValue(table, values, wheres));
 		}
 
+		/// <summary>
+		/// Inserts values.
+		/// </summary>
+		/// <param name="table">Table to insert into.</param>
+		/// <param name="values">List of name-value pairs.</param>
 		public void InsertValues(string table, List<SqlValue> values)
 		{
-			database.Query(creator.InsertValues(table, values));
+			_database.Query(_creator.InsertValues(table, values));
 		}
 
+		/// <summary>
+		/// Retrieve the specified column rows.
+		/// </summary>
+		/// <returns>A list of results.</returns>
+		/// <param name="table">Table to query.</param>
+		/// <param name="column">Name of column.</param>
+		/// <param name="wheres">A list of where conditions.</param>
 		public List<object> ReadColumn(string table, string column, List<SqlValue> wheres)
 		{
 			List<object> values = new List<object>();
 
-			using (var reader = database.QueryReader(creator.ReadColumn(table, wheres)))
+			using (var reader = _database.QueryReader(_creator.ReadColumn(table, wheres)))
 			{
 				while (reader.Read())
 					values.Add(reader.Reader.Get<object>(column));
