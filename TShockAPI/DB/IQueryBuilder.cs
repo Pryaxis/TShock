@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+
+using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using TShockAPI.Extensions;
 
@@ -37,6 +39,13 @@ namespace TShockAPI.DB
 		/// <returns>The SQL query.</returns>
 		/// <param name="table">The table to generate.</param>
 		string CreateTable(SqlTable table);
+
+		/// <summary>
+		/// Generates SQL for creating a table index.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="index">The index to generate.</param>
+		string CreateIndex(SqlIndex index);
 
 		/// <summary>
 		/// Alter a table from source to destination
@@ -88,6 +97,21 @@ namespace TShockAPI.DB
 		/// <param name="from">Source table name</param>
 		/// <param name="to">Destination table name</param>
 		string RenameTable(string from, string to);
+
+		/// <summary>
+		/// Quotes the identifier.
+		/// </summary>
+		/// <returns>The quoted identifier.</returns>
+		/// <param name="identifier">An identifier.</param>
+		/// <param name="alias">An optional alias.</param>
+		string QuoteIdentifier(string identifier, string alias = "");
+
+		/// <summary>
+		/// Quotes the identifiers.
+		/// </summary>
+		/// <returns>The quoted identifiers.</returns>
+		/// <param name="identifiers">Identifiers.</param>
+		IEnumerable<string> QuoteIdentifiers(IEnumerable<string> identifiers);
 	}
 
 	/// <summary>
@@ -95,20 +119,72 @@ namespace TShockAPI.DB
 	/// </summary>
 	public class SqliteQueryCreator : GenericQueryCreator
 	{
-		public override string CreateTable(SqlTable table)
+		/// <summary>
+		/// Gets the quote identifier symbol.
+		/// </summary>
+		/// <value>The quote identifier symbol.</value>
+		public override char IdentifierQuoteChar { get; set; } = '"';
+
+		/// <summary>
+		/// Creates a column definition.
+		/// </summary>
+		/// <returns>The column definition.</returns>
+		/// <param name="column">Column.</param>
+		protected override string GetColumnDefinition(SqlColumn column)
 		{
-			var columns =
-				table.Columns.Select(
-					c =>
-					"'{0}' {1} {2} {3} {4}".SFormat(c.Name, 
-													DbTypeToString(c.Type, c.Length), 
-													c.Primary ? "PRIMARY KEY" : "",
-													c.AutoIncrement ? "AUTOINCREMENT" : "", 
-													c.NotNull ? "NOT NULL" : ""));
-			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), 
-														string.Join(", ", columns),
-														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
+			List<string> columnDefinition = new List<string>();
+			Action<string> add = definition => {
+				if (!String.IsNullOrEmpty(definition))
+					columnDefinition.Add(definition);
+			};
+
+			add(QuoteIdentifier(column.Name));
+			add(DbTypeToString(column.Type, column.Length));
+
+			if (column.AutoIncrement && column.Primary)
+				add("PRIMARY KEY AUTOINCREMENT");
+
+			if (column.NotNull)
+				add("NOT NULL");
+
+			return String.Join(" ", columnDefinition);
+		}
+
+		/// <summary>
+		/// Generates the primary key definition.
+		/// </summary>
+		/// <returns>The primary key definition.</returns>
+		/// <param name="columns">Columns.</param>
+		/// <remarks>
+		/// In SQLite an auto incrememnt column must be defined with an INTEGER PRIMARY
+		/// KEY column definition. If column is auto increment we bail because a duplicate
+		/// primary key definition would occur and a compound key results in an error.
+		/// <see cref="TShockAPI.DB.SqliteQueryCreator.GetColumnDefinition"/>
+		/// </remarks>
+		protected override string GetPrimaryKeyDefinition(IEnumerable<SqlColumn> columns)
+		{
+			if (columns.Count() < 1)
+				return null;
+
+			// See remark.
+			if (columns.Any(c => c.AutoIncrement))
+				return null;
+
+			var quotedColumns = columns.Select(c => QuoteIdentifier(c.Name));
+			return String.Format(CultureInfo.InvariantCulture, "PRIMARY KEY ({0})", String.Join(", ", quotedColumns));
+		}
+
+		/// <summary>
+		/// Generates the index column definition.
+		/// </summary>
+		/// <returns>The index column definition.</returns>
+		/// <param name="column">The index column.</param>
+		/// <remarks>SQLite doesn't support length, we ignore it here</remarks>
+		protected override string GetIndexColumnDefinition(SqlIndexColumn column)
+		{
+			return String.Format(CultureInfo.InvariantCulture, "{0} {1}", 
+				QuoteIdentifier(column.Name),
+				SqlIndexColumn.SortOrderToString(column.Order));
 		}
 
 		/// <summary>
@@ -119,7 +195,7 @@ namespace TShockAPI.DB
 		/// <param name="to">Destination table name</param>
 		public override string RenameTable(string from, string to)
 		{
-			return "ALTER TABLE {0} RENAME TO {1}".SFormat(from, to);
+			return String.Format(CultureInfo.InvariantCulture, "ALTER TABLE {0} RENAME TO {1}", from, to);
 		}
 
 		/// <summary>
@@ -151,7 +227,7 @@ namespace TShockAPI.DB
 		{
 			string ret;
 			if (TypesAsStrings.TryGetValue(type, out ret))
-				return ret;
+				return ret + (length != null ? "({0})".SFormat((int)length) : "");
 			throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
 		}
 	}
@@ -161,18 +237,35 @@ namespace TShockAPI.DB
 	/// </summary>
 	public class MysqlQueryCreator : GenericQueryCreator
 	{
-		public override string CreateTable(SqlTable table)
+		/// <summary>
+		/// Gets the quote identifier symbol.
+		/// </summary>
+		/// <value>The quote identifier symbol.</value>
+		public override char IdentifierQuoteChar { get; set; } = '`';
+
+		/// <summary>
+		/// Creates a column definition.
+		/// </summary>
+		/// <returns>The column definition.</returns>
+		/// <param name="column">Column.</param>
+		protected override string GetColumnDefinition(SqlColumn column)
 		{
-			var columns =
-				table.Columns.Select(
-					c =>
-					"{0} {1} {2} {3} {4}".SFormat(c.Name, DbTypeToString(c.Type, c.Length), c.Primary ? "PRIMARY KEY" : "",
-											  c.AutoIncrement ? "AUTO_INCREMENT" : "", c.NotNull ? "NOT NULL" : ""));
-			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), string.Join(", ", columns),
-														uniques.Count() > 0
-															? ", UNIQUE({0})".SFormat(string.Join(", ", uniques))
-															: "");
+			List<string> columnDefinition = new List<string>();
+			Action<string> add = definition => {
+				if (!String.IsNullOrEmpty(definition))
+					columnDefinition.Add(definition);
+			};
+
+			add(QuoteIdentifier(column.Name));
+			add(DbTypeToString(column.Type, column.Length));
+
+			if (column.AutoIncrement)
+				add("AUTO_INCREMENT");
+
+			if (column.NotNull)
+				add("NOT NULL");
+
+			return String.Join(" ", columnDefinition);
 		}
 
 		/// <summary>
@@ -218,10 +311,62 @@ namespace TShockAPI.DB
 		}
 	}
 
+	/// <summary>
+	/// Generic query creator.
+	/// </summary>
 	public abstract class GenericQueryCreator : IQueryBuilder
 	{
 		protected static Random rand = new Random();
-		public abstract string CreateTable(SqlTable table);
+
+		/// <summary>
+		/// Gets the quote identifier symbol.
+		/// </summary>
+		/// <value>The quote identifier symbol.</value>
+		public virtual char IdentifierQuoteChar { get; set; } = '"';
+
+		/// <summary>
+		/// Generates SQL for creating a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">The table to generate.</param>
+		public virtual string CreateTable(SqlTable table)
+		{
+			List<string> createDefinition = new List<string>();
+			Action<string> add = definition => {
+				if (!String.IsNullOrEmpty(definition))
+					createDefinition.Add(definition);
+			};
+
+			add(GetColumnDefinitions(table.Columns));
+			add(GetUniqueDefinition(table.Columns.Where(c => c.Unique)));
+			add(GetPrimaryKeyDefinition(table.Columns.Where(c => c.Primary)));
+			add(GetForeignKeyDefinitions(table.ForeignKeys));
+
+			return String.Format(CultureInfo.InvariantCulture, "CREATE TABLE {0} ({1})", QuoteIdentifier(table.Name), String.Join(", ", createDefinition));
+		}
+
+		/// <summary>
+		/// Generates SQL for creating a table index.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="index">The index to generate.</param>
+		public virtual string CreateIndex(SqlIndex index)
+		{
+			List<string> createDefinition = new List<string>();
+			Action<string> add = definition => {
+				if (!String.IsNullOrEmpty(definition))
+					createDefinition.Add(definition);
+			};
+
+			add(GetIndexColumnDefinitions(index.Columns));
+
+			return String.Format(CultureInfo.InvariantCulture, "CREATE {0} INDEX {1} ON {2} ({3})",
+				index.Unique ? "UNIQUE" : "",
+				QuoteIdentifier(index.Name),
+				QuoteIdentifier(index.Table),
+				String.Join(", ", createDefinition));
+		}
+
 		/// <summary>
 		/// Builds an SQL query to rename a table.
 		/// </summary>
@@ -244,19 +389,19 @@ namespace TShockAPI.DB
 				CREATE TABLE "main"."Bans" ("IP" TEXT PRIMARY KEY ,"Name" TEXT)
 				INSERT INTO "main"."Bans" SELECT "IP","Name" FROM "main"."oXHFcGcd04oXHFcGcd04_Bans"
 				DROP TABLE "main"."oXHFcGcd04oXHFcGcd04_Bans"
-			 * 
+			 *
 			 * Twitchy - Oh. I get it!
 			 */
 			var rstr = rand.NextString(20);
-			var escapedTable = EscapeTableName(from.Name);
-			var tmpTable = EscapeTableName("{0}_{1}".SFormat(rstr, from.Name));
+			var escapedTable = QuoteIdentifier(from.Name);
+			var tmpTable = QuoteIdentifier(String.Format(CultureInfo.InvariantCulture, "{0}_{1}", rstr, from.Name));
 			var alter = RenameTable(escapedTable, tmpTable);
 			var create = CreateTable(to);
 			// combine all columns in the 'from' variable excluding ones that aren't in the 'to' variable.
 			// exclude the ones that aren't in 'to' variable because if the column is deleted, why try to import the data?
-			var columns = string.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name == c.Name)).Select(c => c.Name));
-			var insert = "INSERT INTO {0} ({1}) SELECT {1} FROM {2}".SFormat(escapedTable, columns, tmpTable);
-			var drop = "DROP TABLE {0}".SFormat(tmpTable);
+			var columns = String.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name == c.Name)).Select(c => c.Name));
+			var insert = String.Format(CultureInfo.InvariantCulture, "INSERT INTO {0} ({1}) SELECT {1} FROM {2}", escapedTable, columns, tmpTable);
+			var drop = String.Format(CultureInfo.InvariantCulture, "DROP TABLE {0}", tmpTable);
 			return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
 		}
 
@@ -268,7 +413,7 @@ namespace TShockAPI.DB
 		/// <param name="wheres">Where conditions.</param>
 		public string DeleteRow(string table, List<SqlValue> wheres)
 		{
-			return "DELETE FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
+			return String.Format(CultureInfo.InvariantCulture, "DELETE FROM {0} {1}", QuoteIdentifier(table), BuildWhere(wheres));
 		}
 
 		/// <summary>
@@ -283,7 +428,7 @@ namespace TShockAPI.DB
 			if (0 == values.Count)
 				throw new ArgumentException("No values supplied");
 
-			return "UPDATE {0} SET {1} {2}".SFormat(EscapeTableName(table), string.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
+			return String.Format(CultureInfo.InvariantCulture, "UPDATE {0} SET {1} {2}", QuoteIdentifier(table), String.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
 		}
 
 		/// <summary>
@@ -294,7 +439,7 @@ namespace TShockAPI.DB
 		/// <param name="wheres">A list of WHERE conditions.</param>
 		public string ReadColumn(string table, List<SqlValue> wheres)
 		{
-			return "SELECT * FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
+			return String.Format(CultureInfo.InvariantCulture, "SELECT * FROM {0} {1}", QuoteIdentifier(table), BuildWhere(wheres));
 		}
 
 		/// <summary>
@@ -321,7 +466,40 @@ namespace TShockAPI.DB
 				count++;
 			}
 
-			return "INSERT INTO {0} ({1}) VALUES ({2})".SFormat(EscapeTableName(table), sbnames, sbvalues);
+			return String.Format(CultureInfo.InvariantCulture, "INSERT INTO {0} ({1}) VALUES ({2})", QuoteIdentifier(table), sbnames, sbvalues);
+		}
+
+		/// <summary>
+		/// Quotes the identifier.
+		/// </summary>
+		/// <returns>The quoted identifier.</returns>
+		/// <param name="identifier">An identifier.</param>
+		/// <param name="alias">An optional alias.</param>
+		public string QuoteIdentifier(string identifier, string alias = "")
+		{
+			const char separator = '.';
+			var identifiers = identifier.Split(new char[] { separator });
+			var quoted = identifiers.Select(
+				// Also escape identifier quote chars in the identifier (ie: 'identifier' to '''identifier''')
+				x => IdentifierQuoteChar 
+						+ x.Replace(IdentifierQuoteChar.ToString(), new String(IdentifierQuoteChar, 2)) 
+						+ IdentifierQuoteChar);
+			var joined = String.Join(separator.ToString(), quoted);
+
+			if (!String.IsNullOrEmpty(alias))
+				joined += " AS " + QuoteIdentifier(alias);
+			
+			return joined;
+		}
+
+		/// <summary>
+		/// Quotes the identifiers.
+		/// </summary>
+		/// <returns>The quoted identifiers.</returns>
+		/// <param name="identifiers">Identifiers.</param>
+		public IEnumerable<string> QuoteIdentifiers(IEnumerable<string> identifiers)
+		{
+			return identifiers.Select(x => QuoteIdentifier(x));
 		}
 
 		/// <summary>
@@ -332,9 +510,9 @@ namespace TShockAPI.DB
 		protected string BuildWhere(List<SqlValue> wheres)
 		{
 			if (0 == wheres.Count)
-				return string.Empty;
+				return String.Empty;
 
-			return String.Format (CultureInfo.InvariantCulture, "WHERE {0}", String.Join (", ", wheres.Select (v => EscapeTableName (v.Name) + " = " + v.Value)));
+			return String.Format(CultureInfo.InvariantCulture, "WHERE {0}", String.Join(", ", wheres.Select(v => QuoteIdentifier(v.Name) + " = " + v.Value)));
 		}
 
 		/// <summary>
@@ -368,9 +546,115 @@ namespace TShockAPI.DB
 			throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
 		}
 
-		protected virtual string EscapeTableName(string table)
+		/// <summary>
+		/// Generates column definitions for an index.
+		/// </summary>
+		/// <returns>The column definitions.</returns>
+		/// <param name="columns">Columns.</param>
+		protected virtual string GetIndexColumnDefinitions(IEnumerable<SqlIndexColumn> columns)
 		{
-			return table.SFormat("'{0}'", table);
+			if (columns.Count() < 1)
+				return null;
+
+			return String.Join(", ", columns.Select(column => GetIndexColumnDefinition(column)));
+		}
+
+		/// <summary>
+		/// Generates the index column definition.
+		/// </summary>
+		/// <returns>The index column definition.</returns>
+		/// <param name="column">The index column.</param>
+		protected virtual string GetIndexColumnDefinition(SqlIndexColumn column)
+		{
+			return String.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", 
+				QuoteIdentifier(column.Name),
+				column.Length.HasValue ? $"({column.Length})" : "",
+				SqlIndexColumn.SortOrderToString(column.Order));
+		}
+
+		/// <summary>
+		/// Generates the foreign key definitions.
+		/// </summary>
+		/// <returns>The foreign key definitions.</returns>
+		/// <param name="keys">Keys.</param>
+		protected virtual string GetForeignKeyDefinitions(IEnumerable<SqlForeignKey> keys)
+		{
+			if (keys.Count() < 1)
+				return null;
+			return String.Join(", ", keys.Select(fk => GetForeignKeyDefinition(fk)));
+		}
+
+		/// <summary>
+		/// Generates the foreign key definition.
+		/// </summary>
+		/// <returns>The foreign key definition.</returns>
+		/// <param name="key">Key.</param>
+		protected virtual string GetForeignKeyDefinition(SqlForeignKey key)
+		{
+			var sql = String.Format(CultureInfo.InvariantCulture, "FOREIGN KEY ({0}) REFERENCES {1}({2}) {3} {4}",
+				String.Join(", ", QuoteIdentifiers(key.Columns)),
+				QuoteIdentifier(key.ParentTable),
+				String.Join(", ", QuoteIdentifiers(key.ParentColumns)),
+				key.OnDeleteEvent,
+				key.OnUpdateEvent);
+
+			if (!String.IsNullOrEmpty(key.Name))
+				sql = String.Format(CultureInfo.InvariantCulture, "CONSTRAINT {0} {1}", QuoteIdentifier(key.Name), sql);
+
+			return sql;
+		}
+
+		/// <summary>
+		/// Generates the primary key definition.
+		/// </summary>
+		/// <returns>The primary key definition.</returns>
+		/// <param name="columns">Columns.</param>
+		protected virtual string GetPrimaryKeyDefinition(IEnumerable<SqlColumn> columns)
+		{
+			if (columns.Count() < 1)
+				return null;
+
+			var quotedColumns = columns.Select(c => QuoteIdentifier(c.Name));
+			return String.Format(CultureInfo.InvariantCulture, "PRIMARY KEY ({0})", String.Join(", ", quotedColumns));
+		}
+
+		/// <summary>
+		/// Generates a unique constraint definition.
+		/// </summary>
+		/// <returns>The unique definition.</returns>
+		/// <param name="columns">Columns.</param>
+		protected virtual string GetUniqueDefinition(IEnumerable<SqlColumn> columns)
+		{
+			if (columns.Count() < 1)
+				return null;
+			var quotedColumns = columns.Select(c => QuoteIdentifier(c.Name));
+			return String.Format(CultureInfo.InvariantCulture, "UNIQUE ({0})", String.Join(", ", quotedColumns));
+		}
+
+		/// <summary>
+		/// Creates a column definition.
+		/// </summary>
+		/// <returns>The column definition.</returns>
+		/// <param name="column">Column.</param>
+		protected virtual string GetColumnDefinition(SqlColumn column)
+		{
+			return String.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3}",
+				QuoteIdentifier(column.Name),
+				DbTypeToString(column.Type, column.Length),
+				column.AutoIncrement ? "AUTO_INCREMENT" : "",
+				column.NotNull ? "NOT NULL" : "");
+		}
+
+		/// <summary>
+		/// Generates column definitions.
+		/// </summary>
+		/// <returns>The column definitions.</returns>
+		/// <param name="columns">Columns.</param>
+		protected virtual string GetColumnDefinitions(IEnumerable<SqlColumn> columns)
+		{
+			if (columns.Count() < 1)
+				return null;
+			return String.Join(", ", columns.Select(c => GetColumnDefinition(c)));
 		}
 	}
 }

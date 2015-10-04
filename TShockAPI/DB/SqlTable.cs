@@ -165,6 +165,7 @@ namespace TShockAPI.DB
 				 */
 				var queries = new List<string>();
 				queries.Add(creator.CreateTable(table));
+				queries.AddRange(table.Indexes.Select(index => creator.CreateIndex(index)));
 				return database.AsTransaction(queries);
 			}
 			return false;
