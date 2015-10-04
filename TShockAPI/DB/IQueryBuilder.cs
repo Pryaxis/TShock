@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
@@ -25,19 +26,74 @@ using TShockAPI.Extensions;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Query builder interface.
+	/// </summary>
 	public interface IQueryBuilder
 	{
+		/// <summary>
+		/// Generates SQL for creating a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">The table to generate.</param>
 		string CreateTable(SqlTable table);
+
+		/// <summary>
+		/// Alter a table from source to destination
+		/// </summary>
+		/// <param name="from">Must have name and column names. Column types are not required</param>
+		/// <param name="to">Must have column names and column types.</param>
+		/// <returns>The SQL query.</returns>
 		string AlterTable(SqlTable from, SqlTable to);
+
+		/// <summary>
+		/// Get the string value of a column data type.
+		/// </summary>
+		/// <returns>The type as a string.</returns>
+		/// <param name="type">Column data type.</param>
+		/// <param name="length">Length of column.</param>
 		string DbTypeToString(MySqlDbType type, int? length);
+		
+		/// <summary>
+		/// Updates values for the specified columns.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">Name of table.</param>
+		/// <param name="values">List of <see cref="TShockAPI.DB.SqlValue"/>.</param>
+		/// <param name="wheres">A list of WHERE conditions.</param>
 		string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres);
+		
+		/// <summary>
+		/// Inserts a row with the specified column and value pairs.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">Name of table.</param>
+		/// <param name="values">List of <see cref="TShockAPI.DB.SqlValue"/>.</param>
 		string InsertValues(string table, List<SqlValue> values);
+		
 		string ReadColumn(string table, List<SqlValue> wheres);
+		
+		/// <summary>
+		/// Delete row(s).
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">The source table.</param>
+		/// <param name="wheres">A list of WHERE conditions.</param>
 		string DeleteRow(string table, List<SqlValue> wheres);
+		
+		/// <summary>
+		/// Rename a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="from">Source table name</param>
+		/// <param name="to">Destination table name</param>
 		string RenameTable(string from, string to);
 	}
 
-	public class SqliteQueryCreator : GenericQueryCreator, IQueryBuilder
+	/// <summary>
+	/// Sqlite query creator.
+	/// </summary>
+	public class SqliteQueryCreator : GenericQueryCreator
 	{
 		public override string CreateTable(SqlTable table)
 		{
@@ -55,11 +111,20 @@ namespace TShockAPI.DB
 														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
 		}
 
+		/// <summary>
+		/// Rename a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="from">Source table name</param>
+		/// <param name="to">Destination table name</param>
 		public override string RenameTable(string from, string to)
 		{
 			return "ALTER TABLE {0} RENAME TO {1}".SFormat(from, to);
 		}
 
+		/// <summary>
+		/// Maps enum types to a string representation.
+		/// </summary>
 		private static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
 		{
 			{ MySqlDbType.VarChar, "TEXT" },
@@ -72,24 +137,29 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Double, "REAL" },
 			{ MySqlDbType.Int32, "INTEGER" },
 			{ MySqlDbType.Blob, "BLOB" },
-            { MySqlDbType.Int64, "BIGINT"},
+			{ MySqlDbType.Int64, "BIGINT"},
 		};
 
-		public string DbTypeToString(MySqlDbType type, int? length)
+		/// <summary>
+		/// Get the string value of a column data type.
+		/// </summary>
+		/// <returns>The type as a string.</returns>
+		/// <param name="type">Column data type.</param>
+		/// <param name="length">Length of column.</param>
+		/// <remarks>SQLite as of 3.x ignores length</remarks>
+		public override string DbTypeToString(MySqlDbType type, int? length)
 		{
 			string ret;
 			if (TypesAsStrings.TryGetValue(type, out ret))
 				return ret;
 			throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
 		}
-
-		protected override string EscapeTableName(string table)
-		{
-			return table.SFormat("'{0}'", table);
-		}
 	}
 
-	public class MysqlQueryCreator : GenericQueryCreator, IQueryBuilder
+	/// <summary>
+	/// Mysql query creator.
+	/// </summary>
+	public class MysqlQueryCreator : GenericQueryCreator
 	{
 		public override string CreateTable(SqlTable table)
 		{
@@ -105,11 +175,20 @@ namespace TShockAPI.DB
 															: "");
 		}
 
+		/// <summary>
+		/// Rename a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="from">Source table name</param>
+		/// <param name="to">Destination table name</param>
 		public override string RenameTable(string from, string to)
 		{
 			return "RENAME TABLE {0} TO {1}".SFormat(from, to);
 		}
 
+		/// <summary>
+		/// Maps enum types to a string representation.
+		/// </summary>
 		private static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
 		{
 			{ MySqlDbType.VarChar, "VARCHAR" },
@@ -121,28 +200,34 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Float, "FLOAT" },
 			{ MySqlDbType.Double, "DOUBLE" },
 			{ MySqlDbType.Int32, "INT" },
-            { MySqlDbType.Int64, "BIGINT"},
+			{ MySqlDbType.Int64, "BIGINT"},
 		};
 
-		public string DbTypeToString(MySqlDbType type, int? length)
+		/// <summary>
+		/// Get the string value of a column data type.
+		/// </summary>
+		/// <returns>The type as a string.</returns>
+		/// <param name="type">Column data type.</param>
+		/// <param name="length">Length of column.</param>
+		public override string DbTypeToString(MySqlDbType type, int? length)
 		{
 			string ret;
 			if (TypesAsStrings.TryGetValue(type, out ret))
 				return ret + (length != null ? "({0})".SFormat((int)length) : "");
 			throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
 		}
-
-		protected override string EscapeTableName(string table)
-		{
-			return table.SFormat("`{0}`", table);
-		}
 	}
 
-	public abstract class GenericQueryCreator
+	public abstract class GenericQueryCreator : IQueryBuilder
 	{
 		protected static Random rand = new Random();
-		protected abstract string EscapeTableName(string table);
 		public abstract string CreateTable(SqlTable table);
+		/// <summary>
+		/// Builds an SQL query to rename a table.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="from">Source table name</param>
+		/// <param name="to">Destination table name</param>
 		public abstract string RenameTable(string from, string to);
 
 		/// <summary>
@@ -150,7 +235,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="from">Must have name and column names. Column types are not required</param>
 		/// <param name="to">Must have column names and column types.</param>
-		/// <returns></returns>
+		/// <returns>The SQL query.</returns>
 		public string AlterTable(SqlTable from, SqlTable to)
 		{
 			/*
@@ -175,11 +260,24 @@ namespace TShockAPI.DB
 			return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
 		}
 
+		/// <summary>
+		/// Delete row(s).
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">The source table.</param>
+		/// <param name="wheres">Where conditions.</param>
 		public string DeleteRow(string table, List<SqlValue> wheres)
 		{
 			return "DELETE FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
 		}
 
+		/// <summary>
+		/// Updates values for the specified columns.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">Name of table.</param>
+		/// <param name="values">List of <see cref="TShockAPI.DB.SqlValue"/>.</param>
+		/// <param name="wheres">A list of WHERE conditions.</param>
 		public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
 		{
 			if (0 == values.Count)
@@ -188,11 +286,23 @@ namespace TShockAPI.DB
 			return "UPDATE {0} SET {1} {2}".SFormat(EscapeTableName(table), string.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
 		}
 
+		/// <summary>
+		/// Reads a column.
+		/// </summary>
+		/// <returns>The column.</returns>
+		/// <param name="table">The table.</param>
+		/// <param name="wheres">A list of WHERE conditions.</param>
 		public string ReadColumn(string table, List<SqlValue> wheres)
 		{
 			return "SELECT * FROM {0} {1}".SFormat(EscapeTableName(table), BuildWhere(wheres));
 		}
 
+		/// <summary>
+		/// Inserts a row with the specified column and value pairs.
+		/// </summary>
+		/// <returns>The SQL query.</returns>
+		/// <param name="table">Name of table.</param>
+		/// <param name="values">List of <see cref="TShockAPI.DB.SqlValue"/>.</param>
 		public string InsertValues(string table, List<SqlValue> values)
 		{
 			var sbnames = new StringBuilder();
@@ -214,12 +324,53 @@ namespace TShockAPI.DB
 			return "INSERT INTO {0} ({1}) VALUES ({2})".SFormat(EscapeTableName(table), sbnames, sbvalues);
 		}
 
-		protected static string BuildWhere(List<SqlValue> wheres)
+		/// <summary>
+		/// Builds a series of where conditions.
+		/// </summary>
+		/// <returns>A where clause.</returns>
+		/// <param name="wheres">A list of name-value pairs for testing equality.</param>
+		protected string BuildWhere(List<SqlValue> wheres)
 		{
 			if (0 == wheres.Count)
 				return string.Empty;
 
-			return "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => v.Name + " = " + v.Value)));
+			return String.Format (CultureInfo.InvariantCulture, "WHERE {0}", String.Join (", ", wheres.Select (v => EscapeTableName (v.Name) + " = " + v.Value)));
+		}
+
+		/// <summary>
+		/// Maps enum types to a string representation.
+		/// </summary>
+		private static readonly Dictionary<MySqlDbType, string> TypesAsStrings = new Dictionary<MySqlDbType, string>
+		{
+			{ MySqlDbType.VarChar, "VARCHAR" },
+			{ MySqlDbType.String, "CHAR" },
+			{ MySqlDbType.Text, "TEXT" },
+			{ MySqlDbType.TinyText, "TINYTEXT" },
+			{ MySqlDbType.MediumText, "MEDIUMTEXT" },
+			{ MySqlDbType.LongText, "LONGTEXT" },
+			{ MySqlDbType.Float, "FLOAT" },
+			{ MySqlDbType.Double, "DOUBLE" },
+			{ MySqlDbType.Int32, "INT" },
+			{ MySqlDbType.Int64, "BIGINT"},
+		};
+
+		/// <summary>
+		/// Get the string value of a column data type.
+		/// </summary>
+		/// <returns>The type as a string.</returns>
+		/// <param name="type">Column data type.</param>
+		/// <param name="length">Length of column.</param>
+		public virtual string DbTypeToString(MySqlDbType type, int? length)
+		{
+			string ret;
+			if (TypesAsStrings.TryGetValue(type, out ret))
+				return ret + (length != null ? "({0})".SFormat((int)length) : "");
+			throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
+		}
+
+		protected virtual string EscapeTableName(string table)
+		{
+			return table.SFormat("'{0}'", table);
 		}
 	}
 }

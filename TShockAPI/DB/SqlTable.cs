@@ -24,9 +24,21 @@ using MySql.Data.MySqlClient;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Sql table.
+	/// </summary>
 	public class SqlTable
 	{
+		/// <summary>
+		/// Gets or sets the table columns.
+		/// </summary>
+		/// <value>The table columns.</value>
 		public List<SqlColumn> Columns { get; protected set; }
+		
+		/// <summary>
+		/// Gets or sets the table name.
+		/// </summary>
+		/// <value>The table name.</value>
 		public string Name { get; protected set; }
 
 		/// <summary>
@@ -39,6 +51,11 @@ namespace TShockAPI.DB
 		/// </summary>
 		public List<SqlIndex> Indexes = new List<SqlIndex>();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTable"/> class.
+		/// </summary>
+		/// <param name="name">Name of table.</param>
+		/// <param name="columns">Table columns.</param>
 		public SqlTable(string name, params SqlColumn[] columns)
 			: this(name, new List<SqlColumn>(columns))
 		{
@@ -71,6 +88,11 @@ namespace TShockAPI.DB
 			Indexes = indexes;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTable"/> class.
+		/// </summary>
+		/// <param name="name">Name of table.</param>
+		/// <param name="columns">Table columns.</param>
 		public SqlTable(string name, List<SqlColumn> columns)
 		{
 			Name = name;
@@ -100,18 +122,30 @@ namespace TShockAPI.DB
 		}
 	}
 
+	/// <summary>
+	/// Sql table creator.
+	/// </summary>
 	public class SqlTableCreator
 	{
 		private IDbConnection database;
 		private IQueryBuilder creator;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TShockAPI.DB.SqlTableCreator"/> class.
+		/// </summary>
+		/// <param name="db">A database connection handler.</param>
+		/// <param name="provider">A query builder.</param>
 		public SqlTableCreator(IDbConnection db, IQueryBuilder provider)
 		{
 			database = db;
 			creator = provider;
 		}
 
-		// Returns true if the table was created; false if it was not.
+		/// <summary>
+		/// Ensures the table structure exists, creates it if it doesn't.
+		/// </summary>
+		/// <returns><c>true</c>, if table was created, <c>false</c> otherwise.</returns>
+		/// <param name="table">Table.</param>
 		public bool EnsureTableStructure(SqlTable table)
 		{
 			var columns = GetColumns(table);
@@ -146,6 +180,11 @@ namespace TShockAPI.DB
 			EnsureTableStructure(table);
 		}
 
+		/// <summary>
+		/// Gets the table columns.
+		/// </summary>
+		/// <returns>List of column names.</returns>
+		/// <param name="table">Table to retrieve column names from.</param>
 		public List<string> GetColumns(SqlTable table)
 		{
 			var ret = new List<string>();
@@ -178,6 +217,11 @@ namespace TShockAPI.DB
 			return ret;
 		}
 
+		/// <summary>
+		/// Deletes row(s) from the database.
+		/// </summary>
+		/// <param name="table">The table.</param>
+		/// <param name="wheres">A list of where conditions.</param>
 		public void DeleteRow(string table, List<SqlValue> wheres)
 		{
 			database.Query(creator.DeleteRow(table, wheres));
