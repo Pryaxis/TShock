@@ -225,7 +225,8 @@ namespace TShockAPI
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
-					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+
+					DB = new SqliteConnection(String.Format("uri=file://{0},Version=3,Pooling=True", sql));
 				}
 				else if (Config.StorageType.ToLower() == "mysql")
 				{
@@ -234,7 +235,7 @@ namespace TShockAPI
 						var hostport = Config.MySqlHost.Split(':');
 						DB = new MySqlConnection();
 						DB.ConnectionString =
-							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
+							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4}; Pooling=True",
 								hostport[0],
 								hostport.Length > 1 ? hostport[1] : "3306",
 								Config.MySqlDbName,
@@ -1320,7 +1321,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("An exeption occurred executing a command.");
+					Log.ConsoleError("An exception occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
