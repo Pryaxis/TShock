@@ -36,9 +36,9 @@ namespace TShockAPI.DB
 		/// <param name="db">The database instance.</param>
 		internal static void EnforceForeignKeys(this SqliteConnection db)
 		{
-			if (db.GetSqlType() == SqlType.Sqlite && TShock.Config.SqliteEnforceForeignKeys)
+			if (TShock.Config.SqliteEnforceForeignKeys)
 			{
-				((SqliteConnection)db).StateChange += delegate(object sender, StateChangeEventArgs e)
+				db.StateChange += delegate(object sender, StateChangeEventArgs e)
 				{
 					if (e.CurrentState != ConnectionState.Open)
 						return;
