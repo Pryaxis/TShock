@@ -178,7 +178,7 @@ namespace TShockAPI.DB
                  */
                 if (GetBanByIp(ip) != null)
                 {
-                    return database.Query("UPDATE Bans SET Date = @0, Expiration = @1 WHERE IP = @2", DateTime.UtcNow.ToString("s"), expiration) == 1;
+                    return database.Query("UPDATE Bans SET Date = @0, Expiration = @1 WHERE IP = @2", DateTime.UtcNow.ToString("s"), expiration, ip) == 1;
                 }
                 else
                 {
