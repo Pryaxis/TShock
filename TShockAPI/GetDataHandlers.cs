@@ -1381,9 +1381,11 @@ namespace TShockAPI
 			var hair = args.Data.ReadInt8();
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
+
 			BitsByte hideVisual = args.Data.ReadInt8();
 			BitsByte hideVisual2 = args.Data.ReadInt8();
 			BitsByte hideMisc = args.Data.ReadInt8();
+
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color skinColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color eyeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
@@ -1391,7 +1393,19 @@ namespace TShockAPI
 			Color underShirtColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color pantsColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
 			Color shoeColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
-			var difficulty = args.Data.ReadInt8();
+
+			BitsByte extra = args.Data.ReadInt8();
+			byte difficulty = 0;
+			if (extra[0])
+			{
+				difficulty++;
+			}
+			else if (extra[1])
+			{
+				difficulty += 2;
+			}
+
+			bool extraSlot = extra[2];
 
 			if (OnPlayerInfo(playerid, hair, skinVariant, difficulty, name))
 			{
@@ -1423,6 +1437,7 @@ namespace TShockAPI
 				for (int i = 8; i < 10; i++)
 					args.Player.TPlayer.hideVisual[i] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
+				args.Player.TPlayer.extraAccessory = extraSlot;
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, args.Player.Name, args.Player.Index);
 				return true;
 			}
