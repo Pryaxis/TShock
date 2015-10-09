@@ -1156,6 +1156,7 @@ namespace TShockAPI
 		public bool exists;
 		public int spawnX= -1;
 		public int spawnY= -1;
+		public int? extraSlot;
 		public int? skinVariant;
 		public int? hair;
 		public byte hairDye;
@@ -1220,6 +1221,7 @@ namespace TShockAPI
 				this.spawnX = player.TPlayer.SpawnX;
 				this.spawnY = player.TPlayer.SpawnY;
 			}
+			extraSlot = player.TPlayer.extraAccessory ? 1 : 0;
 			this.skinVariant = player.TPlayer.skinVariant;
 			this.hair = player.TPlayer.hair;
 			this.hairDye = player.TPlayer.hairDye;
@@ -1323,6 +1325,8 @@ namespace TShockAPI
 			player.TPlayer.hairDye = this.hairDye;
 			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
 
+			if (extraSlot != null)
+				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
 			if (this.skinVariant != null)
 				player.TPlayer.skinVariant = this.skinVariant.Value;
 			if (this.hair != null)
