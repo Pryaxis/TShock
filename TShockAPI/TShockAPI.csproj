@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{49606449-072B-4CF5-8088-AA49DA586694}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -59,24 +57,21 @@
     <Reference Include="HttpServer">
       <HintPath>..\prebuilts\HttpServer.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\prebuilts\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\prebuilts\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="BCrypt.Net">
       <HintPath>..\prebuilts\BCrypt.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\prebuilts\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\prebuilts\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\prebuilts\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\prebuilts\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
@@ -143,6 +138,8 @@
     <Compile Include="TSPlayer.cs" />
     <Compile Include="UpdateManager.cs" />
     <Compile Include="DB\WarpsManager.cs" />
+    <Compile Include="DB\SqlConstraint.cs" />
+    <Compile Include="DB\SqlIndex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TShockAPI.licenseheader" />
@@ -176,12 +173,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TerrariaServerAPI\TerrariaServer.csproj">
-      <Project>{6877506e-adc6-4142-98a6-79e4fa02855a}</Project>
-      <Name>TerrariaServer</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -203,4 +194,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\TerrariaServerAPI\TerrariaServer.csproj">
+      <Project>{6877506E-ADC6-4142-98A6-79E4FA02855A}</Project>
+      <Name>TerrariaServer</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
+
