@@ -17,6 +17,8 @@ Other notable changes include:
 * API: Fixed some possible packet leaks in sendq (@Wolfje)
 * API: APIVersion 1.22
 * API: Added crash protection around malicious and/or invalid packets (@Wolfje)
+* API: Fixed worlds not loading sometimes (@tysonstrange)
+* API: Fixed living leaf walls not working as housing
 * Fixed an issue preventing some players from joining when the world is saving (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
 * Fixed /invade martian (@Wolfje)
@@ -25,6 +27,13 @@ Other notable changes include:
 * Added RESTful API login rate limiting (@George)
 * Added config options (MaximumRequestsPerInterval, RequestBucketDecreaseIntervalMinutes, LimitOnlyFailedLoginRequests) for rate limiting (@George)
 * **DEPRECATION**: Deprecated Disable(string, bool) and added Disable(string, DisableFlags). Please update your plugins accordingly (@WhiteXZ)
+* Fixed Halloween and Christmas events not working properly (@TomyLobo)
+* Fixed the demon heart's extra accessory slot not working correctly in SSC (@WhiteXZ)
+* Fixed gender-changing potions not working correctly in SSC (@hastinbe)
+* Fixed IP bans not working correctly (@hastinbe)
+* Fixed /reload not using the correct permission (@WhiteXZ)
+* Fixed TSPlayer.ActiveChest not being tracked correctly resulting in item dupes while disabled (@WhiteXZ)
+* /reload now reloads tile and projectile bans
 
 
 ## TShock 4.3.8
