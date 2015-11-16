@@ -11,18 +11,20 @@ cur_wd = os.getcwd()
 release_dir = os.path.join(cur_wd, "releases")
 
 terraria_bin_name = "TerrariaServer.exe"
-sql_bins_names = ["Mono.Data.Sqlite.dll", "MySql.Data.dll", "MySql.Web.dll"]
+sql_bins_names = ["Mono.Data.Sqlite.dll", "MySql.Data.dll"]
 sqlite_dep = "sqlite3.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
 tshock_symbols = "TShockAPI.dll.mdb"
+bcrypt_bin_name = "BCrypt.Net.dll"
 
 terraria_release_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Release", terraria_bin_name)
 terraria_debug_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Debug", terraria_bin_name)
-sql_dep = os.path.join(cur_wd, "SqlBins")
-http_bin = os.path.join(cur_wd, "HttpBins", http_bin_name)
-json_bin = os.path.join(cur_wd, "TShockAPI", json_bin_name)
+sql_dep = os.path.join(cur_wd, "prebuilts")
+http_bin = os.path.join(cur_wd, "prebuilts", http_bin_name)
+json_bin = os.path.join(cur_wd, "prebuilts", json_bin_name)
+bcrypt_bin = os.path.join(cur_wd, "prebuilts", bcrypt_bin_name)
 release_bin = os.path.join(cur_wd, "TShockAPI", "bin", "Release", tshock_bin_name)
 debug_folder = os.path.join(cur_wd, "TShockAPI", "bin", "Debug")
 
@@ -33,6 +35,7 @@ def create_release_folder():
 def copy_dependencies():
   shutil.copy(http_bin, release_dir)
   shutil.copy(json_bin, release_dir)
+  shutil.copy(bcrypt_bin, release_dir)
   shutil.copy(os.path.join(sql_dep, sqlite_dep), release_dir)
   for f in sql_bins_names:
     shutil.copy(os.path.join(sql_dep, f), release_dir)
@@ -53,7 +56,8 @@ def create_base_zip(name):
   zip.write(terraria_bin_name)
   zip.write(sqlite_dep)
   zip.write(http_bin_name, os.path.join("ServerPlugins", http_bin_name))
-  zip.write(json_bin_name, os.path.join("ServerPlugins", json_bin_name))
+  zip.write(json_bin_name, json_bin_name)
+  zip.write(bcrypt_bin_name, os.path.join("ServerPlugins", bcrypt_bin_name))
   for f in sql_bins_names:
     zip.write(f, os.path.join("ServerPlugins", f))
   return zip
@@ -84,6 +88,7 @@ def delete_files():
     os.remove(f)
   os.remove(sqlite_dep)
   os.remove(json_bin_name)
+  os.remove(bcrypt_bin_name)
   os.remove(http_bin_name)
   os.chdir(cur_wd)
 

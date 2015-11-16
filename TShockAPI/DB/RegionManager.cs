@@ -232,8 +232,7 @@ namespace TShockAPI.DB
 			foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom &&
-					region.DisableBuild)
+					y >= region.Area.Top && y <= region.Area.Bottom)
 				{
 					return true;
 				}
@@ -247,8 +246,7 @@ namespace TShockAPI.DB
 			foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom &&
-					region.DisableBuild)
+					y >= region.Area.Top && y <= region.Area.Bottom)
 				{
 					regions.Add(region.Name);
 				}
@@ -262,8 +260,7 @@ namespace TShockAPI.DB
 			foreach (Region region in Regions.ToList())
 			{
 				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom &&
-					region.DisableBuild)
+					y >= region.Area.Top && y <= region.Area.Bottom)
 				{
 					regions.Add(region);
 				}
@@ -276,7 +273,7 @@ namespace TShockAPI.DB
 			return MergedIDs.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
 		}
 
-		public bool resizeRegion(string regionName, int addAmount, int direction)
+		public bool ResizeRegion(string regionName, int addAmount, int direction)
 		{
 			//0 = up
 			//1 = right
@@ -334,6 +331,12 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Removes an allowed user from a region
+		/// </summary>
+		/// <param name="regionName">Name of the region to modify</param>
+		/// <param name="userName">Username to remove</param>
+		/// <returns>true if removed successfully</returns>
 		public bool RemoveUser(string regionName, string userName)
 		{
 			Region r = GetRegionByName(regionName);
@@ -349,6 +352,12 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Adds a user to a region's allowed user list
+		/// </summary>
+		/// <param name="regionName">Name of the region to modify</param>
+		/// <param name="userName">Username to add</param>
+		/// <returns>true if added successfully</returns>
 		public bool AddNewUser(string regionName, string userName)
 		{
 			try
@@ -378,7 +387,7 @@ namespace TShockAPI.DB
 				foreach (var r in Regions)
 				{
 					if (r.Name == regionName && r.WorldID == Main.worldID.ToString())
-						r.setAllowedIDs(mergedIDs);
+						r.SetAllowedIDs(mergedIDs);
 				}
 				return q != 0;
 			}
@@ -601,6 +610,10 @@ namespace TShockAPI.DB
 
 		public bool HasPermissionToBuildInRegion(TSPlayer ply)
 		{
+			if (!DisableBuild)
+			{
+				return true;
+			}
 			if (!ply.IsLoggedIn)
 			{
 				if (!ply.HasBeenNaggedAboutLoggingIn)
@@ -610,15 +623,11 @@ namespace TShockAPI.DB
 				}
 				return false;
 			}
-			if (!DisableBuild)
-			{
-				return true;
-			}
 
-			return AllowedIDs.Contains(ply.UserID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.UserAccountName;
+			return AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
 		}
 
-		public void setAllowedIDs(String ids)
+		public void SetAllowedIDs(String ids)
 		{
 			String[] id_arr = ids.Split(',');
 			List<int> id_list = new List<int>();

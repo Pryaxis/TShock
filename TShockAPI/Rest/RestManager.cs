@@ -109,10 +109,10 @@ namespace TShockAPI
 			}
 			else
 			{
-				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/status", (a) => this.ServerStatus(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
-				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None))));
+				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/status", (a) => this.ServerStatus(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 			}
 
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
@@ -314,7 +314,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"name", TShock.Config.ServerName},
-				{"port", Convert.ToString(Netplay.serverPort)},
+				{"port", Convert.ToString(Netplay.ListenPort)},
 				{"playercount", Convert.ToString(activeplayers.Count())},
 				{"players", string.Join(", ", activeplayers.Select(p => p.name))},
 			};
@@ -333,7 +333,7 @@ namespace TShockAPI
 				{"port", TShock.Config.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
 				{"maxplayers", TShock.Config.MaxSlots},
-				{"world", Main.worldName},
+				{"world", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
 				{"uptime", (DateTime.Now - System.Diagnostics.Process.GetCurrentProcess().StartTime).ToString(@"d'.'hh':'mm':'ss")},
 				{"serverpassword", !string.IsNullOrEmpty(TShock.Config.ServerPassword)}
 			};
@@ -394,7 +394,7 @@ namespace TShockAPI
 		[Token]
 		private object UserActiveListV2(RestRequestArgs args)
 		{
-			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.UserAccountName && p.Active).Select(p => p.UserAccountName)) } };
+			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.User && p.Active).Select(p => p.User.Name)) } };
 		}
 
 		[Description("Lists all user accounts in the TShock database.")]
@@ -707,7 +707,7 @@ namespace TShockAPI
 		{
 			return new RestObject()
 			{
-				{"name", Main.worldName},
+				{"name", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
 				{"size", Main.maxTilesX + "*" + Main.maxTilesY},
 				{"time", Main.time},
 				{"daytime", Main.dayTime},
@@ -807,7 +807,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.UserAccountName ? "" : player.UserAccountName},
+				{"username", null == player.User ? "" : player.User.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
 				{"position", player.TileX + "," + player.TileY},
@@ -834,7 +834,7 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.UserAccountName ? "" : player.UserAccountName},
+				{"username", null == player.User ? "" : player.User.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
 				{"position", player.TileX + "," + player.TileY},
@@ -980,7 +980,7 @@ namespace TShockAPI
 				return RestMissingParam("group");
 			try
 			{
-				TShock.Groups.AddGroup(name, args.Parameters["parent"], args.Parameters["permissions"], args.Parameters["chatcolor"], true);
+				TShock.Groups.AddGroup(name, args.Parameters["parent"], args.Parameters["permissions"], args.Parameters["chatcolor"]);
 			}
 			catch (Exception e)
 			{
@@ -1214,7 +1214,7 @@ namespace TShockAPI
 			var player = new Dictionary<string, object>
 				{
 					{"nickname", tsPlayer.Name},
-					{"username", tsPlayer.UserAccountName ?? ""},
+					{"username", tsPlayer.User == null ? "" : tsPlayer.User.Name},
 					{"group", tsPlayer.Group.Name},
 					{"active", tsPlayer.Active},
 					{"state", tsPlayer.State},

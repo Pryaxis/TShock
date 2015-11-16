@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Reflection;
 using HttpServer;
 using HttpServer.Headers;
@@ -34,8 +35,7 @@ namespace Rests
 	/// <summary>
 	/// Rest command delegate
 	/// </summary>
-	/// <param name="parameters">Parameters in the url</param>
-	/// <param name="verbs">{x} in urltemplate</param>
+	/// <param name="args">RestRequestArgs object containing Verbs, Parameters, Request, and TokenData</param>
 	/// <returns>Response object or null to not handle request</returns>
 	public delegate object RestCommandD(RestRequestArgs args);
 
@@ -45,21 +45,24 @@ namespace Rests
 		public IParameterCollection Parameters { get; private set; }
 		public IRequest Request { get; private set; }
 		public SecureRest.TokenData TokenData { get; private set; }
+		public IHttpContext Context { get; private set; }
 
-		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request)
+		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, IHttpContext context)
 		{
 			Verbs = verbs;
 			Parameters = param;
 			Request = request;
 			TokenData = SecureRest.TokenData.None;
+			Context = context;
 		}
 
-		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, SecureRest.TokenData tokenData)
+		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, SecureRest.TokenData tokenData, IHttpContext context)
 		{
 			Verbs = verbs;
 			Parameters = param;
 			Request = request;
 			TokenData = tokenData;
+			Context = context;
 		}
 	}
 	public class Rest : IDisposable
@@ -67,6 +70,8 @@ namespace Rests
 		private readonly List<RestCommand> commands = new List<RestCommand>();
 		private HttpListener listener;
 		private StringHeader serverHeader;
+		public Dictionary<string, int> tokenBucket = new Dictionary<string, int>();
+		private Timer tokenBucketTimer;
 		public IPAddress Ip { get; set; }
 		public int Port { get; set; }
 
@@ -74,18 +79,30 @@ namespace Rests
 		{
 			Ip = ip;
 			Port = port;
-			string appName = this.GetType().Assembly.GetName().Version.ToString();
-			AssemblyName ass = this.GetType().Assembly.GetName();
-			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", ass.Name, ass.Version));
+			AssemblyName assembly = this.GetType().Assembly.GetName();
+			serverHeader = new StringHeader("Server", String.Format("{0}/{1}", assembly.Name, assembly.Version));
 		}
 
 		public virtual void Start()
 		{
-			if (listener == null)
+			try
 			{
 				listener = HttpListener.Create(Ip, Port);
 				listener.RequestReceived += OnRequest;
 				listener.Start(int.MaxValue);
+				tokenBucketTimer = new Timer((e) =>
+				{
+					DegradeBucket();
+				}, null, TimeSpan.Zero, TimeSpan.FromMinutes(Math.Max(TShock.Config.RESTRequestBucketDecreaseIntervalMinutes, 1)));
+
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error("Fatal Startup Exception");
+				TShock.Log.Error(ex.ToString());
+				TShock.Log.ConsoleError("Invalid REST configuration: \nYou may already have a REST service bound to port {0}. \nPlease adjust your configuration and restart the server. \nPress any key to exit.", Port);
+				Console.ReadLine();
+				Environment.Exit(1);
 			}
 		}
 
@@ -114,6 +131,23 @@ namespace Rests
 		protected void AddCommand(RestCommand com)
 		{
 			commands.Add(com);
+		}
+
+		private void DegradeBucket()
+		{
+			var _bucket = new List<string>(tokenBucket.Keys); // Duplicate the keys so we can modify tokenBucket whilst iterating
+			foreach(string key in _bucket)
+			{
+				int tokens = tokenBucket[key];
+				if(tokens > 0)
+				{
+					tokenBucket[key] -= 1;
+				}
+				if(tokens <= 0)
+				{
+					tokenBucket.Remove(key);
+				}
+			}
 		}
 
 		#region Event
@@ -188,7 +222,7 @@ namespace Rests
 						continue;
 					}
 
-					var obj = ExecuteCommand(com, verbs, e.Request.Parameters, e.Request);
+					var obj = ExecuteCommand(com, verbs, e.Request.Parameters, e.Request, e.Context);
 					if (obj != null)
 						return obj;
 				}
@@ -196,21 +230,21 @@ namespace Rests
 			catch (Exception exception)
 			{
 				return new RestObject("500")
-				       	{
-				       		{"error", "Internal server error."},
-				       		{"errormsg", exception.Message},
-				       		{"stacktrace", exception.StackTrace},
-				       	};
+				{
+					{"error", "Internal server error."},
+					{"errormsg", exception.Message},
+					{"stacktrace", exception.StackTrace},
+				};
 			}
 			return new RestObject("404")
-			       	{
-			       		{"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."}
-			       	};
+			{
+				{"error", "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."}
+			};
 		}
 
-		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request)
+		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request, IHttpContext context)
 		{
-			object result = cmd.Execute(verbs, parms, request);
+			object result = cmd.Execute(verbs, parms, request, context);
 			if (cmd.DoLog && TShock.Config.LogRest)
 			{
 				TShock.Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));

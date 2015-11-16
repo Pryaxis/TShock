@@ -65,9 +65,9 @@ namespace Rests
 			get { return UriVerbs.Length > 0; }
 		}
 
-		public virtual object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request)
+		public virtual object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request, IHttpContext context)
 		{
-			return callback(new RestRequestArgs(verbs, parameters, request));
+			return callback(new RestRequestArgs(verbs, parameters, request, context));
 		}
 	}
 
@@ -90,17 +90,17 @@ namespace Rests
 		{
 		}
 
-		public override object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request)
+		public override object Execute(RestVerbs verbs, IParameterCollection parameters, IRequest request, IHttpContext context)
 		{
 			return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
 		}
 
-		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData, IRequest request)
+		public object Execute(RestVerbs verbs, IParameterCollection parameters, SecureRest.TokenData tokenData, IRequest request, IHttpContext context)
 		{
 			if (tokenData.Equals(SecureRest.TokenData.None))
 				return new RestObject("401") { Error = "Not authorized. The specified API endpoint requires a token." };
 
-			return callback(new RestRequestArgs(verbs, parameters, request, tokenData));
+			return callback(new RestRequestArgs(verbs, parameters, request, tokenData, context));
 		}
 	}
 }

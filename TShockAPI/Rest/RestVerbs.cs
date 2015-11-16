@@ -27,8 +27,7 @@ namespace Rests
 		/// <summary>
 		/// Gets value safely, if it does not exist, return null. Sets/Adds value safely, if null it will remove.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
+		/// <param name="key">the key</param>
 		/// <returns>Returns null if key does not exist.</returns>
 		public new string this[string key]
 		{

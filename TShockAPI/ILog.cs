@@ -34,7 +34,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Checks whether the log level contains the specified flag.
 		/// </summary>
-		/// <param name="type">The <see cref="LogLevel" /> value to check.</param>
+		/// <param name="type">The <see cref="TraceLevel" /> value to check.</param>
 		bool MayWriteType(TraceLevel type);
 
 		/// <summary>
@@ -123,13 +123,13 @@ namespace TShockAPI
 		void Write(string message, TraceLevel level);
 
 		/// <summary>
-		/// Writes a debug string to the log file.
+		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Debug(string message);
 
 		/// <summary>
-		/// Writes a debug string to the log file.
+		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
