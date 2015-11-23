@@ -186,6 +186,7 @@ namespace TShockAPI
 		[Description("Valid types are \"sha512\", \"sha256\", \"md5\", append with \"-xp\" for the xp supported algorithms.")]
 		public string HashAlgorithm = "sha512";
 
+		[Obsolete("PacketBuffered is no longer used")]
 		[Description("Buffers up the packets and sends them out at the end of each frame.")]
 		public bool BufferPackets = true;
 

@@ -100,6 +100,7 @@ namespace TShockAPI
 		/// <summary>OverridePort - Determines if TShock should override the server port.</summary>
 		public static bool OverridePort;
 		/// <summary>PacketBuffer - Static reference to the packet bufferer system, which buffers packets to clients for better performance.</summary>
+		[Obsolete("PacketBufferer is no longer used", true)]
 		public static PacketBufferer PacketBuffer;
 		/// <summary>Geo - Static reference to the GeoIP system which determines the location of an IP address.</summary>
 		public static GeoIPCountry Geo;
@@ -321,9 +322,6 @@ namespace TShockAPI
 
 				if (Config.RestApiEnabled)
 					RestApi.Start();
-
-				if (Config.BufferPackets)
-					PacketBuffer = new PacketBufferer(this);
 
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));

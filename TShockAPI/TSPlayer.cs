@@ -565,7 +565,7 @@ namespace TShockAPI
 			if (client == null)
 				return;
 
-			TShock.PacketBuffer.Flush(client);
+			//TShock.PacketBuffer.Flush(client);
 		}
 
 
