@@ -2688,7 +2688,7 @@ namespace TShockAPI
 			{
 			//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;				
-				return true;
+				//return true;
 			}
 
 			return false;
