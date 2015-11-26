@@ -966,7 +966,7 @@ namespace TShockAPI
 					{
 						if (CheckIgnores(player))
 						{
-							player.Disable("not being logged in while SSC is enabled", flags);
+							player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
@@ -1046,7 +1046,7 @@ namespace TShockAPI
 
 						if (CheckIgnores(player))
 						{
-							player.Disable("check ignores failed in OnSecondUpdate()", flags);
+                            player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{

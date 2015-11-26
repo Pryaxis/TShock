@@ -875,12 +875,22 @@ namespace TShockAPI
 				}
 			}
 
-			var trace = new StackTrace();
-			StackFrame frame = null;
-			frame = trace.GetFrame(1);
-			if (frame != null && frame.GetMethod().DeclaringType != null)
-				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
+            /*
+             * Calling new StackTrace() is incredibly expensive, and must be disabled
+             * in release builds.  Use a conditional call instead.
+             */
+            LogStackFrame();
 		}
+
+        [Conditional("DEBUG")]
+        private void LogStackFrame()
+        {
+            var trace = new StackTrace();
+            StackFrame frame = null;
+            frame = trace.GetFrame(1);
+            if (frame != null && frame.GetMethod().DeclaringType != null)
+                TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
+        }
 
 		public virtual void Whoopie(object time)
 		{
