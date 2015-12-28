@@ -7,13 +7,25 @@ using System.Threading;
 using System.IO;
 using System.Web;
 using TerrariaApi.Server;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace TShockAPI
 {
 	public class StatTracker
 	{
+		[DllImport("kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemInKb);
+
+		public string ProviderToken = "";
+		public bool OptOut = false;
+
 		private bool failed;
 		private bool initialized;
+		private long totalMem;
+		private string serverId = "";
+
 		public StatTracker()
 		{
 			
@@ -21,31 +33,56 @@ namespace TShockAPI
 
 		public void Initialize()
 		{
-			if (!initialized)
+			if (!initialized && !OptOut)
 			{
 				initialized = true;
+				serverId = Guid.NewGuid().ToString(); // Gets reset every server restart
 				ThreadPool.QueueUserWorkItem(SendUpdate);
 			}
 		}
 
 		private void SendUpdate(object info)
 		{
-			Thread.Sleep(1000*60*15);
-			var data = new JsonData
+			Thread.Sleep(1000 * 60 * 5);
+			JsonData data;
+
+			if(ServerApi.RunningMono)
 			{
-				port = Terraria.Netplay.ListenPort,
-				currentPlayers = TShock.Utils.ActivePlayers(),
-				maxPlayers = TShock.Config.MaxSlots,
-				systemRam = 0,
-				systemCPUClock = 0,
-				version = TShock.VersionNum.ToString(),
-				terrariaVersion = Terraria.Main.versionNumber2,
-				mono = ServerApi.RunningMono
-			};
+				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
+				totalMem = (pc.RawValue / 1024 / 1024 / 1024);
+				data = new JsonData
+				{
+					port = Terraria.Netplay.ListenPort,
+					currentPlayers = TShock.Utils.ActivePlayers(),
+					maxPlayers = TShock.Config.MaxSlots,
+					systemRam = totalMem,
+					version = TShock.VersionNum.ToString(),
+					terrariaVersion = Terraria.Main.versionNumber2,
+					providerId = ProviderToken,
+					serverId = serverId,
+					mono = true
+				};
+			} else
+			{
+				GetPhysicallyInstalledSystemMemory(out totalMem);
+				totalMem = (totalMem / 1024 / 1024); // Super hardcore maths to convert to Gb from Kb
+				data = new JsonData
+				{
+					port = Terraria.Netplay.ListenPort,
+					currentPlayers = TShock.Utils.ActivePlayers(),
+					maxPlayers = TShock.Config.MaxSlots,
+					systemRam = totalMem,
+					version = TShock.VersionNum.ToString(),
+					terrariaVersion = Terraria.Main.versionNumber2,
+					providerId = ProviderToken,
+					serverId = serverId,
+					mono = false
+				};
+			}
 
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 			var encoded = HttpUtility.UrlEncode(serialized);
-			var uri = String.Format("http://stats.tshock.co/publish/{0}", encoded);
+			var uri = String.Format("http://stats.tshock.co/submit/{0}", encoded);
 			var client = (HttpWebRequest)WebRequest.Create(uri);
 			client.Timeout = 5000;
 			try
@@ -78,10 +115,11 @@ namespace TShockAPI
 		public int port;
 		public int currentPlayers;
 		public int maxPlayers;
-		public int systemRam;
-		public int systemCPUClock;
+		public long systemRam;
 		public string version;
 		public string terrariaVersion;
+		public string providerId;
+		public string serverId;
 		public bool mono;
 	}
 }
