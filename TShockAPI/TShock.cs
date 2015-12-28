@@ -680,6 +680,16 @@ namespace TShockAPI
 
 							break;
 						}
+					case "-providertoken":
+						{
+							TShock.StatTracker.ProviderToken = parms[++i];
+							break;
+						}
+					case "--stats-optout":
+						{
+							TShock.StatTracker.OptOut = true;
+							break;
+						}
 				}
 			}
 		}
