@@ -680,7 +680,7 @@ namespace TShockAPI
 
 							break;
 						}
-					case "-providertoken":
+					case "--provider-token":
 						{
 							TShock.StatTracker.ProviderToken = parms[++i];
 							break;
