@@ -989,7 +989,7 @@ namespace TShockAPI
 						string check = "none";
 						foreach (Item item in player.TPlayer.inventory)
 						{
-							if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
+							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
 								item.type != 0)
 							{
 								check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
@@ -1334,7 +1334,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				if (!tsplr.Group.HasPermission(Permissions.canchat))
+				if (!tsplr.HasPermission(Permissions.canchat))
 				{
 					args.Handled = true;
 				}
@@ -1652,7 +1652,7 @@ namespace TShockAPI
 		/// <returns>bool - True if the player should not be able to modify a tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, short tileType, GetDataHandlers.EditAction actionType)
 		{
-			if (!player.Group.HasPermission(Permissions.canbuild))
+			if (!player.HasPermission(Permissions.canbuild))
 			{
 				if (TShock.Config.AllowIce && actionType != GetDataHandlers.EditAction.PlaceTile)
 				{
@@ -1687,7 +1687,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1700,7 +1700,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.antibuild))
+				if (!player.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
@@ -1713,7 +1713,7 @@ namespace TShockAPI
 
 			if (Config.SpawnProtection)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.HasPermission(Permissions.editspawn))
 				{
 					if (CheckSpawn(tileX, tileY))
 					{
@@ -1737,8 +1737,8 @@ namespace TShockAPI
 		/// <returns>bool - True if the player should not be able to modify the tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, bool paint = false)
 		{
-			if ((!paint && !player.Group.HasPermission(Permissions.canbuild)) ||
-				(paint && !player.Group.HasPermission(Permissions.canpaint)))
+			if ((!paint && !player.HasPermission(Permissions.canbuild)) ||
+				(paint && !player.HasPermission(Permissions.canpaint)))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
@@ -1755,7 +1755,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1768,7 +1768,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.antibuild))
+				if (!player.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
@@ -1781,7 +1781,7 @@ namespace TShockAPI
 
 			if (Config.SpawnProtection)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.HasPermission(Permissions.editspawn))
 				{
 					if (CheckSpawn(tileX, tileY))
 					{
