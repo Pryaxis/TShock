@@ -150,12 +150,19 @@ namespace TShockAPI.Hooks
 		public TSPlayer Player { get; set; }
 
 		/// <summary>
+		/// The permission being checked.
+		/// </summary>
+		public string Permission { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerPermissionEventArgs class.
 		/// </summary>
-		/// <param name="player"></param>
-		public PlayerPermissionEventArgs(TSPlayer player)
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="permission">The permission being checked.</param>
+		public PlayerPermissionEventArgs(TSPlayer player, string permission)
 		{
 			Player = player;
+			Permission = permission;
 		}
 	}
 
@@ -320,12 +327,12 @@ namespace TShockAPI.Hooks
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
 		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerPermission(TSPlayer player)
+		public static bool OnPlayerPermission(TSPlayer player, string permission)
 		{
 			if (PlayerPermission == null)
 				return false;
 
-			var args = new PlayerPermissionEventArgs(player);
+			var args = new PlayerPermissionEventArgs(player, permission);
 			PlayerPermission(args);
 			return args.Handled;
 		}

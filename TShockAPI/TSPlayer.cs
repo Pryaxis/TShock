@@ -963,7 +963,7 @@ namespace TShockAPI
 		/// <returns>True if the player has that permission.</returns>
 		public bool HasPermission(string permission)
 		{
-			if (PlayerHooks.OnPlayerPermission(this))
+			if (PlayerHooks.OnPlayerPermission(this, permission))
 				return true;
 
 			return (tempGroup != null && tempGroup.HasPermission(permission)) || Group.HasPermission(permission);
