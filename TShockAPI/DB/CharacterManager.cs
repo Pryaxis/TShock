@@ -162,13 +162,13 @@ namespace TShockAPI.DB
 			
 			if (!player.IsLoggedIn)
 				return false;
-			
-		        if ((player.tempGroup != null && player.tempGroup.HasPermission(Permissions.bypassssc)) || player.Group.HasPermission(Permissions.bypassssc))
-	        	{
-	        		TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
-	                	return true;
-	            	}
-			
+
+			if (player.HasPermission(Permissions.bypassssc))
+			{
+				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
+				return true;
+			}
+
 			if (!GetPlayerData(player, player.User.ID).exists)
 			{
 				try

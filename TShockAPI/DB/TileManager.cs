@@ -202,7 +202,7 @@ namespace TShockAPI.DB
 			if (ply == null)
 				return false;
 
-			if (ply.Group.HasPermission(Permissions.canusebannedtiles))
+			if (ply.HasPermission(Permissions.canusebannedtiles))
 				return true;
 
 			var cur = ply.Group;

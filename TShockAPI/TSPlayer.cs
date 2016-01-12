@@ -26,6 +26,7 @@ using System.Timers;
 using Terraria;
 using Terraria.ID;
 using TShockAPI.DB;
+using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 
@@ -430,11 +431,11 @@ namespace TShockAPI
 			}
 			try
 			{
-		                if ((tempGroup != null && tempGroup.HasPermission(Permissions.bypassssc)) || Group.HasPermission(Permissions.bypassssc))
-                		{
-                    		TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
-            			return true;
-        			}
+				if (HasPermission(Permissions.bypassssc))
+				{
+					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
+					return true;
+				}
 				PlayerData.CopyCharacter(this);
 				TShock.CharacterDB.InsertPlayerData(this);
 				return true;
@@ -875,22 +876,22 @@ namespace TShockAPI
 				}
 			}
 
-            /*
-             * Calling new StackTrace() is incredibly expensive, and must be disabled
-             * in release builds.  Use a conditional call instead.
-             */
-            LogStackFrame();
+			/*
+			 * Calling new StackTrace() is incredibly expensive, and must be disabled
+			 * in release builds.  Use a conditional call instead.
+			 */
+			LogStackFrame();
 		}
 
-        [Conditional("DEBUG")]
-        private void LogStackFrame()
-        {
-            var trace = new StackTrace();
-            StackFrame frame = null;
-            frame = trace.GetFrame(1);
-            if (frame != null && frame.GetMethod().DeclaringType != null)
-                TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
-        }
+		[Conditional("DEBUG")]
+		private void LogStackFrame()
+		{
+			var trace = new StackTrace();
+			StackFrame frame = null;
+			frame = trace.GetFrame(1);
+			if (frame != null && frame.GetMethod().DeclaringType != null)
+				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
+		}
 
 		public virtual void Whoopie(object time)
 		{
@@ -953,6 +954,19 @@ namespace TShockAPI
 			}
 
 			AwaitingResponse.Add(name, callback);
+		}
+
+		/// <summary>
+		/// Checks to see if a player or its associated group/temporary group has a specified permission.
+		/// </summary>
+		/// <param name="permission">The permission to check.</param>
+		/// <returns>True if the player has that permission.</returns>
+		public bool HasPermission(string permission)
+		{
+			if (PlayerHooks.OnPlayerPermission(this, permission))
+				return true;
+
+			return (tempGroup != null && tempGroup.HasPermission(permission)) || Group.HasPermission(permission);
 		}
 	}
 

@@ -175,7 +175,7 @@ namespace TShockAPI
 				return true;
 			foreach (var Permission in Permissions)
 			{
-				if (ply.Group.HasPermission(Permission))
+				if (ply.HasPermission(Permission))
 					return true;
 			}
 			return false;
@@ -795,7 +795,7 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter)
 					{
-						if (group.HasPermission(Permissions.bypassssc))
+						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
 							args.Player.IgnoreActionsForClearingTrashCan = false;
 						}
@@ -803,10 +803,10 @@ namespace TShockAPI
 					}
 					args.Player.LoginFailsBySsi = false;
 
-					if (group.HasPermission(Permissions.ignorestackhackdetection))
+					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
 						args.Player.IgnoreActionsForCheating = "none";
 
-					if (group.HasPermission(Permissions.usebanneditem))
+					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
 					args.Player.Group = group;
@@ -1381,7 +1381,7 @@ namespace TShockAPI
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 						else
 						{
-							if (args.Player.RealPlayer && players[0].Group.HasPermission(Permissions.immunetoban))
+							if (args.Player.RealPlayer && players[0].HasPermission(Permissions.immunetoban))
 							{
 								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
 								return;
@@ -2237,7 +2237,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				if (args.Player.Group.HasPermission(Permissions.tpothers))
+				if (args.Player.HasPermission(Permissions.tpothers))
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}tp <player> [player 2]", Specifier);
 				else
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}tp <player>", Specifier);
@@ -2254,7 +2254,7 @@ namespace TShockAPI
 				else
 				{
 					var target = players[0];
-					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+					if (!target.TPAllow && !args.Player.HasPermission(Permissions.tpoverride))
 					{
 						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
 						return;
@@ -2262,14 +2262,14 @@ namespace TShockAPI
 					if (args.Player.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
 					{
 						args.Player.SendSuccessMessage("Teleported to {0}.", target.Name);
-						if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+						if (!args.Player.HasPermission(Permissions.tpsilent))
 							target.SendInfoMessage("{0} teleported to you.", args.Player.Name);
 					}
 				}
 			}
 			else
 			{
-				if (!args.Player.Group.HasPermission(Permissions.tpothers))
+				if (!args.Player.HasPermission(Permissions.tpothers))
 				{
 					args.Player.SendErrorMessage("You do not have access to this command.");
 					return;
@@ -2286,7 +2286,7 @@ namespace TShockAPI
 				{
 					if (args.Parameters[0] == "*")
 					{
-						if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+						if (!args.Player.HasPermission(Permissions.tpallothers))
 						{
 							args.Player.SendErrorMessage("You do not have access to this command.");
 							return;
@@ -2295,22 +2295,22 @@ namespace TShockAPI
 						var target = players2[0];
 						foreach (var source in TShock.Players.Where(p => p != null && p != args.Player))
 						{
-							if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+							if (!target.TPAllow && !args.Player.HasPermission(Permissions.tpoverride))
 								continue;
 							if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
 							{
 								if (args.Player != source)
 								{
-									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+									if (args.Player.HasPermission(Permissions.tpsilent))
 										source.SendSuccessMessage("You were teleported to {0}.", target.Name);
 									else
 										source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
 								}
 								if (args.Player != target)
 								{
-									if (args.Player.Group.HasPermission(Permissions.tpsilent))
+									if (args.Player.HasPermission(Permissions.tpsilent))
 										target.SendInfoMessage("{0} was teleported to you.", source.Name);
-									if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+									if (!args.Player.HasPermission(Permissions.tpsilent))
 										target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
 								}
 							}
@@ -2325,13 +2325,13 @@ namespace TShockAPI
 				else
 				{
 					var source = players1[0];
-					if (!source.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+					if (!source.TPAllow && !args.Player.HasPermission(Permissions.tpoverride))
 					{
 						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", source.Name);
 						return;
 					}
 					var target = players2[0];
-					if (!target.TPAllow && !args.Player.Group.HasPermission(Permissions.tpoverride))
+					if (!target.TPAllow && !args.Player.HasPermission(Permissions.tpoverride))
 					{
 						args.Player.SendErrorMessage("{0} has disabled players from teleporting.", target.Name);
 						return;
@@ -2341,16 +2341,16 @@ namespace TShockAPI
 					{
 						if (args.Player != source)
 						{
-							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+							if (args.Player.HasPermission(Permissions.tpsilent))
 								source.SendSuccessMessage("You were teleported to {0}.", target.Name);
 							else
 								source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
 						}
 						if (args.Player != target)
 						{
-							if (args.Player.Group.HasPermission(Permissions.tpsilent))
+							if (args.Player.HasPermission(Permissions.tpsilent))
 								target.SendInfoMessage("{0} was teleported to you.", source.Name);
-							if (!args.Player.Group.HasPermission(Permissions.tpsilent))
+							if (!args.Player.HasPermission(Permissions.tpsilent))
 								target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
 						}
 					}
@@ -2362,7 +2362,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				if (args.Player.Group.HasPermission(Permissions.tpallothers))
+				if (args.Player.HasPermission(Permissions.tpallothers))
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}tphere <player|*>", Specifier);
 				else
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}tphere <player>", Specifier);
@@ -2375,7 +2375,7 @@ namespace TShockAPI
 			{
 				if (playerName == "*")
 				{
-					if (!args.Player.Group.HasPermission(Permissions.tpallothers))
+					if (!args.Player.HasPermission(Permissions.tpallothers))
 					{
 						args.Player.SendErrorMessage("You do not have permission to use this command.");
 						return;
@@ -2500,7 +2500,7 @@ namespace TShockAPI
 
 		private static void Warp(CommandArgs args)
 		{
-		    bool hasManageWarpPermission = args.Player.Group.HasPermission(Permissions.managewarp);
+		    bool hasManageWarpPermission = args.Player.HasPermission(Permissions.managewarp);
             if (args.Parameters.Count < 1)
             {
                 if (hasManageWarpPermission)
@@ -2603,7 +2603,7 @@ namespace TShockAPI
                     args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp hide [name] <true/false>", Specifier);
                 #endregion
             }
-            else if (args.Parameters[0].ToLower() == "send" && args.Player.Group.HasPermission(Permissions.tpothers))
+            else if (args.Parameters[0].ToLower() == "send" && args.Player.HasPermission(Permissions.tpothers))
             {
                 #region Warp send
                 if (args.Parameters.Count < 3)
@@ -3852,7 +3852,7 @@ namespace TShockAPI
 				{
 					int.TryParse(args.Parameters[1], out damage);
 				}
-				if (!args.Player.Group.HasPermission(Permissions.kill))
+				if (!args.Player.HasPermission(Permissions.kill))
 				{
 					damage = TShock.Utils.Clamp(damage, 15, 0);
 				}
@@ -4349,7 +4349,7 @@ namespace TShockAPI
 					}
 				case "tp":
 					{
-						if (!args.Player.Group.HasPermission(Permissions.tp))
+						if (!args.Player.HasPermission(Permissions.tp))
 						{
 							args.Player.SendErrorMessage("You don't have the necessary permission to do that.");
 							break;
@@ -4397,7 +4397,7 @@ namespace TShockAPI
                           "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not.",
                           "z <name> <#> - Sets the z-order of the region.",
                         };
-						if (args.Player.Group.HasPermission(Permissions.tp))
+						if (args.Player.HasPermission(Permissions.tp))
 							lines.Add("tp <region> - Teleports you to the given region's center.");
 
 						PaginationTools.SendPage(
@@ -4526,7 +4526,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid usage, proper usage: {0}who [-i] [pagenumber]", Specifier);
 				return;
 			}
-			if (displayIdsRequested && !args.Player.Group.HasPermission(Permissions.seeids))
+			if (displayIdsRequested && !args.Player.HasPermission(Permissions.seeids))
 			{
 				args.Player.SendErrorMessage("You don't have the required permission to list player ids.");
 				return;
@@ -4658,7 +4658,7 @@ namespace TShockAPI
 			{
 				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
 			}
-			else if (players[0].Group.HasPermission(Permissions.mute))
+			else if (players[0].HasPermission(Permissions.mute))
 			{
 				args.Player.SendErrorMessage("You cannot mute this player.");
 			}
@@ -5497,7 +5497,7 @@ namespace TShockAPI
 			TSPlayer playerToGod;
 			if (args.Parameters.Count > 0)
 			{
-				if (!args.Player.Group.HasPermission(Permissions.godmodeother))
+				if (!args.Player.HasPermission(Permissions.godmodeother))
 				{
 					args.Player.SendErrorMessage("You do not have permission to god mode another player!");
 					return;
