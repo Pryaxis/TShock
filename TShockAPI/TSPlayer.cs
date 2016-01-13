@@ -966,7 +966,10 @@ namespace TShockAPI
 			if (PlayerHooks.OnPlayerPermission(this, permission))
 				return true;
 
-			return (tempGroup != null && tempGroup.HasPermission(permission)) || Group.HasPermission(permission);
+			if (tempGroup != null)
+				return tempGroup.HasPermission(permission);
+			else
+				return Group.HasPermission(permission);
 		}
 	}
 
