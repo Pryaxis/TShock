@@ -2,6 +2,11 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## Upcoming Changes
+
+* Fixed character styles/gender not being saved properly on first login while SSC is on (@WhiteXZ)
+* Added a PlayerPermission hook fired whenever a permission check involving said player occurs (when the new TSPlayer.HasPermission method is called) (@Enerdy)
+
 ## TShock 4.3.12
 
 * Fixed issues with TSPlayer.SetTeam not working (@WhiteXZ)
@@ -16,7 +21,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## TShock 4.3.11
 
-* This release is actuall 4.3.10, but was ticked extra due to a version issue on gen-dev prior to master push.
+* This release is actually 4.3.10, but was ticked extra due to a version issue on gen-dev prior to master push.
 
 ## TShock 4.3.10
 
