@@ -100,6 +100,7 @@ namespace TShockAPI
 		/// <summary>OverridePort - Determines if TShock should override the server port.</summary>
 		public static bool OverridePort;
 		/// <summary>PacketBuffer - Static reference to the packet bufferer system, which buffers packets to clients for better performance.</summary>
+		[Obsolete("PacketBufferer is no longer used", true)]
 		public static PacketBufferer PacketBuffer;
 		/// <summary>Geo - Static reference to the GeoIP system which determines the location of an IP address.</summary>
 		public static GeoIPCountry Geo;
@@ -321,9 +322,6 @@ namespace TShockAPI
 
 				if (Config.RestApiEnabled)
 					RestApi.Start();
-
-				if (Config.BufferPackets)
-					PacketBuffer = new PacketBufferer(this);
 
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -682,6 +680,16 @@ namespace TShockAPI
 
 							break;
 						}
+					case "--provider-token":
+						{
+							TShock.StatTracker.ProviderToken = parms[++i];
+							break;
+						}
+					case "--stats-optout":
+						{
+							TShock.StatTracker.OptOut = true;
+							break;
+						}
 				}
 			}
 		}
@@ -968,7 +976,7 @@ namespace TShockAPI
 					{
 						if (CheckIgnores(player))
 						{
-							player.Disable("not being logged in while SSC is enabled", flags);
+							player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
@@ -992,7 +1000,7 @@ namespace TShockAPI
 						string check = "none";
 						foreach (Item item in player.TPlayer.inventory)
 						{
-							if (!player.Group.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
+							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
 								item.type != 0)
 							{
 								check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
@@ -1059,7 +1067,7 @@ namespace TShockAPI
 
 						if (CheckIgnores(player))
 						{
-							player.Disable("check ignores failed in OnSecondUpdate()", flags);
+                            player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
@@ -1337,7 +1345,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				if (!tsplr.Group.HasPermission(Permissions.canchat))
+				if (!tsplr.HasPermission(Permissions.canchat))
 				{
 					args.Handled = true;
 				}
@@ -1655,7 +1663,7 @@ namespace TShockAPI
 		/// <returns>bool - True if the player should not be able to modify a tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, short tileType, GetDataHandlers.EditAction actionType)
 		{
-			if (!player.Group.HasPermission(Permissions.canbuild))
+			if (!player.HasPermission(Permissions.canbuild))
 			{
 				if (TShock.Config.AllowIce && actionType != GetDataHandlers.EditAction.PlaceTile)
 				{
@@ -1690,7 +1698,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1703,7 +1711,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.antibuild))
+				if (!player.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
@@ -1716,7 +1724,7 @@ namespace TShockAPI
 
 			if (Config.SpawnProtection)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.HasPermission(Permissions.editspawn))
 				{
 					if (CheckSpawn(tileX, tileY))
 					{
@@ -1740,8 +1748,8 @@ namespace TShockAPI
 		/// <returns>bool - True if the player should not be able to modify the tile.</returns>
 		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, bool paint = false)
 		{
-			if ((!paint && !player.Group.HasPermission(Permissions.canbuild)) ||
-				(paint && !player.Group.HasPermission(Permissions.canpaint)))
+			if ((!paint && !player.HasPermission(Permissions.canbuild)) ||
+				(paint && !player.HasPermission(Permissions.canpaint)))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
 				{
@@ -1758,7 +1766,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.Group.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
+			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
 				Regions.InArea(tileX, tileY))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
@@ -1771,7 +1779,7 @@ namespace TShockAPI
 
 			if (Config.DisableBuild)
 			{
-				if (!player.Group.HasPermission(Permissions.antibuild))
+				if (!player.HasPermission(Permissions.antibuild))
 				{
 					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
 					{
@@ -1784,7 +1792,7 @@ namespace TShockAPI
 
 			if (Config.SpawnProtection)
 			{
-				if (!player.Group.HasPermission(Permissions.editspawn))
+				if (!player.HasPermission(Permissions.editspawn))
 				{
 					if (CheckSpawn(tileX, tileY))
 					{

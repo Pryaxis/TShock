@@ -26,6 +26,7 @@ using System.Timers;
 using Terraria;
 using Terraria.ID;
 using TShockAPI.DB;
+using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 
@@ -430,11 +431,11 @@ namespace TShockAPI
 			}
 			try
 			{
-		                if ((tempGroup != null && tempGroup.HasPermission(Permissions.bypassssc)) || Group.HasPermission(Permissions.bypassssc))
-                		{
-                    		TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
-            			return true;
-        			}
+				if (HasPermission(Permissions.bypassssc))
+				{
+					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
+					return true;
+				}
 				PlayerData.CopyCharacter(this);
 				TShock.CharacterDB.InsertPlayerData(this);
 				return true;
@@ -565,7 +566,7 @@ namespace TShockAPI
 			if (client == null)
 				return;
 
-			TShock.PacketBuffer.Flush(client);
+			//TShock.PacketBuffer.Flush(client);
 		}
 
 
@@ -875,6 +876,16 @@ namespace TShockAPI
 				}
 			}
 
+			/*
+			 * Calling new StackTrace() is incredibly expensive, and must be disabled
+			 * in release builds.  Use a conditional call instead.
+			 */
+			LogStackFrame();
+		}
+
+		[Conditional("DEBUG")]
+		private void LogStackFrame()
+		{
 			var trace = new StackTrace();
 			StackFrame frame = null;
 			frame = trace.GetFrame(1);
@@ -944,6 +955,22 @@ namespace TShockAPI
 
 			AwaitingResponse.Add(name, callback);
 		}
+
+		/// <summary>
+		/// Checks to see if a player or its associated group/temporary group has a specified permission.
+		/// </summary>
+		/// <param name="permission">The permission to check.</param>
+		/// <returns>True if the player has that permission.</returns>
+		public bool HasPermission(string permission)
+		{
+			if (PlayerHooks.OnPlayerPermission(this, permission))
+				return true;
+
+			if (tempGroup != null)
+				return tempGroup.HasPermission(permission);
+			else
+				return Group.HasPermission(permission);
+		}
 	}
 
 	public class TSRestPlayer : TSPlayer
@@ -989,570 +1016,6 @@ namespace TShockAPI
 		public List<string> GetCommandOutput()
 		{
 			return this.CommandOutput;
-		}
-	}
-
-	public class TSServerPlayer : TSPlayer
-	{
-		public static string AccountName = "ServerConsole";
-
-		public TSServerPlayer()
-			: base("Server")
-		{
-			Group = new SuperAdminGroup();
-			User = new User{Name = AccountName};
-		}
-
-		public override void SendErrorMessage(string msg)
-		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(msg);
-			Console.ResetColor();
-		}
-
-		public override void SendInfoMessage(string msg)
-		{
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine(msg);
-			Console.ResetColor();
-		}
-
-		public override void SendSuccessMessage(string msg)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine(msg);
-			Console.ResetColor();
-		}
-
-		public override void SendWarningMessage(string msg)
-		{
-			Console.ForegroundColor = ConsoleColor.DarkRed;
-			Console.WriteLine(msg);
-			Console.ResetColor();
-		}
-
-		public override void SendMessage(string msg, Color color)
-		{
-			SendMessage(msg, color.R, color.G, color.B);
-		}
-
-		public override void SendMessage(string msg, byte red, byte green, byte blue)
-		{
-			Console.WriteLine(msg);
-		}
-
-		public void SetFullMoon()
-		{
-			Main.dayTime = false;
-			Main.moonPhase = 0;
-			Main.time = 0.0;
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-		}
-
-		public void SetBloodMoon(bool bloodMoon)
-		{
-			if (bloodMoon)
-			{
-				Main.dayTime = false;
-				Main.bloodMoon = true;
-				Main.time = 0.0;
-			}
-			else
-				Main.bloodMoon = false;
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-		}
-
-		public void SetFrostMoon(bool snowMoon)
-		{
-			if (snowMoon)
-			{
-				Main.dayTime = false;
-				Main.snowMoon = true;
-				Main.time = 0.0;
-			}
-			else
-				Main.snowMoon = false;
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-		}
-
-		public void SetPumpkinMoon(bool pumpkinMoon)
-		{
-			if (pumpkinMoon)
-			{
-				Main.dayTime = false;
-				Main.pumpkinMoon = true;
-				Main.time = 0.0;
-			}
-			else
-				Main.pumpkinMoon = false;
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-		}
-		
-		public void SetEclipse(bool eclipse)
-		{
-			if (eclipse)
-			{
-				Main.dayTime = Main.eclipse = true;
-				Main.time = 0.0;
-			}
-			else
-				Main.eclipse = false;
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-		}
-
-		public void SetTime(bool dayTime, double time)
-		{
-			Main.dayTime = dayTime;
-			Main.time = time;
-			TSPlayer.All.SendData(PacketTypes.TimeSet, "", dayTime ? 1 : 0, (int)time, Main.sunModY, Main.moonModY);
-		}
-
-		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
-			int tileYRange = 50)
-		{
-			for (int i = 0; i < amount; i++)
-			{
-				int spawnTileX;
-				int spawnTileY;
-				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
-															 out spawnTileY);
-				int npcid = NPC.NewNPC(spawnTileX*16, spawnTileY*16, type, 0);
-				// This is for special slimes
-				Main.npc[npcid].SetDefaults(name);
-			}
-		}
-
-		public void StrikeNPC(int npcid, int damage, float knockBack, int hitDirection)
-		{
-			// Main.rand is thread static.
-			if (Main.rand == null)
-				Main.rand = new Random();
-
-			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-			NetMessage.SendData((int) PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
-		}
-
-		public void RevertTiles(Dictionary<Vector2, Tile> tiles)
-		{
-			// Update Main.Tile first so that when tile sqaure is sent it is correct
-			foreach (KeyValuePair<Vector2, Tile> entry in tiles)
-			{
-				Main.tile[(int) entry.Key.X, (int) entry.Key.Y] = entry.Value;
-			}
-			// Send all players updated tile sqaures
-			foreach (Vector2 coords in tiles.Keys)
-			{
-				All.SendTileSquare((int) coords.X, (int) coords.Y, 3);
-			}
-		}
-	}
-
-	public class PlayerData
-	{
-		public NetItem[] inventory = new NetItem[NetItem.MaxInventory];
-		public int health = TShock.ServerSideCharacterConfig.StartingHealth;
-		public int maxHealth = TShock.ServerSideCharacterConfig.StartingHealth;
-		public int mana = TShock.ServerSideCharacterConfig.StartingMana;
-		public int maxMana = TShock.ServerSideCharacterConfig.StartingMana;
-		public bool exists;
-		public int spawnX= -1;
-		public int spawnY= -1;
-		public int? extraSlot;
-		public int? skinVariant;
-		public int? hair;
-		public byte hairDye;
-		public Color? hairColor;
-		public Color? pantsColor;
-		public Color? shirtColor;
-		public Color? underShirtColor;
-		public Color? shoeColor;
-		public Color? skinColor;
-		public Color? eyeColor;
-		public bool[] hideVisuals;
-		public int questsCompleted;
-
-		public PlayerData(TSPlayer player)
-		{
-			for (int i = 0; i < NetItem.MaxInventory; i++)
-			{
-				this.inventory[i] = new NetItem();
-			}
-
-			for (int i = 0; i < TShock.ServerSideCharacterConfig.StartingInventory.Count; i++)
-			{
-				var item = TShock.ServerSideCharacterConfig.StartingInventory[i];
-				StoreSlot(i, item.NetId, item.PrefixId, item.Stack);
-			}
-		}
-
-		/// <summary>
-		/// Stores an item at the specific storage slot
-		/// </summary>
-		/// <param name="slot"></param>
-		/// <param name="netID"></param>
-		/// <param name="prefix"></param>
-		/// <param name="stack"></param>
-		public void StoreSlot(int slot, int netID, byte prefix, int stack)
-		{
-			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
-			{
-				return;
-			}
-
-			this.inventory[slot] = new NetItem(netID, stack, prefix);
-		}
-
-		/// <summary>
-		/// Copies a characters data to this object
-		/// </summary>
-		/// <param name="player"></param>
-		public void CopyCharacter(TSPlayer player)
-		{
-			this.health = player.TPlayer.statLife > 0 ? player.TPlayer.statLife : 1;
-			this.maxHealth = player.TPlayer.statLifeMax;
-			this.mana = player.TPlayer.statMana;
-			this.maxMana = player.TPlayer.statManaMax;
-			if (player.sX > 0 && player.sY > 0)
-			{
-				this.spawnX = player.sX;
-				this.spawnY = player.sY;
-			}
-			else
-			{
-				this.spawnX = player.TPlayer.SpawnX;
-				this.spawnY = player.TPlayer.SpawnY;
-			}
-			extraSlot = player.TPlayer.extraAccessory ? 1 : 0;
-			this.skinVariant = player.TPlayer.skinVariant;
-			this.hair = player.TPlayer.hair;
-			this.hairDye = player.TPlayer.hairDye;
-			this.hairColor = player.TPlayer.hairColor;
-			this.pantsColor = player.TPlayer.pantsColor;
-			this.shirtColor = player.TPlayer.shirtColor;
-			this.underShirtColor = player.TPlayer.underShirtColor;
-			this.shoeColor = player.TPlayer.shoeColor;
-			this.hideVisuals = player.TPlayer.hideVisual;
-			this.skinColor = player.TPlayer.skinColor;
-			this.eyeColor = player.TPlayer.eyeColor;
-			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
-
-			Item[] inventory = player.TPlayer.inventory;
-			Item[] armor = player.TPlayer.armor;
-			Item[] dye = player.TPlayer.dye;
-			Item[] miscEqups = player.TPlayer.miscEquips;
-			Item[] miscDyes = player.TPlayer.miscDyes;
-			Item[] piggy = player.TPlayer.bank.item;
-			Item[] safe = player.TPlayer.bank2.item;
-			Item trash = player.TPlayer.trashItem;
-
-			for (int i = 0; i < NetItem.MaxInventory; i++)
-			{
-				if (i < NetItem.InventorySlots)
-				{
-					//0-58
-					this.inventory[i] = (NetItem)inventory[i];
-				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
-				{
-					//59-78
-					var index = i - NetItem.InventorySlots;
-					this.inventory[i] = (NetItem)armor[index];
-				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
-				{
-					//79-88
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
-					this.inventory[i] = (NetItem)dye[index];
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
-				{
-					//89-93
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
-					this.inventory[i] = (NetItem)miscEqups[index];
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots
-					+ NetItem.MiscDyeSlots)
-				{
-					//93-98
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots);
-					this.inventory[i] = (NetItem)miscDyes[index];
-				}
-				else if (i <
-				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
-				{
-					//98-138
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
-					this.inventory[i] = (NetItem)piggy[index];
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
-				{
-					//138-178
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
-					this.inventory[i] = (NetItem)safe[index];
-				}
-				else
-				{
-					//179
-					this.inventory[i] = (NetItem)trash;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Restores a player's character to the state stored in the database
-		/// </summary>
-		/// <param name="player"></param>
-		public void RestoreCharacter(TSPlayer player)
-		{
-			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
-			player.IgnoreSSCPackets = true;
-
-			player.TPlayer.statLife = this.health;
-			player.TPlayer.statLifeMax = this.maxHealth;
-			player.TPlayer.statMana = this.maxMana;
-			player.TPlayer.statManaMax = this.maxMana;
-			player.TPlayer.SpawnX = this.spawnX;
-			player.TPlayer.SpawnY = this.spawnY;
-			player.sX = this.spawnX;
-			player.sY = this.spawnY;
-			player.TPlayer.hairDye = this.hairDye;
-			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
-
-			if (extraSlot != null)
-				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
-			if (this.skinVariant != null)
-				player.TPlayer.skinVariant = this.skinVariant.Value;
-			if (this.hair != null)
-				player.TPlayer.hair = this.hair.Value;
-			if (this.hairColor != null)
-				player.TPlayer.hairColor = this.hairColor.Value;
-			if (this.pantsColor != null)
-				player.TPlayer.pantsColor = this.pantsColor.Value;
-			if (this.shirtColor != null)
-				player.TPlayer.shirtColor = this.shirtColor.Value;
-			if (this.underShirtColor != null)
-				player.TPlayer.underShirtColor = this.underShirtColor.Value;
-			if (this.shoeColor != null)
-				player.TPlayer.shoeColor = this.shoeColor.Value;
-			if (this.skinColor != null)
-				player.TPlayer.skinColor = this.skinColor.Value;
-			if (this.eyeColor != null)
-				player.TPlayer.eyeColor = this.eyeColor.Value;
-
-			if (this.hideVisuals != null)
-				player.TPlayer.hideVisual = this.hideVisuals;
-			else
-				player.TPlayer.hideVisual = new bool[player.TPlayer.hideVisual.Length];
-			
-			for (int i = 0; i < NetItem.MaxInventory; i++)
-			{
-				if (i < NetItem.InventorySlots)
-				{
-					//0-58
-					player.TPlayer.inventory[i].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.inventory[i].netID != 0)
-					{
-						player.TPlayer.inventory[i].stack = this.inventory[i].Stack;
-						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;
-					}
-				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
-				{
-					//59-78
-					var index = i - NetItem.InventorySlots;
-					player.TPlayer.armor[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.armor[index].netID != 0)
-					{
-						player.TPlayer.armor[index].stack = this.inventory[i].Stack;
-						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
-				{
-					//79-88
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
-					player.TPlayer.dye[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.dye[index].netID != 0)
-					{
-						player.TPlayer.dye[index].stack = this.inventory[i].Stack;
-						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else if (i < 
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
-				{
-					//89-93
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
-					player.TPlayer.miscEquips[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.miscEquips[index].netID != 0)
-					{
-						player.TPlayer.miscEquips[index].stack = this.inventory[i].Stack;
-						player.TPlayer.miscEquips[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots 
-					+ NetItem.MiscDyeSlots)
-				{
-					//93-98
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots);
-					player.TPlayer.miscDyes[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.miscDyes[index].netID != 0)
-					{
-						player.TPlayer.miscDyes[index].stack = this.inventory[i].Stack;
-						player.TPlayer.miscDyes[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots)
-				{
-					//98-138
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots 
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
-					player.TPlayer.bank.item[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.bank.item[index].netID != 0)
-					{
-						player.TPlayer.bank.item[index].stack = this.inventory[i].Stack;
-						player.TPlayer.bank.item[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
-				{
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
-					player.TPlayer.bank2.item[index].netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.bank2.item[index].netID != 0)
-					{
-						player.TPlayer.bank2.item[index].stack = this.inventory[i].Stack;
-						player.TPlayer.bank2.item[index].prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-				else
-				{
-					player.TPlayer.trashItem.netDefaults(this.inventory[i].NetId);
-
-					if (player.TPlayer.trashItem.netID != 0)
-					{
-						player.TPlayer.trashItem.stack = this.inventory[i].Stack;
-						player.TPlayer.trashItem.prefix = (byte)this.inventory[i].PrefixId;
-					}
-				}
-			}
-
-			float slot = 0f;
-			for (int k = 0; k < NetItem.InventorySlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.ArmorSlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.DyeSlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.PiggySlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].bank.item[k].name, player.Index, slot, (float)Main.player[player.Index].bank.item[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.SafeSlots; k++)
-			{
-				NetMessage.SendData(5, -1, -1, Main.player[player.Index].bank2.item[k].name, player.Index, slot, (float)Main.player[player.Index].bank2.item[k].prefix);
-				slot++;
-			}
-
-			NetMessage.SendData(5, -1, -1, Main.player[player.Index].trashItem.name, player.Index, slot, (float)Main.player[player.Index].trashItem.prefix);
-
-			NetMessage.SendData(4, -1, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(42, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(16, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
-
-			slot = 0f;
-			for (int k = 0; k < NetItem.InventorySlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].inventory[k].name, player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.ArmorSlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].armor[k].name, player.Index, slot, (float)Main.player[player.Index].armor[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.DyeSlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].dye[k].name, player.Index, slot, (float)Main.player[player.Index].dye[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].miscEquips[k].name, player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].miscDyes[k].name, player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.PiggySlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].bank.item[k].name, player.Index, slot, (float)Main.player[player.Index].bank.item[k].prefix);
-				slot++;
-			}
-			for (int k = 0; k < NetItem.SafeSlots; k++)
-			{
-				NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].bank2.item[k].name, player.Index, slot, (float)Main.player[player.Index].bank2.item[k].prefix);
-				slot++;
-			}
-
-			NetMessage.SendData(5, player.Index, -1, Main.player[player.Index].trashItem.name, player.Index, slot, (float)Main.player[player.Index].trashItem.prefix);
-
-			NetMessage.SendData(4, player.Index, -1, player.Name, player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(42, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(16, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
-
-			for (int k = 0; k < 22; k++)
-			{
-				player.TPlayer.buffType[k] = 0;
-			}
-			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(76, -1, -1, "", player.Index);
-
-			NetMessage.SendData(39, player.Index, -1, "", 400);
 		}
 	}
 }

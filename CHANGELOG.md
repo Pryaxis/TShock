@@ -2,6 +2,27 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## Upcoming Changes
+
+* Fixed character styles/gender not being saved properly on first login while SSC is on (@WhiteXZ)
+* Added a PlayerPermission hook fired whenever a permission check involving said player occurs (when the new TSPlayer.HasPermission method is called) (@Enerdy)
+
+## TShock 4.3.12
+
+* Fixed issues with TSPlayer.SetTeam not working (@WhiteXZ)
+* Fixed /butcher not killing bosses in expert difficulty (@WhiteXZ)
+* API: Deprecated PacketBufferer (now obviated by SendQ) (@WhiteXZ)
+* API: Building on Windows no longer breaks traps (@Wolfje)
+* Fixed bombs, dynamite, and sticky bombs (@Wolfje)
+* Removed spammy messages from OnSecondUpdate that confused some server owners (@Wolfje)
+* Rewrote some stat tracker code to send actually relevant data to the stats server (@Cleant / George from Multiplay UK)
+* Added an opt-out command line switch to disable the stat tracker (--stats-optout) (@Cleant / George from Multiplay UK)
+* Added a unique provider token which can be passed to the stat tracker (--provider-token [token]) for tracking servers from the same GSP. (@Cleant / George from Multiplay UK)
+
+## TShock 4.3.11
+
+* This release is actually 4.3.10, but was ticked extra due to a version issue on gen-dev prior to master push.
+
 ## TShock 4.3.10
 
 This version features a drop-in tile replacement system by @Wolfje that reduces RAM requirements
@@ -34,7 +55,6 @@ Other notable changes include:
 * Fixed /reload not using the correct permission (@WhiteXZ)
 * Fixed TSPlayer.ActiveChest not being tracked correctly resulting in item dupes while disabled (@WhiteXZ)
 * /reload now reloads tile and projectile bans
-
 
 ## TShock 4.3.8
 * API: Update to Terraria 1.3.0.8 (@Patrikkk)

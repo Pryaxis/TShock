@@ -27,8 +27,10 @@ using TerrariaApi.Server;
 
 namespace TShockAPI
 {
+	[Obsolete("This class is no longer used")]
 	public class PacketBufferer : IDisposable
 	{
+		/*
 		/// <summary>
 		/// Maximum number of bytes to send per update per socket
 		/// </summary>
@@ -46,10 +48,10 @@ namespace TShockAPI
 		Command dump;
 		Command flush;
 #endif
-
+*/
 		public PacketBufferer(TShock p)
 		{
-			plugin = p;
+			/*plugin = p;
 			BytesPerUpdate = 0xFFFF;
 			for (int i = 0; i < buffers.Length; i++)
 				buffers[i] = new PacketBuffer();
@@ -63,23 +65,23 @@ namespace TShockAPI
 
 			ServerApi.Hooks.NetSendBytes.Register(plugin, ServerHooks_SendBytes);
 			ServerApi.Hooks.ServerSocketReset.Register(plugin, ServerHooks_SocketReset);
-			ServerApi.Hooks.GamePostUpdate.Register(plugin, GameHooks_Update);
+			ServerApi.Hooks.GamePostUpdate.Register(plugin, GameHooks_Update);*/
 		}
 
 		~PacketBufferer()
 		{
-			Dispose(false);
+			/*Dispose(false);*/
 		}
 
 		public void Dispose()
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			/*Dispose(true);
+			GC.SuppressFinalize(this);*/
 		}
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing)
+			/*if (disposing)
 			{
 #if DEBUG_NET
 				Commands.ChatCommands.Remove(dump);
@@ -88,44 +90,44 @@ namespace TShockAPI
 				ServerApi.Hooks.NetSendBytes.Deregister(plugin, ServerHooks_SendBytes);
 				ServerApi.Hooks.ServerSocketReset.Deregister(plugin, ServerHooks_SocketReset);
 				ServerApi.Hooks.GamePostUpdate.Deregister(plugin, GameHooks_Update);
-			}
+			}*/
 		}
 
 		private void Dump(CommandArgs args)
 		{
-			var sb = new StringBuilder();
+			/*var sb = new StringBuilder();
 			sb.AppendLine("{0,-25}{1,-25}{2,-25}{3}".SFormat("Name:", "Packets", "Bytes", "Compression"));
 			for (int i = 1; i < Bytes.Length; i++)
 			{
 				sb.AppendLine("{0,-25}{1,-25}{2,-25}{3}".SFormat(Enum.GetName(typeof (PacketTypes), i) + ":", Packets[i], Bytes[i],
 																 Compressed[i]));
 			}
-			File.WriteAllText(Path.Combine(TShock.SavePath, "dmp.txt"), sb.ToString());
+			File.WriteAllText(Path.Combine(TShock.SavePath, "dmp.txt"), sb.ToString());*/
 		}
 
 		private void Flush(CommandArgs args)
 		{
-			Bytes = new int[52];
+			/*Bytes = new int[52];
 			Packets = new int[52];
-			Compressed = new int[52];
+			Compressed = new int[52];*/
 		}
 
 		private void GameHooks_Update(EventArgs args)
 		{
-			FlushAll();
+			/*FlushAll();*/
 		}
 
 		public void FlushAll()
 		{
-			for (int i = 0; i < Netplay.Clients.Length; i++)
+			/*for (int i = 0; i < Netplay.Clients.Length; i++)
 			{
 				Flush(Netplay.Clients[i]);
-			}
+			}*/
 		}
 
 		public bool Flush(RemoteClient client)
 		{
-		    try
+		    /*try
 		    {
 		        if (client == null || !client.IsActive)
 		            return false;
@@ -149,29 +151,30 @@ namespace TShockAPI
 			catch (Exception e)
 			{
 				TShock.Log.ConsoleError(e.ToString());
-			}
+			}*/
 			return false;
 		}
 
 
 		private void ServerHooks_SocketReset(SocketResetEventArgs args)
 		{
-			buffers[args.Socket.Id] = new PacketBuffer();
+			/*buffers[args.Socket.Id] = new PacketBuffer();*/
 		}
 
 		public bool SendBytes(RemoteClient client, byte[] buffer)
 		{
-			return SendBytes(client, buffer, 0, buffer.Length);
+			/*return SendBytes(client, buffer, 0, buffer.Length);*/
+			return false;
 		}
 
 		public void BufferBytes(RemoteClient client, byte[] buffer)
 		{
-			BufferBytes(client, buffer, 0, buffer.Length);
+			/*BufferBytes(client, buffer, 0, buffer.Length);*/
 		}
 
 		public void BufferBytes(RemoteClient client, byte[] buffer, int offset, int count)
 		{
-			lock (buffers[client.Id])
+			/*lock (buffers[client.Id])
 			{
 #if DEBUG_NET
 				int size = (count - offset);
@@ -191,12 +194,12 @@ namespace TShockAPI
 					buffers[client.Id].Clear();
 					client.PendingTermination = true;
 				}
-			}
+			}*/
 		}
 
 		public bool SendBytes(RemoteClient client, byte[] buffer, int offset, int count)
 		{
-			try
+			/*try
 			{
 				if (client.Socket != null && client.Socket.IsConnected())
 				{
@@ -239,16 +242,16 @@ namespace TShockAPI
 				}
 				else
 					TShock.Log.Warn(e.ToString());
-			}
+			}*/
 			return false;
 		}
 
 		private void ServerHooks_SendBytes(SendBytesEventArgs args)
 		{
-			args.Handled = true;
-			BufferBytes(args.Socket, args.Buffer, args.Offset, args.Count);
+			/*args.Handled = true;
+			BufferBytes(args.Socket, args.Buffer, args.Offset, args.Count);*/
 		}
-
+/*
 #if DEBUG_NET
 		static int Compress(byte[] buffer, int offset, int count)
 		{
@@ -262,11 +265,13 @@ namespace TShockAPI
 			}
 		}
 #endif
+*/
 	}
 
+	[Obsolete("This class is no longer used")]
 	public class PacketBuffer : List<byte>
 	{
-		public byte[] GetBytes(int max)
+		/*public byte[] GetBytes(int max)
 		{
 			lock (this)
 			{
@@ -285,6 +290,6 @@ namespace TShockAPI
 			{
 				this.RemoveRange(0, count);
 			}
-		}
+		}*/
 	}
 }

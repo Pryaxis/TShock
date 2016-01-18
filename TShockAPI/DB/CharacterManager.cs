@@ -96,7 +96,7 @@ namespace TShockAPI.DB
 						playerData.extraSlot = reader.Get<int>("extraSlot");
 						playerData.spawnX = reader.Get<int>("spawnX");
 						playerData.spawnY = reader.Get<int>("spawnY");
-						playerData.skinVariant = reader.Get<int>("skinVariant");
+						playerData.skinVariant = reader.Get<int?>("skinVariant");
 						playerData.hair = reader.Get<int?>("hair");
 						playerData.hairDye = (byte)reader.Get<int>("hairDye");
 						playerData.hairColor = TShock.Utils.DecodeColor(reader.Get<int?>("hairColor"));
@@ -162,13 +162,13 @@ namespace TShockAPI.DB
 			
 			if (!player.IsLoggedIn)
 				return false;
-			
-		        if ((player.tempGroup != null && player.tempGroup.HasPermission(Permissions.bypassssc)) || player.Group.HasPermission(Permissions.bypassssc))
-	        	{
-	        		TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
-	                	return true;
-	            	}
-			
+
+			if (player.HasPermission(Permissions.bypassssc))
+			{
+				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
+				return true;
+			}
+
 			if (!GetPlayerData(player, player.User.ID).exists)
 			{
 				try
