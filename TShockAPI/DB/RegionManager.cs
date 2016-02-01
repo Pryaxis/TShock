@@ -70,6 +70,7 @@ namespace TShockAPI.DB
 					Regions.Clear();
 					while (reader.Read())
 					{
+						int id = reader.Get<int>("Id");
 						int X1 = reader.Get<int>("X1");
 						int Y1 = reader.Get<int>("Y1");
 						int height = reader.Get<int>("height");
@@ -83,16 +84,16 @@ namespace TShockAPI.DB
 
 						string[] splitids = mergedids.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
 
-						Region r = new Region(new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString(), z);
+						Region r = new Region(id, new Rectangle(X1, Y1, width, height), name, owner, Protected != 0, Main.worldID.ToString(), z);
 						r.SetAllowedGroups(groups);
 						try
 						{
 							for (int i = 0; i < splitids.Length; i++)
 							{
-								int id;
+								int userid;
 
-								if (Int32.TryParse(splitids[i], out id)) // if unparsable, it's not an int, so silently skip
-									r.AllowedIDs.Add(id);
+								if (Int32.TryParse(splitids[i], out userid)) // if unparsable, it's not an int, so silently skip
+									r.AllowedIDs.Add(userid);
 								else
 									TShock.Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
 							}
@@ -138,9 +139,37 @@ namespace TShockAPI.DB
 				database.Query(
 					"INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, Groups, Owner, Z) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10);",
 					tx, ty, width, height, regionname, worldid, "", 1, "", owner, z);
-				var region = new Region(new Rectangle(tx, ty, width, height), regionname, owner, true, worldid, z);
+				int id;
+				using (QueryResult res = database.QueryReader("SELECT Id FROM Regions WHERE RegionName = @0 AND WorldID = @1", regionname, worldid))
+				{
+					id = res.Get<int>("Id");
+				}
+				var region = new Region(id, new Rectangle(tx, ty, width, height), regionname, owner, true, worldid, z);
 				Regions.Add(region);
 				Hooks.RegionHooks.OnRegionCreated(region);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Delets the region from this world with a given ID.
+		/// </summary>
+		/// <param name="id">The ID of the region to delete.</param>
+		/// <returns>Whether the region was successfully deleted.</returns>
+		public bool DeleteRegion(int id)
+		{
+			try
+			{
+				database.Query("DELETE FROM Regions WHERE Id=@0 AND WorldID=@1", id, Main.worldID.ToString());
+				var worldid = Main.worldID.ToString();
+				var region = Regions.FirstOrDefault(r => r.ID == id && r.WorldID == worldid);
+				Regions.RemoveAll(r => r.ID == id && r.WorldID == worldid);
+				Hooks.RegionHooks.OnRegionDeleted(region);
 				return true;
 			}
 			catch (Exception ex)
@@ -173,6 +202,38 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Sets the protected state of the region with a given ID.
+		/// </summary>
+		/// <param name="id">The ID of the region to change.</param>
+		/// <param name="state">New protected state of the region.</param>
+		/// <returns>Whether the region's state was successfully changed.</returns>
+		public bool SetRegionState(int id, bool state)
+		{
+			try
+			{
+				database.Query("UPDATE Regions SET Protected = @0 WHERE Id = @1 AND WorldID = @2", state ? 1 : 0, id,
+							   Main.worldID.ToString());
+				var region = GetRegionByID(id);
+				if (region != null)
+				{
+					region.DisableBuild = state;
+				}
+				return true;
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Sets the protected state of the region with a given name.
+		/// </summary>
+		/// <param name="name">The name of the region to change.</param>
+		/// <param name="state">New protected state of the region.</param>
+		/// <returns>Whether the region's state was successfully changed.</returns>
 		public bool SetRegionState(string name, bool state)
 		{
 			try
@@ -191,23 +252,13 @@ namespace TShockAPI.DB
 			}
 		}
 
-		public bool SetRegionStateTest(string name, string world, bool state)
-		{
-			try
-			{
-				database.Query("UPDATE Regions SET Protected=@0 WHERE RegionName=@1 AND WorldID=@2", state ? 1 : 0, name, world);
-				var region = GetRegionByName(name);
-				if (region != null)
-					region.DisableBuild = state;
-				return true;
-			}
-			catch (Exception ex)
-			{
-				TShock.Log.Error(ex.ToString());
-				return false;
-			}
-		}
-
+		/// <summary>
+		/// Checks if a given player can build in a region at the given (x, y) coordinate
+		/// </summary>
+		/// <param name="x">X coordinate</param>
+		/// <param name="y">Y coordinate</param>
+		/// <param name="ply">Player to check permissions with</param>
+		/// <returns>Whether the player can build at the given (x, y) coordinate</returns>
 		public bool CanBuild(int x, int y, TSPlayer ply)
 		{
 			if (!ply.HasPermission(Permissions.canbuild))
@@ -227,52 +278,70 @@ namespace TShockAPI.DB
 			return top == null || top.HasPermissionToBuildInRegion(ply);
 		}
 
+		/// <summary>
+		/// Checks if any regions exist at the given (x, y) coordinate
+		/// </summary>
+		/// <param name="x">X coordinate</param>
+		/// <param name="y">Y coordinate</param>
+		/// <returns>Whether any regions exist at the given (x, y) coordinate</returns>
 		public bool InArea(int x, int y)
 		{
-			foreach (Region region in Regions.ToList())
-			{
-				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom)
-				{
-					return true;
-				}
-			}
-			return false;
+			return Regions.Any(r => r.InArea(x, y));
 		}
 
-		public List<string> InAreaRegionName(int x, int y)
+		/// <summary>
+		/// Checks if any regions exist at the given (x, y) coordinate
+		/// and returns an IEnumerable containing their names
+		/// </summary>
+		/// <param name="x">X coordinate</param>
+		/// <param name="y">Y coordinate</param>
+		/// <returns>The names of any regions that exist at the given (x, y) coordinate</returns>
+		public IEnumerable<string> InAreaRegionName(int x, int y)
 		{
-			List<string> regions = new List<string>() { };
-			foreach (Region region in Regions.ToList())
-			{
-				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom)
-				{
-					regions.Add(region.Name);
-				}
-			}
-			return regions;
+			return Regions.Where(r => r.InArea(x, y)).Select(r => r.Name);
 		}
 
-		public List<Region> InAreaRegion(int x, int y)
+		/// <summary>
+		/// Checks if any regions exist at the given (x, y) coordinate 
+		/// and returns an IEnumerable containing their IDs
+		/// </summary>
+		/// <param name="x">X coordinate</param>
+		/// <param name="y">Y coordinate</param>
+		/// <returns>The IDs of any regions that exist at the given (x, y) coordinate</returns>
+		public IEnumerable<int> InAreaRegionID(int x, int y)
 		{
-			List<Region> regions = new List<Region>() { };
-			foreach (Region region in Regions.ToList())
-			{
-				if (x >= region.Area.Left && x <= region.Area.Right &&
-					y >= region.Area.Top && y <= region.Area.Bottom)
-				{
-					regions.Add(region);
-				}
-			}
-			return regions;
+			return Regions.Where(r => r.InArea(x, y)).Select(r => r.ID);
 		}
 
+		/// <summary>
+		/// Checks if any regions exist at the given (x, y) coordinate
+		/// and returns an IEnumerable containing their <see cref="Region"/> objects
+		/// </summary>
+		/// <param name="x">X coordinate</param>
+		/// <param name="y">Y coordinate</param>
+		/// <returns>The <see cref="Region"/> objects of any regions that exist at the given (x, y) coordinate</returns>
+		public IEnumerable<Region> InAreaRegion(int x, int y)
+		{
+			return Regions.Where(r => r.InArea(x, y));
+		}
+		
+		[Obsolete("Unused")]
 		public static List<string> ListIDs(string MergedIDs)
 		{
 			return MergedIDs.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
 		}
 
+		/// <summary>
+		/// Changes the size of a given region
+		/// </summary>
+		/// <param name="regionName">Name of the region to resize</param>
+		/// <param name="addAmount">Amount to resize</param>
+		/// <param name="direction">Direction to resize in:
+		/// 0 = resize height and Y.
+		/// 1 = resize width.
+		/// 2 = resize height.
+		/// 3 = resize width and X.</param>
+		/// <returns></returns>
 		public bool ResizeRegion(string regionName, int addAmount, int direction)
 		{
 			//0 = up
@@ -448,11 +517,32 @@ namespace TShockAPI.DB
 			return regions;
 		}
 
+		/// <summary>
+		/// Returns a region with the given name
+		/// </summary>
+		/// <param name="name">Region name</param>
+		/// <returns>The region with the given name, or null if not found</returns>
 		public Region GetRegionByName(String name)
 		{
 			return Regions.FirstOrDefault(r => r.Name.Equals(name) && r.WorldID == Main.worldID.ToString());
 		}
 
+		/// <summary>
+		/// Returns a region with the given ID
+		/// </summary>
+		/// <param name="id">Region ID</param>
+		/// <returns>The region with the given ID, or null if not found</returns>
+		public Region GetRegionByID(int id)
+		{
+			return Regions.FirstOrDefault(r => r.ID == id && r.WorldID == Main.worldID.ToString());
+		}
+
+		/// <summary>
+		/// Changes the owner of the region with the given name
+		/// </summary>
+		/// <param name="regionName">Region name</param>
+		/// <param name="newOwner">New owner's username</param>
+		/// <returns>Whether the change was successfull</returns>
 		public bool ChangeOwner(string regionName, string newOwner)
 		{
 			var region = GetRegionByName(regionName);
@@ -467,6 +557,12 @@ namespace TShockAPI.DB
 			return false;
 		}
 
+		/// <summary>
+		/// Allows a group to use a region
+		/// </summary>
+		/// <param name="regionName">Region name</param>
+		/// <param name="groupName">Group's name</param>
+		/// <returns>Whether the change was successfull</returns>
 		public bool AllowGroup(string regionName, string groupName)
 		{
 			string mergedGroups = "";
@@ -503,6 +599,12 @@ namespace TShockAPI.DB
 			return q > 0;
 		}
 
+		/// <summary>
+		/// Removes a group's access to a region
+		/// </summary>
+		/// <param name="regionName">Region name</param>
+		/// <param name="group">Group name</param>
+		/// <returns>Whether the change was successfull</returns>
 		public bool RemoveGroup(string regionName, string group)
 		{
 			Region r = GetRegionByName(regionName);
@@ -518,10 +620,15 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		public Region GetTopRegion( List<Region> regions )
+		/// <summary>
+		/// Returns the <see cref="Region"/> with the highest Z index of the given list
+		/// </summary>
+		/// <param name="regions">List of Regions to compare</param>
+		/// <returns></returns>
+		public Region GetTopRegion(IEnumerable<Region> regions)
 		{
 			Region ret = null;
-			foreach( Region r in regions)
+			foreach (Region r in regions)
 			{
 				if (ret == null)
 					ret = r;
@@ -534,7 +641,13 @@ namespace TShockAPI.DB
 			return ret;
 		}
 
-		public bool SetZ( string name, int z )
+		/// <summary>
+		/// Sets the Z index of a given region
+		/// </summary>
+		/// <param name="name">Region name</param>
+		/// <param name="z">New Z index</param>
+		/// <returns>Whether the change was successfull</returns>
+		public bool SetZ(string name, int z)
 		{
 			try
 			{
@@ -556,6 +669,7 @@ namespace TShockAPI.DB
 
 	public class Region
 	{
+		public int ID { get; set; }
 		public Rectangle Area { get; set; }
 		public string Name { get; set; }
 		public string Owner { get; set; }
@@ -565,9 +679,10 @@ namespace TShockAPI.DB
 		public List<string> AllowedGroups { get; set; }
 		public int Z { get; set; }
 
-		public Region(Rectangle region, string name, string owner, bool disablebuild, string RegionWorldIDz, int z)
+		public Region(int id, Rectangle region, string name, string owner, bool disablebuild, string RegionWorldIDz, int z)
 			: this()
 		{
+			ID = id;
 			Area = region;
 			Name = name;
 			Owner = owner;
@@ -587,27 +702,32 @@ namespace TShockAPI.DB
 			Z = 0;
 		}
 
+		/// <summary>
+		/// Checks if a given point is in the region's area
+		/// </summary>
+		/// <param name="point">Point to check</param>
+		/// <returns>Whether the point exists in the region's area</returns>
 		public bool InArea(Rectangle point)
 		{
-			if (Area.Contains(point.X, point.Y))
-			{
-				return true;
-			}
-			return false;
+			return Area.Contains(point.X, point.Y);
 		}
-		
+
+		/// <summary>
+		/// Checks if a given (x, y) coordinate is in the region's area
+		/// </summary>
+		/// <param name="x">X coordinate to check</param>
+		/// <param name="y">Y coordinate to check</param>
+		/// <returns>Whether the coordinate exists in the region's area</returns>
 		public bool InArea(int x, int y) //overloaded with x,y
 		{
-			
-				if (x >= Area.Left && x <= Area.Right && y >= Area.Top && y <= Area.Bottom)
-				{
-					return true;
-				}
-			
-			return false;
+			return Area.Contains(x, y);
 		}
-
-
+		
+		/// <summary>
+		/// Checks if a given player has permission to build in the region
+		/// </summary>
+		/// <param name="ply">Player to check permissions with</param>
+		/// <returns>Whether the player has permission</returns>
 		public bool HasPermissionToBuildInRegion(TSPlayer ply)
 		{
 			if (!DisableBuild)
@@ -627,6 +747,10 @@ namespace TShockAPI.DB
 			return AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
 		}
 
+		/// <summary>
+		/// Sets the user IDs which are allowed to use the region
+		/// </summary>
+		/// <param name="ids">String of IDs to set</param>
 		public void SetAllowedIDs(String ids)
 		{
 			String[] id_arr = ids.Split(',');
@@ -641,6 +765,10 @@ namespace TShockAPI.DB
 			AllowedIDs = id_list;
 		}
 
+		/// <summary>
+		/// Sets the group names which are allowed to use the region
+		/// </summary>
+		/// <param name="groups">String of group names to set</param>
 		public void SetAllowedGroups(String groups)
 		{
 			// prevent null pointer exceptions
@@ -655,6 +783,10 @@ namespace TShockAPI.DB
 			}
 		}
 
+		/// <summary>
+		/// Removes a user's access to the region
+		/// </summary>
+		/// <param name="id">User ID to remove</param>
 		public void RemoveID(int id)
 		{
 			var index = -1;
@@ -669,6 +801,11 @@ namespace TShockAPI.DB
 			AllowedIDs.RemoveAt(index);
 		}
 
+		/// <summary>
+		/// Removes a group's access to the region
+		/// </summary>
+		/// <param name="groupName">Group name to remove</param>
+		/// <returns></returns>
 		public bool RemoveGroup(string groupName)
 		{
 			return AllowedGroups.Remove(groupName);
