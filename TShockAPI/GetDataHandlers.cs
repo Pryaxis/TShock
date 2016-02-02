@@ -3565,24 +3565,24 @@ namespace TShockAPI
                     case 4:
                     case 13:
                     case 50:
-                    case 126:
-                    case 125:
-                    case 134:
-                    case 127:
-                    case 128:
-                    case 131:
-                    case 129:
-                    case 130:
+					case 75:
+					case 125:
+					case 126:
+					case 127:
+					case 128:
+					case 129:
+					case 130:
+					case 131:
+					case 134:
                     case 222:
                     case 245:
                     case 266:
                     case 370:
-                    case 75:
-                    case 398:
-                    case 439:
+					case 398:
+					case 422:
+					case 439:
                     case 493:
                     case 507:
-                    case 422:
                     case 517:
 						spawnboss = true;
 						break;
@@ -3607,6 +3607,12 @@ namespace TShockAPI
 			string boss;
 			switch (Type)
 			{
+				case -7:
+					boss = "a Martian invasion";
+					break;
+				case -6:
+					boss = "an eclipse";
+					break;
 				case -5:
 					boss = "a frost moon";
 					break;
