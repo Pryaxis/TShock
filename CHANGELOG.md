@@ -6,6 +6,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * Fixed character styles/gender not being saved properly on first login while SSC is on (@WhiteXZ)
 * Added a PlayerPermission hook fired whenever a permission check involving said player occurs (when the new TSPlayer.HasPermission method is called) (@Enerdy)
+* Resolved an issue where martian invasions and eclipses would have empty messages if AnonymousBossInvasions was set to true (@WhiteXZ)
+* Added an optional `slime` parameter to the `rain` command, allowing slime rain to be started and stopped. New syntax is `rain [slime] <start/stop>` (@WhiteXZ)
 
 ## TShock 4.3.12
 
