@@ -3798,24 +3798,50 @@ namespace TShockAPI
 
 		private static void Rain(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
+			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain <stop/start>", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain [slime] <stop/start>", Specifier);
 				return;
 			}
 
-			switch (args.Parameters[0].ToLower())
+			int switchIndex = 0;
+			if (args.Parameters.Count == 2 && args.Parameters[0].ToLowerInvariant() == "slime")
+			{
+				switchIndex = 1;
+			}
+
+			switch (args.Parameters[switchIndex].ToLower())
 			{
 				case "start":
-					Main.StartRain();
-					TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
+					if (switchIndex == 1)
+					{
+						Main.StartSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage("{0} caused it to rain slime.", args.Player.Name);
+					}
+					else
+					{
+						Main.StartRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
+					}
 					break;
 				case "stop":
-					Main.StopRain();
-					TSPlayer.All.SendInfoMessage("{0} ended the downpour.", args.Player.Name);
+					if (switchIndex == 1)
+					{
+						Main.StopSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage("{0} ended the slimey downpour.", args.Player.Name);
+					}
+					else
+					{
+						Main.StopRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage("{0} ended the downpour.", args.Player.Name);
+					}
 					break;
 				default:
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain <stop/start>", Specifier);
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain [slime] <stop/start>", Specifier);
 					break;
 
 			}
