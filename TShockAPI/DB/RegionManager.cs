@@ -140,7 +140,7 @@ namespace TShockAPI.DB
 					"INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, Groups, Owner, Z) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10);",
 					tx, ty, width, height, regionname, worldid, "", 1, "", owner, z);
 				int id;
-				using (QueryResult res = database.QueryReader("SELECT Id FROM Regions WHERE RegionName = @0 AND WorldID = @1", regionname, worldid))
+				using (QueryResult res = database.QueryReader("SELECT Id FROM Regions WHERE RegionName = '@0' AND WorldID = '@1'", regionname, worldid))
 				{
 					id = res.Get<int>("Id");
 				}
