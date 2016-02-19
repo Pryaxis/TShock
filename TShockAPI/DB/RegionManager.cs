@@ -725,7 +725,7 @@ namespace TShockAPI.DB
 			Area.Contains does not account for the right and bottom 'border' of the rectangle,
 			which results in regions being trimmed.
 			*/
-			return Area.X <= x && x <= Area.X + Area.Width && Area.Y <= y && y <= Area.Y + Area.Height;
+			return x >= Area.X && x <= Area.X + Area.Width && y >= Area.Y && y <= Area.Y + Area.Height;
 		}
 		
 		/// <summary>
