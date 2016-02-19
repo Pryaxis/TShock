@@ -709,7 +709,7 @@ namespace TShockAPI.DB
 		/// <returns>Whether the point exists in the region's area</returns>
 		public bool InArea(Rectangle point)
 		{
-			return Area.Contains(point.X, point.Y);
+			return InArea(point.X, point.Y);
 		}
 
 		/// <summary>
@@ -720,7 +720,12 @@ namespace TShockAPI.DB
 		/// <returns>Whether the coordinate exists in the region's area</returns>
 		public bool InArea(int x, int y) //overloaded with x,y
 		{
-			return Area.Contains(x, y);
+			/*
+			DO NOT CHANGE TO Area.Contains(x, y)!
+			Area.Contains does not account for the right and bottom 'border' of the rectangle,
+			which results in regions being trimmed.
+			*/
+			return Area.X <= x && x <= Area.X + Area.Width && Area.Y <= y && y <= Area.Y + Area.Height;
 		}
 		
 		/// <summary>
