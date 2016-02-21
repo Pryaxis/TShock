@@ -3560,6 +3560,7 @@ namespace TShockAPI
 					case -5:
                     case -6:
                     case -7:
+        				case -8:
 						invasion = true;
 						break;
                     case 4:
@@ -3607,6 +3608,9 @@ namespace TShockAPI
 			string boss;
 			switch (Type)
 			{
+				case -8:
+					boss = "a Moon Lord";
+					break;
 				case -7:
 					boss = "a Martian invasion";
 					break;
