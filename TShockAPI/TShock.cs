@@ -894,7 +894,8 @@ namespace TShockAPI
 					{
 						player.TileKillThreshold = 0;
 						//We don't want to revert the entire map in case of a disable.
-						player.TilesDestroyed.Clear();
+						lock (player.TilesDestroyed)
+							player.TilesDestroyed.Clear();
 					}
 
 					if (player.TilesCreated != null)
@@ -902,8 +903,10 @@ namespace TShockAPI
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
 							player.Disable("Reached TilePlace threshold", flags);
-							TSPlayer.Server.RevertTiles(player.TilesCreated);
-							player.TilesCreated.Clear();
+							lock (player.TilesCreated) {
+								TSPlayer.Server.RevertTiles(player.TilesCreated);
+								player.TilesCreated.Clear();
+							}
 						}
 					}
 					if (player.TilePlaceThreshold > 0)

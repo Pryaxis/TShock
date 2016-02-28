@@ -2137,8 +2137,9 @@ namespace TShockAPI
 				{
 					args.Player.TilePlaceThreshold++;
 					var coords = new Vector2(tileX, tileY);
-					if (!args.Player.TilesCreated.ContainsKey(coords))
-						args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
+					lock (args.Player.TilesCreated)
+						if (!args.Player.TilesCreated.ContainsKey(coords))
+							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 				}
 
 				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
@@ -2146,8 +2147,9 @@ namespace TShockAPI
 				{
 					args.Player.TileKillThreshold++;
 					var coords = new Vector2(tileX, tileY);
-					if (!args.Player.TilesDestroyed.ContainsKey(coords))
-						args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
+					lock (args.Player.TilesDestroyed)
+						if (!args.Player.TilesDestroyed.ContainsKey(coords))
+							args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
 				}
 				return false;
 			}
@@ -2239,8 +2241,9 @@ namespace TShockAPI
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(x, y);
-				if (!args.Player.TilesCreated.ContainsKey(coords))
-					args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
+				lock (args.Player.TilesCreated)
+					if (!args.Player.TilesCreated.ContainsKey(coords))
+						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
 			}
 
 			return false;
