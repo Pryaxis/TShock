@@ -8,7 +8,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a PlayerPermission hook fired whenever a permission check involving said player occurs (when the new TSPlayer.HasPermission method is called) (@Enerdy)
 * Resolved an issue where martian invasions and eclipses would have empty messages if AnonymousBossInvasions was set to true (@WhiteXZ)
 * Added an optional `slime` parameter to the `rain` command, allowing slime rain to be started and stopped. New syntax is `rain [slime] <start/stop>` (@WhiteXZ)
+* Fixed performance issues due to concurrent dictionary access in TSPlayer (@CoderCow)
+* Added an ID property to Regions (@WhiteXZ)
+* Fixed an issue where region sizes were calculated incorrectly (@WhiteXZ)
 * Fixed a bug in RegionManager preventing regions adding correctly (@pink_panther)
+* Fixed another bug in RegionManager preventing regions adding correctly (@WhiteXZ)
+* Fixed a routing issue with the `/v2/token/create` REST endpoint
+* Removed the `/token/create` REST endpoint. `/v2/token/create` should be used instead.
 
 ## TShock 4.3.12
 
