@@ -44,8 +44,7 @@ namespace Rests
 		{
 			Tokens = new Dictionary<string, TokenData>();
 			AppTokens = new Dictionary<string, TokenData>();
-
-			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
+			
 			Register(new RestCommand("/v2/token/create", NewTokenV2) { DoLog = false });
 			Register(new SecureRestCommand("/token/destroy/{token}", DestroyToken));
 			Register(new SecureRestCommand("/v3/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
@@ -127,18 +126,6 @@ namespace Rests
 			var context = args.Context;
 
 			return this.NewTokenInternal(user, pass, context);
-		}
-
-		[Obsolete("Please use NewTokenV2. This endpoint will be removed in release 4.3.13.")]
-		private object NewToken(RestRequestArgs args)
-		{
-			var user = args.Verbs["username"];
-			var pass = args.Verbs["password"];
-			var context = args.Context;
-
-			RestObject response = this.NewTokenInternal(user, pass, context);
-			response["deprecated"] = "This endpoint is deprecated and will be removed in release 4.3.13.";
-			return response;
 		}
 
 		private RestObject NewTokenInternal(string username, string password, IHttpContext context)
