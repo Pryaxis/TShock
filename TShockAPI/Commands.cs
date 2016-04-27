@@ -1743,6 +1743,12 @@ namespace TShockAPI
 		
 		private static void Restart(CommandArgs args)
 		{
+			if (TShock.NoRestart)
+			{
+				args.Player.SendErrorMessage("This command has been disabled.");
+				return;
+			}
+
 			if (ServerApi.RunningMono)
 			{
 				TShock.Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono.");

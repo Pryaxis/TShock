@@ -67,6 +67,11 @@ namespace TShockAPI
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
 
+		/// <summary>
+		/// Set by the command line, disables the '/restart' command.
+		/// </summary>
+		internal static bool NoRestart;
+
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
@@ -688,6 +693,11 @@ namespace TShockAPI
 					case "--stats-optout":
 						{
 							TShock.StatTracker.OptOut = true;
+							break;
+						}
+					case "--no-restart":
+						{
+							TShock.NoRestart = true;
 							break;
 						}
 				}
