@@ -1854,12 +1854,13 @@ namespace TShockAPI
 		/// </summary>
 		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
-			{ 17, TileID.Dirt },
-			{ 42, TileID.Sand },
-			{ 65, TileID.Ebonsand },
-			{ 68, TileID.Pearlsand },
-			{ 354, TileID.Crimsand },
+			{ ProjectileID.DirtBall, TileID.Dirt },
+			{ ProjectileID.SandBallGun, TileID.Sand },
+			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
+			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
+			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
 		};
+
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
@@ -1991,7 +1992,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
-					// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
+					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
 					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -2029,7 +2030,12 @@ namespace TShockAPI
 					}
 
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if ((editData != 127 && editData != 213) && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
+					if ((editData != TileID.MagicalIceBlock
+						&& editData != TileID.Rope
+						&& editData != TileID.SilkRope
+						&& editData != TileID.VineRope
+						&& editData != TileID.WebRope)
+						&& editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2045,7 +2051,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
-					if (action == EditAction.PlaceTile && editData == 21)
+					if (action == EditAction.PlaceTile && editData == TileID.Containers)
 					{
 						if (TShock.Utils.MaxChests())
 						{
@@ -2064,7 +2070,9 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
 					// If they aren't selecting a wrench, they're hacking.
-					if (selectedItem.type != 509 && selectedItem.type != 850 && selectedItem.type != 851)
+					if (selectedItem.type != ItemID.Wrench
+						&& selectedItem.type != ItemID.BlueWrench
+						&& selectedItem.type != ItemID.GreenWrench)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2074,7 +2082,7 @@ namespace TShockAPI
 					action == EditAction.KillWire2 || action == EditAction.KillWire3)
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != 510)
+					if (selectedItem.type != ItemID.WireCutter)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2083,7 +2091,7 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceActuator)
 				{
 					// If they aren't selecting the actuator, they're hacking.
-					if (selectedItem.type != 849)
+					if (selectedItem.type != ItemID.Actuator)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2107,7 +2115,12 @@ namespace TShockAPI
 				}
 
 				// Ignore rope placement range
-				if ((editData != TileID.Rope || action != EditAction.PlaceTile) && TShock.CheckRangePermission(args.Player, tileX, tileY))
+				if ((editData != TileID.Rope 
+					|| editData != TileID.SilkRope
+					|| editData != TileID.VineRope
+					|| editData != TileID.WebRope
+					|| action != EditAction.PlaceTile)
+					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
@@ -2224,7 +2237,11 @@ namespace TShockAPI
 			}
 
 			// Ignore rope placement range
-			if (type != TileID.Rope && TShock.CheckRangePermission(args.Player, x, y))
+			if ((type != TileID.Rope
+					|| type != TileID.SilkRope
+					|| type != TileID.VineRope
+					|| type != TileID.WebRope)
+					&& TShock.CheckRangePermission(args.Player, x, y))
 			{
 				args.Player.SendTileSquare(x, y, 4);
 				return true;
