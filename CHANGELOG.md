@@ -2,6 +2,10 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## TShock 4.3.13
+
+* Fixed a deadlock in wiring (@Wolfje)
+
 ## TShock 4.3.12
 
 * Fixed issues with TSPlayer.SetTeam not working (@WhiteXZ)
