@@ -44,8 +44,15 @@ namespace TShockAPI
 		public void Backup()
 		{
 			lastbackup = DateTime.UtcNow;
-			ThreadPool.QueueUserWorkItem(DoBackup);
-			ThreadPool.QueueUserWorkItem(DeleteOld);
+			Thread t = new Thread(() => {
+				DoBackup(null);
+				DeleteOld(null);
+			});
+			t.Name = "Backup Thread";
+			t.Start();
+			
+			// ThreadPool.QueueUserWorkItem(DoBackup);
+			// ThreadPool.QueueUserWorkItem(DeleteOld);
 		}
 
 		private void DoBackup(object o)
