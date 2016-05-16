@@ -542,34 +542,59 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Stores an object on this player, accessible with the given key
+		/// Determines whether the player's storage contains the given key.
 		/// </summary>
-		/// <typeparam name="T">Type of the object being stored</typeparam>
-		/// <param name="key">Key with which to access the object</param>
-		/// <param name="value">Object to store</param>
-		public void SetData<T>(string key, T value)
+		/// <param name="key">Key to test.</param>
+		/// <returns></returns>
+		public bool ContainsData(string key)
 		{
-			data.TryAdd(key, value);
+			return data.ContainsKey(key);
 		}
 
 		/// <summary>
-		/// Returns the stored object associated with the given key
+		/// Returns the stored object associated with the given key.
 		/// </summary>
-		/// <typeparam name="T">Type of the object being retrieved</typeparam>
-		/// <param name="key">Key with which to access the object</param>
-		/// <param name="value">Stored object, or default(T) if not found</param>
-		/// <returns>True if the value was retrieved, else False</returns>
-		public bool GetData<T>(string key, out T value)
+		/// <typeparam name="T">Type of the object being retrieved.</typeparam>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <returns>The stored object, or default(T) if not found.</returns>
+		public T GetData<T>(string key)
 		{
 			object obj;
 			if (!data.TryGetValue(key, out obj))
 			{
-				value = default(T);
-				return false;
+				return default(T);
 			}
 
-			value = (T)obj;
-			return true;
+			return (T)obj;
+		}
+
+		/// <summary>
+		/// Stores an object on this player, accessible with the given key.
+		/// </summary>
+		/// <typeparam name="T">Type of the object being stored.</typeparam>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <param name="value">Object to store.</param>
+		public void SetData<T>(string key, T value)
+		{
+			if (!data.TryAdd(key, value))
+			{
+				data.TryUpdate(key, value, data[key]);
+			}
+		}
+
+		/// <summary>
+		/// Removes the stored object associated with the given key.
+		/// </summary>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <returns>The removed object.	</returns>
+		public object RemoveData(string key)
+		{
+			object rem;
+			if (data.TryRemove(key, out rem))
+			{
+				return rem;
+			}
+			return null;
 		}
 
 		public TSPlayer(int index)
