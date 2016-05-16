@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -352,6 +353,11 @@ namespace TShockAPI
 		/// The current region this player is in, or null if none.
 		/// </summary>
 		public Region CurrentRegion = null;
+
+		/// <summary>
+		/// Contains data stored by plugins
+		/// </summary>
+		protected ConcurrentDictionary<string, object> data => new ConcurrentDictionary<string, object>();
 		
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
@@ -533,6 +539,37 @@ namespace TShockAPI
 				}
 				return flag;
 			}
+		}
+
+		/// <summary>
+		/// Stores an object on this player, accessible with the given key
+		/// </summary>
+		/// <typeparam name="T">Type of the object being stored</typeparam>
+		/// <param name="key">Key with which to access the object</param>
+		/// <param name="value">Object to store</param>
+		public void SetData<T>(string key, T value)
+		{
+			data.TryAdd(key, value);
+		}
+
+		/// <summary>
+		/// Returns the stored object associated with the given key
+		/// </summary>
+		/// <typeparam name="T">Type of the object being retrieved</typeparam>
+		/// <param name="key">Key with which to access the object</param>
+		/// <param name="value">Stored object, or default(T) if not found</param>
+		/// <returns>True if the value was retrieved, else False</returns>
+		public bool GetData<T>(string key, out T value)
+		{
+			object obj;
+			if (!data.TryGetValue(key, out obj))
+			{
+				value = default(T);
+				return false;
+			}
+
+			value = (T)obj;
+			return true;
 		}
 
 		public TSPlayer(int index)
