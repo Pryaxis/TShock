@@ -4,6 +4,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+
+
+## TShock 4.3.13
+
 * Fixed an issue preventing TShock from starting on certain mono versions (@Wolfje)
 * Fixed a deadlock in Wiring (@Wolfje)
 * Fixed character styles/gender not being saved properly on first login while SSC is on (@WhiteXZ)
