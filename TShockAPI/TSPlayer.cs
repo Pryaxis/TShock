@@ -357,7 +357,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Contains data stored by plugins
 		/// </summary>
-		protected ConcurrentDictionary<string, object> data => new ConcurrentDictionary<string, object>();
+		protected ConcurrentDictionary<string, object> data = new ConcurrentDictionary<string, object>();
 		
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
