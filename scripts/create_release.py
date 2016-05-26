@@ -11,8 +11,9 @@ cur_wd = os.getcwd()
 release_dir = os.path.join(cur_wd, "releases")
 
 terraria_bin_name = "TerrariaServer.exe"
-sql_bins_names = ["Mono.Data.Sqlite.dll", "MySql.Data.dll"]
-sqlite_dep = "sqlite3.dll"
+mysql_bin_name = "MySql.Data.dll"
+sqlite_dep_name = "sqlite3.dll"
+sqlite_bin_name = "Mono.Data.Sqlite.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
@@ -21,10 +22,12 @@ bcrypt_bin_name = "BCrypt.Net.dll"
 
 terraria_release_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Release", terraria_bin_name)
 terraria_debug_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Debug", terraria_bin_name)
-sql_dep = os.path.join(cur_wd, "prebuilts")
+mysql_bin = os.path.join(cur_wd, "packages", "MySql.Data.6.9.8", "lib", "net45", mysql_bin_name)
+sqlite_dep = os.path.join(cur_wd, "prebuilts", sqlite_dep_name)
+sqlite_bin = os.path.join(cur_wd, "prebuilts", sqlite_bin_name)
 http_bin = os.path.join(cur_wd, "prebuilts", http_bin_name)
-json_bin = os.path.join(cur_wd, "prebuilts", json_bin_name)
-bcrypt_bin = os.path.join(cur_wd, "prebuilts", bcrypt_bin_name)
+json_bin = os.path.join(cur_wd, "packages", "Newtonsoft.Json.8.0.3", "lib", "net45", json_bin_name)
+bcrypt_bin = os.path.join(cur_wd, "packages", "BCrypt.Net.0.1.0", "lib", "net35", bcrypt_bin_name)
 release_bin = os.path.join(cur_wd, "TShockAPI", "bin", "Release", tshock_bin_name)
 debug_folder = os.path.join(cur_wd, "TShockAPI", "bin", "Debug")
 
@@ -36,9 +39,9 @@ def copy_dependencies():
   shutil.copy(http_bin, release_dir)
   shutil.copy(json_bin, release_dir)
   shutil.copy(bcrypt_bin, release_dir)
-  shutil.copy(os.path.join(sql_dep, sqlite_dep), release_dir)
-  for f in sql_bins_names:
-    shutil.copy(os.path.join(sql_dep, f), release_dir)
+  shutil.copy(sqlite_dep, release_dir)
+  shutil.copy(mysql_bin, release_dir)
+  shutil.copy(sqlite_bin, release_dir)
   
 def copy_debug_files():
   shutil.copy(terraria_debug_bin, release_dir)
@@ -54,12 +57,12 @@ def create_base_zip(name):
   os.chdir(release_dir)
   zip = zipfile.ZipFile(name, "w")
   zip.write(terraria_bin_name)
-  zip.write(sqlite_dep)
+  zip.write(sqlite_dep_name)
   zip.write(http_bin_name, os.path.join("ServerPlugins", http_bin_name))
   zip.write(json_bin_name, json_bin_name)
   zip.write(bcrypt_bin_name, os.path.join("ServerPlugins", bcrypt_bin_name))
-  for f in sql_bins_names:
-    zip.write(f, os.path.join("ServerPlugins", f))
+  zip.write(mysql_bin_name, os.path.join("ServerPlugins", mysql_bin_name))
+  zip.write(sqlite_bin_name, os.path.join("ServerPlugins", sqlite_bin_name))
   return zip
 
 def package_release():
@@ -84,8 +87,8 @@ def package_debug():
 
 def delete_files():
   os.chdir(release_dir)
-  for f in sql_bins_names:
-    os.remove(f)
+  os.remove(mysql_bin_name)
+  os.remove(sqlite_bin_name)
   os.remove(sqlite_dep)
   os.remove(json_bin_name)
   os.remove(bcrypt_bin_name)
