@@ -3237,15 +3237,6 @@ namespace TShockAPI
 				return false;
 			}
 
-			if (type == BuffID.DrillMount && !TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
-			{
-				TShock.Log.ConsoleInfo("The configuration option disabling the drill containment unit will be removed at a future date.");
-				TShock.Log.ConsoleInfo("As of Terraria 1.3.0.5, this option is no longer defaulted to kick DCU users.");
-				TShock.Log.ConsoleInfo("This is because the DCU is now covered by TShock protection systems.");
-				TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
-				return true;
-			}
-
 			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 			return true;
 		}
@@ -3538,15 +3529,6 @@ namespace TShockAPI
 				else
 				{
 					args.TPlayer.buffTime[i] = 0;
-				}
-
-				if (buff == BuffID.DrillMount && !TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
-				{
-					TShock.Log.ConsoleInfo("The configuration option disabling the drill containment unit will be removed at a future date.");
-					TShock.Log.ConsoleInfo("As of Terraria 1.3.0.5, this option is no longer defaulted to kick DCU users.");
-					TShock.Log.ConsoleInfo("This is because the DCU is now covered by TShock protection systems.");
-					TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
-					return true;
 				}
 			}
 

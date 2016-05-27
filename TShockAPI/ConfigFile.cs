@@ -446,10 +446,6 @@ namespace TShockAPI
 		[Description("Whether we should limit only the max failed login requests, or all login requests")]
 		public bool RESTLimitOnlyFailedLoginRequests = true;
 
-		[Obsolete("This is being removed in future versions of TShock due to Terraria fixes.")]
-		[Description("Enable the DCU. Very dangerous; can destroy world without consequence.")] public bool
-			VeryDangerousDoNotChangeEnableDrillContainmentUnit = true;
-
 		[Description("Show backup autosave messages.")] public bool ShowBackupAutosaveMessages = true;
 
 		/// <summary>
