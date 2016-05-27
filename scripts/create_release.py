@@ -98,6 +98,7 @@ def delete_files():
 def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'init'])
   subprocess.check_call(['/usr/bin/git', 'submodule', 'update'])
+  subprocess.check_call(['/usr/bin/mono', '/opt/nuget/nuget.exe', 'restore'])
 
 def build_software():
   release_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
