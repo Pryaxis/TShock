@@ -1086,5 +1086,91 @@ namespace TShockAPI
 			string options = stack > 1 ? "/s" + stack : prefix != 0 ? "/p" + prefix : "";
 			return String.Format("[i{0}:{1}]", options, netID);
 		}
+
+		/// <summary>
+		/// Gets a list of points selected by a mass-wiring tool.
+		/// </summary>
+		/// <param name="start">The starting point for the selection.</param>
+		/// <param name="end">The ending point for the selection.</param>
+		/// <param name="direction">False if facing left, True if facing right.</param>
+		/// <returns>
+		/// A list of coordinates containing the <paramref name="start"/> and <paramref name="end"/>
+		/// points and a list of points between them, forming an L shape based on <paramref name="direction"/>.
+		/// </returns>
+		public List<Point> GetMassWireOperationRange(Point start, Point end, bool direction = false)
+		{
+			List<Point> points = new List<Point>();
+
+			#region Tile Selection Logic stolen from Wiring.cs
+
+			// Slightly modified version of Wiring.MassWireOperationInner, ignores a player's wire count
+			int num = Math.Sign(end.X - start.X);
+			int num2 = Math.Sign(end.Y - start.Y);
+			Point pt = new Point();
+			int num3;
+			int num4;
+			int num5;
+			if (direction)
+			{
+				pt.X = start.X;
+				num3 = start.Y;
+				num4 = end.Y;
+				num5 = num2;
+			}
+			else
+			{
+				pt.Y = start.Y;
+				num3 = start.X;
+				num4 = end.X;
+				num5 = num;
+			}
+			int num6 = num3;
+			while (num6 != num4)
+			{
+				if (direction)
+				{
+					pt.Y = num6;
+				}
+				else
+				{
+					pt.X = num6;
+				}
+				points.Add(pt);
+				num6 += num5;
+			}
+			if (direction)
+			{
+				pt.Y = end.Y;
+				num3 = start.X;
+				num4 = end.X;
+				num5 = num;
+			}
+			else
+			{
+				pt.X = end.X;
+				num3 = start.Y;
+				num4 = end.Y;
+				num5 = num2;
+			}
+			int num7 = num3;
+			while (num7 != num4)
+			{
+				if (!direction)
+				{
+					pt.Y = num7;
+				}
+				else
+				{
+					pt.X = num7;
+				}
+				points.Add(pt);
+				num7 += num5;
+			}
+			points.Add(end);
+
+			#endregion
+
+			return points;
+		}
 	}
 }

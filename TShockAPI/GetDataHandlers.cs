@@ -1248,7 +1248,8 @@ namespace TShockAPI
 					{ PacketTypes.PaintWall, HandlePaintWall },
 					{ PacketTypes.DoorUse, HandleDoorUse },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
-					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted }
+					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
+					{ PacketTypes.MassWireOperation, HandleMassWireOperation }
 				};
 		}
 
@@ -2364,15 +2365,15 @@ namespace TShockAPI
 			return false;
 		}
 
-				private static bool HandlePlayerTeam(GetDataHandlerArgs args)
-				{
-						byte id = args.Data.ReadInt8();
-						byte team = args.Data.ReadInt8();
-						if (OnPlayerTeam(id, team))
-								return true;
+		private static bool HandlePlayerTeam(GetDataHandlerArgs args)
+		{
+			byte id = args.Data.ReadInt8();
+			byte team = args.Data.ReadInt8();
+			if (OnPlayerTeam(id, team))
+				return true;
 
-						if (id != args.Player.Index)
-								return true;
+			if (id != args.Player.Index)
+				return true;
 
 			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
@@ -2381,8 +2382,8 @@ namespace TShockAPI
 			}
 
 			args.Player.LastPvPTeamChange = DateTime.UtcNow;
-						return false;
-				}
+			return false;
+		}
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
@@ -3837,6 +3838,43 @@ namespace TShockAPI
 		{
 			// Never sent by vanilla client, ignore this
 			return true;
+		}
+
+		private static bool HandleMassWireOperation(GetDataHandlerArgs args)
+		{
+			short startX = args.Data.ReadInt16();
+			short startY = args.Data.ReadInt16();
+			short endX = args.Data.ReadInt16();
+			short endY = args.Data.ReadInt16();
+			args.Data.ReadByte(); // Ignore toolmode
+
+			List<Point> points = Utils.Instance.GetMassWireOperationRange(
+				new Point(startX, startY),
+				new Point(endX, endY),
+				args.Player.TPlayer.direction == 1);
+			
+			int x;
+			int y;
+			foreach (Point p in points)
+			{
+				/* Perform similar checks to TileKill
+				 * The server-side nature of this packet removes the need to use SendTileSquare
+				 * Range checks are currently ignored here as the items that send this seem to have infinite range */
+
+				x = p.X;
+				y = p.Y;
+
+				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+					return true;
+
+				if (TShock.CheckIgnores(args.Player))
+					return true;
+
+				if (TShock.CheckTilePermission(args.Player, x, y))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }
