@@ -448,6 +448,9 @@ namespace TShockAPI
 
 		[Description("Show backup autosave messages.")] public bool ShowBackupAutosaveMessages = true;
 
+		[Description("Enables the use of announcement boxes to broadcast server-wide messages.")]
+		public bool EnableAnnouncementBoxes = false;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>

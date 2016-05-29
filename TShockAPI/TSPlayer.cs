@@ -848,7 +848,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue);
+			SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
 		}
 
 		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
