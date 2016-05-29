@@ -2049,6 +2049,7 @@ namespace TShockAPI
 			Main.maxNetPlayers = file.MaxSlots + 20;
 			Netplay.ServerPassword = "";
 			Netplay.spamCheck = false;
+			Main.AnnouncementBoxDisabled = !file.EnableAnnouncementBoxes;
 		}
 	}
 }
