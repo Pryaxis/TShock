@@ -1248,7 +1248,8 @@ namespace TShockAPI
 					{ PacketTypes.PaintWall, HandlePaintWall },
 					{ PacketTypes.DoorUse, HandleDoorUse },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
-					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted }
+					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
+					{ PacketTypes.MassWireOperation, HandleMassWireOperation }
 				};
 		}
 
@@ -1854,12 +1855,13 @@ namespace TShockAPI
 		/// </summary>
 		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
-			{ 17, TileID.Dirt },
-			{ 42, TileID.Sand },
-			{ 65, TileID.Ebonsand },
-			{ 68, TileID.Pearlsand },
-			{ 354, TileID.Crimsand },
+			{ ProjectileID.DirtBall, TileID.Dirt },
+			{ ProjectileID.SandBallGun, TileID.Sand },
+			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
+			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
+			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
 		};
+
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
@@ -1991,7 +1993,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
-					// If the tile is a hammer tile and they aren't selecting an hammer, they're hacking.
+					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
 					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -2029,7 +2031,12 @@ namespace TShockAPI
 					}
 
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if ((editData != 127 && editData != 213) && editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
+					if ((editData != TileID.MagicalIceBlock
+						&& editData != TileID.Rope
+						&& editData != TileID.SilkRope
+						&& editData != TileID.VineRope
+						&& editData != TileID.WebRope)
+						&& editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2045,7 +2052,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
-					if (action == EditAction.PlaceTile && editData == 21)
+					if (action == EditAction.PlaceTile && editData == TileID.Containers)
 					{
 						if (TShock.Utils.MaxChests())
 						{
@@ -2064,7 +2071,9 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
 					// If they aren't selecting a wrench, they're hacking.
-					if (selectedItem.type != 509 && selectedItem.type != 850 && selectedItem.type != 851)
+					if (selectedItem.type != ItemID.Wrench
+						&& selectedItem.type != ItemID.BlueWrench
+						&& selectedItem.type != ItemID.GreenWrench)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2074,7 +2083,7 @@ namespace TShockAPI
 					action == EditAction.KillWire2 || action == EditAction.KillWire3)
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != 510)
+					if (selectedItem.type != ItemID.WireCutter)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2083,7 +2092,7 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceActuator)
 				{
 					// If they aren't selecting the actuator, they're hacking.
-					if (selectedItem.type != 849)
+					if (selectedItem.type != ItemID.Actuator)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2107,7 +2116,12 @@ namespace TShockAPI
 				}
 
 				// Ignore rope placement range
-				if ((editData != TileID.Rope || action != EditAction.PlaceTile) && TShock.CheckRangePermission(args.Player, tileX, tileY))
+				if ((editData != TileID.Rope 
+					|| editData != TileID.SilkRope
+					|| editData != TileID.VineRope
+					|| editData != TileID.WebRope
+					|| action != EditAction.PlaceTile)
+					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
@@ -2137,8 +2151,9 @@ namespace TShockAPI
 				{
 					args.Player.TilePlaceThreshold++;
 					var coords = new Vector2(tileX, tileY);
-					if (!args.Player.TilesCreated.ContainsKey(coords))
-						args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
+					lock (args.Player.TilesCreated)
+						if (!args.Player.TilesCreated.ContainsKey(coords))
+							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 				}
 
 				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
@@ -2146,8 +2161,9 @@ namespace TShockAPI
 				{
 					args.Player.TileKillThreshold++;
 					var coords = new Vector2(tileX, tileY);
-					if (!args.Player.TilesDestroyed.ContainsKey(coords))
-						args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
+					lock (args.Player.TilesDestroyed)
+						if (!args.Player.TilesDestroyed.ContainsKey(coords))
+							args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
 				}
 				return false;
 			}
@@ -2222,7 +2238,11 @@ namespace TShockAPI
 			}
 
 			// Ignore rope placement range
-			if (type != TileID.Rope && TShock.CheckRangePermission(args.Player, x, y))
+			if ((type != TileID.Rope
+					|| type != TileID.SilkRope
+					|| type != TileID.VineRope
+					|| type != TileID.WebRope)
+					&& TShock.CheckRangePermission(args.Player, x, y))
 			{
 				args.Player.SendTileSquare(x, y, 4);
 				return true;
@@ -2239,8 +2259,9 @@ namespace TShockAPI
 			{
 				args.Player.TilePlaceThreshold++;
 				var coords = new Vector2(x, y);
-				if (!args.Player.TilesCreated.ContainsKey(coords))
-					args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
+				lock (args.Player.TilesCreated)
+					if (!args.Player.TilesCreated.ContainsKey(coords))
+						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
 			}
 
 			return false;
@@ -2344,15 +2365,15 @@ namespace TShockAPI
 			return false;
 		}
 
-				private static bool HandlePlayerTeam(GetDataHandlerArgs args)
-				{
-						byte id = args.Data.ReadInt8();
-						byte team = args.Data.ReadInt8();
-						if (OnPlayerTeam(id, team))
-								return true;
+		private static bool HandlePlayerTeam(GetDataHandlerArgs args)
+		{
+			byte id = args.Data.ReadInt8();
+			byte team = args.Data.ReadInt8();
+			if (OnPlayerTeam(id, team))
+				return true;
 
-						if (id != args.Player.Index)
-								return true;
+			if (id != args.Player.Index)
+				return true;
 
 			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
@@ -2361,8 +2382,8 @@ namespace TShockAPI
 			}
 
 			args.Player.LastPvPTeamChange = DateTime.UtcNow;
-						return false;
-				}
+			return false;
+		}
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
@@ -3236,15 +3257,6 @@ namespace TShockAPI
 				return false;
 			}
 
-			if (type == BuffID.DrillMount && !TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
-			{
-				TShock.Log.ConsoleInfo("The configuration option disabling the drill containment unit will be removed at a future date.");
-				TShock.Log.ConsoleInfo("As of Terraria 1.3.0.5, this option is no longer defaulted to kick DCU users.");
-				TShock.Log.ConsoleInfo("This is because the DCU is now covered by TShock protection systems.");
-				TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
-				return true;
-			}
-
 			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 			return true;
 		}
@@ -3538,15 +3550,6 @@ namespace TShockAPI
 				{
 					args.TPlayer.buffTime[i] = 0;
 				}
-
-				if (buff == BuffID.DrillMount && !TShock.Config.VeryDangerousDoNotChangeEnableDrillContainmentUnit)
-				{
-					TShock.Log.ConsoleInfo("The configuration option disabling the drill containment unit will be removed at a future date.");
-					TShock.Log.ConsoleInfo("As of Terraria 1.3.0.5, this option is no longer defaulted to kick DCU users.");
-					TShock.Log.ConsoleInfo("This is because the DCU is now covered by TShock protection systems.");
-					TShock.Utils.ForceKick(TShock.Players[id], "The Drill Containment Unit is disabled.");
-					return true;
-				}
 			}
 
 
@@ -3579,29 +3582,30 @@ namespace TShockAPI
 					case -5:
                     case -6:
                     case -7:
+        				case -8:
 						invasion = true;
 						break;
                     case 4:
                     case 13:
                     case 50:
-                    case 126:
-                    case 125:
-                    case 134:
-                    case 127:
-                    case 128:
-                    case 131:
-                    case 129:
-                    case 130:
+					case 75:
+					case 125:
+					case 126:
+					case 127:
+					case 128:
+					case 129:
+					case 130:
+					case 131:
+					case 134:
                     case 222:
                     case 245:
                     case 266:
                     case 370:
-                    case 75:
-                    case 398:
-                    case 439:
+					case 398:
+					case 422:
+					case 439:
                     case 493:
                     case 507:
-                    case 422:
                     case 517:
 						spawnboss = true;
 						break;
@@ -3626,6 +3630,15 @@ namespace TShockAPI
 			string boss;
 			switch (Type)
 			{
+				case -8:
+					boss = "a Moon Lord";
+					break;
+				case -7:
+					boss = "a Martian invasion";
+					break;
+				case -6:
+					boss = "an eclipse";
+					break;
 				case -5:
 					boss = "a frost moon";
 					break;
@@ -3844,6 +3857,43 @@ namespace TShockAPI
 		{
 			// Never sent by vanilla client, ignore this
 			return true;
+		}
+
+		private static bool HandleMassWireOperation(GetDataHandlerArgs args)
+		{
+			short startX = args.Data.ReadInt16();
+			short startY = args.Data.ReadInt16();
+			short endX = args.Data.ReadInt16();
+			short endY = args.Data.ReadInt16();
+			args.Data.ReadByte(); // Ignore toolmode
+
+			List<Point> points = Utils.Instance.GetMassWireOperationRange(
+				new Point(startX, startY),
+				new Point(endX, endY),
+				args.Player.TPlayer.direction == 1);
+			
+			int x;
+			int y;
+			foreach (Point p in points)
+			{
+				/* Perform similar checks to TileKill
+				 * The server-side nature of this packet removes the need to use SendTileSquare
+				 * Range checks are currently ignored here as the items that send this seem to have infinite range */
+
+				x = p.X;
+				y = p.Y;
+
+				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+					return true;
+
+				if (TShock.CheckIgnores(args.Player))
+					return true;
+
+				if (TShock.CheckTilePermission(args.Player, x, y))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

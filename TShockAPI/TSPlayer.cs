@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -352,6 +353,11 @@ namespace TShockAPI
 		/// The current region this player is in, or null if none.
 		/// </summary>
 		public Region CurrentRegion = null;
+
+		/// <summary>
+		/// Contains data stored by plugins
+		/// </summary>
+		protected ConcurrentDictionary<string, object> data = new ConcurrentDictionary<string, object>();
 		
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
@@ -533,6 +539,62 @@ namespace TShockAPI
 				}
 				return flag;
 			}
+		}
+
+		/// <summary>
+		/// Determines whether the player's storage contains the given key.
+		/// </summary>
+		/// <param name="key">Key to test.</param>
+		/// <returns></returns>
+		public bool ContainsData(string key)
+		{
+			return data.ContainsKey(key);
+		}
+
+		/// <summary>
+		/// Returns the stored object associated with the given key.
+		/// </summary>
+		/// <typeparam name="T">Type of the object being retrieved.</typeparam>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <returns>The stored object, or default(T) if not found.</returns>
+		public T GetData<T>(string key)
+		{
+			object obj;
+			if (!data.TryGetValue(key, out obj))
+			{
+				return default(T);
+			}
+
+			return (T)obj;
+		}
+
+		/// <summary>
+		/// Stores an object on this player, accessible with the given key.
+		/// </summary>
+		/// <typeparam name="T">Type of the object being stored.</typeparam>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <param name="value">Object to store.</param>
+		public void SetData<T>(string key, T value)
+		{
+			if (!data.TryAdd(key, value))
+			{
+				data.TryUpdate(key, value, data[key]);
+			}
+		}
+
+		/// <summary>
+		/// Removes the stored object associated with the given key.
+		/// </summary>
+		/// <param name="key">Key with which to access the object.</param>
+		/// <returns>The removed object.	</returns>
+		public object RemoveData(string key)
+		{
+			object rem;
+			if (data.TryRemove(key, out rem))
+			{
+				return rem;
+			}
+			return null;
 		}
 
 		public TSPlayer(int index)

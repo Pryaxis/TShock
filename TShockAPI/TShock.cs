@@ -45,7 +45,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(1, 22)]
+	[ApiVersion(1, 23)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
@@ -66,6 +66,11 @@ namespace TShockAPI
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
+
+		/// <summary>
+		/// Set by the command line, disables the '/restart' command.
+		/// </summary>
+		internal static bool NoRestart;
 
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
@@ -690,6 +695,11 @@ namespace TShockAPI
 							TShock.StatTracker.OptOut = true;
 							break;
 						}
+					case "--no-restart":
+						{
+							TShock.NoRestart = true;
+							break;
+						}
 				}
 			}
 		}
@@ -894,7 +904,8 @@ namespace TShockAPI
 					{
 						player.TileKillThreshold = 0;
 						//We don't want to revert the entire map in case of a disable.
-						player.TilesDestroyed.Clear();
+						lock (player.TilesDestroyed)
+							player.TilesDestroyed.Clear();
 					}
 
 					if (player.TilesCreated != null)
@@ -902,8 +913,10 @@ namespace TShockAPI
 						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
 						{
 							player.Disable("Reached TilePlace threshold", flags);
-							TSPlayer.Server.RevertTiles(player.TilesCreated);
-							player.TilesCreated.Clear();
+							lock (player.TilesCreated) {
+								TSPlayer.Server.RevertTiles(player.TilesCreated);
+								player.TilesCreated.Clear();
+							}
 						}
 					}
 					if (player.TilePlaceThreshold > 0)

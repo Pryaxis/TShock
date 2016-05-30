@@ -36,7 +36,16 @@ namespace TShockAPI
 
 		public UpdateManager()
 		{
-			ThreadPool.QueueUserWorkItem(CheckForUpdates);
+			Thread t = new Thread(() => {
+				do {
+					CheckForUpdates(null);	
+				} while (true);
+			});
+			
+			t.Name = "TShock Update Thread";
+			t.IsBackground = true;
+			
+			t.Start();
 		}
 
 		private void CheckForUpdates(object state)
@@ -53,7 +62,6 @@ namespace TShockAPI
 			}
 			
 			Thread.Sleep(CheckXMinutes * 60 * 1000);
-			ThreadPool.QueueUserWorkItem(CheckForUpdates);
 		}
 
 		public void UpdateCheck(object o)

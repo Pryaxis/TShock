@@ -44,9 +44,8 @@ namespace Rests
 		{
 			Tokens = new Dictionary<string, TokenData>();
 			AppTokens = new Dictionary<string, TokenData>();
-
-			Register(new RestCommand("/token/create/{username}/{password}", NewToken) { DoLog = false });
-			Register(new RestCommand("/v2/token/create/{password}", NewTokenV2) { DoLog = false });
+			
+			Register(new RestCommand("/v2/token/create", NewTokenV2) { DoLog = false });
 			Register(new SecureRestCommand("/token/destroy/{token}", DestroyToken));
 			Register(new SecureRestCommand("/v3/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
 
@@ -123,21 +122,10 @@ namespace Rests
 		private object NewTokenV2(RestRequestArgs args)
 		{
 			var user = args.Parameters["username"];
-			var pass = args.Verbs["password"];
+			var pass = args.Parameters["password"];
 			var context = args.Context;
 
 			return this.NewTokenInternal(user, pass, context);
-		}
-
-		private object NewToken(RestRequestArgs args)
-		{
-			var user = args.Verbs["username"];
-			var pass = args.Verbs["password"];
-			var context = args.Context;
-
-			RestObject response = this.NewTokenInternal(user, pass, context);
-			response["deprecated"] = "This endpoint is depracted and will be removed in the future.";
-			return response;
 		}
 
 		private RestObject NewTokenInternal(string username, string password, IHttpContext context)
