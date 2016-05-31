@@ -2071,9 +2071,13 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
 					// If they aren't selecting a wrench, they're hacking.
+					// WireKite = The Grand Design
 					if (selectedItem.type != ItemID.Wrench
 						&& selectedItem.type != ItemID.BlueWrench
-						&& selectedItem.type != ItemID.GreenWrench)
+						&& selectedItem.type != ItemID.GreenWrench
+						&& selectedItem.type != ItemID.YellowWrench
+						&& selectedItem.type != ItemID.MulticolorWrench
+						&& selectedItem.type != ItemID.WireKite)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2083,7 +2087,9 @@ namespace TShockAPI
 					action == EditAction.KillWire2 || action == EditAction.KillWire3)
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != ItemID.WireCutter)
+					if (selectedItem.type != ItemID.WireCutter
+						&& selectedItem.type != ItemID.WireKite
+						&& selectedItem.type != ItemID.MulticolorWrench)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2195,6 +2201,14 @@ namespace TShockAPI
 
 			if (y < 0 || y >= Main.maxTilesY)
 				return true;
+
+			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
+			//These two items cause localised lag and rendering issues
+			if (type == TileID.FakeContainers && (style == 52 || style == 53))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
 
 			if (TShock.TileBans.TileIsBanned(type, args.Player))
 			{
