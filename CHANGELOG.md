@@ -6,6 +6,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 
 
+## TShock 4.3.15
+
+* This release is actually 4.3.14, but was ticked extra due to a version issue on gen-dev prior to master push.
+* Update to 1.3.1
+
 ## TShock 4.3.13
 
 * Fixed an issue preventing TShock from starting on certain mono versions (@Wolfje)
