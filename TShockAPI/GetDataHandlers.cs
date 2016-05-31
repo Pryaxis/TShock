@@ -2067,13 +2067,26 @@ namespace TShockAPI
 							return true;
 						}
 					}
+					if (action == EditAction.PlaceTile && editData == TileID.FakeContainers)
+					{
+						if (selectedItem.type == ItemID.Fake_newchest1
+							|| selectedItem.type == ItemID.Fake_newchest2)
+						{
+							args.Player.SendTileSquare(tileX, tileY, 3);
+							return true;
+						}
+					}
 				}
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
 					// If they aren't selecting a wrench, they're hacking.
+					// WireKite = The Grand Design
 					if (selectedItem.type != ItemID.Wrench
 						&& selectedItem.type != ItemID.BlueWrench
-						&& selectedItem.type != ItemID.GreenWrench)
+						&& selectedItem.type != ItemID.GreenWrench
+						&& selectedItem.type != ItemID.YellowWrench
+						&& selectedItem.type != ItemID.MulticolorWrench
+						&& selectedItem.type != ItemID.WireKite)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
@@ -2083,7 +2096,8 @@ namespace TShockAPI
 					action == EditAction.KillWire2 || action == EditAction.KillWire3)
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != ItemID.WireCutter)
+					if (selectedItem.type != ItemID.WireCutter
+						&& selectedItem.type != ItemID.WireKite)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
