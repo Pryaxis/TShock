@@ -2067,15 +2067,6 @@ namespace TShockAPI
 							return true;
 						}
 					}
-					if (action == EditAction.PlaceTile && editData == TileID.FakeContainers)
-					{
-						if (selectedItem.type == ItemID.Fake_newchest1
-							|| selectedItem.type == ItemID.Fake_newchest2)
-						{
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							return true;
-						}
-					}
 				}
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
 				{
@@ -2209,6 +2200,14 @@ namespace TShockAPI
 
 			if (y < 0 || y >= Main.maxTilesY)
 				return true;
+
+			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
+			//These two items cause localised lag and rendering issues
+			if (type == TileID.FakeContainers && (style == 52 || style == 53))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
 
 			if (TShock.TileBans.TileIsBanned(type, args.Player))
 			{
