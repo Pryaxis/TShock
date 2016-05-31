@@ -2088,7 +2088,8 @@ namespace TShockAPI
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
 					if (selectedItem.type != ItemID.WireCutter
-						&& selectedItem.type != ItemID.WireKite)
+						&& selectedItem.type != ItemID.WireKite
+						&& selectedItem.type != ItemID.MulticolorWrench)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
