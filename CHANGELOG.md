@@ -4,7 +4,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.16
 
+* Terraria 1.3.1 wiring bugfixes
+* Terraria 1.3.1.1 compatibility
 
 ## TShock 4.3.15
 
