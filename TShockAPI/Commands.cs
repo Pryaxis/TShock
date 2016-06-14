@@ -797,9 +797,8 @@ namespace TShockAPI
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
+							args.Player.PlayerData.RestoreCharacter(args.Player);
 						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
 					args.Player.LoginFailsBySsi = false;
 
