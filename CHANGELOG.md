@@ -4,6 +4,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* Updated superadmin behaviour to conform to expected behaviour (@WhiteXZ)
+* Fixed a crash involving teleporters and dressers (@WhiteXZ)
+* Fixed pressure plates (@Enerdy @Patrikk)
+* Fixed a deadlock in wiring (@Wolfje)
+* Fixed a crash in wiring (@Patrikk)
+
 ## TShock 4.3.16
 
 * Terraria 1.3.1 wiring bugfixes
