@@ -2231,12 +2231,8 @@ namespace TShockAPI
 			if (tileData == null)
 				return true;
 
-			if (tileData.Width == 3 && tileData.Height == 2) { x -= 1; y -= 1; }
-			else if (tileData.Width == 4 && tileData.Height == 2) { x -= 1; y -= 1; }
-			else if (tileData.Width == 6 && tileData.Height == 3) { x -= 2; y -= 2; }
-			else if (tileData.Width == 6 && tileData.Height == 4) { x -= 2; y -= 3; }
-			else if (tileData.Width == 3 && tileData.Height == 3) { x -= 1; y -= 2; }
-			else if (tileData.Width == 3 && tileData.Height == 4) { x -= 1; y -= 3; }
+			x -= tileData.Origin.X;
+			y -= tileData.Origin.Y;
 
 			for (int i = x; i < x + tileData.Width; i++)
 			{
