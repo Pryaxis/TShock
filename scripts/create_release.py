@@ -19,6 +19,7 @@ http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
 tshock_symbols = "TShockAPI.dll.mdb"
 bcrypt_bin_name = "BCrypt.Net.dll"
+geoip_db_name = "GeoIP.dat"
 
 terraria_release_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Release", terraria_bin_name)
 terraria_debug_bin = os.path.join(cur_wd, "TerrariaServerAPI", "bin", "Debug", terraria_bin_name)
@@ -28,6 +29,7 @@ sqlite_bin = os.path.join(cur_wd, "prebuilts", sqlite_bin_name)
 http_bin = os.path.join(cur_wd, "prebuilts", http_bin_name)
 json_bin = os.path.join(cur_wd, "packages", "Newtonsoft.Json.8.0.3", "lib", "net45", json_bin_name)
 bcrypt_bin = os.path.join(cur_wd, "packages", "BCrypt.Net.0.1.0", "lib", "net35", bcrypt_bin_name)
+geoip_db = os.path.join(cur_wd, "prebuilts", geoip_db_name)
 release_bin = os.path.join(cur_wd, "TShockAPI", "bin", "Release", tshock_bin_name)
 debug_folder = os.path.join(cur_wd, "TShockAPI", "bin", "Debug")
 
@@ -42,6 +44,7 @@ def copy_dependencies():
   shutil.copy(sqlite_dep, release_dir)
   shutil.copy(mysql_bin, release_dir)
   shutil.copy(sqlite_bin, release_dir)
+  shutil.copy(geoip_db, release_dir)
   
 def copy_debug_files():
   shutil.copy(terraria_debug_bin, release_dir)
@@ -58,6 +61,7 @@ def create_base_zip(name):
   zip = zipfile.ZipFile(name, "w")
   zip.write(terraria_bin_name)
   zip.write(sqlite_dep_name)
+  zip.write(geoip_db_name)
   zip.write(http_bin_name, os.path.join("ServerPlugins", http_bin_name))
   zip.write(json_bin_name, json_bin_name)
   zip.write(bcrypt_bin_name, os.path.join("ServerPlugins", bcrypt_bin_name))
@@ -93,6 +97,7 @@ def delete_files():
   os.remove(json_bin_name)
   os.remove(bcrypt_bin_name)
   os.remove(http_bin_name)
+  os.remove(geoip_db_name)
   os.chdir(cur_wd)
 
 def update_terraria_source():
