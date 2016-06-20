@@ -165,6 +165,9 @@ namespace TShockAPI
 
 		// tshock.item nodes
 
+		[Description("User can give items.")]
+		public static readonly string give = "tshock.item.give";
+
 		[Description("User can spawn items.")]
 		public static readonly string item = "tshock.item.spawn";
 

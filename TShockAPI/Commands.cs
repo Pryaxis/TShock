@@ -365,7 +365,7 @@ namespace TShockAPI
 			});
 			#endregion
 			#region Item Commands
-			add(new Command(Permissions.item, Give, "give", "g")
+			add(new Command(Permissions.give, Give, "give", "g")
 			{
 				HelpText = "Gives another player an item."
 			});
