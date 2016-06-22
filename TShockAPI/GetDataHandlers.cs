@@ -1249,7 +1249,8 @@ namespace TShockAPI
 					{ PacketTypes.DoorUse, HandleDoorUse },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
-					{ PacketTypes.MassWireOperation, HandleMassWireOperation }
+					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
+					{ PacketTypes.GemLockToggle, HandleGemLockToggle }
 				};
 		}
 
@@ -3895,6 +3896,84 @@ namespace TShockAPI
 
 				if (TShock.CheckTilePermission(args.Player, x, y))
 					return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// For use with a ToggleGemLock event
+		/// </summary>
+		public class GemLockToggleEventArgs : HandledEventArgs 
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// On status
+			/// </summary>
+			public bool On { get; set; }
+		}
+
+		/// <summary>
+		/// GemLockToggle - Called when a gem lock is switched
+		/// </summary>
+		public static HandlerList<GemLockToggleEventArgs> GemLockToggle;
+
+		private static bool OnGemLockToggle(Int32 x, Int32 y, bool on) 
+		{
+			if (GemLockToggle == null)
+				return false;
+
+			var args = new GemLockToggleEventArgs 
+			{
+				X = x,
+				Y = y,
+				On = on
+			};
+			GemLockToggle.Invoke(null, args);
+			return args.Handled;
+		}
+
+		private static bool HandleGemLockToggle(GetDataHandlerArgs args)
+		{
+			var x = (int)args.Data.ReadInt16();
+			var y = (int)args.Data.ReadInt16();
+			var on = args.Data.ReadBoolean();
+
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY) 
+			{
+				return true;
+			}
+
+			if (OnGemLockToggle(x, y, on)) 
+			{
+				return true;
+			}
+
+			if (!TShock.Config.RegionProtectGemLocks)
+			{
+				return false;
+			}
+
+			if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification)) 
+			{
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player)) 
+			{
+				return true;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, x, y)) 
+			{
+				return true;
 			}
 
 			return false;

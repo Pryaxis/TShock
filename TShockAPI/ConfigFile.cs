@@ -319,6 +319,10 @@ namespace TShockAPI
 		[Description("Protect chests with region and build permissions.")]
 		public bool RegionProtectChests;
 
+		/// <summary>RegionProtectGemLocks - Whether or not region protection should apply to gem locks.</summary>
+		[Description("Protect gem locks with region and build permissions.")]
+		public bool RegionProtectGemLocks = true;
+
 		/// <summary>DisableLoginBeforeJoin - This will prevent users from being able to login before connecting.</summary>
 		[Description("Disable users from being able to login with account password when joining.")]
 		public bool DisableLoginBeforeJoin;
