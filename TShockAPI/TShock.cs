@@ -292,7 +292,7 @@ namespace TShockAPI
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 
-				var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
