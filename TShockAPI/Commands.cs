@@ -5242,22 +5242,6 @@ namespace TShockAPI
 			args.Parameters.RemoveAt(0);
 			if (args.Parameters.Count == 1)
 				int.TryParse(args.Parameters[0], out itemAmount);
-			else if (args.Parameters.Count == 2)
-			{
-				int.TryParse(args.Parameters[0], out itemAmount);
-				var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-				if (items[0].accessory && prefixIds.Contains(42))
-				{
-					prefixIds.Remove(42);
-					prefixIds.Remove(76);
-					prefixIds.Add(76);
-				}
-				else if (!items[0].accessory && prefixIds.Contains(42))
-					prefixIds.Remove(76);
-				if (prefixIds.Count == 1)
-					prefix = prefixIds[0];
-			}
-
 			if (items.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid item type!");
@@ -5269,6 +5253,23 @@ namespace TShockAPI
 			else
 			{
 				var item = items[0];
+
+				if (args.Parameters.Count == 2)
+				{
+					int.TryParse(args.Parameters[0], out itemAmount);
+					var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+					if (item.accessory && prefixIds.Contains(42))
+					{
+						prefixIds.Remove(42);
+						prefixIds.Remove(76);
+						prefixIds.Add(76);
+					}
+					else if (!item.accessory && prefixIds.Contains(42))
+						prefixIds.Remove(76);
+					if (prefixIds.Count == 1)
+						prefix = prefixIds[0];
+				}
+
 				if (item.type >= 1 && item.type < Main.maxItemTypes)
 				{
 					var players = TShock.Utils.FindPlayer(plStr);
