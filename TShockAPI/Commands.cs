@@ -793,12 +793,20 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.User = user;
+					args.Player.IsLoggedIn = true;
+					args.Player.IgnoreActionsForInventory = "none";
+
 					if (Main.ServerSideCharacter)
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
-							args.Player.PlayerData.RestoreCharacter(args.Player);
+							args.Player.PlayerData.CopyCharacter(args.Player);
+							TShock.CharacterDB.InsertPlayerData(args.Player);
 						}
+						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
 					args.Player.LoginFailsBySsi = false;
 
@@ -808,17 +816,6 @@ namespace TShockAPI
 					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.Group = group;
-					args.Player.tempGroup = null;
-					args.Player.User = user;
-					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
-
-					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
-					{
-						args.Player.PlayerData.CopyCharacter(args.Player);
-						TShock.CharacterDB.InsertPlayerData(args.Player);
-					}
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
