@@ -3229,6 +3229,9 @@ namespace TShockAPI
 			if (OnPlayerBuff(id, type, time))
 				return true;
 
+			if (TShock.Players[id] == null)
+				return false;
+
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
