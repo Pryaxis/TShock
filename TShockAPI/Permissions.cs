@@ -305,6 +305,9 @@ namespace TShockAPI
 		[Description("User can set the world spawn.")]
 		public static readonly string worldspawn = "tshock.world.setspawn";
 
+	    [Description( "User can set the dungeon's location." )]
+        public static readonly string dungeonposition = "tshock.world.setdungeon";
+
 		[Description("User can drop a meteor.")]
 		public static readonly string dropmeteor = "tshock.world.time.dropmeteor";
 

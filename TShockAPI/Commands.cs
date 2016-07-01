@@ -512,7 +512,12 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Sets the world's spawn point to your location."
 			});
-			add(new Command(Permissions.worldsettle, Settle, "settle")
+            add(new Command(Permissions.worldspawn, SetDungeon, "setdungeon")
+            {
+                AllowServer = false,
+                HelpText = "Sets the dungeon's position to your location."
+            });
+            add(new Command(Permissions.worldsettle, Settle, "settle")
 			{
 				HelpText = "Forces all liquids to update immediately."
 			});
@@ -3612,7 +3617,15 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("Spawn has now been set at your location.");
 		}
 
-		private static void Reload(CommandArgs args)
+        private static void SetDungeon(CommandArgs args)
+        {
+            Main.dungeonX = args.Player.TileX + 1;
+            Main.dungeonY = args.Player.TileY + 3;
+            SaveManager.Instance.SaveWorld(false);
+            args.Player.SendSuccessMessage("The dungeon's position has now been set at your location.");
+        }
+
+        private static void Reload(CommandArgs args)
 		{
 			TShock.Utils.Reload(args.Player);
 
