@@ -517,7 +517,7 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Sets the dungeon's position to your location."
 			});
-            add(new Command(Permissions.worldsettle, Settle, "settle")
+			add(new Command(Permissions.worldsettle, Settle, "settle")
 			{
 				HelpText = "Forces all liquids to update immediately."
 			});
@@ -3625,7 +3625,7 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("The dungeon's position has now been set at your location.");
 		}
 
-        private static void Reload(CommandArgs args)
+		private static void Reload(CommandArgs args)
 		{
 			TShock.Utils.Reload(args.Player);
 
