@@ -1019,7 +1019,10 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Checks to see if a player or its associated group/temporary group has a specified permission.
+		/// Checks to see if a player has a specific permission.
+		/// Fires the <see cref="PlayerHooks.OnPlayerPermission"/> hook which may be handled to override permission checks.
+		/// If the OnPlayerPermission hook is not handled and the player is assigned a temporary group, this method calls <see cref="Group.HasPermission"/> on the temporary group and returns the result.
+		/// If the OnPlayerPermission hook is not handled and the player is not assigned a temporary group, this method calls <see cref="Group.HasPermission"/> on the player's current group.
 		/// </summary>
 		/// <param name="permission">The permission to check.</param>
 		/// <returns>True if the player has that permission.</returns>
