@@ -1743,6 +1743,15 @@ namespace TShockAPI
 							Main.tile[realx, realy].active(false);
 							changed = true;
 						}
+						// Sensors
+						if(newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
+						{
+							Main.tile[realx, realy].type = newtile.Type;
+							Main.tile[realx, realy].frameX = newtile.FrameX;
+							Main.tile[realx, realy].frameY = newtile.FrameY;
+							Main.tile[realx, realy].active(true);
+							changed = true;
+						}
 
 						if (tile.active() && newtile.Active)
 						{
