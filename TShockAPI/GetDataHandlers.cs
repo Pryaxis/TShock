@@ -2045,6 +2045,14 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
+
+					// Using the actuation accessory can lead to actuator hacking
+					if (TShock.Itembans.ItemIsBanned("Actuator", args.Player) && args.Player.Accessories.Any(accessory => accessory != null && accessory.stack > 0 && accessory.type == ItemID.ActuationAccessory))
+					{
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						args.Player.SendErrorMessage("You do not have permission to place actuators.");
+						return true;
+					}
 					if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -2102,8 +2110,8 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceActuator)
 				{
 					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
-					// ActuationAccessorry = The Presserator
-					if (selectedItem.type != ItemID.Actuator && !args.Player.Accessories.Any(accessory => accessory.type == ItemID.ActuationAccessory))
+					// ActuationAccessory = The Presserator
+					if (selectedItem.type != ItemID.Actuator && !args.Player.Accessories.Any(accessory => accessory != null && accessory.stack > 0 && accessory.type == ItemID.ActuationAccessory))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;

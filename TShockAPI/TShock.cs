@@ -1341,7 +1341,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("An exeption occurred executing a command.");
+					Log.ConsoleError("An exception occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
