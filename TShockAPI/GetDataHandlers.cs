@@ -2101,8 +2101,9 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.PlaceActuator)
 				{
-					// If they aren't selecting the actuator, they're hacking.
-					if (selectedItem.type != ItemID.Actuator)
+					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
+					// ActuationAccessorry = The Presserator
+					if (selectedItem.type != ItemID.Actuator && !args.Player.Accessories.Any(accessory => accessory.type == ItemID.ActuationAccessory))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
