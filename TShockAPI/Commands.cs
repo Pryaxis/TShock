@@ -1643,7 +1643,7 @@ namespace TShockAPI
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
-			Main.CheckXMas();
+			Main.checkXMas();
 			if (args.Silent)
 				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
 			else
