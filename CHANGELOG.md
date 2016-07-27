@@ -6,7 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## TShock 4.3.17
 
-* Compatibility with Terraria 1.3.2.2
+* Compatibility with Terraria 1.3.2.1
 * Updated superadmin behaviour to conform to expected behaviour (@WhiteXZ, @Patrikk)
 * Fixed a crash involving teleporters and dressers (@WhiteXZ)
 * Fixed pressure plates (@Enerdy, @Patrikk)
@@ -20,6 +20,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Gem locks can now be region protected (@mistzzt)
 * Players can now place sensors (@mistzzt)
 * Repackaged GeoIP with TShock so that GeoIP works (@Enerdy)
+
+* Added an announcement box hook (@mistzzt)
+* Added the ability to choose what type of world (crimson/corruption) you generate (@NoNiMad)
 
 ## TShock 4.3.16
 
