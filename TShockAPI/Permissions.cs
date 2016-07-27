@@ -379,6 +379,9 @@ namespace TShockAPI
 		[Description("Player can place banned tiles.")]
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
 
+		[Description("Player can use the Enchanted Sundial item.")]
+		public static readonly string usesundial = "tshock.time.usesundial";
+
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>
