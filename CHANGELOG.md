@@ -4,6 +4,26 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.17
+
+* Compatibility with Terraria 1.3.2.1
+* Updated superadmin behaviour to conform to expected behaviour (@WhiteXZ, @Patrikk)
+* Fixed a crash involving teleporters and dressers (@WhiteXZ)
+* Fixed pressure plates (@Enerdy, @Patrikk)
+* Fixed a deadlock in wiring (@Wolfje)
+* Fixed a crash in wiring (@Patrikk)
+* Improved network syncing on client joins (@Patrikk)
+* The Presserator can now place actuators (@ProfessorXZ)
+* Resolved a region error when removing unlisted users from regions (@WhiteXZ)
+* Added a `SetDungeon` command to set the dungeon position (@webmilio)
+* The currently running world name is now part of the server application's title (@webmilio)
+* Gem locks can now be region protected (@mistzzt)
+* Players can now place sensors (@mistzzt)
+* Repackaged GeoIP with TShock so that GeoIP works (@Enerdy)
+* Added permissions to use sundials and start/stop parties (@Patrikk)
+* Added an announcement box hook (@mistzzt)
+* Added the ability to choose what type of world (crimson/corruption) you generate (@NoNiMad)
+
 ## TShock 4.3.16
 
 * Terraria 1.3.1 wiring bugfixes

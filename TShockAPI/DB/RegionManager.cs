@@ -418,13 +418,16 @@ namespace TShockAPI.DB
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				r.RemoveID(TShock.Users.GetUserID(userName));
+				if (!r.RemoveID(TShock.Users.GetUserID(userName)))
+				{
+					return false;
+				}
+
 				string ids = string.Join(",", r.AllowedIDs);
-				int q = database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", ids,
-									   regionName, Main.worldID.ToString());
-				if (q > 0)
-					return true;
+				return database.Query("UPDATE Regions SET UserIds=@0 WHERE RegionName=@1 AND WorldID=@2", ids,
+									   regionName, Main.worldID.ToString()) > 0;
 			}
+
 			return false;
 		}
 
@@ -765,16 +768,18 @@ namespace TShockAPI.DB
 		/// <param name="ids">String of IDs to set</param>
 		public void SetAllowedIDs(String ids)
 		{
-			String[] id_arr = ids.Split(',');
-			List<int> id_list = new List<int>();
-			foreach (String id in id_arr)
+			String[] idArr = ids.Split(',');
+			List<int> idList = new List<int>();
+
+			foreach (String id in idArr)
 			{
 				int i = 0;
-				int.TryParse(id, out i);
-				if (i != 0)
-					id_list.Add(i);
+				if (int.TryParse(id, out i) && i != 0)
+				{
+					idList.Add(i);
+				}
 			}
-			AllowedIDs = id_list;
+			AllowedIDs = idList;
 		}
 
 		/// <summary>
@@ -786,12 +791,14 @@ namespace TShockAPI.DB
 			// prevent null pointer exceptions
 			if (!string.IsNullOrEmpty(groups))
 			{
-				List<String> groupArr = groups.Split(',').ToList();
+				List<String> groupList = groups.Split(',').ToList();
 
-				for (int i = 0; i < groupArr.Count; i++)
-					groupArr[i] = groupArr[i].Trim();
+				for (int i = 0; i < groupList.Count; i++)
+				{
+					groupList[i] = groupList[i].Trim();
+				}
 
-				AllowedGroups = groupArr;
+				AllowedGroups = groupList;
 			}
 		}
 
@@ -799,18 +806,10 @@ namespace TShockAPI.DB
 		/// Removes a user's access to the region
 		/// </summary>
 		/// <param name="id">User ID to remove</param>
-		public void RemoveID(int id)
+		/// <returns>true if the user was found and removed from the region's allowed users</returns>
+		public bool RemoveID(int id)
 		{
-			var index = -1;
-			for (int i = 0; i < AllowedIDs.Count; i++)
-			{
-				if (AllowedIDs[i] == id)
-				{
-					index = i;
-					break;
-				}
-			}
-			AllowedIDs.RemoveAt(index);
+			return AllowedIDs.Remove(id);
 		}
 
 		/// <summary>

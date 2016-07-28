@@ -67,7 +67,7 @@ namespace TShockAPI.DB
 						Permissions.immunetokick, Permissions.tpothers));
 
 				AddDefaultGroup("trustedadmin", "admin",
-					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item,
+					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item, Permissions.give,
 						Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
 
 				AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));

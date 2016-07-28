@@ -165,6 +165,9 @@ namespace TShockAPI
 
 		// tshock.item nodes
 
+		[Description("User can give items.")]
+		public static readonly string give = "tshock.item.give";
+
 		[Description("User can spawn items.")]
 		public static readonly string item = "tshock.item.spawn";
 
@@ -272,6 +275,9 @@ namespace TShockAPI
 		[Description("User can set the time.")]
 		public static readonly string time = "tshock.world.time.set";
 
+		[Description("Player can use the Enchanted Sundial item.")]
+		public static readonly string usesundial = "tshock.world.time.usesundial";
+
 		[Description("User can grow plants.")]
 		public static readonly string grow = "tshock.world.grow";
 
@@ -302,6 +308,9 @@ namespace TShockAPI
 		[Description("User can set the world spawn.")]
 		public static readonly string worldspawn = "tshock.world.setspawn";
 
+	    [Description( "User can set the dungeon's location." )]
+        public static readonly string dungeonposition = "tshock.world.setdungeon";
+
 		[Description("User can drop a meteor.")]
 		public static readonly string dropmeteor = "tshock.world.time.dropmeteor";
 
@@ -322,6 +331,9 @@ namespace TShockAPI
 
 		[Description("User can modify the wind.")]
 		public static readonly string wind = "tshock.world.wind";
+
+		[Description("Player can toggle party event.")]
+		public static readonly string toggleparty = "tshock.world.toggleparty";
 
 		// Non-grouped
 
@@ -372,7 +384,6 @@ namespace TShockAPI
 
 		[Description("Player can place banned tiles.")]
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
-
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>

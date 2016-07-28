@@ -365,7 +365,7 @@ namespace TShockAPI
 			});
 			#endregion
 			#region Item Commands
-			add(new Command(Permissions.item, Give, "give", "g")
+			add(new Command(Permissions.give, Give, "give", "g")
 			{
 				HelpText = "Gives another player an item."
 			});
@@ -511,6 +511,11 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Sets the world's spawn point to your location."
+			});
+			add(new Command(Permissions.worldspawn, SetDungeon, "setdungeon")
+			{
+				AllowServer = false,
+				HelpText = "Sets the dungeon's position to your location."
 			});
 			add(new Command(Permissions.worldsettle, Settle, "settle")
 			{
@@ -793,11 +798,18 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.User = user;
+					args.Player.IsLoggedIn = true;
+					args.Player.IgnoreActionsForInventory = "none";
+
 					if (Main.ServerSideCharacter)
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
+							args.Player.PlayerData.CopyCharacter(args.Player);
+							TShock.CharacterDB.InsertPlayerData(args.Player);
 						}
 						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
@@ -809,17 +821,6 @@ namespace TShockAPI
 					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.Group = group;
-					args.Player.tempGroup = null;
-					args.Player.User = user;
-					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
-
-					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
-					{
-						args.Player.PlayerData.CopyCharacter(args.Player);
-						TShock.CharacterDB.InsertPlayerData(args.Player);
-					}
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
@@ -1642,7 +1643,7 @@ namespace TShockAPI
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
-			Main.CheckXMas();
+			Main.checkXMas();
 			if (args.Silent)
 				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
 			else
@@ -3616,6 +3617,14 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("Spawn has now been set at your location.");
 		}
 
+		private static void SetDungeon(CommandArgs args)
+		{
+			Main.dungeonX = args.Player.TileX + 1;
+			Main.dungeonY = args.Player.TileY + 3;
+			SaveManager.Instance.SaveWorld(false);
+			args.Player.SendSuccessMessage("The dungeon's position has now been set at your location.");
+		}
+
 		private static void Reload(CommandArgs args)
 		{
 			TShock.Utils.Reload(args.Player);
@@ -5243,22 +5252,6 @@ namespace TShockAPI
 			args.Parameters.RemoveAt(0);
 			if (args.Parameters.Count == 1)
 				int.TryParse(args.Parameters[0], out itemAmount);
-			else if (args.Parameters.Count == 2)
-			{
-				int.TryParse(args.Parameters[0], out itemAmount);
-				var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-				if (items[0].accessory && prefixIds.Contains(42))
-				{
-					prefixIds.Remove(42);
-					prefixIds.Remove(76);
-					prefixIds.Add(76);
-				}
-				else if (!items[0].accessory && prefixIds.Contains(42))
-					prefixIds.Remove(76);
-				if (prefixIds.Count == 1)
-					prefix = prefixIds[0];
-			}
-
 			if (items.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid item type!");
@@ -5270,6 +5263,23 @@ namespace TShockAPI
 			else
 			{
 				var item = items[0];
+
+				if (args.Parameters.Count == 2)
+				{
+					int.TryParse(args.Parameters[0], out itemAmount);
+					var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+					if (item.accessory && prefixIds.Contains(42))
+					{
+						prefixIds.Remove(42);
+						prefixIds.Remove(76);
+						prefixIds.Add(76);
+					}
+					else if (!item.accessory && prefixIds.Contains(42))
+						prefixIds.Remove(76);
+					if (prefixIds.Count == 1)
+						prefix = prefixIds[0];
+				}
+
 				if (item.type >= 1 && item.type < Main.maxItemTypes)
 				{
 					var players = TShock.Utils.FindPlayer(plStr);

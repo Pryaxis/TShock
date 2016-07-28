@@ -292,7 +292,7 @@ namespace TShockAPI
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 
-				var geoippath = Path.Combine(SavePath, "GeoIP.dat");
+				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
@@ -1113,10 +1113,10 @@ namespace TShockAPI
 		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
 		private void SetConsoleTitle(bool empty)
 		{
-			Console.Title = string.Format("{0}{1}/{2} @ {3}:{4} (TShock for Terraria v{5})",
+			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
 					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
+					Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
@@ -1352,7 +1352,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("An exeption occurred executing a command.");
+					Log.ConsoleError("An exception occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
