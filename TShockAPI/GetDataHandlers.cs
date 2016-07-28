@@ -1250,7 +1250,8 @@ namespace TShockAPI
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
-					{ PacketTypes.GemLockToggle, HandleGemLockToggle }
+					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
+					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
 
@@ -3988,6 +3989,17 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y)) 
 			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleToggleParty(GetDataHandlerArgs args)
+		{
+			if (args.Player != null && !args.Player.HasPermission(Permissions.toggleparty))
+			{
+				args.Player.SendErrorMessage("You do not have permission to start a party");
 				return true;
 			}
 
