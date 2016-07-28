@@ -275,6 +275,9 @@ namespace TShockAPI
 		[Description("User can set the time.")]
 		public static readonly string time = "tshock.world.time.set";
 
+		[Description("Player can use the Enchanted Sundial item.")]
+		public static readonly string usesundial = "tshock.world.time.usesundial";
+
 		[Description("User can grow plants.")]
 		public static readonly string grow = "tshock.world.grow";
 
@@ -329,6 +332,9 @@ namespace TShockAPI
 		[Description("User can modify the wind.")]
 		public static readonly string wind = "tshock.world.wind";
 
+		[Description("Player can toggle party event.")]
+		public static readonly string toggleparty = "tshock.world.toggleparty";
+
 		// Non-grouped
 
 		[Description("User can clear items or projectiles.")]
@@ -378,10 +384,6 @@ namespace TShockAPI
 
 		[Description("Player can place banned tiles.")]
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
-
-		[Description("Player can toggle party event.")]
-		public static readonly string toggleparty = "tshock.world.toggleparty";
-
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>

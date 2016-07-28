@@ -3515,6 +3515,12 @@ namespace TShockAPI
 				return true;
 			}
 
+			if (type == 3 & !args.Player.HasPermission(Permissions.usesundial))
+			{
+				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
+				return true;
+			}
+
 			return false;
 		}
 
