@@ -1252,6 +1252,7 @@ namespace TShockAPI
 					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
 					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.KillPortal, HandleKillPortal },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -4012,6 +4013,22 @@ namespace TShockAPI
 				Main.npc[npcID].active = true;
 				NetMessage.SendData(23, -1, -1, "", npcID);
 				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleKillPortal(GetDataHandlerArgs args)
+		{
+			short projectileIndex = args.Data.ReadInt16();
+
+			Projectile projectile = Main.projectile[projectileIndex];
+			if (projectile != null && projectile.active)
+			{
+				if (projectile.owner != args.TPlayer.whoAmI)
+				{
+					return true;
+				}
 			}
 
 			return false;
