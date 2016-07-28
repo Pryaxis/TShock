@@ -1254,6 +1254,7 @@ namespace TShockAPI
 					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
 					{ PacketTypes.KillPortal, HandleKillPortal },
+					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -4103,6 +4104,37 @@ namespace TShockAPI
 				{
 					return true;
 				}
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlaceTileEntity(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var type = args.Data.ReadByte();
+
+			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				return true;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, x, y))
+			{
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, x, y))
+			{
+				return true;
 			}
 
 			return false;
