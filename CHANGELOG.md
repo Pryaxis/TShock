@@ -20,7 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Gem locks can now be region protected (@mistzzt)
 * Players can now place sensors (@mistzzt)
 * Repackaged GeoIP with TShock so that GeoIP works (@Enerdy)
-
+* Added permissions to use sundials and start/stop parties (@Patrikk)
 * Added an announcement box hook (@mistzzt)
 * Added the ability to choose what type of world (crimson/corruption) you generate (@NoNiMad)
 
