@@ -1251,6 +1251,7 @@ namespace TShockAPI
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
 					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
+					{ PacketTypes.CatchNPC, HandleCatchNpc },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -3995,6 +3996,21 @@ namespace TShockAPI
 
 			if (TShock.CheckTilePermission(args.Player, x, y)) 
 			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleCatchNpc(GetDataHandlerArgs args)
+		{
+			var npcID = args.Data.ReadInt16();
+			var who = args.Data.ReadByte();
+
+			if (Main.npc[npcID]?.catchItem == 0)
+			{
+				Main.npc[npcID].active = true;
+				NetMessage.SendData(23, -1, -1, "", npcID);
 				return true;
 			}
 
