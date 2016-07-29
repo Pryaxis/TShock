@@ -848,7 +848,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.ChatText, msg, 255, red, green, blue);
+			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, 460);
 		}
 
 		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
@@ -862,7 +862,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendDataFromPlayer(PacketTypes.ChatText, ply, msg, red, green, blue, 0);
+			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, 460);
 		}
 
 		public virtual void DamagePlayer(int damage)
