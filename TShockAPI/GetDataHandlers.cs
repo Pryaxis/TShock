@@ -1231,6 +1231,7 @@ namespace TShockAPI
 					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
 					{ PacketTypes.ItemDrop, HandleItemDrop },
+					{ PacketTypes.UpdateItemDrop, HandleUpdateItemDrop },
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
@@ -1251,6 +1252,9 @@ namespace TShockAPI
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
 					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
+					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.KillPortal, HandleKillPortal },
+					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -3355,6 +3359,79 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleUpdateItemDrop(GetDataHandlerArgs args)
+		{
+			var itemID = args.Data.ReadInt16();
+			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var velocity = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadInt8() == 1;
+			var itemNetID = args.Data.ReadInt16();
+
+			if (OnItemDrop(itemID, position, velocity, stacks, prefix, noDelay, itemNetID))
+				return true;
+
+			// Invalid Net IDs can cause client crashes
+			if (itemNetID < -48 || itemNetID >= Main.maxItemTypes)
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+
+			if (prefix > Item.maxPrefixes) // Make sure the prefix is a legit value
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+
+			if (itemNetID == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check)
+			{
+				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[itemID].position.X / 16f), (int)(Main.item[itemID].position.Y / 16f)))
+				{
+					args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+					return true;
+				}
+
+				return false;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, (int)(position.X / 16f), (int)(position.Y / 16f)))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+
+			if (Main.item[itemID].active && Main.item[itemID].netID != itemNetID) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+
+			Item item = new Item();
+			item.netDefaults(itemNetID);
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
+			{
+				//Player is probably trying to sneak items onto the server in their hands!!!
+				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name);
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+
+			}
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
+				return true;
+			}
+
+			return false;
+		}
+
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
@@ -3994,6 +4071,68 @@ namespace TShockAPI
 			}
 
 			if (TShock.CheckTilePermission(args.Player, x, y)) 
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleCatchNpc(GetDataHandlerArgs args)
+		{
+			var npcID = args.Data.ReadInt16();
+			var who = args.Data.ReadByte();
+
+			if (Main.npc[npcID]?.catchItem == 0)
+			{
+				Main.npc[npcID].active = true;
+				NetMessage.SendData(23, -1, -1, "", npcID);
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleKillPortal(GetDataHandlerArgs args)
+		{
+			short projectileIndex = args.Data.ReadInt16();
+
+			Projectile projectile = Main.projectile[projectileIndex];
+			if (projectile != null && projectile.active)
+			{
+				if (projectile.owner != args.TPlayer.whoAmI)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlaceTileEntity(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var type = args.Data.ReadByte();
+
+			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				return true;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, x, y))
+			{
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
 				return true;
 			}
