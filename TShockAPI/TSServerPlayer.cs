@@ -50,7 +50,7 @@ namespace TShockAPI
 			SendMessage(msg, color.R, color.G, color.B);
 		}
 
-		public override void SendMessage(string msg, byte red, byte green, byte blue)
+		public override void SendMessage(string msg, byte red, byte green, byte blue, int messageLength = -1)
 		{
 			Console.WriteLine(msg);
 		}

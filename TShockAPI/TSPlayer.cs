@@ -367,6 +367,9 @@ namespace TShockAPI
 			get { return Index >= 0 && Index < Main.maxNetPlayers && Main.player[Index] != null; }
 		}
 
+		/// <summary>
+		/// Checks if the player is active and not pending termination.
+		/// </summary>
 		public bool ConnectionAlive
 		{
 			get
@@ -377,13 +380,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gets the player's selected item.
+		/// Gets the item that the player is currently holding.
 		/// </summary>
 		public Item SelectedItem
 		{
 			get { return TPlayer.inventory[TPlayer.selectedItem]; }
 		}
 
+		/// <summary>
+		/// Gets the player's Client State.
+		/// </summary>
 		public int State
 		{
 			get { return Netplay.Clients[Index].State; }
@@ -416,6 +422,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Gets the player's accessories.
+		/// </summary>
 		public IEnumerable<Item> Accessories
 		{
 			get
@@ -477,43 +486,64 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Terraria Player
+		/// Gets the Terraria Player object associated with the player.
 		/// </summary>
 		public Player TPlayer
 		{
 			get { return FakePlayer ?? Main.player[Index]; }
 		}
 
+		/// <summary>
+		/// Gets the player's name.
+		/// </summary>
 		public string Name
 		{
 			get { return TPlayer.name; }
 		}
 
+		/// <summary>
+		/// Gets the player's active state.
+		/// </summary>
 		public bool Active
 		{
 			get { return TPlayer != null && TPlayer.active; }
 		}
 
+		/// <summary>
+		/// Gets the player's team.
+		/// </summary>
 		public int Team
 		{
 			get { return TPlayer.team; }
 		}
 
+		/// <summary>
+		/// Gets the player's X coordinate.
+		/// </summary>
 		public float X
 		{
 			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX*16; }
 		}
 
+		/// <summary>
+		/// Gets the player's Y coordinate.
+		/// </summary>
 		public float Y
 		{
 			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY*16; }
 		}
 
+		/// <summary>
+		/// Gets the player's X tile coordinate.
+		/// </summary>
 		public int TileX
 		{
 			get { return (int) (X/16); }
 		}
 
+		/// <summary>
+		/// Gets the player's Y tile coordinate.
+		/// </summary>
 		public int TileY
 		{
 			get { return (int) (Y/16); }
@@ -521,6 +551,9 @@ namespace TShockAPI
 
 		public bool TpLock;
 
+		/// <summary>
+		/// Checks if the player has any inventory slots available.
+		/// </summary>
 		public bool InventorySlotAvailable
 		{
 			get
@@ -617,11 +650,16 @@ namespace TShockAPI
 			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
+		/// <summary>
+		/// Disconnects the player from the server.
+		/// </summary>
+		/// <param name="reason">The reason why the player was disconnected.</param>
 		public virtual void Disconnect(string reason)
 		{
 			SendData(PacketTypes.Disconnect, reason);
 		}
 
+		[Obsolete("This method is no longer used.")]
 		public virtual void Flush()
 		{
 			var client = Netplay.Clients[Index];
@@ -631,7 +669,11 @@ namespace TShockAPI
 			//TShock.PacketBuffer.Flush(client);
 		}
 
-
+		/// <summary>
+		/// Fired when the player's temporary group access expires.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
 		{
 			SendWarningMessage("Your temporary group access has expired.");
@@ -643,6 +685,13 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Teleports a player to the given coordinates in the world.
+		/// </summary>
+		/// <param name="x">The X coordinate.</param>
+		/// <param name="y">The Y coordinate.</param>
+		/// <param name="style">The teleportation style.</param>
+		/// <returns>True or false.</returns>
 		public bool Teleport(float x, float y, byte style = 1)
 		{
 			if (x > Main.rightWorld - 992)
@@ -668,11 +717,18 @@ namespace TShockAPI
 			return true;
 		}
 
+		/// <summary>
+		/// Heals the player.
+		/// </summary>
+		/// <param name="health">Heal health amount.</param>
 		public void Heal(int health = 600)
 		{
 			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmI, health);
 		}
 
+		/// <summary>
+		/// Spawns the player at his spawn point.
+		/// </summary>
 		public void Spawn()
 		{			
 			if (this.sX > 0 && this.sY > 0)
@@ -685,6 +741,11 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Spawns the player at the given coordinates.
+		/// </summary>
+		/// <param name="tilex">The X coordinate.</param>
+		/// <param name="tiley">The Y coordinate.</param>
 		public void Spawn(int tilex, int tiley)
 		{
 			using (var ms = new MemoryStream())
@@ -700,6 +761,11 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Removes the projectile with the given index and owner.
+		/// </summary>
+		/// <param name="index">The projectile's index.</param>
+		/// <param name="owner">The projectile's owner.</param>
 		public void RemoveProjectile(int index, int owner)
 		{
 			using (var ms = new MemoryStream())
@@ -764,6 +830,16 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>
+		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="stack"></param>
+		/// <param name="prefix"></param>
+		/// <returns>True or false, depending if the item passed the check or not.</returns>
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
@@ -774,6 +850,15 @@ namespace TShockAPI
 			return true;
 		}
 
+		/// <summary>
+		/// Gives an item to the player.
+		/// </summary>
+		/// <param name="type">The item's netID.</param>
+		/// <param name="name">The tiem's name.</param>
+		/// <param name="width">The item's width.</param>
+		/// <param name="height">The item's height.</param>
+		/// <param name="stack">The item's stack.</param>
+		/// <param name="prefix">The item's prefix.</param>
 		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
@@ -792,52 +877,105 @@ namespace TShockAPI
 			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
 		}
 
+		/// <summary>
+		/// Sends an information message to the player.
+		/// </summary>
+		/// <param name="msg">The message.</param>
 		public virtual void SendInfoMessage(string msg)
 		{
 			SendMessage(msg, Color.Yellow);
 		}
 
+		/// <summary>
+		/// Sends an information message to the player.
+		/// Replaces format items in the message with the string representation of a specified object.
+		/// </summary>
+		/// <param name="format">The message.</param>
+		/// <param name="args">An array of objects to format.</param>
 		public void SendInfoMessage(string format, params object[] args)
 		{
 			SendInfoMessage(string.Format(format, args));
 		}
 
+		/// <summary>
+		/// Sends a success message to the player.
+		/// </summary>
+		/// <param name="msg">The message.</param>
 		public virtual void SendSuccessMessage(string msg)
 		{
 			SendMessage(msg, Color.Green);
 		}
 
+		/// <summary>
+		/// Sends a success message to the player.
+		/// Replaces format items in the message with the string representation of a specified object.
+		/// </summary>
+		/// <param name="format">The message.</param>
+		/// <param name="args">An array of objects to format.</param>
 		public void SendSuccessMessage(string format, params object[] args)
 		{
 			SendSuccessMessage(string.Format(format, args));
 		}
 
+		/// <summary>
+		/// Sends a warning message to the player.
+		/// </summary>
+		/// <param name="msg">The message.</param>
 		public virtual void SendWarningMessage(string msg)
 		{
 			SendMessage(msg, Color.OrangeRed);
 		}
 
+		/// <summary>
+		/// Sends a warning message to the player.
+		/// Replaces format items in the message with the string representation of a specified object.
+		/// </summary>
+		/// <param name="format">The message.</param>
+		/// <param name="args">An array of objects to format.</param>
 		public void SendWarningMessage(string format, params object[] args)
 		{
 			SendWarningMessage(string.Format(format, args));
 		}
 
+		/// <summary>
+		/// Sends an error message to the player.
+		/// </summary>
+		/// <param name="msg">The message.</param>
 		public virtual void SendErrorMessage(string msg)
 		{
 			SendMessage(msg, Color.Red);
 		}
 
+		/// <summary>
+		/// Sends an error message to the player.
+		/// Replaces format items in the message with the string representation of a specified object
+		/// </summary>
+		/// <param name="format">The message.</param>
+		/// <param name="args">An array of objects to format.</param>
 		public void SendErrorMessage(string format, params object[] args)
 		{
 			SendErrorMessage(string.Format(format, args));
 		}
 
+		/// <summary>
+		/// Sends a message with the specified color. 
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="color">The message color.</param>
 		public virtual void SendMessage(string msg, Color color)
 		{
 			SendMessage(msg, color.R, color.G, color.B);
 		}
 
-		public virtual void SendMessage(string msg, byte red, byte green, byte blue)
+		/// <summary>
+		/// Sends a message with the specified RGB color.
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="red">The amount of red color to factor in. Max: 255.</param>
+		/// <param name="green">The amount of green color to factor in. Max: 255</param>
+		/// <param name="blue">The amount of blue color to factor in. Max: 255</param>
+		/// <param name="messageLength">The number of pixels before the message splits lines. Defaults to -1, which is the client's screen width.</param>
+		public virtual void SendMessage(string msg, byte red, byte green, byte blue, int messageLength = -1)
 		{
 			if (msg.Contains("\n"))
 			{
@@ -848,10 +986,19 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, 800);
+			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, messageLength);
 		}
 
-		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
+		/// <summary>
+		/// Sends a message to a player with the specified RGB color.
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		/// <param name="red">The amount of red color to factor in. Max: 255.</param>
+		/// <param name="green">The amount of green color to factor in. Max: 255.</param>
+		/// <param name="blue">The amount of blue color to factor in. Max: 255.</param>
+		/// <param name="ply">The player who receives the message.</param>
+		/// <param name="messageLength">The number of pixels before the message splits lines. Defaults to -1, which is the client's screen width.</param>
+		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply, int messageLength = -1)
 		{
 			if (msg.Contains("\n"))
 			{
@@ -862,15 +1009,23 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, 800);
+			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, messageLength);
 		}
 
+		/// <summary>
+		/// Wounds the player with the given damage.
+		/// </summary>
+		/// <param name="damage">The amount of damage the player will take.</param>
 		public virtual void DamagePlayer(int damage)
 		{
 			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
 								(float) 0);
 		}
 
+		/// <summary>
+		/// Sets the player's team.
+		/// </summary>
+		/// <param name="team">The team color index.</param>
 		public virtual void SetTeam(int team)
 		{
 			Main.player[Index].team = team;
@@ -879,7 +1034,15 @@ namespace TShockAPI
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
+
+		/// <summary>
+		/// Represents the ID of the chest that the player is viewing.
+		/// </summary>
 		public int ActiveChest = -1;
+
+		/// <summary>
+		/// Represents the current item the player is holding.
+		/// </summary>
 		public Item ItemInHand = new Item();
 
 		/// <summary>
@@ -968,6 +1131,12 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>
+		/// Applies a buff to the player.
+		/// </summary>
+		/// <param name="type">The buff type.</param>
+		/// <param name="time">The buff duration.</param>
+		/// <param name="bypass"></param>
 		public virtual void SetBuff(int type, int time = 3600, bool bypass = false)
 		{
 			if ((DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000 && !bypass)
@@ -977,6 +1146,16 @@ namespace TShockAPI
 		}
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
+		/// <summary>
+		/// Sends data to the player.
+		/// </summary>
+		/// <param name="msgType">The sent packet</param>
+		/// <param name="text">The packet text.</param>
+		/// <param name="number"></param>
+		/// <param name="number2"></param>
+		/// <param name="number3"></param>
+		/// <param name="number4"></param>
+		/// <param name="number5"></param>
 		public virtual void SendData(PacketTypes msgType, string text = "", int number = 0, float number2 = 0f,
 			float number3 = 0f, float number4 = 0f, int number5 = 0)
 		{
@@ -986,6 +1165,16 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
 		}
 
+		/// <summary>
+		/// Sends data from the given player.
+		/// </summary>
+		/// <param name="msgType">The sent packet.</param>
+		/// <param name="ply">The packet sender.</param>
+		/// <param name="text">The packet text.</param>
+		/// <param name="number2"></param>
+		/// <param name="number3"></param>
+		/// <param name="number4"></param>
+		/// <param name="number5"></param>
 		public virtual void SendDataFromPlayer(PacketTypes msgType, int ply, string text = "", float number2 = 0f,
 			float number3 = 0f, float number4 = 0f, int number5 = 0)
 		{
@@ -995,6 +1184,10 @@ namespace TShockAPI
 			NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
 		}
 
+		/// <summary>
+		/// Sends raw data to the player's socket object.
+		/// </summary>
+		/// <param name="data">The data to send.</param>
 		public virtual void SendRawData(byte[] data)
 		{
 			if (!RealPlayer || !ConnectionAlive)
@@ -1053,7 +1246,7 @@ namespace TShockAPI
 			SendMessage(msg, color.R, color.G, color.B);
 		}
 
-		public override void SendMessage(string msg, byte red, byte green, byte blue)
+		public override void SendMessage(string msg, byte red, byte green, byte blue, int messageLength = -1)
 		{
 			this.CommandOutput.Add(msg);
 		}
