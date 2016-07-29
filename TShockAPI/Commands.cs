@@ -512,7 +512,7 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Sets the world's spawn point to your location."
 			});
-			add(new Command(Permissions.worldspawn, SetDungeon, "setdungeon")
+			add(new Command(Permissions.dungeonposition, SetDungeon, "setdungeon")
 			{
 				AllowServer = false,
 				HelpText = "Sets the dungeon's position to your location."

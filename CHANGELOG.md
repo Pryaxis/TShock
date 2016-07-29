@@ -4,6 +4,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
+
 ## TShock 4.3.17
 
 * Compatibility with Terraria 1.3.2.1
