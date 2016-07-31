@@ -30,6 +30,8 @@ using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
 using Terraria.ObjectData;
+using Terraria.DataStructures;
+using Terraria.GameContent.Tile_Entities;
 
 namespace TShockAPI
 {
@@ -1255,6 +1257,7 @@ namespace TShockAPI
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
 					{ PacketTypes.KillPortal, HandleKillPortal },
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
+					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -4134,6 +4137,42 @@ namespace TShockAPI
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlaceItemFrame(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var itemID = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var stack = args.Data.ReadInt16();
+			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				return true;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, x, y))
+			{
+				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, x, y))
+			{
+				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				return true;
+			}
+
+			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
+			{
+				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
 				return true;
 			}
 

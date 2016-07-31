@@ -974,8 +974,7 @@ namespace TShockAPI
 		/// <param name="red">The amount of red color to factor in. Max: 255.</param>
 		/// <param name="green">The amount of green color to factor in. Max: 255</param>
 		/// <param name="blue">The amount of blue color to factor in. Max: 255</param>
-		/// <param name="messageLength">The number of pixels before the message splits lines. Defaults to -1, which is the client's screen width.</param>
-		public virtual void SendMessage(string msg, byte red, byte green, byte blue, int messageLength = -1)
+		public virtual void SendMessage(string msg, byte red, byte green, byte blue)
 		{
 			if (msg.Contains("\n"))
 			{
@@ -986,7 +985,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, messageLength);
+			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, -1);
 		}
 
 		/// <summary>
@@ -997,8 +996,7 @@ namespace TShockAPI
 		/// <param name="green">The amount of green color to factor in. Max: 255.</param>
 		/// <param name="blue">The amount of blue color to factor in. Max: 255.</param>
 		/// <param name="ply">The player who receives the message.</param>
-		/// <param name="messageLength">The number of pixels before the message splits lines. Defaults to -1, which is the client's screen width.</param>
-		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply, int messageLength = -1)
+		public virtual void SendMessageFromPlayer(string msg, byte red, byte green, byte blue, int ply)
 		{
 			if (msg.Contains("\n"))
 			{
@@ -1009,7 +1007,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, messageLength);
+			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, -1);
 		}
 
 		/// <summary>
@@ -1246,7 +1244,7 @@ namespace TShockAPI
 			SendMessage(msg, color.R, color.G, color.B);
 		}
 
-		public override void SendMessage(string msg, byte red, byte green, byte blue, int messageLength = -1)
+		public override void SendMessage(string msg, byte red, byte green, byte blue)
 		{
 			this.CommandOutput.Add(msg);
 		}
