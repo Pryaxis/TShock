@@ -1255,6 +1255,7 @@ namespace TShockAPI
 					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
 					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.NpcTeleportPortal, HandleNpcTeleportPortal },
 					{ PacketTypes.KillPortal, HandleKillPortal },
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
@@ -4089,7 +4090,30 @@ namespace TShockAPI
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
 				Main.npc[npcID].active = true;
-				NetMessage.SendData(23, -1, -1, "", npcID);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcID);
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleNpcTeleportPortal(GetDataHandlerArgs args)
+		{
+			var npcIndex = args.Data.ReadByte();
+			var portalColorIndex = args.Data.ReadInt16();
+			var newPosition = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var velocity = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var projectile = Main.projectile.FirstOrDefault(p => p.position.X == newPosition.X && p.position.Y == newPosition.Y); // Check for projectiles at this location
+
+			if (projectile == null || !projectile.active)
+			{
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
+				return true;
+			}
+
+			if (projectile.type != ProjectileID.PortalGunGate)
+			{
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
 				return true;
 			}
 
@@ -4154,25 +4178,25 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
-				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
 			{
-				NetMessage.SendData(86, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
 				return true;
 			}
 

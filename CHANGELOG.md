@@ -4,7 +4,15 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
 * The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
+* Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
+* Fixed clients being able to remove other players' portals (@ProfessorXZ)
+* Fixed possible client crashes caused by invalid item netIDs (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing Tile Entities (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing items in Item Frames (@ProfessorXZ)
+* Fixed a bug involving Item Frames which allowed players to duplicate items (@ProfessorXZ)
+* Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
 
 ## TShock 4.3.17
 
