@@ -1069,7 +1069,7 @@ namespace TShockAPI
 
 						if (CheckIgnores(player))
 						{
-                            player.Disable(flags: flags);
+							player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
