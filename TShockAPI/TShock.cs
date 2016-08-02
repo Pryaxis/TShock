@@ -497,8 +497,7 @@ namespace TShockAPI
 
 			if (args.Chest != null)
 			{
-				if (Config.RegionProtectChests && !tsplr.HasPermission(Permissions.editregion) 
-					&& !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr) && Regions.InArea((int)args.Position.X, (int)args.Position.Y))
+				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr))
 				{
 					args.Handled = true;
 					return;
@@ -1741,8 +1740,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
+			if (!Regions.CanBuild(tileX, tileY, player))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
@@ -1809,8 +1807,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
+			if (!Regions.CanBuild(tileX, tileY, player))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
