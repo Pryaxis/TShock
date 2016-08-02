@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed players being able to bypass permission checks when placing items in Item Frames (@ProfessorXZ)
 * Fixed a bug involving Item Frames which allowed players to duplicate items (@ProfessorXZ)
 * Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
+* Fixed a bug where players would get teleported to their previous location after dismounting the Unicorn Mount (@ProfessorXZ)
 
 ## TShock 4.3.17
 
