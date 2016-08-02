@@ -317,6 +317,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
+				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
@@ -384,6 +385,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
+				ServerApi.Hooks.ItemForceIntoChest.Deregister(this, OnItemForceIntoChest);
 				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -467,6 +469,45 @@ namespace TShockAPI
 						Netplay.Clients[player.Index].PendingTermination = true;
 						args.Handled = true;
 					}
+				}
+			}
+		}
+
+		/// <summary>OnItemForceIntoChest - Internal hook fired when a player quick stacks items into a chest.</summary>
+		/// <param name="args">The <see cref="ForceItemIntoChestEventArgs"/> object.</param>
+		private void OnItemForceIntoChest(ForceItemIntoChestEventArgs args)
+		{
+			if (args.Handled)
+			{
+				return;
+			}
+
+			if (args.Player == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			TSPlayer tsplr = Players[args.Player.whoAmI];
+			if (tsplr == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Chest != null)
+			{
+				if (Config.RegionProtectChests && !tsplr.HasPermission(Permissions.editregion) 
+					&& !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr) && Regions.InArea((int)args.Position.X, (int)args.Position.Y))
+				{
+					args.Handled = true;
+					return;
+				}
+
+				if (CheckRangePermission(tsplr, (int)args.Position.X, (int)args.Position.Y))
+				{
+					args.Handled = true;
+					return;
 				}
 			}
 		}
