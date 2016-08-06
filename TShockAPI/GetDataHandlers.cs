@@ -2021,7 +2021,7 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.KillWall)
 				{
-					// If they aren't selecting an hammer, they could be hacking.
+					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
 
@@ -2144,10 +2144,10 @@ namespace TShockAPI
 
 				// Ignore rope placement range
 				if ((editData != TileID.Rope
-					|| editData != TileID.SilkRope
-					|| editData != TileID.VineRope
-					|| editData != TileID.WebRope
-					|| action != EditAction.PlaceTile)
+					&& editData != TileID.SilkRope
+					&& editData != TileID.VineRope
+					&& editData != TileID.WebRope
+					&& action == EditAction.PlaceTile)
 					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
