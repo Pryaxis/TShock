@@ -759,7 +759,7 @@ namespace TShockAPI.DB
 				return false;
 			}
 
-			return AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
+			return ply.HasPermission(Permissions.editregion) || AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
 		}
 
 		/// <summary>

@@ -5,6 +5,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming Changes
 
 * API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
+* API: Added ItemForceIntoChest hook (@WhiteXZ)
 * The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
 * Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
 * Fixed clients being able to remove other players' portals (@ProfessorXZ)
@@ -14,6 +15,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed a bug involving Item Frames which allowed players to duplicate items (@ProfessorXZ)
 * Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
 * Fixed a bug where players would get teleported to their previous location after dismounting the Unicorn Mount (@ProfessorXZ)
+* Players can no longer quick stack items into region protected chests (@ProfessorXZ)
 
 ## TShock 4.3.17
 
