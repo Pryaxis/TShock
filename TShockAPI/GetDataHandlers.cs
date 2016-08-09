@@ -2013,7 +2013,7 @@ namespace TShockAPI
 						return true;
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && (selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
+					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && ((args.TPlayer.mount.Type != 8 && selectedItem.pick == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2021,7 +2021,7 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.KillWall)
 				{
-					// If they aren't selecting an hammer, they could be hacking.
+					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
 
@@ -2144,10 +2144,10 @@ namespace TShockAPI
 
 				// Ignore rope placement range
 				if ((editData != TileID.Rope
-					|| editData != TileID.SilkRope
-					|| editData != TileID.VineRope
-					|| editData != TileID.WebRope
-					|| action != EditAction.PlaceTile)
+					&& editData != TileID.SilkRope
+					&& editData != TileID.VineRope
+					&& editData != TileID.WebRope
+					&& action == EditAction.PlaceTile)
 					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);

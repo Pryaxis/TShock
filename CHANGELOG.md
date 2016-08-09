@@ -16,6 +16,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
 * Fixed a bug where players would get teleported to their previous location after dismounting the Unicorn Mount (@ProfessorXZ)
 * Players can no longer quick stack items into region protected chests (@ProfessorXZ)
+* Rope placement is no longer blocked by range checks (@ProfessorXZ)
+* The Drill Containment Unit breaks blocks properly now (@ProfessorXZ)
 
 ## TShock 4.3.17
 
