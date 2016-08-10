@@ -1259,6 +1259,7 @@ namespace TShockAPI
 					{ PacketTypes.KillPortal, HandleKillPortal },
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
+					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -4203,11 +4204,35 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleSyncExtraValue(GetDataHandlerArgs args)
+		{
+			var npcIndex = args.Data.ReadInt16();
+			var extraValue = args.Data.ReadSingle();
+			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+
+			if (position.X < 0 || position.X >= Main.maxTilesX || position.Y < 0 || position.Y >= Main.maxTilesY)
+			{
+				return true;
+			}
+
+			if (!Main.expertMode)
+			{
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, (int)position.X, (int)position.Y))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		private static bool HandleToggleParty(GetDataHandlerArgs args)
 		{
 			if (args.Player != null && !args.Player.HasPermission(Permissions.toggleparty))
 			{
-				args.Player.SendErrorMessage("You do not have permission to start a party");
+				args.Player.SendErrorMessage("You do not have permission to start a party.");
 				return true;
 			}
 

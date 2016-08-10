@@ -198,8 +198,14 @@ namespace TShockAPI
 		/// </summary>
 		public int LoginAttempts { get; set; }
 
+		/// <summary>
+		/// Unused.
+		/// </summary>
 		public Vector2 TeleportCoords = new Vector2(-1, -1);
 
+		/// <summary>
+		/// The player's last known position from PlayerUpdate packet.
+		/// </summary>
 		public Vector2 LastNetPosition = Vector2.Zero;
 
 		/// <summary>
@@ -247,6 +253,9 @@ namespace TShockAPI
 		/// </summary>
 		public bool HasBeenNaggedAboutLoggingIn;
 
+		/// <summary>
+		/// Whether other players can teleport to the player.
+		/// </summary>
 		public bool TPAllow = true;
 
 		/// <summary>
@@ -435,7 +444,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Saves the player's inventory to SSI
+		/// Saves the player's inventory to SSC
 		/// </summary>
 		/// <returns>bool - True/false if it saved successfully</returns>
 		public bool SaveServerCharacter()
@@ -534,7 +543,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gets the player's X tile coordinate.
+		/// Player X coordinate divided by 16. Supposed X world coordinate.
 		/// </summary>
 		public int TileX
 		{
@@ -542,13 +551,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gets the player's Y tile coordinate.
+		/// Player Y cooridnate divided by 16. Supposed Y world coordinate.
 		/// </summary>
 		public int TileY
 		{
 			get { return (int) (Y/16); }
 		}
 
+		/// <summary>
+		/// Unused.
+		/// </summary>
 		public bool TpLock;
 
 		/// <summary>
@@ -630,6 +642,10 @@ namespace TShockAPI
 			return null;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TSPlayer"/> class.
+		/// </summary>
+		/// <param name="index">The player's index in the.</param>
 		public TSPlayer(int index)
 		{
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
@@ -640,6 +656,10 @@ namespace TShockAPI
 			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TSPlayer"/> class.
+		/// </summary>
+		/// <param name="playerName">The player's name.</param>
 		protected TSPlayer(String playerName)
 		{
 			TilesDestroyed = new Dictionary<Vector2, Tile>();
@@ -686,7 +706,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Teleports a player to the given coordinates in the world.
+		/// Teleports the player to the given coordinates in the world.
 		/// </summary>
 		/// <param name="x">The X coordinate.</param>
 		/// <param name="y">The Y coordinate.</param>
@@ -989,7 +1009,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sends a message to a player with the specified RGB color.
+		/// Sends a message to the player with the specified RGB color.
 		/// </summary>
 		/// <param name="msg">The message.</param>
 		/// <param name="red">The amount of red color to factor in. Max: 255.</param>
@@ -1116,6 +1136,10 @@ namespace TShockAPI
 				TShock.Log.Debug(frame.GetMethod().DeclaringType.Name + " called Disable().");
 		}
 
+		/// <summary>
+		/// Annoys the player for a specified amount of time.
+		/// </summary>
+		/// <param name="time">The</param>
 		public virtual void Whoopie(object time)
 		{
 			var time2 = (int) time;
