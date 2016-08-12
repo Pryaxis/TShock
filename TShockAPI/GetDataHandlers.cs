@@ -362,7 +362,7 @@ namespace TShockAPI
 			public int TileY { get; set; }
 		}
 		/// <summary>
-		/// TileKill - When a tile is removed fromt he world
+		/// TileKill - When a tile is removed from the world
 		/// </summary>
 		public static HandlerList<TileKillEventArgs> TileKill;
 
@@ -1260,6 +1260,7 @@ namespace TShockAPI
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
 					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
+					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
 					{ PacketTypes.ToggleParty, HandleToggleParty }
 				};
 		}
@@ -4226,6 +4227,12 @@ namespace TShockAPI
 			}
 
 			return false;
+		}
+
+		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
+		{
+			// Since this packet is never actually sent to us, every attempt at sending it can be considered as a liquid exploit attempt
+			return true;
 		}
 
 		private static bool HandleToggleParty(GetDataHandlerArgs args)

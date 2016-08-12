@@ -18,6 +18,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Players can no longer quick stack items into region protected chests (@ProfessorXZ)
 * Rope placement is no longer blocked by range checks (@ProfessorXZ)
 * The Drill Containment Unit breaks blocks properly now (@ProfessorXZ)
+* Fixed Expert mode coin duplication (@ProfessorXZ)
+* Players are no longer able to place liquids using LoadNetModule packet (@ProfessorXZ)
 
 ## TShock 4.3.17
 
