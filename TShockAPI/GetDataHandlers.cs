@@ -1907,6 +1907,12 @@ namespace TShockAPI
 
 				var style = args.Data.ReadInt8();
 
+				if (editData < 0)
+				{
+					args.Player.SendTileSquare(tileX, tileY, 4);
+					return true;
+				}
+
 				if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 					return true;
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
