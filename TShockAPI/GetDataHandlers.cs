@@ -3322,7 +3322,8 @@ namespace TShockAPI
 			// player is attempting to crash clients
 			if (type < -48 || type >= Main.maxItemTypes)
 			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				// Causes item duplications. Will be re added later if necessary
+				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 			}
 
@@ -3336,7 +3337,8 @@ namespace TShockAPI
 			{
 				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
 				{
-					args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
 					return true;
 				}
 
