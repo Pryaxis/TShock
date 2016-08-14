@@ -2030,7 +2030,6 @@ namespace TShockAPI
 					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
-
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
 					}
@@ -2149,13 +2148,30 @@ namespace TShockAPI
 				}
 
 				// Ignore rope placement range
-				if ((editData != TileID.Rope
-					&& editData != TileID.SilkRope
-					&& editData != TileID.VineRope
-					&& editData != TileID.WebRope
-					&& action == EditAction.PlaceTile)
-					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
+				//if ((editData != TileID.Rope
+				//	&& editData != TileID.SilkRope
+				//	&& editData != TileID.VineRope
+				//	&& editData != TileID.WebRope
+				//	&& action == EditAction.PlaceTile)
+				//	&& TShock.CheckRangePermission(args.Player, tileX, tileY))
+				//{
+				//	args.Player.SendTileSquare(tileX, tileY, 4);
+				//	return true;
+				//}
+				if (TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
+					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
+					{
+						args.Player.SendTileSquare(tileX, tileY, 4);
+						return false;
+					}
+
+					if ((action == EditAction.KillTile || action == EditAction.KillWall) && ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+					{
+						args.Player.SendTileSquare(tileX, tileY, 4);
+						return false;
+					}
+
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
