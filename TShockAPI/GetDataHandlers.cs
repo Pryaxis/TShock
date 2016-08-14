@@ -1233,7 +1233,7 @@ namespace TShockAPI
 					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
 					{ PacketTypes.ItemDrop, HandleItemDrop },
-					{ PacketTypes.UpdateItemDrop, HandleUpdateItemDrop },
+					{ PacketTypes.UpdateItemDrop, HandleItemDrop },
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
@@ -3375,79 +3375,6 @@ namespace TShockAPI
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleUpdateItemDrop(GetDataHandlerArgs args)
-		{
-			var itemID = args.Data.ReadInt16();
-			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var velocity = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var stacks = args.Data.ReadInt16();
-			var prefix = args.Data.ReadInt8();
-			var noDelay = args.Data.ReadInt8() == 1;
-			var itemNetID = args.Data.ReadInt16();
-
-			if (OnItemDrop(itemID, position, velocity, stacks, prefix, noDelay, itemNetID))
-				return true;
-
-			// Invalid Net IDs can cause client crashes
-			if (itemNetID < -48 || itemNetID >= Main.maxItemTypes)
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-			}
-
-			if (prefix > Item.maxPrefixes) // Make sure the prefix is a legit value
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-			}
-
-			if (itemNetID == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check)
-			{
-				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[itemID].position.X / 16f), (int)(Main.item[itemID].position.Y / 16f)))
-				{
-					args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-					return true;
-				}
-
-				return false;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, (int)(position.X / 16f), (int)(position.Y / 16f)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-			}
-
-			if (Main.item[itemID].active && Main.item[itemID].netID != itemNetID) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-			}
-
-			Item item = new Item();
-			item.netDefaults(itemNetID);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-			}
-			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
-			{
-				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name);
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
-				return true;
-
-			}
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", itemID);
 				return true;
 			}
 
