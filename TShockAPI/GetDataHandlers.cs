@@ -1741,6 +1741,10 @@ namespace TShockAPI
 							continue;
 						}
 
+						// Junction Box
+						if (tile.type == TileID.WirePipe)
+							return false;
+
 						// Orientable tiles
 						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
 						{
