@@ -6,6 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 * API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
 * API: Added ItemForceIntoChest hook (@WhiteXZ)
+* API: Included the player's registration date in REST's players/read endpoints (@ProfessorXZ)
 * The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
 * Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
 * Fixed clients being able to remove other players' portals (@ProfessorXZ)
