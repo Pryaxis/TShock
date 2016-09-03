@@ -2030,7 +2030,6 @@ namespace TShockAPI
 					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
-
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						return true;
 					}
@@ -2044,6 +2043,13 @@ namespace TShockAPI
 					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
 						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
+					{
+						args.Player.SendTileSquare(tileX, tileY, 4);
+						return true;
+					}
+
+					// If they aren't selecting the item which creates the correct tile or wall, they're hacking.
+					if (editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2148,14 +2154,18 @@ namespace TShockAPI
 					return true;
 				}
 
-				// Ignore rope placement range
-				if ((editData != TileID.Rope
-					&& editData != TileID.SilkRope
-					&& editData != TileID.VineRope
-					&& editData != TileID.WebRope
-					&& action == EditAction.PlaceTile)
-					&& TShock.CheckRangePermission(args.Player, tileX, tileY))
+				if (TShock.CheckRangePermission(args.Player, tileX, tileY))
 				{
+					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
+					{
+						return false;
+					}
+
+					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+					{
+						return false;
+					}
+
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					return true;
 				}
@@ -4013,7 +4023,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a ToggleGemLock event
 		/// </summary>
-		public class GemLockToggleEventArgs : HandledEventArgs 
+		public class GemLockToggleEventArgs : HandledEventArgs
 		{
 			/// <summary>
 			/// X Location
@@ -4034,12 +4044,12 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<GemLockToggleEventArgs> GemLockToggle;
 
-		private static bool OnGemLockToggle(Int32 x, Int32 y, bool on) 
+		private static bool OnGemLockToggle(Int32 x, Int32 y, bool on)
 		{
 			if (GemLockToggle == null)
 				return false;
 
-			var args = new GemLockToggleEventArgs 
+			var args = new GemLockToggleEventArgs
 			{
 				X = x,
 				Y = y,
@@ -4055,12 +4065,12 @@ namespace TShockAPI
 			var y = (int)args.Data.ReadInt16();
 			var on = args.Data.ReadBoolean();
 
-			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY) 
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
 			{
 				return true;
 			}
 
-			if (OnGemLockToggle(x, y, on)) 
+			if (OnGemLockToggle(x, y, on))
 			{
 				return true;
 			}
@@ -4070,17 +4080,17 @@ namespace TShockAPI
 				return false;
 			}
 
-			if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification)) 
+			if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
 			{
 				return true;
 			}
 
-			if (TShock.CheckIgnores(args.Player)) 
+			if (TShock.CheckIgnores(args.Player))
 			{
 				return true;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, x, y)) 
+			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
 				return true;
 			}

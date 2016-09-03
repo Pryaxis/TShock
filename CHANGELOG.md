@@ -21,6 +21,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * The Drill Containment Unit breaks blocks properly now (@ProfessorXZ)
 * Fixed Expert mode coin duplication (@ProfessorXZ)
 * Players are no longer able to place liquids using LoadNetModule packet (@ProfessorXZ)
+* Explosives are no longer blocked by range checks (@ProfessorXZ)
+* Players can no longer bypass tile checks by using the Tile packet (@ProfessorXZ)
 * Fixed a bug where players couldn't hammer a Junction Box without "allowclientsideworldedit" permission (@Patrikkk)
 
 ## TShock 4.3.17
