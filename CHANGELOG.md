@@ -24,6 +24,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Explosives are no longer blocked by range checks (@ProfessorXZ)
 * Players can no longer bypass tile checks by using the Tile packet (@ProfessorXZ)
 * Fixed a bug where players couldn't hammer a Junction Box without "allowclientsideworldedit" permission (@Patrikkk)
+* Fixed the client's UI not being draw when setting wind speed to abnormal values (@ProfessorXZ)
 
 ## TShock 4.3.17
 

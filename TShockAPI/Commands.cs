@@ -3917,7 +3917,7 @@ namespace TShockAPI
 			}
 
 			int speed;
-			if (!int.TryParse(args.Parameters[0], out speed))
+			if (!int.TryParse(args.Parameters[0], out speed) || speed * 100 < 0)
 			{
 				args.Player.SendErrorMessage("Invalid wind speed!");
 				return;
