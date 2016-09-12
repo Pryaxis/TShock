@@ -2049,9 +2049,13 @@ namespace TShockAPI
 					}
 
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if (editData != TileID.MagicalIceBlock
-						&& editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
+					if (editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
+						if (selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock)
+						{
+							return false;
+						}
+
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
