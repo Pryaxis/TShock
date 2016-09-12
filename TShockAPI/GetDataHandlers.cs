@@ -2048,21 +2048,14 @@ namespace TShockAPI
 						return true;
 					}
 
-					// If they aren't selecting the item which creates the correct tile or wall, they're hacking.
+					// If they aren't selecting the item which creates the tile or wall, they're hacking.
 					if (editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
 					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
+						if (selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock)
+						{
+							return false;
+						}
 
-					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if ((editData != TileID.MagicalIceBlock
-						&& editData != TileID.Rope
-						&& editData != TileID.SilkRope
-						&& editData != TileID.VineRope
-						&& editData != TileID.WebRope)
-						&& editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
-					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
 					}
