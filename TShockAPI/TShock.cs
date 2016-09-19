@@ -45,7 +45,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(1, 23)]
+	[ApiVersion(1, 24)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
@@ -317,6 +317,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
+				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
@@ -384,6 +385,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
+				ServerApi.Hooks.ItemForceIntoChest.Deregister(this, OnItemForceIntoChest);
 				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -467,6 +469,44 @@ namespace TShockAPI
 						Netplay.Clients[player.Index].PendingTermination = true;
 						args.Handled = true;
 					}
+				}
+			}
+		}
+
+		/// <summary>OnItemForceIntoChest - Internal hook fired when a player quick stacks items into a chest.</summary>
+		/// <param name="args">The <see cref="ForceItemIntoChestEventArgs"/> object.</param>
+		private void OnItemForceIntoChest(ForceItemIntoChestEventArgs args)
+		{
+			if (args.Handled)
+			{
+				return;
+			}
+
+			if (args.Player == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			TSPlayer tsplr = Players[args.Player.whoAmI];
+			if (tsplr == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Chest != null)
+			{
+				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr))
+				{
+					args.Handled = true;
+					return;
+				}
+
+				if (CheckRangePermission(tsplr, (int)args.Position.X, (int)args.Position.Y))
+				{
+					args.Handled = true;
+					return;
 				}
 			}
 		}
@@ -1080,7 +1120,7 @@ namespace TShockAPI
 
 						if (CheckIgnores(player))
 						{
-                            player.Disable(flags: flags);
+							player.Disable(flags: flags);
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
@@ -1711,8 +1751,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
+			if (!Regions.CanBuild(tileX, tileY, player))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{
@@ -1779,8 +1818,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!player.HasPermission(Permissions.editregion) && !Regions.CanBuild(tileX, tileY, player) &&
-				Regions.InArea(tileX, tileY))
+			if (!Regions.CanBuild(tileX, tileY, player))
 			{
 				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
 				{

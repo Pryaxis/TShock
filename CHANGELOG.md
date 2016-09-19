@@ -4,6 +4,29 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
+* API: Added ItemForceIntoChest hook (@WhiteXZ)
+* API: Included the player's registration date in REST's players/read endpoints (@ProfessorXZ)
+* The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
+* Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
+* Fixed clients being able to remove other players' portals (@ProfessorXZ)
+* Fixed possible client crashes caused by invalid item netIDs (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing Tile Entities (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing items in Item Frames (@ProfessorXZ)
+* Fixed a bug involving Item Frames which allowed players to duplicate items (@ProfessorXZ)
+* Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
+* Fixed a bug where players would get teleported to their previous location after dismounting the Unicorn Mount (@ProfessorXZ)
+* Players can no longer quick stack items into region protected chests (@ProfessorXZ)
+* Rope placement is no longer blocked by range checks (@ProfessorXZ)
+* The Drill Containment Unit breaks blocks properly now (@ProfessorXZ)
+* Fixed item duplications caused by range checks and invalid netIDs (@ProfessorXZ)
+* Fixed Expert mode coin duplication (@ProfessorXZ)
+* Players are no longer able to place liquids using LoadNetModule packet (@ProfessorXZ)
+* Explosives are no longer blocked by range checks (@ProfessorXZ)
+* Players can no longer bypass tile checks by using the Tile packet (@ProfessorXZ)
+* Fixed a bug where players couldn't hammer a Junction Box without "allowclientsideworldedit" permission (@Patrikkk)
+* Fixed the client's UI not being draw when setting wind speed to abnormal values (@ProfessorXZ)
+
 ## TShock 4.3.17
 
 * Compatibility with Terraria 1.3.2.1
