@@ -326,6 +326,9 @@ namespace TShockAPI
 		[Description("User can paint tiles.")]
 		public static readonly string canpaint = "tshock.world.paint";
 
+		[Description("User can turn on or off sandstorms.")]
+		public static readonly string sandstorm = "tshock.world.sandstorm";
+
 		[Description("User can turn on or off the rain.")]
 		public static readonly string rain = "tshock.world.rain";
 

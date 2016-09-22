@@ -499,6 +499,10 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles spawn protection."
 			});
+			add(new Command(Permissions.sandstorm, Sandstorm, "sandstorm")
+			{
+				HelpText = "Toggles sandstorms."
+			});
 			add(new Command(Permissions.rain, Rain, "rain")
 			{
 				HelpText = "Toggles the rain."
@@ -3812,6 +3816,30 @@ namespace TShockAPI
 						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
 					}
 					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
+					break;
+			}
+		}
+
+		private static void Sandstorm(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
+				return;
+			}
+
+			switch (args.Parameters[0].ToLowerInvariant())
+			{
+				case "start":
+					Terraria.GameContent.Events.Sandstorm.StartSandstorm();
+					TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
+					break;
+				case "stop":
+					Terraria.GameContent.Events.Sandstorm.StopSandstorm();
+					TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
+					break;
+				default:
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
 					break;
 			}
 		}
