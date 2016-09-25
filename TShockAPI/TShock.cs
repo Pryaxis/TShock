@@ -503,7 +503,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (CheckRangePermission(tsplr, (int)args.Position.X, (int)args.Position.Y))
+				if (CheckRangePermission(tsplr, args.Chest.x, args.Chest.y))
 				{
 					args.Handled = true;
 					return;
