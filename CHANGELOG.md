@@ -4,6 +4,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.18
+
+* Compatibility with Terraria 1.3.3.2
+* API: Version tick 1.2.4
 * API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
 * API: Added ItemForceIntoChest hook (@WhiteXZ)
 * API: Included the player's registration date in REST's players/read endpoints (@ProfessorXZ)
