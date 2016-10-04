@@ -4,7 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
-## TShock 4.3.18
+## TShock 4.3.19
 * Compatibility with Terraria 1.3.3.3 (@Simon311)
 * API: Version tick 1.25
 * API: Resolved some issues with the ItemForceIntoChest hook (@WhiteXZ, @Patrikkk)
