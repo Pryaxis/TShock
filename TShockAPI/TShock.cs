@@ -497,7 +497,7 @@ namespace TShockAPI
 
 			if (args.Chest != null)
 			{
-				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr))
+				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.WorldPosition.X, (int)args.WorldPosition.Y, tsplr))
 				{
 					args.Handled = true;
 					return;
