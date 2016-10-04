@@ -45,7 +45,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(1, 24)]
+	[ApiVersion(1, 25)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
@@ -497,7 +497,7 @@ namespace TShockAPI
 
 			if (args.Chest != null)
 			{
-				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.Position.X, (int)args.Position.Y, tsplr))
+				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.WorldPosition.X, (int)args.WorldPosition.Y, tsplr))
 				{
 					args.Handled = true;
 					return;
