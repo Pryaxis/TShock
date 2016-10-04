@@ -2,7 +2,6 @@ language: csharp
 solution: ./TShockAPI/TShockAPI.csproj
 install:
   - nuget restore
-script: python ./scripts/create_release.py
 notifications:
   slack:
     secure: O4Nibe2fdaUa2ZxuETUg6WEoQKvNM2CotnfaIVgm3fjfe61dfE1P+EgTpbwDG8646jSmpTqMDw8Z6I/WJwGTlXV/ZQsbwu63Cps4MgOTvPHZ0Lsye5azySlJZs1iI4ItYSj2czXfcnJ+qAl1SOOkXJrjB5uyTMWtDpCrSCFB3MA=
