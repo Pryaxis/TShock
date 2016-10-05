@@ -997,7 +997,7 @@ namespace TShockAPI
 		[Noun("group", true, "The name of the group to modify.", typeof(String))]
 		[Noun("parent", false, "The name of the new parent for this group.", typeof(String))]
 		[Noun("chatcolor", false, "The new chat color r,g,b.", typeof(String))]
-		[Noun("permisisons", false, "The new comma seperated list of permissions.", typeof(String))]
+		[Noun("permissions", false, "The new comma seperated list of permissions.", typeof(String))]
 		[Token]
 		private object GroupUpdate(RestRequestArgs args)
 		{
