@@ -1,3 +1,5 @@
+_When in doubt, make an issue. If any of these instructions are unclear, make an issue to discuss your issue or suggestion._
+
 ### Issue Guidelines
 Please follow these simple requirements before posting a bug report:
 
@@ -20,11 +22,21 @@ Need help? Drop by Slack and we'll be happy to explain it with more words, step 
 
 ### TShock Additions
 
-If something is better suited to be a plugin for TShock, rather than a TShock core feature, it should not be added!
+If something is better suited to be a plugin for TShock, rather than a TShock core feature, it should not be added! Project scope is at times questionable, though, so create an issue on Github for discussion first. If an issue is completely outside of the scope of TShock, it will be made clear in that issue what it is.
+
+_If you are confused, make a suggestion. We will determine scope and relevance for you._
 
 ### Pull Request Dev Guidelines
 
-These guidelines are for all contributors. Please join our Slack instance and ask about your idea first, if you're implementing a new feature, system, or changing an existing implementation. Pull requests that change large feature sets or swathes of code will be dissected for quality and purpose prior to approval, and requests that conflict with a team developer's work may be declined if the project is already being worked on internally, but not released. In addition, issues assigned to Nyx developers that are recent and fresh should be considered a no-go zone, while that developer works on their solution outside the scope of Github.
+These guidelines are for all contributors.
+
+* Create an issue first to suggest an improvement or feature addition to TShock.
+* Active developers will then give a go/no go for implementation. This is scope related: if an issue is within the scope of TShock, it will be tagged 'pr-wanted.'
+* After 'pr-wanted' has been added, an issue should be considered workable in a pull request fashion.
+* If you, as a developer, want to claim an issue for a PR, as soon as possible start work and note that in both the original issue and the new PR. The 'pr-wanted' tag will remain but the active PR will become the center for discussion for your implementation.
+* If a TShock core developer takes an issue, they'll be assigned to the issue and pull the pr-wanted tag off. TShock core developers should not pull a issue out of 'pr-wanted' unless the PR is going nowhere or needs massive rework to be implemented correctly. If your issue was taken by a TShock developer and you were actively developing it in a PR, you should _make it clear as soon as possible that a process error has been made_ so that the your development resources and our development resources aren't wasted.
+
+_The pr-wanted tag indicates an issue should be implemented but no developers are currently available to work an issue._
 
 Even if you have write access to the repository, follow [Github flow](https://guides.github.com/introduction/flow/) when sending commits. Don't send commits directly to either ```master``` or ```general-devel``` unless those commits modify either the deploy scripts or non-code components. If it compiles, follow Github Flow.
 
