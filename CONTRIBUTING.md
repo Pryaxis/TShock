@@ -13,7 +13,7 @@ Please follow these simple requirements before posting a bug report:
 Note: This includes the API by default. If you need only the API, you need to cd into that folder and do the following with the .sln file for the API. For those new to C#, the .sln and .csproj files contain the necessary definitions to do a complete source build using Microsoft or Mono build tools.
 
 - Checkout the source.
-- Initialize the submodules: ```git submodule init```
+- Initialize the submodules: ```git submodule update --init```
 - Open the source in your favorite text editor that supports .NET building and press the build button OR
 - Run ```msbuild TShock.sln``` in the root of the cloned folder on Windows in a 'Developer Command Prompt' OR
 - Run ```xbuild TShock.sln``` in the root of the cloned folder on Unix.
