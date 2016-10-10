@@ -993,7 +993,8 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Account " + user.Name + " has already been registered.");
+					args.Player.SendErrorMessage("Sorry, " + user.Name + " was already taken by another person.");
+					args.Player.SendErrorMessage("Please try a different username.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
 				}
 			}
