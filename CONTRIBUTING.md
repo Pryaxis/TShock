@@ -36,9 +36,9 @@ These guidelines are for all contributors.
 * Active developers will then give a go/no go for implementation. This is scope related: if an issue is within the scope of TShock, it will be tagged 'pr-wanted.'
 * After 'pr-wanted' has been added, an issue should be considered workable in a pull request fashion.
 * If you, as a developer, want to claim an issue for a PR, as soon as possible start work and note that in both the original issue and the new PR. The 'pr-wanted' tag will remain but the active PR will become the center for discussion for your implementation.
-* If a TShock core developer takes an issue, they'll be assigned to the issue and pull the pr-wanted tag off. TShock core developers should not pull a issue out of 'pr-wanted' unless the PR is going nowhere or needs massive rework to be implemented correctly. If your issue was taken by a TShock developer and you were actively developing it in a PR, you should _make it clear as soon as possible that a process error has been made_ so that the your development resources and our development resources aren't wasted.
+* If a TShock core developer takes an issue, they'll be assigned to the issue. If your issue was taken by a TShock developer and you were actively developing it in a PR, you should _make it clear as soon as possible that a process error has been made_ so that the your development resources and our development resources aren't wasted.
 
-_The pr-wanted tag indicates an issue should be implemented but no developers are currently available to work an issue._
+_The pr-wanted tag indicates an issue should be implemented. If an issue has a developer assigned, it indicates that they're working on it. When in doubt, ask where an issue is before starting work (so you don't waste time)!_
 
 Even if you have write access to the repository, follow [Github flow](https://guides.github.com/introduction/flow/) when sending commits. Don't send commits directly to either ```master``` or ```general-devel``` unless those commits modify either the deploy scripts or non-code components. If it compiles, follow Github Flow.
 
