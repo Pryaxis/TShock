@@ -1033,8 +1033,19 @@ namespace TShockAPI
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							Item item = player.TPlayer.inventory[player.TPlayer.selectedItem];
+							string s;
+							ItemBan ban = TShock.Itembans.GetItemBanByName(item.name);
+							if (ban.AllowedGroups.Count == 0)
+								s = String.Format("You are holding a banned item: {0}.", item.name);
+							else
+							{
+								Group group = TShock.Groups.GetGroupByName(ban.AllowedGroups[0]);
+								s = String.Format("You must be at least {0} to use {1}.", group.Name, item.name);
+							}
+							player.Disable(String.Format("holding banned item: {0}", item.name), flags);
+							player.SendErrorMessage(s);
+							break;
 						}
 					}
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
@@ -1113,8 +1124,18 @@ namespace TShockAPI
 						}
 						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							Item item = player.TPlayer.inventory[player.TPlayer.selectedItem];
+							string s;
+							ItemBan ban = TShock.Itembans.GetItemBanByName(item.name);
+							if (ban.AllowedGroups.Count == 0)
+								s = String.Format("You are holding a banned item: {0}.", item.name);
+							else
+							{
+								Group group = TShock.Groups.GetGroupByName(ban.AllowedGroups[0]);
+								s = String.Format("You must be at least {0} to use {1}.", group.Name, item.name);
+							}
+							player.Disable(String.Format("holding banned item: {0}", item.name), flags);
+							player.SendErrorMessage(s);
 						}
 					}
 
@@ -1154,7 +1175,7 @@ namespace TShockAPI
 		{
 			if (args.Handled)
 				return;
-			
+
 			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
 				|| TileID.Sets.Crimson[args.Type]))
 			{
