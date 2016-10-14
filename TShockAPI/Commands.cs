@@ -208,7 +208,7 @@ namespace TShockAPI
 				ChatCommands.Add(cmd);
 			};
 
-			add(new Command(AuthToken, "auth", "auth-verify")
+			add(new Command(AuthToken, "auth")
 			{
 				AllowServer = false,
 				HelpText = "Used to authenticate as superadmin when first setting up TShock."
