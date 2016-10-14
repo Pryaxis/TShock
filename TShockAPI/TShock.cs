@@ -789,36 +789,43 @@ namespace TShockAPI
 		private void OnPostInit(EventArgs args)
 		{
 			SetConsoleTitle(false);
-			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
+
+			// Disable the auth system if "auth.lck" is present or a superadmin exists
+			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || Users.GetUsers().Exists(u => u.Group == new SuperAdminGroup().Name))
+			{
+				AuthToken = 0;
+
+				if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+				{
+					Log.ConsoleInfo("A superadmin account has been detected in the user database, but authcode.txt is still present.");
+					Log.ConsoleInfo("TShock will now disable the auth system and remove authcode.txt as it is no longer needed.");
+					File.Delete(Path.Combine(SavePath, "authcode.txt"));
+				}
+
+				if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
+				{
+					// This avoids unnecessary database work, which can get ridiculously high on old servers as all users need to be fetched
+					File.Create(Path.Combine(SavePath, "auth.lck"));
+				}
+			}
+			else if (!File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int)DateTime.Now.ToBinary());
 				AuthToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
 				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
-				Console.ForegroundColor = ConsoleColor.Gray;
-				FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
-				using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
-				{
-					tw.WriteLine(AuthToken);
-				}
-			}
-			else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
-			{
-				using (var tr = new StreamReader(Path.Combine(SavePath, "authcode.txt")))
-				{
-					AuthToken = Convert.ToInt32(tr.ReadLine());
-				}
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine(
-					"TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
-				Console.ForegroundColor = ConsoleColor.Gray;
+				Console.ResetColor();
+				File.WriteAllText(Path.Combine(SavePath, "authcode.txt"), AuthToken.ToString());
 			}
 			else
 			{
-				AuthToken = 0;
+				AuthToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "authcode.txt")));
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.ResetColor();
 			}
 
 			Regions.Reload();
