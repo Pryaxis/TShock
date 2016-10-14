@@ -4618,10 +4618,15 @@ namespace TShockAPI
 		{
 			if (TShock.AuthToken == 0)
 			{
-				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
-				TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
-				TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
-				return;
+				if (args.Player.Group.Name == new SuperAdminGroup().Name)
+					args.Player.SendInfoMessage("The auth system is already disabled.");
+				else
+				{
+					args.Player.SendWarningMessage("The auth system is disabled. This incident has been logged.");
+					TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
+					TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
+					return;
+				}
 			}
 
 			// If the user account is already a superadmin (permanent), disable the system
