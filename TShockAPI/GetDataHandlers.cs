@@ -1741,6 +1741,14 @@ namespace TShockAPI
 							continue;
 						}
 
+						if (((Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
+							|| (Main.tile[realx, realy + 1].type == TileID.HallowedGrass && (newtile.Type == TileID.HallowedPlants || newtile.Type == TileID.HallowedPlants2))
+							|| (Main.tile[realx, realy + 1].type == TileID.JungleGrass && newtile.Type == TileID.JunglePlants2))
+							&& size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
+						{
+							return false;
+						}
+
 						// Junction Box
 						if (tile.type == TileID.WirePipe)
 							return false;
