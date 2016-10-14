@@ -3,6 +3,8 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
+* Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy)
+* Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy)
 
 ## TShock 4.3.19
 * Compatibility with Terraria 1.3.3.3 (@Simon311)
