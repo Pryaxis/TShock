@@ -8,4 +8,4 @@ notifications:
     secure: O4Nibe2fdaUa2ZxuETUg6WEoQKvNM2CotnfaIVgm3fjfe61dfE1P+EgTpbwDG8646jSmpTqMDw8Z6I/WJwGTlXV/ZQsbwu63Cps4MgOTvPHZ0Lsye5azySlJZs1iI4ItYSj2czXfcnJ+qAl1SOOkXJrjB5uyTMWtDpCrSCFB3MA=
 before_install:
 - openssl aes-256-cbc -K $encrypted_1d7cd15ffdb4_key -iv $encrypted_1d7cd15ffdb4_iv
-  -in ssh_private_key.enc -out ssh_private_key -d
+  -in ./scripts/ssh_private_key.enc -out ./scripts/ssh_private_key -d
