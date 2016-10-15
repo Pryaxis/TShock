@@ -109,11 +109,8 @@ def upload_artifacts():
     os.chdir(cur_wd)
     shutil.copy(os.path.join(release_dir, 'tshock_release.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
     shutil.copy(os.path.join(release_dir, 'tshock_debug.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
-    target = open('./id_rsa', 'w')
-    target.write(os.environ.get('SECRET_SSH_KEY', 'nokey'))
-    target.close()
-    os.chmod('./id_rsa', 0600)
-    upload_process = subprocess.Popen(['scp', '-i', './id_rsa', '-r', os.environ.get('TRAVIS_BRANCH', 'test-branch'), 'tshock-travis@arc.shanked.me:/usr/share/nginx/tshock-travis/'])
+    os.chmod('./scripts/ssh_private_key', 0600)
+    upload_process = subprocess.Popen(['scp', '-i', './scripts/ssh_private_key', '-r', os.environ.get('TRAVIS_BRANCH', 'test-branch'), 'tshock-travis@arc.shanked.me:/usr/share/nginx/tshock-travis/'])
     upload_process.wait()
 
 def update_terraria_source():
