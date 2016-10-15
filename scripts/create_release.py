@@ -110,6 +110,8 @@ def upload_artifacts():
     shutil.copy(os.path.join(release_dir, 'tshock_release.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
     shutil.copy(os.path.join(release_dir, 'tshock_debug.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
     os.chmod('./scripts/ssh_private_key', 0600)
+    decrypt_process = subprocess.Popen(['openssl', 'aes-256-cbc', '-K', os.environ.get('encrypted_1d7cd15ffdb4_key'), '-iv', os.environ.get('encrypted_1d7cd15ffdb4_iv'), '-in', './scripts/ssh_private_key.enc', '-out', './scripts/ssh_private_key', '-d'])
+    decrypt_process.wait()
     upload_process = subprocess.Popen(['scp', '-oStrictHostKeyChecking=no', '-i', './scripts/ssh_private_key', '-r', os.environ.get('TRAVIS_BRANCH', 'test-branch'), 'tshock-travis@arc.shanked.me:/usr/share/nginx/tshock-travis/'])
     upload_process.wait()
 
