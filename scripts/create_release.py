@@ -105,8 +105,8 @@ def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'update'])
 
 def build_software():
-  release_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
-  debug_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
+  release_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
+  debug_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
   release_proc.wait()
   debug_proc.wait()
   if (release_proc.returncode != 0):
