@@ -92,13 +92,29 @@ def package_debug():
 def delete_files():
   os.chdir(release_dir)
   os.remove(mysql_bin_name)
-  os.remove(sqlite_bin_name)
-  os.remove(sqlite_dep)
+  # os.remove(sqlite_bin_name)
+  # os.remove(sqlite_dep)
   os.remove(json_bin_name)
   os.remove(bcrypt_bin_name)
   os.remove(http_bin_name)
   os.remove(geoip_db_name)
   os.chdir(cur_wd)
+
+def upload_artifacts():
+  if os.environ.get('TRAVIS_PULL_REQUEST', 'false') == 'false':
+    os.chdir(cur_wd)
+    os.mkdir(os.environ.get('TRAVIS_BRANCH', 'test-branch'))
+    os.chdir(os.environ.get('TRAVIS_BRANCH', 'test-branch'))
+    os.mkdir(os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407'))
+    os.chdir(cur_wd)
+    shutil.copy(os.path.join(release_dir, 'tshock_release.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
+    shutil.copy(os.path.join(release_dir, 'tshock_debug.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
+    target = open('./id_rsa', 'w')
+    target.write(os.environ.get('SECRET_SSH_KEY', 'nokey'))
+    target.close()
+    os.chmod('./id_rsa', 0600)
+    upload_process = subprocess.Popen(['scp', '-i', './id_rsa', '-r', os.environ.get('TRAVIS_BRANCH', 'test-branch'), 'tshock-travis@arc.shanked.me:/usr/share/nginx/tshock-travis/'])
+    upload_process.wait()
 
 def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'init'])
@@ -122,3 +138,4 @@ if __name__ == '__main__':
   package_release()
   package_debug()
   delete_files()
+  upload_artifacts()
