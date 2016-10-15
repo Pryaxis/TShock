@@ -1,5 +1,6 @@
 language: csharp
 solution: "./TShockAPI/TShockAPI.csproj"
+sudo: false
 install:
 - nuget restore
 script: python ./scripts/create_release.py
