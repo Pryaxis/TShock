@@ -72,6 +72,9 @@ namespace TShockAPI
 		/// </summary>
 		internal static bool NoRestart;
 
+		/// <summary>Will be set to true once Utils.StopServer() is called.</summary>
+		public static bool ShuttingDown;
+
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
 		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
@@ -1200,6 +1203,13 @@ namespace TShockAPI
 		/// <param name="args">args - The ConnectEventArgs object.</param>
 		private void OnConnect(ConnectEventArgs args)
 		{
+			if (ShuttingDown)
+			{
+				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, "Server is shutting down...");
+				args.Handled = true;
+				return;
+			}
+
 			var player = new TSPlayer(args.Who);
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
