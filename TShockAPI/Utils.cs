@@ -538,6 +538,8 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void StopServer(bool save = true, string reason = "Server shutting down!")
 		{
+			TShock.ShuttingDown = true;
+
 			ForceKickAll(reason);
 			if (save)
 				SaveManager.Instance.SaveWorld();
