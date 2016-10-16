@@ -37,6 +37,7 @@ These guidelines are for all contributors.
 * After 'pr-wanted' has been added, an issue should be considered workable in a pull request fashion.
 * If you, as a developer, want to claim an issue for a PR, as soon as possible start work and note that in both the original issue and the new PR. The 'pr-wanted' tag will remain but the active PR will become the center for discussion for your implementation.
 * If a TShock core developer takes an issue, they'll be assigned to the issue. If your issue was taken by a TShock developer and you were actively developing it in a PR, you should _make it clear as soon as possible that a process error has been made_ so that the your development resources and our development resources aren't wasted.
+* Please send a pull request with at least a sentence description and something meaningful as the title, not just the issue number you're fixing.
 
 _The pr-wanted tag indicates an issue should be implemented. If an issue has a developer assigned, it indicates that they're working on it. When in doubt, ask where an issue is before starting work (so you don't waste time)!_
 
