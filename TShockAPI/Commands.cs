@@ -630,11 +630,13 @@ namespace TShockAPI
 
 			int index = -1;
 			for (int i = 0; i < cmdText.Length; i++)
+			{
 				if (IsWhiteSpace(cmdText[i]))
 				{
 					index = i;
 					break;
 				}
+			}
 			string cmdName;
 			if (index == 0) // Space after the command specifier should not be supported
 			{
