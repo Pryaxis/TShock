@@ -628,12 +628,31 @@ namespace TShockAPI
 			if (cmdPrefix == SilentSpecifier)
 				silent = true;
 
-			var args = ParseParameters(cmdText);
-			if (args.Count < 1)
-				return false;
+			int index = -1;
+			for (int i = 0; i < cmdText.Length; i++)
+			{
+				if (IsWhiteSpace(cmdText[i]))
+				{
+					index = i;
+					break;
+				}
+			}
+			string cmdName;
+			if (index == 0) // Space after the command specifier should not be supported
+			{
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				return true;
+			}
+			else if (index < 0)
+				cmdName = cmdText.ToLower();
+			else
+				cmdName = cmdText.Substring(0, index).ToLower();
 
-			string cmdName = args[0].ToLower();
-			args.RemoveAt(0);
+			List<string> args;
+			if (index < 0)
+				args = new List<string>();
+			else
+				args = ParseParameters(cmdText.Substring(index));
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 

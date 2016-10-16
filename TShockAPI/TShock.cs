@@ -1384,7 +1384,13 @@ namespace TShockAPI
 			{
 				try
 				{
-					args.Handled = Commands.HandleCommand(tsplr, args.Text);
+					args.Handled = true;
+					if (!Commands.HandleCommand(tsplr, args.Text))
+					{
+						// This is required in case anyone makes HandleCommand return false again
+						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
+						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", args.Text, tsplr.Name);
+					}
 				}
 				catch (Exception ex)
 				{
