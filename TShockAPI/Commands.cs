@@ -644,9 +644,9 @@ namespace TShockAPI
 				return true;
 			}
 			else if (index < 0)
-				cmdName = cmdText;
+				cmdName = cmdText.ToLower();
 			else
-				cmdName = cmdText.Substring(0, index);
+				cmdName = cmdText.Substring(0, index).ToLower();
 
 			List<string> args;
 			if (index < 0)
