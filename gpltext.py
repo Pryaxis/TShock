@@ -77,7 +77,10 @@ def getFiles(path):
 		else:
 			for ext in extensions:
 				if f.endswith(ext):
+					if f.endswith('.Designer.cs'):
+						break
 					print (path + f)
 					changeText(path + f)
+					break
 
 getFiles(path)
