@@ -1030,7 +1030,7 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
-					if (player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
+					if (player.HealOtherThreshold >= TShock.Config.HealOtherThreshold)
 					{
 						player.Disable("Reached HealOtherPlayer threshold", flags);
 					}

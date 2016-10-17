@@ -295,8 +295,8 @@ namespace TShockAPI
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
 		public int ProjectileThreshold = 50;
 
-		/// <summary>ProjectileThreshold - Disables a player if this number of projectiles is created within 1 second.</summary>
-		[Description("Disable a player if this number of projectiles is created within 1 second.")]
+		/// <summary>HealOtherThreshold - Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
+		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
 		public int HealOtherThreshold = 50;
 
 		/// <summary>ProjIgnoreShrapnel - Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
