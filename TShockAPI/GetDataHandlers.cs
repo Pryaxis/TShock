@@ -1296,12 +1296,6 @@ namespace TShockAPI
 
 			if (amount > TShock.Config.MaxDamage * 0.2)
 			{
-				args.Player.Disable("HealOtherPlayer max amount cheat attempt!", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (args.TPlayer.whoAmI != plr && (args.TPlayer.team == 0 || args.TPlayer.team != Main.player[plr].team))
-			{
 				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
 				return true;
 			}
