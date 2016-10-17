@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -538,6 +538,8 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void StopServer(bool save = true, string reason = "Server shutting down!")
 		{
+			TShock.ShuttingDown = true;
+
 			ForceKickAll(reason);
 			if (save)
 				SaveManager.Instance.SaveWorld();

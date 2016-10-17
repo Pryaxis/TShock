@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1261,7 +1261,8 @@ namespace TShockAPI
 					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
 					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
 					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
-					{ PacketTypes.ToggleParty, HandleToggleParty }
+					{ PacketTypes.ToggleParty, HandleToggleParty },
+					{ PacketTypes.PlayerHealOther, HandleHealOther }
 				};
 		}
 
@@ -1280,6 +1281,37 @@ namespace TShockAPI
 					return true;
 				}
 			}
+			return false;
+		}
+
+		private static bool HandleHealOther(GetDataHandlerArgs args)
+		{
+			byte plr = args.Data.ReadInt8();
+			short amount = args.Data.ReadInt16();
+
+			if (amount <= 0 || Main.player[plr] == null || !Main.player[plr].active)
+			{
+				return true;
+			}
+
+			if (amount > TShock.Config.MaxDamage * 0.2)
+			{
+				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
+				return true;
+			}
+
+			if (args.Player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
+			{
+				args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player) || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				return true;
+			}
+
+			args.Player.HealOtherThreshold++;
 			return false;
 		}
 
@@ -1739,6 +1771,25 @@ namespace TShockAPI
 							TShock.CheckRangePermission(args.Player, realx, realy))
 						{
 							continue;
+						}
+
+						// Fixes the Flower Boots not creating flowers issue
+						if (size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
+						{
+							if (Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
+							{
+								return false;
+							}
+
+							if (Main.tile[realx, realy + 1].type == TileID.HallowedGrass && (newtile.Type == TileID.HallowedPlants || newtile.Type == TileID.HallowedPlants2))
+							{
+								return false;
+							}
+
+							if (Main.tile[realx, realy + 1].type == TileID.JungleGrass && newtile.Type == TileID.JunglePlants2)
+							{
+								return false;
+							}
 						}
 
 						// Junction Box

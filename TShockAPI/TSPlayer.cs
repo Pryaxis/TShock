@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -93,7 +93,12 @@ namespace TShockAPI
 		/// The number of projectiles created by the player in the last second.
 		/// </summary>
 		public int ProjectileThreshold { get; set; }
-		
+
+		/// <summary>
+		/// The number of HealOtherPlayer packets sent by the player in the last second.
+		/// </summary>
+		public int HealOtherThreshold { get; set; }
+
 		/// <summary>
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		/// </summary>

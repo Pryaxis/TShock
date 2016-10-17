@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -294,6 +294,10 @@ namespace TShockAPI
 		/// <summary>ProjectileThreshold - Disables a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
 		public int ProjectileThreshold = 50;
+
+		/// <summary>HealOtherThreshold - Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
+		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
+		public int HealOtherThreshold = 50;
 
 		/// <summary>ProjIgnoreShrapnel - Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
 		[Description("Ignore shrapnel from crystal bullets for projectile threshold.")]

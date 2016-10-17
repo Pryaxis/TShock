@@ -1,3 +1,21 @@
+'''
+TShock, a server mod for Terraria
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 # Hey there, this is used to compile TShock on the build server.
 # Don't change it. Thanks!
 
@@ -92,24 +110,36 @@ def package_debug():
 def delete_files():
   os.chdir(release_dir)
   os.remove(mysql_bin_name)
-  os.remove(sqlite_bin_name)
-  os.remove(sqlite_dep)
+  # os.remove(sqlite_bin_name)
+  # os.remove(sqlite_dep)
   os.remove(json_bin_name)
   os.remove(bcrypt_bin_name)
   os.remove(http_bin_name)
   os.remove(geoip_db_name)
   os.chdir(cur_wd)
 
+def upload_artifacts():
+  if os.environ.get('TRAVIS_PULL_REQUEST', 'false') == 'false':
+    os.chdir(cur_wd)
+    os.mkdir(os.environ.get('TRAVIS_BRANCH', 'test-branch'))
+    os.chdir(os.environ.get('TRAVIS_BRANCH', 'test-branch'))
+    os.mkdir(os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407'))
+    os.chdir(cur_wd)
+    shutil.copy(os.path.join(release_dir, 'tshock_release.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
+    shutil.copy(os.path.join(release_dir, 'tshock_debug.zip'), os.path.join(os.environ.get('TRAVIS_BRANCH', 'test-branch'), os.environ.get('TRAVIS_BUILD_NUMBER', 'test-0407')))
+    decrypt_process = subprocess.Popen(['openssl', 'aes-256-cbc', '-K', os.environ.get('encrypted_1d7cd15ffdb4_key'), '-iv', os.environ.get('encrypted_1d7cd15ffdb4_iv'), '-in', './scripts/ssh_private_key.enc', '-out', './scripts/ssh_private_key', '-d'])
+    decrypt_process.wait()
+    os.chmod('./scripts/ssh_private_key', 0600)
+    upload_process = subprocess.Popen(['scp', '-oStrictHostKeyChecking=no', '-i', './scripts/ssh_private_key', '-r', os.environ.get('TRAVIS_BRANCH', 'test-branch'), 'tshock-travis@arc.shanked.me:/usr/share/nginx/tshock-travis/'])
+    upload_process.wait()
+
 def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'init'])
   subprocess.check_call(['/usr/bin/git', 'submodule', 'update'])
-  subprocess.check_call(['/usr/bin/rm', '-rf', '/tmp/NuGet/'])
-  subprocess.check_call(['/usr/bin/rm', '-rf', '/tmp/NuGetScratch'])
-  subprocess.check_call(['/usr/bin/mono', '/opt/nuget/nuget.exe', 'restore'])
 
 def build_software():
-  release_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
-  debug_proc = subprocess.Popen(['/usr/local/bin/xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
+  release_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
+  debug_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
   release_proc.wait()
   debug_proc.wait()
   if (release_proc.returncode != 0):
@@ -125,3 +155,4 @@ if __name__ == '__main__':
   package_release()
   package_debug()
   delete_files()
+  upload_artifacts()

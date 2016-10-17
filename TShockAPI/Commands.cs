@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -212,10 +212,6 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Used to authenticate as superadmin when first setting up TShock."
-			});
-			add(new Command(Permissions.authverify, AuthVerify, "auth-verify")
-			{
-				HelpText = "Used to verify that you have correctly set up TShock."
 			});
 			add(new Command(Permissions.user, ManageUsers, "user")
 			{
@@ -632,12 +628,31 @@ namespace TShockAPI
 			if (cmdPrefix == SilentSpecifier)
 				silent = true;
 
-			var args = ParseParameters(cmdText);
-			if (args.Count < 1)
-				return false;
+			int index = -1;
+			for (int i = 0; i < cmdText.Length; i++)
+			{
+				if (IsWhiteSpace(cmdText[i]))
+				{
+					index = i;
+					break;
+				}
+			}
+			string cmdName;
+			if (index == 0) // Space after the command specifier should not be supported
+			{
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				return true;
+			}
+			else if (index < 0)
+				cmdName = cmdText.ToLower();
+			else
+				cmdName = cmdText.Substring(0, index).ToLower();
 
-			string cmdName = args[0].ToLower();
-			args.RemoveAt(0);
+			List<string> args;
+			if (index < 0)
+				args = new List<string>();
+			else
+				args = ParseParameters(cmdText.Substring(index));
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
@@ -993,7 +1008,8 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Account " + user.Name + " has already been registered.");
+					args.Player.SendErrorMessage("Sorry, " + user.Name + " was already taken by another person.");
+					args.Player.SendErrorMessage("Please try a different username.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
 				}
 			}
@@ -4621,61 +4637,55 @@ namespace TShockAPI
 		{
 			if (TShock.AuthToken == 0)
 			{
-				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
-				TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
-				TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
-				return;
-			}
-			int givenCode = Convert.ToInt32(args.Parameters[0]);
-			if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
-			{
-				try
+				if (args.Player.Group.Name == new SuperAdminGroup().Name)
+					args.Player.SendInfoMessage("The auth system is already disabled.");
+				else
 				{
-					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
-					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
-					args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
-					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
-					args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
-					args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+					args.Player.SendWarningMessage("The auth system is disabled. This incident has been logged.");
+					TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
+					TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
+					return;
 				}
-				catch (UserManagerException ex)
-				{
-					TShock.Log.ConsoleError(ex.ToString());
-					args.Player.SendErrorMessage(ex.Message);
-				}
-				return;
 			}
 
-			if (args.Player.Group.Name == "superadmin")
+			// If the user account is already a superadmin (permanent), disable the system
+			if (args.Player.IsLoggedIn && args.Player.tempGroup == null && args.Player.Group.Name == new SuperAdminGroup().Name)
 			{
-				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. https://tshock.co/");
-				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
-				args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
-				args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}auth system has been turned off.", Specifier);
+				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
+				args.Player.SendSuccessMessage("The auth system will remain disabled as long as a superadmin exists (even if you delete auth.lck).");
+				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
+				FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
+				File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
+				TShock.AuthToken = 0;
 				return;
 			}
 
-			args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
-			TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
-		}
-
-		private static void AuthVerify(CommandArgs args)
-		{
-			if (TShock.AuthToken == 0)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendWarningMessage("It appears that you have already turned off the auth token.");
-				args.Player.SendWarningMessage("If this is a mistake, delete auth.lck.");
+				args.Player.SendErrorMessage("You must provide an auth code!");
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
-			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
-			args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
-			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
-			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
-			TShock.AuthToken = 0;
+			int givenCode;
+			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.AuthToken)
+			{
+				args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
+				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
+				return;
+			}
+
+			if (args.Player.Group.Name != "superadmin")
+				args.Player.tempGroup = new SuperAdminGroup();
+
+			args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
+			args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
+			args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
+			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
+			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}auth.", Specifier);
+			return;
 		}
 
 		private static void ThirdPerson(CommandArgs args)
