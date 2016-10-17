@@ -8,7 +8,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Security: `/"` exploit can no longer break chat mute filters (@Simon311).
 * Fixed an issue where sometimes players could connect briefly during server shutdown, leading to errors (@Simon311).
 * Fixed wyverns despawning & not behaving like normal (@WhiteXZ).
-* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ).
+* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ, @WhiteXZ).
 
 ## TShock 4.3.19
 * Compatibility with Terraria 1.3.3.3 (@Simon311)
