@@ -93,7 +93,12 @@ namespace TShockAPI
 		/// The number of projectiles created by the player in the last second.
 		/// </summary>
 		public int ProjectileThreshold { get; set; }
-		
+
+		/// <summary>
+		/// The number of HealOtherPlayer packets sent by the player in the last second.
+		/// </summary>
+		public int HealOtherThreshold { get; set; }
+
 		/// <summary>
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		/// </summary>

@@ -1030,6 +1030,15 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
+					if (player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
+					{
+						player.Disable("Reached HealOtherPlayer threshold", flags);
+					}
+					if (player.HealOtherThreshold > 0)
+					{
+						player.HealOtherThreshold = 0;
+					}
+
 					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
 					{
 						player.Spawn();
@@ -1458,7 +1467,7 @@ namespace TShockAPI
 		/// <param name="args">The CommandEventArgs object</param>
 		private void ServerHooks_OnCommand(CommandEventArgs args)
 		{
-			if (args.Handled)
+			if (args.Handled || string.IsNullOrWhiteSpace(args.Command))
 				return;
 
 			// Damn you ThreadStatic and Redigit
