@@ -388,6 +388,12 @@ namespace TShockAPI
 
 		[Description("Player can place banned tiles.")]
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
+
+		[Description("Player can check if a username is registered and see its last login time.")]
+		public static readonly string checkaccountinfo = "tshock.accountinfo.check";
+
+		[Description("Player can see advanced information about any user account.")]
+		public static readonly string advaccountinfo = "tshock.accountinfo.details";
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>

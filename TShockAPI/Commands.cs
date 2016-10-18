@@ -244,6 +244,10 @@ namespace TShockAPI
 				DoLog = false,
 				HelpText = "Registers you an account."
 			});
+			add(new Command(Permissions.checkaccountinfo, ViewAccountInfo, "accountinfo", "ai")
+			{
+				HelpText = "Shows information about a user."
+			});
 			#endregion
 			#region Admin Commands
 			add(new Command(Permissions.ban, Ban, "ban")
@@ -300,7 +304,7 @@ namespace TShockAPI
 			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
-				HelpText = "Shows information about a user."
+				HelpText = "Shows information about a player."
 			});
 			#endregion
 			#region Annoy Commands
@@ -1203,6 +1207,43 @@ namespace TShockAPI
 					message.Append(" | Logged in as: ").Append(players[0].User.Name).Append(" | Group: ").Append(players[0].Group.Name);
 				args.Player.SendSuccessMessage(message.ToString());
 			}
+		}
+
+		private static void ViewAccountInfo(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
+				return;
+			}
+
+			string username = String.Join(" ", args.Parameters);
+			if (!string.IsNullOrWhiteSpace(username))
+			{
+				var user = TShock.Users.GetUserByName(username);
+				if (user != null)
+				{
+					DateTime LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
+
+					args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+						LastSeen.ToShortTimeString(), Timezone);
+
+					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
+					{
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+						string ip = KnownIps[KnownIps.Count - 1];
+						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
+
+						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
+						args.Player.SendSuccessMessage("{0}'s last known IP is {1}.", user.Name, ip);
+						args.Player.SendSuccessMessage("{0}'s register date is {1} {2} UTC{3}.", user.Name, Registered.ToShortDateString(), Registered.ToShortTimeString(), Timezone);
+					}
+				}
+				else
+					args.Player.SendErrorMessage("User {0} does not exist.", username);
+			}
+			else args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
 		}
 
 		private static void Kick(CommandArgs args)
