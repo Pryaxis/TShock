@@ -412,8 +412,8 @@ namespace TShockAPI
 				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
 			}
 
-			bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
-			if (!found)
+			bool last = KnownIps.Last() == args.Player.IP;
+			if (!last)
 			{
 				if (KnownIps.Count == 100)
 				{
@@ -1467,8 +1467,14 @@ namespace TShockAPI
 		/// <param name="args">The CommandEventArgs object</param>
 		private void ServerHooks_OnCommand(CommandEventArgs args)
 		{
-			if (args.Handled || string.IsNullOrWhiteSpace(args.Command))
+			if (args.Handled)
 				return;
+
+			if (string.IsNullOrWhiteSpace(args.Command))
+			{
+				args.Handled = true;
+				return;
+			}
 
 			// Damn you ThreadStatic and Redigit
 			if (Main.rand == null)
