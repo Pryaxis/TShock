@@ -1823,7 +1823,7 @@ namespace TShockAPI
 						{
 							// Grass <-> Grass
 							if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
-                                // Dirt <-> Dirt
+								// Dirt <-> Dirt
 								((tile.type == 0 || tile.type == 59) &&
 								(newtile.Type == 0 || newtile.Type == 59)) ||
 								// Ice <-> Ice
@@ -1831,12 +1831,12 @@ namespace TShockAPI
 								// Stone <-> Stone
 								((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
 								(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
-                                // Sand <-> Sand
-                                (TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
-                                // Sandstone <-> Sandstone
-                                (TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
-                                // Hardened Sand <-> Hardened Sand
-                                (TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
+								// Sand <-> Sand
+								(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
+								// Sandstone <-> Sandstone
+								(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
+								// Hardened Sand <-> Hardened Sand
+								(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
 							{
 								Main.tile[realx, realy].type = newtile.Type;
 								changed = true;
