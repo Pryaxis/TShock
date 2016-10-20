@@ -50,6 +50,8 @@ namespace TShockAPI
 		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
 
+		private Regex byteRegex = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
+
 		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
 
@@ -691,11 +693,12 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="file">string filename reletave to savedir</param>
+		/// <param name="player">Player the file contents will be sent to</param>
+		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
 			string foo = "";
+			bool containsOldFormat = false;
 			using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
 			{
 				while ((foo = tr.ReadLine()) != null)
@@ -707,21 +710,14 @@ namespace TShockAPI
 
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
-					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
-					var matches = reg.Matches(foo);
-					Color c = Color.White;
-					foreach (Match match in matches)
+					if (byteRegex.IsMatch(foo) && !containsOldFormat)
 					{
-						byte r, g, b;
-						if (byte.TryParse(match.Groups["r"].Value, out r) &&
-							byte.TryParse(match.Groups["g"].Value, out g) &&
-							byte.TryParse(match.Groups["b"].Value, out b))
-						{
-							c = new Color(r, g, b);
-						}
-						foo = foo.Remove(match.Index, match.Length);
+						TShock.Log.ConsoleInfo($"You are using an old color format in file {file}.");
+						TShock.Log.ConsoleInfo("To send coloured text please use Terraria's inbuilt format of: [c/#hex:text].");
+						TShock.Log.ConsoleInfo("For example: [c/ff00aa:This is a message!].");
+						containsOldFormat = true;
 					}
-					player.SendMessage(foo, c);
+					player.SendMessage(foo, Color.White);
 				}
 			}
 		}
