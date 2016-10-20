@@ -1835,7 +1835,9 @@ namespace TShockAPI
 								(newtile.Type == 1 || newtile.Type == 25 || newtile.Type == 117 || newtile.Type == 203 || Main.tileMoss[newtile.Type])) ||
 								// Sand <-> Sand
 								((tile.type == 53 || tile.type == 112 || tile.type == 116 || tile.type == 234) &&
-								(newtile.Type == 53 || newtile.Type == 112 || newtile.Type == 116 || newtile.Type == 234)))
+								(newtile.Type == 53 || newtile.Type == 112 || newtile.Type == 116 || newtile.Type == 234)) ||
+                                // Hardened Sand <-> Hardened Sand
+                                (TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
 							{
 								Main.tile[realx, realy].type = newtile.Type;
 								changed = true;
