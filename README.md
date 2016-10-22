@@ -31,5 +31,6 @@ Please see the contributing file before sending pull requests.
 ## Download
 
 * [Github Releases](https://github.com/TShock/TShock/releases)
+* [Unstable, unsupported, and experimental builds](https://travis.tshock.co/)
 * [Plugins](https://tshock.co/xf/index.php?resources/)
 * [Very, very old versions of TShock](https://github.com/TShock/TShock/downloads)
