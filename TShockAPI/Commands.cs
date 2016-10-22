@@ -4806,7 +4806,7 @@ namespace TShockAPI
 
 		private static void Motd(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.MotdPath);
 		}
 
 		private static void Rules(CommandArgs args)

@@ -1173,7 +1173,7 @@ namespace TShockAPI
 		{
 			if (args.Handled)
 				return;
-			
+
 			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
 				|| TileID.Sets.Crimson[args.Type]))
 			{
@@ -1577,7 +1577,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, "motd.txt");
+			Utils.ShowFileToUser(player, FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")
