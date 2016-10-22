@@ -2,6 +2,15 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## Upcoming Changes
+
+* Fixed HealOtherPlayer packet exploit (@Simon311).
+* Added associated config option for HealOtherPlayer exploit prevention (@Simon311).
+* Added `/accountinfo` command to get account information for a given TShock account (@Simon311).
+* Removed TShock color parsing from MOTDs (@WhiteXZ).
+* Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
+* Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
+
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
 * Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy).
