@@ -4811,7 +4811,7 @@ namespace TShockAPI
 
 		private static void Rules(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.RulesPath);
 		}
 
 		private static void Whisper(CommandArgs args)
