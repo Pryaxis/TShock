@@ -40,7 +40,7 @@ namespace TShockAPI
 		/// </summary>
 		internal static string MotdPath
 		{
-			get { return Path.Combine(TShock.SavePath, FileTools.MotdPath); }
+			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
 		}
 
 		/// <summary>
