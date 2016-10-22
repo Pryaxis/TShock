@@ -182,7 +182,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * API: Fixed issues with SendQ writes failing. (@Wolfje)
 * API: Version tick to 1.21
 
-## TShock 4.3.6 (Pre-Release)
+## TShock 4.3.6
 
 * API: NPCs shoot the right way (@WhiteXZ)
 * API: The server config file works correctly with priority and port (@Patrikkk)
@@ -234,7 +234,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * Fix: Logging out is now safe with SSC (/logout) (issue #1037). (@WhiteXZ)
 * API/TShock: Removed -world parameter from TShock, put it back in the API. (@tylerjwatson)
 
-## TShock 4.3.5 (Unreleased)
+## TShock 4.3.5
 
 * Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items. (@Ijwu)
 * Rewrite SendQ for more network stack improvements (@tylerjwatson)
