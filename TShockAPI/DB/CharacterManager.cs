@@ -131,15 +131,15 @@ namespace TShockAPI.DB
 			string initialItems = String.Join("~", items.Take(NetItem.MaxInventory));
 			try
 			{
-				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);", 
+				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);",
 							   user.ID,
 							   TShock.ServerSideCharacterConfig.StartingHealth,
 							   TShock.ServerSideCharacterConfig.StartingHealth,
 							   TShock.ServerSideCharacterConfig.StartingMana,
-							   TShock.ServerSideCharacterConfig.StartingMana, 
-							   initialItems, 
-							   -1, 
-							   -1, 
+							   TShock.ServerSideCharacterConfig.StartingMana,
+							   initialItems,
+							   -1,
+							   -1,
 							   0);
 				return true;
 			}
@@ -159,7 +159,7 @@ namespace TShockAPI.DB
 		public bool InsertPlayerData(TSPlayer player)
 		{
 			PlayerData playerData = player.PlayerData;
-			
+
 			if (!player.IsLoggedIn)
 				return false;
 
@@ -217,6 +217,96 @@ namespace TShockAPI.DB
 				TShock.Log.Error(ex.ToString());
 			}
 
+			return false;
+		}
+
+		/// <summary>
+		/// Inserts a specific PlayerData into the SSC table for a player.
+		/// </summary>
+		/// <param name="player">The player to store the data for.</param>
+		/// <param name="data">The player data to store.</param>
+		/// <returns>If the command succeeds.</returns>
+		public bool InsertSpecificPlayerData(TSPlayer player, PlayerData data)
+		{
+			PlayerData playerData = data;
+
+			if (!player.IsLoggedIn)
+				return false;
+
+			if (player.HasPermission(Permissions.bypassssc))
+			{
+				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
+				return true;
+			}
+
+			if (!GetPlayerData(player, player.User.ID).exists)
+			{
+				try
+				{
+					database.Query(
+						"INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, extraSlot, spawnX, spawnY, skinVariant, hair, hairDye, hairColor, pantsColor, shirtColor, underShirtColor, shoeColor, hideVisuals, skinColor, eyeColor, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18, @19, @20);",
+						player.User.ID,
+						playerData.health,
+						playerData.maxHealth,
+						playerData.mana,
+						playerData.maxMana,
+						String.Join("~", playerData.inventory),
+						playerData.extraSlot,
+						playerData.spawnX,
+						playerData.spawnX,
+						playerData.skinVariant,
+						playerData.hair,
+						playerData.hairDye,
+						TShock.Utils.EncodeColor(playerData.hairColor),
+						TShock.Utils.EncodeColor(playerData.pantsColor),
+						TShock.Utils.EncodeColor(playerData.shirtColor),
+						TShock.Utils.EncodeColor(playerData.underShirtColor),
+						TShock.Utils.EncodeColor(playerData.shoeColor),
+						TShock.Utils.EncodeBoolArray(playerData.hideVisuals),
+						TShock.Utils.EncodeColor(playerData.skinColor),
+						TShock.Utils.EncodeColor(playerData.eyeColor),
+						playerData.questsCompleted);
+					return true;
+				}
+				catch (Exception ex)
+				{
+					TShock.Log.Error(ex.ToString());
+				}
+			}
+			else
+			{
+				try
+				{
+					database.Query(
+						"UPDATE tsCharacter SET Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, Inventory = @4, spawnX = @6, spawnY = @7, hair = @8, hairDye = @9, hairColor = @10, pantsColor = @11, shirtColor = @12, underShirtColor = @13, shoeColor = @14, hideVisuals = @15, skinColor = @16, eyeColor = @17, questsCompleted = @18, skinVariant = @19, extraSlot = @20 WHERE Account = @5;",
+						playerData.health,
+						playerData.maxHealth,
+						playerData.mana,
+						playerData.maxMana,
+						String.Join("~", playerData.inventory),
+						player.User.ID,
+						playerData.spawnX,
+						playerData.spawnX,
+						playerData.skinVariant,
+						playerData.hair,
+						playerData.hairDye,
+						TShock.Utils.EncodeColor(playerData.hairColor),
+						TShock.Utils.EncodeColor(playerData.pantsColor),
+						TShock.Utils.EncodeColor(playerData.shirtColor),
+						TShock.Utils.EncodeColor(playerData.underShirtColor),
+						TShock.Utils.EncodeColor(playerData.shoeColor),
+						TShock.Utils.EncodeBoolArray(playerData.hideVisuals),
+						TShock.Utils.EncodeColor(playerData.skinColor),
+						TShock.Utils.EncodeColor(playerData.eyeColor),
+						playerData.questsCompleted,
+						playerData.extraSlot ?? 0);
+					return true;
+				}
+				catch (Exception ex)
+				{
+					TShock.Log.Error(ex.ToString());
+				}
+			}
 			return false;
 		}
 	}
