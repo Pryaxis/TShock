@@ -11,6 +11,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
 * Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
 * Added alias for server shutdown command: stop (@nicatronTg).
+* Removed the old REST model. This includes the following endpoints:
+ * `/status`
+ * `/v2/players/read`
+ * `/v2/server/rawcmd` (@WhiteXZ).
 
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).

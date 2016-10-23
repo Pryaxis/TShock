@@ -44,12 +44,12 @@ namespace Rests
 		{
 			Tokens = new Dictionary<string, TokenData>();
 			AppTokens = new Dictionary<string, TokenData>();
-			
+
 			Register(new RestCommand("/v2/token/create", NewTokenV2) { DoLog = false });
 			Register(new SecureRestCommand("/token/destroy/{token}", DestroyToken));
 			Register(new SecureRestCommand("/v3/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
 
-			foreach (KeyValuePair<string, TokenData> t in TShockAPI.TShock.RESTStartupTokens)
+			foreach (KeyValuePair<string, TokenData> t in TShock.RESTStartupTokens)
 			{
 				AppTokens.Add(t.Key, t.Value);
 			}
@@ -57,29 +57,6 @@ namespace Rests
 			foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
 			{
 				AppTokens.Add(t.Key, t.Value);
-			}
-
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
-			{
-				string warningMessage = string.Concat(
-					"You're using the old REST permission model which is highly vulnerable in matter of security. ",
-					"The old model will be removed with the next maintenance release of TShock. In order to switch to the new model, ",
-					"change the config setting \"RestUseNewPermissionModel\" to true."
-				);
-				TShock.Log.Warn(warningMessage);
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(warningMessage);
-				Console.ForegroundColor = ConsoleColor.Gray;
-			}
-			else if (TShock.Config.RestApiEnabled)
-			{
-				string warningMessage = string.Concat(
-					"You're using the new more secure REST permission model which can lead to compatibility problems ",
-					"with existing REST services. If compatibility problems occur, you can switch back to the unsecure permission ",
-					"model by changing the config setting \"RestUseNewPermissionModel\" to false, which is not recommended."
-				);
-				TShock.Log.ConsoleInfo(warningMessage);
 			}
 		}
 
@@ -206,23 +183,19 @@ namespace Rests
 				return new RestObject("403")
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
+			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			if (userGroup == null)
 			{
-				Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
-				if (userGroup == null)
-				{
-					Tokens.Remove(token);
+				Tokens.Remove(token);
 
-					return new RestObject("403")
-					{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
-				}
+				return new RestObject("403")
+				{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+			}
 
-				if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
-				{
-					return new RestObject("403")
-					{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
-				}
+			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
+			{
+				return new RestObject("403")
+				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);
