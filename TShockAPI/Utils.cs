@@ -51,7 +51,10 @@ namespace TShockAPI
 		private static readonly Utils instance = new Utils();
 
 		/// <summary> This regex will look for the old MotD format for colors and replace them with the new chat format. </summary>
-		private Regex motdColorRegex = new Regex(@"\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%(?<text>((?!\%\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\%).)*)");
+		private Regex motdColorRegex = new Regex(@"\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%(?<text>((?!(\%\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\%)|(\[[a-zA-Z]/[^:]+:[^\]]*\])).)*)");
+
+		/// <summary> Matches the start of a line with our legacy color format</summary>
+		private Regex startOfLineColorRegex = new Regex(@"^\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%");
 
 		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
@@ -702,8 +705,10 @@ namespace TShockAPI
 			bool containsOldFormat = false;
 			using (var tr = new StreamReader(file))
 			{
+				Color lineColor;
 				while ((foo = tr.ReadLine()) != null)
 				{
+					lineColor = Color.White;
 					if (string.IsNullOrWhiteSpace(foo))
 					{
 						continue;
@@ -712,6 +717,14 @@ namespace TShockAPI
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
 
+					var legacyColorMatch = startOfLineColorRegex.Match(foo);
+					if (legacyColorMatch.Success)
+					{
+						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
+												Int32.Parse(legacyColorMatch.Groups["g"].Value),
+												Int32.Parse(legacyColorMatch.Groups["b"].Value));
+						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
+					}
 					string newFoo = ReplaceDeprecatedColorCodes(foo);
 					if (newFoo != foo && !containsOldFormat)
 					{
@@ -722,7 +735,7 @@ namespace TShockAPI
 					}
 					foo = newFoo;
 
-					player.SendMessage(foo, Color.White);
+					player.SendMessage(foo, lineColor);
 				}
 			}
 		}
