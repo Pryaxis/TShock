@@ -107,9 +107,6 @@ namespace TShockAPI
 		public static IDbConnection DB;
 		/// <summary>OverridePort - Determines if TShock should override the server port.</summary>
 		public static bool OverridePort;
-		/// <summary>PacketBuffer - Static reference to the packet bufferer system, which buffers packets to clients for better performance.</summary>
-		[Obsolete("PacketBufferer is no longer used", true)]
-		public static PacketBufferer PacketBuffer;
 		/// <summary>Geo - Static reference to the GeoIP system which determines the location of an IP address.</summary>
 		public static GeoIPCountry Geo;
 		/// <summary>RestApi - Static reference to the Rest API authentication manager.</summary>
