@@ -300,8 +300,7 @@ namespace TShockAPI
 			});
 			add(new Command(Permissions.uploaddata, UploadJoinData, "uploadssc")
 			{
-				HelpText = "Upload the account information when you joined the server as your Server Side Character data.",
-				AllowServer = false
+				HelpText = "Upload the account information when you joined the server as your Server Side Character data."
 			});
 			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
 			{
@@ -1698,13 +1697,58 @@ namespace TShockAPI
 
 		private static void UploadJoinData(CommandArgs args)
 		{
-			if (TShock.CharacterDB.InsertSpecificPlayerData(args.Player, args.Player.DataWhenJoined)) {
-				args.Player.DataWhenJoined.RestoreCharacter(args.Player);
-				args.Player.SendSuccessMessage("Your Join Data has been uploaded to the server.");
+			TSPlayer targetPlayer = args.Player;
+			if (args.Parameters.Count == 1 && args.Player.HasPermission(Permissions.uploadothersdata))
+			{
+				List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				if (players.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					return;
+				}
+				else if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage("No player was found matching'{0}'", args.Parameters[0]);
+					return;
+				}
+				else
+				{
+					targetPlayer = players[0];
+				}
+			}
+			else if (args.Parameters.Count == 1)
+			{
+				args.Player.SendErrorMessage("You do not have permission to upload another player's data.");
+				return;
+			}
+			else if (args.Parameters.Count > 0)
+			{
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+			else if (args.Parameters.Count == 0 && args.Player is TSServerPlayer)
+			{
+				args.Player.SendErrorMessage("A console can not upload their player data.");
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+
+			if (targetPlayer.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.InsertSpecificPlayerData(targetPlayer, targetPlayer.DataWhenJoined))
+				{
+					targetPlayer.DataWhenJoined.RestoreCharacter(targetPlayer);
+					targetPlayer.SendSuccessMessage("Your Join Data has been uploaded to the server.");
+					args.Player.SendSuccessMessage("The player's data was successfully uploaded.");
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Failed to upload your data, are you logged in to an account?");
+				}
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Failed to upload your data, please find an admin.");
+				args.Player.SendErrorMessage("The target player has not logged in yet.");
 			}
 		}
 
