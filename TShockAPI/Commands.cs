@@ -298,6 +298,11 @@ namespace TShockAPI
 			{
 				HelpText = "Saves all serverside characters."
 			});
+			add(new Command(Permissions.uploaddata, UploadJoinData, "uploadssc")
+			{
+				HelpText = "Upload the account information when you joined the server as your Server Side Character data.",
+				AllowServer = false
+			});
 			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
 			{
 				HelpText = "Temporarily sets another player's group."
@@ -1689,6 +1694,18 @@ namespace TShockAPI
 
 			TShock.CharacterDB.InsertPlayerData(matchedPlayer);
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
+		}
+
+		private static void UploadJoinData(CommandArgs args)
+		{
+			if (TShock.CharacterDB.InsertSpecificPlayerData(args.Player, args.Player.DataWhenJoined)) {
+				args.Player.DataWhenJoined.RestoreCharacter(args.Player);
+				args.Player.SendSuccessMessage("Your Join Data has been uploaded to the server.");
+			}
+			else
+			{
+				args.Player.SendErrorMessage("Failed to upload your data, please find an admin.");
+			}
 		}
 
 		private static void ForceHalloween(CommandArgs args)
