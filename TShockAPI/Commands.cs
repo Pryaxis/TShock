@@ -354,11 +354,6 @@ namespace TShockAPI
 			{
 				HelpText = "Shows the TShock version."
 			});
-			/* Does nothing atm.
-			 *
-			 * add(new Command(Permissions.updateplugins, UpdatePlugins, "updateplugins")
-			{
-			});*/
 			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
 			{
 				HelpText = "Manages the server whitelist."
