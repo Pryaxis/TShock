@@ -158,15 +158,15 @@ namespace TShockAPI.DB
 		/// <param name="group">string group</param>
 		public void SetUserGroup(User user, string group)
 		{
+			Group grp = TShock.Groups.GetGroupByName(group);
+			if (null == grp)
+				throw new GroupNotExistsException(group);
+
+			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
+				throw new UserNotExistException(user.Name);
+			
 			try
 			{
-				Group grp = TShock.Groups.GetGroupByName(group);
-				if (null == grp)
-					throw new GroupNotExistsException(group);
-
-				if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
-					throw new UserNotExistException(user.Name);
-				
 				// Update player group reference for any logged in player
 				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.User.Name == user.Name))
 				{
