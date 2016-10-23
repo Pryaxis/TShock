@@ -135,10 +135,6 @@ namespace TShockAPI
 		/// <summary>UseServerName - Whether or not to use ServerName in place of the world name.</summary>
 		[Description("Sends ServerName in place of the world name to clients.")]
 		public bool UseServerName = false;
-		/// <summary>MasterServer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("Not implemented.")]
-		public string MasterServer = "127.0.0.1";
 
 		/// <summary>StorageType - The type of SQL database to use when storing data (either "sqlite" or "mysql").</summary>
 		[Description("Valid types are \"sqlite\" and \"mysql\".")]
@@ -163,11 +159,6 @@ namespace TShockAPI
 		/// <summary>MediumcoreKickReason - The reason given if kicking mediumcore players on death.</summary>
 		[Description("The reason given when kicking a mediumcore player on death if KickOnMediumcoreDeath is set to true.")]
 		public string MediumcoreKickReason = "Death results in a kick";
-
-		/// <summary>EnableDNSHostResolution - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not Implemented) Enables DNS resolution of incoming connections with GetGroupForIPExpensive.")]
-		public bool EnableDNSHostResolution;
 
 		/// <summary>EnableIPBans - Whether or not to kick players on join that match a banned IP address.</summary>
 		[Description("Enables kicking of banned users by matching their IP Address.")]
@@ -201,11 +192,6 @@ namespace TShockAPI
 		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
 		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
 		public string HashAlgorithm = "sha512";
-
-		/// <summary>BufferPackets - No longer used.</summary>
-		[Obsolete("No longer used")]
-		[Description("(No longer used) Buffers up the packets and sends them out at the end of each frame.")]
-		public bool BufferPackets = true;
 
 		/// <summary>ServerFullReason - The reason given when kicking players when the server is full.</summary>
 		[Description("String that is used when kicking people when the server is full.")]
@@ -466,16 +452,6 @@ namespace TShockAPI
 		/// <summary>TilePaintThreshold - Disables a player if this number of tiles is painted within 1 second.</summary>
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
 		public int TilePaintThreshold = 15;
-
-		/// <summary>EnableMaxBytesInBuffer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not implemented) Enables max packet bufferer size.")]
-		public bool EnableMaxBytesInBuffer = false;
-
-		/// <summary>MaxBytesInBuffer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not implemented) Number of bytes in the packet buffer before we disconnect the player.")]
-		public int MaxBytesInBuffer = 5242880;
 
 		/// <summary>ForceHalloween - Forces Halloween-only events to occur all year.</summary>
 		[Description("Forces your world to be in Halloween mode regardless of the data.")]

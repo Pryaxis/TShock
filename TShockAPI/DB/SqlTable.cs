@@ -72,16 +72,6 @@ namespace TShockAPI.DB
 			return false;
 		}
 
-		/// <summary>
-		/// Ensures a table exists and that its structure is correct
-		/// </summary>
-		/// <param name="table">The table name</param>
-		[Obsolete("This method will be replaced by EnsureTableStructure.")]
-		public void EnsureExists(SqlTable table)
-		{
-			EnsureTableStructure(table);
-		}
-
 		public List<string> GetColumns(SqlTable table)
 		{
 			var ret = new List<string>();

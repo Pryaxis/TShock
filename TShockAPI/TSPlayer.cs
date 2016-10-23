@@ -214,15 +214,6 @@ namespace TShockAPI
 		public Vector2 LastNetPosition = Vector2.Zero;
 
 		/// <summary>
-		/// The player's login name.
-		/// </summary>
-		[Obsolete("Use User.Name instead")]
-		public string UserAccountName
-		{
-			get { return User == null ? null : User.Name; }
-		}
-
-		/// <summary>
 		/// User object associated with the player.
 		/// Set when the player logs in.
 		/// </summary>
@@ -243,15 +234,6 @@ namespace TShockAPI
 		/// Whether the player has sent their whole inventory to the server while connecting.
 		/// </summary>
 		public bool HasSentInventory { get; set; }
-
-		/// <summary>
-		/// The player's user id( from the db ).
-		/// </summary>
-		[Obsolete("Use User.ID instead")]
-		public int UserID
-		{
-			get { return User == null ? -1 : User.ID; }
-		}
 
 		/// <summary>
 		/// Whether the player has been nagged about logging in.
@@ -684,16 +666,6 @@ namespace TShockAPI
 			SendData(PacketTypes.Disconnect, reason);
 		}
 
-		[Obsolete("This method is no longer used.")]
-		public virtual void Flush()
-		{
-			var client = Netplay.Clients[Index];
-			if (client == null)
-				return;
-
-			//TShock.PacketBuffer.Flush(client);
-		}
-
 		/// <summary>
 		/// Fired when the player's temporary group access expires.
 		/// </summary>
@@ -1067,24 +1039,6 @@ namespace TShockAPI
 		/// Represents the current item the player is holding.
 		/// </summary>
 		public Item ItemInHand = new Item();
-
-		/// <summary>
-		/// Disables the player for the given <paramref name="reason"/>.
-		/// </summary>
-		/// <param name="reason">The reason why the player was disabled.</param>
-		/// <param name="displayConsole">Whether or not to log this event to the console.</param>
-		[Obsolete("Use Disable(string, DisableFlags)")]
-		public virtual void Disable(string reason = "", bool displayConsole = true)
-		{
-			if (displayConsole)
-			{
-				Disable(reason, DisableFlags.WriteToConsole);
-			}
-			else
-			{
-				Disable(reason, DisableFlags.WriteToLog);
-			}
-		}
 
 		/// <summary>
 		/// Disables the player for the given <paramref name="reason"/>

@@ -209,12 +209,6 @@ namespace TShockAPI
 		[Description("User can clear the list of users who have completed an angler quest that day.")]
 		public static readonly string clearangler = "tshock.npc.clearanglerquests";
 
-		// tshock.superadmin nodes
-
-		[Description("This permission is no longer used.")]
-		[Obsolete("No longer used.")]
-		public static readonly string authverify = "tshock.superadmin.authverify";
-
 		[Description("Meant for super admins only.")]
 		public static readonly string user = "tshock.superadmin.user";
 

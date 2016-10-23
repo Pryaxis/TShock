@@ -59,10 +59,6 @@ namespace TShockAPI
 		/// <value>value - the Utils instance</value>
 		public static Utils Instance { get { return instance; } }
 
-		/// <summary>Random - An instance of random for generating random data.</summary>
-		[Obsolete("Please create your own random objects; this will be removed in the next version of TShock.")]
-		public Random Random = new Random();
-
 		/// <summary>
 		/// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
 		/// </summary>
@@ -771,76 +767,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Default hashing algorithm.
-		/// </summary>
-		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead if you really need it (but use User.VerifyPassword(password)) for verifying passwords.")]
-		public string HashAlgo = "sha512";
-
-		/// <summary>
-		/// A dictionary of hashing algortihms and an implementation object.
-		/// </summary>
-		[Obsolete("This is no longer necessary, after switching to User.VerifyPassword(password) instead.")]
-		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-			{
-					{"sha512", () => new SHA512Managed()},
-					{"sha256", () => new SHA256Managed()},
-					{"md5", () => new MD5Cng()},
-					{"sha512-xp", () => SHA512.Create()},
-					{"sha256-xp", () => SHA256.Create()},
-					{"md5-xp", () => MD5.Create()},
-			};
-
-		/// <summary>
-		/// Returns a Sha256 string for a given string
-		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
-		/// <returns>string sha256</returns>
-		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
-		public string HashPassword(byte[] bytes)
-		{
-			if (bytes == null)
-				throw new NullReferenceException("bytes");
-			Func<HashAlgorithm> func;
-			if (!HashTypes.TryGetValue(HashAlgo.ToLower(), out func))
-				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(HashAlgo.ToLower()));
-
-			using (var hash = func())
-			{
-				var ret = hash.ComputeHash(bytes);
-				return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
-			}
-		}
-
-		/// <summary>
-		/// Returns a Sha256 string for a given string
-		/// </summary>
-		/// <param name="password">string to hash</param>
-		/// <returns>string sha256</returns>
-		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
-		public string HashPassword(string password)
-		{
-			if (string.IsNullOrEmpty(password) || password == "non-existant password")
-				return "non-existant password";
-			return HashPassword(Encoding.UTF8.GetBytes(password));
-		}
-
-		/// <summary>
-		/// Checks if the string contains any unprintable characters
-		/// </summary>
-		/// <param name="str">String to check</param>
-		/// <returns>True if the string only contains printable characters</returns>
-		[Obsolete("ValidString is being removed as it serves no purpose to TShock at this time.")]
-		public bool ValidString(string str)
-		{
-			foreach (var c in str)
-			{
-				if (c < 0x20 || c > 0xA9)
-					return false;
-			}
-			return true;
-		}
-
-		/// <summary>
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>
@@ -914,23 +840,6 @@ namespace TShockAPI
 					return i;
 			}
 			return 1000;
-		}
-
-		/// <summary>
-		/// Sanitizes input strings
-		/// </summary>
-		/// <param name="str">string</param>
-		/// <returns>sanitized string</returns>
-		[Obsolete("SanitizeString is being removed from TShock as it currently serves no purpose.")]
-		public string SanitizeString(string str)
-		{
-			var returnstr = str.ToCharArray();
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (!ValidString(str[i].ToString()))
-					returnstr[i] = ' ';
-			}
-			return new string(returnstr);
 		}
 
 		/// <summary>

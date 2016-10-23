@@ -150,60 +150,6 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Adds group with name and permissions if it does not exist.
-		/// </summary>
-		/// <param name="name">name of group</param>
-		/// <param name="parentname">parent of group</param>
-		/// <param name="permissions">permissions</param>
-		/// <param name="chatcolor">chatcolor</param>
-		/// <param name="exceptions">exceptions true indicates use exceptions for errors false otherwise</param>
-		[Obsolete("Use AddGroup(name, parentname, permissions, chatcolor) instead.")]
-		public String AddGroup(String name, string parentname, String permissions, String chatcolor = Group.defaultChatColor, bool exceptions = false)
-		{
-			if (GroupExists(name))
-			{
-				if (exceptions)
-					throw new GroupExistsException(name);
-				return "Error: Group already exists; unable to add group.";
-			}
-
-			var group = new Group(name, null, chatcolor);
-			group.Permissions = permissions;
-			if (!string.IsNullOrWhiteSpace(parentname))
-			{
-				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
-				if (parent == null || name == parentname)
-				{
-					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
-					if (exceptions)
-						throw new GroupManagerException(error);
-					TShock.Log.ConsoleError(error);
-					return error;
-				}
-				group.Parent = parent;
-			}
-
-			string query = (TShock.Config.StorageType.ToLower() == "sqlite")
-							? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
-							: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
-			if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
-			{
-				groups.Add(group);
-				return "Group " + name + " has been created successfully.";
-			}
-			else if (exceptions)
-				throw new GroupManagerException("Failed to add group '" + name + ".'");
-
-			return "";
-		}
-
-		[Obsolete("Use AddGroup(name, parentname, permissions, chatcolor) instead.")]
-		public String AddGroup(String name, String permissions)
-		{
-			return AddGroup(name, null, permissions, Group.defaultChatColor, false);
-		}
-
-		/// <summary>
 		/// Updates a group including permissions
 		/// </summary>
 		/// <param name="name">name of the group to update</param>

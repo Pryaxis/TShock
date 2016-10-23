@@ -331,12 +331,6 @@ namespace TShockAPI.DB
 		{
 			return Regions.Where(r => r.InArea(x, y));
 		}
-		
-		[Obsolete("Unused")]
-		public static List<string> ListIDs(string MergedIDs)
-		{
-			return MergedIDs.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
-		}
 
 		/// <summary>
 		/// Changes the size of a given region
