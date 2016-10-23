@@ -10,6 +10,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed TShock color parsing from MOTDs (@WhiteXZ).
 * Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
 * Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
+* Added alias for server shutdown command: stop (@nicatronTg).
 
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).

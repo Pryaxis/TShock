@@ -330,11 +330,11 @@ namespace TShockAPI
 			{
 				HelpText = "Checks for TShock updates."
 			});
-			add(new Command(Permissions.maintenance, Off, "off", "exit")
+			add(new Command(Permissions.maintenance, Off, "off", "exit", "stop")
 			{
 				HelpText = "Shuts down the server while saving."
 			});
-			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave")
+			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave", "stop-nosave")
 			{
 				HelpText = "Shuts down the server without saving."
 			});
