@@ -1713,7 +1713,7 @@ namespace TShockAPI
 			}
 			else if (args.Parameters.Count == 1)
 			{
-				args.Player.SendErrorMessage("You do not have permission to upload another player's data.");
+				args.Player.SendErrorMessage("You do not have permission to upload another player's character data.");
 				return;
 			}
 			else if (args.Parameters.Count > 0)
@@ -1733,12 +1733,12 @@ namespace TShockAPI
 				if (TShock.CharacterDB.InsertSpecificPlayerData(targetPlayer, targetPlayer.DataWhenJoined))
 				{
 					targetPlayer.DataWhenJoined.RestoreCharacter(targetPlayer);
-					targetPlayer.SendSuccessMessage("Your Join Data has been uploaded to the server.");
-					args.Player.SendSuccessMessage("The player's data was successfully uploaded.");
+					targetPlayer.SendSuccessMessage("Your local character data has been uploaded to the server.");
+					args.Player.SendSuccessMessage("The player's character data was successfully uploaded.");
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Failed to upload your data, are you logged in to an account?");
+					args.Player.SendErrorMessage("Failed to upload your character data, are you logged in to an account?");
 				}
 			}
 			else
