@@ -19,6 +19,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
 * Fixed issue where registration + login would fail with no pre-existing users (@DogooFalchion).
 * Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
+* Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
 
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
