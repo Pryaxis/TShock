@@ -73,7 +73,7 @@ namespace TShockAPI
 		/// The amount of tiles that the player has killed in the last second.
 		/// </summary>
 		public int TileKillThreshold { get; set; }
-		
+
 		/// <summary>
 		/// The amount of tiles the player has placed in the last second.
 		/// </summary>
@@ -113,10 +113,10 @@ namespace TShockAPI
 		/// A system to delay Remembered Position Teleports a few seconds
 		/// </summary>
 		public int RPPending = 0;
-		
+
 		public int sX = -1;
 		public int sY = -1;
-		
+
 		/// <summary>
 		/// A queue of tiles destroyed by the player for reverting.
 		/// </summary>
@@ -145,7 +145,7 @@ namespace TShockAPI
 		/// The player's temporary group.  This overrides the user's actual group.
 		/// </summary>
 		public Group tempGroup = null;
-		
+
 		public Timer tempGroupTimer;
 
 		private Group group = null;
@@ -158,7 +158,7 @@ namespace TShockAPI
 		public int Index { get; protected set; }
 
 		/// <summary>
-		/// The last time the player changed their team or pvp status.  
+		/// The last time the player changed their team or pvp status.
 		/// </summary>
 		public DateTime LastPvPTeamChange;
 
@@ -175,7 +175,7 @@ namespace TShockAPI
 		/// <summary>
 		/// A list of command callbacks indexed by the command they need to do.
 		/// </summary>
-		public Dictionary<string, Action<object>> AwaitingResponse;  
+		public Dictionary<string, Action<object>> AwaitingResponse;
 
 		public bool AwaitingName { get; set; }
 
@@ -314,14 +314,14 @@ namespace TShockAPI
 		/// Spawn protection message cool down.
 		/// </summary>
 		public long SPm = 1;
-			
+
 		/// <summary>
 		/// Permission to build message cool down.
 		/// </summary>
 		public long BPm = 1;
 
 		/// <summary>
-		/// The time in ms when the player has logged in.  
+		/// The time in ms when the player has logged in.
 		/// </summary>
 		public long LoginMS;
 
@@ -354,7 +354,7 @@ namespace TShockAPI
 		/// Contains data stored by plugins
 		/// </summary>
 		protected ConcurrentDictionary<string, object> data = new ConcurrentDictionary<string, object>();
-		
+
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
 		/// </summary>
@@ -574,6 +574,11 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// This contains the character data a player has when they join the server.
+		/// </summary>
+		public PlayerData DataWhenJoined { get; set; }
+
+		/// <summary>
 		/// Determines whether the player's storage contains the given key.
 		/// </summary>
 		/// <param name="key">Key to test.</param>
@@ -727,7 +732,7 @@ namespace TShockAPI
 		/// Spawns the player at his spawn point.
 		/// </summary>
 		public void Spawn()
-		{			
+		{
 			if (this.sX > 0 && this.sY > 0)
 			{
 				Spawn(this.sX, this.sY);
@@ -839,7 +844,7 @@ namespace TShockAPI
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
 				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
 					return false;
 
@@ -955,7 +960,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sends a message with the specified color. 
+		/// Sends a message with the specified color.
 		/// </summary>
 		/// <param name="msg">The message.</param>
 		/// <param name="color">The message color.</param>

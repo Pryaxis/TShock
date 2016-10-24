@@ -88,6 +88,12 @@ namespace TShockAPI
 		[Description("User can save all the players SSI state.")]
 		public static readonly string savessc = "tshock.admin.savessi";
 
+		[Description("User can upload their joined character data as SSC data.")]
+		public static readonly string uploaddata = "tshock.ssc.upload";
+
+		[Description("User can upload other players join data to the SSC database.")]
+		public static readonly string uploadothersdata = "tshock.ssc.upload.others";
+
 		[Description("User can elevate other users' groups temporarily.")]
 		public static readonly string settempgroup = "tshock.admin.tempgroup";
 
