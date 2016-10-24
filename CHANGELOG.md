@@ -17,7 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
  * `/v2/server/rawcmd` (@WhiteXZ).
 * Fixed `/user group` always giving an unhelpful error messaging telling you to check the console, even if we knew exactly why it failed (@nicatronTg).
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
-* Fixed issue where registration + login would fail with no pre-existing users (@DogooFalchion).
+* Fixed issue where registration + login would fail because KnownIps had 0 items and .Last() doesn't work on collections with 0 items (@DogooFalchion, @nicatronTg, @Simon311).
 * Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
 * Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
 * Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.

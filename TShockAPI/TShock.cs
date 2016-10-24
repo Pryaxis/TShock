@@ -409,15 +409,22 @@ namespace TShockAPI
 				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
 			}
 
-			bool last = KnownIps.Last() == args.Player.IP;
-			if (!last)
+			if (KnownIps.Count == 0)
 			{
-				if (KnownIps.Count == 100)
-				{
-					KnownIps.RemoveAt(0);
-				}
-
 				KnownIps.Add(args.Player.IP);
+			}
+			else
+			{
+				bool last = KnownIps.Last() == args.Player.IP;
+				if (!last)
+				{
+					if (KnownIps.Count == 100)
+					{
+						KnownIps.RemoveAt(0);
+					}
+
+					KnownIps.Add(args.Player.IP);
+				}
 			}
 
 			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
