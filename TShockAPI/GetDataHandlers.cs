@@ -1824,20 +1824,21 @@ namespace TShockAPI
 						if (tile.active() && newtile.Active)
 						{
 							// Grass <-> Grass
-							if (((tile.type == 2 || tile.type == 23 || tile.type == 60 || tile.type == 70 || tile.type == 109 || tile.type == 199) &&
-								(newtile.Type == 2 || newtile.Type == 23 || newtile.Type == 60 || newtile.Type == 70 || newtile.Type == 109 || newtile.Type == 199)) ||
+							if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
 								// Dirt <-> Dirt
 								((tile.type == 0 || tile.type == 59) &&
 								(newtile.Type == 0 || newtile.Type == 59)) ||
 								// Ice <-> Ice
-								((tile.type == 161 || tile.type == 163 || tile.type == 164 || tile.type == 200) &&
-								(newtile.Type == 161 || newtile.Type == 163 || newtile.Type == 164 || newtile.Type == 200)) ||
+								(TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newtile.Type]) ||
 								// Stone <-> Stone
-								((tile.type == 1 || tile.type == 25 || tile.type == 117 || tile.type == 203 || Main.tileMoss[tile.type]) &&
-								(newtile.Type == 1 || newtile.Type == 25 || newtile.Type == 117 || newtile.Type == 203 || Main.tileMoss[newtile.Type])) ||
+								((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
+								(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
 								// Sand <-> Sand
-								((tile.type == 53 || tile.type == 112 || tile.type == 116 || tile.type == 234) &&
-								(newtile.Type == 53 || newtile.Type == 112 || newtile.Type == 116 || newtile.Type == 234)))
+								(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
+								// Sandstone <-> Sandstone
+								(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
+								// Hardened Sand <-> Hardened Sand
+								(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
 							{
 								Main.tile[realx, realy].type = newtile.Type;
 								changed = true;
