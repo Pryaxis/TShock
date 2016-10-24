@@ -50,7 +50,11 @@ namespace TShockAPI
 		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
 
-		private Regex byteRegex = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
+		/// <summary> This regex will look for the old MotD format for colors and replace them with the new chat format. </summary>
+		private Regex motdColorRegex = new Regex(@"\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%(?<text>((?!(\%\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\%)|(\[[a-zA-Z]/[^:]+:[^\]]*\])).)*)");
+
+		/// <summary> Matches the start of a line with our legacy color format</summary>
+		private Regex startOfLineColorRegex = new Regex(@"^\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%");
 
 		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
@@ -189,7 +193,7 @@ namespace TShockAPI
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
-				if (player != null && player != excludedPlayer && player.Active && player.HasPermission(Permissions.logs) && 
+				if (player != null && player != excludedPlayer && player.Active && player.HasPermission(Permissions.logs) &&
 						player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
 					player.SendMessage(log, color);
 			}
@@ -498,7 +502,7 @@ namespace TShockAPI
 			}
 			return found;
 		}
-				
+
 				/// <summary>
 		/// Gets a prefix by ID or name
 		/// </summary>
@@ -553,7 +557,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to 
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to
 		/// restart it.
 		/// </summary>
 		/// <param name="save">bool perform a world save before stop (default: true)</param>
@@ -679,7 +683,7 @@ namespace TShockAPI
 							{
 									TShock.Bans.RemoveBan(ban.IP, false, false, false);
 							}
-							
+
 							return true;
 					}
 
@@ -695,10 +699,12 @@ namespace TShockAPI
 		{
 			string foo = "";
 			bool containsOldFormat = false;
-			using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
+			using (var tr = new StreamReader(file))
 			{
+				Color lineColor;
 				while ((foo = tr.ReadLine()) != null)
 				{
+					lineColor = Color.White;
 					if (string.IsNullOrWhiteSpace(foo))
 					{
 						continue;
@@ -706,15 +712,96 @@ namespace TShockAPI
 
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
-					if (byteRegex.IsMatch(foo) && !containsOldFormat)
+
+					var legacyColorMatch = startOfLineColorRegex.Match(foo);
+					if (legacyColorMatch.Success)
+					{
+						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
+												Int32.Parse(legacyColorMatch.Groups["g"].Value),
+												Int32.Parse(legacyColorMatch.Groups["b"].Value));
+						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
+					}
+
+					bool upgraded = false;
+					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
+					if (upgraded && !containsOldFormat)
 					{
 						TShock.Log.ConsoleInfo($"You are using an old color format in file {file}.");
 						TShock.Log.ConsoleInfo("To send coloured text please use Terraria's inbuilt format of: [c/#hex:text].");
 						TShock.Log.ConsoleInfo("For example: [c/ff00aa:This is a message!].");
 						containsOldFormat = true;
 					}
-					player.SendMessage(foo, Color.White);
+					foo = newFoo;
+
+					player.SendMessage(foo, lineColor);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Returns a string with deprecated %###,###,###% formats replaced with the new chat format colors.
+		/// </summary>
+		/// <param name="input">The input string</param>
+		/// <param name="upgradedFormat">An out parameter that denotes if this line of text was upgraded.</param>
+		/// <returns>A replaced version of the input with the new chat color format.</returns>
+		private string ReplaceDeprecatedColorCodes(string input, out bool upgradedFormat)
+		{
+			String tempString = input;
+			Match match = null;
+			bool uFormat = false;
+
+			while ((match = motdColorRegex.Match(tempString)).Success)
+			{
+				uFormat = true;
+				tempString = tempString.Replace(match.Groups[0].Value, String.Format("[c/{0:X2}{1:X2}{2:X2}:{3}]", Int32.Parse(match.Groups["r"].Value), Int32.Parse(match.Groups["g"].Value), Int32.Parse(match.Groups["b"].Value), match.Groups["text"]));
+			}
+
+			upgradedFormat = uFormat;
+			return tempString;
+		}
+
+		/// <summary>
+		/// Upgrades a legacy MotD file to the new terraria chat tags version.
+		/// </summary>
+		public void UpgradeMotD()
+		{
+			string foo = "";
+			StringBuilder motd = new StringBuilder();
+			bool informedOwner = false;
+			using (var tr = new StreamReader(FileTools.MotdPath))
+			{
+				Color lineColor;
+				while ((foo = tr.ReadLine()) != null)
+				{
+					lineColor = Color.White;
+					var legacyColorMatch = startOfLineColorRegex.Match(foo);
+					if (legacyColorMatch.Success)
+					{
+						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
+												Int32.Parse(legacyColorMatch.Groups["g"].Value),
+												Int32.Parse(legacyColorMatch.Groups["b"].Value));
+						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
+					}
+
+					bool upgraded = false;
+					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
+					if (!informedOwner && upgraded)
+					{
+						informedOwner = true;
+						TShock.Log.ConsoleInfo("We have upgraded your MotD to the new format.  A backup has been created.");
+					}
+
+					if (lineColor != Color.White)
+						motd.Append(String.Format("%{0:d3},{1:d3},{2:d3}%", lineColor.R, lineColor.G, lineColor.B));
+
+					motd.AppendLine(newFoo);
+				}
+			}
+
+			if (informedOwner)
+			{
+				File.Copy(FileTools.MotdPath, String.Format("{0}_{1}.backup", FileTools.MotdPath, DateTime.Now.ToString("ddMMMyy_hhmmss")));
+				File.WriteAllText(FileTools.MotdPath, motd.ToString());
 			}
 		}
 
@@ -800,7 +887,7 @@ namespace TShockAPI
 					int num;
 					if (!int.TryParse(sb.ToString(), out num))
 						return false;
-					
+
 					sb.Clear();
 					switch (str[i])
 					{

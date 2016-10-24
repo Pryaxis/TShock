@@ -4862,12 +4862,12 @@ namespace TShockAPI
 
 		private static void Motd(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.MotdPath);
 		}
 
 		private static void Rules(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.RulesPath);
 		}
 
 		private static void Whisper(CommandArgs args)

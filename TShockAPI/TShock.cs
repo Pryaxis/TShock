@@ -836,6 +836,8 @@ namespace TShockAPI
 			ComputeMaxStyles();
 			FixChestStacks();
 
+			Utils.UpgradeMotD();
+
 			if (Config.UseServerName)
 			{
 				Main.worldName = Config.ServerName;
@@ -1576,7 +1578,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, "motd.txt");
+			Utils.ShowFileToUser(player, FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")

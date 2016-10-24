@@ -249,7 +249,7 @@ namespace TShockAPI
 		[Token]
 		private object ServerMotd(RestRequestArgs args)
 		{
-			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
+			string motdFilePath = FileTools.MotdPath;
 			if (!File.Exists(motdFilePath))
 				return this.RestError("The motd.txt was not found.", "500");
 
