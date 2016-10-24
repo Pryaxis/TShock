@@ -17,7 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
  * `/v2/server/rawcmd` (@WhiteXZ).
 * Fixed `/user group` always giving an unhelpful error messaging telling you to check the console, even if we knew exactly why it failed (@nicatronTg).
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
-* Fixed issue where SSC + registration would fail with no pre-existing users (@DogooFalchion).
+* Fixed issue where registration + login would fail with no pre-existing users (@DogooFalchion).
 * Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
 
 ## TShock 4.3.20
