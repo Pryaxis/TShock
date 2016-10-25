@@ -633,7 +633,7 @@ namespace TShockAPI
 							break;
 						}
 					case "-dump":
-					{
+						{
 							Utils.PrepareLangForDump();
 							Lang.setLang(true);
 							ConfigFile.DumpDescriptions();
