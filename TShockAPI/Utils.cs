@@ -1166,5 +1166,155 @@ namespace TShockAPI
 
 			return points;
 		}
+
+		internal void PrepareLangForDump()
+		{
+			for(int i = 0; i < Main.recipe.Length; i++)
+				Main.recipe[i] = new Recipe();
+		}
+
+		public void DumpBuffs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block: parameters]").AppendLine("{").AppendLine("\t\"data\": {");
+			buffer.AppendLine("\t\t\"h-0\":\"ID\",");
+			buffer.AppendLine("\t\t\"h-1\":\"Name\",");
+			buffer.AppendLine("\t\t\"h-2\":\"Description\",");
+
+			var row = 0;
+			for(int i = 0; i < Main.maxBuffTypes; i++)
+			{
+				if (!String.IsNullOrEmpty(Main.buffName[i]))
+				{
+					if (row > 0)
+						buffer.AppendLine(",");
+
+					buffer.AppendLine(String.Format("\t\t\"{0}-0\": \"{1}\",", row, i));
+					buffer.AppendLine(String.Format("\t\t\"{0}-1\": \"{1}\",", row, Main.buffName[i]));
+					buffer.Append(String.Format("\t\t\"{0}-2\": \"{1}\"", row++, Main.buffTip[i]));
+				}
+			}
+
+			buffer.AppendLine();
+			buffer.AppendLine("\t}").AppendLine("}");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpItems(string path)
+		{
+			Main.player[Main.myPlayer] = new Player();
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block: parameters]").AppendLine("{").AppendLine("\t\"data\": {");
+			buffer.AppendLine("\t\t\"h-0\":\"ID\",");
+			buffer.AppendLine("\t\t\"h-1\":\"Name\",");
+			buffer.AppendLine("\t\t\"h-2\":\"Tooltip\",");
+			buffer.AppendLine("\t\t\"h-2\":\"Tooltip 2\",");
+
+			var row = 0;
+			for (int i = -48; i < Main.maxItemTypes; i++)
+			{
+				Item item = new Item();
+				item.netDefaults(i);
+				if (!String.IsNullOrEmpty(item.name))
+				{
+					if (row > 0)
+						buffer.AppendLine(",");
+
+					buffer.AppendLine(String.Format("\t\t\"{0}-0\": \"{1}\",", row, i));
+					buffer.AppendLine(String.Format("\t\t\"{0}-1\": \"{1}\",", row, item.name));
+					buffer.AppendLine(String.Format("\t\t\"{0}-1\": \"{1}\",", row, item.toolTip));
+					buffer.Append(String.Format("\t\t\"{0}-1\": \"{1}\"", row++, item.toolTip2));
+				}
+			}
+			buffer.AppendLine();
+			buffer.AppendLine("\t}").AppendLine("}");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpNPCs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block: parameters]").AppendLine("{").AppendLine("\t\"data\": {");
+			buffer.AppendLine("\t\t\"h-0\":\"ID\",");
+			buffer.AppendLine("\t\t\"h-1\":\"Name\",");
+			buffer.AppendLine("\t\t\"h-2\":\"Display Name\",");
+
+			var row = 0;
+			for (int i = -65; i < Main.maxNPCTypes; i++)
+			{
+				NPC npc = new NPC();
+				npc.netDefaults(i);
+				if (!String.IsNullOrEmpty(npc.name))
+				{
+					if (row > 0)
+						buffer.AppendLine(",");
+
+					buffer.AppendLine(String.Format("\t\t\"{0}-0\": \"{1}\",", row, i));
+					buffer.AppendLine(String.Format("\t\t\"{0}-1\": \"{1}\",", row, npc.name));
+					buffer.Append(String.Format("\t\t\"{0}-1\": \"{1}\"", row++, npc.displayName));
+				}
+			}
+			buffer.AppendLine();
+			buffer.AppendLine("\t}").AppendLine("}");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpProjectiles(string path)
+		{
+			Main.rand = new Random();
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block: parameters]").AppendLine("{").AppendLine("\t\"data\": {");
+			buffer.AppendLine("\t\t\"h-0\":\"ID\",");
+			buffer.AppendLine("\t\t\"h-1\":\"Name\",");
+
+			var row = 0;
+			for (int i = 0; i < Main.maxProjectileTypes; i++)
+			{
+				Projectile projectile = new Projectile();
+				projectile.SetDefaults(i);
+				if (!String.IsNullOrEmpty(projectile.name))
+				{
+					if (row > 0)
+						buffer.AppendLine(",");
+
+					buffer.AppendLine(String.Format("\t\t\"{0}-0\": \"{1}\",", row, i));
+					buffer.Append(String.Format("\t\t\"{0}-1\": \"{1}\"", row++, projectile.name));
+				}
+			}
+			buffer.AppendLine();
+			buffer.AppendLine("\t}").AppendLine("}");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpPrefixes(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block: parameters]").AppendLine("{").AppendLine("\t\"data\": {");
+			buffer.AppendLine("\t\t\"h-0\":\"ID\",");
+			buffer.AppendLine("\t\t\"h-1\":\"Name\",");
+
+			var row = 0;
+			for (int i = 0; i < Item.maxPrefixes; i++)
+			{
+				string prefix = Lang.prefix[i];
+
+				if (!String.IsNullOrEmpty(prefix))
+				{
+					if (row > 0)
+						buffer.AppendLine(",");
+
+					buffer.AppendLine(String.Format("\t\t\"{0}-0\": \"{1}\",", row, i));
+					buffer.Append(String.Format("\t\t\"{0}-1\": \"{1}\"", row++, prefix));
+				}
+			}
+			buffer.AppendLine();
+			buffer.AppendLine("\t}").AppendLine("}");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
 	}
 }
