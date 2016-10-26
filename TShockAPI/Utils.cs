@@ -1208,7 +1208,7 @@ namespace TShockAPI
 			File.WriteAllText(path, buffer.ToString());
 		}
 
-		public void DumpItems(string path)
+		public void DumpItems(string path, int start, int end)
 		{
 			Main.player[Main.myPlayer] = new Player();
 			StringBuilder buffer = new StringBuilder();
@@ -1219,7 +1219,7 @@ namespace TShockAPI
 			buffer.AppendLine("    \"h-2\": \"Tooltip 2\",");
 
 			List<object[]> elements = new List<object[]>();
-			for (int i = -48; i < Main.maxItemTypes; i++)
+			for (int i = start; i < end; i++)
 			{
 				Item item = new Item();
 				item.netDefaults(i);
