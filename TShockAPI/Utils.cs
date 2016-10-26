@@ -1212,11 +1212,12 @@ namespace TShockAPI
 		{
 			Main.player[Main.myPlayer] = new Player();
 			StringBuilder buffer = new StringBuilder();
+			Regex newLine = new Regex(@"\n");
 			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
 			buffer.AppendLine("    \"h-0\": \"ID\",");
 			buffer.AppendLine("    \"h-1\": \"Name\",");
 			buffer.AppendLine("    \"h-2\": \"Tooltip\",");
-			buffer.AppendLine("    \"h-2\": \"Tooltip 2\",");
+			buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
 
 			List<object[]> elements = new List<object[]>();
 			for (int i = start; i < end; i++)
@@ -1225,7 +1226,11 @@ namespace TShockAPI
 				item.netDefaults(i);
 				if (!String.IsNullOrEmpty(item.name))
 				{
-					object[] element = new object[] { i, item.name, item.toolTip, item.toolTip2 };
+					object[] element = new object[] { i,
+													  newLine.Replace(item.name, @" "),
+													  newLine.Replace(item.toolTip, @" "),
+													  newLine.Replace(item.toolTip2, @" ")
+													};
 					elements.Add(element);
 				}
 			}
