@@ -30,6 +30,7 @@ using Terraria.ID;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
+using Terraria.GameContent.Events;
 
 namespace TShockAPI
 {
@@ -2053,7 +2054,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetPumpkinMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -2071,7 +2072,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetFrostMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -2081,6 +2082,11 @@ namespace TShockAPI
 						TShock.StartInvasion(4);
 						break;
 				}
+			}
+			else if (DD2Event.Ongoing)
+			{
+				DD2Event.StopInvasion();
+				TSPlayer.All.SendInfoMessage("{0} has ended the Old One's Army event.", args.Player.Name);
 			}
 			else
 			{

@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
@@ -1018,8 +1019,7 @@ namespace TShockAPI
 		/// <param name="damage">The amount of damage the player will take.</param>
 		public virtual void DamagePlayer(int damage)
 		{
-			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
-								(float) 0);
+			NetMessage.SendPlayerHurt(Index, PlayerDeathReason.LegacyDefault(), damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
 		}
 
 		/// <summary>

@@ -212,6 +212,9 @@ namespace TShockAPI
 		[Description("User can start invasions (Goblin/Snow Legion) using items.")]
 		public static readonly string startinvasion = "tshock.npc.startinvasion";
 
+		[Description("User can start the dd2 event.")]
+		public static readonly string startdd2 = "tshock.npc.startdd2";
+
 		[Description("User can clear the list of users who have completed an angler quest that day.")]
 		public static readonly string clearangler = "tshock.npc.clearanglerquests";
 
