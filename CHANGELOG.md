@@ -22,6 +22,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
 * Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
 
+## TShock 4.3.21
+* Compatibility with Terraria 1.3.3.4 (@Zaicon)
+* API: Version tick 1.26
+* API: Depreciated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2)
+* API: Main.rand now uses UnifiedRandom instead of Random
+
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
 * Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy).

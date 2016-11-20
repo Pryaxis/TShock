@@ -38,6 +38,7 @@ using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.ServerSideCharacters;
+using Terraria.Utilities;
 
 namespace TShockAPI
 {
@@ -45,7 +46,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(1, 25)]
+	[ApiVersion(1, 26)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
@@ -1485,11 +1486,7 @@ namespace TShockAPI
 			// Damn you ThreadStatic and Redigit
 			if (Main.rand == null)
 			{
-				Main.rand = new Random();
-			}
-			if (WorldGen.genRand == null)
-			{
-				WorldGen.genRand = new Random();
+				Main.rand = new UnifiedRandom();
 			}
 
 			if (args.Command == "autosave")
