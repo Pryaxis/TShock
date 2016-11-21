@@ -1262,7 +1262,10 @@ namespace TShockAPI
 					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
 					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
 					{ PacketTypes.ToggleParty, HandleToggleParty },
-					{ PacketTypes.PlayerHealOther, HandleHealOther }
+					{ PacketTypes.PlayerHealOther, HandleHealOther },
+					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
+					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
+					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
 				};
 		}
 
@@ -2922,6 +2925,72 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandlePlayerKillMeV2(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
+			var dmg = args.Data.ReadInt16();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
+			BitsByte bits = (BitsByte)args.Data.ReadByte();
+			bool pvp = bits[0];
+			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			{
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
+				return false;
+			}
+
+			if (id >= Main.maxPlayers)
+			{
+				return true;
+			}
+
+			if (OnKillMe(id, direction, dmg, pvp))
+				return true;
+
+			if (playerDeathReason.GetDeathText().Length > 500)
+			{
+				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
+				return true;
+			}
+
+			args.Player.Dead = true;
+			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
+
+			foreach (NPC npc in Main.npc)
+			{
+				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
+					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
+				{
+					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
+					break;
+				}
+			}
+
+			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+			{
+				if (TShock.Config.BanOnHardcoreDeath)
+				{
+					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
+				}
+				else
+				{
+					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
+				}
+			}
+
+			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.RemovePlayer(args.Player.User.ID))
+				{
+					TShock.CharacterDB.SeedInitialData(args.Player.User);
+				}
+			}
+
+			return false;
+		}
+
 		private static bool HandleLiquidSet(GetDataHandlerArgs args)
 		{
 			int tileX = args.Data.ReadInt16();
@@ -3456,6 +3525,76 @@ namespace TShockAPI
 			var bits = (BitsByte)args.Data.ReadInt8();
 			var pvp = bits[0];
 			var crit = bits[1];
+
+			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
+				return true;
+
+			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			{
+				return true;
+			}
+
+			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			{
+				if (TShock.Config.KickOnDamageThresholdBroken)
+				{
+					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					return true;
+				}
+				else
+				{
+					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+				}
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				return true;
+			}
+
+			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				return true;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				return true;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				return true;
+			}
+
+			if (TShock.Players[id].GodMode)
+			{
+				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlayerDamageV2(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
+			var dmg = args.Data.ReadInt16();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
+			var bits = (BitsByte)(args.Data.ReadByte());
+			var crit = bits[0];
+			var pvp = bits[1];
 
 			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
 				return true;
@@ -4235,6 +4374,26 @@ namespace TShockAPI
 				return true;
 			}
 
+			return false;
+		}
+
+		private static bool HandleOldOnesArmy(GetDataHandlerArgs args)
+		{
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				return true;
+			}
+			
+			if (!args.Player.HasPermission(Permissions.startdd2))
+			{
+				args.Player.SendErrorMessage("You don't have permission to start the Old One's Army event.");
+				return true;
+			}
+
+			if (TShock.Config.AnonymousBossInvasions)
+				TShock.Utils.SendLogs(string.Format("{0} started the Old One's Army event!", args.Player.Name), Color.PaleVioletRed, args.Player);
+			else
+				TShock.Utils.Broadcast(string.Format("{0} started the Old One's Army event!", args.Player.Name), 175, 75, 255);
 			return false;
 		}
 	}

@@ -16,9 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Utilities;
 using TShockAPI;
 using TShockAPI.DB;
 
@@ -158,7 +159,7 @@ namespace TShockAPI
 		{
 			// Main.rand is thread static.
 			if (Main.rand == null)
-				Main.rand = new Random();
+				Main.rand = new UnifiedRandom();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
 			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);

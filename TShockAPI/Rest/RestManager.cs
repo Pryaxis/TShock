@@ -676,8 +676,6 @@ namespace TShockAPI
 		[Token]
 		private object WorldMeteor(RestRequestArgs args)
 		{
-			if (null == WorldGen.genRand)
-				WorldGen.genRand = new Random();
 			WorldGen.dropMeteor();
 			return RestResponse("Meteor has been spawned");
 		}
