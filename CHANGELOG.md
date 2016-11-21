@@ -5,7 +5,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming Changes
 
 ## TShock 4.3.21
-* Compatibility with Terraria 1.3.3.4 (@Patrikkk, @Zaicon).
+* Compatibility with Terraria 1.3.4.3 (@Patrikkk, @Zaicon).
 * API: Version tick 1.26.
 * API: Deprecated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2).
 * API: Main.rand now uses UnifiedRandom instead of Random. This WILL break any existing plugin that uses Main.rand.
