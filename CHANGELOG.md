@@ -4,6 +4,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.21
+* Compatibility with Terraria 1.3.3.4 (@Patrikkk, @Zaicon).
+* API: Version tick 1.26.
+* API: Deprecated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2).
+* API: Main.rand now uses UnifiedRandom instead of Random. This WILL break any existing plugin that uses Main.rand.
 * Fixed HealOtherPlayer packet exploit (@Simon311).
 * Added associated config option for HealOtherPlayer exploit prevention (@Simon311).
 * Added `/accountinfo` command to get account information for a given TShock account (@Simon311).
@@ -21,12 +26,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
 * Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
 * Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
-
-## TShock 4.3.21
-* Compatibility with Terraria 1.3.3.4 (@Zaicon)
-* API: Version tick 1.26
-* API: Depreciated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2)
-* API: Main.rand now uses UnifiedRandom instead of Random
 
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
