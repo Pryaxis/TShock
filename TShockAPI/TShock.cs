@@ -1926,6 +1926,7 @@ namespace TShockAPI
 			Item[] miscDyes = player.TPlayer.miscDyes;
 			Item[] piggy = player.TPlayer.bank.item;
 			Item[] safe = player.TPlayer.bank2.item;
+			Item[] forge = player.TPlayer.bank3.item;
 			Item trash = player.TPlayer.trashItem;
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
@@ -2070,6 +2071,29 @@ namespace TShockAPI
 							check = true;
 							player.SendMessage(
 								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.name, safe[index].stack),
+								Color.Cyan);
+						}
+					}
+				}
+				else if (i <
+					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
+					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots + NetItem.ForgeSlots)
+				{
+					//179-219
+					Item item = new Item();
+					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
+						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots);
+					if (forge[index] != null && forge[index].netID != 0)
+					{
+						item.netDefaults(forge[index].netID);
+						item.Prefix(forge[index].prefix);
+						item.AffixName();
+
+						if (forge[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
 								Color.Cyan);
 						}
 					}
