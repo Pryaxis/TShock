@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.25807.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{755F5B05-0924-47E9-9563-26EB20FE3F67}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrariaServer", "TerrariaServerAPI\TerrariaServer.csproj", "{6877506E-ADC6-4142-98A6-79E4FA02855A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,16 +27,6 @@ Global
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x86.ActiveCfg = Release|Any CPU
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x86.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x86.Build.0 = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Any CPU.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Mixed Platforms.Build.0 = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x86.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

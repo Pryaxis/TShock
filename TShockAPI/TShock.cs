@@ -39,6 +39,7 @@ using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.ServerSideCharacters;
 using Terraria.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI
 {
@@ -578,7 +579,7 @@ namespace TShockAPI
 			{
 				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
 				{
-					Main.worldPathName += ".crash";
+					Main.ActiveWorldFileData._path += ".crash";
 					SaveManager.Instance.SaveWorld();
 				}
 			}
@@ -675,7 +676,7 @@ namespace TShockAPI
 						}
 					case "-autoshutdown":
 						{
-							Main.instance.autoShut();
+							Main.instance.EnableAutoShutdown();
 							break;
 						}
 					case "-autocreate":
@@ -705,9 +706,11 @@ namespace TShockAPI
 							int limit;
 							if (int.TryParse(parms[++i], out limit))
 							{
+								/* Todo - Requires an OTAPI modification
 								Netplay.MaxConnections = limit;
 								ServerApi.LogWriter.PluginWriteLine(this, string.Format(
-									"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);
+									"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);*/
+								ServerApi.LogWriter.PluginWriteLine(this, "\"-connperip\" is not supported in this version of TShock.", TraceLevel.Verbose);
 							}
 							else
 								ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-connperip\".", TraceLevel.Warning);
@@ -1684,7 +1687,10 @@ namespace TShockAPI
 				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
 			}
 
-			Main.StartInvasion(type, invasionSize);
+			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
+			Main.invasionSize = invasionSize;
+
+			Main.StartInvasion(type);
 		}
 
 		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>

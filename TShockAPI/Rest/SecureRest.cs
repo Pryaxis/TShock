@@ -23,6 +23,7 @@ using System.Net;
 using HttpServer;
 using TShockAPI;
 using TShockAPI.DB;
+using Microsoft.Xna.Framework;
 
 namespace Rests
 {
