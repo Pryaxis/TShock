@@ -158,7 +158,6 @@ namespace TShockAPI.Sockets
 			{
 				try
 				{
-					Console.WriteLine("Creating linux socket");
 					ISocket socket = new LinuxTcpSocket(this._listener.AcceptTcpClient());
 					Console.WriteLine(Language.GetTextValue("Net.ClientConnecting", socket.GetRemoteAddress()));
 					this._listenerCallback(socket);
