@@ -179,7 +179,7 @@ namespace TShockAPI
 				{
 					//179-219
 					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.ForgeSlots);
+						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
 					this.inventory[i] = (NetItem)forge[index];
 				}
 				else
