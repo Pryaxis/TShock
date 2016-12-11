@@ -1025,6 +1025,14 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Kills the player.
+		/// </summary>
+		public virtual void KillPlayer()
+		{
+			NetMessage.SendPlayerDeath(Index, PlayerDeathReason.LegacyDefault(), 99999, (new Random()).Next(-1, 1), false, -1, -1);
+		}
+
+		/// <summary>
 		/// Sets the player's team.
 		/// </summary>
 		/// <param name="team">The team color index.</param>
