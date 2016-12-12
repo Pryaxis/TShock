@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1165,6 +1166,213 @@ namespace TShockAPI
 			#endregion
 
 			return points;
+		}
+
+		internal void PrepareLangForDump()
+		{
+			for(int i = 0; i < Main.recipe.Length; i++)
+				Main.recipe[i] = new Recipe();
+		}
+
+		public void DumpBuffs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Description\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Main.maxBuffTypes; i++)
+			{
+				if (!String.IsNullOrEmpty(Main.buffName[i]))
+				{
+					object[] element = new object[] { i, Main.buffName[i], Main.buffTip[i] };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpItems(string path, int start, int end)
+		{
+			Main.player[Main.myPlayer] = new Player();
+			StringBuilder buffer = new StringBuilder();
+			Regex newLine = new Regex(@"\n");
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Tooltip\",");
+			buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = start; i < end; i++)
+			{
+				Item item = new Item();
+				item.netDefaults(i);
+				if (!String.IsNullOrEmpty(item.name))
+				{
+					object[] element = new object[] { i,
+													  newLine.Replace(item.name, @" "),
+													  newLine.Replace(item.toolTip, @" "),
+													  newLine.Replace(item.toolTip2, @" ")
+													};
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpNPCs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Display Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = -65; i < Main.maxNPCTypes; i++)
+			{
+				NPC npc = new NPC();
+				npc.netDefaults(i);
+				if (!String.IsNullOrEmpty(npc.name))
+				{
+					object[] element = new object[] { i, npc.name, npc.displayName };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpProjectiles(string path)
+		{
+			Main.rand = new Random();
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Main.maxProjectileTypes; i++)
+			{
+				Projectile projectile = new Projectile();
+				projectile.SetDefaults(i);
+				if (!String.IsNullOrEmpty(projectile.name))
+				{
+					object[] element = new object[] { i, projectile.name };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpPrefixes(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Item.maxPrefixes; i++)
+			{
+				string prefix = Lang.prefix[i];
+
+				if (!String.IsNullOrEmpty(prefix))
+				{
+					object[] element = new object[] {i, prefix};
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		private void OutputElementsForDump(StringBuilder buffer, List<object[]> elements, int rows, int columns)
+		{
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+				for (int i = 0; i < columns; i++)
+				{
+					for (int j = 0; j < rows; j++)
+					{
+						buffer.Append(String.Format("    \"{0}-{1}\": \"{2}\"", j, i, elements[j][i]));
+						if (j != rows - 1 || i != columns - 1)
+							buffer.AppendLine(",");
+					}
+				}
+			}
 		}
 	}
 }
