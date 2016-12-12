@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using Terraria.ID;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
+using Terraria.GameContent.Events;
 
 namespace TShockAPI
 {
@@ -83,10 +84,10 @@ namespace TShockAPI
 		/// Gets or sets the help text of this command.
 		/// </summary>
 		public string HelpText { get; set; }
-        /// <summary>
-        /// Gets or sets an extended description of this command.
-        /// </summary>
-        public string[] HelpDesc { get; set; }
+		/// <summary>
+		/// Gets or sets an extended description of this command.
+		/// </summary>
+		public string[] HelpDesc { get; set; }
 		/// <summary>
 		/// Gets the name of the command.
 		/// </summary>
@@ -111,7 +112,7 @@ namespace TShockAPI
 
 				commandDelegate = value;
 			}
-	 	}
+		}
 
 		public Command(List<string> permissions, CommandDelegate cmd, params string[] names)
 			: this(cmd, names)
@@ -136,7 +137,7 @@ namespace TShockAPI
 			CommandDelegate = cmd;
 			DoLog = true;
 			HelpText = "No help available.";
-      HelpDesc = null;
+			HelpDesc = null;
 			Names = new List<string>(names);
 			Permissions = new List<string>();
 		}
@@ -202,7 +203,7 @@ namespace TShockAPI
 		public static void InitCommands()
 		{
 			List<Command> tshockCommands = new List<Command>(100);
-			Action<Command> add = (cmd) => 
+			Action<Command> add = (cmd) =>
 			{
 				tshockCommands.Add(cmd);
 				ChatCommands.Add(cmd);
@@ -212,10 +213,6 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Used to authenticate as superadmin when first setting up TShock."
-			});
-			add(new Command(Permissions.authverify, AuthVerify, "auth-verify")
-			{
-				HelpText = "Used to verify that you have correctly set up TShock."
 			});
 			add(new Command(Permissions.user, ManageUsers, "user")
 			{
@@ -248,6 +245,10 @@ namespace TShockAPI
 				DoLog = false,
 				HelpText = "Registers you an account."
 			});
+			add(new Command(Permissions.checkaccountinfo, ViewAccountInfo, "accountinfo", "ai")
+			{
+				HelpText = "Shows information about a user."
+			});
 			#endregion
 			#region Admin Commands
 			add(new Command(Permissions.ban, Ban, "ban")
@@ -270,10 +271,10 @@ namespace TShockAPI
 			{
 				HelpText = "Manages item bans."
 			});
-            add(new Command(Permissions.manageprojectile, ProjectileBan, "projban")
-            {
-                HelpText = "Manages projectile bans."
-            });
+			add(new Command(Permissions.manageprojectile, ProjectileBan, "projban")
+			{
+				HelpText = "Manages projectile bans."
+			});
 			add(new Command(Permissions.managetile, TileBan, "tileban")
 			{
 				HelpText = "Manages tile bans."
@@ -298,13 +299,17 @@ namespace TShockAPI
 			{
 				HelpText = "Saves all serverside characters."
 			});
+			add(new Command(Permissions.uploaddata, UploadJoinData, "uploadssc")
+			{
+				HelpText = "Upload the account information when you joined the server as your Server Side Character data."
+			});
 			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
 			{
 				HelpText = "Temporarily sets another player's group."
 			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
-				HelpText = "Shows information about a user."
+				HelpText = "Shows information about a player."
 			});
 			#endregion
 			#region Annoy Commands
@@ -330,11 +335,11 @@ namespace TShockAPI
 			{
 				HelpText = "Checks for TShock updates."
 			});
-			add(new Command(Permissions.maintenance, Off, "off", "exit")
+			add(new Command(Permissions.maintenance, Off, "off", "exit", "stop")
 			{
 				HelpText = "Shuts down the server while saving."
 			});
-			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave")
+			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave", "stop-nosave")
 			{
 				HelpText = "Shuts down the server without saving."
 			});
@@ -354,18 +359,13 @@ namespace TShockAPI
 			{
 				HelpText = "Shows the TShock version."
 			});
-			/* Does nothing atm.
-			 * 
-			 * add(new Command(Permissions.updateplugins, UpdatePlugins, "updateplugins")
-			{
-			});*/
 			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
 			{
 				HelpText = "Manages the server whitelist."
 			});
 			#endregion
 			#region Item Commands
-			add(new Command(Permissions.item, Give, "give", "g")
+			add(new Command(Permissions.give, Give, "give", "g")
 			{
 				HelpText = "Gives another player an item."
 			});
@@ -456,7 +456,7 @@ namespace TShockAPI
 			#region World Commands
 			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert", "expertmode")
 			{
-					HelpText = "Toggles expert mode."
+				HelpText = "Toggles expert mode."
 			});
 			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
@@ -499,6 +499,10 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles spawn protection."
 			});
+			add(new Command(Permissions.sandstorm, Sandstorm, "sandstorm")
+			{
+				HelpText = "Toggles sandstorms."
+			});
 			add(new Command(Permissions.rain, Rain, "rain")
 			{
 				HelpText = "Toggles the rain."
@@ -511,6 +515,11 @@ namespace TShockAPI
 			{
 				AllowServer = false,
 				HelpText = "Sets the world's spawn point to your location."
+			});
+			add(new Command(Permissions.dungeonposition, SetDungeon, "setdungeon")
+			{
+				AllowServer = false,
+				HelpText = "Sets the dungeon's position to your location."
 			});
 			add(new Command(Permissions.worldsettle, Settle, "settle")
 			{
@@ -623,12 +632,31 @@ namespace TShockAPI
 			if (cmdPrefix == SilentSpecifier)
 				silent = true;
 
-			var args = ParseParameters(cmdText);
-			if (args.Count < 1)
-				return false;
+			int index = -1;
+			for (int i = 0; i < cmdText.Length; i++)
+			{
+				if (IsWhiteSpace(cmdText[i]))
+				{
+					index = i;
+					break;
+				}
+			}
+			string cmdName;
+			if (index == 0) // Space after the command specifier should not be supported
+			{
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				return true;
+			}
+			else if (index < 0)
+				cmdName = cmdText.ToLower();
+			else
+				cmdName = cmdText.Substring(0, index).ToLower();
 
-			string cmdName = args[0].ToLower();
-			args.RemoveAt(0);
+			List<string> args;
+			if (index < 0)
+				args = new List<string>();
+			else
+				args = ParseParameters(cmdText.Substring(index));
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
@@ -741,7 +769,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("You are already logged in, and cannot login again.");
 				return;
 			}
-            
+
 			User user = TShock.Users.GetUserByName(args.Player.Name);
 			string password = "";
 			bool usingUUID = false;
@@ -793,11 +821,18 @@ namespace TShockAPI
 
 					var group = TShock.Utils.GetGroup(user.Group);
 
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.User = user;
+					args.Player.IsLoggedIn = true;
+					args.Player.IgnoreActionsForInventory = "none";
+
 					if (Main.ServerSideCharacter)
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
-							args.Player.IgnoreActionsForClearingTrashCan = false;
+							args.Player.PlayerData.CopyCharacter(args.Player);
+							TShock.CharacterDB.InsertPlayerData(args.Player);
 						}
 						args.Player.PlayerData.RestoreCharacter(args.Player);
 					}
@@ -809,17 +844,6 @@ namespace TShockAPI
 					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.Group = group;
-					args.Player.tempGroup = null;
-					args.Player.User = user;
-					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
-
-					if (!args.Player.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter)
-					{
-						args.Player.PlayerData.CopyCharacter(args.Player);
-						TShock.CharacterDB.InsertPlayerData(args.Player);
-					}
 					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
 
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
@@ -828,7 +852,7 @@ namespace TShockAPI
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
 							Vector2 pos = TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP);
-							args.Player.Teleport((int) pos.X*16, (int) pos.Y*16);
+							args.Player.Teleport((int)pos.X * 16, (int)pos.Y * 16);
 						}
 						args.Player.LoginHarassed = false;
 
@@ -910,7 +934,7 @@ namespace TShockAPI
 							args.Player.SendSuccessMessage("You changed your password!");
 							TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
 							TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " +
-							                       args.Player.User.Name + ".");
+												   args.Player.User.Name + ".");
 						}
 						catch (ArgumentOutOfRangeException)
 						{
@@ -921,7 +945,7 @@ namespace TShockAPI
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
 						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
-						                        args.Player.User.Name + ".");
+												args.Player.User.Name + ".");
 					}
 				}
 				else
@@ -979,7 +1003,7 @@ namespace TShockAPI
 				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
 				user.UUID = args.Player.UUID;
 
-                if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
+				if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
@@ -988,7 +1012,8 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Account " + user.Name + " has already been registered.");
+					args.Player.SendErrorMessage("Sorry, " + user.Name + " was already taken by another person.");
+					args.Player.SendErrorMessage("Please try a different username.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
 				}
 			}
@@ -1011,7 +1036,7 @@ namespace TShockAPI
 			string subcmd = args.Parameters[0];
 
 			// Add requires a username, password, and a group specified.
-			if (subcmd == "add"  && args.Parameters.Count == 4)
+			if (subcmd == "add" && args.Parameters.Count == 4)
 			{
 				var user = new User();
 
@@ -1026,7 +1051,7 @@ namespace TShockAPI
 					return;
 				}
 				user.Group = args.Parameters[3];
-				
+
 				try
 				{
 					TShock.Users.AddUser(user);
@@ -1047,7 +1072,7 @@ namespace TShockAPI
 					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
-				// User deletion requires a username
+			// User deletion requires a username
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
 				var user = new User();
@@ -1069,7 +1094,7 @@ namespace TShockAPI
 					TShock.Log.ConsoleError(ex.ToString());
 				}
 			}
-			
+
 			// Password changing requires a username, and a new password to set
 			else if (subcmd == "password" && args.Parameters.Count == 3)
 			{
@@ -1182,6 +1207,43 @@ namespace TShockAPI
 					message.Append(" | Logged in as: ").Append(players[0].User.Name).Append(" | Group: ").Append(players[0].Group.Name);
 				args.Player.SendSuccessMessage(message.ToString());
 			}
+		}
+
+		private static void ViewAccountInfo(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
+				return;
+			}
+
+			string username = String.Join(" ", args.Parameters);
+			if (!string.IsNullOrWhiteSpace(username))
+			{
+				var user = TShock.Users.GetUserByName(username);
+				if (user != null)
+				{
+					DateTime LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
+
+					args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+						LastSeen.ToShortTimeString(), Timezone);
+
+					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
+					{
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+						string ip = KnownIps[KnownIps.Count - 1];
+						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
+
+						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
+						args.Player.SendSuccessMessage("{0}'s last known IP is {1}.", user.Name, ip);
+						args.Player.SendSuccessMessage("{0}'s register date is {1} {2} UTC{3}.", user.Name, Registered.ToShortDateString(), Registered.ToShortTimeString(), Timezone);
+					}
+				}
+				else
+					args.Player.SendErrorMessage("User {0} does not exist.", username);
+			}
+			else args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
 		}
 
 		private static void Kick(CommandArgs args)
@@ -1403,7 +1465,7 @@ namespace TShockAPI
 									}
 								else
 								{
-									if (args.Silent) 
+									if (args.Silent)
 									{
 										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
 									}
@@ -1481,8 +1543,8 @@ namespace TShockAPI
 							"delip <ip> - Unbans an IP.",
 							"list [page] - Lists all player bans.",
 							"listip [page] - Lists all IP bans."
-                        };
-						
+						};
+
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
 							{
@@ -1589,7 +1651,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Server Side Characters is disabled.");
 				return;
 			}
-			if( args.Parameters.Count < 1 )
+			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Correct usage: {0}overridessc|{0}ossc <player name>", Specifier);
 				return;
@@ -1597,12 +1659,12 @@ namespace TShockAPI
 
 			string playerNameToMatch = string.Join(" ", args.Parameters);
 			var matchedPlayers = TShock.Utils.FindPlayer(playerNameToMatch);
-			if( matchedPlayers.Count < 1 )
+			if (matchedPlayers.Count < 1)
 			{
 				args.Player.SendErrorMessage("No players matched \"{0}\".", playerNameToMatch);
 				return;
 			}
-			else if( matchedPlayers.Count > 1 )
+			else if (matchedPlayers.Count > 1)
 			{
 				TShock.Utils.SendMultipleMatchError(args.Player, matchedPlayers.Select(p => p.Name));
 				return;
@@ -1629,11 +1691,68 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
+		private static void UploadJoinData(CommandArgs args)
+		{
+			TSPlayer targetPlayer = args.Player;
+			if (args.Parameters.Count == 1 && args.Player.HasPermission(Permissions.uploadothersdata))
+			{
+				List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				if (players.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					return;
+				}
+				else if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage("No player was found matching'{0}'", args.Parameters[0]);
+					return;
+				}
+				else
+				{
+					targetPlayer = players[0];
+				}
+			}
+			else if (args.Parameters.Count == 1)
+			{
+				args.Player.SendErrorMessage("You do not have permission to upload another player's character data.");
+				return;
+			}
+			else if (args.Parameters.Count > 0)
+			{
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+			else if (args.Parameters.Count == 0 && args.Player is TSServerPlayer)
+			{
+				args.Player.SendErrorMessage("A console can not upload their player data.");
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+
+			if (targetPlayer.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.InsertSpecificPlayerData(targetPlayer, targetPlayer.DataWhenJoined))
+				{
+					targetPlayer.DataWhenJoined.RestoreCharacter(targetPlayer);
+					targetPlayer.SendSuccessMessage("Your local character data has been uploaded to the server.");
+					args.Player.SendSuccessMessage("The player's character data was successfully uploaded.");
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Failed to upload your character data, are you logged in to an account?");
+				}
+			}
+			else
+			{
+				args.Player.SendErrorMessage("The target player has not logged in yet.");
+			}
+		}
+
 		private static void ForceHalloween(CommandArgs args)
 		{
 			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
 			Main.checkHalloween();
-			if (args.Silent) 
+			if (args.Silent)
 				args.Player.SendInfoMessage("{0}abled halloween mode!", (TShock.Config.ForceHalloween ? "en" : "dis"));
 			else
 				TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
@@ -1642,7 +1761,7 @@ namespace TShockAPI
 		private static void ForceXmas(CommandArgs args)
 		{
 			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
-			Main.CheckXMas();
+			Main.checkXMas();
 			if (args.Silent)
 				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
 			else
@@ -1718,8 +1837,8 @@ namespace TShockAPI
 			string message = string.Join(" ", args.Parameters);
 
 			TShock.Utils.Broadcast(
-				"(Server Broadcast) " + message, 
-				Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]), 
+				"(Server Broadcast) " + message,
+				Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
 				Convert.ToByte(TShock.Config.BroadcastRGB[2]));
 		}
 
@@ -1740,7 +1859,7 @@ namespace TShockAPI
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
 		}
-		
+
 		private static void Restart(CommandArgs args)
 		{
 			if (TShock.NoRestart)
@@ -1786,55 +1905,56 @@ namespace TShockAPI
 			if (args.Parameters.Count > 0)
 				subCommand = args.Parameters[0];
 
-			switch(subCommand.ToLower())
+			switch (subCommand.ToLower())
 			{
 				case "listusers":
-				{
-					int pageNumber;
-					if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-						return;
-
-					Dictionary<string,int> restUsersTokens = new Dictionary<string,int>();
-					foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
 					{
-						if (restUsersTokens.ContainsKey(tokenData.Username))
-							restUsersTokens[tokenData.Username]++;
-						else
-							restUsersTokens.Add(tokenData.Username, 1);
-					}
+						int pageNumber;
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+							return;
 
-					List<string> restUsers = new List<string>(
-						restUsersTokens.Select(ut => string.Format("{0} ({1} tokens)", ut.Key, ut.Value)));
-
-					PaginationTools.SendPage(
-						args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings {
-							NothingToDisplayString = "There are currently no active REST users.",
-							HeaderFormat = "Active REST Users ({0}/{1}):",
-							FooterFormat = "Type {0}rest listusers {{0}} for more.".SFormat(Specifier)
+						Dictionary<string, int> restUsersTokens = new Dictionary<string, int>();
+						foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
+						{
+							if (restUsersTokens.ContainsKey(tokenData.Username))
+								restUsersTokens[tokenData.Username]++;
+							else
+								restUsersTokens.Add(tokenData.Username, 1);
 						}
-					);
 
-					break;
-				}
+						List<string> restUsers = new List<string>(
+							restUsersTokens.Select(ut => string.Format("{0} ({1} tokens)", ut.Key, ut.Value)));
+
+						PaginationTools.SendPage(
+							args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings
+							{
+								NothingToDisplayString = "There are currently no active REST users.",
+								HeaderFormat = "Active REST Users ({0}/{1}):",
+								FooterFormat = "Type {0}rest listusers {{0}} for more.".SFormat(Specifier)
+							}
+						);
+
+						break;
+					}
 				case "destroytokens":
-				{
-					TShock.RestApi.Tokens.Clear();
-					args.Player.SendSuccessMessage("All REST tokens have been destroyed.");
-					break;
-				}
+					{
+						TShock.RestApi.Tokens.Clear();
+						args.Player.SendSuccessMessage("All REST tokens have been destroyed.");
+						break;
+					}
 				default:
-				{
-					args.Player.SendInfoMessage("Available REST Sub-Commands:");
-					args.Player.SendMessage("listusers - Lists all REST users and their current active tokens.", Color.White);
-					args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
-					break;
-				}
+					{
+						args.Player.SendInfoMessage("Available REST Sub-Commands:");
+						args.Player.SendMessage("listusers - Lists all REST users and their current active tokens.", Color.White);
+						args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
+						break;
+					}
 			}
 		}
 
 		#endregion Server Maintenence Commands
 
-        #region Cause Events and Spawn Monsters Commands
+		#region Cause Events and Spawn Monsters Commands
 
 		private static void DropMeteor(CommandArgs args)
 		{
@@ -1934,7 +2054,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetPumpkinMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -1952,7 +2072,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetFrostMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -1962,6 +2082,11 @@ namespace TShockAPI
 						TShock.StartInvasion(4);
 						break;
 				}
+			}
+			else if (DD2Event.Ongoing)
+			{
+				DD2Event.StopInvasion();
+				TSPlayer.All.SendInfoMessage("{0} has ended the Old One's Army event.", args.Player.Name);
 			}
 			else
 			{
@@ -1978,7 +2103,7 @@ namespace TShockAPI
 				if (result > 0)
 				{
 					args.Player.SendSuccessMessage("Removed {0} players from the angler quest completion list for today.", result);
-					foreach (TSPlayer ply in TShock.Players.Where(p => p!= null && p.Active && p.TPlayer.name.ToLower().Equals(args.Parameters[0].ToLower())))
+					foreach (TSPlayer ply in TShock.Players.Where(p => p != null && p.Active && p.TPlayer.name.ToLower().Equals(args.Parameters[0].ToLower())))
 					{
 						//this will always tell the client that they have not done the quest today.
 						ply.SendData((PacketTypes)74, "");
@@ -2235,7 +2360,7 @@ namespace TShockAPI
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (args.Player.Teleport(Main.spawnTileX*16, (Main.spawnTileY*16) -48))
+			if (args.Player.Teleport(Main.spawnTileX * 16, (Main.spawnTileY * 16) - 48))
 				args.Player.SendSuccessMessage("Teleported to the map's spawnpoint.");
 		}
 
@@ -2500,34 +2625,34 @@ namespace TShockAPI
 			if (!args.Player.TPAllow)
 				args.Player.SendSuccessMessage("You have removed your teleportation protection.");
 			if (args.Player.TPAllow)
-                args.Player.SendSuccessMessage("You have enabled teleportation protection.");
+				args.Player.SendSuccessMessage("You have enabled teleportation protection.");
 			args.Player.TPAllow = !args.Player.TPAllow;
 		}
 
 		private static void Warp(CommandArgs args)
 		{
-		    bool hasManageWarpPermission = args.Player.HasPermission(Permissions.managewarp);
-            if (args.Parameters.Count < 1)
-            {
-                if (hasManageWarpPermission)
-                {
-                    args.Player.SendInfoMessage("Invalid syntax! Proper syntax: {0}warp [command] [arguments]", Specifier);
-                    args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
-                    args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
-                    args.Player.SendInfoMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]");
-                    args.Player.SendInfoMessage("Examples: {0}warp add foobar, {0}warp hide foobar true, {0}warp foobar", Specifier);
-                    return;
-                }
-                else
-                {
-                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp [name] or {0}warp list <page>", Specifier);
-                    return;
-                }
-            }
+			bool hasManageWarpPermission = args.Player.HasPermission(Permissions.managewarp);
+			if (args.Parameters.Count < 1)
+			{
+				if (hasManageWarpPermission)
+				{
+					args.Player.SendInfoMessage("Invalid syntax! Proper syntax: {0}warp [command] [arguments]", Specifier);
+					args.Player.SendInfoMessage("Commands: add, del, hide, list, send, [warpname]");
+					args.Player.SendInfoMessage("Arguments: add [warp name], del [warp name], list [page]");
+					args.Player.SendInfoMessage("Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]");
+					args.Player.SendInfoMessage("Examples: {0}warp add foobar, {0}warp hide foobar true, {0}warp foobar", Specifier);
+					return;
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp [name] or {0}warp list <page>", Specifier);
+					return;
+				}
+			}
 
 			if (args.Parameters[0].Equals("list"))
-            {
-                #region List warps
+			{
+				#region List warps
 				int pageNumber;
 				if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 					return;
@@ -2541,98 +2666,98 @@ namespace TShockAPI
 						FooterFormat = "Type {0}warp list {{0}} for more.".SFormat(Specifier),
 						NothingToDisplayString = "There are currently no warps defined."
 					});
-                #endregion
-            }
-            else if (args.Parameters[0].ToLower() == "add" && hasManageWarpPermission)
-            {
-                #region Add warp
-                if (args.Parameters.Count == 2)
-                {
-                    string warpName = args.Parameters[1];
-                    if (warpName == "list" || warpName == "hide" || warpName == "del" || warpName == "add")
-                    {
-                        args.Player.SendErrorMessage("Name reserved, use a different name.");
-                    }
-                    else if (TShock.Warps.Add(args.Player.TileX, args.Player.TileY, warpName))
-                    {
-                        args.Player.SendSuccessMessage("Warp added: " + warpName);
-                    }
-                    else
-                    {
-                        args.Player.SendErrorMessage("Warp " + warpName + " already exists.");
-                    }
-                }
-                else
-                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp add [name]", Specifier);
-                #endregion
-            }
-            else if (args.Parameters[0].ToLower() == "del" && hasManageWarpPermission)
-            {
-                #region Del warp
-                if (args.Parameters.Count == 2)
-                {
-                    string warpName = args.Parameters[1];
+				#endregion
+			}
+			else if (args.Parameters[0].ToLower() == "add" && hasManageWarpPermission)
+			{
+				#region Add warp
+				if (args.Parameters.Count == 2)
+				{
+					string warpName = args.Parameters[1];
+					if (warpName == "list" || warpName == "hide" || warpName == "del" || warpName == "add")
+					{
+						args.Player.SendErrorMessage("Name reserved, use a different name.");
+					}
+					else if (TShock.Warps.Add(args.Player.TileX, args.Player.TileY, warpName))
+					{
+						args.Player.SendSuccessMessage("Warp added: " + warpName);
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Warp " + warpName + " already exists.");
+					}
+				}
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp add [name]", Specifier);
+				#endregion
+			}
+			else if (args.Parameters[0].ToLower() == "del" && hasManageWarpPermission)
+			{
+				#region Del warp
+				if (args.Parameters.Count == 2)
+				{
+					string warpName = args.Parameters[1];
 					if (TShock.Warps.Remove(warpName))
 					{
 						args.Player.SendSuccessMessage("Warp deleted: " + warpName);
 					}
 					else
 						args.Player.SendErrorMessage("Could not find the specified warp.");
-                }
-                else
-                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp del [name]", Specifier);
-                #endregion
-            }
-            else if (args.Parameters[0].ToLower() == "hide" && hasManageWarpPermission)
-            {
-                #region Hide warp
-                if (args.Parameters.Count == 3)
-                {
-                    string warpName = args.Parameters[1];
-                    bool state = false;
-                    if (Boolean.TryParse(args.Parameters[2], out state))
-                    {
-                        if (TShock.Warps.Hide(args.Parameters[1], state))
-                        {
-                            if (state)
-                                args.Player.SendSuccessMessage("Warp " + warpName + " is now private.");
-                            else
-                                args.Player.SendSuccessMessage("Warp " + warpName + " is now public.");
-                        }
-                        else
-                            args.Player.SendErrorMessage("Could not find specified warp.");
-                    }
-                    else
-                        args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp hide [name] <true/false>", Specifier);
-                }
-                else
-                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp hide [name] <true/false>", Specifier);
-                #endregion
-            }
-            else if (args.Parameters[0].ToLower() == "send" && args.Player.HasPermission(Permissions.tpothers))
-            {
-                #region Warp send
-                if (args.Parameters.Count < 3)
-                {
-                    args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp send [player] [warpname]", Specifier);
-                    return;
-                }
+				}
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp del [name]", Specifier);
+				#endregion
+			}
+			else if (args.Parameters[0].ToLower() == "hide" && hasManageWarpPermission)
+			{
+				#region Hide warp
+				if (args.Parameters.Count == 3)
+				{
+					string warpName = args.Parameters[1];
+					bool state = false;
+					if (Boolean.TryParse(args.Parameters[2], out state))
+					{
+						if (TShock.Warps.Hide(args.Parameters[1], state))
+						{
+							if (state)
+								args.Player.SendSuccessMessage("Warp " + warpName + " is now private.");
+							else
+								args.Player.SendSuccessMessage("Warp " + warpName + " is now public.");
+						}
+						else
+							args.Player.SendErrorMessage("Could not find specified warp.");
+					}
+					else
+						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp hide [name] <true/false>", Specifier);
+				}
+				else
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp hide [name] <true/false>", Specifier);
+				#endregion
+			}
+			else if (args.Parameters[0].ToLower() == "send" && args.Player.HasPermission(Permissions.tpothers))
+			{
+				#region Warp send
+				if (args.Parameters.Count < 3)
+				{
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}warp send [player] [warpname]", Specifier);
+					return;
+				}
 
-                var foundplr = TShock.Utils.FindPlayer(args.Parameters[1]);
-                if (foundplr.Count == 0)
-                {
-                    args.Player.SendErrorMessage("Invalid player!");
-                    return;
-                }
-                else if (foundplr.Count > 1)
-                {
+				var foundplr = TShock.Utils.FindPlayer(args.Parameters[1]);
+				if (foundplr.Count == 0)
+				{
+					args.Player.SendErrorMessage("Invalid player!");
+					return;
+				}
+				else if (foundplr.Count > 1)
+				{
 					TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
-                    return;
-                }
+					return;
+				}
 
-                string warpName = args.Parameters[2];
-                var warp = TShock.Warps.Find(warpName);
-                var plr = foundplr[0];
+				string warpName = args.Parameters[2];
+				var warp = TShock.Warps.Find(warpName);
+				var plr = foundplr[0];
 				if (warp.Position != Point.Zero)
 				{
 					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
@@ -2645,22 +2770,22 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("Specified warp not found.");
 				}
-                #endregion
-            }
-            else
-            {
-                string warpName = String.Join(" ", args.Parameters);
-                var warp = TShock.Warps.Find(warpName);
-                if (warp != null)
-                {
+				#endregion
+			}
+			else
+			{
+				string warpName = String.Join(" ", args.Parameters);
+				var warp = TShock.Warps.Find(warpName);
+				if (warp != null)
+				{
 					if (args.Player.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
-                        args.Player.SendSuccessMessage("Warped to " + warpName + ".");
-                }
-                else
-                {
-                    args.Player.SendErrorMessage("The specified warp was not found.");
-                }
-            }
+						args.Player.SendSuccessMessage("Warped to " + warpName + ".");
+				}
+				else
+				{
+					args.Player.SendErrorMessage("The specified warp was not found.");
+				}
+			}
 		}
 
 		#endregion Teleport Commands
@@ -2757,7 +2882,7 @@ namespace TShockAPI
 							"parent <group> <parent group> - Changes a group's parent group.",
 							"prefix <group> <prefix> - Changes a group's prefix.",
 							"suffix <group> <suffix> - Changes a group's suffix."
-                        };
+						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
@@ -3233,7 +3358,7 @@ namespace TShockAPI
 							"del <item> - Deletes an item ban.",
 							"disallow <item> <group> - Disallows a group from using an item.",
 							"list [page] - Lists all item bans."
-                        };
+						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
@@ -3403,7 +3528,7 @@ namespace TShockAPI
 							"del <projectile ID> - Deletes an projectile ban.",
 							"disallow <projectile ID> <group> - Disallows a group from using a projectile.",
 							"list [page] - Lists all projectile bans."
-                        };
+						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
@@ -3572,7 +3697,7 @@ namespace TShockAPI
 							"del <tile ID> - Deletes a tile ban.",
 							"disallow <tile ID> <group> - Disallows a group from place a tile.",
 							"list [page] - Lists all tile bans."
-                        };
+						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
@@ -3591,7 +3716,7 @@ namespace TShockAPI
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 							return;
 						IEnumerable<Int16> tileIds = from tileBan in TShock.TileBans.TileBans
-														   select tileBan.ID;
+													 select tileBan.ID;
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(tileIds),
 							new PaginationTools.Settings
 							{
@@ -3614,6 +3739,14 @@ namespace TShockAPI
 			Main.spawnTileY = args.Player.TileY + 3;
 			SaveManager.Instance.SaveWorld(false);
 			args.Player.SendSuccessMessage("Spawn has now been set at your location.");
+		}
+
+		private static void SetDungeon(CommandArgs args)
+		{
+			Main.dungeonX = args.Player.TileX + 1;
+			Main.dungeonY = args.Player.TileY + 3;
+			SaveManager.Instance.SaveWorld(false);
+			args.Player.SendSuccessMessage("The dungeon's position has now been set at your location.");
 		}
 
 		private static void Reload(CommandArgs args)
@@ -3668,11 +3801,12 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
-				if (args.Silent) 
+				if (args.Silent)
 				{
 					args.Player.SendInfoMessage("Changed the maximum spawns to 5.");
 				}
-				else {
+				else
+				{
 					TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to 5.", args.Player.Name);
 				}
 				return;
@@ -3690,7 +3824,8 @@ namespace TShockAPI
 			{
 				args.Player.SendInfoMessage("Changed the maximum spawns to {0}.", maxSpawns);
 			}
-			else {
+			else
+			{
 				TSPlayer.All.SendInfoMessage("{0} changed the maximum spawns to {1}.", args.Player.Name, maxSpawns);
 			}
 		}
@@ -3706,11 +3841,12 @@ namespace TShockAPI
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
 				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
-				if (args.Silent) 
+				if (args.Silent)
 				{
 					args.Player.SendInfoMessage("Changed the spawn rate to 600.");
 				}
-				else {
+				else
+				{
 					TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to 600.", args.Player.Name);
 				}
 				return;
@@ -3723,11 +3859,12 @@ namespace TShockAPI
 				return;
 			}
 			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
-			if (args.Silent) 
+			if (args.Silent)
 			{
 				args.Player.SendInfoMessage("Changed the spawn rate to {0}.", spawnRate);
 			}
-			else {
+			else
+			{
 				TSPlayer.All.SendInfoMessage("{0} changed the spawn rate to {1}.", args.Player.Name, spawnRate);
 			}
 		}
@@ -3748,7 +3885,7 @@ namespace TShockAPI
 				args.Player.SendInfoMessage("The current time is {0}:{1:D2}.", (int)Math.Floor(time), (int)Math.Round((time % 1.0) * 60.0));
 				return;
 			}
-			
+
 			switch (args.Parameters[0].ToLower())
 			{
 				case "day":
@@ -3798,6 +3935,30 @@ namespace TShockAPI
 						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
 					}
 					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
+					break;
+			}
+		}
+
+		private static void Sandstorm(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
+				return;
+			}
+
+			switch (args.Parameters[0].ToLowerInvariant())
+			{
+				case "start":
+					Terraria.GameContent.Events.Sandstorm.StartSandstorm();
+					TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
+					break;
+				case "stop":
+					Terraria.GameContent.Events.Sandstorm.StopSandstorm();
+					TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
+					break;
+				default:
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
 					break;
 			}
 		}
@@ -3902,8 +4063,8 @@ namespace TShockAPI
 				return;
 			}
 
-			float speed;
-			if (!float.TryParse(args.Parameters[0], out speed))
+			int speed;
+			if (!int.TryParse(args.Parameters[0], out speed) || speed * 100 < 0)
 			{
 				args.Player.SendErrorMessage("Invalid wind speed!");
 				return;
@@ -3918,7 +4079,7 @@ namespace TShockAPI
 
 		#endregion Time/PvpFun Commands
 
-        #region Region Commands
+		#region Region Commands
 
 		private static void Region(CommandArgs args)
 		{
@@ -4221,11 +4382,11 @@ namespace TShockAPI
 							break;
 
 						List<string> lines = new List<string>
-                        {
-                            string.Format("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
-                            string.Concat("Owner: ", region.Owner),
-                            string.Concat("Protected: ", region.DisableBuild.ToString()),
-                        };
+						{
+							string.Format("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
+							string.Concat("Owner: ", region.Owner),
+							string.Concat("Protected: ", region.DisableBuild.ToString()),
+						};
 
 						if (region.AllowedIDs.Count > 0)
 						{
@@ -4273,8 +4434,8 @@ namespace TShockAPI
 								// Preferring dotted lines as those should easily be distinguishable from actual wires.
 								if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
 								{
-									// Could be improved by sending raw tile data to the client instead but not really 
-									// worth the effort as chances are very low that overwriting the wire for a few 
+									// Could be improved by sending raw tile data to the client instead but not really
+									// worth the effort as chances are very low that overwriting the wire for a few
 									// nanoseconds will cause much trouble.
 									Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
 									bool oldWireState = tile.wire();
@@ -4414,21 +4575,21 @@ namespace TShockAPI
 							return;
 
 						List<string> lines = new List<string> {
-                          "set <1/2> - Sets the temporary region points.",
-                          "clear - Clears the temporary region points.",
-                          "define <name> - Defines the region with the given name.",
-                          "delete <name> - Deletes the given region.",
-                          "name [-u][-z][-p] - Shows the name of the region at the given point.",
-                          "list - Lists all regions.",
-                          "resize <region> <u/d/l/r> <amount> - Resizes a region.",
-                          "allow <user> <region> - Allows a user to a region.",
-                          "remove <user> <region> - Removes a user from a region.",
-                          "allowg <group> <region> - Allows a user group to a region.",
-                          "removeg <group> <region> - Removes a user group from a region.",
-                          "info <region> [-d] - Displays several information about the given region.",
-                          "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not.",
-                          "z <name> <#> - Sets the z-order of the region.",
-                        };
+						  "set <1/2> - Sets the temporary region points.",
+						  "clear - Clears the temporary region points.",
+						  "define <name> - Defines the region with the given name.",
+						  "delete <name> - Deletes the given region.",
+						  "name [-u][-z][-p] - Shows the name of the region at the given point.",
+						  "list - Lists all regions.",
+						  "resize <region> <u/d/l/r> <amount> - Resizes a region.",
+						  "allow <user> <region> - Allows a user to a region.",
+						  "remove <user> <region> - Removes a user from a region.",
+						  "allowg <group> <region> - Allows a user group to a region.",
+						  "removeg <group> <region> - Removes a user group from a region.",
+						  "info <region> [-d] - Displays several information about the given region.",
+						  "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not.",
+						  "z <name> <#> - Sets the z-order of the region.",
+						};
 						if (args.Player.HasPermission(Permissions.tp))
 							lines.Add("tp <region> - Teleports you to the given region's center.");
 
@@ -4445,7 +4606,7 @@ namespace TShockAPI
 			}
 		}
 
-        #endregion Region Commands
+		#endregion Region Commands
 
 		#region World Protection Commands
 
@@ -4513,15 +4674,15 @@ namespace TShockAPI
 				}
 
 				args.Player.SendSuccessMessage("{0}{1} help: ", Specifier, command.Name);
-                if (command.HelpDesc == null)
-                {
-                    args.Player.SendInfoMessage(command.HelpText);
-                    return;
-                }
-                foreach (string line in command.HelpDesc)
-                {
-                    args.Player.SendInfoMessage(line);
-                }
+				if (command.HelpDesc == null)
+				{
+					args.Player.SendInfoMessage(command.HelpText);
+					return;
+				}
+				foreach (string line in command.HelpDesc)
+				{
+					args.Player.SendInfoMessage(line);
+				}
 			}
 		}
 
@@ -4536,7 +4697,7 @@ namespace TShockAPI
 
 			bool displayIdsRequested = false;
 			int pageNumber = 1;
-			if (!invalidUsage) 
+			if (!invalidUsage)
 			{
 				foreach (string parameter in args.Parameters)
 				{
@@ -4566,8 +4727,8 @@ namespace TShockAPI
 
 			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
 			PaginationTools.SendPage(
-				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(TShock.Utils.GetPlayers(displayIdsRequested)), 
-				new PaginationTools.Settings 
+				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(TShock.Utils.GetPlayers(displayIdsRequested)),
+				new PaginationTools.Settings
 				{
 					IncludeHeader = false,
 					FooterFormat = string.Format("Type {0}who {1}{{0}} for more.", Specifier, displayIdsRequested ? "-i " : string.Empty)
@@ -4579,61 +4740,55 @@ namespace TShockAPI
 		{
 			if (TShock.AuthToken == 0)
 			{
-				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
-				TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
-				TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
-				return;
-			}
-			int givenCode = Convert.ToInt32(args.Parameters[0]);
-			if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
-			{
-				try
+				if (args.Player.Group.Name == new SuperAdminGroup().Name)
+					args.Player.SendInfoMessage("The auth system is already disabled.");
+				else
 				{
-					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
-					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
-					args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
-					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
-					args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
-					args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+					args.Player.SendWarningMessage("The auth system is disabled. This incident has been logged.");
+					TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
+					TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
+					return;
 				}
-				catch (UserManagerException ex)
-				{
-					TShock.Log.ConsoleError(ex.ToString());
-					args.Player.SendErrorMessage(ex.Message);
-				}
-				return;
 			}
 
-			if (args.Player.Group.Name == "superadmin")
+			// If the user account is already a superadmin (permanent), disable the system
+			if (args.Player.IsLoggedIn && args.Player.tempGroup == null && args.Player.Group.Name == new SuperAdminGroup().Name)
 			{
-				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. https://tshock.co/");
-				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
-				args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
-				args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}auth system has been turned off.", Specifier);
+				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
+				args.Player.SendSuccessMessage("The auth system will remain disabled as long as a superadmin exists (even if you delete auth.lck).");
+				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
+				FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
+				File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
+				TShock.AuthToken = 0;
 				return;
 			}
 
-			args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
-			TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
-		}
-
-		private static void AuthVerify(CommandArgs args)
-		{
-			if (TShock.AuthToken == 0)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendWarningMessage("It appears that you have already turned off the auth token.");
-				args.Player.SendWarningMessage("If this is a mistake, delete auth.lck.");
+				args.Player.SendErrorMessage("You must provide an auth code!");
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
-			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
-			args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
-			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
-			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
-			TShock.AuthToken = 0;
+			int givenCode;
+			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.AuthToken)
+			{
+				args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
+				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
+				return;
+			}
+
+			if (args.Player.Group.Name != "superadmin")
+				args.Player.tempGroup = new SuperAdminGroup();
+
+			args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
+			args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
+			args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
+			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
+			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}auth.", Specifier);
+			return;
 		}
 
 		private static void ThirdPerson(CommandArgs args)
@@ -4713,12 +4868,12 @@ namespace TShockAPI
 
 		private static void Motd(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.MotdPath);
 		}
 
 		private static void Rules(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.RulesPath);
 		}
 
 		private static void Whisper(CommandArgs args)
@@ -4881,9 +5036,10 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}aliases <command or alias>", Specifier);
 				return;
 			}
-			
+
 			string givenCommandName = string.Join(" ", args.Parameters);
-			if (string.IsNullOrWhiteSpace(givenCommandName)) {
+			if (string.IsNullOrWhiteSpace(givenCommandName))
+			{
 				args.Player.SendErrorMessage("Please enter a proper command name or alias.");
 				return;
 			}
@@ -4895,10 +5051,11 @@ namespace TShockAPI
 				commandName = givenCommandName;
 
 			bool didMatch = false;
-			foreach (Command matchingCommand in ChatCommands.Where(cmd => cmd.Names.IndexOf(commandName) != -1)) {
+			foreach (Command matchingCommand in ChatCommands.Where(cmd => cmd.Names.IndexOf(commandName) != -1))
+			{
 				if (matchingCommand.Names.Count > 1)
 					args.Player.SendInfoMessage(
-					    "Aliases of {0}{1}: {0}{2}", Specifier, matchingCommand.Name, string.Join(", {0}".SFormat(Specifier), matchingCommand.Names.Skip(1)));
+						"Aliases of {0}{1}: {0}{2}", Specifier, matchingCommand.Name, string.Join(", {0}".SFormat(Specifier), matchingCommand.Names.Skip(1)));
 				else
 					args.Player.SendInfoMessage("{0}{1} defines no aliases.", Specifier, matchingCommand.Name);
 
@@ -5060,13 +5217,13 @@ namespace TShockAPI
 			{
 				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC && Main.npc[i].netID != NPCID.TargetDummy) || Main.npc[i].netID == npcId))
 				{
-					TSPlayer.Server.StrikeNPC(i, (int)(Main.npc[i].life + (Main.npc[i].defense*0.5)), 0, 0);
+					TSPlayer.Server.StrikeNPC(i, (int)(Main.npc[i].life + (Main.npc[i].defense * 0.5)), 0, 0);
 					kills++;
 				}
 			}
 			TSPlayer.All.SendInfoMessage("{0} butchered {1} NPCs.", args.Player.Name, kills);
 		}
-		
+
 		private static void Item(CommandArgs args)
 		{
 			if (args.Parameters.Count < 1)
@@ -5129,12 +5286,12 @@ namespace TShockAPI
 				else if (!item.accessory && prefixIds.Contains(42))
 					prefixIds.Remove(76);
 
-				if (prefixIds.Count > 1) 
+				if (prefixIds.Count > 1)
 				{
 					TShock.Utils.SendMultipleMatchError(args.Player, prefixIds.Select(p => p.ToString()));
 					return;
 				}
-				else if (prefixIds.Count == 0) 
+				else if (prefixIds.Count == 0)
 				{
 					args.Player.SendErrorMessage("No prefix matched \"{0}\".", prefixidOrName);
 					return;
@@ -5165,7 +5322,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Your inventory seems full.");
 			}
 		}
-		
+
 		private static void RenameNPC(CommandArgs args)
 		{
 			if (args.Parameters.Count != 2)
@@ -5187,7 +5344,7 @@ namespace TShockAPI
 					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
 					return;
 				}
-				else if (args.Parameters[1].Length >200)
+				else if (args.Parameters[1].Length > 200)
 				{
 					args.Player.SendErrorMessage("New name is too large!");
 					return;
@@ -5197,26 +5354,26 @@ namespace TShockAPI
 					npcId = npcs[0].netID;
 				}
 			}
-			int done=0;
+			int done = 0;
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
 				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || (Main.npc[i].netID == npcId && Main.npc[i].townNPC)))
 				{
-				Main.npc[i].displayName= args.Parameters[1];
-				NetMessage.SendData(56, -1, -1, args.Parameters[1], i, 0f, 0f, 0f, 0);
-				done++;
+					Main.npc[i].displayName = args.Parameters[1];
+					NetMessage.SendData(56, -1, -1, args.Parameters[1], i, 0f, 0f, 0f, 0);
+					done++;
 				}
 			}
-			if (done >0 )
+			if (done > 0)
 			{
-			TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
+				TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
 			}
 			else
 			{
-			args.Player.SendErrorMessage("Could not rename {0}!", args.Parameters[0]);
+				args.Player.SendErrorMessage("Could not rename {0}!", args.Parameters[0]);
 			}
 		}
-		
+
 		private static void Give(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
@@ -5243,22 +5400,6 @@ namespace TShockAPI
 			args.Parameters.RemoveAt(0);
 			if (args.Parameters.Count == 1)
 				int.TryParse(args.Parameters[0], out itemAmount);
-			else if (args.Parameters.Count == 2)
-			{
-				int.TryParse(args.Parameters[0], out itemAmount);
-				var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-				if (items[0].accessory && prefixIds.Contains(42))
-				{
-					prefixIds.Remove(42);
-					prefixIds.Remove(76);
-					prefixIds.Add(76);
-				}
-				else if (!items[0].accessory && prefixIds.Contains(42))
-					prefixIds.Remove(76);
-				if (prefixIds.Count == 1)
-					prefix = prefixIds[0];
-			}
-
 			if (items.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid item type!");
@@ -5270,6 +5411,23 @@ namespace TShockAPI
 			else
 			{
 				var item = items[0];
+
+				if (args.Parameters.Count == 2)
+				{
+					int.TryParse(args.Parameters[0], out itemAmount);
+					var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
+					if (item.accessory && prefixIds.Contains(42))
+					{
+						prefixIds.Remove(42);
+						prefixIds.Remove(76);
+						prefixIds.Add(76);
+					}
+					else if (!item.accessory && prefixIds.Contains(42))
+						prefixIds.Remove(76);
+					if (prefixIds.Count == 1)
+						prefix = prefixIds[0];
+				}
+
 				if (item.type >= 1 && item.type < Main.maxItemTypes)
 				{
 					var players = TShock.Utils.FindPlayer(plStr);
@@ -5297,7 +5455,7 @@ namespace TShockAPI
 							{
 								args.Player.SendErrorMessage("You cannot spawn banned items.");
 							}
-							
+
 						}
 						else
 						{
@@ -5386,7 +5544,7 @@ namespace TShockAPI
 			{
 				if (time < 0 || time > short.MaxValue)
 					time = 60;
-				args.Player.SetBuff(id, time*60);
+				args.Player.SetBuff(id, time * 60);
 				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
 													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
 			}
@@ -5437,7 +5595,7 @@ namespace TShockAPI
 				{
 					if (time < 0 || time > short.MaxValue)
 						time = 60;
-					foundplr[0].SetBuff(id, time*60);
+					foundplr[0].SetBuff(id, time * 60);
 					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
 														  foundplr[0].Name, TShock.Utils.GetBuffName(id),
 														  TShock.Utils.GetBuffDescription(id), (time)));

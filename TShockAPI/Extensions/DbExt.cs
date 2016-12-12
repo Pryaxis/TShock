@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,14 +60,21 @@ namespace TShockAPI.DB
 		public static QueryResult QueryReader(this IDbConnection olddb, string query, params object[] args)
 		{
 			var db = olddb.CloneEx();
-			db.Open();
-			using (var com = db.CreateCommand())
+			try
 			{
-				com.CommandText = query;
-				for (int i = 0; i < args.Length; i++)
-					com.AddParameter("@" + i, args[i]);
+				db.Open();
+				using (var com = db.CreateCommand())
+				{
+					com.CommandText = query;
+					for (int i = 0; i < args.Length; i++)
+						com.AddParameter("@" + i, args[i]);
 
-				return new QueryResult(db, com.ExecuteReader());
+					return new QueryResult(db, com.ExecuteReader());
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details.", ex);
 			}
 		}
 

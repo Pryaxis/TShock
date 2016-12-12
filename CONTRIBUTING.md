@@ -1,3 +1,5 @@
+_When in doubt, make an issue. If any of these instructions are unclear, make an issue to discuss your issue or suggestion._
+
 ### Issue Guidelines
 Please follow these simple requirements before posting a bug report:
 
@@ -11,7 +13,7 @@ Please follow these simple requirements before posting a bug report:
 Note: This includes the API by default. If you need only the API, you need to cd into that folder and do the following with the .sln file for the API. For those new to C#, the .sln and .csproj files contain the necessary definitions to do a complete source build using Microsoft or Mono build tools.
 
 - Checkout the source.
-- Initialize the submodules: ```git submodule init```
+- Initialize the submodules: ```git submodule update --init```
 - Open the source in your favorite text editor that supports .NET building and press the build button OR
 - Run ```msbuild TShock.sln``` in the root of the cloned folder on Windows in a 'Developer Command Prompt' OR
 - Run ```xbuild TShock.sln``` in the root of the cloned folder on Unix.
@@ -20,11 +22,24 @@ Need help? Drop by Slack and we'll be happy to explain it with more words, step 
 
 ### TShock Additions
 
-If something is better suited to be a plugin for TShock, rather than a TShock core feature, it should not be added!
+If something is better suited to be a plugin for TShock, rather than a TShock core feature, it should not be added! Project scope is at times questionable, though, so create an issue on Github for discussion first. If an issue is completely outside of the scope of TShock, it will be made clear in that issue what it is.
+
+_If you are confused, make a suggestion. We will determine scope and relevance for you._
+
+_If a person makes a suggestion in Slack, capture the suggestion as a Github issue. If a suggestion crops up on the forums, make a Github issue to capture it. If you want, direct the user to make a suggestion on Github, but set an alarm/timer/reminder so that if they don't know how to use Github or they don't have an account, an issue is still made and discussed. Make it clear that the issue is a surrogate issue for a suggestion from Slack/the forums too._
 
 ### Pull Request Dev Guidelines
 
-These guidelines are for all contributors. Please join our Slack instance and ask about your idea first, if you're implementing a new feature, system, or changing an existing implementation. Pull requests that change large feature sets or swathes of code will be dissected for quality and purpose prior to approval, and requests that conflict with a team developer's work may be declined if the project is already being worked on internally, but not released. In addition, issues assigned to Nyx developers that are recent and fresh should be considered a no-go zone, while that developer works on their solution outside the scope of Github.
+These guidelines are for all contributors.
+
+* Create an issue first to suggest an improvement or feature addition to TShock.
+* Active developers will then give a go/no go for implementation. This is scope related: if an issue is within the scope of TShock, it will be tagged 'pr-wanted.'
+* After 'pr-wanted' has been added, an issue should be considered workable in a pull request fashion.
+* If you, as a developer, want to claim an issue for a PR, as soon as possible start work and note that in both the original issue and the new PR. The 'pr-wanted' tag will remain but the active PR will become the center for discussion for your implementation.
+* If a TShock core developer takes an issue, they'll be assigned to the issue. If your issue was taken by a TShock developer and you were actively developing it in a PR, you should _make it clear as soon as possible that a process error has been made_ so that the your development resources and our development resources aren't wasted.
+* Please send a pull request with at least a sentence description and something meaningful as the title, not just the issue number you're fixing.
+
+_The pr-wanted tag indicates an issue should be implemented. If an issue has a developer assigned, it indicates that they're working on it. When in doubt, ask where an issue is before starting work (so you don't waste time)!_
 
 Even if you have write access to the repository, follow [Github flow](https://guides.github.com/introduction/flow/) when sending commits. Don't send commits directly to either ```master``` or ```general-devel``` unless those commits modify either the deploy scripts or non-code components. If it compiles, follow Github Flow.
 

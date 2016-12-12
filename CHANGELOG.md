@@ -4,7 +4,101 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.21
+* Compatibility with Terraria 1.3.4.3 (@Patrikkk, @Zaicon).
+* API: Version tick 1.26.
+* API: Deprecated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2).
+* API: Main.rand now uses UnifiedRandom instead of Random. This WILL break any existing plugin that uses Main.rand.
+* Fixed HealOtherPlayer packet exploit (@Simon311).
+* Added associated config option for HealOtherPlayer exploit prevention (@Simon311).
+* Added `/accountinfo` command to get account information for a given TShock account (@Simon311).
+* Removed TShock color parsing from MOTDs (@WhiteXZ).
+* Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
+* Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
+* Added alias for server shutdown command: stop (@nicatronTg).
+* Removed the old REST model. This includes the following endpoints:
+ * `/status`
+ * `/v2/players/read`
+ * `/v2/server/rawcmd` (@WhiteXZ).
+* Fixed `/user group` always giving an unhelpful error messaging telling you to check the console, even if we knew exactly why it failed (@nicatronTg).
+* Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
+* Fixed issue where registration + login would fail because KnownIps had 0 items and .Last() doesn't work on collections with 0 items (@DogooFalchion, @nicatronTg, @Simon311).
+* Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
+* Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
+* Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
 
+## TShock 4.3.20
+* Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
+* Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy).
+* Security: `/"` exploit can no longer break chat mute filters (@Simon311).
+* Fixed an issue where sometimes players could connect briefly during server shutdown, leading to errors (@Simon311).
+* Fixed wyverns despawning & not behaving like normal (@WhiteXZ).
+* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ, @WhiteXZ).
+
+## TShock 4.3.19
+* Compatibility with Terraria 1.3.3.3 (@Simon311)
+* API: Version tick 1.25
+* API: Resolved some issues with the ItemForceIntoChest hook (@WhiteXZ, @Patrikkk)
+* API: Resolved some shonky code that caused Vitamins and other Ankh Shield related items to drop at strange rates or not at all (@ProfessorXZ, @WhiteXZ, @nicatronTg)
+* Fixed magical ice blocks not working correctly (@ProfessorXZ)
+
+## TShock 4.3.18
+
+* Compatibility with Terraria 1.3.3.2
+* API: Version tick 1.24
+* API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
+* API: Added ItemForceIntoChest hook (@WhiteXZ)
+* API: Included the player's registration date in REST's players/read endpoints (@ProfessorXZ)
+* The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
+* Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
+* Fixed clients being able to remove other players' portals (@ProfessorXZ)
+* Fixed possible client crashes caused by invalid item netIDs (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing Tile Entities (@ProfessorXZ)
+* Fixed players being able to bypass permission checks when placing items in Item Frames (@ProfessorXZ)
+* Fixed a bug involving Item Frames which allowed players to duplicate items (@ProfessorXZ)
+* Fixed an issue allowing clients to teleport NPCs to arbitrary locations (@ProfessorXZ)
+* Fixed a bug where players would get teleported to their previous location after dismounting the Unicorn Mount (@ProfessorXZ)
+* Players can no longer quick stack items into region protected chests (@ProfessorXZ)
+* Rope placement is no longer blocked by range checks (@ProfessorXZ)
+* The Drill Containment Unit breaks blocks properly now (@ProfessorXZ)
+* Fixed item duplications caused by range checks and invalid netIDs (@ProfessorXZ)
+* Fixed Expert mode coin duplication (@ProfessorXZ)
+* Players are no longer able to place liquids using LoadNetModule packet (@ProfessorXZ)
+* Explosives are no longer blocked by range checks (@ProfessorXZ)
+* Players can no longer bypass tile checks by using the Tile packet (@ProfessorXZ)
+* Fixed a bug where players couldn't hammer a Junction Box without "allowclientsideworldedit" permission (@Patrikkk)
+* Fixed the client's UI not being draw when setting wind speed to abnormal values (@ProfessorXZ)
+* Added a command to start and stop sandstorms (@WhiteXZ)
+
+## TShock 4.3.17
+
+* Compatibility with Terraria 1.3.2.1
+* Updated superadmin behaviour to conform to expected behaviour (@WhiteXZ, @Patrikk)
+* Fixed a crash involving teleporters and dressers (@WhiteXZ)
+* Fixed pressure plates (@Enerdy, @Patrikk)
+* Fixed a deadlock in wiring (@Wolfje)
+* Fixed a crash in wiring (@Patrikk)
+* Improved network syncing on client joins (@Patrikk)
+* The Presserator can now place actuators (@ProfessorXZ)
+* Resolved a region error when removing unlisted users from regions (@WhiteXZ)
+* Added a `SetDungeon` command to set the dungeon position (@webmilio)
+* The currently running world name is now part of the server application's title (@webmilio)
+* Gem locks can now be region protected (@mistzzt)
+* Players can now place sensors (@mistzzt)
+* Repackaged GeoIP with TShock so that GeoIP works (@Enerdy)
+* Added permissions to use sundials and start/stop parties (@Patrikk)
+* Added an announcement box hook (@mistzzt)
+* Added the ability to choose what type of world (crimson/corruption) you generate (@NoNiMad)
+
+## TShock 4.3.16
+
+* Terraria 1.3.1 wiring bugfixes
+* Terraria 1.3.1.1 compatibility
+
+## TShock 4.3.15
+
+* This release is actually 4.3.14, but was ticked extra due to a version issue on gen-dev prior to master push.
+* Update to 1.3.1
 
 ## TShock 4.3.13
 
@@ -104,7 +198,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * API: Fixed issues with SendQ writes failing. (@Wolfje)
 * API: Version tick to 1.21
 
-## TShock 4.3.6 (Pre-Release)
+## TShock 4.3.6
 
 * API: NPCs shoot the right way (@WhiteXZ)
 * API: The server config file works correctly with priority and port (@Patrikkk)
@@ -156,7 +250,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * Fix: Logging out is now safe with SSC (/logout) (issue #1037). (@WhiteXZ)
 * API/TShock: Removed -world parameter from TShock, put it back in the API. (@tylerjwatson)
 
-## TShock 4.3.5 (Unreleased)
+## TShock 4.3.5
 
 * Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items. (@Ijwu)
 * Rewrite SendQ for more network stack improvements (@tylerjwatson)

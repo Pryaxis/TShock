@@ -120,7 +120,6 @@
     <Compile Include="Net\ProjectileRemoveMsg.cs" />
     <Compile Include="Net\SpawnMsg.cs" />
     <Compile Include="Net\WorldInfoMsg.cs" />
-    <Compile Include="PacketBufferer.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Resources.Designer.cs">
