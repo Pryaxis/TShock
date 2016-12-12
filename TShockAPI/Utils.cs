@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
+using Terraria.Utilities;
 using TShockAPI.DB;
 using BCrypt.Net;
 
@@ -1289,7 +1290,7 @@ namespace TShockAPI
 
 		public void DumpProjectiles(string path)
 		{
-			Main.rand = new Random();
+			Main.rand = new UnifiedRandom();
 			StringBuilder buffer = new StringBuilder();
 			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
 			buffer.AppendLine("    \"h-0\": \"ID\",");
