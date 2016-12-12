@@ -167,6 +167,12 @@ namespace TShockAPI.Sockets
 				}
 			}
 			this._listener.Stop();
+
+			// currently vanilla will stop listening when the slots are full, however it appears that this Netplay.IsListening
+			// flag is still set, making the server loop beleive it's still listening when it's actually not.
+			// clearing this flag when we actually have stopped will allow the ServerLoop to start listening again when
+			// there are enough slots available.
+			Netplay.IsListening = false;
 		}
 	}
 }
