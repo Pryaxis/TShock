@@ -73,7 +73,20 @@ namespace TShockAPI.Sockets
 		private void ReadCallback(IAsyncResult result)
 		{
 			Tuple<SocketReceiveCallback, object> tuple = (Tuple<SocketReceiveCallback, object>)result.AsyncState;
-			tuple.Item1(tuple.Item2, this._connection.GetStream().EndRead(result));
+
+			try
+			{
+				tuple.Item1(tuple.Item2, this._connection.GetStream().EndRead(result));
+			}
+			catch (InvalidOperationException)
+			{
+				// This is common behaviour during client disconnects
+				((ISocket)this).Close();
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
 		}
 
 		private void SendCallback(IAsyncResult result)
