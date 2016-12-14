@@ -22,6 +22,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI
 {

@@ -31,6 +31,8 @@ using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
+using Microsoft.Xna.Framework;
+using OTAPI.Tile;
 
 namespace TShockAPI
 {
@@ -2116,7 +2118,7 @@ namespace TShockAPI
 			else
 			{
 				Main.anglerWhoFinishedToday.Clear();
-				NetMessage.SendAnglerQuest();
+				NetMessage.SendAnglerQuest(-1);
 				args.Player.SendSuccessMessage("Cleared all users from the angler quest completion list for today.");
 			}
 		}
@@ -4437,7 +4439,7 @@ namespace TShockAPI
 									// Could be improved by sending raw tile data to the client instead but not really
 									// worth the effort as chances are very low that overwriting the wire for a few
 									// nanoseconds will cause much trouble.
-									Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+									ITile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
 									bool oldWireState = tile.wire();
 									tile.wire(true);
 
@@ -5177,7 +5179,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				plr.DamagePlayer(999999);
+				plr.KillPlayer();
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}

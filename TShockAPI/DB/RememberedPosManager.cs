@@ -20,6 +20,7 @@ using System;
 using System.Data;
 using MySql.Data.MySqlClient;
 using Terraria;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI.DB
 {
