@@ -654,10 +654,20 @@ namespace TShockAPI
 						}
 					case "-dump":
 						{
+							Utils.PrepareLangForDump();
+							Lang.setLang(true);
 							ConfigFile.DumpDescriptions();
 							Permissions.DumpDescriptions();
 							ServerSideConfig.DumpDescriptions();
 							RestManager.DumpDescriptions();
+							Utils.DumpBuffs("BuffList.txt");
+							Utils.DumpItems("Items-1_0.txt", -48, 235);
+							Utils.DumpItems("Items-1_1.txt", 235, 604);
+							Utils.DumpItems("Items-1_2.txt", 604, 2749);
+							Utils.DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
+							Utils.DumpNPCs("NPCs.txt");
+							Utils.DumpProjectiles("Projectiles.txt");
+							Utils.DumpPrefixes("Prefixes.txt");
 							Environment.Exit(1);
 							break;
 						}
