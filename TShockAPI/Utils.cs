@@ -31,6 +31,7 @@ using Terraria.ID;
 using Terraria.Utilities;
 using TShockAPI.DB;
 using BCrypt.Net;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI
 {

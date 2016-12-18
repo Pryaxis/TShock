@@ -32,6 +32,8 @@ using Terraria;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
+using Microsoft.Xna.Framework;
+using OTAPI.Tile;
 
 namespace TShockAPI
 {
@@ -2053,7 +2055,7 @@ namespace TShockAPI
 
 				Item selectedItem = args.Player.SelectedItem;
 				int lastKilledProj = args.Player.LastKilledProjectile;
-				Tile tile = Main.tile[tileX, tileY];
+				ITile tile = Main.tile[tileX, tileY];
 
 				if (action == EditAction.PlaceTile)
 				{

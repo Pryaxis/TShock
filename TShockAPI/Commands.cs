@@ -31,6 +31,8 @@ using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
+using Microsoft.Xna.Framework;
+using OTAPI.Tile;
 
 namespace TShockAPI
 {
@@ -890,29 +892,7 @@ namespace TShockAPI
 				return;
 			}
 
-			PlayerHooks.OnPlayerLogout(args.Player);
-
-
-			if (Main.ServerSideCharacter)
-			{
-				args.Player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
-				if (!args.Player.IgnoreActionsForClearingTrashCan && (!args.Player.Dead || args.Player.TPlayer.difficulty != 2))
-				{
-					args.Player.PlayerData.CopyCharacter(args.Player);
-					TShock.CharacterDB.InsertPlayerData(args.Player);
-				}
-			}
-
-			args.Player.PlayerData = new PlayerData(args.Player);
-			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
-			args.Player.tempGroup = null;
-			if (args.Player.tempGroupTimer != null)
-			{
-				args.Player.tempGroupTimer.Stop();
-			}
-			args.Player.User = null;
-			args.Player.IsLoggedIn = false;
-
+			args.Player.Logout();
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 			if (Main.ServerSideCharacter)
 			{
@@ -1223,16 +1203,20 @@ namespace TShockAPI
 				var user = TShock.Users.GetUserByName(username);
 				if (user != null)
 				{
-					DateTime LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+					DateTime LastSeen;
 					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
 
-					args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
-						LastSeen.ToShortTimeString(), Timezone);
+					if (DateTime.TryParse(user.LastAccessed, out LastSeen))
+					{
+						LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+							LastSeen.ToShortTimeString(), Timezone);
+					}
 
 					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
 					{
-						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-						string ip = KnownIps[KnownIps.Count - 1];
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps?.ToString() ?? string.Empty);
+						string ip = KnownIps?[KnownIps.Count - 1] ?? "N/A";
 						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
 
 						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
@@ -2116,7 +2100,7 @@ namespace TShockAPI
 			else
 			{
 				Main.anglerWhoFinishedToday.Clear();
-				NetMessage.SendAnglerQuest();
+				NetMessage.SendAnglerQuest(-1);
 				args.Player.SendSuccessMessage("Cleared all users from the angler quest completion list for today.");
 			}
 		}
@@ -4437,7 +4421,7 @@ namespace TShockAPI
 									// Could be improved by sending raw tile data to the client instead but not really
 									// worth the effort as chances are very low that overwriting the wire for a few
 									// nanoseconds will cause much trouble.
-									Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+									ITile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
 									bool oldWireState = tile.wire();
 									tile.wire(true);
 
@@ -5177,7 +5161,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				plr.DamagePlayer(999999);
+				plr.KillPlayer();
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}

@@ -16,7 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using Terraria;
+using Microsoft.Xna.Framework;
+using Terraria;
 using TShockAPI;
 
 namespace TShockAPI
@@ -122,64 +123,51 @@ namespace TShockAPI
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.InventorySlots)
+				if (i < NetItem.InventoryIndex.Item2)
 				{
 					//0-58
 					this.inventory[i] = (NetItem)inventory[i];
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
+				else if (i < NetItem.ArmorIndex.Item2)
 				{
 					//59-78
-					var index = i - NetItem.InventorySlots;
+					var index = i - NetItem.ArmorIndex.Item1;
 					this.inventory[i] = (NetItem)armor[index];
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
+				else if (i < NetItem.DyeIndex.Item2)
 				{
 					//79-88
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
+					var index = i - NetItem.DyeIndex.Item1;
 					this.inventory[i] = (NetItem)dye[index];
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
+				else if (i < NetItem.MiscEquipIndex.Item2)
 				{
 					//89-93
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
+					var index = i - NetItem.MiscEquipIndex.Item1;
 					this.inventory[i] = (NetItem)miscEqups[index];
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots
-					+ NetItem.MiscDyeSlots)
+				else if (i < NetItem.MiscDyeIndex.Item2)
 				{
 					//93-98
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots);
+					var index = i - NetItem.MiscDyeIndex.Item1;
 					this.inventory[i] = (NetItem)miscDyes[index];
 				}
-				else if (i <
-				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
+				else if (i < NetItem.PiggyIndex.Item2)
 				{
 					//98-138
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
+					var index = i - NetItem.PiggyIndex.Item1;
 					this.inventory[i] = (NetItem)piggy[index];
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
+				else if (i < NetItem.SafeIndex.Item2)
 				{
 					//138-178
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
+					var index = i - NetItem.SafeIndex.Item1;
 					this.inventory[i] = (NetItem)safe[index];
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots + NetItem.ForgeSlots)
+				else if (i < NetItem.ForgeIndex.Item2)
 				{
 					//179-219
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.ForgeSlots);
+					var index = i - NetItem.ForgeIndex.Item1;
 					this.inventory[i] = (NetItem)forge[index];
 				}
 				else
