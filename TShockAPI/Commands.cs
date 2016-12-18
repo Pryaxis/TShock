@@ -892,29 +892,7 @@ namespace TShockAPI
 				return;
 			}
 
-			PlayerHooks.OnPlayerLogout(args.Player);
-
-
-			if (Main.ServerSideCharacter)
-			{
-				args.Player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
-				if (!args.Player.IgnoreActionsForClearingTrashCan && (!args.Player.Dead || args.Player.TPlayer.difficulty != 2))
-				{
-					args.Player.PlayerData.CopyCharacter(args.Player);
-					TShock.CharacterDB.InsertPlayerData(args.Player);
-				}
-			}
-
-			args.Player.PlayerData = new PlayerData(args.Player);
-			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
-			args.Player.tempGroup = null;
-			if (args.Player.tempGroupTimer != null)
-			{
-				args.Player.tempGroupTimer.Stop();
-			}
-			args.Player.User = null;
-			args.Player.IsLoggedIn = false;
-
+			args.Player.Logout();
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 			if (Main.ServerSideCharacter)
 			{
