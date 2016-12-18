@@ -638,6 +638,33 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Logs the player out of an account.
+		/// </summary>
+		public void Logout()
+		{
+			PlayerHooks.OnPlayerLogout(this);
+			if (Main.ServerSideCharacter)
+			{
+				IgnoreActionsForInventory = $"Server side characters is enabled! Please {Commands.Specifier}register or {Commands.Specifier}login to play!";
+				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
+				{
+					PlayerData.CopyCharacter(this);
+					TShock.CharacterDB.InsertPlayerData(this);
+				}
+			}
+
+			PlayerData = new PlayerData(this);
+			Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			tempGroup = null;
+			if (tempGroupTimer != null)
+			{
+				tempGroupTimer.Stop();
+			}
+			User = null;
+			IsLoggedIn = false;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="TSPlayer"/> class.
 		/// </summary>
 		/// <param name="index">The player's index in the.</param>
