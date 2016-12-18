@@ -1203,16 +1203,20 @@ namespace TShockAPI
 				var user = TShock.Users.GetUserByName(username);
 				if (user != null)
 				{
-					DateTime LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+					DateTime LastSeen;
 					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
 
-					args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
-						LastSeen.ToShortTimeString(), Timezone);
+					if (DateTime.TryParse(user.LastAccessed, out LastSeen))
+					{
+						LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+							LastSeen.ToShortTimeString(), Timezone);
+					}
 
 					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
 					{
-						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-						string ip = KnownIps[KnownIps.Count - 1];
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps?.ToString() ?? string.Empty);
+						string ip = KnownIps?[KnownIps.Count - 1] ?? "N/A";
 						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
 
 						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
