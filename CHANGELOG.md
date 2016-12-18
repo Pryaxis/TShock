@@ -7,6 +7,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Added TSPlayer.KillPlayer() (@WhiteXZ)
 * API: Added TSPlayer.Logout() (@ProfessorXZ)
 * Fixed connections after max slot is reached (@DeathCradle)
+* Fixed server crashes caused by client disconnections when attempting to read closed sockets (@Enerdy)
 
 ## TShock 4.3.21
 * Compatibility with Terraria 1.3.4.3 (@Patrikkk, @Zaicon).
