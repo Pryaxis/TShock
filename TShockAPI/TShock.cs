@@ -1951,7 +1951,6 @@ namespace TShockAPI
 		/// <returns>bool - True if the player has a hacked inventory.</returns>
 		public static bool HackedInventory(TSPlayer player)
 		{
-			//TODO:  Update this to the new logic in PlayerData.
 			bool check = false;
 
 			Item[] inventory = player.TPlayer.inventory;
