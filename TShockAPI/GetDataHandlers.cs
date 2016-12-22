@@ -1940,6 +1940,14 @@ namespace TShockAPI
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
 		};
 
+		private static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
+		{
+			{ItemID.RopeCoil, TileID.Rope},
+			{ItemID.SilkRopeCoil, TileID.SilkRope},
+			{ItemID.VineRopeCoil, TileID.VineRope},
+			{ItemID.WebRopeCoil, TileID.WebRope}
+		};
+
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
@@ -2115,7 +2123,8 @@ namespace TShockAPI
 
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
 					if (!(selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock) &&
-						editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall))
+						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
+						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
