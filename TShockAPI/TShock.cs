@@ -1962,10 +1962,9 @@ namespace TShockAPI
 			Item[] safe = player.TPlayer.bank2.item;
 			Item[] forge = player.TPlayer.bank3.item;
 			Item trash = player.TPlayer.trashItem;
-
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.InventorySlots)
+				if (i < NetItem.InventoryIndex.Item2)
 				{
 					//0-58
 					Item item = new Item();
@@ -1983,11 +1982,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
+				else if (i < NetItem.ArmorIndex.Item2)
 				{
 					//59-78
+					var index = i - NetItem.ArmorIndex.Item1;
 					Item item = new Item();
-					var index = i - NetItem.InventorySlots;
 					if (armor[index] != null && armor[index].netID != 0)
 					{
 						item.netDefaults(armor[index].netID);
@@ -2002,11 +2001,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
+				else if (i < NetItem.DyeIndex.Item2)
 				{
 					//79-88
+					var index = i - NetItem.DyeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
 					if (dye[index] != null && dye[index].netID != 0)
 					{
 						item.netDefaults(dye[index].netID);
@@ -2021,12 +2020,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
+				else if (i < NetItem.MiscEquipIndex.Item2)
 				{
 					//89-93
+					var index = i - NetItem.MiscEquipIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
 					if (miscEquips[index] != null && miscEquips[index].netID != 0)
 					{
 						item.netDefaults(miscEquips[index].netID);
@@ -2041,14 +2039,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots
-					+ NetItem.MiscDyeSlots)
+				else if (i < NetItem.MiscDyeIndex.Item2)
 				{
 					//93-98
+					var index = i - NetItem.MiscDyeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots);
 					if (miscDyes[index] != null && miscDyes[index].netID != 0)
 					{
 						item.netDefaults(miscDyes[index].netID);
@@ -2063,14 +2058,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
+				else if (i < NetItem.PiggyIndex.Item2)
 				{
 					//98-138
+					var index = i - NetItem.PiggyIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
 					if (piggy[index] != null && piggy[index].netID != 0)
 					{
 						item.netDefaults(piggy[index].netID);
@@ -2086,14 +2078,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
+				else if (i < NetItem.SafeIndex.Item2)
 				{
 					//138-178
+					var index = i - NetItem.SafeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
 					if (safe[index] != null && safe[index].netID != 0)
 					{
 						item.netDefaults(safe[index].netID);
@@ -2109,31 +2098,9 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots + NetItem.ForgeSlots)
+				else if (i < NetItem.TrashIndex.Item2)
 				{
 					//179-219
-					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots);
-					if (forge[index] != null && forge[index].netID != 0)
-					{
-						item.netDefaults(forge[index].netID);
-						item.Prefix(forge[index].prefix);
-						item.AffixName();
-
-						if (forge[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else
-				{
 					Item item = new Item();
 					if (trash != null && trash.netID != 0)
 					{
@@ -2149,6 +2116,27 @@ namespace TShockAPI
 								Color.Cyan);
 						}
 					}
+				}
+				else
+				{
+					//220
+					var index = i - NetItem.ForgeIndex.Item1;
+					Item item = new Item();
+					if (forge[index] != null && forge[index].netID != 0)
+					{
+						item.netDefaults(forge[index].netID);
+						item.Prefix(forge[index].prefix);
+						item.AffixName();
+
+						if (forge[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
+								Color.Cyan);
+						}
+					}
+
 				}
 			}
 
