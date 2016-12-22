@@ -72,6 +72,11 @@ namespace TShockAPI
 		public static readonly int MiscDyeSlots = MiscEquipSlots;
 
 		/// <summary>
+		/// 1 - The number of trash can slots.
+		/// </summary>
+		public static readonly int TrashSlots = 1;
+
+		/// <summary>
 		/// 180 - The inventory size (inventory, held item, armour, dies, coins, ammo, piggy, safe, and trash)
 		/// </summary>
 		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + ForgeSlots + 1;
@@ -83,7 +88,8 @@ namespace TShockAPI
 		public static readonly Tuple<int, int> MiscDyeIndex = new Tuple<int, int>(MiscEquipIndex.Item2, MiscEquipIndex.Item2 + MiscDyeSlots);
 		public static readonly Tuple<int, int> PiggyIndex = new Tuple<int, int>(MiscDyeIndex.Item2, MiscDyeIndex.Item2 + PiggySlots);
 		public static readonly Tuple<int, int> SafeIndex = new Tuple<int, int>(PiggyIndex.Item2, PiggyIndex.Item2 + SafeSlots);
-		public static readonly Tuple<int, int> ForgeIndex = new Tuple<int, int>(SafeIndex.Item2, SafeIndex.Item2 + ForgeSlots);
+		public static readonly Tuple<int, int> TrashIndex = new Tuple<int, int>(SafeIndex.Item2, SafeIndex.Item2 + TrashSlots);
+		public static readonly Tuple<int, int> ForgeIndex = new Tuple<int, int>(TrashIndex.Item2, TrashIndex.Item2 + ForgeSlots);
 
 		[JsonProperty("netID")]
 		private int _netId;
