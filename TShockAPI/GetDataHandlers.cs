@@ -1719,15 +1719,7 @@ namespace TShockAPI
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 
-			bool isTrapdoor = false;
-
-			if (Main.tile[tileX, tileY].type == TileID.TrapdoorClosed
-				|| Main.tile[tileX, tileY].type == TileID.TrapdoorOpen)
-			{
-				isTrapdoor = true;
-			}
-
-			if (args.Player.HasPermission(Permissions.allowclientsideworldedit) && !isTrapdoor)
+			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 				return false;
 
 			if (OnSendTileSquare(size, tileX, tileY))
@@ -1801,6 +1793,10 @@ namespace TShockAPI
 
 						// Junction Box
 						if (tile.type == TileID.WirePipe)
+							return false;
+
+						// Fixes trapdoors being removed upon opening/closing
+						if (tile.type == TileID.TrapdoorOpen || tile.type == TileID.TrapdoorClosed)
 							return false;
 
 						// Orientable tiles
@@ -4394,7 +4390,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			
+
 			if (!args.Player.HasPermission(Permissions.startdd2))
 			{
 				args.Player.SendErrorMessage("You don't have permission to start the Old One's Army event.");
