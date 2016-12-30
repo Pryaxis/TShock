@@ -438,8 +438,17 @@ namespace TShockAPI
 			{
 				player.TPlayer.buffType[k] = 0;
 			}
+
+			/*
+			 * The following packets are sent twice because the server will not send a packet to a client
+			 * if they have not spawned yet if the remoteclient is -1
+			 * This is for when players login via uuid or serverpassword instead of via
+			 * the login command.
+			 */
 			NetMessage.SendData(50, -1, -1, "", player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(50, player.Index, -1, "", player.Index, 0f, 0f, 0f, 0);
+
+			NetMessage.SendData(76, player.Index, -1, "", player.Index);
 			NetMessage.SendData(76, -1, -1, "", player.Index);
 
 			NetMessage.SendData(39, player.Index, -1, "", 400);
