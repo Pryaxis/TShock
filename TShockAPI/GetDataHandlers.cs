@@ -2200,8 +2200,13 @@ namespace TShockAPI
 						return true;
 					}
 				}
-				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[Main.tile[tileX, tileY].type])
+				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
 				{
+					if (action == EditAction.KillWall)
+					{
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						return true;
+					}
 					return false;
 				}
 
