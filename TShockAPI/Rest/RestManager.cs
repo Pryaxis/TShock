@@ -23,7 +23,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using HttpServer;
 using Rests;
@@ -102,12 +101,14 @@ namespace TShockAPI
 			// Server Commands
 			if (TShock.Config.EnableTokenEndpointAuthentication)
 			{
+				Rest.Register(new SecureRestCommand("/status", ServerStatusRoot));
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
 				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
 				Rest.Register(new SecureRestCommand("/v3/server/rules", ServerRules));
 			}
 			else
 			{
+				Rest.Register(new RestCommand("/status", (a) => this.ServerStatusRoot(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
@@ -272,6 +273,16 @@ namespace TShockAPI
 			{
 				{"rules", File.ReadAllLines(rulesFilePath)}
 			};
+		}
+
+		[Description("Get a list of information about the current TShock server.")]
+		[Route("/status")]
+		[Token]
+		private object ServerStatusRoot(RestRequestArgs args)
+		{
+			RestObject status = (RestObject)ServerStatusV2(args);
+			status.Add("upgrade", "/v2/server/status");
+			return status;
 		}
 
 		[Description("Get a list of information about the current TShock server.")]
@@ -761,10 +772,11 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.User ? "" : player.User.Name},
+				{"username", player.User?.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
-				{"registered", null == player.User ? "" : player.User.Registered},
+				{"registered", player.User?.Registered},
+				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
 				{"inventory", string.Join(", ", inventory.Select(p => (p.name + ":" + p.stack)))},
 				{"armor", string.Join(", ", equipment.Select(p => (p.netID + ":" + p.prefix)))},
