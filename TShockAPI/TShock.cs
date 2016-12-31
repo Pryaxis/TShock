@@ -822,12 +822,23 @@ namespace TShockAPI
 
 		/// <summary>AuthToken - The auth token used by the /auth system to grant temporary superadmin access to new admins.</summary>
 		public static int AuthToken = -1;
+		private string _cliPassword = null;
 
 		/// <summary>OnPostInit - Fired when the server loads a map, to perform world specific operations.</summary>
 		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
 			SetConsoleTitle(false);
+
+			//This is to prevent a bug where a CLI-defined password causes packets to be
+			//sent in an unexpected order, resulting in clients being unable to connect
+			if (!string.IsNullOrEmpty(Netplay.ServerPassword))
+			{
+				//CLI defined password overrides a config password
+				_cliPassword = Netplay.ServerPassword;
+				Netplay.ServerPassword = "";
+				Config.ServerPassword = _cliPassword;
+			}
 
 			// Disable the auth system if "auth.lck" is present or a superadmin exists
 			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || Users.GetUsers().Exists(u => u.Group == new SuperAdminGroup().Name))
@@ -2172,7 +2183,14 @@ namespace TShockAPI
 			if (file.MaxSlots > 235)
 				file.MaxSlots = 235;
 			Main.maxNetPlayers = file.MaxSlots + 20;
+
 			Netplay.ServerPassword = "";
+			if (!string.IsNullOrEmpty(_cliPassword))
+			{
+				//This prevents a config reload from removing/updating a CLI-defined password
+				file.ServerPassword = _cliPassword;
+			}
+
 			Netplay.spamCheck = false;
 		}
 	}
