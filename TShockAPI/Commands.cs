@@ -1013,6 +1013,12 @@ namespace TShockAPI
 				return;
 			}
 
+			if (!args.Player.IsLoggedIn && args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You are not logged in.");
+				return;
+			}
+
 			string subcmd = args.Parameters[0];
 
 			// Add requires a username, password, and a group specified.
@@ -1109,6 +1115,12 @@ namespace TShockAPI
 
 				try
 				{
+					if (user.Name == args.Player.User.Name)
+					{
+						args.Player.SendErrorMessage("You cannot change your own group.");
+						return;
+					}
+
 					TShock.Users.SetUserGroup(user, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
