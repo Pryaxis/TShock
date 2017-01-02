@@ -3,11 +3,17 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
+* Compatibility with Terraria 1.3.4.4
 * API: Version tick 2.0
 * API: Added TSPlayer.KillPlayer() (@WhiteXZ)
 * API: Added TSPlayer.Logout() (@ProfessorXZ)
 * Fixed connections after max slot is reached (@DeathCradle)
 * Fixed server crashes caused by client disconnections when attempting to read closed sockets (@Enerdy)
+* Added some code to make trapdoors work better (@DogooFalchion)
+* AllowCutTilesAndBreakables config option now correctly allows flowers/vines/herbs to be cut in regions without breaking walls (@WhiteXZ)
+* REST: `/status` has been re-added. It will now always point to `/v2/server/status` and includes an `upgrade` field describing the newest status route (@WhiteXZ)
+* REST: `/v3/players/read` now includes a `muted` field (@WhiteXZ)
+* Fixed fishing quests not saving/loading correctly when login before join, UUID login, and SSC were enabled together (@DogooFalchion)
 
 ## TShock 4.3.21
 * Compatibility with Terraria 1.3.4.3 (@Patrikkk, @Zaicon).
