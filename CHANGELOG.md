@@ -5,6 +5,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming Changes
 * Compatibility with Terraria 1.3.4.4
 * API: Version tick 2.0
+* API: Reduced RAM usage by ~80MB (Large server) (@deathcradle)
 * API: Added TSPlayer.KillPlayer() (@WhiteXZ)
 * API: Added TSPlayer.Logout() (@ProfessorXZ)
 * Fixed connections after max slot is reached (@DeathCradle)
