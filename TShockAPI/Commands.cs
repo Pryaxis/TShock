@@ -1874,7 +1874,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("An update check has been queued.");
 			try
 			{
-				TShock.UpdateManager.UpdateCheck(null);
+				TShock.UpdateManager.UpdateCheckAsync(null);
 			}
 			catch (Exception)
 			{
