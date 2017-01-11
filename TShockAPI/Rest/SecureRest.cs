@@ -24,6 +24,7 @@ using HttpServer;
 using TShockAPI;
 using TShockAPI.DB;
 using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace Rests
 {
@@ -197,6 +198,13 @@ namespace Rests
 			{
 				return new RestObject("403")
 				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
+			}
+
+			//Main.rand being null can cause issues in command execution.
+			//This should solve that
+			if (Main.rand == null)
+			{
+				Main.rand = new Terraria.Utilities.UnifiedRandom();
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);
