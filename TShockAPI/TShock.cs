@@ -1380,11 +1380,17 @@ namespace TShockAPI
 				}
 			}
 		}
-
+		
 		/// <summary>OnLeave - Called when a player leaves the server.</summary>
 		/// <param name="args">args - The LeaveEventArgs object.</param>
 		private void OnLeave(LeaveEventArgs args)
 		{
+			if (args.Who >= Players.Length || args.Who < 0)
+			{
+				//Something not right has happened
+				return;
+			}
+
 			var tsplr = Players[args.Who];
 			Players[args.Who] = null;
 
