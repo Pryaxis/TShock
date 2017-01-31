@@ -521,6 +521,7 @@ namespace TShockAPI
 		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
 		/// <summary>RESTLimitOnlyFailedLoginRequests - Whether or not to limit only the max failed login requests, or all login requests.</summary>
+		[Obsolete("This value is no longer used and will be removed next version.")]
 		[Description("Whether we should limit only the max failed login requests, or all login requests.")]
 		public bool RESTLimitOnlyFailedLoginRequests = true;
 
