@@ -43,7 +43,7 @@ namespace Rests
 		public Dictionary<string, TokenData> AppTokens { get; protected set; }
 
 		private RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
-		
+
 		public SecureRest(IPAddress ip, int port)
 			: base(ip, port)
 		{
@@ -128,8 +128,7 @@ namespace Rests
 			}
 			else
 			{
-				if (!TShock.Config.RESTLimitOnlyFailedLoginRequests)
-					tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
+				tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
 			}
 
 			User userAccount = TShock.Users.GetUserByName(username);
@@ -152,7 +151,7 @@ namespace Rests
 				return new RestObject("403")
 				{ Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
 			}
-			
+
 			string tokenHash;
 			var randbytes = new byte[32];
 			do
