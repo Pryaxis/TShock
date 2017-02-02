@@ -14,9 +14,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed server crashes caused by client disconnections when attempting to read closed sockets (@Enerdy)
 * Added some code to make trapdoors work better (@DogooFalchion)
 * AllowCutTilesAndBreakables config option now correctly allows flowers/vines/herbs to be cut in regions without breaking walls (@WhiteXZ)
-* REST: `/status` has been re-added. It will now always point to `/v2/server/status` and includes an `upgrade` field describing the newest status route (@WhiteXZ)
 * REST: `/v3/players/read` now includes a `muted` field (@WhiteXZ)
-* REST: Token creation is now more secure (@WhiteXZ) (Thanks to @Plazmaz for reporting the issue!)
+* REST: Token creation is now more secure (Thanks to @Plazmaz for reporting the issue!)
+* REST: Deprecated the RestRequestEvent. If you use this event, please let us know.
+* REST: ALL endpoints now have a base route (eg you can use `/server/motd` instead of `/v3/server/motd`). These base routes will never change, but will provide an `upgrade` field describing any newer routes
+* REST: Added `/v3/world/autosave` and `/v3/world/bloodmoon` which use GET parameter style arguments. I.e., `/v3/world/autosave?state=[true|false]` & `/v3/world/bloodmoon?state=[true|false]`. The state argument is optional
 * Fixed fishing quests not saving/loading correctly when login before join, UUID login, and SSC were enabled together (@DogooFalchion)
 
 ## TShock 4.3.21

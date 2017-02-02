@@ -34,7 +34,7 @@ namespace Rests
 		private RestCommandD callback;
 
 		/// <summary>
-		/// 
+		/// Creates a new <see cref="RestCommand"/> used with the REST API
 		/// </summary>
 		/// <param name="name">Used for identification</param>
 		/// <param name="uritemplate">Url template</param>
@@ -51,7 +51,7 @@ namespace Rests
 		}
 
 		/// <summary>
-		/// 
+		/// Creates a new <see cref="RestCommand"/> used with the REST API
 		/// </summary>
 		/// <param name="uritemplate">Url template</param>
 		/// <param name="callback">Rest Command callback</param>
