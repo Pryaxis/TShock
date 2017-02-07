@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,8 +28,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
+using Terraria.Utilities;
 using TShockAPI.DB;
 using BCrypt.Net;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI
 {
@@ -50,16 +53,18 @@ namespace TShockAPI
 		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
 
+		/// <summary> This regex will look for the old MotD format for colors and replace them with the new chat format. </summary>
+		private Regex motdColorRegex = new Regex(@"\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%(?<text>((?!(\%\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\%)|(\[[a-zA-Z]/[^:]+:[^\]]*\])).)*)");
+
+		/// <summary> Matches the start of a line with our legacy color format</summary>
+		private Regex startOfLineColorRegex = new Regex(@"^\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%");
+
 		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
 
 		/// <summary>Instance - An instance of the utils class.</summary>
 		/// <value>value - the Utils instance</value>
 		public static Utils Instance { get { return instance; } }
-
-		/// <summary>Random - An instance of random for generating random data.</summary>
-		[Obsolete("Please create your own random objects; this will be removed in the next version of TShock.")]
-		public Random Random = new Random();
 
 		/// <summary>
 		/// Provides the real IP address from a RemoteEndPoint string that contains a port and an IP
@@ -191,7 +196,7 @@ namespace TShockAPI
 			TSPlayer.Server.SendMessage(log, color);
 			foreach (TSPlayer player in TShock.Players)
 			{
-				if (player != null && player != excludedPlayer && player.Active && player.HasPermission(Permissions.logs) && 
+				if (player != null && player != excludedPlayer && player.Active && player.HasPermission(Permissions.logs) &&
 						player.DisplayLogs && TShock.Config.DisableSpewLogs == false)
 					player.SendMessage(log, color);
 			}
@@ -500,7 +505,7 @@ namespace TShockAPI
 			}
 			return found;
 		}
-				
+
 				/// <summary>
 		/// Gets a prefix by ID or name
 		/// </summary>
@@ -538,6 +543,8 @@ namespace TShockAPI
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
 		public void StopServer(bool save = true, string reason = "Server shutting down!")
 		{
+			TShock.ShuttingDown = true;
+
 			ForceKickAll(reason);
 			if (save)
 				SaveManager.Instance.SaveWorld();
@@ -553,7 +560,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to 
+		/// Stops the server after kicking all players with a reason message, and optionally saving the world then attempts to
 		/// restart it.
 		/// </summary>
 		/// <param name="save">bool perform a world save before stop (default: true)</param>
@@ -679,7 +686,7 @@ namespace TShockAPI
 							{
 									TShock.Bans.RemoveBan(ban.IP, false, false, false);
 							}
-							
+
 							return true;
 					}
 
@@ -689,15 +696,18 @@ namespace TShockAPI
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="file">string filename reletave to savedir</param>
+		/// <param name="player">Player the file contents will be sent to</param>
+		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
 		public void ShowFileToUser(TSPlayer player, string file)
 		{
 			string foo = "";
-			using (var tr = new StreamReader(Path.Combine(TShock.SavePath, file)))
+			bool containsOldFormat = false;
+			using (var tr = new StreamReader(file))
 			{
+				Color lineColor;
 				while ((foo = tr.ReadLine()) != null)
 				{
+					lineColor = Color.White;
 					if (string.IsNullOrWhiteSpace(foo))
 					{
 						continue;
@@ -705,22 +715,96 @@ namespace TShockAPI
 
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
-					Regex reg = new Regex("%\\s*(?<r>\\d{1,3})\\s*,\\s*(?<g>\\d{1,3})\\s*,\\s*(?<b>\\d{1,3})\\s*%");
-					var matches = reg.Matches(foo);
-					Color c = Color.White;
-					foreach (Match match in matches)
+
+					var legacyColorMatch = startOfLineColorRegex.Match(foo);
+					if (legacyColorMatch.Success)
 					{
-						byte r, g, b;
-						if (byte.TryParse(match.Groups["r"].Value, out r) &&
-							byte.TryParse(match.Groups["g"].Value, out g) &&
-							byte.TryParse(match.Groups["b"].Value, out b))
-						{
-							c = new Color(r, g, b);
-						}
-						foo = foo.Remove(match.Index, match.Length);
+						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
+												Int32.Parse(legacyColorMatch.Groups["g"].Value),
+												Int32.Parse(legacyColorMatch.Groups["b"].Value));
+						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
 					}
-					player.SendMessage(foo, c);
+
+					bool upgraded = false;
+					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
+					if (upgraded && !containsOldFormat)
+					{
+						TShock.Log.ConsoleInfo($"You are using an old color format in file {file}.");
+						TShock.Log.ConsoleInfo("To send coloured text please use Terraria's inbuilt format of: [c/#hex:text].");
+						TShock.Log.ConsoleInfo("For example: [c/ff00aa:This is a message!].");
+						containsOldFormat = true;
+					}
+					foo = newFoo;
+
+					player.SendMessage(foo, lineColor);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Returns a string with deprecated %###,###,###% formats replaced with the new chat format colors.
+		/// </summary>
+		/// <param name="input">The input string</param>
+		/// <param name="upgradedFormat">An out parameter that denotes if this line of text was upgraded.</param>
+		/// <returns>A replaced version of the input with the new chat color format.</returns>
+		private string ReplaceDeprecatedColorCodes(string input, out bool upgradedFormat)
+		{
+			String tempString = input;
+			Match match = null;
+			bool uFormat = false;
+
+			while ((match = motdColorRegex.Match(tempString)).Success)
+			{
+				uFormat = true;
+				tempString = tempString.Replace(match.Groups[0].Value, String.Format("[c/{0:X2}{1:X2}{2:X2}:{3}]", Int32.Parse(match.Groups["r"].Value), Int32.Parse(match.Groups["g"].Value), Int32.Parse(match.Groups["b"].Value), match.Groups["text"]));
+			}
+
+			upgradedFormat = uFormat;
+			return tempString;
+		}
+
+		/// <summary>
+		/// Upgrades a legacy MotD file to the new terraria chat tags version.
+		/// </summary>
+		public void UpgradeMotD()
+		{
+			string foo = "";
+			StringBuilder motd = new StringBuilder();
+			bool informedOwner = false;
+			using (var tr = new StreamReader(FileTools.MotdPath))
+			{
+				Color lineColor;
+				while ((foo = tr.ReadLine()) != null)
+				{
+					lineColor = Color.White;
+					var legacyColorMatch = startOfLineColorRegex.Match(foo);
+					if (legacyColorMatch.Success)
+					{
+						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
+												Int32.Parse(legacyColorMatch.Groups["g"].Value),
+												Int32.Parse(legacyColorMatch.Groups["b"].Value));
+						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
+					}
+
+					bool upgraded = false;
+					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
+					if (!informedOwner && upgraded)
+					{
+						informedOwner = true;
+						TShock.Log.ConsoleInfo("We have upgraded your MotD to the new format.  A backup has been created.");
+					}
+
+					if (lineColor != Color.White)
+						motd.Append(String.Format("%{0:d3},{1:d3},{2:d3}%", lineColor.R, lineColor.G, lineColor.B));
+
+					motd.AppendLine(newFoo);
+				}
+			}
+
+			if (informedOwner)
+			{
+				File.Copy(FileTools.MotdPath, String.Format("{0}_{1}.backup", FileTools.MotdPath, DateTime.Now.ToString("ddMMMyy_hhmmss")));
+				File.WriteAllText(FileTools.MotdPath, motd.ToString());
 			}
 		}
 
@@ -773,76 +857,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Default hashing algorithm.
-		/// </summary>
-		[Obsolete("This is no longer necessary, please use TShock.Config.HashAlgorithm instead if you really need it (but use User.VerifyPassword(password)) for verifying passwords.")]
-		public string HashAlgo = "sha512";
-
-		/// <summary>
-		/// A dictionary of hashing algortihms and an implementation object.
-		/// </summary>
-		[Obsolete("This is no longer necessary, after switching to User.VerifyPassword(password) instead.")]
-		public readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-			{
-					{"sha512", () => new SHA512Managed()},
-					{"sha256", () => new SHA256Managed()},
-					{"md5", () => new MD5Cng()},
-					{"sha512-xp", () => SHA512.Create()},
-					{"sha256-xp", () => SHA256.Create()},
-					{"md5-xp", () => MD5.Create()},
-			};
-
-		/// <summary>
-		/// Returns a Sha256 string for a given string
-		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
-		/// <returns>string sha256</returns>
-		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
-		public string HashPassword(byte[] bytes)
-		{
-			if (bytes == null)
-				throw new NullReferenceException("bytes");
-			Func<HashAlgorithm> func;
-			if (!HashTypes.TryGetValue(HashAlgo.ToLower(), out func))
-				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(HashAlgo.ToLower()));
-
-			using (var hash = func())
-			{
-				var ret = hash.ComputeHash(bytes);
-				return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
-			}
-		}
-
-		/// <summary>
-		/// Returns a Sha256 string for a given string
-		/// </summary>
-		/// <param name="password">string to hash</param>
-		/// <returns>string sha256</returns>
-		[Obsolete("Please use User.VerifyPassword(password) instead. Warning: This will upgrade passwords to BCrypt. Already converted passwords will not hash correctly using this method.")]
-		public string HashPassword(string password)
-		{
-			if (string.IsNullOrEmpty(password) || password == "non-existant password")
-				return "non-existant password";
-			return HashPassword(Encoding.UTF8.GetBytes(password));
-		}
-
-		/// <summary>
-		/// Checks if the string contains any unprintable characters
-		/// </summary>
-		/// <param name="str">String to check</param>
-		/// <returns>True if the string only contains printable characters</returns>
-		[Obsolete("ValidString is being removed as it serves no purpose to TShock at this time.")]
-		public bool ValidString(string str)
-		{
-			foreach (var c in str)
-			{
-				if (c < 0x20 || c > 0xA9)
-					return false;
-			}
-			return true;
-		}
-
-		/// <summary>
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>
@@ -876,7 +890,7 @@ namespace TShockAPI
 					int num;
 					if (!int.TryParse(sb.ToString(), out num))
 						return false;
-					
+
 					sb.Clear();
 					switch (str[i])
 					{
@@ -916,23 +930,6 @@ namespace TShockAPI
 					return i;
 			}
 			return 1000;
-		}
-
-		/// <summary>
-		/// Sanitizes input strings
-		/// </summary>
-		/// <param name="str">string</param>
-		/// <returns>sanitized string</returns>
-		[Obsolete("SanitizeString is being removed from TShock as it currently serves no purpose.")]
-		public string SanitizeString(string str)
-		{
-			var returnstr = str.ToCharArray();
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (!ValidString(str[i].ToString()))
-					returnstr[i] = ' ';
-			}
-			return new string(returnstr);
 		}
 
 		/// <summary>
@@ -1171,6 +1168,213 @@ namespace TShockAPI
 			#endregion
 
 			return points;
+		}
+
+		internal void PrepareLangForDump()
+		{
+			for(int i = 0; i < Main.recipe.Length; i++)
+				Main.recipe[i] = new Recipe();
+		}
+
+		public void DumpBuffs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Description\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Main.maxBuffTypes; i++)
+			{
+				if (!String.IsNullOrEmpty(Main.buffName[i]))
+				{
+					object[] element = new object[] { i, Main.buffName[i], Main.buffTip[i] };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpItems(string path, int start, int end)
+		{
+			Main.player[Main.myPlayer] = new Player();
+			StringBuilder buffer = new StringBuilder();
+			Regex newLine = new Regex(@"\n");
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Tooltip\",");
+			buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = start; i < end; i++)
+			{
+				Item item = new Item();
+				item.netDefaults(i);
+				if (!String.IsNullOrEmpty(item.name))
+				{
+					object[] element = new object[] { i,
+													  newLine.Replace(item.name, @" "),
+													  newLine.Replace(item.toolTip, @" "),
+													  newLine.Replace(item.toolTip2, @" ")
+													};
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpNPCs(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+			buffer.AppendLine("    \"h-2\": \"Display Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = -65; i < Main.maxNPCTypes; i++)
+			{
+				NPC npc = new NPC();
+				npc.netDefaults(i);
+				if (!String.IsNullOrEmpty(npc.name))
+				{
+					object[] element = new object[] { i, npc.name, npc.displayName };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpProjectiles(string path)
+		{
+			Main.rand = new UnifiedRandom();
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Main.maxProjectileTypes; i++)
+			{
+				Projectile projectile = new Projectile();
+				projectile.SetDefaults(i);
+				if (!String.IsNullOrEmpty(projectile.name))
+				{
+					object[] element = new object[] { i, projectile.name };
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		public void DumpPrefixes(string path)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+			buffer.AppendLine("    \"h-0\": \"ID\",");
+			buffer.AppendLine("    \"h-1\": \"Name\",");
+
+			List<object[]> elements = new List<object[]>();
+			for (int i = 0; i < Item.maxPrefixes; i++)
+			{
+				string prefix = Lang.prefix[i];
+
+				if (!String.IsNullOrEmpty(prefix))
+				{
+					object[] element = new object[] {i, prefix};
+					elements.Add(element);
+				}
+			}
+
+			var rows = elements.Count;
+			var columns = 0;
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+			}
+			OutputElementsForDump(buffer, elements, rows, columns);
+
+			buffer.AppendLine();
+			buffer.AppendLine("  },");
+			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+			buffer.AppendLine("}").Append("[/block]");
+
+			File.WriteAllText(path, buffer.ToString());
+		}
+
+		private void OutputElementsForDump(StringBuilder buffer, List<object[]> elements, int rows, int columns)
+		{
+			if (rows > 0)
+			{
+				columns = elements[0].Length;
+				for (int i = 0; i < columns; i++)
+				{
+					for (int j = 0; j < rows; j++)
+					{
+						buffer.Append(String.Format("    \"{0}-{1}\": \"{2}\"", j, i, elements[j][i]));
+						if (j != rows - 1 || i != columns - 1)
+							buffer.AppendLine(",");
+					}
+				}
+			}
 		}
 	}
 }

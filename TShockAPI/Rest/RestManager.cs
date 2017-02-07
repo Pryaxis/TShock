@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using HttpServer;
 using Rests;
@@ -32,35 +31,78 @@ using TShockAPI.DB;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Describes the permission required to use an API route
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class Permission : Attribute
 	{
+		/// <summary>
+		/// Name of the permission
+		/// </summary>
 		public string Name { get; set; }
 
+		/// <summary>
+		/// Creates a new instance of <see cref="Permission"/> with the given name
+		/// </summary>
+		/// <param name="name">Permission required</param>
 		public Permission(string name)
 		{
 			Name = name;
 		}
 	}
 
+	/// <summary>
+	/// Describes the route of a REST API call
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method)]
 	public class RouteAttribute : Attribute
 	{
+		/// <summary>
+		/// The route used to call the API
+		/// </summary>
 		public string Route { get; set; }
 
+		/// <summary>
+		/// Creates a new instance of <see cref="RouteAttribute"/> with the given route
+		/// </summary>
+		/// <param name="route">Route used to call the API</param>
 		public RouteAttribute(string route)
 		{
 			Route = route;
 		}
 	}
 
+	/// <summary>
+	/// Describes a parameter in a REST route
+	/// </summary>
 	public class ParameterAttribute : Attribute
 	{
+		/// <summary>
+		/// The parameter's name
+		/// </summary>
 		public string Name { get; set; }
+		/// <summary>
+		/// Whether the parameter is required or not
+		/// </summary>
 		public bool Required { get; set; }
+		/// <summary>
+		/// The parameter's description
+		/// </summary>
 		public string Description { get; set; }
+		/// <summary>
+		/// The parameter's System Type
+		/// </summary>
 		public Type ArgumentType { get; set; }
 
+		/// <summary>
+		/// Creates a new instance of <see cref="ParameterAttribute"/> with the given name, description, and type.
+		/// A ParameterAttribute may be optional or required.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="req"></param>
+		/// <param name="desc"></param>
+		/// <param name="type"></param>
 		public ParameterAttribute(string name, bool req, string desc, Type type)
 		{
 			Name = name;
@@ -70,56 +112,140 @@ namespace TShockAPI
 		}
 	}
 
+	/// <summary>
+	/// Describes a parameter in a REST route
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class Noun : ParameterAttribute
 	{
+		/// <summary>
+		/// Creates a new instance of <see cref="Noun"/> with the given name, description, and type.
+		/// Nouns may be optional or required. A required Noun is akin to a <see cref="Verb"/>
+		/// </summary>
+		/// <param name="name">Name of the noun</param>
+		/// <param name="req">Whether the noun is required or not</param>
+		/// <param name="desc">Decription of the noun</param>
+		/// <param name="type">System Type of the noun</param>
 		public Noun(string name, bool req, string desc, Type type) : base(name, req, desc, type) { }
 	}
 
+	/// <summary>
+	/// Describes a parameter in a REST route
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class Verb : ParameterAttribute
 	{
+		/// <summary>
+		/// Creates a new instance of <see cref="Verb"/> with the given name, description, and type.
+		/// Verbs are required arguments.
+		/// </summary>
+		/// <param name="name">Name of the verb</param>
+		/// <param name="desc">Description of the verb</param>
+		/// <param name="type">System Type of the verb</param>
 		public Verb(string name, string desc, Type type) : base(name, true, desc, type) { }
 	}
 
+	/// <summary>
+	/// Describes a REST authentication token
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method)]
 	public class Token : Noun
 	{
+		/// <summary>
+		/// Creates a new instance of <see cref="Token"/>
+		/// </summary>
 		public Token() : base("token", true, "The REST authentication token.", typeof(String)){}
 	}
 
+	/// <summary>
+	/// Manages a <see cref="Rests.Rest"/> instance
+	/// </summary>
 	public class RestManager
 	{
+		/// <summary>
+		/// The RESTful API service that handles API requests
+		/// </summary>
 		private Rest Rest;
 
+		/// <summary>
+		/// Creates a new instance of <see cref="RestManager"/> using the provided <see cref="Rest"/> object
+		/// </summary>
+		/// <param name="rest"></param>
 		public RestManager(Rest rest)
 		{
 			Rest = rest;
 		}
 
+		/// <summary>
+		/// Registers default TShock REST commands
+		/// </summary>
 		public void RegisterRestfulCommands()
 		{
 			// Server Commands
 			if (TShock.Config.EnableTokenEndpointAuthentication)
 			{
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
-				Rest.Register(new SecureRestCommand("/status", ServerStatus));
 				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
 				Rest.Register(new SecureRestCommand("/v3/server/rules", ServerRules));
 			}
 			else
 			{
-				Rest.Register(new RestCommand("/v2/server/status", (a) => this.ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
-				Rest.Register(new RestCommand("/status", (a) => this.ServerStatus(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
-				Rest.Register(new RestCommand("/v3/server/motd", (a) => this.ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
-				Rest.Register(new RestCommand("/v3/server/rules", (a) => this.ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v2/server/status", (a) => ServerStatusV2(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/motd", (a) => ServerMotd(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
+				Rest.Register(new RestCommand("/v3/server/rules", (a) => ServerRules(new RestRequestArgs(a.Verbs, a.Parameters, a.Request, SecureRest.TokenData.None, a.Context))));
 			}
+
+			Rest.RegisterRedirect("/status", "/v2/server/status");
+
+			//server commands
+			Rest.RegisterRedirect("/server/motd", "/v3/server/motd");
+			Rest.RegisterRedirect("/server/rules", "/v3/server/rules");
+			Rest.RegisterRedirect("/server/broadcast", "/v2/server/broadcast");
+			Rest.RegisterRedirect("/server/reload", "/v2/server/reload");
+			Rest.RegisterRedirect("/server/off", "/v2/server/off");
+			Rest.RegisterRedirect("/server/restart", "/v3/server/restart");
+			Rest.RegisterRedirect("/server/rawcmd", "/v3/server/rawcmd");
+
+			//user commands
+			Rest.RegisterRedirect("/users/activelist", "/v2/users/activelist");
+			Rest.RegisterRedirect("/users/create", "/v2/users/create");
+			Rest.RegisterRedirect("/users/list", "/v2/users/list");
+			Rest.RegisterRedirect("/users/read", "/v2/users/read");
+			Rest.RegisterRedirect("/users/destroy", "/v2/users/destroy");
+			Rest.RegisterRedirect("/users/update", "/v2/users/update");
+
+			//ban commands
+			Rest.RegisterRedirect("/bans/list", "/v2/bans/list");
+			Rest.RegisterRedirect("/bans/read", "/v2/bans/read");
+			Rest.RegisterRedirect("/bans/destroy", "/v2/bans/destroy");
+
+			//world commands
+			Rest.RegisterRedirect("/world/bloodmoon", "v3/world/bloodmoon");
+			Rest.RegisterRedirect("/world/save", "/v2/world/save");
+			Rest.RegisterRedirect("/world/autosave", "/v3/world/autosave");
+
+			//player commands
+			Rest.RegisterRedirect("/lists/players", "/lists/players", "/v2/players/list");
+			Rest.RegisterRedirect("/players/list", "/v2/players/list");
+			Rest.RegisterRedirect("/players/read", "/v3/players/read");
+			Rest.RegisterRedirect("/players/kick", "/v2/players/kick");
+			Rest.RegisterRedirect("/players/ban", "/v2/players/ban");
+			Rest.RegisterRedirect("/players/kill", "/v2/players/kill");
+			Rest.RegisterRedirect("/players/mute", "/v2/players/mute");
+			Rest.RegisterRedirect("/players/unmute", "/v2/players/unmute");
+
+			//group commands
+			Rest.RegisterRedirect("/groups/list", "/v2/groups/list");
+			Rest.RegisterRedirect("/groups/read", "/v2/groups/read");
+			Rest.RegisterRedirect("/groups/destroy", "/v2/groups/destroy");
+			Rest.RegisterRedirect("/groups/create", "/v2/groups/create");
+			Rest.RegisterRedirect("/groups/update", "/v2/groups/update");
+
 
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
 			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
 			Rest.Register(new SecureRestCommand("/v3/server/restart", ServerRestart, RestPermissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v2/server/rawcmd", ServerCommand, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
 
@@ -141,14 +267,15 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
 			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bloodmoon}", WorldBloodmoon, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/v3/world/bloomoon", WorldBloodmoonV3, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{state}", WorldChangeSaveSettings, RestPermissions.restcfg));
+			Rest.Register(new SecureRestCommand("/v3/world/autosave", WorldChangeSaveSettingsV3, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/world/butcher", WorldButcher, RestPermissions.restbutcher));
 
 			// Player Commands
 			Rest.Register(new SecureRestCommand("/lists/players", PlayerList));
 			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2));
-			Rest.Register(new SecureRestCommand("/v2/players/read", PlayerReadV2, RestPermissions.restuserinfo));
 			Rest.Register(new SecureRestCommand("/v3/players/read", PlayerReadV3, RestPermissions.restuserinfo));
 			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, RestPermissions.restkick));
 			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, RestPermissions.restban, RestPermissions.restmanagebans));
@@ -164,29 +291,7 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/v2/groups/update", GroupUpdate, RestPermissions.restmanagegroups));
 		}
 
-		#region RestServerMethods
-
-		[Description("Executes a remote command on the server, and returns the output of the command.")]
-		[RouteAttribute("/v2/server/rawcmd")]
-		[Permission(RestPermissions.restrawcommand)]
-		[Noun("cmd", true, "The command and arguments to execute.", typeof(String))]
-		[Token]
-		private object ServerCommand(RestRequestArgs args)
-		{
-			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
-				return RestMissingParam("cmd");
-
-			Group restPlayerGroup;
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
-				restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
-			else
-				restPlayerGroup = new SuperAdminGroup();
-
-			TSRestPlayer tr = new TSRestPlayer(args.TokenData.Username, restPlayerGroup);
-			Commands.HandleCommand(tr, args.Parameters["cmd"]);
-			return RestResponse(string.Join("\n", tr.GetCommandOutput()));
-		}
+		#region Rest Server Methods
 
 		[Description("Executes a remote command on the server, and returns the output of the command.")]
 		[RouteAttribute("/v3/server/rawcmd")]
@@ -198,12 +303,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(args.Parameters["cmd"]))
 				return RestMissingParam("cmd");
 
-			Group restPlayerGroup;
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
-				restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
-			else
-				restPlayerGroup = new SuperAdminGroup();
+			Group restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
 
 			TSRestPlayer tr = new TSRestPlayer(args.TokenData.Username, restPlayerGroup);
 			Commands.HandleCommand(tr, args.Parameters["cmd"]);
@@ -280,7 +380,7 @@ namespace TShockAPI
 		[Token]
 		private object ServerMotd(RestRequestArgs args)
 		{
-			string motdFilePath = Path.Combine(TShock.SavePath, "motd.txt");
+			string motdFilePath = FileTools.MotdPath;
 			if (!File.Exists(motdFilePath))
 				return this.RestError("The motd.txt was not found.", "500");
 
@@ -302,21 +402,6 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"rules", File.ReadAllLines(rulesFilePath)}
-			};
-		}
-
-		[Description("Returns the current status of the server.")]
-		[Route("/status")]
-		[Token]
-		private object ServerStatus(RestRequestArgs args)
-		{
-			var activeplayers = Main.player.Where(p => null != p && p.active).ToList();
-			return new RestObject()
-			{
-				{"name", TShock.Config.ServerName},
-				{"port", Convert.ToString(Netplay.ListenPort)},
-				{"playercount", Convert.ToString(activeplayers.Count())},
-				{"players", string.Join(", ", activeplayers.Select(p => p.name))},
 			};
 		}
 
@@ -386,7 +471,7 @@ namespace TShockAPI
 
 		#endregion
 
-		#region RestUserMethods
+		#region Rest User Methods
 
 		[Description("Returns the list of user accounts that are currently in use on the server.")]
 		[Route("/v2/users/activelist")]
@@ -537,7 +622,7 @@ namespace TShockAPI
 
 		#endregion
 
-		#region RestBanMethods
+		#region Rest Ban Methods
 
 		[Description("Create a new ban entry.")]
 		[Route("/bans/create")]
@@ -649,8 +734,8 @@ namespace TShockAPI
 
 		#endregion
 
-		#region RestWorldMethods
-
+		#region Rest World Methods
+		
 		[Route("/v2/world/autosave/state/{state}")]
 		[Permission(RestPermissions.restcfg)]
 		[Verb("state", "The status for autosave.", typeof(bool))]
@@ -662,7 +747,25 @@ namespace TShockAPI
 				return RestInvalidParam("state");
 			TShock.Config.AutoSave = autoSave;
 
-			return RestResponse("AutoSave has been set to " + autoSave);
+			var resp = RestResponse("AutoSave has been set to " + autoSave);
+			resp.Add("upgrade", "/v3/world/autosave");
+			return resp;
+		}
+
+		[Route("/v3/world/autosave")]
+		[Permission(RestPermissions.restcfg)]
+		[Parameter("state", false, "The status for autosave.", typeof(bool))]
+		[Token]
+		private object WorldChangeSaveSettingsV3(RestRequestArgs args)
+		{
+			bool autoSave;
+			if (!bool.TryParse(args.Parameters["state"], out autoSave))
+			{
+				return RestResponse($"Autosave is currently {(TShock.Config.AutoSave ? "enabled" : "disabled")}");
+			}
+			TShock.Config.AutoSave = autoSave;
+
+			return RestResponse($"AutoSave has been {(TShock.Config.AutoSave ? "enabled" : "disabled")}");
 		}
 
 		[Description("Save the world.")]
@@ -722,8 +825,7 @@ namespace TShockAPI
 		[Token]
 		private object WorldMeteor(RestRequestArgs args)
 		{
-			if (null == WorldGen.genRand)
-				WorldGen.genRand = new Random();
+			WorldGen.spawnMeteor = false;
 			WorldGen.dropMeteor();
 			return RestResponse("Meteor has been spawned");
 		}
@@ -740,12 +842,31 @@ namespace TShockAPI
 				return RestInvalidParam("bloodmoon");
 			Main.bloodMoon = bloodmoon;
 
-			return RestResponse("Blood Moon has been set to " + bloodmoon);
+			var resp = RestResponse("Blood Moon has been set to " + bloodmoon);
+			resp.Add("upgrade", "/v3/world/bloodmoon");
+			return resp;
+		}
+
+		[Description("Toggle the status of blood moon.")]
+		[Route("/v3/world/bloodmoon")]
+		[Permission(RestPermissions.restcauseevents)]
+		[Parameter("state", false, "Sets the state of the bloodmoon.", typeof(bool))]
+		[Token]
+		private object WorldBloodmoonV3(RestRequestArgs args)
+		{
+			bool bloodmoon;
+			if (!bool.TryParse(args.Verbs["state"], out bloodmoon))
+			{
+				return RestResponse($"Bloodmoon state: {(Main.bloodMoon ? "Enabled" : "Disabled")}");
+			}
+			Main.bloodMoon = bloodmoon;
+
+			return RestResponse($"Blood Moon has been {(Main.bloodMoon ? "enabled" : "disabled")}");
 		}
 
 		#endregion
 
-		#region RestPlayerMethods
+		#region Rest Player Methods
 
 		[Description("Unmute a player.")]
 		[Route("/v2/players/unmute")]
@@ -792,32 +913,6 @@ namespace TShockAPI
 		}
 
 		[Description("Get information for a user.")]
-		[Route("/v2/players/read")]
-		[Permission(RestPermissions.restuserinfo)]
-		[Noun("player", true, "The player to lookup", typeof(String))]
-		[Token]
-		private object PlayerReadV2(RestRequestArgs args)
-		{
-			var ret = PlayerFind(args.Parameters);
-			if (ret is RestObject)
-				return ret;
-
-			TSPlayer player = (TSPlayer)ret;
-			var activeItems = player.TPlayer.inventory.Where(p => p.active).ToList();
-			return new RestObject()
-			{
-				{"nickname", player.Name},
-				{"username", null == player.User ? "" : player.User.Name},
-				{"ip", player.IP},
-				{"group", player.Group.Name},
-				{"registered", null == player.User ? "" : player.User.Registered},
-				{"position", player.TileX + "," + player.TileY},
-				{"inventory", string.Join(", ", activeItems.Select(p => (p.name + ":" + p.stack)))},
-				{"buffs", string.Join(", ", player.TPlayer.buffType)}
-			};
-		}
-
-		[Description("Get information for a user.")]
 		[Route("/v3/players/read")]
 		[Permission(RestPermissions.restuserinfo)]
 		[Noun("player", true, "The player to lookup", typeof(String))]
@@ -835,10 +930,11 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", null == player.User ? "" : player.User.Name},
+				{"username", player.User?.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
-				{"registered", null == player.User ? "" : player.User.Registered},
+				{"registered", player.User?.Registered},
+				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
 				{"inventory", string.Join(", ", inventory.Select(p => (p.name + ":" + p.stack)))},
 				{"armor", string.Join(", ", equipment.Select(p => (p.netID + ":" + p.prefix)))},
@@ -905,7 +1001,7 @@ namespace TShockAPI
 
 		#endregion
 
-		#region RestGroupMethods
+		#region Rest Group Methods
 
 		[Description("View all groups in the TShock database.")]
 		[Route("/v2/groups/list")]

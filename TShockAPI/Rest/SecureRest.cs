@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@ using System.Net;
 using HttpServer;
 using TShockAPI;
 using TShockAPI.DB;
+using Microsoft.Xna.Framework;
+using Terraria;
+using System.Security.Cryptography;
 
 namespace Rests
 {
@@ -39,17 +42,19 @@ namespace Rests
 		public Dictionary<string, TokenData> Tokens { get; protected set; }
 		public Dictionary<string, TokenData> AppTokens { get; protected set; }
 
+		private RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
+
 		public SecureRest(IPAddress ip, int port)
 			: base(ip, port)
 		{
 			Tokens = new Dictionary<string, TokenData>();
 			AppTokens = new Dictionary<string, TokenData>();
-			
+
 			Register(new RestCommand("/v2/token/create", NewTokenV2) { DoLog = false });
 			Register(new SecureRestCommand("/token/destroy/{token}", DestroyToken));
 			Register(new SecureRestCommand("/v3/token/destroy/all", DestroyAllTokens, RestPermissions.restmanage));
 
-			foreach (KeyValuePair<string, TokenData> t in TShockAPI.TShock.RESTStartupTokens)
+			foreach (KeyValuePair<string, TokenData> t in TShock.RESTStartupTokens)
 			{
 				AppTokens.Add(t.Key, t.Value);
 			}
@@ -57,29 +62,6 @@ namespace Rests
 			foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
 			{
 				AppTokens.Add(t.Key, t.Value);
-			}
-
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestApiEnabled && !TShock.Config.RestUseNewPermissionModel)
-			{
-				string warningMessage = string.Concat(
-					"You're using the old REST permission model which is highly vulnerable in matter of security. ",
-					"The old model will be removed with the next maintenance release of TShock. In order to switch to the new model, ",
-					"change the config setting \"RestUseNewPermissionModel\" to true."
-				);
-				TShock.Log.Warn(warningMessage);
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(warningMessage);
-				Console.ForegroundColor = ConsoleColor.Gray;
-			}
-			else if (TShock.Config.RestApiEnabled)
-			{
-				string warningMessage = string.Concat(
-					"You're using the new more secure REST permission model which can lead to compatibility problems ",
-					"with existing REST services. If compatibility problems occur, you can switch back to the unsecure permission ",
-					"model by changing the config setting \"RestUseNewPermissionModel\" to false, which is not recommended."
-				);
-				TShock.Log.ConsoleInfo(warningMessage);
 			}
 		}
 
@@ -133,7 +115,7 @@ namespace Rests
 			int tokens = 0;
 			if (tokenBucket.TryGetValue(context.RemoteEndPoint.Address.ToString(), out tokens))
 			{
-				if (tokens >= Math.Max(TShock.Config.RESTMaximumRequestsPerInterval, 5))
+				if (tokens >= TShock.Config.RESTMaximumRequestsPerInterval)
 				{
 					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} tokens", context.RemoteEndPoint.Address.ToString(), tokens);
 					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens over limit, increment by one and reject request
@@ -142,13 +124,11 @@ namespace Rests
 						Error = "Username or password may be incorrect or this account may not have sufficient privileges."
 					};
 				}
-				if (!TShock.Config.RESTLimitOnlyFailedLoginRequests)
-					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens under limit, increment by one and process request
+				tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens under limit, increment by one and process request
 			}
 			else
 			{
-				if (!TShock.Config.RESTLimitOnlyFailedLoginRequests)
-					tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
+				tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
 			}
 
 			User userAccount = TShock.Users.GetUserByName(username);
@@ -173,11 +153,10 @@ namespace Rests
 			}
 
 			string tokenHash;
-			var rand = new Random();
 			var randbytes = new byte[32];
 			do
 			{
-				rand.NextBytes(randbytes);
+				_rng.GetBytes(randbytes);
 				tokenHash = randbytes.Aggregate("", (s, b) => s + b.ToString("X2"));
 			} while (Tokens.ContainsKey(tokenHash));
 
@@ -206,23 +185,26 @@ namespace Rests
 				return new RestObject("403")
 				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
 
-			// TODO: Get rid of this when the old REST permission model is removed.
-			if (TShock.Config.RestUseNewPermissionModel)
+			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
+			if (userGroup == null)
 			{
-				Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
-				if (userGroup == null)
-				{
-					Tokens.Remove(token);
+				Tokens.Remove(token);
 
-					return new RestObject("403")
-					{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
-				}
+				return new RestObject("403")
+				{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+			}
 
-				if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
-				{
-					return new RestObject("403")
-					{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
-				}
+			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
+			{
+				return new RestObject("403")
+				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
+			}
+
+			//Main.rand being null can cause issues in command execution.
+			//This should solve that
+			if (Main.rand == null)
+			{
+				Main.rand = new Terraria.Utilities.UnifiedRandom();
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);

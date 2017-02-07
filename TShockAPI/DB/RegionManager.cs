@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using Terraria;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI.DB
 {
@@ -330,12 +331,6 @@ namespace TShockAPI.DB
 		public IEnumerable<Region> InAreaRegion(int x, int y)
 		{
 			return Regions.Where(r => r.InArea(x, y));
-		}
-		
-		[Obsolete("Unused")]
-		public static List<string> ListIDs(string MergedIDs)
-		{
-			return MergedIDs.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
 		}
 
 		/// <summary>

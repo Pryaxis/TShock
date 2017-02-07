@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -135,10 +135,6 @@ namespace TShockAPI
 		/// <summary>UseServerName - Whether or not to use ServerName in place of the world name.</summary>
 		[Description("Sends ServerName in place of the world name to clients.")]
 		public bool UseServerName = false;
-		/// <summary>MasterServer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("Not implemented.")]
-		public string MasterServer = "127.0.0.1";
 
 		/// <summary>StorageType - The type of SQL database to use when storing data (either "sqlite" or "mysql").</summary>
 		[Description("Valid types are \"sqlite\" and \"mysql\".")]
@@ -163,11 +159,6 @@ namespace TShockAPI
 		/// <summary>MediumcoreKickReason - The reason given if kicking mediumcore players on death.</summary>
 		[Description("The reason given when kicking a mediumcore player on death if KickOnMediumcoreDeath is set to true.")]
 		public string MediumcoreKickReason = "Death results in a kick";
-
-		/// <summary>EnableDNSHostResolution - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not Implemented) Enables DNS resolution of incoming connections with GetGroupForIPExpensive.")]
-		public bool EnableDNSHostResolution;
 
 		/// <summary>EnableIPBans - Whether or not to kick players on join that match a banned IP address.</summary>
 		[Description("Enables kicking of banned users by matching their IP Address.")]
@@ -201,11 +192,6 @@ namespace TShockAPI
 		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
 		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
 		public string HashAlgorithm = "sha512";
-
-		/// <summary>BufferPackets - No longer used.</summary>
-		[Obsolete("No longer used")]
-		[Description("(No longer used) Buffers up the packets and sends them out at the end of each frame.")]
-		public bool BufferPackets = true;
 
 		/// <summary>ServerFullReason - The reason given when kicking players when the server is full.</summary>
 		[Description("String that is used when kicking people when the server is full.")]
@@ -294,6 +280,10 @@ namespace TShockAPI
 		/// <summary>ProjectileThreshold - Disables a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
 		public int ProjectileThreshold = 50;
+
+		/// <summary>HealOtherThreshold - Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
+		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
+		public int HealOtherThreshold = 50;
 
 		/// <summary>ProjIgnoreShrapnel - Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
 		[Description("Ignore shrapnel from crystal bullets for projectile threshold.")]
@@ -439,10 +429,6 @@ namespace TShockAPI
 		[Description("#.#.# = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")]
 		public int[] BroadcastRGB = { 127, 255, 212 };
 
-		// TODO: Get rid of this when the old REST permission model is removed.
-		[Description("Whether the REST API should use the new permission model. Note: The old permission model will become depracted in the future.")]
-		public bool RestUseNewPermissionModel = true;
-
 		/// <summary>ApplicationRestTokens - A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
 		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
 		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
@@ -466,16 +452,6 @@ namespace TShockAPI
 		/// <summary>TilePaintThreshold - Disables a player if this number of tiles is painted within 1 second.</summary>
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
 		public int TilePaintThreshold = 15;
-
-		/// <summary>EnableMaxBytesInBuffer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not implemented) Enables max packet bufferer size.")]
-		public bool EnableMaxBytesInBuffer = false;
-
-		/// <summary>MaxBytesInBuffer - Not implemented.</summary>
-		[Obsolete("Not implemented")]
-		[Description("(Not implemented) Number of bytes in the packet buffer before we disconnect the player.")]
-		public int MaxBytesInBuffer = 5242880;
 
 		/// <summary>ForceHalloween - Forces Halloween-only events to occur all year.</summary>
 		[Description("Forces your world to be in Halloween mode regardless of the data.")]
@@ -545,6 +521,7 @@ namespace TShockAPI
 		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
 		/// <summary>RESTLimitOnlyFailedLoginRequests - Whether or not to limit only the max failed login requests, or all login requests.</summary>
+		[Obsolete("This value is no longer used and will be removed next version.")]
 		[Description("Whether we should limit only the max failed login requests, or all login requests.")]
 		public bool RESTLimitOnlyFailedLoginRequests = true;
 

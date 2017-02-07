@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ namespace TShockAPI
 				string worldname = Main.worldPathName;
 				string name = Path.GetFileName(worldname);
 
-				Main.worldPathName = Path.Combine(BackupPath, string.Format("{0}.{1:dd.MM.yy-HH.mm.ss}.bak", name, DateTime.UtcNow));
+				Main.ActiveWorldFileData._path = Path.Combine(BackupPath, string.Format("{0}.{1:dd.MM.yy-HH.mm.ss}.bak", name, DateTime.UtcNow));
 
 				string worldpath = Path.GetDirectoryName(Main.worldPathName);
 				if (worldpath != null && !Directory.Exists(worldpath))
@@ -80,7 +80,7 @@ namespace TShockAPI
 				Console.ForegroundColor = ConsoleColor.Gray;
 				TShock.Log.Info(string.Format("World backed up ({0}).", Main.worldPathName));
 
-				Main.worldPathName = worldname;
+				Main.ActiveWorldFileData._path = worldname;
 			}
 			catch (Exception ex)
 			{

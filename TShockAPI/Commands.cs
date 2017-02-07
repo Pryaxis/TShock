@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +30,9 @@ using Terraria.ID;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
+using Terraria.GameContent.Events;
+using Microsoft.Xna.Framework;
+using OTAPI.Tile;
 
 namespace TShockAPI
 {
@@ -213,10 +216,6 @@ namespace TShockAPI
 				AllowServer = false,
 				HelpText = "Used to authenticate as superadmin when first setting up TShock."
 			});
-			add(new Command(Permissions.authverify, AuthVerify, "auth-verify")
-			{
-				HelpText = "Used to verify that you have correctly set up TShock."
-			});
 			add(new Command(Permissions.user, ManageUsers, "user")
 			{
 				DoLog = false,
@@ -247,6 +246,10 @@ namespace TShockAPI
 				AllowServer = false,
 				DoLog = false,
 				HelpText = "Registers you an account."
+			});
+			add(new Command(Permissions.checkaccountinfo, ViewAccountInfo, "accountinfo", "ai")
+			{
+				HelpText = "Shows information about a user."
 			});
 			#endregion
 			#region Admin Commands
@@ -298,13 +301,17 @@ namespace TShockAPI
 			{
 				HelpText = "Saves all serverside characters."
 			});
+			add(new Command(Permissions.uploaddata, UploadJoinData, "uploadssc")
+			{
+				HelpText = "Upload the account information when you joined the server as your Server Side Character data."
+			});
 			add(new Command(Permissions.settempgroup, TempGroup, "tempgroup")
 			{
 				HelpText = "Temporarily sets another player's group."
 			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
-				HelpText = "Shows information about a user."
+				HelpText = "Shows information about a player."
 			});
 			#endregion
 			#region Annoy Commands
@@ -330,11 +337,11 @@ namespace TShockAPI
 			{
 				HelpText = "Checks for TShock updates."
 			});
-			add(new Command(Permissions.maintenance, Off, "off", "exit")
+			add(new Command(Permissions.maintenance, Off, "off", "exit", "stop")
 			{
 				HelpText = "Shuts down the server while saving."
 			});
-			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave")
+			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave", "stop-nosave")
 			{
 				HelpText = "Shuts down the server without saving."
 			});
@@ -354,11 +361,6 @@ namespace TShockAPI
 			{
 				HelpText = "Shows the TShock version."
 			});
-			/* Does nothing atm.
-			 *
-			 * add(new Command(Permissions.updateplugins, UpdatePlugins, "updateplugins")
-			{
-			});*/
 			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
 			{
 				HelpText = "Manages the server whitelist."
@@ -632,12 +634,31 @@ namespace TShockAPI
 			if (cmdPrefix == SilentSpecifier)
 				silent = true;
 
-			var args = ParseParameters(cmdText);
-			if (args.Count < 1)
-				return false;
+			int index = -1;
+			for (int i = 0; i < cmdText.Length; i++)
+			{
+				if (IsWhiteSpace(cmdText[i]))
+				{
+					index = i;
+					break;
+				}
+			}
+			string cmdName;
+			if (index == 0) // Space after the command specifier should not be supported
+			{
+				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				return true;
+			}
+			else if (index < 0)
+				cmdName = cmdText.ToLower();
+			else
+				cmdName = cmdText.Substring(0, index).ToLower();
 
-			string cmdName = args[0].ToLower();
-			args.RemoveAt(0);
+			List<string> args;
+			if (index < 0)
+				args = new List<string>();
+			else
+				args = ParseParameters(cmdText.Substring(index));
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
@@ -871,29 +892,7 @@ namespace TShockAPI
 				return;
 			}
 
-			PlayerHooks.OnPlayerLogout(args.Player);
-
-
-			if (Main.ServerSideCharacter)
-			{
-				args.Player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier);
-				if (!args.Player.IgnoreActionsForClearingTrashCan && (!args.Player.Dead || args.Player.TPlayer.difficulty != 2))
-				{
-					args.Player.PlayerData.CopyCharacter(args.Player);
-					TShock.CharacterDB.InsertPlayerData(args.Player);
-				}
-			}
-
-			args.Player.PlayerData = new PlayerData(args.Player);
-			args.Player.Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
-			args.Player.tempGroup = null;
-			if (args.Player.tempGroupTimer != null)
-			{
-				args.Player.tempGroupTimer.Stop();
-			}
-			args.Player.User = null;
-			args.Player.IsLoggedIn = false;
-
+			args.Player.Logout();
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 			if (Main.ServerSideCharacter)
 			{
@@ -1188,6 +1187,47 @@ namespace TShockAPI
 					message.Append(" | Logged in as: ").Append(players[0].User.Name).Append(" | Group: ").Append(players[0].Group.Name);
 				args.Player.SendSuccessMessage(message.ToString());
 			}
+		}
+
+		private static void ViewAccountInfo(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
+				return;
+			}
+
+			string username = String.Join(" ", args.Parameters);
+			if (!string.IsNullOrWhiteSpace(username))
+			{
+				var user = TShock.Users.GetUserByName(username);
+				if (user != null)
+				{
+					DateTime LastSeen;
+					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
+
+					if (DateTime.TryParse(user.LastAccessed, out LastSeen))
+					{
+						LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
+						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+							LastSeen.ToShortTimeString(), Timezone);
+					}
+
+					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
+					{
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps?.ToString() ?? string.Empty);
+						string ip = KnownIps?[KnownIps.Count - 1] ?? "N/A";
+						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
+
+						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
+						args.Player.SendSuccessMessage("{0}'s last known IP is {1}.", user.Name, ip);
+						args.Player.SendSuccessMessage("{0}'s register date is {1} {2} UTC{3}.", user.Name, Registered.ToShortDateString(), Registered.ToShortTimeString(), Timezone);
+					}
+				}
+				else
+					args.Player.SendErrorMessage("User {0} does not exist.", username);
+			}
+			else args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}accountinfo <username>", Specifier);
 		}
 
 		private static void Kick(CommandArgs args)
@@ -1635,6 +1675,63 @@ namespace TShockAPI
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
+		private static void UploadJoinData(CommandArgs args)
+		{
+			TSPlayer targetPlayer = args.Player;
+			if (args.Parameters.Count == 1 && args.Player.HasPermission(Permissions.uploadothersdata))
+			{
+				List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				if (players.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					return;
+				}
+				else if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage("No player was found matching'{0}'", args.Parameters[0]);
+					return;
+				}
+				else
+				{
+					targetPlayer = players[0];
+				}
+			}
+			else if (args.Parameters.Count == 1)
+			{
+				args.Player.SendErrorMessage("You do not have permission to upload another player's character data.");
+				return;
+			}
+			else if (args.Parameters.Count > 0)
+			{
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+			else if (args.Parameters.Count == 0 && args.Player is TSServerPlayer)
+			{
+				args.Player.SendErrorMessage("A console can not upload their player data.");
+				args.Player.SendErrorMessage("Usage: /uploadssc [playername]");
+				return;
+			}
+
+			if (targetPlayer.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.InsertSpecificPlayerData(targetPlayer, targetPlayer.DataWhenJoined))
+				{
+					targetPlayer.DataWhenJoined.RestoreCharacter(targetPlayer);
+					targetPlayer.SendSuccessMessage("Your local character data has been uploaded to the server.");
+					args.Player.SendSuccessMessage("The player's character data was successfully uploaded.");
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Failed to upload your character data, are you logged in to an account?");
+				}
+			}
+			else
+			{
+				args.Player.SendErrorMessage("The target player has not logged in yet.");
+			}
+		}
+
 		private static void ForceHalloween(CommandArgs args)
 		{
 			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
@@ -1777,7 +1874,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("An update check has been queued.");
 			try
 			{
-				TShock.UpdateManager.UpdateCheck(null);
+				TShock.UpdateManager.UpdateCheckAsync(null);
 			}
 			catch (Exception)
 			{
@@ -1941,7 +2038,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetPumpkinMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -1959,7 +2056,7 @@ namespace TShockAPI
 						TSPlayer.Server.SetFrostMoon(true);
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
-						NPC.waveCount = wave;
+						NPC.waveNumber = wave;
 						TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
 						break;
 
@@ -1969,6 +2066,11 @@ namespace TShockAPI
 						TShock.StartInvasion(4);
 						break;
 				}
+			}
+			else if (DD2Event.Ongoing)
+			{
+				DD2Event.StopInvasion();
+				TSPlayer.All.SendInfoMessage("{0} has ended the Old One's Army event.", args.Player.Name);
 			}
 			else
 			{
@@ -1998,7 +2100,7 @@ namespace TShockAPI
 			else
 			{
 				Main.anglerWhoFinishedToday.Clear();
-				NetMessage.SendAnglerQuest();
+				NetMessage.SendAnglerQuest(-1);
 				args.Player.SendSuccessMessage("Cleared all users from the angler quest completion list for today.");
 			}
 		}
@@ -4319,7 +4421,7 @@ namespace TShockAPI
 									// Could be improved by sending raw tile data to the client instead but not really
 									// worth the effort as chances are very low that overwriting the wire for a few
 									// nanoseconds will cause much trouble.
-									Tile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
+									ITile tile = Main.tile[boundaryPoint.X, boundaryPoint.Y];
 									bool oldWireState = tile.wire();
 									tile.wire(true);
 
@@ -4622,61 +4724,55 @@ namespace TShockAPI
 		{
 			if (TShock.AuthToken == 0)
 			{
-				args.Player.SendWarningMessage("Auth is disabled. This incident has been logged.");
-				TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
-				TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
-				return;
-			}
-			int givenCode = Convert.ToInt32(args.Parameters[0]);
-			if (givenCode == TShock.AuthToken && args.Player.Group.Name != "superadmin")
-			{
-				try
+				if (args.Player.Group.Name == new SuperAdminGroup().Name)
+					args.Player.SendInfoMessage("The auth system is already disabled.");
+				else
 				{
-					args.Player.Group = TShock.Utils.GetGroup("superadmin");
-					args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
-					args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
-					args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
-					args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
-					args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
-					args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+					args.Player.SendWarningMessage("The auth system is disabled. This incident has been logged.");
+					TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
+					TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
+					return;
 				}
-				catch (UserManagerException ex)
-				{
-					TShock.Log.ConsoleError(ex.ToString());
-					args.Player.SendErrorMessage(ex.Message);
-				}
-				return;
 			}
 
-			if (args.Player.Group.Name == "superadmin")
+			// If the user account is already a superadmin (permanent), disable the system
+			if (args.Player.IsLoggedIn && args.Player.tempGroup == null && args.Player.Group.Name == new SuperAdminGroup().Name)
 			{
-				args.Player.SendInfoMessage("Please disable the auth system! If you need help, consult the forums. https://tshock.co/");
-				args.Player.SendInfoMessage("This account is superadmin, please do the following to finish your install:");
-				args.Player.SendInfoMessage("Please use {0}login <username> <password> to login from now on.", Specifier);
-				args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and type {0}auth-verify.", Specifier);
+				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}auth system has been turned off.", Specifier);
+				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
+				args.Player.SendSuccessMessage("The auth system will remain disabled as long as a superadmin exists (even if you delete auth.lck).");
+				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
+				FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
+				File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
+				TShock.AuthToken = 0;
 				return;
 			}
 
-			args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
-			TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
-		}
-
-		private static void AuthVerify(CommandArgs args)
-		{
-			if (TShock.AuthToken == 0)
+			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendWarningMessage("It appears that you have already turned off the auth token.");
-				args.Player.SendWarningMessage("If this is a mistake, delete auth.lck.");
+				args.Player.SendErrorMessage("You must provide an auth code!");
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Your new account has been verified, and the /auth system has been turned off.");
-			args.Player.SendSuccessMessage("You can always use the /user command to manage players. Don't just delete the auth.lck.");
-			args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
-			args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
-			FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
-			File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
-			TShock.AuthToken = 0;
+			int givenCode;
+			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.AuthToken)
+			{
+				args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
+				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
+				return;
+			}
+
+			if (args.Player.Group.Name != "superadmin")
+				args.Player.tempGroup = new SuperAdminGroup();
+
+			args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
+			args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
+			args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
+			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
+			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}auth.", Specifier);
+			return;
 		}
 
 		private static void ThirdPerson(CommandArgs args)
@@ -4756,12 +4852,12 @@ namespace TShockAPI
 
 		private static void Motd(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "motd.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.MotdPath);
 		}
 
 		private static void Rules(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, "rules.txt");
+			TShock.Utils.ShowFileToUser(args.Player, FileTools.RulesPath);
 		}
 
 		private static void Whisper(CommandArgs args)
@@ -5065,7 +5161,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				plr.DamagePlayer(999999);
+				plr.KillPlayer();
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}

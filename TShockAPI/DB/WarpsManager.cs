@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using Terraria;
+using Microsoft.Xna.Framework;
 
 namespace TShockAPI.DB
 {
@@ -131,16 +132,6 @@ namespace TShockAPI.DB
 		{
 			return Warps.FirstOrDefault(w => String.Equals(w.Name, warpName, StringComparison.OrdinalIgnoreCase));
 		}
-		/// <summary>
-		/// Finds the warp with the given name.
-		/// </summary>
-		/// <param name="warpName">The name.</param>
-		/// <returns>The warp, if it exists, or else null.</returns>
-		[Obsolete]
-		public Warp FindWarp(string warpName)
-		{
-			return Warps.FirstOrDefault(w => String.Equals(w.Name, warpName, StringComparison.OrdinalIgnoreCase));
-		}
 
 		/// <summary>
 		/// Sets the position of a warp.
@@ -209,27 +200,11 @@ namespace TShockAPI.DB
 		/// Gets or sets the position.
 		/// </summary>
 		public Point Position { get; set; }
-		/// <summary>
-		/// Gets or sets the position.
-		/// </summary>
-		[Obsolete]
-		public Vector2 WarpPos
-		{
-			get { return new Vector2(Position.X, Position.Y); }
-			set { Position = new Point((int)value.X, (int)value.Y); }
-		}
 
 		public Warp(Point position, string name, bool isPrivate = false)
 		{
 			Name = name;
 			Position = position;
-			IsPrivate = isPrivate;
-		}
-		[Obsolete]
-		public Warp(Vector2 position, string name, bool isPrivate = false)
-		{
-			Name = name;
-			WarpPos = position;
 			IsPrivate = isPrivate;
 		}
 

@@ -1,6 +1,6 @@
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.ServerSideCharacters;
+using Terraria.Utilities;
+using Microsoft.Xna.Framework;
+using TShockAPI.Sockets;
 
 namespace TShockAPI
 {
@@ -45,13 +48,13 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(1, 25)]
+	[ApiVersion(2, 0)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Yoraiz0r R0cks";
+		public static readonly string VersionCodename = "Mintaka";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -71,6 +74,9 @@ namespace TShockAPI
 		/// Set by the command line, disables the '/restart' command.
 		/// </summary>
 		internal static bool NoRestart;
+
+		/// <summary>Will be set to true once Utils.StopServer() is called.</summary>
+		public static bool ShuttingDown;
 
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
@@ -104,9 +110,6 @@ namespace TShockAPI
 		public static IDbConnection DB;
 		/// <summary>OverridePort - Determines if TShock should override the server port.</summary>
 		public static bool OverridePort;
-		/// <summary>PacketBuffer - Static reference to the packet bufferer system, which buffers packets to clients for better performance.</summary>
-		[Obsolete("PacketBufferer is no longer used", true)]
-		public static PacketBufferer PacketBuffer;
 		/// <summary>Geo - Static reference to the GeoIP system which determines the location of an IP address.</summary>
 		public static GeoIPCountry Geo;
 		/// <summary>RestApi - Static reference to the Rest API authentication manager.</summary>
@@ -182,7 +185,20 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
-			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
+            OTAPI.Hooks.Net.Socket.Create = () =>
+            {
+                //Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
+                return new LinuxTcpSocket();
+                //return new OTAPI.Sockets.PoolSocket();
+                //return new Terraria.Net.Sockets.TcpSocket();
+            };
+            OTAPI.Hooks.Player.Announce = (int playerId) =>
+            {
+                //TShock handles this
+                return OTAPI.HookResult.Cancel;
+            };
+
+            TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
 
 			try
 			{
@@ -195,6 +211,10 @@ namespace TShockAPI
 				FileTools.SetupConfig();
 
 				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
+
+				//TSAPI previously would do this automatically, but the vanilla server wont
+				if (Netplay.ServerIP == null)
+					Netplay.ServerIP = IPAddress.Any;
 
 				DateTime now = DateTime.Now;
 				// Log path was not already set by the command line parameter?
@@ -409,15 +429,22 @@ namespace TShockAPI
 				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
 			}
 
-			bool found = KnownIps.Any(s => s.Equals(args.Player.IP));
-			if (!found)
+			if (KnownIps.Count == 0)
 			{
-				if (KnownIps.Count == 100)
-				{
-					KnownIps.RemoveAt(0);
-				}
-
 				KnownIps.Add(args.Player.IP);
+			}
+			else
+			{
+				bool last = KnownIps.Last() == args.Player.IP;
+				if (!last)
+				{
+					if (KnownIps.Count == 100)
+					{
+						KnownIps.RemoveAt(0);
+					}
+
+					KnownIps.Add(args.Player.IP);
+				}
 			}
 
 			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
@@ -570,7 +597,7 @@ namespace TShockAPI
 			{
 				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
 				{
-					Main.worldPathName += ".crash";
+					Main.ActiveWorldFileData._path += ".crash";
 					SaveManager.Instance.SaveWorld();
 				}
 			}
@@ -627,10 +654,20 @@ namespace TShockAPI
 						}
 					case "-dump":
 						{
+							Utils.PrepareLangForDump();
+							Lang.setLang(true);
 							ConfigFile.DumpDescriptions();
 							Permissions.DumpDescriptions();
 							ServerSideConfig.DumpDescriptions();
 							RestManager.DumpDescriptions();
+							Utils.DumpBuffs("BuffList.txt");
+							Utils.DumpItems("Items-1_0.txt", -48, 235);
+							Utils.DumpItems("Items-1_1.txt", 235, 604);
+							Utils.DumpItems("Items-1_2.txt", 604, 2749);
+							Utils.DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
+							Utils.DumpNPCs("NPCs.txt");
+							Utils.DumpProjectiles("Projectiles.txt");
+							Utils.DumpPrefixes("Prefixes.txt");
 							Environment.Exit(1);
 							break;
 						}
@@ -667,7 +704,7 @@ namespace TShockAPI
 						}
 					case "-autoshutdown":
 						{
-							Main.instance.autoShut();
+							Main.instance.EnableAutoShutdown();
 							break;
 						}
 					case "-autocreate":
@@ -697,9 +734,11 @@ namespace TShockAPI
 							int limit;
 							if (int.TryParse(parms[++i], out limit))
 							{
+								/* Todo - Requires an OTAPI modification
 								Netplay.MaxConnections = limit;
 								ServerApi.LogWriter.PluginWriteLine(this, string.Format(
-									"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);
+									"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);*/
+								ServerApi.LogWriter.PluginWriteLine(this, "\"-connperip\" is not supported in this version of TShock.", TraceLevel.Verbose);
 							}
 							else
 								ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-connperip\".", TraceLevel.Warning);
@@ -783,42 +822,60 @@ namespace TShockAPI
 
 		/// <summary>AuthToken - The auth token used by the /auth system to grant temporary superadmin access to new admins.</summary>
 		public static int AuthToken = -1;
+		private string _cliPassword = null;
 
 		/// <summary>OnPostInit - Fired when the server loads a map, to perform world specific operations.</summary>
 		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
 			SetConsoleTitle(false);
-			if (!File.Exists(Path.Combine(SavePath, "auth.lck")) && !File.Exists(Path.Combine(SavePath, "authcode.txt")))
+
+			//This is to prevent a bug where a CLI-defined password causes packets to be
+			//sent in an unexpected order, resulting in clients being unable to connect
+			if (!string.IsNullOrEmpty(Netplay.ServerPassword))
+			{
+				//CLI defined password overrides a config password
+				_cliPassword = Netplay.ServerPassword;
+				Netplay.ServerPassword = "";
+				Config.ServerPassword = _cliPassword;
+			}
+
+			// Disable the auth system if "auth.lck" is present or a superadmin exists
+			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || Users.GetUsers().Exists(u => u.Group == new SuperAdminGroup().Name))
+			{
+				AuthToken = 0;
+
+				if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+				{
+					Log.ConsoleInfo("A superadmin account has been detected in the user database, but authcode.txt is still present.");
+					Log.ConsoleInfo("TShock will now disable the auth system and remove authcode.txt as it is no longer needed.");
+					File.Delete(Path.Combine(SavePath, "authcode.txt"));
+				}
+
+				if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
+				{
+					// This avoids unnecessary database work, which can get ridiculously high on old servers as all users need to be fetched
+					File.Create(Path.Combine(SavePath, "auth.lck"));
+				}
+			}
+			else if (!File.Exists(Path.Combine(SavePath, "authcode.txt")))
 			{
 				var r = new Random((int)DateTime.Now.ToBinary());
 				AuthToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
-				Console.ForegroundColor = ConsoleColor.Gray;
-				FileTools.CreateFile(Path.Combine(SavePath, "authcode.txt"));
-				using (var tw = new StreamWriter(Path.Combine(SavePath, "authcode.txt")))
-				{
-					tw.WriteLine(AuthToken);
-				}
-			}
-			else if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
-			{
-				using (var tr = new StreamReader(Path.Combine(SavePath, "authcode.txt")))
-				{
-					AuthToken = Convert.ToInt32(tr.ReadLine());
-				}
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine(
-					"TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth-verify)", Commands.Specifier);
-				Console.ForegroundColor = ConsoleColor.Gray;
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.ResetColor();
+				File.WriteAllText(Path.Combine(SavePath, "authcode.txt"), AuthToken.ToString());
 			}
 			else
 			{
-				AuthToken = 0;
+				AuthToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "authcode.txt")));
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
+				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.ResetColor();
 			}
 
 			Regions.Reload();
@@ -826,6 +883,8 @@ namespace TShockAPI
 
 			ComputeMaxStyles();
 			FixChestStacks();
+
+			Utils.UpgradeMotD();
 
 			if (Config.UseServerName)
 			{
@@ -1018,6 +1077,15 @@ namespace TShockAPI
 					if (player.PaintThreshold > 0)
 					{
 						player.PaintThreshold = 0;
+					}
+
+					if (player.HealOtherThreshold >= TShock.Config.HealOtherThreshold)
+					{
+						player.Disable("Reached HealOtherPlayer threshold", flags);
+					}
+					if (player.HealOtherThreshold > 0)
+					{
+						player.HealOtherThreshold = 0;
 					}
 
 					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
@@ -1214,6 +1282,13 @@ namespace TShockAPI
 		/// <param name="args">args - The ConnectEventArgs object.</param>
 		private void OnConnect(ConnectEventArgs args)
 		{
+			if (ShuttingDown)
+			{
+				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, "Server is shutting down...");
+				args.Handled = true;
+				return;
+			}
+
 			var player = new TSPlayer(args.Who);
 
 			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
@@ -1326,11 +1401,17 @@ namespace TShockAPI
 				}
 			}
 		}
-
+		
 		/// <summary>OnLeave - Called when a player leaves the server.</summary>
 		/// <param name="args">args - The LeaveEventArgs object.</param>
 		private void OnLeave(LeaveEventArgs args)
 		{
+			if (args.Who >= Players.Length || args.Who < 0)
+			{
+				//Something not right has happened
+				return;
+			}
+
 			var tsplr = Players[args.Who];
 			Players[args.Who] = null;
 
@@ -1398,7 +1479,13 @@ namespace TShockAPI
 			{
 				try
 				{
-					args.Handled = Commands.HandleCommand(tsplr, args.Text);
+					args.Handled = true;
+					if (!Commands.HandleCommand(tsplr, args.Text))
+					{
+						// This is required in case anyone makes HandleCommand return false again
+						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
+						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", args.Text, tsplr.Name);
+					}
 				}
 				catch (Exception ex)
 				{
@@ -1459,14 +1546,16 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
+			if (string.IsNullOrWhiteSpace(args.Command))
+			{
+				args.Handled = true;
+				return;
+			}
+
 			// Damn you ThreadStatic and Redigit
 			if (Main.rand == null)
 			{
-				Main.rand = new Random();
-			}
-			if (WorldGen.genRand == null)
-			{
-				WorldGen.genRand = new Random();
+				Main.rand = new UnifiedRandom();
 			}
 
 			if (args.Command == "autosave")
@@ -1560,7 +1649,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, "motd.txt");
+			Utils.ShowFileToUser(player, FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")
@@ -1664,7 +1753,10 @@ namespace TShockAPI
 				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
 			}
 
-			Main.StartInvasion(type, invasionSize);
+			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
+			Main.invasionSize = invasionSize;
+
+			Main.StartInvasion(type);
 		}
 
 		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
@@ -1906,11 +1998,11 @@ namespace TShockAPI
 			Item[] miscDyes = player.TPlayer.miscDyes;
 			Item[] piggy = player.TPlayer.bank.item;
 			Item[] safe = player.TPlayer.bank2.item;
+			Item[] forge = player.TPlayer.bank3.item;
 			Item trash = player.TPlayer.trashItem;
-
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
-				if (i < NetItem.InventorySlots)
+				if (i < NetItem.InventoryIndex.Item2)
 				{
 					//0-58
 					Item item = new Item();
@@ -1928,11 +2020,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
+				else if (i < NetItem.ArmorIndex.Item2)
 				{
 					//59-78
+					var index = i - NetItem.ArmorIndex.Item1;
 					Item item = new Item();
-					var index = i - NetItem.InventorySlots;
 					if (armor[index] != null && armor[index].netID != 0)
 					{
 						item.netDefaults(armor[index].netID);
@@ -1947,11 +2039,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
+				else if (i < NetItem.DyeIndex.Item2)
 				{
 					//79-88
+					var index = i - NetItem.DyeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
 					if (dye[index] != null && dye[index].netID != 0)
 					{
 						item.netDefaults(dye[index].netID);
@@ -1966,12 +2058,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
+				else if (i < NetItem.MiscEquipIndex.Item2)
 				{
 					//89-93
+					var index = i - NetItem.MiscEquipIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
 					if (miscEquips[index] != null && miscEquips[index].netID != 0)
 					{
 						item.netDefaults(miscEquips[index].netID);
@@ -1986,14 +2077,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots
-					+ NetItem.MiscDyeSlots)
+				else if (i < NetItem.MiscDyeIndex.Item2)
 				{
 					//93-98
+					var index = i - NetItem.MiscDyeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots);
 					if (miscDyes[index] != null && miscDyes[index].netID != 0)
 					{
 						item.netDefaults(miscDyes[index].netID);
@@ -2008,14 +2096,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-				   NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-				   NetItem.MiscDyeSlots + NetItem.PiggySlots)
+				else if (i < NetItem.PiggyIndex.Item2)
 				{
 					//98-138
+					var index = i - NetItem.PiggyIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots);
 					if (piggy[index] != null && piggy[index].netID != 0)
 					{
 						item.netDefaults(piggy[index].netID);
@@ -2031,14 +2116,11 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i <
-					NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots +
-					NetItem.MiscDyeSlots + NetItem.PiggySlots + NetItem.SafeSlots)
+				else if (i < NetItem.SafeIndex.Item2)
 				{
 					//138-178
+					var index = i - NetItem.SafeIndex.Item1;
 					Item item = new Item();
-					var index = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots
-						+ NetItem.MiscEquipSlots + NetItem.MiscDyeSlots + NetItem.PiggySlots);
 					if (safe[index] != null && safe[index].netID != 0)
 					{
 						item.netDefaults(safe[index].netID);
@@ -2054,8 +2136,9 @@ namespace TShockAPI
 						}
 					}
 				}
-				else
+				else if (i < NetItem.TrashIndex.Item2)
 				{
+					//179-219
 					Item item = new Item();
 					if (trash != null && trash.netID != 0)
 					{
@@ -2071,6 +2154,27 @@ namespace TShockAPI
 								Color.Cyan);
 						}
 					}
+				}
+				else
+				{
+					//220
+					var index = i - NetItem.ForgeIndex.Item1;
+					Item item = new Item();
+					if (forge[index] != null && forge[index].netID != 0)
+					{
+						item.netDefaults(forge[index].netID);
+						item.Prefix(forge[index].prefix);
+						item.AffixName();
+
+						if (forge[index].stack > item.maxStack)
+						{
+							check = true;
+							player.SendMessage(
+								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
+								Color.Cyan);
+						}
+					}
+
 				}
 			}
 
@@ -2106,7 +2210,14 @@ namespace TShockAPI
 			if (file.MaxSlots > 235)
 				file.MaxSlots = 235;
 			Main.maxNetPlayers = file.MaxSlots + 20;
+
 			Netplay.ServerPassword = "";
+			if (!string.IsNullOrEmpty(_cliPassword))
+			{
+				//This prevents a config reload from removing/updating a CLI-defined password
+				file.ServerPassword = _cliPassword;
+			}
+
 			Netplay.spamCheck = false;
 		}
 	}

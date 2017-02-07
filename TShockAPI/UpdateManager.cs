@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,27 +18,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TShockAPI
 {
+	/// <summary>
+	/// Responsible for checking for and notifying users about new updates to TShock
+	/// </summary>
 	public class UpdateManager
 	{
 		private string updateUrl = "http://update.tshock.co/latest/";
+		private HttpClient _client = new HttpClient();
 
 		/// <summary>
 		/// Check once every X minutes.
 		/// </summary>
 		private int CheckXMinutes = 30;
 
+		/// <summary>
+		/// Creates a new instance of <see cref="UpdateManager"/> and starts the update thread
+		/// </summary>
 		public UpdateManager()
 		{
-			Thread t = new Thread(() => {
+			//5 second timeout
+			_client.Timeout = new TimeSpan(0, 0, 5);
+
+			Thread t = new Thread(async () => {
 				do {
-					CheckForUpdates(null);	
+					await CheckForUpdatesAsync(null);	
 				} while (true);
 			});
 			
@@ -48,25 +60,39 @@ namespace TShockAPI
 			t.Start();
 		}
 
-		private void CheckForUpdates(object state)
+		private async Task CheckForUpdatesAsync(object state)
 		{
 			try
 			{
-				UpdateCheck(state);
+				await UpdateCheckAsync(state);
 				CheckXMinutes = 30;
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				// Skip this run and check more frequently...
+
+				string msg = BuildExceptionString(ex);
+				//Give the console a brief
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine($"UpdateManager warning: {msg}");
+				Console.ForegroundColor = ConsoleColor.Gray;
+				//And log the full exception
+				TShock.Log.Warn($"UpdateManager warning: {ex.ToString()}");
+				TShock.Log.ConsoleError("Retrying in 5 minutes.");
 				CheckXMinutes = 5;
 			}
 			
 			Thread.Sleep(CheckXMinutes * 60 * 1000);
 		}
 
-		public void UpdateCheck(object o)
+		/// <summary>
+		/// Checks for updates to the TShock server
+		/// </summary>
+		/// <param name="o"></param>
+		/// <returns></returns>
+		public async Task UpdateCheckAsync(object o)
 		{
-			var updates = ServerIsOutOfDate();
+			var updates = await ServerIsOutOfDateAsync();
 			if (updates != null)
 			{
 				NotifyAdministrators(updates);
@@ -77,35 +103,29 @@ namespace TShockAPI
 		/// Checks to see if the server is out of date.
 		/// </summary>
 		/// <returns></returns>
-		private Dictionary<string, string> ServerIsOutOfDate()
+		private async Task<Dictionary<string, string>> ServerIsOutOfDateAsync()
 		{
-			var client = (HttpWebRequest)WebRequest.Create(updateUrl);
-			client.Timeout = 5000;
-			try
+			var resp = await _client.GetAsync(updateUrl);
+			if (resp.StatusCode != HttpStatusCode.OK)
 			{
-				using (var resp = TShock.Utils.GetResponseNoException(client))
+				string reason = resp.ReasonPhrase;
+				if (string.IsNullOrWhiteSpace(reason))
 				{
-					if (resp.StatusCode != HttpStatusCode.OK)
-					{
-						throw new IOException("Server did not respond with an OK.");
-					}
-
-					using(var reader = new StreamReader(resp.GetResponseStream()))
-					{
-						string updatejson = reader.ReadToEnd();
-						var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(updatejson);
-						var version = new Version(update["version"]);
-						if (TShock.VersionNum.CompareTo(version) < 0)
-							return update;
-					}
+					reason = "none";
 				}
-			}
-			catch (Exception e)
-			{
-				TShock.Log.ConsoleError("UpdateManager Exception: {0}", e);
-				throw e;
+				throw new WebException("Update server did not respond with an OK. "
+					+ $"Server message: [error {resp.StatusCode}] {reason}");
 			}
 
+			string json = await resp.Content.ReadAsStringAsync();
+			var update = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+			var version = new Version(update["version"]);
+			if (TShock.VersionNum.CompareTo(version) < 0)
+			{
+				return update;
+			}
+			
 			return null;
 		}
 
@@ -129,6 +149,24 @@ namespace TShockAPI
 			{
 				player.SendMessage(changes[j], Color.Red);
 			}
+		}
+
+		/// <summary>
+		/// Produces a string containing all exception messages in an exception chain.
+		/// </summary>
+		/// <param name="ex"></param>
+		/// <returns></returns>
+		private string BuildExceptionString(Exception ex)
+		{
+			string msg = ex.Message;
+			Exception inner = ex.InnerException;
+			while (inner != null)
+			{
+				msg += $"\r\n\t-> {inner.Message}";
+				inner = inner.InnerException;
+			}
+
+			return msg;
 		}
 	}
 }

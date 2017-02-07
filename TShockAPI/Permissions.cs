@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@ namespace TShockAPI
 	{
 		// tshock.account nodes
 
-		[Description("User can register account in game")]
+		[Description("User can register account in game.")]
 		public static readonly string canregister = "tshock.account.register";
 
-		[Description("User can login in game")]
+		[Description("User can login in game.")]
 		public static readonly string canlogin = "tshock.account.login";
 
-		[Description("User can logout in game")]
+		[Description("User can logout in game.")]
 		public static readonly string canlogout = "tshock.account.logout";
 
-		[Description("User can change password in game")]
+		[Description("User can change password in game.")]
 		public static readonly string canchangepassword = "tshock.account.changepassword";
 
 		// tshock.admin nodes
@@ -79,14 +79,20 @@ namespace TShockAPI
 		[Description("User can manage regions.")]
 		public static readonly string manageregion = "tshock.admin.region";
 
-		[Description("User can mute and unmute users")]
+		[Description("User can mute and unmute users.")]
 		public static readonly string mute = "tshock.admin.mute";
 
-		[Description("User can see the id of players with /who")]
+		[Description("User can see the id of players with /who.")]
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
 		[Description("User can save all the players SSI state.")]
 		public static readonly string savessc = "tshock.admin.savessi";
+
+		[Description("User can upload their joined character data as SSC data.")]
+		public static readonly string uploaddata = "tshock.ssc.upload";
+
+		[Description("User can upload other players join data to the SSC database.")]
+		public static readonly string uploadothersdata = "tshock.ssc.upload.others";
 
 		[Description("User can elevate other users' groups temporarily.")]
 		public static readonly string settempgroup = "tshock.admin.tempgroup";
@@ -148,7 +154,7 @@ namespace TShockAPI
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 
-		[Description("Bypass server side character checks")]
+		[Description("Bypass server side character checks.")]
 		public static readonly string bypassssc = "tshock.ignore.ssc";
 
 		[Description("Allow unrestricted SendTileSquare usage, for client side world editing.")]
@@ -200,19 +206,17 @@ namespace TShockAPI
 		[Description("User can kill all enemy npcs.")]
 		public static readonly string butcher = "tshock.npc.butcher";
 
-		[Description("User can summon bosses using items")]
+		[Description("User can summon bosses using items.")]
 		public static readonly string summonboss = "tshock.npc.summonboss";
 
-		[Description("User can start invasions (Goblin/Snow Legion) using items")]
+		[Description("User can start invasions (Goblin/Snow Legion) using items.")]
 		public static readonly string startinvasion = "tshock.npc.startinvasion";
+
+		[Description("User can start the dd2 event.")]
+		public static readonly string startdd2 = "tshock.npc.startdd2";
 
 		[Description("User can clear the list of users who have completed an angler quest that day.")]
 		public static readonly string clearangler = "tshock.npc.clearanglerquests";
-
-		// tshock.superadmin nodes
-
-		[Description("Meant for super admins only.")]
-		public static readonly string authverify = "tshock.superadmin.authverify";
 
 		[Description("Meant for super admins only.")]
 		public static readonly string user = "tshock.superadmin.user";
@@ -252,7 +256,7 @@ namespace TShockAPI
 		[Description("User can use /spawn.")]
 		public static readonly string spawn = "tshock.tp.spawn";
 
-		[Description("User can use the Rod of Discor.")] 
+		[Description("User can use the Rod of Discord.")]
 		public static readonly string rod = "tshock.tp.rod";
 
 		[Description("User can use wormhole potions.")]
@@ -287,7 +291,7 @@ namespace TShockAPI
 		[Description("User can change the homes of NPCs.")]
 		public static readonly string movenpc = "tshock.world.movenpc";
 
-		[Description("User can convert hallow into corruption and vice-versa")]
+		[Description("User can convert hallow into corruption and vice-versa.")]
 		public static readonly string converthardmode = "tshock.world.converthardmode";
 
 		[Description("User can force the server to Halloween mode.")]
@@ -322,7 +326,7 @@ namespace TShockAPI
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
-		
+
 		[Description("User can paint tiles.")]
 		public static readonly string canpaint = "tshock.world.paint";
 
@@ -345,7 +349,7 @@ namespace TShockAPI
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
-		
+
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max.")]
 		public static readonly string reservedslot = "tshock.reservedslot";
 
@@ -364,10 +368,10 @@ namespace TShockAPI
 		[Description("User can heal players.")]
 		public static readonly string heal = "tshock.heal";
 
-		[Description("User can use party chat in game")]
+		[Description("User can use party chat in game.")]
 		public static readonly string canpartychat = "tshock.partychat";
 
-		[Description("User can talk in third person")]
+		[Description("User can talk in third person.")]
 		public static readonly string cantalkinthird = "tshock.thirdperson";
 
 		[Description("User can get the server info.")]
@@ -376,10 +380,10 @@ namespace TShockAPI
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
 		public static readonly string godmode = "tshock.godmode";
 
-		[Description("User can godmode other players")]
+		[Description("User can godmode other players.")]
 		public static readonly string godmodeother = "tshock.godmode.other";
 
-		[Description("Player can chat")] 
+		[Description("Player can chat.")]
 		public static readonly string canchat = "tshock.canchat";
 
 		[Description("Player can use banned projectiles.")]
@@ -387,6 +391,12 @@ namespace TShockAPI
 
 		[Description("Player can place banned tiles.")]
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
+
+		[Description("Player can check if a username is registered and see its last login time.")]
+		public static readonly string checkaccountinfo = "tshock.accountinfo.check";
+
+		[Description("Player can see advanced information about any user account.")]
+		public static readonly string advaccountinfo = "tshock.accountinfo.details";
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>

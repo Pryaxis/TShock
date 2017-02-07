@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ namespace Rests
 		private RestCommandD callback;
 
 		/// <summary>
-		/// 
+		/// Creates a new <see cref="RestCommand"/> used with the REST API
 		/// </summary>
 		/// <param name="name">Used for identification</param>
 		/// <param name="uritemplate">Url template</param>
@@ -51,7 +51,7 @@ namespace Rests
 		}
 
 		/// <summary>
-		/// 
+		/// Creates a new <see cref="RestCommand"/> used with the REST API
 		/// </summary>
 		/// <param name="uritemplate">Url template</param>
 		/// <param name="callback">Rest Command callback</param>

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2015 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,7 +25,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using OTAPI.Tile;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
@@ -73,7 +76,7 @@ namespace TShockAPI
 		/// The amount of tiles that the player has killed in the last second.
 		/// </summary>
 		public int TileKillThreshold { get; set; }
-		
+
 		/// <summary>
 		/// The amount of tiles the player has placed in the last second.
 		/// </summary>
@@ -93,7 +96,12 @@ namespace TShockAPI
 		/// The number of projectiles created by the player in the last second.
 		/// </summary>
 		public int ProjectileThreshold { get; set; }
-		
+
+		/// <summary>
+		/// The number of HealOtherPlayer packets sent by the player in the last second.
+		/// </summary>
+		public int HealOtherThreshold { get; set; }
+
 		/// <summary>
 		/// A timer to keep track of whether or not the player has recently thrown an explosive
 		/// </summary>
@@ -108,19 +116,19 @@ namespace TShockAPI
 		/// A system to delay Remembered Position Teleports a few seconds
 		/// </summary>
 		public int RPPending = 0;
-		
+
 		public int sX = -1;
 		public int sY = -1;
-		
+
 		/// <summary>
 		/// A queue of tiles destroyed by the player for reverting.
 		/// </summary>
-		public Dictionary<Vector2, Tile> TilesDestroyed { get; protected set; }
+		public Dictionary<Vector2, ITile> TilesDestroyed { get; protected set; }
 
 		/// <summary>
 		/// A queue of tiles placed by the player for reverting.
 		/// </summary>
-		public Dictionary<Vector2, Tile> TilesCreated { get; protected set; }
+		public Dictionary<Vector2, ITile> TilesCreated { get; protected set; }
 
 		/// <summary>
 		/// The player's group.
@@ -140,7 +148,7 @@ namespace TShockAPI
 		/// The player's temporary group.  This overrides the user's actual group.
 		/// </summary>
 		public Group tempGroup = null;
-		
+
 		public Timer tempGroupTimer;
 
 		private Group group = null;
@@ -153,7 +161,7 @@ namespace TShockAPI
 		public int Index { get; protected set; }
 
 		/// <summary>
-		/// The last time the player changed their team or pvp status.  
+		/// The last time the player changed their team or pvp status.
 		/// </summary>
 		public DateTime LastPvPTeamChange;
 
@@ -170,7 +178,7 @@ namespace TShockAPI
 		/// <summary>
 		/// A list of command callbacks indexed by the command they need to do.
 		/// </summary>
-		public Dictionary<string, Action<object>> AwaitingResponse;  
+		public Dictionary<string, Action<object>> AwaitingResponse;
 
 		public bool AwaitingName { get; set; }
 
@@ -209,15 +217,6 @@ namespace TShockAPI
 		public Vector2 LastNetPosition = Vector2.Zero;
 
 		/// <summary>
-		/// The player's login name.
-		/// </summary>
-		[Obsolete("Use User.Name instead")]
-		public string UserAccountName
-		{
-			get { return User == null ? null : User.Name; }
-		}
-
-		/// <summary>
 		/// User object associated with the player.
 		/// Set when the player logs in.
 		/// </summary>
@@ -238,15 +237,6 @@ namespace TShockAPI
 		/// Whether the player has sent their whole inventory to the server while connecting.
 		/// </summary>
 		public bool HasSentInventory { get; set; }
-
-		/// <summary>
-		/// The player's user id( from the db ).
-		/// </summary>
-		[Obsolete("Use User.ID instead")]
-		public int UserID
-		{
-			get { return User == null ? -1 : User.ID; }
-		}
 
 		/// <summary>
 		/// Whether the player has been nagged about logging in.
@@ -327,14 +317,14 @@ namespace TShockAPI
 		/// Spawn protection message cool down.
 		/// </summary>
 		public long SPm = 1;
-			
+
 		/// <summary>
 		/// Permission to build message cool down.
 		/// </summary>
 		public long BPm = 1;
 
 		/// <summary>
-		/// The time in ms when the player has logged in.  
+		/// The time in ms when the player has logged in.
 		/// </summary>
 		public long LoginMS;
 
@@ -367,7 +357,7 @@ namespace TShockAPI
 		/// Contains data stored by plugins
 		/// </summary>
 		protected ConcurrentDictionary<string, object> data = new ConcurrentDictionary<string, object>();
-		
+
 		/// <summary>
 		/// Whether the player is a real, human, player on the server.
 		/// </summary>
@@ -587,6 +577,11 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// This contains the character data a player has when they join the server.
+		/// </summary>
+		public PlayerData DataWhenJoined { get; set; }
+
+		/// <summary>
 		/// Determines whether the player's storage contains the given key.
 		/// </summary>
 		/// <param name="key">Key to test.</param>
@@ -643,13 +638,40 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Logs the player out of an account.
+		/// </summary>
+		public void Logout()
+		{
+			PlayerHooks.OnPlayerLogout(this);
+			if (Main.ServerSideCharacter)
+			{
+				IgnoreActionsForInventory = $"Server side characters is enabled! Please {Commands.Specifier}register or {Commands.Specifier}login to play!";
+				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
+				{
+					PlayerData.CopyCharacter(this);
+					TShock.CharacterDB.InsertPlayerData(this);
+				}
+			}
+
+			PlayerData = new PlayerData(this);
+			Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			tempGroup = null;
+			if (tempGroupTimer != null)
+			{
+				tempGroupTimer.Stop();
+			}
+			User = null;
+			IsLoggedIn = false;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="TSPlayer"/> class.
 		/// </summary>
 		/// <param name="index">The player's index in the.</param>
 		public TSPlayer(int index)
 		{
-			TilesDestroyed = new Dictionary<Vector2, Tile>();
-			TilesCreated = new Dictionary<Vector2, Tile>();
+			TilesDestroyed = new Dictionary<Vector2, ITile>();
+			TilesCreated = new Dictionary<Vector2, ITile>();
 			Index = index;
 			Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
@@ -662,8 +684,8 @@ namespace TShockAPI
 		/// <param name="playerName">The player's name.</param>
 		protected TSPlayer(String playerName)
 		{
-			TilesDestroyed = new Dictionary<Vector2, Tile>();
-			TilesCreated = new Dictionary<Vector2, Tile>();
+			TilesDestroyed = new Dictionary<Vector2, ITile>();
+			TilesCreated = new Dictionary<Vector2, ITile>();
 			Index = -1;
 			FakePlayer = new Player {name = playerName, whoAmI = -1};
 			Group = Group.DefaultGroup;
@@ -677,16 +699,6 @@ namespace TShockAPI
 		public virtual void Disconnect(string reason)
 		{
 			SendData(PacketTypes.Disconnect, reason);
-		}
-
-		[Obsolete("This method is no longer used.")]
-		public virtual void Flush()
-		{
-			var client = Netplay.Clients[Index];
-			if (client == null)
-				return;
-
-			//TShock.PacketBuffer.Flush(client);
 		}
 
 		/// <summary>
@@ -750,7 +762,7 @@ namespace TShockAPI
 		/// Spawns the player at his spawn point.
 		/// </summary>
 		public void Spawn()
-		{			
+		{
 			if (this.sX > 0 && this.sY > 0)
 			{
 				Spawn(this.sX, this.sY);
@@ -862,7 +874,7 @@ namespace TShockAPI
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) && 
+			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
 				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
 					return false;
 
@@ -978,7 +990,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sends a message with the specified color. 
+		/// Sends a message with the specified color.
 		/// </summary>
 		/// <param name="msg">The message.</param>
 		/// <param name="color">The message color.</param>
@@ -1036,8 +1048,15 @@ namespace TShockAPI
 		/// <param name="damage">The amount of damage the player will take.</param>
 		public virtual void DamagePlayer(int damage)
 		{
-			NetMessage.SendData((int) PacketTypes.PlayerDamage, -1, -1, "", Index, ((new Random()).Next(-1, 1)), damage,
-								(float) 0);
+			NetMessage.SendPlayerHurt(Index, PlayerDeathReason.LegacyDefault(), damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
+		}
+
+		/// <summary>
+		/// Kills the player.
+		/// </summary>
+		public virtual void KillPlayer()
+		{
+			NetMessage.SendPlayerDeath(Index, PlayerDeathReason.LegacyDefault(), 99999, (new Random()).Next(-1, 1), false, -1, -1);
 		}
 
 		/// <summary>
@@ -1062,24 +1081,6 @@ namespace TShockAPI
 		/// Represents the current item the player is holding.
 		/// </summary>
 		public Item ItemInHand = new Item();
-
-		/// <summary>
-		/// Disables the player for the given <paramref name="reason"/>.
-		/// </summary>
-		/// <param name="reason">The reason why the player was disabled.</param>
-		/// <param name="displayConsole">Whether or not to log this event to the console.</param>
-		[Obsolete("Use Disable(string, DisableFlags)")]
-		public virtual void Disable(string reason = "", bool displayConsole = true)
-		{
-			if (displayConsole)
-			{
-				Disable(reason, DisableFlags.WriteToConsole);
-			}
-			else
-			{
-				Disable(reason, DisableFlags.WriteToLog);
-			}
-		}
 
 		/// <summary>
 		/// Disables the player for the given <paramref name="reason"/>

@@ -4,6 +4,54 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.22
+* Compatibility with Terraria 1.3.4.4
+* API: Version tick 2.0
+* API: Reduced RAM usage by ~80MB (Large server) (@deathcradle)
+* API: Added TSPlayer.KillPlayer() (@WhiteXZ)
+* API: Added TSPlayer.Logout() (@ProfessorXZ)
+* Fixed connections after max slot is reached (@DeathCradle)
+* Fixed server crashes caused by client disconnections when attempting to read closed sockets (@Enerdy)
+* Added some code to make trapdoors work better (@DogooFalchion)
+* AllowCutTilesAndBreakables config option now correctly allows flowers/vines/herbs to be cut in regions without breaking walls (@WhiteXZ)
+* REST: `/v3/players/read` now includes a `muted` field (@WhiteXZ)
+* REST: Token creation is now more secure (Thanks to @Plazmaz for reporting the issue!)
+* REST: Deprecated the RestRequestEvent. If you use this event, please let us know.
+* REST: ALL endpoints now have a base route (eg you can use `/server/motd` instead of `/v3/server/motd`). These base routes will never change, but will provide an `upgrade` field describing any newer routes
+* REST: Added `/v3/world/autosave` and `/v3/world/bloodmoon` which use GET parameter style arguments. I.e., `/v3/world/autosave?state=[true|false]` & `/v3/world/bloodmoon?state=[true|false]`. The state argument is optional
+* Fixed fishing quests not saving/loading correctly when login before join, UUID login, and SSC were enabled together (@DogooFalchion)
+
+## TShock 4.3.21
+* Compatibility with Terraria 1.3.4.3 (@Patrikkk, @Zaicon).
+* API: Version tick 1.26.
+* API: Deprecated PlayerDamage and PlayerKillMe packets (now uses PlayerHurtV2 and PlayerDeathV2).
+* API: Main.rand now uses UnifiedRandom instead of Random. This WILL break any existing plugin that uses Main.rand.
+* Fixed HealOtherPlayer packet exploit (@Simon311).
+* Added associated config option for HealOtherPlayer exploit prevention (@Simon311).
+* Added `/accountinfo` command to get account information for a given TShock account (@Simon311).
+* Removed TShock color parsing from MOTDs (@WhiteXZ).
+* Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
+* Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
+* Added alias for server shutdown command: stop (@nicatronTg).
+* Removed the old REST model. This includes the following endpoints:
+ * `/status`
+ * `/v2/players/read`
+ * `/v2/server/rawcmd` (@WhiteXZ).
+* Fixed `/user group` always giving an unhelpful error messaging telling you to check the console, even if we knew exactly why it failed (@nicatronTg).
+* Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
+* Fixed issue where registration + login would fail because KnownIps had 0 items and .Last() doesn't work on collections with 0 items (@DogooFalchion, @nicatronTg, @Simon311).
+* Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
+* Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
+* Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
+
+## TShock 4.3.20
+* Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
+* Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy).
+* Security: `/"` exploit can no longer break chat mute filters (@Simon311).
+* Fixed an issue where sometimes players could connect briefly during server shutdown, leading to errors (@Simon311).
+* Fixed wyverns despawning & not behaving like normal (@WhiteXZ).
+* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ, @WhiteXZ).
+
 ## TShock 4.3.19
 * Compatibility with Terraria 1.3.3.3 (@Simon311)
 * API: Version tick 1.25
@@ -167,7 +215,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * API: Fixed issues with SendQ writes failing. (@Wolfje)
 * API: Version tick to 1.21
 
-## TShock 4.3.6 (Pre-Release)
+## TShock 4.3.6
 
 * API: NPCs shoot the right way (@WhiteXZ)
 * API: The server config file works correctly with priority and port (@Patrikkk)
@@ -219,7 +267,7 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * Fix: Logging out is now safe with SSC (/logout) (issue #1037). (@WhiteXZ)
 * API/TShock: Removed -world parameter from TShock, put it back in the API. (@tylerjwatson)
 
-## TShock 4.3.5 (Unreleased)
+## TShock 4.3.5
 
 * Fix HandleSpawnBoss, and as a result the spawnboss command and boss spawning items. (@Ijwu)
 * Rewrite SendQ for more network stack improvements (@tylerjwatson)

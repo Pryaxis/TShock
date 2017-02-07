@@ -1,6 +1,27 @@
-﻿using System;
+/*
+TShock, a server mod for Terraria
+Copyright (C) 2011-2016 Nyx Studios (fka. The TShock Team)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using Microsoft.Xna.Framework;
+using OTAPI.Tile;
+using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Utilities;
 using TShockAPI;
 using TShockAPI.DB;
 
@@ -140,16 +161,16 @@ namespace TShockAPI
 		{
 			// Main.rand is thread static.
 			if (Main.rand == null)
-				Main.rand = new Random();
+				Main.rand = new UnifiedRandom();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
 			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
 		}
 
-		public void RevertTiles(Dictionary<Vector2, Tile> tiles)
+		public void RevertTiles(Dictionary<Vector2, ITile> tiles)
 		{
 			// Update Main.Tile first so that when tile sqaure is sent it is correct
-			foreach (KeyValuePair<Vector2, Tile> entry in tiles)
+			foreach (KeyValuePair<Vector2, ITile> entry in tiles)
 			{
 				Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
 			}
