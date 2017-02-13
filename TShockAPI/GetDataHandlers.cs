@@ -921,7 +921,12 @@ namespace TShockAPI
 		public class ItemDropEventArgs : HandledEventArgs
 		{
 			/// <summary>
-			/// The Terraria playerID of the player
+			/// The player who sent message
+			/// </summary>
+			public TSPlayer Player { get; set; }
+			/// <summary>
+			/// ID of the item.
+			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
 			/// </summary>
 			public short ID { get; set; }
 			/// <summary>
@@ -954,13 +959,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ItemDropEventArgs> ItemDrop;
 
-		private static bool OnItemDrop(short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
+		private static bool OnItemDrop(TSPlayer player, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
 		{
 			if (ItemDrop == null)
 				return false;
 
 			var args = new ItemDropEventArgs
 			{
+				Player = player,
 				ID = id,
 				Position = pos,
 				Velocity = vel,
@@ -3456,7 +3462,7 @@ namespace TShockAPI
 			var noDelay = args.Data.ReadInt8() == 1;
 			var type = args.Data.ReadInt16();
 
-			if (OnItemDrop(id, pos, vel, stacks, prefix, noDelay, type))
+			if (OnItemDrop(args.Player, id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
 
 			// player is attempting to crash clients
