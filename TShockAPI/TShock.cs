@@ -197,10 +197,8 @@ namespace TShockAPI
 				//TShock handles this
 				return OTAPI.HookResult.Cancel;
 			};
-			OTAPI.Hooks.Game.PostInitialize += () =>
-			{
-				Main.SettingsUnlock_WorldEvil = true;
-			};
+
+			Main.SettingsUnlock_WorldEvil = true;
 
 			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
 
