@@ -185,20 +185,22 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
-            OTAPI.Hooks.Net.Socket.Create = () =>
-            {
-                //Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
-                return new LinuxTcpSocket();
-                //return new OTAPI.Sockets.PoolSocket();
-                //return new Terraria.Net.Sockets.TcpSocket();
-            };
-            OTAPI.Hooks.Player.Announce = (int playerId) =>
-            {
-                //TShock handles this
-                return OTAPI.HookResult.Cancel;
-            };
+			OTAPI.Hooks.Net.Socket.Create = () =>
+			{
+				//Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
+				return new LinuxTcpSocket();
+				//return new OTAPI.Sockets.PoolSocket();
+				//return new Terraria.Net.Sockets.TcpSocket();
+			};
+			OTAPI.Hooks.Player.Announce = (int playerId) =>
+			{
+				//TShock handles this
+				return OTAPI.HookResult.Cancel;
+			};
 
-            TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
+			Main.SettingsUnlock_WorldEvil = true;
+
+			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
 
 			try
 			{
