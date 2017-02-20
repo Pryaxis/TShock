@@ -267,7 +267,7 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/world/read", WorldRead));
 			Rest.Register(new SecureRestCommand("/world/meteor", WorldMeteor, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/world/bloodmoon/{bloodmoon}", WorldBloodmoon, RestPermissions.restcauseevents));
-			Rest.Register(new SecureRestCommand("/v3/world/bloomoon", WorldBloodmoonV3, RestPermissions.restcauseevents));
+			Rest.Register(new SecureRestCommand("/v3/world/bloodmoon", WorldBloodmoonV3, RestPermissions.restcauseevents));
 			Rest.Register(new SecureRestCommand("/v2/world/save", WorldSave, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/world/autosave/state/{state}", WorldChangeSaveSettings, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v3/world/autosave", WorldChangeSaveSettingsV3, RestPermissions.restcfg));
