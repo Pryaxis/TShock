@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using MySql.Data.MySqlClient;
@@ -85,9 +86,16 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Gets a list of bans.
+		/// Gets a list of bans sorted by their addition date from newest to oldest
 		/// </summary>
-		public List<Ban> GetBans()
+		public List<Ban> GetBans() => GetSortedBans(BanSortMethod.AddedNewestToOldest).ToList();
+
+		/// <summary>
+		/// Retrieves an enumerable of <see cref="Ban"/> objects, sorted using the provided sort method
+		/// </summary>
+		/// <param name="sortMethod"></param>
+		/// <returns></returns>
+		public IEnumerable<Ban> GetSortedBans(BanSortMethod sortMethod)
 		{
 			List<Ban> banlist = new List<Ban>();
 			try
@@ -96,8 +104,28 @@ namespace TShockAPI.DB
 				{
 					while (reader.Read())
 					{
-						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("UUID"), reader.Get<string>("Reason"), reader.Get<string>("BanningUser"), reader.Get<string>("Date"), reader.Get<string>("Expiration")));					
+						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("UUID"), reader.Get<string>("Reason"), reader.Get<string>("BanningUser"), reader.Get<string>("Date"), reader.Get<string>("Expiration")));
 					}
+
+					Comparison<Ban> comparer;
+					switch (sortMethod)
+					{
+						case BanSortMethod.AddedOldestToNewest:
+							comparer = (a, b) => b.DateTime.CompareTo(a.DateTime);
+							break;
+						case BanSortMethod.AddedNewestToOldest:
+							comparer = (a, b) => a.DateTime.CompareTo(b.DateTime);
+							break;
+						case BanSortMethod.ExpirationLatestToSoonest:
+							comparer = (a, b) => b.ExpirationDateTime.CompareTo(a.ExpirationDateTime);
+							break;
+						default:
+							//Default encompasses BanSortMethod.ExpirationSoonestToLatest
+							comparer = (a, b) => a.ExpirationDateTime.CompareTo(b.ExpirationDateTime);
+							break;
+					}
+
+					banlist.Sort(comparer);
 					return banlist;
 				}
 			}
@@ -239,6 +267,29 @@ namespace TShockAPI.DB
 		}
 	}
 
+	/// <summary>
+	/// Enum containing sort options for ban retrieval
+	/// </summary>
+	public enum BanSortMethod
+	{
+		/// <summary>
+		/// Bans will be sorted on expiration date, from soonest to latest
+		/// </summary>
+		ExpirationSoonestToLatest,
+		/// <summary>
+		/// Bans will be sorted on expiration date, from latest to soonest
+		/// </summary>
+		ExpirationLatestToSoonest,
+		/// <summary>
+		/// Bans will be sorted by the date they were added, from newest to oldest
+		/// </summary>
+		AddedNewestToOldest,
+		/// <summary>
+		/// Bans will be sorted by the date they were added, from oldest to newest
+		/// </summary>
+		AddedOldestToNewest
+	}
+
     /// <summary>
     /// Model class that represents a ban entry in the TShock database.
     /// </summary>
@@ -280,11 +331,21 @@ namespace TShockAPI.DB
         /// <value>The date, which must be in UTC</value>
         public string Date { get; set; }
 
+		/// <summary>
+		/// Gets the <see cref="System.DateTime"/> object representation of the <see cref="Date"/> string.
+		/// </summary>
+		public DateTime DateTime { get; }
+
         /// <summary>
         /// Gets or sets the expiration date, in which the ban shall be lifted
         /// </summary>
         /// <value>The expiration.</value>
         public string Expiration { get; set; }
+
+		/// <summary>
+		/// Gets the <see cref="System.DateTime"/> object representation of the <see cref="Expiration"/> string.
+		/// </summary>
+		public DateTime ExpirationDateTime { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TShockAPI.DB.Ban"/> class.
