@@ -107,25 +107,7 @@ namespace TShockAPI.DB
 						banlist.Add(new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("UUID"), reader.Get<string>("Reason"), reader.Get<string>("BanningUser"), reader.Get<string>("Date"), reader.Get<string>("Expiration")));
 					}
 
-					Comparison<Ban> comparer;
-					switch (sortMethod)
-					{
-						case BanSortMethod.AddedOldestToNewest:
-							comparer = (a, b) => b.BanDateTime.CompareTo(a.BanDateTime);
-							break;
-						case BanSortMethod.AddedNewestToOldest:
-							comparer = (a, b) => a.BanDateTime.CompareTo(b.BanDateTime);
-							break;
-						case BanSortMethod.ExpirationLatestToSoonest:
-							comparer = (a, b) => b.ExpirationDateTime.CompareTo(a.ExpirationDateTime);
-							break;
-						default:
-							//Default encompasses BanSortMethod.ExpirationSoonestToLatest
-							comparer = (a, b) => a.ExpirationDateTime.CompareTo(b.ExpirationDateTime);
-							break;
-					}
-
-					banlist.Sort(comparer);
+					banlist.Sort(new BanComparer(sortMethod));
 					return banlist;
 				}
 			}
@@ -291,6 +273,91 @@ namespace TShockAPI.DB
 	}
 
 	/// <summary>
+	/// An <see cref="IComparer{Ban}"/> used for sorting an enumerable of bans
+	/// </summary>
+	public class BanComparer : IComparer<Ban>
+	{
+		private BanSortMethod _method;
+
+		/// <summary>
+		/// Generates a new <see cref="BanComparer"/> using the given <see cref="BanSortMethod"/>
+		/// </summary>
+		/// <param name="method"></param>
+		public BanComparer(BanSortMethod method)
+		{
+			_method = method;
+		}
+
+		private int CompareDateTimes(DateTime? x, DateTime? y)
+		{
+			if (x == null)
+			{
+				if (y == null)
+				{
+					//If both bans have no BanDateTime they're considered equal
+					return 0;
+				}
+				//If we're sorting by a newest to oldest method, a null value will come after the valid value.
+				return _method == BanSortMethod.AddedNewestToOldest || _method == BanSortMethod.ExpirationSoonestToLatest ? 1 : -1;
+			}
+
+			if (y == null)
+			{
+				return _method == BanSortMethod.AddedNewestToOldest || _method == BanSortMethod.ExpirationSoonestToLatest ? -1 : 1;
+			}
+
+			//Newest to oldest sorting uses x compared to y. Oldest to newest uses y compared to x
+			return _method == BanSortMethod.AddedNewestToOldest || _method == BanSortMethod.ExpirationSoonestToLatest ? x.Value.CompareTo(y.Value)
+				: y.Value.CompareTo(x.Value);
+		}
+
+		/// <summary>
+		/// Compares two ban objects
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns>1 if x is less than y, 0 if x is equal to y, -1 if x is greater than y</returns>
+		public int Compare(Ban x, Ban y)
+		{
+			if (x == null)
+			{
+				if (y == null)
+				{
+					return 0;
+				}
+
+				//If Ban y is null and Ban x is not, and we're sorting from newest to oldest, x goes before y. Else y goes before x
+				return _method == BanSortMethod.AddedNewestToOldest || _method == BanSortMethod.ExpirationSoonestToLatest ? -1 : 1;
+			}
+
+			if (x == null)
+			{
+				if (y == null)
+				{
+					return 0;
+				}
+
+				//If Ban y is null and Ban x is not, and we're sorting from newest to oldest, x goes before y. Else y goes before x
+				return _method == BanSortMethod.AddedNewestToOldest || _method == BanSortMethod.ExpirationSoonestToLatest ? -1 : 1;
+			}
+
+			switch (_method)
+			{
+				case BanSortMethod.AddedNewestToOldest:
+				case BanSortMethod.AddedOldestToNewest:
+					return CompareDateTimes(x.BanDateTime, y.BanDateTime);
+
+				case BanSortMethod.ExpirationSoonestToLatest:
+				case BanSortMethod.ExpirationLatestToSoonest:
+					return CompareDateTimes(x.ExpirationDateTime, y.ExpirationDateTime);
+
+				default:
+					return 0;
+			}
+		}
+	}
+
+	/// <summary>
 	/// Model class that represents a ban entry in the TShock database.
 	/// </summary>
 	public class Ban
@@ -334,7 +401,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Gets the <see cref="System.DateTime"/> object representation of the <see cref="Date"/> string.
 		/// </summary>
-		public DateTime BanDateTime { get; }
+		public DateTime? BanDateTime { get; }
 
 		/// <summary>
 		/// Gets or sets the expiration date, in which the ban shall be lifted
@@ -345,7 +412,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Gets the <see cref="System.DateTime"/> object representation of the <see cref="Expiration"/> string.
 		/// </summary>
-		public DateTime ExpirationDateTime { get; }
+		public DateTime? ExpirationDateTime { get; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TShockAPI.DB.Ban"/> class.
