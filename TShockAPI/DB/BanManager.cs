@@ -111,10 +111,10 @@ namespace TShockAPI.DB
 					switch (sortMethod)
 					{
 						case BanSortMethod.AddedOldestToNewest:
-							comparer = (a, b) => b.DateTime.CompareTo(a.DateTime);
+							comparer = (a, b) => b.BanDateTime.CompareTo(a.BanDateTime);
 							break;
 						case BanSortMethod.AddedNewestToOldest:
-							comparer = (a, b) => a.DateTime.CompareTo(b.DateTime);
+							comparer = (a, b) => a.BanDateTime.CompareTo(b.BanDateTime);
 							break;
 						case BanSortMethod.ExpirationLatestToSoonest:
 							comparer = (a, b) => b.ExpirationDateTime.CompareTo(a.ExpirationDateTime);
@@ -334,7 +334,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Gets the <see cref="System.DateTime"/> object representation of the <see cref="Date"/> string.
 		/// </summary>
-		public DateTime DateTime { get; }
+		public DateTime BanDateTime { get; }
 
 		/// <summary>
 		/// Gets or sets the expiration date, in which the ban shall be lifted
@@ -366,6 +366,17 @@ namespace TShockAPI.DB
 			BanningUser = banner;
 			Date = date;
 			Expiration = exp;
+
+			DateTime d;
+			DateTime e;
+			if (DateTime.TryParse(Date, out d))
+			{
+				BanDateTime = d;
+			}
+			if (DateTime.TryParse(Expiration, out e))
+			{
+				ExpirationDateTime = e;
+			}
 		}
 
 		/// <summary>
