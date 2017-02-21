@@ -672,10 +672,7 @@ namespace TShockAPI
 		/// <returns>bool - True if the ban has expired.</returns>
 		public bool HasBanExpired(Ban ban, bool byName = false)
 		{
-			DateTime exp;
-			bool expirationExists = DateTime.TryParse(ban.Expiration, out exp);
-
-			if (!string.IsNullOrWhiteSpace(ban.Expiration) && (expirationExists) && (DateTime.UtcNow >= exp))
+			if (!string.IsNullOrWhiteSpace(ban.Expiration) && (ban.ExpirationDateTime != null) && (DateTime.UtcNow >= ban.ExpirationDateTime))
 			{
 				if (byName)
 				{
