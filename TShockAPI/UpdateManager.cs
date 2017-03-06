@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TShockAPI.Extensions;
 
 namespace TShockAPI
 {
@@ -32,7 +33,7 @@ namespace TShockAPI
 	/// </summary>
 	public class UpdateManager
 	{
-		private string updateUrl = "http://update.tshock.co/latest/";
+		private const string UpdateUrl = "http://update.tshock.co/latest/";
 		private HttpClient _client = new HttpClient();
 
 		/// <summary>
@@ -48,15 +49,20 @@ namespace TShockAPI
 			//5 second timeout
 			_client.Timeout = new TimeSpan(0, 0, 5);
 
-			Thread t = new Thread(async () => {
-				do {
-					await CheckForUpdatesAsync(null);	
+			Thread t = new Thread(async () =>
+			{
+				do
+				{
+					//Sleep for X minutes
+					await Task.Delay(1000 * 60 * CheckXMinutes);
+					//Then check again
+					await CheckForUpdatesAsync(null);
 				} while (true);
-			});
-			
-			t.Name = "TShock Update Thread";
-			t.IsBackground = true;
-			
+			})
+			{
+				Name = "TShock Update Thread",
+				IsBackground = true
+			};
 			t.Start();
 		}
 
@@ -64,14 +70,14 @@ namespace TShockAPI
 		{
 			try
 			{
-				await UpdateCheckAsync(state);
 				CheckXMinutes = 30;
+				await UpdateCheckAsync(state);
 			}
 			catch (Exception ex)
 			{
 				// Skip this run and check more frequently...
 
-				string msg = BuildExceptionString(ex);
+				string msg = ex.BuildExceptionString();
 				//Give the console a brief
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine($"UpdateManager warning: {msg}");
@@ -81,8 +87,6 @@ namespace TShockAPI
 				TShock.Log.ConsoleError("Retrying in 5 minutes.");
 				CheckXMinutes = 5;
 			}
-			
-			Thread.Sleep(CheckXMinutes * 60 * 1000);
 		}
 
 		/// <summary>
@@ -105,7 +109,7 @@ namespace TShockAPI
 		/// <returns></returns>
 		private async Task<Dictionary<string, string>> ServerIsOutOfDateAsync()
 		{
-			var resp = await _client.GetAsync(updateUrl);
+			var resp = await _client.GetAsync(UpdateUrl);
 			if (resp.StatusCode != HttpStatusCode.OK)
 			{
 				string reason = resp.ReasonPhrase;
@@ -149,24 +153,6 @@ namespace TShockAPI
 			{
 				player.SendMessage(changes[j], Color.Red);
 			}
-		}
-
-		/// <summary>
-		/// Produces a string containing all exception messages in an exception chain.
-		/// </summary>
-		/// <param name="ex"></param>
-		/// <returns></returns>
-		private string BuildExceptionString(Exception ex)
-		{
-			string msg = ex.Message;
-			Exception inner = ex.InnerException;
-			while (inner != null)
-			{
-				msg += $"\r\n\t-> {inner.Message}";
-				inner = inner.InnerException;
-			}
-
-			return msg;
 		}
 	}
 }

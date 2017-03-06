@@ -118,7 +118,7 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		/// <summary>Utils - Static reference to the utilities class, which contains a variety of utility functions.</summary>
 		public static Utils Utils = Utils.Instance;
-		/// <summary>StatTracker - Static reference to the stat tracker, which is created immediately when declared.</summary>
+		/// <summary>StatTracker - Static reference to the stat tracker, which sends some server metrics every 5 minutes.</summary>
 		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>UpdateManager - Static reference to the update checker, which checks for updates and notifies server admins of updates.</summary>
 		public static UpdateManager UpdateManager;
@@ -768,12 +768,12 @@ namespace TShockAPI
 						}
 					case "--provider-token":
 						{
-							TShock.StatTracker.ProviderToken = parms[++i];
+							StatTracker.ProviderToken = parms[++i];
 							break;
 						}
 					case "--stats-optout":
 						{
-							TShock.StatTracker.OptOut = true;
+							StatTracker.OptOut = true;
 							break;
 						}
 					case "--no-restart":
@@ -894,7 +894,7 @@ namespace TShockAPI
 			}
 
 			UpdateManager = new UpdateManager();
-			StatTracker.Initialize();
+			StatTracker.Start();
 		}
 
 		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
