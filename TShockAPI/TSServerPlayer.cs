@@ -142,18 +142,26 @@ namespace TShockAPI
 			TSPlayer.All.SendData(PacketTypes.TimeSet, "", dayTime ? 1 : 0, (int)time, Main.sunModY, Main.moonModY);
 		}
 
-		public void SpawnNPC(int type, string name, int amount, int startTileX, int startTileY, int tileXRange = 100,
+		public void SpawnNPC(int type, string name, int amount, TSPlayer player, int tileXRange = 100,
 			int tileYRange = 50)
 		{
 			for (int i = 0; i < amount; i++)
 			{
 				int spawnTileX;
 				int spawnTileY;
-				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
+				TShock.Utils.GetRandomClearTileWithInRange(player.TileX, player.TileY, tileXRange, tileYRange, out spawnTileX,
 															 out spawnTileY);
 				int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
-				// This is for special slimes
-				Main.npc[npcid].SetDefaults(name);
+
+				if (npcid < 200)
+				{
+					// This is for special slimes
+					if (Main.npcName[type] != Main.npc[npcid].displayName)
+						Main.npc[npcid].SetDefaults(name);
+					Main.npc[npcid].target = player.Index;
+					Main.npc[npcid].timeLeft *= 20;
+					NetMessage.SendData(23, -1, -1, "", npcid, 0f, 0f, 0f, 0, 0, 0);
+				}
 			}
 		}
 
