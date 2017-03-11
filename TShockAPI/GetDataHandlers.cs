@@ -3810,6 +3810,9 @@ namespace TShockAPI
 				if (buff == 10 && TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 					buff = 0;
 
+				if (Netplay.Clients[args.TPlayer.whoAmI].State < 2 && (buff == 156 || buff == 47 || buff == 149))
+					buff = 0;
+
 				args.TPlayer.buffType[i] = buff;
 				if (args.TPlayer.buffType[i] > 0)
 				{
