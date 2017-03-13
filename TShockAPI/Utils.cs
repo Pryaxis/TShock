@@ -1166,6 +1166,32 @@ namespace TShockAPI
 			return points;
 		}
 
+		/// <summary>
+		/// Dumps information and optionally exits afterwards
+		/// </summary>
+		/// <param name="exit"></param>
+		public void Dump(bool exit = true)
+		{
+			PrepareLangForDump();
+			Lang.setLang(true);
+			ConfigFile.DumpDescriptions();
+			Permissions.DumpDescriptions();
+			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
+			RestManager.DumpDescriptions();
+			DumpBuffs("BuffList.txt");
+			DumpItems("Items-1_0.txt", -48, 235);
+			DumpItems("Items-1_1.txt", 235, 604);
+			DumpItems("Items-1_2.txt", 604, 2749);
+			DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
+			DumpNPCs("NPCs.txt");
+			DumpProjectiles("Projectiles.txt");
+			DumpPrefixes("Prefixes.txt");
+			if (exit)
+			{
+				Environment.Exit(1);
+			}
+		}
+
 		internal void PrepareLangForDump()
 		{
 			for(int i = 0; i < Main.recipe.Length; i++)
