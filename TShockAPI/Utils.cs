@@ -420,9 +420,9 @@ namespace TShockAPI
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
 				npc.netDefaults(i);
-				if (npc.name.ToLower() == nameLower)
+				if (npc.name.ToLower() == nameLower || npc.displayName.ToLower() == nameLower)
 					return new List<NPC> { npc };
-				if (npc.name.ToLower().StartsWith(nameLower))
+				if (npc.name.ToLower().StartsWith(nameLower) || npc.displayName.ToLower().StartsWith(nameLower))
 					found.Add((NPC)npc.Clone());
 			}
 			return found;

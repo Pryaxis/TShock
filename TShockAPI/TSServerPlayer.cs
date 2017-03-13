@@ -153,7 +153,14 @@ namespace TShockAPI
 															 out spawnTileY);
 				int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
 				// This is for special slimes
-				Main.npc[npcid].SetDefaults(name);
+				if (type == 1)
+				{
+					Main.npc[npcid].SetDefaults(name);
+				}
+				else
+				{
+					Main.npc[npcid].netDefaults(type);
+				}
 			}
 		}
 
