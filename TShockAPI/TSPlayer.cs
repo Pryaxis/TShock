@@ -896,7 +896,7 @@ namespace TShockAPI
 			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
 
 			// This is for special pickaxe/hammers/swords etc
-			Main.item[itemid].SetDefaults(name);
+			Main.item[itemid].netDefaults(type);
 			// The set default overrides the wet and stack set by NewItem
 			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
 															 Main.item[itemid].height);
