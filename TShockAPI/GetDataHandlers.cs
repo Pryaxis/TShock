@@ -2514,6 +2514,11 @@ namespace TShockAPI
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
 		{
+			if (args.Player == null || args.TPlayer == null || args.Data == null)
+			{
+				return false;
+			}
+
 			byte plr = args.Data.ReadInt8();
 			BitsByte control = args.Data.ReadInt8();
 			BitsByte pulley = args.Data.ReadInt8();
