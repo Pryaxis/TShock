@@ -5,6 +5,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming Changes
 * Added evil type option during world creation (@mistzzt)
 * Bans can be sorted. TShock's default sorting will retrieve bans sorted from newest to oldest based on the date the ban was added (@WhiteXZ)
+* Resolved issues with mob and item spawning. Thanks to @OnsenManju for your investigative work :) (@WhiteXZ)
+* Patched a crashing exploit (@Simon311)
 
 ## TShock 4.3.22
 * Compatibility with Terraria 1.3.4.4
