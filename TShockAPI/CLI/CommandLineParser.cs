@@ -165,10 +165,14 @@ namespace TShockAPI.CLI
 		{
 			_source = source;
 
-			for (int i = 0; i < source.Length - 1; i++)
+			for (int i = 0; i < (source.Length - 1 == 0 ? 1 : source.Length - 1); i++)
 			{
 				string flag = source[i].ToLowerInvariant();
-				string argument = source[i + 1];
+				string argument = null;
+				if (i + 1 < source.Length)
+				{
+					argument = source[i + 1];
+				}
 
 				FlagSet flags = _flags.FirstOrDefault(f => f.Contains(flag));
 				if (flags == null)
