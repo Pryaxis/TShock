@@ -726,7 +726,7 @@ namespace TShockAPI
 					{
 						{"name", null == ban.Name ? "" : ban.Name},
 						{"ip", null == ban.IP ? "" : ban.IP},
-            {"banning_user", null == ban.BanningUser ? "" : ban.BanningUser},
+            					{"banning_user", null == ban.BanningUser ? "" : ban.BanningUser},
 						{"date", null == ban.BanDateTime ? "" : ban.BanDateTime.Value.ToString()},
 						{"reason", null == ban.Reason ? "" : ban.Reason},
 					}
