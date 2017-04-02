@@ -52,7 +52,7 @@ namespace TShockAPI.DB
 				// Add default groups if they don't exist
 				AddDefaultGroup("guest", "",
 					string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
-						Permissions.cantalkinthird, Permissions.canchat));
+						Permissions.cantalkinthird, Permissions.canchat, Permissions.canlogout));
 
 				AddDefaultGroup("default", "guest",
 					string.Join(",", Permissions.warp, Permissions.canchangepassword));
@@ -228,7 +228,7 @@ namespace TShockAPI.DB
 			var group = TShock.Utils.GetGroup(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
 			permissions.ForEach(p => group.AddPermission(p));
- 
+
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
 				return "Group " + name + " has been modified successfully.";
 
@@ -248,7 +248,7 @@ namespace TShockAPI.DB
 
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
 				return "Group " + name + " has been modified successfully.";
-	
+
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
 			return "";
@@ -319,7 +319,7 @@ namespace TShockAPI.DB
 						if (group.Parent == null)
 						{
 							TShock.Log.ConsoleError(
-								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.", 
+								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.",
 								group.Name, parentGroupName);
 						}
 						else
@@ -391,4 +391,4 @@ namespace TShockAPI.DB
 		{
 		}
 	}
-} 
+}
