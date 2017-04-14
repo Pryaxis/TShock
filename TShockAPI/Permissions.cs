@@ -85,7 +85,7 @@ namespace TShockAPI
 		[Description("User can see the id of players with /who.")]
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
-		[Description("User can save all the players SSI state.")]
+		[Description("User can save all the players SSI (server side character) state.")]
 		public static readonly string savessc = "tshock.admin.savessi";
 
 		[Description("User can upload their joined character data as SSC data.")]
