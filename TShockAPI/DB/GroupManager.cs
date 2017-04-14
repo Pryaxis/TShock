@@ -52,10 +52,10 @@ namespace TShockAPI.DB
 				// Add default groups if they don't exist
 				AddDefaultGroup("guest", "",
 					string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
-						Permissions.cantalkinthird, Permissions.canchat, Permissions.canlogout));
+						Permissions.cantalkinthird, Permissions.canchat));
 
 				AddDefaultGroup("default", "guest",
-					string.Join(",", Permissions.warp, Permissions.canchangepassword));
+					string.Join(",", Permissions.warp, Permissions.canchangepassword, Permissions.canlogout));
 
 				AddDefaultGroup("newadmin", "default",
 					string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
