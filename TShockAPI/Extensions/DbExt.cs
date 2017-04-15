@@ -111,7 +111,7 @@ namespace TShockAPI.DB
 		public static SqlType GetSqlType(this IDbConnection conn)
 		{
 			var name = conn.GetType().Name;
-			if (name == "SqliteConnection")
+			if (name == "SqliteConnection" || name == "SQLiteConnection")
 				return SqlType.Sqlite;
 			if (name == "MySqlConnection")
 				return SqlType.Mysql;
