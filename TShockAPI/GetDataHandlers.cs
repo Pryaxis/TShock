@@ -3274,6 +3274,8 @@ namespace TShockAPI
 			{
 				return true;
 			}
+			
+			args.Player.ActiveChest = Chest.FindChest(x, y);
 
 			int id = Chest.FindChest(x, y);
 			args.Player.ActiveChest = id;
@@ -3295,13 +3297,14 @@ namespace TShockAPI
 			if (nameLen != 0 && nameLen <= 20)
 				args.Data.ReadString(); // Ignore the name
 
-			args.Player.ActiveChest = id;
-
 			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
 			{
 				args.Player.SendData(PacketTypes.ChestOpen, "", -1);
 				return true;
 			}
+
+			// This is only sent when closing, no need to read the value
+			args.Player.ActiveChest = -1;
 
 			return false;
 		}
