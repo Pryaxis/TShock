@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# PROVIDE: terraria
+# REQUIRE: LOGIN DAEMON NETWORKING mountcritlocal
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local to enable the terraria server:
+#
+# terraria_enable="YES"
+# terraria_user="<run server as this user>"
+# terraria_world="<use this world at server start up>"
+# terraria_chdir="<run server in this directory>"
+# terraria_path="<path to TerrariaServer.exe>"
+# terraria_flags="<set as needed>"
+#
+# For default setup, create a user named 'terraria', set its home directory
+# to /usr/home/terraria, and place TerrariaServer.exe into /usr/home/terraria
+#
+
+. /etc/rc.subr
+
+name=terraria
+rcvar=terraria_enable
+
+load_rc_config ${name}
+
+command=/usr/local/bin/screen
+pidfile=/var/run/terraria.pid
+
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+status_cmd="${name}_status"
+
+extra_commands="attach"
+attach_cmd="${name}_attach"
+
+: ${terraria_enable="NO"}
+: ${terraria_session="terraria-session"}
+: ${terraria_user="terraria"}
+: ${terraria_chdir="/home/terraria"}
+: ${terraria_path="/home/terraria/TerrariaServer.exe"}
+: ${terraria_world=''}
+: ${terraria_flags="-world ${terraria_world}"}
+: ${terraria_args="/usr/local/bin/mono --server --gc=sgen -O=all \
+                    ${terraria_path} ${terraria_flags}"}
+: ${terraria_TERM='vt100'} # Used for the attach command, else screen complains.
+
+terraria_start() {
+    unset "${rc_arg}_cmd"
+    terraria_flags="-d -m -S ${terraria_session} ${terraria_args}"
+    if terraria_running; then
+        echo "terraria already running?"
+    else
+        run_rc_command "start"
+    fi
+}
+
+terraria_stop() {
+    local cmd
+    cmd="${command} -p 0 -S ${terraria_session} -X eval 'stuff /off\015'"
+    if terraria_running; then
+        echo "Stopping terraria."
+        su -m ${terraria_user} -c "${cmd}"
+    fi
+}
+
+terraria_attach() {
+    local cmd
+    cmd="${command} -D -r ${terraria_session}"
+    if terraria_running; then
+        export TERM=${terraria_TERM}
+        echo "Attaching terraria."
+        su -m ${terraria_user} -c "${cmd}"
+    fi
+}
+
+terraria_status() {
+    if terraria_running; then
+        echo "terraria is running."
+    else
+        echo "terraria is not running."
+    fi
+}
+
+terraria_running() {
+    local check ses
+    ses="${terraria_session}"
+    check=`su -m ${terraria_user} -c "${command} -list | grep ${ses}"`
+    if [ "$check" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+run_rc_command "$1"
