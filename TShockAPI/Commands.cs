@@ -5517,7 +5517,7 @@ namespace TShockAPI
 				}
 				else if (found.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Main.buffName[f]));
+					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Lang.GetBuffName(f)));
 					return;
 				}
 				id = found[0];
@@ -5568,7 +5568,7 @@ namespace TShockAPI
 					}
 					else if (found.Count > 1)
 					{
-						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Main.buffName[b]));
+						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Lang.GetBuffName(b)));
 						return;
 					}
 					id = found[0];

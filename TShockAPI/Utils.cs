@@ -435,7 +435,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffName[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
 		}
 
 		/// <summary>
@@ -445,7 +445,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffTip[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
 		}
 
 		/// <summary>
@@ -459,14 +459,14 @@ namespace TShockAPI
 			string buffname;
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				buffname = Main.buffName[i];
+				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				buffname = Main.buffName[i];
+				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
 					found.Add(i);
 			}
@@ -1209,9 +1209,9 @@ namespace TShockAPI
 			List<object[]> elements = new List<object[]>();
 			for (int i = 0; i < Main.maxBuffTypes; i++)
 			{
-				if (!String.IsNullOrEmpty(Main.buffName[i]))
+				if (!String.IsNullOrEmpty(Lang.GetBuffName(i)))
 				{
-					object[] element = new object[] { i, Main.buffName[i], Main.buffTip[i] };
+					object[] element = new object[] { i, Lang.GetBuffName(i), Main.buffTip[i] };
 					elements.Add(element);
 				}
 			}
