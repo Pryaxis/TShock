@@ -1,6 +1,6 @@
 # Sublime Text #
 *.sublime-*
-
+releases/
 # Compiled source #
 ###################
 *.com

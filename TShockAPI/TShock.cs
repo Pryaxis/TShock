@@ -1108,7 +1108,7 @@ namespace TShockAPI
 							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
 								item.type != 0)
 							{
-								check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+								check = "Remove item " + item.Name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 								player.SendErrorMessage(check);
 								break;
 							}
@@ -1118,12 +1118,12 @@ namespace TShockAPI
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(item.Name, player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.name;
+								check = "Remove armor/accessory " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1131,12 +1131,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.dye)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(item.Name, player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.name;
+								check = "Remove dye " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1144,12 +1144,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscEquips)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(item.Name, player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.name;
+								check = "Remove misc equip " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1157,12 +1157,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscDyes)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(item.Name, player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.name;
+								check = "Remove misc dye " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1989,7 +1989,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, inventory[i].stack),
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, inventory[i].stack),
 								Color.Cyan);
 						}
 					}
@@ -2008,7 +2008,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[index].stack),
+								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.Name, armor[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2027,7 +2027,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.Name, dye[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2046,7 +2046,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, miscEquips[index].stack),
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, miscEquips[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2065,7 +2065,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.name, miscDyes[index].stack),
+								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.Name, miscDyes[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2085,7 +2085,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.name, piggy[index].stack),
+								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.Name, piggy[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2105,7 +2105,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.name, safe[index].stack),
+								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.Name, safe[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2124,7 +2124,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.name, trash.stack),
+								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.Name, trash.stack),
 								Color.Cyan);
 						}
 					}
@@ -2144,7 +2144,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
+								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.Name, forge[index].stack),
 								Color.Cyan);
 						}
 					}
