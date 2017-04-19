@@ -208,8 +208,22 @@ namespace TShockAPI.DB
 
 			if (database.Query("UPDATE GroupList SET GroupName=@0 WHERE GroupName=@1", newname, name) == 1)
 			{
-				GetGroupByName(name).Name = newname;
+
+				// Replace group within our groups list
+				Group oldgroup = GetGroupByName(name);
+				Group newgroup = new Group(newname, oldgroup.Parent, oldgroup.ChatColor, oldgroup.Permissions);
+				groups.Remove(oldgroup);
+				groups.Add(newgroup);
+
+				// Update all Users in DB to reflect group name change.
 				database.Query("UPDATE Users SET Usergroup=@0 WHERE Usergroup = @1", newname, name);
+
+				// Update all players on server to reflect group name change.
+				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.Group == oldgroup))
+				{
+					player.Group = newgroup;
+				}
+
 				return string.Format("Group \"{0}\" has been renamed to \"{1}\".", name, newname);
 			}
 			else
