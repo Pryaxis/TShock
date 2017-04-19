@@ -28,7 +28,7 @@ Feeling like helping out? Want to find an awesome server? Some awesome plugins?
 
 * [Website & Forums](https://tshock.co/xf/)
 * [Contribute to our docs on readme.io](https://tshock.readme.io/)
-* [Join our chat (supports IRC, XMPP, iOS, Android, Web)](http://chat.tshock.co/)
+* [Join our Discord chat (supports Android, iOS, Web, Mac, and Windows)](https://discord.gg/XUJdH58)
 
 Please see the contributing file before sending pull requests.
 
