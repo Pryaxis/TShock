@@ -2560,7 +2560,17 @@ namespace TShockAPI
 						}
 						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
 						{
-							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
+							string s;
+
+							ItemBan ban = TShock.Itembans.GetItemBanByName(args.Player.IgnoreActionsForDisabledArmor);
+							if (ban.AllowedGroups.Count == 0)
+								s = "Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor;
+							else
+							{
+								Group group = TShock.Groups.GetGroupByName(ban.AllowedGroups[0]);
+								s = "You must be at least {0} to wear {1}.".SFormat(group.Name, args.Player.IgnoreActionsForDisabledArmor);
+							}
+							args.Player.SendErrorMessage(s);
 						}
 						else if (args.Player.IgnoreActionsForInventory != "none")
 						{
@@ -2612,8 +2622,17 @@ namespace TShockAPI
 				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
 				{
 					control[5] = false;
-					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
+					string s;
+					ItemBan ban = TShock.Itembans.GetItemBanByName(itemName);
+					if (ban.AllowedGroups.Count == 0)
+						s = String.Format("You cannot use {0} on this server. Your actions are being ignored.", itemName);
+					else
+					{
+						Group group = TShock.Groups.GetGroupByName(ban.AllowedGroups[0]);
+						s = String.Format("You must be at least {0} to use {1}.", group.Name, itemName);
+					}
+					args.Player.Disable(String.Format("using banned item ({0})", itemName), DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage(s);
 				}
 
 				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)

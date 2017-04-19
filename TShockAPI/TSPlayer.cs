@@ -1090,8 +1090,6 @@ namespace TShockAPI
 		public virtual void Disable(string reason = "", DisableFlags flags = DisableFlags.WriteToLog)
 		{
 			LastThreat = DateTime.UtcNow;
-			SetBuff(BuffID.Frozen, 330, true);
-			SetBuff(BuffID.Stoned, 330, true);
 			SetBuff(BuffID.Webbed, 330, true);
 
 			if (ActiveChest != -1)
