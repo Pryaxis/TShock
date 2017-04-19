@@ -199,6 +199,24 @@ namespace TShockAPI.DB
 			group.Prefix = prefix;
 			group.Suffix = suffix;
 		}
+		public String RenameGroup(String name, String newname)
+		{
+			if (!GroupExists(name))
+				throw new GroupNotExistException(name);
+
+			if (GroupExists(newname))
+				throw new GroupExistsException(newname);
+
+			if (database.Query("UPDATE GroupList SET GroupName=@0 WHERE GroupName=@1", newname, name) == 1)
+			{
+				GetGroupByName(name).Name = newname;
+				return string.Format("Group \"{0}\" has been renamed to \"{1}\".", name, newname);
+			}
+			else
+			{
+				throw new GroupManagerException(string.Format("Failed to rename group \"{0}\".", name));
+			}
+		}
 
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
@@ -215,7 +233,7 @@ namespace TShockAPI.DB
 				return "Group " + name + " has been deleted successfully.";
 			}
 			else if (exceptions)
-				throw new GroupManagerException("Failed to delete group '" + name + ".'");
+				throw new GroupManagerException("Failed to delete group '" + name + "'.");
 
 			return "";
 		}
