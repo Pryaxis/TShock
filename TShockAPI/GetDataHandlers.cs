@@ -2149,7 +2149,7 @@ namespace TShockAPI
 						args.Player.SendErrorMessage("You do not have permission to place actuators.");
 						return true;
 					}
-					if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (TShock.Itembans.ItemIsBanned(selectedItem.Name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2608,7 +2608,7 @@ namespace TShockAPI
 
 			if (control[5])
 			{
-				string itemName = args.TPlayer.inventory[item].name;
+				string itemName = args.TPlayer.inventory[item].Name;
 				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
 				{
 					control[5] = false;
@@ -2616,19 +2616,19 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
 				}
 
-				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
+				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
 					args.Player.TPlayer.statManaMax += 20;
 					args.Player.PlayerData.maxMana += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
+				else if (args.TPlayer.inventory[item].Name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
 				{
 					args.TPlayer.statLife += 20;
 					args.TPlayer.statLifeMax += 20;
 					args.Player.PlayerData.maxHealth += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
+				else if (args.TPlayer.inventory[item].Name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
 				{
 					args.TPlayer.statLife += 5;
 					args.TPlayer.statLifeMax += 5;
@@ -3330,7 +3330,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name, args.Player))
+			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.Name, args.Player))
 			{
 				return false;
 			}
@@ -3510,7 +3510,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.Name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
@@ -3518,7 +3518,7 @@ namespace TShockAPI
 			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
 			{
 				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name);
+				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 
@@ -3932,7 +3932,7 @@ namespace TShockAPI
 					boss = "a Goblin Invasion";
 					break;
 				default:
-					boss = String.Format("the {0}", npc.name);
+					boss = String.Format("the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.AnonymousBossInvasions)

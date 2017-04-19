@@ -348,11 +348,11 @@ namespace TShockAPI
 			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (String.IsNullOrWhiteSpace(item.name))
+				if (String.IsNullOrWhiteSpace(item.Name))
 					continue;
-				if (item.name.ToLower() == nameLower)
+				if (item.Name.ToLower() == nameLower)
 					return new List<Item> { item };
-				if (item.name.ToLower().StartsWith(nameLower))
+				if (item.Name.ToLower().StartsWith(nameLower))
 					found.Add(item.Clone());
 			}
 			return found;
@@ -420,9 +420,9 @@ namespace TShockAPI
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
 				npc.netDefaults(i);
-				if (npc.name.ToLower() == nameLower || npc.displayName.ToLower() == nameLower)
+				if (npc.FullName.ToLower() == nameLower || npc.TypeName.ToLower() == nameLower)
 					return new List<NPC> { npc };
-				if (npc.name.ToLower().StartsWith(nameLower) || npc.displayName.ToLower().StartsWith(nameLower))
+				if (npc.FullName.ToLower().StartsWith(nameLower) || npc.TypeName.ToLower().StartsWith(nameLower))
 					found.Add((NPC)npc.Clone());
 			}
 			return found;
@@ -1248,10 +1248,10 @@ namespace TShockAPI
 			{
 				Item item = new Item();
 				item.netDefaults(i);
-				if (!String.IsNullOrEmpty(item.name))
+				if (!String.IsNullOrEmpty(item.Name))
 				{
 					object[] element = new object[] { i,
-													  newLine.Replace(item.name, @" "),
+													  newLine.Replace(item.Name, @" "),
 													  newLine.Replace(item.toolTip, @" "),
 													  newLine.Replace(item.toolTip2, @" ")
 													};
@@ -1288,9 +1288,9 @@ namespace TShockAPI
 			{
 				NPC npc = new NPC();
 				npc.netDefaults(i);
-				if (!String.IsNullOrEmpty(npc.name))
+				if (!String.IsNullOrEmpty(npc.FullName))
 				{
-					object[] element = new object[] { i, npc.name, npc.displayName };
+					object[] element = new object[] { i, npc.FullName, npc.displayName };
 					elements.Add(element);
 				}
 			}
@@ -1324,9 +1324,9 @@ namespace TShockAPI
 			{
 				Projectile projectile = new Projectile();
 				projectile.SetDefaults(i);
-				if (!String.IsNullOrEmpty(projectile.name))
+				if (!String.IsNullOrEmpty(projectile.Name))
 				{
-					object[] element = new object[] { i, projectile.name };
+					object[] element = new object[] { i, projectile.Name };
 					elements.Add(element);
 				}
 			}
