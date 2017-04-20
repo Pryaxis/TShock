@@ -168,7 +168,7 @@ namespace TShockAPI
 				Main.rand = new UnifiedRandom();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, NetworkText.FromLiteral(""), npcid, damage, knockBack, hitDirection);
+			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, NetworkText.Empty, npcid, damage, knockBack, hitDirection);
 		}
 
 		public void RevertTiles(Dictionary<Vector2, ITile> tiles)

@@ -746,7 +746,7 @@ namespace TShockAPI
 
 			SendTileSquare((int) (x/16), (int) (y/16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
-			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.FromLiteral(""), 0, TPlayer.whoAmI, x, y, style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
 		}
 
@@ -756,7 +756,7 @@ namespace TShockAPI
 		/// <param name="health">Heal health amount.</param>
 		public void Heal(int health = 600)
 		{
-			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, NetworkText.FromLiteral(""), this.TPlayer.whoAmI, health);
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, NetworkText.Empty, this.TPlayer.whoAmI, health);
 		}
 
 		/// <summary>
@@ -906,8 +906,8 @@ namespace TShockAPI
 			Main.item[itemid].prefix = (byte) prefix;
 			Main.item[itemid].noGrabDelay = 1;
 			Main.item[itemid].velocity = Main.player[this.Index].velocity;
-			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, NetworkText.FromLiteral(""), itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.FromLiteral(""), itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
 		}
 
 		/// <summary>
@@ -1067,8 +1067,8 @@ namespace TShockAPI
 		public virtual void SetTeam(int team)
 		{
 			Main.player[Index].team = team;
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.FromLiteral(""), Index);
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.FromLiteral(""), Index);
+			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
+			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.Empty, Index);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
