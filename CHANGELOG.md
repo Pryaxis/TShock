@@ -4,6 +4,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* Updated OpenTerraria API to 1.3.5.1 (@DeathCradle)
+* Updated Terraria Server API to 1.3.5.1 (@WhiteXZ, @hakusaro)
+* Updated TShock core components to 1.3.5.1 (@hakusaro)
+* Terraria Server API version tick: 2.1
 
 ## TShock 4.3.23
 * Added evil type option during world creation (@mistzzt)
