@@ -32,6 +32,7 @@ using Terraria;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
+using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 
@@ -1494,7 +1495,7 @@ namespace TShockAPI
 					args.Player.TPlayer.hideVisual[i] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
-				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, args.Player.Name, args.Player.Index);
+				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
@@ -1678,7 +1679,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
+			NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, NetworkText.FromLiteral(""), Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
 			return false;
 		}
 
@@ -2719,13 +2720,11 @@ namespace TShockAPI
 
 
 				args.TPlayer.Update(args.TPlayer.whoAmI);
-				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, "", args.Player.Index);
+				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.FromLiteral(""), args.Player.Index);
 				return true;
 			}
 
-
-
-			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, "", args.Player.Index);
+			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.FromLiteral(""), args.Player.Index);
 			return true;
 		}
 
@@ -2981,7 +2980,7 @@ namespace TShockAPI
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			if (playerDeathReason.GetDeathText().Length > 500)
+			if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 			{
 				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
 				return true;
@@ -3478,7 +3477,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (prefix > Item.maxPrefixes) //make sure the prefix is a legit value
+			if (prefix > PrefixID.Count) //make sure the prefix is a legit value
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
@@ -3830,7 +3829,7 @@ namespace TShockAPI
 			}
 
 
-			NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
+			NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, NetworkText.FromLiteral(""), args.Player.Index);
 			return true;
 		}
 
@@ -4259,7 +4258,7 @@ namespace TShockAPI
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
 				Main.npc[npcID].active = true;
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcID);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.FromLiteral(""), npcID);
 				return true;
 			}
 
@@ -4276,13 +4275,13 @@ namespace TShockAPI
 
 			if (projectile == null || !projectile.active)
 			{
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.FromLiteral(""), npcIndex);
 				return true;
 			}
 
 			if (projectile.type != ProjectileID.PortalGunGate)
 			{
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.FromLiteral(""), npcIndex);
 				return true;
 			}
 
@@ -4347,25 +4346,25 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.FromLiteral(""), itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.FromLiteral(""), itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.FromLiteral(""), itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.FromLiteral(""), itemFrame.ID, 0, 1);
 				return true;
 			}
 

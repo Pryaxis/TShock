@@ -403,7 +403,7 @@ namespace TShockAPI
 		public NPC GetNPCById(int id)
 		{
 			NPC npc = new NPC();
-			npc.netDefaults(id);
+			npc.SetDefaults(id);
 			return npc;
 		}
 
@@ -419,7 +419,7 @@ namespace TShockAPI
 			string nameLower = name.ToLower();
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
-				npc.netDefaults(i);
+				npc.SetDefaults(i);
 				if (npc.FullName.ToLower() == nameLower || npc.TypeName.ToLower() == nameLower)
 					return new List<NPC> { npc };
 				if (npc.FullName.ToLower().StartsWith(nameLower) || npc.TypeName.ToLower().StartsWith(nameLower))
@@ -480,7 +480,7 @@ namespace TShockAPI
 		/// <returns>Prefix name</returns>
 		public string GetPrefixById(int id)
 		{
-			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id] ?? "";
+			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id].ToString() ?? "";
 		}
 
 		/// <summary>
@@ -1166,237 +1166,237 @@ namespace TShockAPI
 			return points;
 		}
 
-		/// <summary>
-		/// Dumps information and optionally exits afterwards
-		/// </summary>
-		/// <param name="exit"></param>
-		public void Dump(bool exit = true)
-		{
-			PrepareLangForDump();
-			Lang.setLang(true);
-			ConfigFile.DumpDescriptions();
-			Permissions.DumpDescriptions();
-			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
-			RestManager.DumpDescriptions();
-			DumpBuffs("BuffList.txt");
-			DumpItems("Items-1_0.txt", -48, 235);
-			DumpItems("Items-1_1.txt", 235, 604);
-			DumpItems("Items-1_2.txt", 604, 2749);
-			DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
-			DumpNPCs("NPCs.txt");
-			DumpProjectiles("Projectiles.txt");
-			DumpPrefixes("Prefixes.txt");
-			if (exit)
-			{
-				Environment.Exit(1);
-			}
-		}
+		// /// <summary>
+		// /// Dumps information and optionally exits afterwards
+		// /// </summary>
+		// /// <param name="exit"></param>
+		// public void Dump(bool exit = true)
+		// {
+		// 	PrepareLangForDump();
+		// 	Lang.setLang(true);
+		// 	ConfigFile.DumpDescriptions();
+		// 	Permissions.DumpDescriptions();
+		// 	ServerSideCharacters.ServerSideConfig.DumpDescriptions();
+		// 	RestManager.DumpDescriptions();
+		// 	DumpBuffs("BuffList.txt");
+		// 	DumpItems("Items-1_0.txt", -48, 235);
+		// 	DumpItems("Items-1_1.txt", 235, 604);
+		// 	DumpItems("Items-1_2.txt", 604, 2749);
+		// 	DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
+		// 	DumpNPCs("NPCs.txt");
+		// 	DumpProjectiles("Projectiles.txt");
+		// 	DumpPrefixes("Prefixes.txt");
+		// 	if (exit)
+		// 	{
+		// 		Environment.Exit(1);
+		// 	}
+		// }
 
-		internal void PrepareLangForDump()
-		{
-			for(int i = 0; i < Main.recipe.Length; i++)
-				Main.recipe[i] = new Recipe();
-		}
+		// internal void PrepareLangForDump()
+		// {
+		// 	for(int i = 0; i < Main.recipe.Length; i++)
+		// 		Main.recipe[i] = new Recipe();
+		// }
 
-		public void DumpBuffs(string path)
-		{
-			StringBuilder buffer = new StringBuilder();
-			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
-			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
-			buffer.AppendLine("    \"h-2\": \"Description\",");
+		// public void DumpBuffs(string path)
+		// {
+		// 	StringBuilder buffer = new StringBuilder();
+		// 	buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+		// 	buffer.AppendLine("    \"h-0\": \"ID\",");
+		// 	buffer.AppendLine("    \"h-1\": \"Name\",");
+		// 	buffer.AppendLine("    \"h-2\": \"Description\",");
 
-			List<object[]> elements = new List<object[]>();
-			for (int i = 0; i < Main.maxBuffTypes; i++)
-			{
-				if (!String.IsNullOrEmpty(Lang.GetBuffName(i)))
-				{
-					object[] element = new object[] { i, Lang.GetBuffName(i), Main.buffTip[i] };
-					elements.Add(element);
-				}
-			}
+		// 	List<object[]> elements = new List<object[]>();
+		// 	for (int i = 0; i < Main.maxBuffTypes; i++)
+		// 	{
+		// 		if (!String.IsNullOrEmpty(Lang.GetBuffName(i)))
+		// 		{
+		// 			object[] element = new object[] { i, Lang.GetBuffName(i), Main.buffTip[i] };
+		// 			elements.Add(element);
+		// 		}
+		// 	}
 
-			var rows = elements.Count;
-			var columns = 0;
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-			}
-			OutputElementsForDump(buffer, elements, rows, columns);
+		// 	var rows = elements.Count;
+		// 	var columns = 0;
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 	}
+		// 	OutputElementsForDump(buffer, elements, rows, columns);
 
-			buffer.AppendLine();
-			buffer.AppendLine("  },");
-			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
-			buffer.AppendLine("}").Append("[/block]");
+		// 	buffer.AppendLine();
+		// 	buffer.AppendLine("  },");
+		// 	buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+		// 	buffer.AppendLine("}").Append("[/block]");
 
-			File.WriteAllText(path, buffer.ToString());
-		}
+		// 	File.WriteAllText(path, buffer.ToString());
+		// }
 
-		public void DumpItems(string path, int start, int end)
-		{
-			Main.player[Main.myPlayer] = new Player();
-			StringBuilder buffer = new StringBuilder();
-			Regex newLine = new Regex(@"\n");
-			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
-			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
-			buffer.AppendLine("    \"h-2\": \"Tooltip\",");
-			buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
+		// public void DumpItems(string path, int start, int end)
+		// {
+		// 	Main.player[Main.myPlayer] = new Player();
+		// 	StringBuilder buffer = new StringBuilder();
+		// 	Regex newLine = new Regex(@"\n");
+		// 	buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+		// 	buffer.AppendLine("    \"h-0\": \"ID\",");
+		// 	buffer.AppendLine("    \"h-1\": \"Name\",");
+		// 	buffer.AppendLine("    \"h-2\": \"Tooltip\",");
+		// 	buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
 
-			List<object[]> elements = new List<object[]>();
-			for (int i = start; i < end; i++)
-			{
-				Item item = new Item();
-				item.netDefaults(i);
-				if (!String.IsNullOrEmpty(item.Name))
-				{
-					object[] element = new object[] { i,
-													  newLine.Replace(item.Name, @" "),
-													  newLine.Replace(item.toolTip, @" "),
-													  newLine.Replace(item.toolTip2, @" ")
-													};
-					elements.Add(element);
-				}
-			}
+		// 	List<object[]> elements = new List<object[]>();
+		// 	for (int i = start; i < end; i++)
+		// 	{
+		// 		Item item = new Item();
+		// 		item.netDefaults(i);
+		// 		if (!String.IsNullOrEmpty(item.Name))
+		// 		{
+		// 			object[] element = new object[] { i,
+		// 											  newLine.Replace(item.Name, @" "),
+		// 											  newLine.Replace(item.toolTip, @" "),
+		// 											  newLine.Replace(item.toolTip2, @" ")
+		// 											};
+		// 			elements.Add(element);
+		// 		}
+		// 	}
 
-			var rows = elements.Count;
-			var columns = 0;
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-			}
-			OutputElementsForDump(buffer, elements, rows, columns);
+		// 	var rows = elements.Count;
+		// 	var columns = 0;
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 	}
+		// 	OutputElementsForDump(buffer, elements, rows, columns);
 
-			buffer.AppendLine();
-			buffer.AppendLine("  },");
-			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
-			buffer.AppendLine("}").Append("[/block]");
+		// 	buffer.AppendLine();
+		// 	buffer.AppendLine("  },");
+		// 	buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+		// 	buffer.AppendLine("}").Append("[/block]");
 
-			File.WriteAllText(path, buffer.ToString());
-		}
+		// 	File.WriteAllText(path, buffer.ToString());
+		// }
 
-		public void DumpNPCs(string path)
-		{
-			StringBuilder buffer = new StringBuilder();
-			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
-			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
-			buffer.AppendLine("    \"h-2\": \"Display Name\",");
+		// public void DumpNPCs(string path)
+		// {
+		// 	StringBuilder buffer = new StringBuilder();
+		// 	buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+		// 	buffer.AppendLine("    \"h-0\": \"ID\",");
+		// 	buffer.AppendLine("    \"h-1\": \"Name\",");
+		// 	buffer.AppendLine("    \"h-2\": \"Display Name\",");
 
-			List<object[]> elements = new List<object[]>();
-			for (int i = -65; i < Main.maxNPCTypes; i++)
-			{
-				NPC npc = new NPC();
-				npc.netDefaults(i);
-				if (!String.IsNullOrEmpty(npc.FullName))
-				{
-					object[] element = new object[] { i, npc.FullName, npc.displayName };
-					elements.Add(element);
-				}
-			}
+		// 	List<object[]> elements = new List<object[]>();
+		// 	for (int i = -65; i < Main.maxNPCTypes; i++)
+		// 	{
+		// 		NPC npc = new NPC();
+		// 		npc.netDefaults(i);
+		// 		if (!String.IsNullOrEmpty(npc.FullName))
+		// 		{
+		// 			object[] element = new object[] { i, npc.FullName, npc.displayName };
+		// 			elements.Add(element);
+		// 		}
+		// 	}
 
-			var rows = elements.Count;
-			var columns = 0;
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-			}
-			OutputElementsForDump(buffer, elements, rows, columns);
+		// 	var rows = elements.Count;
+		// 	var columns = 0;
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 	}
+		// 	OutputElementsForDump(buffer, elements, rows, columns);
 
-			buffer.AppendLine();
-			buffer.AppendLine("  },");
-			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
-			buffer.AppendLine("}").Append("[/block]");
+		// 	buffer.AppendLine();
+		// 	buffer.AppendLine("  },");
+		// 	buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+		// 	buffer.AppendLine("}").Append("[/block]");
 
-			File.WriteAllText(path, buffer.ToString());
-		}
+		// 	File.WriteAllText(path, buffer.ToString());
+		// }
 
-		public void DumpProjectiles(string path)
-		{
-			Main.rand = new UnifiedRandom();
-			StringBuilder buffer = new StringBuilder();
-			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
-			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
+		// public void DumpProjectiles(string path)
+		// {
+		// 	Main.rand = new UnifiedRandom();
+		// 	StringBuilder buffer = new StringBuilder();
+		// 	buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+		// 	buffer.AppendLine("    \"h-0\": \"ID\",");
+		// 	buffer.AppendLine("    \"h-1\": \"Name\",");
 
-			List<object[]> elements = new List<object[]>();
-			for (int i = 0; i < Main.maxProjectileTypes; i++)
-			{
-				Projectile projectile = new Projectile();
-				projectile.SetDefaults(i);
-				if (!String.IsNullOrEmpty(projectile.Name))
-				{
-					object[] element = new object[] { i, projectile.Name };
-					elements.Add(element);
-				}
-			}
+		// 	List<object[]> elements = new List<object[]>();
+		// 	for (int i = 0; i < Main.maxProjectileTypes; i++)
+		// 	{
+		// 		Projectile projectile = new Projectile();
+		// 		projectile.SetDefaults(i);
+		// 		if (!String.IsNullOrEmpty(projectile.Name))
+		// 		{
+		// 			object[] element = new object[] { i, projectile.Name };
+		// 			elements.Add(element);
+		// 		}
+		// 	}
 
-			var rows = elements.Count;
-			var columns = 0;
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-			}
-			OutputElementsForDump(buffer, elements, rows, columns);
+		// 	var rows = elements.Count;
+		// 	var columns = 0;
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 	}
+		// 	OutputElementsForDump(buffer, elements, rows, columns);
 
-			buffer.AppendLine();
-			buffer.AppendLine("  },");
-			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
-			buffer.AppendLine("}").Append("[/block]");
+		// 	buffer.AppendLine();
+		// 	buffer.AppendLine("  },");
+		// 	buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+		// 	buffer.AppendLine("}").Append("[/block]");
 
-			File.WriteAllText(path, buffer.ToString());
-		}
+		// 	File.WriteAllText(path, buffer.ToString());
+		// }
 
-		public void DumpPrefixes(string path)
-		{
-			StringBuilder buffer = new StringBuilder();
-			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
-			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
+		// public void DumpPrefixes(string path)
+		// {
+		// 	StringBuilder buffer = new StringBuilder();
+		// 	buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
+		// 	buffer.AppendLine("    \"h-0\": \"ID\",");
+		// 	buffer.AppendLine("    \"h-1\": \"Name\",");
 
-			List<object[]> elements = new List<object[]>();
-			for (int i = 0; i < Item.maxPrefixes; i++)
-			{
-				string prefix = Lang.prefix[i];
+		// 	List<object[]> elements = new List<object[]>();
+		// 	for (int i = 0; i < Item.maxPrefixes; i++)
+		// 	{
+		// 		string prefix = Lang.prefix[i].ToString();
 
-				if (!String.IsNullOrEmpty(prefix))
-				{
-					object[] element = new object[] {i, prefix};
-					elements.Add(element);
-				}
-			}
+		// 		if (!String.IsNullOrEmpty(prefix))
+		// 		{
+		// 			object[] element = new object[] {i, prefix};
+		// 			elements.Add(element);
+		// 		}
+		// 	}
 
-			var rows = elements.Count;
-			var columns = 0;
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-			}
-			OutputElementsForDump(buffer, elements, rows, columns);
+		// 	var rows = elements.Count;
+		// 	var columns = 0;
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 	}
+		// 	OutputElementsForDump(buffer, elements, rows, columns);
 
-			buffer.AppendLine();
-			buffer.AppendLine("  },");
-			buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
-			buffer.AppendLine("}").Append("[/block]");
+		// 	buffer.AppendLine();
+		// 	buffer.AppendLine("  },");
+		// 	buffer.AppendLine(String.Format("  \"cols\": {0},", columns)).AppendLine(String.Format("  \"rows\": {0}", rows));
+		// 	buffer.AppendLine("}").Append("[/block]");
 
-			File.WriteAllText(path, buffer.ToString());
-		}
+		// 	File.WriteAllText(path, buffer.ToString());
+		// }
 
-		private void OutputElementsForDump(StringBuilder buffer, List<object[]> elements, int rows, int columns)
-		{
-			if (rows > 0)
-			{
-				columns = elements[0].Length;
-				for (int i = 0; i < columns; i++)
-				{
-					for (int j = 0; j < rows; j++)
-					{
-						buffer.Append(String.Format("    \"{0}-{1}\": \"{2}\"", j, i, elements[j][i]));
-						if (j != rows - 1 || i != columns - 1)
-							buffer.AppendLine(",");
-					}
-				}
-			}
-		}
+		// private void OutputElementsForDump(StringBuilder buffer, List<object[]> elements, int rows, int columns)
+		// {
+		// 	if (rows > 0)
+		// 	{
+		// 		columns = elements[0].Length;
+		// 		for (int i = 0; i < columns; i++)
+		// 		{
+		// 			for (int j = 0; j < rows; j++)
+		// 			{
+		// 				buffer.Append(String.Format("    \"{0}-{1}\": \"{2}\"", j, i, elements[j][i]));
+		// 				if (j != rows - 1 || i != columns - 1)
+		// 					buffer.AppendLine(",");
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 }

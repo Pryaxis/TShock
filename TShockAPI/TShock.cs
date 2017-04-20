@@ -34,6 +34,7 @@ using Newtonsoft.Json;
 using Rests;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
@@ -710,16 +711,8 @@ namespace TShockAPI
 
 				.AddFlag("-lang", (l) =>
 					{
-						int lang;
-						if (int.TryParse(l, out lang))
-						{
-							Lang.lang = lang;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Language index set to {0}.", lang), TraceLevel.Verbose);
-						}
-						else
-						{
-							ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-lang\".", TraceLevel.Warning);
-						}
+						LanguageManager.Instance.SetLanguage(l);
+						ServerApi.LogWriter.PluginWriteLine(this, string.Format("Language attempted to be set to {0}.", l), TraceLevel.Verbose);
 					})
 
 				.AddFlag("-autocreate", (size) =>
@@ -735,7 +728,7 @@ namespace TShockAPI
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
-				.AddFlag("-dump", () => Utils.Dump())
+				// .AddFlag("-dump", () => Utils.Dump())
 				.AddFlag("--stats-optout", () => StatTracker.OptOut = true)
 				.AddFlag("--no-restart", () => NoRestart = true);
 
@@ -1258,7 +1251,7 @@ namespace TShockAPI
 		{
 			if (ShuttingDown)
 			{
-				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, "Server is shutting down...");
+				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, NetworkText.FromLiteral("Server is shutting down..."));
 				args.Handled = true;
 				return;
 			}
@@ -1491,12 +1484,12 @@ namespace TShockAPI
 					Player ply = Main.player[args.Who];
 					string name = ply.name;
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
-					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, ply.name, args.Who, 0, 0, 0, 0);
+					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(ply.name), args.Who, 0, 0, 0, 0);
 					ply.name = name;
 					var text = args.Text;
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
-					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
+					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, NetworkText.FromFormattable(text), args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(name), args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),

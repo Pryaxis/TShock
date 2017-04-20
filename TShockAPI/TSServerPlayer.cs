@@ -24,6 +24,7 @@ using Terraria;
 using Terraria.Utilities;
 using TShockAPI;
 using TShockAPI.DB;
+using Terraria.Localization;
 
 namespace TShockAPI
 {
@@ -152,15 +153,11 @@ namespace TShockAPI
 				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
 															 out spawnTileY);
 				int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
-				// This is for special slimes
-				if (type == 1)
-				{
-					Main.npc[npcid].SetDefaults(name);
-				}
-				else
-				{
-					Main.npc[npcid].netDefaults(type);
-				}
+
+				// TODO: If special slimes break look at the git blame for this spot
+				// It's probably because I removed something that didn't work
+				Main.npc[npcid].SetDefaults(type);
+				
 			}
 		}
 
@@ -171,7 +168,7 @@ namespace TShockAPI
 				Main.rand = new UnifiedRandom();
 
 			Main.npc[npcid].StrikeNPC(damage, knockBack, hitDirection);
-			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, "", npcid, damage, knockBack, hitDirection);
+			NetMessage.SendData((int)PacketTypes.NpcStrike, -1, -1, NetworkText.FromLiteral(""), npcid, damage, knockBack, hitDirection);
 		}
 
 		public void RevertTiles(Dictionary<Vector2, ITile> tiles)

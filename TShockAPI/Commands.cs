@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
@@ -5343,8 +5344,8 @@ namespace TShockAPI
 			{
 				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || (Main.npc[i].netID == npcId && Main.npc[i].townNPC)))
 				{
-					Main.npc[i].displayName = args.Parameters[1];
-					NetMessage.SendData(56, -1, -1, args.Parameters[1], i, 0f, 0f, 0f, 0);
+					Main.npc[i].GivenName = args.Parameters[1];
+					NetMessage.SendData(56, -1, -1, NetworkText.FromLiteral(args.Parameters[1]), i, 0f, 0f, 0f, 0);
 					done++;
 				}
 			}
