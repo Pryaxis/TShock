@@ -2161,7 +2161,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
-					if (action == EditAction.PlaceTile && editData == TileID.Containers)
+					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
 						if (TShock.Utils.MaxChests())
 						{
@@ -3166,9 +3166,10 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (flag != 0
+			if (flag != 0 && flag != 4 // if no container or container2 placement
 				&& Main.tile[tileX, tileY].type != TileID.Containers
 				&& Main.tile[tileX, tileY].type != TileID.Dressers
+				&& Main.tile[tileX, tileY].type != TileID.Containers2
 				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
