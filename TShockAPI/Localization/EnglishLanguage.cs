@@ -25,8 +25,10 @@ namespace TShockAPI.Localization
 
 			try
 			{
-				if(!skip)
+				if (!skip)
+				{
 					LanguageManager.Instance.SetLanguage(GameCulture.English);
+				}
 
 				for (var i = -48; i < Main.maxItemTypes; i++)
 				{
@@ -46,8 +48,10 @@ namespace TShockAPI.Localization
 			}
 			finally
 			{
-				if(!skip)
+				if (!skip)
+				{
 					LanguageManager.Instance.SetLanguage(culture);
+				}
 			}
 		}
 
@@ -62,7 +66,7 @@ namespace TShockAPI.Localization
 			if (ItemNames.TryGetValue(id, out itemName))
 				return itemName;
 
-			return string.Empty;
+			return null;
 		}
 
 		/// <summary>
@@ -76,7 +80,7 @@ namespace TShockAPI.Localization
 			if (NpcNames.TryGetValue(id, out npcName))
 				return npcName;
 
-			return string.Empty;
+			return null;
 		}
 
 		/// <summary>
@@ -90,7 +94,7 @@ namespace TShockAPI.Localization
 			if (Prefixs.TryGetValue(id, out prefix))
 				return prefix;
 
-			return string.Empty;
+			return null;
 		}
 	}
 }

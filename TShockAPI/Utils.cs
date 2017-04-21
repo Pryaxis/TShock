@@ -358,10 +358,9 @@ namespace TShockAPI
 				}
 
 				string englishName = EnglishLanguage.GetItemNameById(i).ToLowerInvariant();
-				if (!String.IsNullOrWhiteSpace(englishName))
+				if (!String.IsNullOrEmpty(englishName))
 				{
 					if (englishName == nameLower)
-						return new List<Item> { item };
 						return new List<Item> { item };
 					if (englishName.StartsWith(nameLower))
 						found.Add(item.Clone());
