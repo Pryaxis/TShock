@@ -1441,17 +1441,26 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier))
-				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
+			string text = args.Text;
+
+			//This is a hacky way of bypassing Terraria's new chat command processing.
+			//_name is usually a private variable but the wonders of OTAPI make it available to us
+			if (args.CommandId._name == "Emote")
+			{
+				text = "/me " + text;
+			}
+			
+			if ((text.StartsWith(Config.CommandSpecifier) || text.StartsWith(Config.CommandSilentSpecifier))
+				&& !string.IsNullOrWhiteSpace(text.Substring(1)))
 			{
 				try
 				{
 					args.Handled = true;
-					if (!Commands.HandleCommand(tsplr, args.Text))
+					if (!Commands.HandleCommand(tsplr, text))
 					{
 						// This is required in case anyone makes HandleCommand return false again
 						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
-						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", args.Text, tsplr.Name);
+						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", text, tsplr.Name);
 					}
 				}
 				catch (Exception ex)
@@ -1473,7 +1482,7 @@ namespace TShockAPI
 				}
 				else if (!TShock.Config.EnableChatAboveHeads)
 				{
-					var text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+					text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
 											 args.Text);
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
@@ -1486,16 +1495,20 @@ namespace TShockAPI
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(ply.name), args.Who, 0, 0, 0, 0);
 					ply.name = name;
-					var text = args.Text;
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
-					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, NetworkText.FromFormattable(text), args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+
+					Terraria.Net.NetPacket packet = Terraria.GameContent.NetModules.NetTextModule.SerializeServerMessage(
+						NetworkText.FromLiteral(text), new Color(tsplr.Group.R, tsplr.Group.G, tsplr.Group.B), (byte)args.Who
+					);
+					Terraria.Net.NetManager.Instance.Broadcast(packet);
+
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(name), args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
 						text);
 
-					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					//tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					Log.Info("Broadcast: {0}", msg);
