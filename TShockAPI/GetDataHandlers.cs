@@ -35,6 +35,7 @@ using Terraria.GameContent.Tile_Entities;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -3330,7 +3331,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.Name, args.Player))
+			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
 			{
 				return false;
 			}
@@ -3510,7 +3511,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.Name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
@@ -4419,7 +4420,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			
+
 			if (!args.Player.HasPermission(Permissions.startdd2))
 			{
 				args.Player.SendErrorMessage("You don't have permission to start the Old One's Army event.");

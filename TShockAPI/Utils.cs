@@ -32,6 +32,7 @@ using Terraria.Utilities;
 using TShockAPI.DB;
 using BCrypt.Net;
 using Microsoft.Xna.Framework;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -344,16 +345,27 @@ namespace TShockAPI
 		{
 			var found = new List<Item>();
 			Item item = new Item();
-			string nameLower = name.ToLower();
+			string nameLower = name.ToLowerInvariant();
 			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (String.IsNullOrWhiteSpace(item.Name))
-					continue;
-				if (item.Name.ToLower() == nameLower)
-					return new List<Item> { item };
-				if (item.Name.ToLower().StartsWith(nameLower))
-					found.Add(item.Clone());
+				if (!String.IsNullOrWhiteSpace(item.Name))
+				{
+					if (item.Name.ToLowerInvariant() == nameLower)
+						return new List<Item> { item };
+					if (item.Name.ToLowerInvariant().StartsWith(nameLower))
+						found.Add(item.Clone());
+				}
+
+				string englishName = EnglishLanguage.GetItemNameById(i).ToLowerInvariant();
+				if (!String.IsNullOrWhiteSpace(englishName))
+				{
+					if (englishName == nameLower)
+						return new List<Item> { item };
+						return new List<Item> { item };
+					if (englishName.StartsWith(nameLower))
+						found.Add(item.Clone());
+				}
 			}
 			return found;
 		}
@@ -416,13 +428,17 @@ namespace TShockAPI
 		{
 			var found = new List<NPC>();
 			NPC npc = new NPC();
-			string nameLower = name.ToLower();
+			string nameLower = name.ToLowerInvariant();
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
+				string englishName = EnglishLanguage.GetNpcNameById(i).ToLowerInvariant();
+
 				npc.SetDefaults(i);
-				if (npc.FullName.ToLower() == nameLower || npc.TypeName.ToLower() == nameLower)
+				if (npc.FullName.ToLowerInvariant() == nameLower || npc.TypeName.ToLowerInvariant() == nameLower
+					|| nameLower == englishName)
 					return new List<NPC> { npc };
-				if (npc.FullName.ToLower().StartsWith(nameLower) || npc.TypeName.ToLower().StartsWith(nameLower))
+				if (npc.FullName.ToLowerInvariant().StartsWith(nameLower) || npc.TypeName.ToLowerInvariant().StartsWith(nameLower)
+					|| englishName.StartsWith(nameLower))
 					found.Add((NPC)npc.Clone());
 			}
 			return found;
@@ -492,15 +508,16 @@ namespace TShockAPI
 		{
 			Item item = new Item();
 			item.SetDefaults(0);
-			string lowerName = name.ToLower();
+			string lowerName = name.ToLowerInvariant();
 			var found = new List<int>();
 			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
 				item.prefix = (byte)i;
-				string prefixName = item.AffixName().Trim().ToLower();
-				if (prefixName == lowerName)
+				string prefixName = item.AffixName().Trim().ToLowerInvariant();
+				string englishName = EnglishLanguage.GetPrefixById(i).ToLowerInvariant();
+				if (prefixName == lowerName || englishName == lowerName)
 					return new List<int>() { i };
-				else if (prefixName.StartsWith(lowerName)) // Partial match
+				else if (prefixName.StartsWith(lowerName) || englishName.StartsWith(lowerName)) // Partial match
 					found.Add(i);
 			}
 			return found;

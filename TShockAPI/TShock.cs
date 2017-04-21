@@ -43,6 +43,7 @@ using Terraria.Utilities;
 using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -356,6 +357,8 @@ namespace TShockAPI
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
 
+				EnglishLanguage.Initialize();
+
 				if (Config.RestApiEnabled)
 					RestApi.Start();
 
@@ -620,7 +623,7 @@ namespace TShockAPI
 			string path = null;
 
 			//Generic method for doing a path sanity check
-			Action<string> pathChecker = (p) => 
+			Action<string> pathChecker = (p) =>
 			{
 				if (!string.IsNullOrWhiteSpace(p) && p.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 				{
@@ -733,7 +736,7 @@ namespace TShockAPI
 				.AddFlag("--no-restart", () => NoRestart = true);
 
 			CliParser.ParseFromSource(parms);
-			
+
 			/*"-connperip": Todo - Requires an OTAPI modification
 			{
 				int limit;
@@ -1111,7 +1114,7 @@ namespace TShockAPI
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
 						{
-							if (Itembans.ItemIsBanned(item.Name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
@@ -1124,7 +1127,7 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.dye)
 						{
-							if (Itembans.ItemIsBanned(item.Name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
@@ -1137,7 +1140,7 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscEquips)
 						{
-							if (Itembans.ItemIsBanned(item.Name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
@@ -1150,7 +1153,7 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscDyes)
 						{
-							if (Itembans.ItemIsBanned(item.Name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
