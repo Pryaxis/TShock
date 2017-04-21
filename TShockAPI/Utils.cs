@@ -437,7 +437,7 @@ namespace TShockAPI
 					|| nameLower == englishName)
 					return new List<NPC> { npc };
 				if (npc.FullName.ToLowerInvariant().StartsWith(nameLower) || npc.TypeName.ToLowerInvariant().StartsWith(nameLower)
-					|| englishName.StartsWith(nameLower))
+					|| englishName?.StartsWith(nameLower) == true)
 					found.Add((NPC)npc.Clone());
 			}
 			return found;
@@ -516,7 +516,7 @@ namespace TShockAPI
 				string englishName = EnglishLanguage.GetPrefixById(i).ToLowerInvariant();
 				if (prefixName == lowerName || englishName == lowerName)
 					return new List<int>() { i };
-				else if (prefixName.StartsWith(lowerName) || englishName.StartsWith(lowerName)) // Partial match
+				else if (prefixName.StartsWith(lowerName) || englishName?.StartsWith(lowerName) == true) // Partial match
 					found.Add(i);
 			}
 			return found;

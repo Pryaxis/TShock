@@ -2544,7 +2544,7 @@ namespace TShockAPI
 					break;
 				}
 				if (npc.FullName.ToLowerInvariant().StartsWith(npcStr.ToLowerInvariant()) ||
-				    englishName.StartsWith(npcStr, StringComparison.InvariantCultureIgnoreCase))
+				    englishName?.StartsWith(npcStr, StringComparison.InvariantCultureIgnoreCase) == true)
 					matches.Add(npc);
 			}
 
