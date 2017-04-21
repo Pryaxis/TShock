@@ -728,7 +728,7 @@ namespace TShockAPI
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
-				// .AddFlag("-dump", () => Utils.Dump())
+				.AddFlag("-dump", () => Utils.Dump())
 				.AddFlag("--stats-optout", () => StatTracker.OptOut = true)
 				.AddFlag("--no-restart", () => NoRestart = true);
 
