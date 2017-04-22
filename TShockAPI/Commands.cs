@@ -34,6 +34,7 @@ using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -2534,12 +2535,16 @@ namespace TShockAPI
 			var matches = new List<NPC>();
 			foreach (var npc in Main.npc.Where(npc => npc.active))
 			{
-				if (string.Equals(npc.FullName, npcStr, StringComparison.CurrentCultureIgnoreCase))
+				var englishName = EnglishLanguage.GetNpcNameById(npc.netID);
+
+				if (string.Equals(npc.FullName, npcStr, StringComparison.InvariantCultureIgnoreCase) ||
+				    string.Equals(englishName, npcStr, StringComparison.InvariantCultureIgnoreCase))
 				{
 					matches = new List<NPC> { npc };
 					break;
 				}
-				if (npc.FullName.ToLower().StartsWith(npcStr.ToLower()))
+				if (npc.FullName.ToLowerInvariant().StartsWith(npcStr.ToLowerInvariant()) ||
+				    englishName?.StartsWith(npcStr, StringComparison.InvariantCultureIgnoreCase) == true)
 					matches.Add(npc);
 			}
 
@@ -3207,7 +3212,7 @@ namespace TShockAPI
 						}
 						else
 						{
-							TShock.Itembans.AddNewBan(items[0].Name);
+							TShock.Itembans.AddNewBan(EnglishLanguage.GetItemNameById(items[0].type));
 							args.Player.SendSuccessMessage("Banned " + items[0].Name + ".");
 						}
 					}
@@ -3239,7 +3244,7 @@ namespace TShockAPI
 								return;
 							}
 
-							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].Name);
+							ItemBan ban = TShock.Itembans.GetItemBanByName(EnglishLanguage.GetItemNameById(items[0].type));
 							if (ban == null)
 							{
 								args.Player.SendErrorMessage("{0} is not banned.", items[0].Name);
@@ -3247,7 +3252,7 @@ namespace TShockAPI
 							}
 							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
-								TShock.Itembans.AllowGroup(items[0].Name, args.Parameters[2]);
+								TShock.Itembans.AllowGroup(EnglishLanguage.GetItemNameById(items[0].type), args.Parameters[2]);
 								args.Player.SendSuccessMessage("{0} has been allowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 							else
@@ -3278,7 +3283,7 @@ namespace TShockAPI
 						}
 						else
 						{
-							TShock.Itembans.RemoveBan(items[0].Name);
+							TShock.Itembans.RemoveBan(EnglishLanguage.GetItemNameById(items[0].type));
 							args.Player.SendSuccessMessage("Unbanned " + items[0].Name + ".");
 						}
 					}
@@ -3310,7 +3315,7 @@ namespace TShockAPI
 								return;
 							}
 
-							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].Name);
+							ItemBan ban = TShock.Itembans.GetItemBanByName(EnglishLanguage.GetItemNameById(items[0].type));
 							if (ban == null)
 							{
 								args.Player.SendErrorMessage("{0} is not banned.", items[0].Name);
@@ -3318,7 +3323,7 @@ namespace TShockAPI
 							}
 							if (ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
-								TShock.Itembans.RemoveGroup(items[0].Name, args.Parameters[2]);
+								TShock.Itembans.RemoveGroup(EnglishLanguage.GetItemNameById(items[0].type), args.Parameters[2]);
 								args.Player.SendSuccessMessage("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 							else
@@ -5292,7 +5297,7 @@ namespace TShockAPI
 				if (itemAmount == 0 || itemAmount > item.maxStack)
 					itemAmount = item.maxStack;
 
-				if (args.Player.GiveItemCheck(item.type, item.Name, item.width, item.height, itemAmount, prefixId))
+				if (args.Player.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), item.width, item.height, itemAmount, prefixId))
 				{
 					item.prefix = (byte)prefixId;
 					args.Player.SendSuccessMessage("Gave {0} {1}(s).", itemAmount, item.AffixName());
@@ -5431,7 +5436,7 @@ namespace TShockAPI
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
-							if (plr.GiveItemCheck(item.type, item.Name, item.width, item.height, itemAmount, prefix))
+							if (plr.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), item.width, item.height, itemAmount, prefix))
 							{
 								args.Player.SendSuccessMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.Name));
 								plr.SendSuccessMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.Name));
