@@ -1443,13 +1443,25 @@ namespace TShockAPI
 
 			string text = args.Text;
 
-			//This is a hacky way of bypassing Terraria's new chat command processing.
-			//_name is usually a private variable but the wonders of OTAPI make it available to us
-			if (args.CommandId._name == "Emote")
+			// Terraria now has chat commands on the client side.
+			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
+			// In order for us to keep legacy code we must reverse this and get the prefix using the command id
+			foreach (var item in Terraria.UI.Chat.ChatManager.Commands._localizedCommands)
 			{
-				text = "/me " + text;
+				if (item.Value._name == args.CommandId._name)
+				{
+					if (!String.IsNullOrEmpty(text))
+					{
+						text = item.Key.Value + ' ' + text;
+					}
+					else
+					{
+						text = item.Key.Value;
+					}
+					break;
+				}
 			}
-			
+
 			if ((text.StartsWith(Config.CommandSpecifier) || text.StartsWith(Config.CommandSilentSpecifier))
 				&& !string.IsNullOrWhiteSpace(text.Substring(1)))
 			{
