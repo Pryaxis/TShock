@@ -712,12 +712,6 @@ namespace TShockAPI
 						}
 					})
 
-				.AddFlag("-lang", (l) =>
-					{
-						LanguageManager.Instance.SetLanguage(l);
-						ServerApi.LogWriter.PluginWriteLine(this, string.Format("Language attempted to be set to {0}.", l), TraceLevel.Verbose);
-					})
-
 				.AddFlag("-autocreate", (size) =>
 					{
 						if (!string.IsNullOrWhiteSpace(size))
