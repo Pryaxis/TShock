@@ -1186,7 +1186,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromFormattable(text), number, number2, number3, number4, number5);
+			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
 		}
 
 		/// <summary>
