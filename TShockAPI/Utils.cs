@@ -869,8 +869,13 @@ namespace TShockAPI
 		/// <param name="matches">An enumerable list with the matches</param>
 		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
 		{
-			ply.SendErrorMessage("More than one match found: {0}", string.Join(",", matches));
-			ply.SendErrorMessage("Use \"my query\" for items with spaces");
+			ply.SendErrorMessage("More than one match found: ");
+
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+
+			lines.ForEach(ply.SendInfoMessage);
+
+			ply.SendErrorMessage("Use \"my query\" for items with spaces.");
 		}
 
 		/// <summary>
