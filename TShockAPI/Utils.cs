@@ -17,21 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
 using Terraria.Utilities;
 using TShockAPI.DB;
-using BCrypt.Net;
 using Microsoft.Xna.Framework;
+using Terraria.Localization;
 using TShockAPI.Localization;
 
 namespace TShockAPI
@@ -346,6 +344,8 @@ namespace TShockAPI
 			var found = new List<Item>();
 			Item item = new Item();
 			string nameLower = name.ToLowerInvariant();
+			var checkEnglish = Language.ActiveCulture != GameCulture.English;
+
 			for (int i = -48; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
@@ -355,6 +355,11 @@ namespace TShockAPI
 						return new List<Item> { item };
 					if (item.Name.ToLowerInvariant().StartsWith(nameLower))
 						found.Add(item.Clone());
+				}
+
+				if (!checkEnglish)
+				{
+					continue;
 				}
 
 				string englishName = EnglishLanguage.GetItemNameById(i).ToLowerInvariant();
@@ -864,8 +869,13 @@ namespace TShockAPI
 		/// <param name="matches">An enumerable list with the matches</param>
 		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
 		{
-			ply.SendErrorMessage("More than one match found: {0}", string.Join(",", matches));
-			ply.SendErrorMessage("Use \"my query\" for items with spaces");
+			ply.SendErrorMessage("More than one match found: ");
+
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+
+			lines.ForEach(ply.SendInfoMessage);
+
+			ply.SendErrorMessage("Use \"my query\" for items with spaces.");
 		}
 
 		/// <summary>
