@@ -65,7 +65,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("INSERT INTO ItemBans (ItemName, AllowedGroups) VALUES (@0, @1);",
-				               TShock.Utils.GetItemByName(itemname)[0].Name, "");
+				               itemname, "");
 				if (!ItemIsBanned(itemname, null))
 					ItemBans.Add(new ItemBan(itemname));
 			}
@@ -81,7 +81,7 @@ namespace TShockAPI.DB
 				return;
 			try
 			{
-				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].Name);
+				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", itemname);
 				ItemBans.Remove(new ItemBan(itemname));
 			}
 			catch (Exception ex)
