@@ -879,7 +879,7 @@ namespace TShockAPI
 				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
 					return false;
 
-			GiveItem(type,name,width,height,stack,prefix);
+			GiveItem(type, name, width, height, stack, prefix);
 			return true;
 		}
 
