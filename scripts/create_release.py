@@ -148,13 +148,11 @@ def run_bootstrapper():
     mod_clientuuid_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.ClientUUID/TShock.Modifications.ClientUUID.csproj', '/p:Configuration=' + build_config])
     mod_explosives_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Explosives/TShock.Modifications.Explosives.csproj', '/p:Configuration=' + build_config])
     mod_ssc_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.SSC/TShock.Modifications.SSC.csproj', '/p:Configuration=' + build_config])
-    mod_utf8_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.UnicodeInput/TShock.Modifications.UnicodeInput.csproj', '/p:Configuration=' + build_config])
     
     mod_bootstrapper_proc.wait()
     mod_clientuuid_proc.wait()
     mod_explosives_proc.wait()
     mod_ssc_proc.wait()
-    mod_utf8_proc.wait()
     
     if (mod_bootstrapper_proc.returncode != 0):
       raise CalledProcessError(mod_bootstrapper_proc.returncode)
