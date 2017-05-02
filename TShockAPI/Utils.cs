@@ -346,7 +346,7 @@ namespace TShockAPI
 			string nameLower = name.ToLowerInvariant();
 			var checkEnglish = Language.ActiveCulture != GameCulture.English;
 
-			for (int i = -48; i < Main.maxItemTypes; i++)
+			for (int i = 1; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
 				if (!String.IsNullOrWhiteSpace(item.Name))
