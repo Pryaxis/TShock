@@ -148,7 +148,7 @@ def run_bootstrapper():
     mod_clientuuid_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.ClientUUID/TShock.Modifications.ClientUUID.csproj', '/p:Configuration=' + build_config])
     mod_explosives_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Explosives/TShock.Modifications.Explosives.csproj', '/p:Configuration=' + build_config])
     mod_ssc_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.SSC/TShock.Modifications.SSC.csproj', '/p:Configuration=' + build_config])
-    mod_utf8_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.UnicodeInput/TShock.Modifications.UnicodeInput.csproj', '/p:Configuration=' + build_config])
+    mod_utf8_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Platform/TShock.Modifications.Platform.csproj', '/p:Configuration=' + build_config])
     
     mod_bootstrapper_proc.wait()
     mod_clientuuid_proc.wait()
@@ -164,6 +164,8 @@ def run_bootstrapper():
       raise CalledProcessError(mod_explosives_proc.returncode)
     if (mod_ssc_proc.returncode != 0):
       raise CalledProcessError(mod_ssc_proc.returncode)
+    if (mod_utf8_proc.returncode != 0):
+      raise CalledProcessError(mod_utf8_proc.returncode)
 
     # run the bootstrapper to generate the new OTAPI.dll
     os.chdir('./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/' + build_config)
