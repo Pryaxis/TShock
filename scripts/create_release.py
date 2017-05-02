@@ -144,28 +144,12 @@ def update_terraria_source():
 
 def run_bootstrapper():
   for build_config in ['Debug','Release'] :
-    mod_bootstrapper_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Bootstrapper/TShock.Modifications.Bootstrapper.csproj', '/p:Configuration=' + build_config])
-    mod_clientuuid_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.ClientUUID/TShock.Modifications.ClientUUID.csproj', '/p:Configuration=' + build_config])
-    mod_explosives_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Explosives/TShock.Modifications.Explosives.csproj', '/p:Configuration=' + build_config])
-    mod_ssc_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.SSC/TShock.Modifications.SSC.csproj', '/p:Configuration=' + build_config])
-    mod_utf8_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Platform/TShock.Modifications.Platform.csproj', '/p:Configuration=' + build_config])
+    mintaka = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.4.OTAPI.sln', '/p:Configuration=' + build_config])
     
-    mod_bootstrapper_proc.wait()
-    mod_clientuuid_proc.wait()
-    mod_explosives_proc.wait()
-    mod_ssc_proc.wait()
-    mod_utf8_proc.wait()
+    mintaka.wait()
     
-    if (mod_bootstrapper_proc.returncode != 0):
-      raise CalledProcessError(mod_bootstrapper_proc.returncode)
-    if (mod_clientuuid_proc.returncode != 0):
-      raise CalledProcessError(mod_clientuuid_proc.returncode)
-    if (mod_explosives_proc.returncode != 0):
-      raise CalledProcessError(mod_explosives_proc.returncode)
-    if (mod_ssc_proc.returncode != 0):
-      raise CalledProcessError(mod_ssc_proc.returncode)
-    if (mod_utf8_proc.returncode != 0):
-      raise CalledProcessError(mod_utf8_proc.returncode)
+    if (mintaka.returncode != 0):
+      raise CalledProcessError(mintaka.returncode)
 
     # run the bootstrapper to generate the new OTAPI.dll
     os.chdir('./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/' + build_config)
