@@ -2293,7 +2293,7 @@ namespace TShockAPI
 			}
 			else if (npcs.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.FullName));
+				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 			}
 			else
 			{
@@ -2550,7 +2550,7 @@ namespace TShockAPI
 
 			if (matches.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => n.FullName));
+				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => $"{n.FullName}({n.whoAmI})"));
 				return;
 			}
 			if (matches.Count == 0)
@@ -3208,7 +3208,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3234,7 +3234,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3279,7 +3279,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3305,7 +3305,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -5193,7 +5193,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.FullName));
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else
@@ -5248,7 +5248,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => i.Name));
+				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => $"{i.Name}({i.netID})"));
 				return;
 			}
 			else
@@ -5267,14 +5267,14 @@ namespace TShockAPI
 				string prefixidOrName = args.Parameters[amountParamIndex + 1];
 				var prefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
 
-				if (item.accessory && prefixIds.Contains(42))
+				if (item.accessory && prefixIds.Contains(PrefixID.Quick))
 				{
-					prefixIds.Remove(42);
-					prefixIds.Remove(76);
-					prefixIds.Add(76);
+					prefixIds.Remove(PrefixID.Quick);
+					prefixIds.Remove(PrefixID.Quick2);
+					prefixIds.Add(PrefixID.Quick2);
 				}
-				else if (!item.accessory && prefixIds.Contains(42))
-					prefixIds.Remove(76);
+				else if (!item.accessory && prefixIds.Contains(PrefixID.Quick))
+					prefixIds.Remove(PrefixID.Quick2);
 
 				if (prefixIds.Count > 1)
 				{
@@ -5331,7 +5331,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.FullName));
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else if (args.Parameters[1].Length > 200)
@@ -5396,7 +5396,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 			}
 			else
 			{
@@ -5406,14 +5406,14 @@ namespace TShockAPI
 				{
 					int.TryParse(args.Parameters[0], out itemAmount);
 					var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-					if (item.accessory && prefixIds.Contains(42))
+					if (item.accessory && prefixIds.Contains(PrefixID.Quick))
 					{
-						prefixIds.Remove(42);
-						prefixIds.Remove(76);
-						prefixIds.Add(76);
+						prefixIds.Remove(PrefixID.Quick);
+						prefixIds.Remove(PrefixID.Quick2);
+						prefixIds.Add(PrefixID.Quick2);
 					}
-					else if (!item.accessory && prefixIds.Contains(42))
-						prefixIds.Remove(76);
+					else if (!item.accessory && prefixIds.Contains(PrefixID.Quick))
+						prefixIds.Remove(PrefixID.Quick2);
 					if (prefixIds.Count == 1)
 						prefix = prefixIds[0];
 				}
