@@ -27,12 +27,14 @@ using System.Text;
 using System.Threading;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using TShockAPI.DB;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -2156,83 +2158,83 @@ namespace TShockAPI
 					foreach (int i in npcIds)
 					{
 						npc.SetDefaults(i);
-						TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+						TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					}
 					TSPlayer.All.SendSuccessMessage("{0} has spawned all bosses {1} time(s).", args.Player.Name, amount);
 					return;
 				case "brain":
 				case "brain of cthulhu":
 					npc.SetDefaults(266);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Brain of Cthulhu {1} time(s).", args.Player.Name, amount);
 					return;
 				case "destroyer":
 					npc.SetDefaults(134);
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Destroyer {1} time(s).", args.Player.Name, amount);
 					return;
 				case "duke":
 				case "duke fishron":
 				case "fishron":
 					npc.SetDefaults(370);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Duke Fishron {1} time(s).", args.Player.Name, amount);
 					return;
 				case "eater":
 				case "eater of worlds":
 					npc.SetDefaults(13);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eater of Worlds {1} time(s).", args.Player.Name, amount);
 					return;
 				case "eye":
 				case "eye of cthulhu":
 					npc.SetDefaults(4);
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eye of Cthulhu {1} time(s).", args.Player.Name, amount);
 					return;
 				case "golem":
 					npc.SetDefaults(245);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Golem {1} time(s).", args.Player.Name, amount);
 					return;
 				case "king":
 				case "king slime":
 					npc.SetDefaults(50);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned King Slime {1} time(s).", args.Player.Name, amount);
 					return;
 				case "plantera":
 					npc.SetDefaults(262);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Plantera {1} time(s).", args.Player.Name, amount);
 					return;
 				case "prime":
 				case "skeletron prime":
 					npc.SetDefaults(127);
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron Prime {1} time(s).", args.Player.Name, amount);
 					return;
 				case "queen":
 				case "queen bee":
 					npc.SetDefaults(222);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Bee {1} time(s).", args.Player.Name, amount);
 					return;
 				case "skeletron":
 					npc.SetDefaults(35);
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron {1} time(s).", args.Player.Name, amount);
 					return;
 				case "twins":
 					TSPlayer.Server.SetTime(false, 0.0);
 					npc.SetDefaults(125);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					npc.SetDefaults(126);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Twins {1} time(s).", args.Player.Name, amount);
 					return;
 				case "wof":
@@ -2253,7 +2255,7 @@ namespace TShockAPI
 				case "moon":
 				case "moon lord":
 					npc.SetDefaults(398);
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Moon Lord {1} time(s).", args.Player.Name, amount);
 					return;
 				default:
@@ -2291,21 +2293,21 @@ namespace TShockAPI
 			}
 			else if (npcs.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
+				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 			}
 			else
 			{
 				var npc = npcs[0];
 				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
 				{
-					TSPlayer.Server.SpawnNPC(npc.type, npc.name, amount, args.Player.TileX, args.Player.TileY, 50, 20);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY, 50, 20);
 					if (args.Silent)
 					{
-						args.Player.SendSuccessMessage("Spawned {0} {1} time(s).", npc.name, amount);
+						args.Player.SendSuccessMessage("Spawned {0} {1} time(s).", npc.FullName, amount);
 					}
 					else
 					{
-						TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.name, amount);
+						TSPlayer.All.SendSuccessMessage("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.FullName, amount);
 					}
 				}
 				else if (npc.type == 113)
@@ -2533,18 +2535,22 @@ namespace TShockAPI
 			var matches = new List<NPC>();
 			foreach (var npc in Main.npc.Where(npc => npc.active))
 			{
-				if (string.Equals(npc.name, npcStr, StringComparison.CurrentCultureIgnoreCase))
+				var englishName = EnglishLanguage.GetNpcNameById(npc.netID);
+
+				if (string.Equals(npc.FullName, npcStr, StringComparison.InvariantCultureIgnoreCase) ||
+				    string.Equals(englishName, npcStr, StringComparison.InvariantCultureIgnoreCase))
 				{
 					matches = new List<NPC> { npc };
 					break;
 				}
-				if (npc.name.ToLower().StartsWith(npcStr.ToLower()))
+				if (npc.FullName.ToLowerInvariant().StartsWith(npcStr.ToLowerInvariant()) ||
+				    englishName?.StartsWith(npcStr, StringComparison.InvariantCultureIgnoreCase) == true)
 					matches.Add(npc);
 			}
 
 			if (matches.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => n.name));
+				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => $"{n.FullName}({n.whoAmI})"));
 				return;
 			}
 			if (matches.Count == 0)
@@ -2555,7 +2561,7 @@ namespace TShockAPI
 
 			var target = matches[0];
 			args.Player.Teleport(target.position.X, target.position.Y);
-			args.Player.SendSuccessMessage("Teleported to the '{0}'.", target.name);
+			args.Player.SendSuccessMessage("Teleported to the '{0}'.", target.FullName);
 		}
 
 		private static void GetPos(CommandArgs args)
@@ -3202,12 +3208,12 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
-							TShock.Itembans.AddNewBan(items[0].name);
-							args.Player.SendSuccessMessage("Banned " + items[0].name + ".");
+							TShock.Itembans.AddNewBan(EnglishLanguage.GetItemNameById(items[0].type));
+							args.Player.SendSuccessMessage("Banned " + items[0].Name + ".");
 						}
 					}
 					#endregion
@@ -3228,7 +3234,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3238,20 +3244,20 @@ namespace TShockAPI
 								return;
 							}
 
-							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
+							ItemBan ban = TShock.Itembans.GetItemBanByName(EnglishLanguage.GetItemNameById(items[0].type));
 							if (ban == null)
 							{
-								args.Player.SendErrorMessage("{0} is not banned.", items[0].name);
+								args.Player.SendErrorMessage("{0} is not banned.", items[0].Name);
 								return;
 							}
 							if (!ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
-								TShock.Itembans.AllowGroup(items[0].name, args.Parameters[2]);
-								args.Player.SendSuccessMessage("{0} has been allowed to use {1}.", args.Parameters[2], items[0].name);
+								TShock.Itembans.AllowGroup(EnglishLanguage.GetItemNameById(items[0].type), args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been allowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 							else
 							{
-								args.Player.SendWarningMessage("{0} is already allowed to use {1}.", args.Parameters[2], items[0].name);
+								args.Player.SendWarningMessage("{0} is already allowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 						}
 					}
@@ -3273,12 +3279,12 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
-							TShock.Itembans.RemoveBan(items[0].name);
-							args.Player.SendSuccessMessage("Unbanned " + items[0].name + ".");
+							TShock.Itembans.RemoveBan(EnglishLanguage.GetItemNameById(items[0].type));
+							args.Player.SendSuccessMessage("Unbanned " + items[0].Name + ".");
 						}
 					}
 					#endregion
@@ -3299,7 +3305,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
+							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3309,20 +3315,20 @@ namespace TShockAPI
 								return;
 							}
 
-							ItemBan ban = TShock.Itembans.GetItemBanByName(items[0].name);
+							ItemBan ban = TShock.Itembans.GetItemBanByName(EnglishLanguage.GetItemNameById(items[0].type));
 							if (ban == null)
 							{
-								args.Player.SendErrorMessage("{0} is not banned.", items[0].name);
+								args.Player.SendErrorMessage("{0} is not banned.", items[0].Name);
 								return;
 							}
 							if (ban.AllowedGroups.Contains(args.Parameters[2]))
 							{
-								TShock.Itembans.RemoveGroup(items[0].name, args.Parameters[2]);
-								args.Player.SendSuccessMessage("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].name);
+								TShock.Itembans.RemoveGroup(EnglishLanguage.GetItemNameById(items[0].type), args.Parameters[2]);
+								args.Player.SendSuccessMessage("{0} has been disallowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 							else
 							{
-								args.Player.SendWarningMessage("{0} is already disallowed to use {1}.", args.Parameters[2], items[0].name);
+								args.Player.SendWarningMessage("{0} is already disallowed to use {1}.", args.Parameters[2], items[0].Name);
 							}
 						}
 					}
@@ -5187,7 +5193,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else
@@ -5242,7 +5248,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => i.name));
+				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => $"{i.Name}({i.netID})"));
 				return;
 			}
 			else
@@ -5261,14 +5267,14 @@ namespace TShockAPI
 				string prefixidOrName = args.Parameters[amountParamIndex + 1];
 				var prefixIds = TShock.Utils.GetPrefixByIdOrName(prefixidOrName);
 
-				if (item.accessory && prefixIds.Contains(42))
+				if (item.accessory && prefixIds.Contains(PrefixID.Quick))
 				{
-					prefixIds.Remove(42);
-					prefixIds.Remove(76);
-					prefixIds.Add(76);
+					prefixIds.Remove(PrefixID.Quick);
+					prefixIds.Remove(PrefixID.Quick2);
+					prefixIds.Add(PrefixID.Quick2);
 				}
-				else if (!item.accessory && prefixIds.Contains(42))
-					prefixIds.Remove(76);
+				else if (!item.accessory && prefixIds.Contains(PrefixID.Quick))
+					prefixIds.Remove(PrefixID.Quick2);
 
 				if (prefixIds.Count > 1)
 				{
@@ -5291,7 +5297,7 @@ namespace TShockAPI
 				if (itemAmount == 0 || itemAmount > item.maxStack)
 					itemAmount = item.maxStack;
 
-				if (args.Player.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefixId))
+				if (args.Player.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), item.width, item.height, itemAmount, prefixId))
 				{
 					item.prefix = (byte)prefixId;
 					args.Player.SendSuccessMessage("Gave {0} {1}(s).", itemAmount, item.AffixName());
@@ -5325,7 +5331,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => n.name));
+					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else if (args.Parameters[1].Length > 200)
@@ -5343,8 +5349,8 @@ namespace TShockAPI
 			{
 				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || (Main.npc[i].netID == npcId && Main.npc[i].townNPC)))
 				{
-					Main.npc[i].displayName = args.Parameters[1];
-					NetMessage.SendData(56, -1, -1, args.Parameters[1], i, 0f, 0f, 0f, 0);
+					Main.npc[i].GivenName = args.Parameters[1];
+					NetMessage.SendData(56, -1, -1, NetworkText.FromLiteral(args.Parameters[1]), i, 0f, 0f, 0f, 0);
 					done++;
 				}
 			}
@@ -5390,7 +5396,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.name));
+				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
 			}
 			else
 			{
@@ -5400,14 +5406,14 @@ namespace TShockAPI
 				{
 					int.TryParse(args.Parameters[0], out itemAmount);
 					var prefixIds = TShock.Utils.GetPrefixByIdOrName(args.Parameters[1]);
-					if (item.accessory && prefixIds.Contains(42))
+					if (item.accessory && prefixIds.Contains(PrefixID.Quick))
 					{
-						prefixIds.Remove(42);
-						prefixIds.Remove(76);
-						prefixIds.Add(76);
+						prefixIds.Remove(PrefixID.Quick);
+						prefixIds.Remove(PrefixID.Quick2);
+						prefixIds.Add(PrefixID.Quick2);
 					}
-					else if (!item.accessory && prefixIds.Contains(42))
-						prefixIds.Remove(76);
+					else if (!item.accessory && prefixIds.Contains(PrefixID.Quick))
+						prefixIds.Remove(PrefixID.Quick2);
 					if (prefixIds.Count == 1)
 						prefix = prefixIds[0];
 				}
@@ -5430,10 +5436,10 @@ namespace TShockAPI
 						{
 							if (itemAmount == 0 || itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
-							if (plr.GiveItemCheck(item.type, item.name, item.width, item.height, itemAmount, prefix))
+							if (plr.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), item.width, item.height, itemAmount, prefix))
 							{
-								args.Player.SendSuccessMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.name));
-								plr.SendSuccessMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.name));
+								args.Player.SendSuccessMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.Name));
+								plr.SendSuccessMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.Name));
 							}
 							else
 							{
@@ -5517,7 +5523,7 @@ namespace TShockAPI
 				}
 				else if (found.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Main.buffName[f]));
+					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Lang.GetBuffName(f)));
 					return;
 				}
 				id = found[0];
@@ -5568,7 +5574,7 @@ namespace TShockAPI
 					}
 					else if (found.Count > 1)
 					{
-						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Main.buffName[b]));
+						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Lang.GetBuffName(b)));
 						return;
 					}
 					id = found[0];

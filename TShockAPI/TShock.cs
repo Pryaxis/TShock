@@ -34,6 +34,7 @@ using Newtonsoft.Json;
 using Rests;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
@@ -42,6 +43,7 @@ using Terraria.Utilities;
 using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -49,7 +51,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(2, 0)]
+	[ApiVersion(2, 1)]
 	public class TShock : TerrariaPlugin
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
@@ -355,6 +357,8 @@ namespace TShockAPI
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
 
+				EnglishLanguage.Initialize();
+
 				if (Config.RestApiEnabled)
 					RestApi.Start();
 
@@ -619,7 +623,7 @@ namespace TShockAPI
 			string path = null;
 
 			//Generic method for doing a path sanity check
-			Action<string> pathChecker = (p) => 
+			Action<string> pathChecker = (p) =>
 			{
 				if (!string.IsNullOrWhiteSpace(p) && p.IndexOfAny(Path.GetInvalidPathChars()) == -1)
 				{
@@ -708,20 +712,6 @@ namespace TShockAPI
 						}
 					})
 
-				.AddFlag("-lang", (l) =>
-					{
-						int lang;
-						if (int.TryParse(l, out lang))
-						{
-							Lang.lang = lang;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Language index set to {0}.", lang), TraceLevel.Verbose);
-						}
-						else
-						{
-							ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-lang\".", TraceLevel.Warning);
-						}
-					})
-
 				.AddFlag("-autocreate", (size) =>
 					{
 						if (!string.IsNullOrWhiteSpace(size))
@@ -740,7 +730,7 @@ namespace TShockAPI
 				.AddFlag("--no-restart", () => NoRestart = true);
 
 			CliParser.ParseFromSource(parms);
-			
+
 			/*"-connperip": Todo - Requires an OTAPI modification
 			{
 				int limit;
@@ -1094,10 +1084,10 @@ namespace TShockAPI
 						{
 							player.Disable(flags: flags);
 						}
-						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].Name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
 						}
 					}
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
@@ -1108,7 +1098,7 @@ namespace TShockAPI
 							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
 								item.type != 0)
 							{
-								check = "Remove item " + item.name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
+								check = "Remove item " + item.Name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
 								player.SendErrorMessage(check);
 								break;
 							}
@@ -1118,12 +1108,12 @@ namespace TShockAPI
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.name;
+								check = "Remove armor/accessory " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1131,12 +1121,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.dye)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.name;
+								check = "Remove dye " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1144,12 +1134,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscEquips)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.name;
+								check = "Remove misc equip " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1157,12 +1147,12 @@ namespace TShockAPI
 						}
 						foreach (Item item in player.TPlayer.miscDyes)
 						{
-							if (Itembans.ItemIsBanned(item.name, player))
+							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
 							{
 								player.SetBuff(BuffID.Frozen, 330, true);
 								player.SetBuff(BuffID.Stoned, 330, true);
 								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.name;
+								check = "Remove misc dye " + item.Name;
 
 								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
 								break;
@@ -1174,10 +1164,10 @@ namespace TShockAPI
 						{
 							player.Disable(flags: flags);
 						}
-						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].name, player))
+						else if (Itembans.ItemIsBanned(player.TPlayer.inventory[player.TPlayer.selectedItem].Name, player))
 						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].name}");
+							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
+							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
 						}
 					}
 
@@ -1258,7 +1248,7 @@ namespace TShockAPI
 		{
 			if (ShuttingDown)
 			{
-				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, "Server is shutting down...");
+				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, NetworkText.FromLiteral("Server is shutting down..."));
 				args.Handled = true;
 				return;
 			}
@@ -1448,17 +1438,38 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((args.Text.StartsWith(Config.CommandSpecifier) || args.Text.StartsWith(Config.CommandSilentSpecifier))
-				&& !string.IsNullOrWhiteSpace(args.Text.Substring(1)))
+			string text = args.Text;
+
+			// Terraria now has chat commands on the client side.
+			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
+			// In order for us to keep legacy code we must reverse this and get the prefix using the command id
+			foreach (var item in Terraria.UI.Chat.ChatManager.Commands._localizedCommands)
+			{
+				if (item.Value._name == args.CommandId._name)
+				{
+					if (!String.IsNullOrEmpty(text))
+					{
+						text = item.Key.Value + ' ' + text;
+					}
+					else
+					{
+						text = item.Key.Value;
+					}
+					break;
+				}
+			}
+
+			if ((text.StartsWith(Config.CommandSpecifier) || text.StartsWith(Config.CommandSilentSpecifier))
+				&& !string.IsNullOrWhiteSpace(text.Substring(1)))
 			{
 				try
 				{
 					args.Handled = true;
-					if (!Commands.HandleCommand(tsplr, args.Text))
+					if (!Commands.HandleCommand(tsplr, text))
 					{
 						// This is required in case anyone makes HandleCommand return false again
 						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
-						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", args.Text, tsplr.Name);
+						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", text, tsplr.Name);
 					}
 				}
 				catch (Exception ex)
@@ -1480,7 +1491,7 @@ namespace TShockAPI
 				}
 				else if (!TShock.Config.EnableChatAboveHeads)
 				{
-					var text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+					text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
 											 args.Text);
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
@@ -1491,18 +1502,22 @@ namespace TShockAPI
 					Player ply = Main.player[args.Who];
 					string name = ply.name;
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
-					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, ply.name, args.Who, 0, 0, 0, 0);
+					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(ply.name), args.Who, 0, 0, 0, 0);
 					ply.name = name;
-					var text = args.Text;
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
-					NetMessage.SendData((int)PacketTypes.ChatText, -1, args.Who, text, args.Who, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, name, args.Who, 0, 0, 0, 0);
+
+					Terraria.Net.NetPacket packet = Terraria.GameContent.NetModules.NetTextModule.SerializeServerMessage(
+						NetworkText.FromLiteral(text), new Color(tsplr.Group.R, tsplr.Group.G, tsplr.Group.B), (byte)args.Who
+					);
+					Terraria.Net.NetManager.Instance.Broadcast(packet);
+
+					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(name), args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
 						text);
 
-					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					//tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					Log.Info("Broadcast: {0}", msg);
@@ -1989,7 +2004,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, inventory[i].stack),
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, inventory[i].stack),
 								Color.Cyan);
 						}
 					}
@@ -2008,7 +2023,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.name, armor[index].stack),
+								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.Name, armor[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2027,7 +2042,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.name, dye[index].stack),
+								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.Name, dye[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2046,7 +2061,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.name, miscEquips[index].stack),
+								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, miscEquips[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2065,7 +2080,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.name, miscDyes[index].stack),
+								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.Name, miscDyes[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2085,7 +2100,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.name, piggy[index].stack),
+								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.Name, piggy[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2105,7 +2120,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.name, safe[index].stack),
+								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.Name, safe[index].stack),
 								Color.Cyan);
 						}
 					}
@@ -2124,7 +2139,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.name, trash.stack),
+								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.Name, trash.stack),
 								Color.Cyan);
 						}
 					}
@@ -2144,7 +2159,7 @@ namespace TShockAPI
 						{
 							check = true;
 							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.name, forge[index].stack),
+								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.Name, forge[index].stack),
 								Color.Cyan);
 						}
 					}

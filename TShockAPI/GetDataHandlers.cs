@@ -32,8 +32,10 @@ using Terraria;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
+using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -1494,7 +1496,7 @@ namespace TShockAPI
 					args.Player.TPlayer.hideVisual[i] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
-				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, args.Player.Name, args.Player.Index);
+				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
@@ -1678,7 +1680,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, "", Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
+			NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, NetworkText.Empty, Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
 			return false;
 		}
 
@@ -2149,7 +2151,7 @@ namespace TShockAPI
 						args.Player.SendErrorMessage("You do not have permission to place actuators.");
 						return true;
 					}
-					if (TShock.Itembans.ItemIsBanned(selectedItem.name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (TShock.Itembans.ItemIsBanned(selectedItem.Name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2160,7 +2162,7 @@ namespace TShockAPI
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						return true;
 					}
-					if (action == EditAction.PlaceTile && editData == TileID.Containers)
+					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
 						if (TShock.Utils.MaxChests())
 						{
@@ -2608,7 +2610,7 @@ namespace TShockAPI
 
 			if (control[5])
 			{
-				string itemName = args.TPlayer.inventory[item].name;
+				string itemName = args.TPlayer.inventory[item].Name;
 				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
 				{
 					control[5] = false;
@@ -2616,19 +2618,19 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
 				}
 
-				if (args.TPlayer.inventory[item].name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
+				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
 					args.Player.TPlayer.statManaMax += 20;
 					args.Player.PlayerData.maxMana += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
+				else if (args.TPlayer.inventory[item].Name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
 				{
 					args.TPlayer.statLife += 20;
 					args.TPlayer.statLifeMax += 20;
 					args.Player.PlayerData.maxHealth += 20;
 				}
-				else if (args.TPlayer.inventory[item].name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
+				else if (args.TPlayer.inventory[item].Name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
 				{
 					args.TPlayer.statLife += 5;
 					args.TPlayer.statLifeMax += 5;
@@ -2719,13 +2721,11 @@ namespace TShockAPI
 
 
 				args.TPlayer.Update(args.TPlayer.whoAmI);
-				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, "", args.Player.Index);
+				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
 				return true;
 			}
 
-
-
-			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, "", args.Player.Index);
+			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return true;
 		}
 
@@ -2981,7 +2981,7 @@ namespace TShockAPI
 			if (OnKillMe(id, direction, dmg, pvp))
 				return true;
 
-			if (playerDeathReason.GetDeathText().Length > 500)
+			if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 			{
 				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
 				return true;
@@ -3167,9 +3167,10 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (flag != 0
+			if (flag != 0 && flag != 4 // if no container or container2 placement
 				&& Main.tile[tileX, tileY].type != TileID.Containers
 				&& Main.tile[tileX, tileY].type != TileID.Dressers
+				&& Main.tile[tileX, tileY].type != TileID.Containers2
 				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
@@ -3330,7 +3331,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(item.name, args.Player))
+			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
 			{
 				return false;
 			}
@@ -3478,7 +3479,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (prefix > Item.maxPrefixes) //make sure the prefix is a legit value
+			if (prefix > PrefixID.Count) //make sure the prefix is a legit value
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
@@ -3510,7 +3511,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(item.name, args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
@@ -3518,7 +3519,7 @@ namespace TShockAPI
 			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
 			{
 				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.name);
+				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				return true;
 
@@ -3830,7 +3831,7 @@ namespace TShockAPI
 			}
 
 
-			NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, "", args.Player.Index);
+			NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return true;
 		}
 
@@ -3932,7 +3933,7 @@ namespace TShockAPI
 					boss = "a Goblin Invasion";
 					break;
 				default:
-					boss = String.Format("the {0}", npc.name);
+					boss = String.Format("the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.AnonymousBossInvasions)
@@ -4259,7 +4260,7 @@ namespace TShockAPI
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
 				Main.npc[npcID].active = true;
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcID);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
 
@@ -4276,13 +4277,13 @@ namespace TShockAPI
 
 			if (projectile == null || !projectile.active)
 			{
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcIndex);
 				return true;
 			}
 
 			if (projectile.type != ProjectileID.PortalGunGate)
 			{
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, "", npcIndex);
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcIndex);
 				return true;
 			}
 
@@ -4347,25 +4348,25 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
 			}
 
 			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, "", itemFrame.ID, 0, 1);
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
 			}
 
@@ -4419,7 +4420,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			
+
 			if (!args.Player.HasPermission(Permissions.startdd2))
 			{
 				args.Player.SendErrorMessage("You don't have permission to start the Old One's Army event.");
