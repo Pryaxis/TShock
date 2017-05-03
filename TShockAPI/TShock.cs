@@ -1502,23 +1502,31 @@ namespace TShockAPI
 					Player ply = Main.player[args.Who];
 					string name = ply.name;
 					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
+					//Update the player's name to format text nicely. This needs to be done because Terraria automatically formats messages against our will
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(ply.name), args.Who, 0, 0, 0, 0);
-					ply.name = name;
-					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 
+					//Give that poor player their name back :'c
+					ply.name = name;
+					PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+
+					//This netpacket is used to send chat text from the server to clients, in this case on behalf of a client
 					Terraria.Net.NetPacket packet = Terraria.GameContent.NetModules.NetTextModule.SerializeServerMessage(
 						NetworkText.FromLiteral(text), new Color(tsplr.Group.R, tsplr.Group.G, tsplr.Group.B), (byte)args.Who
 					);
-					Terraria.Net.NetManager.Instance.Broadcast(packet);
+					//Broadcast to everyone except the player who sent the message.
+					//This is so that we can send them the same nicely formatted message that everyone else gets
+					Terraria.Net.NetManager.Instance.Broadcast(packet, args.Who);
 
+					//Reset their name
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(name), args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
 						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
-						text);
+						text
+					);
 
-					//tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-
+					//Send the original sender their nicely formatted message, and do all the loggy things
+					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					Log.Info("Broadcast: {0}", msg);
 					args.Handled = true;
