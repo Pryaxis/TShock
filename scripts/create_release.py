@@ -36,7 +36,7 @@ sqlite_bin_name = "Mono.Data.Sqlite.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
-tshock_symbols = "TShockAPI.dll.mdb"
+tshock_symbols = "TShockAPI.pdb"
 bcrypt_bin_name = "BCrypt.Net.dll"
 geoip_db_name = "GeoIP.dat"
 
@@ -140,6 +140,7 @@ def upload_artifacts():
 def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'init'])
   subprocess.check_call(['/usr/bin/git', 'submodule', 'update'])
+  subprocess.check_call(['nuget', 'restore'])
   subprocess.check_call(['nuget', 'restore', 'TerrariaServerAPI/'])
 
 def run_bootstrapper():
