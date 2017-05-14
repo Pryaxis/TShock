@@ -7,8 +7,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
 * Updated Terraria Server API to 1.3.5.3 (@WhiteXZ, @hakusaro)
 * Updated TShock core components to 1.3.5.3 (@hakusaro)
-* Terraria Server API version tick: 2.2
+* Terraria Server API version tick: 2.1
 * Added OnNpcKilled hook to Server API: 2.2 (@tylerjwatson)
+* Added CreateCombatTextExtended to PacketTypes. This packet allows for the same functionality that packet 82 (CreateCombatText) used to have. (@WhiteXZ)
+* Updated ServerBroadcast hook to provide a NetworkText object. (@tylerjwatson)
+* Fixed levers and things not updating properly. (@deathcradle)
+* Deprecated PacketTypes.ChatText. Chat is now handled using the NetTextModule and packet 82. (@WhiteXZ, @Hakusaro)
+* Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@Hakusaro)
 
 ## TShock 4.3.23
 * Added evil type option during world creation (@mistzzt)
