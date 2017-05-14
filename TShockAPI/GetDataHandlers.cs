@@ -2151,7 +2151,7 @@ namespace TShockAPI
 						args.Player.SendErrorMessage("You do not have permission to place actuators.");
 						return true;
 					}
-					if (TShock.Itembans.ItemIsBanned(selectedItem.Name, args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItem.netID), args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -2611,7 +2611,7 @@ namespace TShockAPI
 			if (control[5])
 			{
 				string itemName = args.TPlayer.inventory[item].Name;
-				if (TShock.Itembans.ItemIsBanned(itemName, args.Player))
+				if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(args.TPlayer.inventory[item].netID), args.Player))
 				{
 					control[5] = false;
 					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
