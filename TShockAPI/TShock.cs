@@ -2216,6 +2216,7 @@ namespace TShockAPI
 			}
 
 			Netplay.spamCheck = false;
+			Main.AnnouncementBoxDisabled = !file.EnableAnnouncementBoxes;
 		}
 	}
 }
