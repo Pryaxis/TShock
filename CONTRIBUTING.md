@@ -18,7 +18,7 @@ Note: This includes the API by default. If you need only the API, you need to cd
 - Run ```msbuild TShock.sln``` in the root of the cloned folder on Windows in a 'Developer Command Prompt' OR
 - Run ```xbuild TShock.sln``` in the root of the cloned folder on Unix.
 
-Need help? Drop by Slack and we'll be happy to explain it with more words, step by step.
+Need help? Drop by Discord and we'll be happy to explain it with more words, step by step.
 
 ### TShock Additions
 
@@ -26,7 +26,7 @@ If something is better suited to be a plugin for TShock, rather than a TShock co
 
 _If you are confused, make a suggestion. We will determine scope and relevance for you._
 
-_If a person makes a suggestion in Slack, capture the suggestion as a Github issue. If a suggestion crops up on the forums, make a Github issue to capture it. If you want, direct the user to make a suggestion on Github, but set an alarm/timer/reminder so that if they don't know how to use Github or they don't have an account, an issue is still made and discussed. Make it clear that the issue is a surrogate issue for a suggestion from Slack/the forums too._
+_If a person makes a suggestion in Discord, capture the suggestion as a Github issue. If a suggestion crops up on the forums, make a Github issue to capture it. If you want, direct the user to make a suggestion on Github, but set an alarm/timer/reminder so that if they don't know how to use Github or they don't have an account, an issue is still made and discussed. Make it clear that the issue is a surrogate issue for a suggestion from Discord/the forums too._
 
 ### Pull Request Dev Guidelines
 
