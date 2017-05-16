@@ -349,6 +349,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
+				ServerApi.Hooks.WorldGrassSpread.Register(this, OnWorldGrassSpread);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
@@ -419,6 +420,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
 				ServerApi.Hooks.ItemForceIntoChest.Deregister(this, OnItemForceIntoChest);
+				ServerApi.Hooks.WorldGrassSpread.Deregister(this, OnWorldGrassSpread);
 				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -1208,24 +1210,50 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
-				|| TileID.Sets.Crimson[args.Type]))
+			if (!OnCreep(args.Type))
 			{
 				args.Handled = true;
+			}
+		}
+
+		/// <summary>OnWorldGrassSpread - Fired when grass is attempting to spread.</summary>
+		/// <param name="args">args - The GrassSpreadEventArgs object.</param>
+		private void OnWorldGrassSpread(GrassSpreadEventArgs args)
+		{
+			if (args.Handled)
 				return;
+
+			if(!OnCreep(args.Grass))
+			{
+				args.Handled = true;
+			}
+		}
+
+		/// <summary>
+		/// Checks if the tile type is allowed to creep
+		/// </summary>
+		/// <param name="tileType">Tile id</param>
+		/// <returns>True if allowed, otherwise false</returns>
+		private bool OnCreep(int tileType)
+		{
+			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.FleshWeeds
+				|| TileID.Sets.Crimson[tileType]))
+			{
+				return false;
 			}
 
-			if (!Config.AllowCorruptionCreep && (args.Type == TileID.Dirt || args.Type == TileID.CorruptThorns
-				|| TileID.Sets.Corrupt[args.Type]))
+			if (!Config.AllowCorruptionCreep && (tileType == TileID.Dirt || tileType == TileID.CorruptThorns
+				|| TileID.Sets.Corrupt[tileType]))
 			{
-				args.Handled = true;
-				return;
+				return false;
 			}
 
-			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[args.Type]))
+			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[tileType]))
 			{
-				args.Handled = true;
+				return false;
 			}
+
+			return true;
 		}
 
 		/// <summary>OnStatueSpawn - Fired when a statue spawns.</summary>
