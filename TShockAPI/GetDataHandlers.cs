@@ -1161,12 +1161,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// For use with a NPCStrike event
+		/// For use with a Teleport event
 		/// </summary>
 		public class TeleportEventArgs : HandledEventArgs
 		{
 			/// <summary>
-			/// ???
+			/// The player who teleported
+			/// </summary>
+			public TSPlayer Player { get; set; }
+			/// <summary>
+			/// ID of the target player
 			/// </summary>
 			public Int16 ID { get; set; }
 			/// <summary>
@@ -1187,17 +1191,18 @@ namespace TShockAPI
 			public float Y { get; set; }
 		}
 		/// <summary>
-		/// NPCStrike - Called when an NPC is attacked
+		/// Teleport - Called when player teleported to others
 		/// </summary>
 		public static HandlerList<TeleportEventArgs> Teleport;
 
-		private static bool OnTeleport(Int16 id, byte f, float x, float y)
+		private static bool OnTeleport(TSPlayer player, Int16 id, byte f, float x, float y)
 		{
 			if (Teleport == null)
 				return false;
 
 			var args = new TeleportEventArgs
 			{
+				Player = player,
 				ID = id,
 				Flag = f,
 				X = x,
@@ -4038,7 +4043,7 @@ namespace TShockAPI
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
 
-			if (OnTeleport(id, flag, x, y))
+			if (OnTeleport(args.Player, id, flag, x, y))
 				return true;
 
 			int type = 0;
