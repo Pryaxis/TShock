@@ -1253,6 +1253,24 @@ namespace TShockAPI
 			else
 				return Group.HasPermission(permission);
 		}
+
+		/// <inheritdoc cref="HasPermission(string)"/>
+		public bool HasPermission(ItemBan bannedItem)
+		{
+			return TShock.Itembans.ItemIsBanned(bannedItem.Name, this);
+		}
+
+		/// <inheritdoc cref="HasPermission(string)"/>
+		public bool HasPermission(ProjectileBan bannedProj)
+		{
+			return TShock.ProjectileBans.ProjectileIsBanned(bannedProj.ID, this);
+		}
+
+		/// <inheritdoc cref="HasPermission(string)"/>
+		public bool HasPermission(TileBan bannedTile)
+		{
+			return TShock.TileBans.TileIsBanned(bannedTile.ID, this);
+		}
 	}
 
 	public class TSRestPlayer : TSPlayer
