@@ -1253,6 +1253,38 @@ namespace TShockAPI
 			else
 				return Group.HasPermission(permission);
 		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned item.
+		/// Fires the <see cref="PlayerHooks.OnPlayerItembanPermission"/> hook which may be handled to override item ban permission checks.
+		/// </summary>
+		/// <param name="bannedItem">The <see cref="ItemBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned item.</returns>
+		public bool HasPermission(ItemBan bannedItem)
+		{
+			return TShock.Itembans.ItemIsBanned(bannedItem.Name, this);
+		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned projectile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerProjbanPermission"/> hook which may be handled to override projectile ban permission checks.
+		/// </summary>
+		/// <param name="bannedProj">The <see cref="ProjectileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned projectile.</returns>
+		public bool HasPermission(ProjectileBan bannedProj)
+		{
+			return TShock.ProjectileBans.ProjectileIsBanned(bannedProj.ID, this);
+		}
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned tile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerTilebanPermission"/> hook which may be handled to override tile ban permission checks.
+		/// </summary>
+		/// <param name="bannedTile">The <see cref="TileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned tile.</returns>
+		public bool HasPermission(TileBan bannedTile)
+		{
+			return TShock.TileBans.TileIsBanned(bannedTile.ID, this);
+		}
 	}
 
 	public class TSRestPlayer : TSPlayer
