@@ -1405,9 +1405,14 @@ namespace TShockAPI
 			}
 
 			var tsplr = Players[args.Who];
+			if (tsplr == null)
+			{
+				return;
+			}
+
 			Players[args.Who] = null;
 
-			if (tsplr != null && tsplr.ReceivedInfo)
+			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
@@ -1431,7 +1436,7 @@ namespace TShockAPI
 			}
 
 			// Fire the OnPlayerLogout hook too, if the player was logged in and they have a TSPlayer object.
-			if (tsplr != null && tsplr.IsLoggedIn)
+			if (tsplr.IsLoggedIn)
 			{
 				Hooks.PlayerHooks.OnPlayerLogout(tsplr);
 			}
