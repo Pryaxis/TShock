@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Terraria;
@@ -28,9 +29,6 @@ namespace TShockAPI
 {
 	internal class SaveManager
 	{
-		private readonly object _lock = new object();
-		private readonly List<Task> _saveTasks = new List<Task>();
-
 		private SaveManager() 
 		{
 		}
@@ -61,7 +59,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Saves the map data
 		/// </summary>
-		/// <param name="wait">wait for all pending saves to finish (default: true)</param>
+		/// <param name="wait">wait for the pending save to finish (default: true)</param>
 		/// <param name="resetTime">reset the last save time counter (default: false)</param>
 		/// <param name="direct">use the realsaveWorld method instead of saveWorld event (default: false)</param>
 		public void SaveWorld(bool wait = true, bool resetTime = false, bool direct = false)
@@ -87,16 +85,9 @@ namespace TShockAPI
 				}
 			});
 
-			Task[] tasks;
-			lock (_lock)
-			{
-				_saveTasks.Add(task);
-				tasks = _saveTasks.ToArray();
-			}
-
 			if (wait)
 			{
-				Task.WaitAll(tasks);
+				task.Wait();
 			}
 		}
 	}
