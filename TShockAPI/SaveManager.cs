@@ -19,30 +19,23 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.IO;
 using TerrariaApi.Server;
 
 namespace TShockAPI
 {
-	class SaveManager : IDisposable
+	internal class SaveManager
 	{
-		// Singleton
-		private static readonly SaveManager instance = new SaveManager();
+		private readonly object _lock = new object();
+		private readonly List<Task> _saveTasks = new List<Task>();
+
 		private SaveManager() 
 		{
-			_saveThread = new Thread(SaveWorker);
-			_saveThread.Name = "TShock SaveManager Worker";
-			_saveThread.Start();
 		}
-		public static SaveManager Instance { get { return instance; } }
 
-		// Producer Consumer
-		private EventWaitHandle _wh = new AutoResetEvent(false);
-		private Object _saveLock = new Object();
-		private Queue<SaveTask> _saveQueue = new Queue<SaveTask>();
-		private Thread _saveThread;
-		private int saveQueueCount { get { lock (_saveLock) return _saveQueue.Count; } }
+		public static SaveManager Instance { get; } = new SaveManager();
 
 		/// <summary>
 		/// SaveWorld event handler which notifies users that the server may lag
@@ -73,91 +66,37 @@ namespace TShockAPI
 		/// <param name="direct">use the realsaveWorld method instead of saveWorld event (default: false)</param>
 		public void SaveWorld(bool wait = true, bool resetTime = false, bool direct = false)
 		{
-			EnqueueTask(new SaveTask(resetTime, direct));
-			if (!wait)
-				return;
-
-			// Wait for all outstanding saves to complete
-			int count = saveQueueCount;
-			while (0 != count)
+			var task = Task.Run(() =>
 			{
-				Thread.Sleep(50);
-				count = saveQueueCount;
-			}
-		}
-
-		/// <summary>
-		/// Processes any outstanding saves, shutsdown the save thread and returns
-		/// </summary>
-		public void Dispose()
-		{
-			EnqueueTask(null);
-			_saveThread.Join();
-			_wh.Close();
-		}
-
-		private void EnqueueTask(SaveTask task)
-		{
-			lock (_saveLock)
-			{
-				_saveQueue.Enqueue(task);
-			}
-			_wh.Set();
-		}
-
-		private void SaveWorker()
-		{
-			while (true)
-			{
-				lock (_saveLock)
+				try
 				{
-					// NOTE: lock for the entire process so wait works in SaveWorld
-					if (_saveQueue.Count > 0)
+					if (direct)
 					{
-						SaveTask task = _saveQueue.Dequeue();
-						if (null == task)
-							return;
-						else
-						{
-							// Ensure that save handler errors don't bubble up and cause a recursive call
-							// These can be caused by an unexpected error such as a bad or out of date plugin
-							try
-							{
-								if (task.direct)
-								{
-									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.saveWorld(task.resetTime);
-								}
-								else
-									WorldFile.saveWorld(task.resetTime);
-									TShock.Utils.Broadcast("World saved.", Color.Yellow);
-									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
-							}
-							catch (Exception e)
-							{
-								TShock.Log.Error("World saved failed");
-								TShock.Log.Error(e.ToString());
-							}
-						}
+						OnSaveWorld(new WorldSaveEventArgs());
+						WorldFile.saveWorldDirect(resetTime);
 					}
+					else
+						WorldFile.saveWorld(resetTime);
+					TShock.Utils.Broadcast("World saved.", Color.Yellow);
+					TShock.Log.Info($"World saved at ({Main.worldPathName})");
 				}
-				_wh.WaitOne();
-			}
-		}
+				catch (Exception ex)
+				{
+					TShock.Log.Error("World saved failed");
+					TShock.Log.Error(ex.ToString());
+				}
+			});
 
-		class SaveTask
-		{
-			public bool resetTime { get; set; }
-			public bool direct { get; set; }
-			public SaveTask(bool resetTime, bool direct)
+			Task[] tasks;
+			lock (_lock)
 			{
-				this.resetTime = resetTime;
-				this.direct = direct;
+				_saveTasks.Add(task);
+				tasks = _saveTasks.ToArray();
 			}
-		
-			public override string ToString()
+
+			if (wait)
 			{
-				return string.Format("resetTime {0}, direct {1}", resetTime, direct);
+				Task.WaitAll(tasks);
 			}
 		}
 	}
