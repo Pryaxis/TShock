@@ -2300,7 +2300,7 @@ namespace TShockAPI
 				var npc = npcs[0];
 				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
 				{
-					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY, 50, 20);
+					TSPlayer.Server.SpawnNPC(npc.netID, npc.FullName, amount, args.Player.TileX, args.Player.TileY, 50, 20);
 					if (args.Silent)
 					{
 						args.Player.SendSuccessMessage("Spawned {0} {1} time(s).", npc.FullName, amount);

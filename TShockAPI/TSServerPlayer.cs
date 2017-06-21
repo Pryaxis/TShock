@@ -152,12 +152,7 @@ namespace TShockAPI
 				int spawnTileY;
 				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
 															 out spawnTileY);
-				int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
-
-				// TODO: If special slimes break look at the git blame for this spot
-				// It's probably because I removed something that didn't work
-				Main.npc[npcid].SetDefaults(type);
-				
+				NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type);
 			}
 		}
 
