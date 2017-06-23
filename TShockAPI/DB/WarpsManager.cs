@@ -61,7 +61,7 @@ namespace TShockAPI.DB
 		/// <param name="x">The X position.</param>
 		/// <param name="y">The Y position.</param>
 		/// <param name="name">The name.</param>
-		/// <returns>Whether the opration succeeded.</returns>
+		/// <returns>Whether the operation succeeded.</returns>
 		public bool Add(int x, int y, string name)
 		{
 			try
