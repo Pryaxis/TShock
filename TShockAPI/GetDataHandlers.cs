@@ -1909,7 +1909,10 @@ namespace TShockAPI
 			KillWire2,
 			PlaceWire3,
 			KillWire3,
-			SlopeTile
+			SlopeTile,
+			FrameTrack,
+			PlaceWire4,
+			KillWire4
 		}
 		public enum EditType
 		{
