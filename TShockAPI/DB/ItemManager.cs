@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using TShockAPI.Hooks;
 
 namespace TShockAPI.DB
 {
@@ -65,7 +66,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("INSERT INTO ItemBans (ItemName, AllowedGroups) VALUES (@0, @1);",
-				               TShock.Utils.GetItemByName(itemname)[0].name, "");
+				               itemname, "");
 				if (!ItemIsBanned(itemname, null))
 					ItemBans.Add(new ItemBan(itemname));
 			}
@@ -81,7 +82,7 @@ namespace TShockAPI.DB
 				return;
 			try
 			{
-				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", TShock.Utils.GetItemByName(itemname)[0].name);
+				database.Query("DELETE FROM ItemBans WHERE ItemName=@0;", itemname);
 				ItemBans.Remove(new ItemBan(itemname));
 			}
 			catch (Exception ex)
@@ -198,6 +199,9 @@ namespace TShockAPI.DB
 				return false;
 
 			if (ply.HasPermission(Permissions.usebanneditem))
+				return true;
+
+			if (PlayerHooks.OnPlayerItembanPermission(ply, this))
 				return true;
 
 			var cur = ply.Group;

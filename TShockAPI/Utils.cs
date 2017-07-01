@@ -17,21 +17,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
 using Terraria.Utilities;
 using TShockAPI.DB;
-using BCrypt.Net;
 using Microsoft.Xna.Framework;
+using Terraria.Localization;
+using TShockAPI.Localization;
 
 namespace TShockAPI
 {
@@ -344,16 +343,33 @@ namespace TShockAPI
 		{
 			var found = new List<Item>();
 			Item item = new Item();
-			string nameLower = name.ToLower();
-			for (int i = -48; i < Main.maxItemTypes; i++)
+			string nameLower = name.ToLowerInvariant();
+			var checkEnglish = Language.ActiveCulture != GameCulture.English;
+
+			for (int i = 1; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (String.IsNullOrWhiteSpace(item.name))
+				if (!String.IsNullOrWhiteSpace(item.Name))
+				{
+					if (item.Name.ToLowerInvariant() == nameLower)
+						return new List<Item> { item };
+					if (item.Name.ToLowerInvariant().StartsWith(nameLower))
+						found.Add(item.Clone());
+				}
+
+				if (!checkEnglish)
+				{
 					continue;
-				if (item.name.ToLower() == nameLower)
-					return new List<Item> { item };
-				if (item.name.ToLower().StartsWith(nameLower))
-					found.Add(item.Clone());
+				}
+
+				string englishName = EnglishLanguage.GetItemNameById(i).ToLowerInvariant();
+				if (!String.IsNullOrEmpty(englishName))
+				{
+					if (englishName == nameLower)
+						return new List<Item> { item };
+					if (englishName.StartsWith(nameLower))
+						found.Add(item.Clone());
+				}
 			}
 			return found;
 		}
@@ -403,7 +419,7 @@ namespace TShockAPI
 		public NPC GetNPCById(int id)
 		{
 			NPC npc = new NPC();
-			npc.netDefaults(id);
+			npc.SetDefaults(id);
 			return npc;
 		}
 
@@ -416,13 +432,17 @@ namespace TShockAPI
 		{
 			var found = new List<NPC>();
 			NPC npc = new NPC();
-			string nameLower = name.ToLower();
+			string nameLower = name.ToLowerInvariant();
 			for (int i = -17; i < Main.maxNPCTypes; i++)
 			{
-				npc.netDefaults(i);
-				if (npc.name.ToLower() == nameLower || npc.displayName.ToLower() == nameLower)
+				string englishName = EnglishLanguage.GetNpcNameById(i).ToLowerInvariant();
+
+				npc.SetDefaults(i);
+				if (npc.FullName.ToLowerInvariant() == nameLower || npc.TypeName.ToLowerInvariant() == nameLower
+					|| nameLower == englishName)
 					return new List<NPC> { npc };
-				if (npc.name.ToLower().StartsWith(nameLower) || npc.displayName.ToLower().StartsWith(nameLower))
+				if (npc.FullName.ToLowerInvariant().StartsWith(nameLower) || npc.TypeName.ToLowerInvariant().StartsWith(nameLower)
+					|| englishName?.StartsWith(nameLower) == true)
 					found.Add((NPC)npc.Clone());
 			}
 			return found;
@@ -435,7 +455,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffName[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
 		}
 
 		/// <summary>
@@ -445,7 +465,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Main.buffTip[id] : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
 		}
 
 		/// <summary>
@@ -459,14 +479,14 @@ namespace TShockAPI
 			string buffname;
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				buffname = Main.buffName[i];
+				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
 			for (int i = 1; i < Main.maxBuffTypes; i++)
 			{
-				buffname = Main.buffName[i];
+				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
 					found.Add(i);
 			}
@@ -480,7 +500,7 @@ namespace TShockAPI
 		/// <returns>Prefix name</returns>
 		public string GetPrefixById(int id)
 		{
-			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id] ?? "";
+			return id < FirstItemPrefix || id > LastItemPrefix ? "" : Lang.prefix[id].ToString() ?? "";
 		}
 
 		/// <summary>
@@ -492,15 +512,16 @@ namespace TShockAPI
 		{
 			Item item = new Item();
 			item.SetDefaults(0);
-			string lowerName = name.ToLower();
+			string lowerName = name.ToLowerInvariant();
 			var found = new List<int>();
 			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
 				item.prefix = (byte)i;
-				string prefixName = item.AffixName().Trim().ToLower();
-				if (prefixName == lowerName)
+				string prefixName = item.AffixName().Trim().ToLowerInvariant();
+				string englishName = EnglishLanguage.GetPrefixById(i).ToLowerInvariant();
+				if (prefixName == lowerName || englishName == lowerName)
 					return new List<int>() { i };
-				else if (prefixName.StartsWith(lowerName)) // Partial match
+				else if (prefixName.StartsWith(lowerName) || englishName?.StartsWith(lowerName) == true) // Partial match
 					found.Add(i);
 			}
 			return found;
@@ -848,8 +869,13 @@ namespace TShockAPI
 		/// <param name="matches">An enumerable list with the matches</param>
 		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
 		{
-			ply.SendErrorMessage("More than one match found: {0}", string.Join(",", matches));
-			ply.SendErrorMessage("Use \"my query\" for items with spaces");
+			ply.SendErrorMessage("More than one match found: ");
+
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+
+			lines.ForEach(ply.SendInfoMessage);
+
+			ply.SendErrorMessage("Use \"my query\" for items with spaces.");
 		}
 
 		/// <summary>
@@ -1173,7 +1199,7 @@ namespace TShockAPI
 		public void Dump(bool exit = true)
 		{
 			PrepareLangForDump();
-			Lang.setLang(true);
+			// Lang.setLang(true);
 			ConfigFile.DumpDescriptions();
 			Permissions.DumpDescriptions();
 			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
@@ -1209,9 +1235,9 @@ namespace TShockAPI
 			List<object[]> elements = new List<object[]>();
 			for (int i = 0; i < Main.maxBuffTypes; i++)
 			{
-				if (!String.IsNullOrEmpty(Main.buffName[i]))
+				if (!String.IsNullOrEmpty(Lang.GetBuffName(i)))
 				{
-					object[] element = new object[] { i, Main.buffName[i], Main.buffTip[i] };
+					object[] element = new object[] { i, Lang.GetBuffName(i), Lang.GetBuffDescription(i) };
 					elements.Add(element);
 				}
 			}
@@ -1241,19 +1267,22 @@ namespace TShockAPI
 			buffer.AppendLine("    \"h-0\": \"ID\",");
 			buffer.AppendLine("    \"h-1\": \"Name\",");
 			buffer.AppendLine("    \"h-2\": \"Tooltip\",");
-			buffer.AppendLine("    \"h-3\": \"Tooltip 2\",");
 
 			List<object[]> elements = new List<object[]>();
 			for (int i = start; i < end; i++)
 			{
 				Item item = new Item();
-				item.netDefaults(i);
-				if (!String.IsNullOrEmpty(item.name))
+				item.SetDefaults(i);
+
+				string tt = "";
+				for (int x = 0; x < item.ToolTip.Lines; x++) {
+					tt += item.ToolTip.GetLine(x) + "\n";
+				}
+				if (!String.IsNullOrEmpty(item.Name))
 				{
 					object[] element = new object[] { i,
-													  newLine.Replace(item.name, @" "),
-													  newLine.Replace(item.toolTip, @" "),
-													  newLine.Replace(item.toolTip2, @" ")
+													  newLine.Replace(item.Name, @" "),
+													  newLine.Replace(tt, @" "),
 													};
 					elements.Add(element);
 				}
@@ -1280,17 +1309,17 @@ namespace TShockAPI
 			StringBuilder buffer = new StringBuilder();
 			buffer.AppendLine("[block:parameters]").AppendLine("{").AppendLine("  \"data\": {");
 			buffer.AppendLine("    \"h-0\": \"ID\",");
-			buffer.AppendLine("    \"h-1\": \"Name\",");
-			buffer.AppendLine("    \"h-2\": \"Display Name\",");
+			buffer.AppendLine("    \"h-1\": \"Full Name\",");
+			buffer.AppendLine("    \"h-2\": \"Type Name\",");
 
 			List<object[]> elements = new List<object[]>();
 			for (int i = -65; i < Main.maxNPCTypes; i++)
 			{
 				NPC npc = new NPC();
-				npc.netDefaults(i);
-				if (!String.IsNullOrEmpty(npc.name))
+				npc.SetDefaults(i);
+				if (!String.IsNullOrEmpty(npc.FullName))
 				{
-					object[] element = new object[] { i, npc.name, npc.displayName };
+					object[] element = new object[] { i, npc.FullName, npc.TypeName };
 					elements.Add(element);
 				}
 			}
@@ -1324,9 +1353,9 @@ namespace TShockAPI
 			{
 				Projectile projectile = new Projectile();
 				projectile.SetDefaults(i);
-				if (!String.IsNullOrEmpty(projectile.name))
+				if (!String.IsNullOrEmpty(projectile.Name))
 				{
-					object[] element = new object[] { i, projectile.name };
+					object[] element = new object[] { i, projectile.Name };
 					elements.Add(element);
 				}
 			}
@@ -1355,9 +1384,9 @@ namespace TShockAPI
 			buffer.AppendLine("    \"h-1\": \"Name\",");
 
 			List<object[]> elements = new List<object[]>();
-			for (int i = 0; i < Item.maxPrefixes; i++)
+			for (int i = 0; i < PrefixID.Count; i++)
 			{
-				string prefix = Lang.prefix[i];
+				string prefix = Lang.prefix[i].ToString();
 
 				if (!String.IsNullOrEmpty(prefix))
 				{

@@ -29,6 +29,7 @@ using OTAPI.Tile;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.Net;
@@ -565,7 +566,7 @@ namespace TShockAPI
 				{
 					for (int i = 0; i < 50; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
 					{
-						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].name == "")
+						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].Name == "")
 						{
 							flag = true;
 							break;
@@ -745,7 +746,7 @@ namespace TShockAPI
 
 			SendTileSquare((int) (x/16), (int) (y/16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
-			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, "", 0, TPlayer.whoAmI, x, y, style);
+			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
 		}
 
@@ -755,7 +756,7 @@ namespace TShockAPI
 		/// <param name="health">Heal health amount.</param>
 		public void Heal(int health = 600)
 		{
-			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, "", this.TPlayer.whoAmI, health);
+			NetMessage.SendData((int)PacketTypes.PlayerHealOther, -1, -1, NetworkText.Empty, this.TPlayer.whoAmI, health);
 		}
 
 		/// <summary>
@@ -878,7 +879,7 @@ namespace TShockAPI
 				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
 					return false;
 
-			GiveItem(type,name,width,height,stack,prefix);
+			GiveItem(type, name, width, height, stack, prefix);
 			return true;
 		}
 
@@ -905,8 +906,8 @@ namespace TShockAPI
 			Main.item[itemid].prefix = (byte) prefix;
 			Main.item[itemid].noGrabDelay = 1;
 			Main.item[itemid].velocity = Main.player[this.Index].velocity;
-			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, "", itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, "", itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
+			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
 		}
 
 		/// <summary>
@@ -1066,8 +1067,8 @@ namespace TShockAPI
 		public virtual void SetTeam(int team)
 		{
 			Main.player[Index].team = team;
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, "", Index);
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, "", Index);
+			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
+			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.Empty, Index);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
@@ -1185,7 +1186,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, text, number, number2, number3, number4, number5);
+			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1204,7 +1205,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, text, ply, number2, number3, number4, number5);
+			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromFormattable(text), ply, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1251,6 +1252,38 @@ namespace TShockAPI
 				return tempGroup.HasPermission(permission);
 			else
 				return Group.HasPermission(permission);
+		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned item.
+		/// Fires the <see cref="PlayerHooks.OnPlayerItembanPermission"/> hook which may be handled to override item ban permission checks.
+		/// </summary>
+		/// <param name="bannedItem">The <see cref="ItemBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned item.</returns>
+		public bool HasPermission(ItemBan bannedItem)
+		{
+			return TShock.Itembans.ItemIsBanned(bannedItem.Name, this);
+		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned projectile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerProjbanPermission"/> hook which may be handled to override projectile ban permission checks.
+		/// </summary>
+		/// <param name="bannedProj">The <see cref="ProjectileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned projectile.</returns>
+		public bool HasPermission(ProjectileBan bannedProj)
+		{
+			return TShock.ProjectileBans.ProjectileIsBanned(bannedProj.ID, this);
+		}
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned tile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerTilebanPermission"/> hook which may be handled to override tile ban permission checks.
+		/// </summary>
+		/// <param name="bannedTile">The <see cref="TileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned tile.</returns>
+		public bool HasPermission(TileBan bannedTile)
+		{
+			return TShock.TileBans.TileIsBanned(bannedTile.ID, this);
 		}
 	}
 
