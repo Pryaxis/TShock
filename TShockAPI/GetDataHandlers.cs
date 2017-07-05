@@ -2350,6 +2350,15 @@ namespace TShockAPI
 				return true;
 			}
 
+			// This is neccessary to check in order to prevent special tiles such as 
+			// queen bee larva, paintings etc that use this packet from being placed 
+			// without selecting the right item.
+			if (type != args.TPlayer.inventory[args.TPlayer.selectedItem].createTile)
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				return true;
+			}
+
 			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
 			if (tileData == null)
 				return true;
