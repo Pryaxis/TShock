@@ -201,8 +201,9 @@ namespace TShockAPI.DB
 			if (ply.HasPermission(Permissions.usebanneditem))
 				return true;
 
-			if (PlayerHooks.OnPlayerItembanPermission(ply, this))
-				return true;
+			PermissionResult hookResult = PlayerHooks.OnPlayerItembanPermission(ply, this);
+			if (hookResult != PermissionResult.Inconclusive)
+				return hookResult == PermissionResult.Granted;
 
 			var cur = ply.Group;
 			var traversed = new List<Group>();

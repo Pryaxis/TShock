@@ -156,6 +156,11 @@ namespace TShockAPI.Hooks
 		public string Permission { get; set; }
 
 		/// <summary>
+		/// <see cref="PermissionResult"/> of the hook.
+		/// </summary>
+		public PermissionResult Result { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerPermissionEventArgs class.
 		/// </summary>
 		/// <param name="player">The player who fired the event.</param>
@@ -164,6 +169,7 @@ namespace TShockAPI.Hooks
 		{
 			Player = player;
 			Permission = permission;
+			Result = PermissionResult.Inconclusive;
 		}
 	}
 
@@ -183,14 +189,20 @@ namespace TShockAPI.Hooks
 		public ItemBan BannedItem { get; set; }
 
 		/// <summary>
+		/// <see cref="PermissionResult"/> of the hook.
+		/// </summary>
+		public PermissionResult Result { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerItembanPermissionEventArgs class.
 		/// </summary>
 		/// <param name="player">The player who fired the event.</param>
-		/// <param name="permission">The permission being checked.</param>
+		/// <param name="bannedItem">The banned item being checked.</param>
 		public PlayerItembanPermissionEventArgs(TSPlayer player, ItemBan bannedItem)
 		{
 			Player = player;
 			BannedItem = bannedItem;
+			Result = PermissionResult.Inconclusive;
 		}
 	}
 
@@ -210,6 +222,11 @@ namespace TShockAPI.Hooks
 		public ProjectileBan BannedProjectile { get; set; }
 
 		/// <summary>
+		/// <see cref="PermissionResult"/> of the hook.
+		/// </summary>
+		public PermissionResult Result { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerProjbanPermissionEventArgs class.
 		/// </summary>
 		/// <param name="player">The player who fired the event.</param>
@@ -218,6 +235,7 @@ namespace TShockAPI.Hooks
 		{
 			Player = player;
 			BannedProjectile = checkedProjectile;
+			Result = PermissionResult.Inconclusive;
 		}
 	}
 
@@ -237,6 +255,11 @@ namespace TShockAPI.Hooks
 		public TileBan BannedTile { get; set; }
 
 		/// <summary>
+		/// <see cref="PermissionResult"/> of the hook.
+		/// </summary>
+		public PermissionResult Result { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerTilebanPermissionEventArgs class.
 		/// </summary>
 		/// <param name="player">The player who fired the event.</param>
@@ -245,6 +268,7 @@ namespace TShockAPI.Hooks
 		{
 			Player = player;
 			BannedTile = checkedTile;
+			Result = PermissionResult.Inconclusive;
 		}
 	}
 
@@ -439,60 +463,91 @@ namespace TShockAPI.Hooks
 		/// Fires the <see cref="PlayerPermission"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
-		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerPermission(TSPlayer player, string permission)
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionResult.Inconclusive"/>.</returns>
+		public static PermissionResult OnPlayerPermission(TSPlayer player, string permission)
 		{
 			if (PlayerPermission == null)
-				return false;
+				return PermissionResult.Inconclusive;
 
 			var args = new PlayerPermissionEventArgs(player, permission);
 			PlayerPermission(args);
-			return args.Handled;
+
+			if (args.Handled)
+				return args.Result;
+			else
+				return PermissionResult.Inconclusive;
 		}
 
 		/// <summary>
 		/// Fires the <see cref="PlayerItembanPermission"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
-		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerItembanPermission(TSPlayer player, ItemBan bannedItem)
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionResult.Inconclusive"/>.</returns>
+		public static PermissionResult OnPlayerItembanPermission(TSPlayer player, ItemBan bannedItem)
 		{
 			if (PlayerItembanPermission == null)
-				return false;
+				return PermissionResult.Inconclusive;
 
 			var args = new PlayerItembanPermissionEventArgs(player, bannedItem);
 			PlayerItembanPermission(args);
-			return args.Handled;
+
+			if (args.Handled)
+				return args.Result;
+			else
+				return PermissionResult.Inconclusive;
 		}
 
 		/// <summary>
 		/// Fires the <see cref="PlayerProjbanPermission"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
-		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerProjbanPermission(TSPlayer player, ProjectileBan bannedProj)
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionResult.Inconclusive"/>.</returns>
+		public static PermissionResult OnPlayerProjbanPermission(TSPlayer player, ProjectileBan bannedProj)
 		{
 			if (PlayerProjbanPermission == null)
-				return false;
+				return PermissionResult.Inconclusive;
 
 			var args = new PlayerProjbanPermissionEventArgs(player, bannedProj);
 			PlayerProjbanPermission(args);
-			return args.Handled;
+
+			if (args.Handled)
+				return args.Result;
+			else
+				return PermissionResult.Inconclusive;
 		}
 
 		/// <summary>
 		/// Fires the <see cref="PlayerTilebanPermission"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
-		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerTilebanPermission(TSPlayer player, TileBan bannedTile)
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionResult.Inconclusive"/>.</returns>
+		public static PermissionResult OnPlayerTilebanPermission(TSPlayer player, TileBan bannedTile)
 		{
 			if (PlayerTilebanPermission == null)
-				return false;
+				return PermissionResult.Inconclusive;
 
 			var args = new PlayerTilebanPermissionEventArgs(player, bannedTile);
 			PlayerTilebanPermission(args);
-			return args.Handled;
+
+			if (args.Handled)
+				return args.Result;
+			else
+				return PermissionResult.Inconclusive;
 		}
+
 	}
+
+	/// <summary>
+	/// Defines the possible outcomes of <see cref="PlayerHooks.PlayerPermission"/> handlers.
+	/// </summary>
+	public enum PermissionResult
+	{
+		/// <summary>Hook doesn't return a result on the permission check.</summary>
+		Inconclusive,
+		/// <summary>Permission is explicitly denied by a hook.</summary>
+		Denied,
+		/// <summary>Permission is explicitly granted by a hook.</summary>
+		Granted
+	}
+
 }

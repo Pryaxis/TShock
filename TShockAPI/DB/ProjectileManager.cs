@@ -206,8 +206,9 @@ namespace TShockAPI.DB
 			if (ply.HasPermission(Permissions.canusebannedprojectiles))
 				return true;
 
-			if (PlayerHooks.OnPlayerProjbanPermission(ply, this))
-				return true;
+			PermissionResult hookResult = PlayerHooks.OnPlayerProjbanPermission(ply, this);
+			if (hookResult != PermissionResult.Inconclusive)
+				return hookResult == PermissionResult.Granted;
 
 			var cur = ply.Group;
 			var traversed = new List<Group>();
