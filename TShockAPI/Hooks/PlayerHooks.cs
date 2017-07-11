@@ -143,7 +143,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PlayerPermission"/> event.
 	/// </summary>
-	public class PlayerPermissionEventArgs : HandledEventArgs
+	public class PlayerPermissionEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -176,7 +176,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PlayerItembanPermission"/> event.
 	/// </summary>
-	public class PlayerItembanPermissionEventArgs : HandledEventArgs
+	public class PlayerItembanPermissionEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -209,7 +209,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PlayerProjbanPermission"/> event.
 	/// </summary>
-	public class PlayerProjbanPermissionEventArgs : HandledEventArgs
+	public class PlayerProjbanPermissionEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -242,7 +242,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PlayerTilebanPermission"/> event.
 	/// </summary>
-	public class PlayerTilebanPermissionEventArgs : HandledEventArgs
+	public class PlayerTilebanPermissionEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -472,10 +472,7 @@ namespace TShockAPI.Hooks
 			var args = new PlayerPermissionEventArgs(player, permission);
 			PlayerPermission(args);
 
-			if (args.Handled)
-				return args.Result;
-			else
-				return PermissionResult.Inconclusive;
+			return args.Result;
 		}
 
 		/// <summary>
@@ -491,10 +488,7 @@ namespace TShockAPI.Hooks
 			var args = new PlayerItembanPermissionEventArgs(player, bannedItem);
 			PlayerItembanPermission(args);
 
-			if (args.Handled)
-				return args.Result;
-			else
-				return PermissionResult.Inconclusive;
+			return args.Result;
 		}
 
 		/// <summary>
@@ -510,10 +504,7 @@ namespace TShockAPI.Hooks
 			var args = new PlayerProjbanPermissionEventArgs(player, bannedProj);
 			PlayerProjbanPermission(args);
 
-			if (args.Handled)
-				return args.Result;
-			else
-				return PermissionResult.Inconclusive;
+			return args.Result;
 		}
 
 		/// <summary>
@@ -529,10 +520,7 @@ namespace TShockAPI.Hooks
 			var args = new PlayerTilebanPermissionEventArgs(player, bannedTile);
 			PlayerTilebanPermission(args);
 
-			if (args.Handled)
-				return args.Result;
-			else
-				return PermissionResult.Inconclusive;
+			return args.Result;
 		}
 
 	}
