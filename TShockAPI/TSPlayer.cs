@@ -1265,10 +1265,10 @@ namespace TShockAPI
 		/// <returns>True if the player has that permission.</returns>
 		public bool HasPermission(string permission)
 		{
-			PermissionResult hookResult = PlayerHooks.OnPlayerPermission(this, permission);
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerPermission(this, permission);
 
-			if (hookResult != PermissionResult.Inconclusive)
-				return hookResult == PermissionResult.Granted;
+			if (hookResult != PermissionHookResult.Unhandled)
+				return hookResult == PermissionHookResult.Granted;
 
 			if (tempGroup != null)
 				return tempGroup.HasPermission(permission);
