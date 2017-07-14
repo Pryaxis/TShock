@@ -595,7 +595,7 @@ namespace TShockAPI.DB
 
 		/// <summary>Indicates whether the current <see cref="User"/> is equal to another object.</summary>
 		/// <returns>true if the <see cref="User"/> is equal to the <paramref name="obj" /> parameter; otherwise, false.</returns>
-		/// <param name="obj">An <see cref="User"/> to compare with this <see cref="User"/>.</param>
+		/// <param name="obj">An <see cref="object"/> to compare with this <see cref="User"/>.</param>
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
