@@ -375,7 +375,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-					&& (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
+				       && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -413,10 +413,10 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-				CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
-						? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
-						: "")
-					: "";
+						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
+								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+								: "")
+							: "";
 				else
 					return CacheIP;
 			}
@@ -522,7 +522,7 @@ namespace TShockAPI
 		/// </summary>
 		public float X
 		{
-			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX*16; }
+			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16; }
 		}
 
 		/// <summary>
@@ -530,7 +530,7 @@ namespace TShockAPI
 		/// </summary>
 		public float Y
 		{
-			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY*16; }
+			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY * 16; }
 		}
 
 		/// <summary>
@@ -538,7 +538,7 @@ namespace TShockAPI
 		/// </summary>
 		public int TileX
 		{
-			get { return (int) (X/16); }
+			get { return (int)(X / 16); }
 		}
 
 		/// <summary>
@@ -546,7 +546,7 @@ namespace TShockAPI
 		/// </summary>
 		public int TileY
 		{
-			get { return (int) (Y/16); }
+			get { return (int)(Y / 16); }
 		}
 
 		/// <summary>
@@ -688,7 +688,7 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, ITile>();
 			TilesCreated = new Dictionary<Vector2, ITile>();
 			Index = -1;
-			FakePlayer = new Player {name = playerName, whoAmI = -1};
+			FakePlayer = new Player { name = playerName, whoAmI = -1 };
 			Group = Group.DefaultGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
@@ -744,7 +744,7 @@ namespace TShockAPI
 				y = 992;
 			}
 
-			SendTileSquare((int) (x/16), (int) (y/16), 15);
+			SendTileSquare((int)(x / 16), (int)(y / 16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
@@ -784,11 +784,11 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new SpawnMsg
-							{
-								PlayerIndex = (byte) Index,
-								TileX = (short)tilex,
-								TileY = (short)tiley
-							};
+				{
+					PlayerIndex = (byte)Index,
+					TileX = (short)tilex,
+					TileY = (short)tiley
+				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -804,10 +804,10 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg
-							{
-								Index = (short) index,
-								Owner = (byte) owner
-							};
+				{
+					Index = (short)index,
+					Owner = (byte)owner
+				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -817,7 +817,7 @@ namespace TShockAPI
 		{
 			try
 			{
-				int num = (size - 1)/2;
+				int num = (size - 1) / 2;
 				int m_x = 0;
 				int m_y = 0;
 
@@ -866,18 +866,37 @@ namespace TShockAPI
 		/// <summary>
 		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
 		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="name"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="stack"></param>
-		/// <param name="prefix"></param>
+		/// <param name="type">The item ID.</param>
+		/// <param name="name">The item name.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
+		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
+		{
+			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
+			    (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+				return false;
+
+			GiveItem(type, stack, prefix);
+			return true;
+		}
+
+		/// <summary>
+		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
+		/// </summary>
+		/// <param name="type">The item ID.</param>
+		/// <param name="name">The item name.</param>
+		/// <param name="width">The width of the receiver.</param>
+		/// <param name="height">The height of the receiver.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
+		/// <returns>True or false, depending if the item passed the check or not.</returns>
+		[Obsolete("Use the GiveItemCheck overload with fewer parameters.")]
 		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
 			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
-				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-					return false;
+			    (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+				return false;
 
 			GiveItem(type, name, width, height, stack, prefix);
 			return true;
@@ -886,28 +905,29 @@ namespace TShockAPI
 		/// <summary>
 		/// Gives an item to the player.
 		/// </summary>
-		/// <param name="type">The item's netID.</param>
-		/// <param name="name">The tiem's name.</param>
-		/// <param name="width">The item's width.</param>
-		/// <param name="height">The item's height.</param>
-		/// <param name="stack">The item's stack.</param>
-		/// <param name="prefix">The item's prefix.</param>
+		/// <param name="type">The item ID.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
+		public virtual void GiveItem(int type, int stack, int prefix = 0)
+		{
+			int itemIndex = Item.NewItem((int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
+			SendData(PacketTypes.ItemDrop, "", itemIndex);
+		}
+
+		/// <summary>
+		/// Gives an item to the player.
+		/// </summary>
+		/// <param name="type">The item ID.</param>
+		/// <param name="name">The item name. This parameter is unused.</param>
+		/// <param name="width">The width of the receiver.</param>
+		/// <param name="height">The height of the receiver.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
+		[Obsolete("Use the GiveItem overload with fewer parameters.")]
 		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
 		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
-
-			// This is for special pickaxe/hammers/swords etc
-			Main.item[itemid].netDefaults(type);
-			// The set default overrides the wet and stack set by NewItem
-			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
-															 Main.item[itemid].height);
-			Main.item[itemid].stack = stack;
-			Main.item[itemid].owner = Index;
-			Main.item[itemid].prefix = (byte) prefix;
-			Main.item[itemid].noGrabDelay = 1;
-			Main.item[itemid].velocity = Main.player[this.Index].velocity;
-			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
+			int itemIndex = Item.NewItem((int)X, (int)Y, width, height, type, stack, true, prefix, true);
+			SendData(PacketTypes.ItemDrop, "", itemIndex);
 		}
 
 		/// <summary>
@@ -1144,7 +1164,7 @@ namespace TShockAPI
 		/// <param name="time">The</param>
 		public virtual void Whoopie(object time)
 		{
-			var time2 = (int) time;
+			var time2 = (int)time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
 			SendInfoMessage("You are now being annoyed.");
@@ -1186,7 +1206,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
+			NetMessage.SendData((int)msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1205,7 +1225,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromFormattable(text), ply, number2, number3, number4, number5);
+			NetMessage.SendData((int)msgType, Index, -1, NetworkText.FromFormattable(text), ply, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1225,9 +1245,9 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="name">The string representing the command i.e "yes" == /yes</param>
 		/// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
-		public void AddResponse( string name, Action<object> callback)
+		public void AddResponse(string name, Action<object> callback)
 		{
-			if( AwaitingResponse.ContainsKey(name))
+			if (AwaitingResponse.ContainsKey(name))
 			{
 				AwaitingResponse.Remove(name);
 			}
@@ -1291,7 +1311,7 @@ namespace TShockAPI
 	{
 		internal List<string> CommandOutput = new List<string>();
 
-		public TSRestPlayer(string playerName, Group playerGroup): base(playerName)
+		public TSRestPlayer(string playerName, Group playerGroup) : base(playerName)
 		{
 			Group = playerGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
