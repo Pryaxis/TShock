@@ -2236,9 +2236,9 @@ namespace TShockAPI
 				Netplay.ListenPort = file.ServerPort;
 			}
 
-			if (file.MaxSlots > 235)
-				file.MaxSlots = 235;
-			Main.maxNetPlayers = file.MaxSlots + 20;
+			if (file.MaxSlots > Main.maxPlayers - file.ReservedSlots)
+				file.MaxSlots = Main.maxPlayers - file.ReservedSlots;
+			Main.maxNetPlayers = file.MaxSlots + file.ReservedSlots;
 
 			Netplay.ServerPassword = "";
 			if (!string.IsNullOrEmpty(_cliPassword))

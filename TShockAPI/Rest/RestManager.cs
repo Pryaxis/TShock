@@ -520,9 +520,10 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, "", group, "", "", "");
+			User user = new User(username, "", "", group, "", "", "");
 			try
 			{
+				user.CreateBCryptHash(password);
 				TShock.Users.AddUser(user);
 			}
 			catch (Exception e)
