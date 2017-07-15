@@ -28,6 +28,7 @@ using HttpServer;
 using Rests;
 using Terraria;
 using TShockAPI.DB;
+using Newtonsoft.Json;
 
 namespace TShockAPI
 {
@@ -196,6 +197,7 @@ namespace TShockAPI
 			}
 
 			Rest.RegisterRedirect("/status", "/v2/server/status");
+			Rest.RegisterRedirect("/token/create", "/v2/token/create");
 
 			//server commands
 			Rest.RegisterRedirect("/server/motd", "/v3/server/motd");
@@ -227,7 +229,7 @@ namespace TShockAPI
 			//player commands
 			Rest.RegisterRedirect("/lists/players", "/lists/players", "/v2/players/list");
 			Rest.RegisterRedirect("/players/list", "/v2/players/list");
-			Rest.RegisterRedirect("/players/read", "/v3/players/read");
+			Rest.RegisterRedirect("/players/read", "/v3/players/read", "v4/players/read");
 			Rest.RegisterRedirect("/players/kick", "/v2/players/kick");
 			Rest.RegisterRedirect("/players/ban", "/v2/players/ban");
 			Rest.RegisterRedirect("/players/kill", "/v2/players/kill");
@@ -277,6 +279,7 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/lists/players", PlayerList));
 			Rest.Register(new SecureRestCommand("/v2/players/list", PlayerListV2));
 			Rest.Register(new SecureRestCommand("/v3/players/read", PlayerReadV3, RestPermissions.restuserinfo));
+			Rest.Register(new SecureRestCommand("/v4/players/read", PlayerReadV4, RestPermissions.restuserinfo));
 			Rest.Register(new SecureRestCommand("/v2/players/kick", PlayerKickV2, RestPermissions.restkick));
 			Rest.Register(new SecureRestCommand("/v2/players/ban", PlayerBanV2, RestPermissions.restban, RestPermissions.restmanagebans));
 			Rest.Register(new SecureRestCommand("/v2/players/kill", PlayerKill, RestPermissions.restkill));
@@ -517,9 +520,10 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, password, "", group, "", "", "");
+			User user = new User(username, "", "", group, "", "", "");
 			try
 			{
+				user.CreateBCryptHash(password);
 				TShock.Users.AddUser(user);
 			}
 			catch (Exception e)
@@ -940,9 +944,48 @@ namespace TShockAPI
 				{"registered", player.User?.Registered},
 				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
-				{"inventory", string.Join(", ", inventory.Select(p => (p.name + ":" + p.stack)))},
+				{"inventory", string.Join(", ", inventory.Select(p => (p.Name + ":" + p.stack)))},
 				{"armor", string.Join(", ", equipment.Select(p => (p.netID + ":" + p.prefix)))},
-				{"dyes", string.Join(", ", dyes.Select(p => (p.name)))},
+				{"dyes", string.Join(", ", dyes.Select(p => (p.Name)))},
+				{"buffs", string.Join(", ", player.TPlayer.buffType)}
+			};
+		}
+
+		[Description("Get information for a user.")]
+		[Route("/v4/players/read")]
+		[Permission(RestPermissions.restuserinfo)]
+		[Noun("player", true, "The player to lookup", typeof(String))]
+		[Token]
+		private object PlayerReadV4(RestRequestArgs args)
+		{
+			var ret = PlayerFind(args.Parameters);
+			if (ret is RestObject)
+			{
+				return ret;
+			}
+
+			TSPlayer player = (TSPlayer)ret;
+
+			object items = new
+			{
+				inventory = player.TPlayer.inventory.Where(i => i.active).Select(item => (NetItem)item),
+				equipment = player.TPlayer.armor.Where(i => i.active).Select(item => (NetItem)item),
+				dyes = player.TPlayer.dye.Where(i => i.active).Select(item => (NetItem)item),
+				piggy = player.TPlayer.bank.item.Where(i => i.active).Select(item => (NetItem)item),
+				safe = player.TPlayer.bank2.item.Where(i => i.active).Select(item => (NetItem)item),
+				forge = player.TPlayer.bank3.item.Where(i => i.active).Select(item => (NetItem)item)
+			};
+
+			return new RestObject
+			{
+				{"nickname", player.Name},
+				{"username", player.User?.Name},
+				{"ip", player.IP},
+				{"group", player.Group.Name},
+				{"registered", player.User?.Registered},
+				{"muted", player.mute },
+				{"position", player.TileX + "," + player.TileY},
+				{"items", items},
 				{"buffs", string.Join(", ", player.TPlayer.buffType)}
 			};
 		}

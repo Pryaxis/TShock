@@ -36,7 +36,7 @@ sqlite_bin_name = "Mono.Data.Sqlite.dll"
 json_bin_name = "Newtonsoft.Json.dll"
 http_bin_name = "HttpServer.dll"
 tshock_bin_name = "TShockAPI.dll"
-tshock_symbols = "TShockAPI.dll.mdb"
+tshock_symbols = "TShockAPI.pdb"
 bcrypt_bin_name = "BCrypt.Net.dll"
 geoip_db_name = "GeoIP.dat"
 
@@ -140,28 +140,17 @@ def upload_artifacts():
 def update_terraria_source():
   subprocess.check_call(['/usr/bin/git', 'submodule', 'init'])
   subprocess.check_call(['/usr/bin/git', 'submodule', 'update'])
+  subprocess.check_call(['nuget', 'restore'])
   subprocess.check_call(['nuget', 'restore', 'TerrariaServerAPI/'])
 
 def run_bootstrapper():
   for build_config in ['Debug','Release'] :
-    mod_bootstrapper_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Bootstrapper/TShock.Modifications.Bootstrapper.csproj', '/p:Configuration=' + build_config])
-    mod_clientuuid_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.ClientUUID/TShock.Modifications.ClientUUID.csproj', '/p:Configuration=' + build_config])
-    mod_explosives_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.Explosives/TShock.Modifications.Explosives.csproj', '/p:Configuration=' + build_config])
-    mod_ssc_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.Modifications.SSC/TShock.Modifications.SSC.csproj', '/p:Configuration=' + build_config])
+    mintaka = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.4.OTAPI.sln', '/p:Configuration=' + build_config])
     
-    mod_bootstrapper_proc.wait()
-    mod_clientuuid_proc.wait()
-    mod_explosives_proc.wait()
-    mod_ssc_proc.wait()
+    mintaka.wait()
     
-    if (mod_bootstrapper_proc.returncode != 0):
-      raise CalledProcessError(mod_bootstrapper_proc.returncode)
-    if (mod_clientuuid_proc.returncode != 0):
-      raise CalledProcessError(mod_clientuuid_proc.returncode)
-    if (mod_explosives_proc.returncode != 0):
-      raise CalledProcessError(mod_explosives_proc.returncode)
-    if (mod_ssc_proc.returncode != 0):
-      raise CalledProcessError(mod_ssc_proc.returncode)
+    if (mintaka.returncode != 0):
+      raise CalledProcessError(mintaka.returncode)
 
     # run the bootstrapper to generate the new OTAPI.dll
     os.chdir('./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/' + build_config)

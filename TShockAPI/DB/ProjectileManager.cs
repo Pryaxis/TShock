@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using TShockAPI.Hooks;
 
 namespace TShockAPI.DB
 {
@@ -203,6 +204,9 @@ namespace TShockAPI.DB
 				return false;
 
 			if (ply.HasPermission(Permissions.canusebannedprojectiles))
+				return true;
+
+			if (PlayerHooks.OnPlayerProjbanPermission(ply, this))
 				return true;
 
 			var cur = ply.Group;

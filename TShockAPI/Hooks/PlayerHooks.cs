@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using TShockAPI.DB;
 
 namespace TShockAPI.Hooks
 {
@@ -167,6 +168,87 @@ namespace TShockAPI.Hooks
 	}
 
 	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerItembanPermission"/> event.
+	/// </summary>
+	public class PlayerItembanPermissionEventArgs : HandledEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned item being checked.
+		/// </summary>
+		public ItemBan BannedItem { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerItembanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="permission">The permission being checked.</param>
+		public PlayerItembanPermissionEventArgs(TSPlayer player, ItemBan bannedItem)
+		{
+			Player = player;
+			BannedItem = bannedItem;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerProjbanPermission"/> event.
+	/// </summary>
+	public class PlayerProjbanPermissionEventArgs : HandledEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned projectile being checked.
+		/// </summary>
+		public ProjectileBan BannedProjectile { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerProjbanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="checkedProjectile">The banned projectile being checked.</param>
+		public PlayerProjbanPermissionEventArgs(TSPlayer player, ProjectileBan checkedProjectile)
+		{
+			Player = player;
+			BannedProjectile = checkedProjectile;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerTilebanPermission"/> event.
+	/// </summary>
+	public class PlayerTilebanPermissionEventArgs : HandledEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned tile being checked.
+		/// </summary>
+		public TileBan BannedTile { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerTilebanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="checkedTile">The banned tile being checked.</param>
+		public PlayerTilebanPermissionEventArgs(TSPlayer player, TileBan checkedTile)
+		{
+			Player = player;
+			BannedTile = checkedTile;
+		}
+	}
+
+	/// <summary>
 	/// A collection of events fired by players that can be hooked to.
 	/// </summary>
 	public static class PlayerHooks
@@ -231,6 +313,37 @@ namespace TShockAPI.Hooks
 		/// Fired by players every time a permission check involving them occurs.
 		/// </summary>
 		public static event PlayerPermissionD PlayerPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerItembanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerItembanPermissionD(PlayerItembanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned items involving them occurs.
+		/// </summary>
+		public static event PlayerItembanPermissionD PlayerItembanPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerProjbanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerProjbanPermissionD(PlayerProjbanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned projectiles involving them occurs.
+		/// </summary>
+		public static event PlayerProjbanPermissionD PlayerProjbanPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerTilebanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerTilebanPermissionD(PlayerTilebanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned tiles involving them occurs.
+		/// </summary>
+		public static event PlayerTilebanPermissionD PlayerTilebanPermission;
+
 
 		/// <summary>
 		/// Fires the <see cref="PlayerPostLogin"/> event.
@@ -334,6 +447,51 @@ namespace TShockAPI.Hooks
 
 			var args = new PlayerPermissionEventArgs(player, permission);
 			PlayerPermission(args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerItembanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>True if the event has been handled.</returns>
+		public static bool OnPlayerItembanPermission(TSPlayer player, ItemBan bannedItem)
+		{
+			if (PlayerItembanPermission == null)
+				return false;
+
+			var args = new PlayerItembanPermissionEventArgs(player, bannedItem);
+			PlayerItembanPermission(args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerProjbanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>True if the event has been handled.</returns>
+		public static bool OnPlayerProjbanPermission(TSPlayer player, ProjectileBan bannedProj)
+		{
+			if (PlayerProjbanPermission == null)
+				return false;
+
+			var args = new PlayerProjbanPermissionEventArgs(player, bannedProj);
+			PlayerProjbanPermission(args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerTilebanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>True if the event has been handled.</returns>
+		public static bool OnPlayerTilebanPermission(TSPlayer player, TileBan bannedTile)
+		{
+			if (PlayerTilebanPermission == null)
+				return false;
+
+			var args = new PlayerTilebanPermissionEventArgs(player, bannedTile);
+			PlayerTilebanPermission(args);
 			return args.Handled;
 		}
 	}
