@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+* API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
 * Updated Terraria Server API to 1.3.5.3 (@WhiteXZ, @hakusaro)
 * Updated TShock core components to 1.3.5.3 (@hakusaro)

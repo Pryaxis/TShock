@@ -206,8 +206,9 @@ namespace TShockAPI.DB
 			if (ply.HasPermission(Permissions.canusebannedtiles))
 				return true;
 
-			if (PlayerHooks.OnPlayerTilebanPermission(ply, this))
-				return true;
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerTilebanPermission(ply, this);
+			if (hookResult != PermissionHookResult.Unhandled)
+				return hookResult == PermissionHookResult.Granted;
 
 			var cur = ply.Group;
 			var traversed = new List<Group>();
