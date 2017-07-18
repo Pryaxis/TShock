@@ -10,6 +10,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Validated tile placement on PlaceObject; clients can no longer place frames, paintings etc with dirt blocks (@bartico6, @ProfessorXZ)
 
 ## TShock 4.3.24
+* API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
 * Updated Terraria Server API to 1.3.5.3 (@WhiteXZ, @hakusaro)
 * Updated TShock core components to 1.3.5.3 (@hakusaro)

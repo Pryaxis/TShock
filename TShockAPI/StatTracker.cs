@@ -22,10 +22,12 @@ using System.Threading;
 using System.Web;
 using TerrariaApi.Server;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TShockAPI.Extensions;
+
 
 namespace TShockAPI
 {
@@ -52,10 +54,11 @@ namespace TShockAPI
 		/// </summary>
 		public bool OptOut = false;
 
+		private PluginItem[] plugins;
+
 		private long totalMem = 0;
 		private string serverId = "";
 		private HttpClient _client;
-
 		private const string TrackerUrl = "http://stats.tshock.co/submit/{0}";
 
 		/// <summary>
@@ -103,11 +106,9 @@ namespace TShockAPI
 		private async Task SendUpdateAsync()
 		{
 			JsonData data = PrepareJsonData();
-
 			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(data);
 			var encoded = HttpUtility.UrlEncode(serialized);
-			var uri = String.Format(TrackerUrl, encoded);
-
+			var uri = string.Format(TrackerUrl, encoded);
 			try
 			{
 				HttpResponseMessage msg = await _client.GetAsync(uri);
@@ -139,49 +140,81 @@ namespace TShockAPI
 
 		private JsonData PrepareJsonData()
 		{
-			if (ServerApi.RunningMono)
-			{
-				if (totalMem == 0)
-				{
-					//Only do this if we haven't already cached the total physicaly memory
-					var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
-					totalMem = (pc.RawValue / 1024 / 1024 / 1024);
-				}
-
-				return new JsonData
-				{
-					port = Terraria.Netplay.ListenPort,
-					currentPlayers = TShock.Utils.ActivePlayers(),
-					maxPlayers = TShock.Config.MaxSlots,
-					systemRam = totalMem,
-					version = TShock.VersionNum.ToString(),
-					terrariaVersion = Terraria.Main.versionNumber2,
-					providerId = ProviderToken,
-					serverId = serverId,
-					mono = true
-				};
-			}
-
-			if (totalMem == 0)
-			{
-				//Again, only call this if it hasn't previously been cached
-				GetPhysicallyInstalledSystemMemory(out totalMem);
-				totalMem = (totalMem / 1024 / 1024); // Super hardcore maths to convert to Gb from Kb
-			}
-
-			return new JsonData
+			return new JsonData()
 			{
 				port = Terraria.Netplay.ListenPort,
 				currentPlayers = TShock.Utils.ActivePlayers(),
 				maxPlayers = TShock.Config.MaxSlots,
-				systemRam = totalMem,
+				systemRam = GetTotalSystemRam(ServerApi.RunningMono),
 				version = TShock.VersionNum.ToString(),
 				terrariaVersion = Terraria.Main.versionNumber2,
 				providerId = ProviderToken,
 				serverId = serverId,
-				mono = false
+				mono = ServerApi.RunningMono,
+				ignorePluginVersion = ServerApi.IgnoreVersion,
+				loadedPlugins = GetLoadedPlugins()
 			};
 		}
+
+		private PluginItem[] GetLoadedPlugins()
+		{
+			if (plugins != null)
+			{
+				return plugins;//Return early
+			}
+
+			plugins = new PluginItem[ServerApi.Plugins.Count];//Initialize with enough room to store the ammount of plugins loaded.
+			for (var i = 0; i < ServerApi.Plugins.Count; i++)
+			{
+				var pluginItem = new PluginItem();
+				var apiAttribute = (ApiVersionAttribute)ServerApi.Plugins[i].Plugin.GetType().GetCustomAttributes(typeof(ApiVersionAttribute), false).FirstOrDefault();
+				//The current implementation of loading plugins doesn't allow for a plugin to be loaded without an ApiVersion, the UNKNOWN is there incase a change is made to allow it
+				pluginItem.apiVersion = apiAttribute?.ApiVersion.ToString() ?? "UNKNOWN";
+				pluginItem.name = ServerApi.Plugins[i].Plugin.Name;
+				pluginItem.version = ServerApi.Plugins[i].Plugin.Version.ToString();
+				plugins[i] = pluginItem;
+			}
+			return plugins;
+		}
+
+		private long GetTotalSystemRam(bool isMono)
+		{
+			if (totalMem != 0)
+			{
+				return totalMem;//Return early 
+			}
+
+			if (isMono)//Set totalMem so it can be returned later
+			{
+				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
+				totalMem = (pc.RawValue / 1024 / 1024 / 1024);
+			}
+			else
+			{
+				GetPhysicallyInstalledSystemMemory(out totalMem);
+				totalMem = (totalMem / 1024 / 1024); // Super hardcore maths to convert to Gb from Kb
+			}
+
+			return totalMem;
+		}
+	}
+	/// <summary>
+	/// Holding information regarding loaded plugins 
+	/// </summary>
+	public struct PluginItem
+	{
+		/// <summary>
+		/// Plugin name
+		/// </summary>
+		public string name;
+		/// <summary>
+		/// Assembly version 
+		/// </summary>
+		public string version;
+		/// <summary>
+		/// Api version or UNKNOWN if attribute is missing, which is currently impossible 
+		/// </summary>
+		public string apiVersion;
 	}
 
 	/// <summary>
@@ -209,6 +242,14 @@ namespace TShockAPI
 		/// The TShock version being used by the server
 		/// </summary>
 		public string version;
+		/// <summary>
+		/// Whether or not server was started with --ignoreversion 
+		/// </summary>
+		public bool ignorePluginVersion;
+		/// <summary>
+		/// List of loaded plugins and version name:
+		/// </summary>
+		public PluginItem[] loadedPlugins;
 		/// <summary>
 		/// The Terraria version supported by the server
 		/// </summary>
