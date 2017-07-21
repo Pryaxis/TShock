@@ -160,10 +160,10 @@ namespace TShockAPI
 		{
 			if (plugins != null)
 			{
-				return plugins;//Return early
+				return plugins; //Return early
 			}
 
-			plugins = new PluginItem[ServerApi.Plugins.Count];//Initialize with enough room to store the ammount of plugins loaded.
+			plugins = new PluginItem[ServerApi.Plugins.Count]; //Initialize with enough room to store the ammount of plugins loaded.
 			for (var i = 0; i < ServerApi.Plugins.Count; i++)
 			{
 				var pluginItem = new PluginItem();
@@ -181,10 +181,10 @@ namespace TShockAPI
 		{
 			if (totalMem != 0)
 			{
-				return totalMem;//Return early 
+				return totalMem; //Return early 
 			}
 
-			if (isMono)//Set totalMem so it can be returned later
+			if (isMono) //Set totalMem so it can be returned later
 			{
 				var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory");
 				totalMem = (pc.RawValue / 1024 / 1024 / 1024);
