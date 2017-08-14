@@ -177,7 +177,7 @@ namespace TShockAPI
 			return plugins;
 		}
 
-		private long GetTotalSystemRam(bool isMono)
+		public long GetTotalSystemRam(bool isMono)
 		{
 			if (totalMem != 0)
 			{
