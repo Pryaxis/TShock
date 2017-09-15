@@ -2853,6 +2853,34 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				case "rename":
+					#region Rename group
+					{
+						if (args.Parameters.Count < 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}group rename <group name> <new name>", Specifier);
+							return;
+						}
+
+						string groupName = args.Parameters[1];
+						string newGroupName = args.Parameters[2];
+						try
+						{
+							string response = TShock.Groups.RenameGroup(groupName, newGroupName);
+							if (response.Length > 0)
+							{
+								args.Player.SendSuccessMessage(response);
+							}
+
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.Message);	
+						}
+					}
+					#endregion
+					return;
+ 
 				case "help":
 					#region Help
 					{
@@ -2871,7 +2899,8 @@ namespace TShockAPI
 							"listperm <group> [page] - Lists a group's permissions.",
 							"parent <group> <parent group> - Changes a group's parent group.",
 							"prefix <group> <prefix> - Changes a group's prefix.",
-							"suffix <group> <suffix> - Changes a group's suffix."
+							"rename <group> <name> - Changes a group's name.",
+							"suffix <group> <suffix> - Changes a group's suffix.",
 						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,

@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -199,6 +198,39 @@ namespace TShockAPI.DB
 			group.Prefix = prefix;
 			group.Suffix = suffix;
 		}
+		public String RenameGroup(String name, String newname)
+		{
+			if (!GroupExists(name))
+				throw new GroupNotExistException(name);
+
+			if (GroupExists(newname))
+				throw new GroupExistsException(newname);
+
+			if (database.Query("UPDATE GroupList SET GroupName=@0 WHERE GroupName=@1", newname, name) == 1)
+			{
+
+				// Replace group within our groups list
+				Group oldgroup = GetGroupByName(name);
+				Group newgroup = new Group(newname, oldgroup.Parent, oldgroup.ChatColor, oldgroup.Permissions);
+				groups.Remove(oldgroup);
+				groups.Add(newgroup);
+
+				// Update all Users in DB to reflect group name change.
+				database.Query("UPDATE Users SET Usergroup=@0 WHERE Usergroup = @1", newname, name);
+
+				// Update all players on server to reflect group name change.
+				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.Group == oldgroup))
+				{
+					player.Group = newgroup;
+				}
+
+				return string.Format("Group \"{0}\" has been renamed to \"{1}\".", name, newname);
+			}
+			else
+			{
+				throw new GroupManagerException(string.Format("Failed to rename group \"{0}\".", name));
+			}
+		}
 
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
@@ -215,7 +247,7 @@ namespace TShockAPI.DB
 				return "Group " + name + " has been deleted successfully.";
 			}
 			else if (exceptions)
-				throw new GroupManagerException("Failed to delete group '" + name + ".'");
+				throw new GroupManagerException("Failed to delete group '" + name + "'.");
 
 			return "";
 		}
