@@ -398,7 +398,6 @@ namespace TShockAPI
 				{
 					Geo.Dispose();
 				}
-				SaveManager.Instance.Dispose();
 
 				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
