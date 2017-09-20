@@ -177,6 +177,12 @@ namespace TShockAPI
 			}
 			return plugins;
 		}
+
+		/// <summary>
+		/// Returns the amount of free RAM, in megabytes.
+		/// </summary>
+		/// <param name="mono">Whether or not this program is being executed in a Mono runtime</param>
+		/// <returns>Free RAM memory amount, in megabytes</returns>
 		public long GetFreeSystemRam(bool mono)
 		{
 			if (mono)
@@ -209,6 +215,11 @@ namespace TShockAPI
 				return pc.RawValue;
 			}
 		}
+		/// <summary>
+		/// Returns the total amount of installed RAM, in gigabytes.
+		/// </summary>
+		/// <param name="isMono">Whether or not this program is being executed in a Mono runtime</param>
+		/// <returns>Total RAM memory amount, in gigabytes</returns>
 		public long GetTotalSystemRam(bool isMono)
 		{
 			if (totalMem != 0)
