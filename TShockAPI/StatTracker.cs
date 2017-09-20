@@ -27,7 +27,8 @@ using System.Runtime.InteropServices;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TShockAPI.Extensions;
-
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace TShockAPI
 {
@@ -176,7 +177,38 @@ namespace TShockAPI
 			}
 			return plugins;
 		}
-
+		public long GetFreeSystemRam(bool mono)
+		{
+			if (mono)
+			{
+				//Temporary in case mono won't work
+				if (File.Exists("/proc/meminfo"))
+				{
+					var l = File.ReadAllLines("/proc/meminfo");
+					foreach (string s in l)
+					{
+						if (s.StartsWith("MemFree:"))
+						{
+							var m = Regex.Match(s, "MemFree:(\\s*)(\\d*) kB");
+							if (m.Success)
+							{
+								long val;
+								if (long.TryParse(m.Groups[2].Value, out val))
+								{
+									return val / 1024;
+								}
+							}
+						}
+					}
+				}
+				return -1;
+			}
+			else
+			{
+				var pc = new PerformanceCounter("Memory", "Available MBytes");
+				return pc.RawValue;
+			}
+		}
 		public long GetTotalSystemRam(bool isMono)
 		{
 			if (totalMem != 0)
