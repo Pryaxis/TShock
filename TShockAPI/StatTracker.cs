@@ -215,6 +215,7 @@ namespace TShockAPI
 				return pc.RawValue;
 			}
 		}
+
 		/// <summary>
 		/// Returns the total amount of installed RAM, in gigabytes.
 		/// </summary>
