@@ -10,6 +10,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Validated tile placement on PlaceObject; clients can no longer place frames, paintings etc with dirt blocks (@bartico6, @ProfessorXZ)
 * Updated to new stat tracking system with more data so we can actually make informed software decisions (Jordan Coulam)
 * Fixed /time display at the end of Terraria hours (@koneko-nyan)
+* Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
 
 ## TShock 4.3.24
 * API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
