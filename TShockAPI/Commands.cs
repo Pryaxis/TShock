@@ -3077,25 +3077,25 @@ namespace TShockAPI
 					return;
 				case "rename":
 					#region Rename group
-				{
-					if (args.Parameters.Count != 3)
 					{
-						args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}group rename <group> <new name>", Specifier);
-						return;
-					}
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}group rename <group> <new name>", Specifier);
+							return;
+						}
 
-					string group = args.Parameters[1];
-					string newName = args.Parameters[2];
-					try
-					{
-						string response = TShock.Groups.RenameGroup(group, newName);
-						args.Player.SendSuccessMessage(response);
+						string group = args.Parameters[1];
+						string newName = args.Parameters[2];
+						try
+						{
+							string response = TShock.Groups.RenameGroup(group, newName);
+							args.Player.SendSuccessMessage(response);
+						}
+						catch (GroupManagerException ex)
+						{
+							args.Player.SendErrorMessage(ex.Message);
+						}
 					}
-					catch (GroupManagerException ex)
-					{
-						args.Player.SendErrorMessage(ex.Message);
-					}
-				}
 					#endregion
 					return;
 				case "del":

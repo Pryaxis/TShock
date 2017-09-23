@@ -34,6 +34,10 @@ namespace TShockAPI.DB
 		private IDbConnection database;
 		public readonly List<Group> groups = new List<Group>();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GroupManager"/> class with the specified database connection.
+		/// </summary>
+		/// <param name="db">The connection.</param>
 		public GroupManager(IDbConnection db)
 		{
 			database = db;
@@ -234,41 +238,83 @@ namespace TShockAPI.DB
 				throw new GroupExistsException(newName);
 			}
 
-			if (database.Query("UPDATE GroupList SET GroupName = @0 WHERE GroupName = @1", newName, name) == 1)
+			using (var db = database.CloneEx())
 			{
-				var oldGroup = GetGroupByName(name);
-				var newGroup = new Group(newName, oldGroup.Parent, oldGroup.ChatColor, oldGroup.Permissions)
+				db.Open();
+				using (var transaction = db.BeginTransaction())
 				{
-					Prefix = oldGroup.Prefix,
-					Suffix = oldGroup.Suffix
-				};
+					try
+					{
+						using (var command = db.CreateCommand())
+						{
+							command.CommandText = "UPDATE GroupList SET GroupName = @0 WHERE GroupName = @1";
+							command.AddParameter("@0", newName);
+							command.AddParameter("@1", name);
+							command.ExecuteNonQuery();
+						}
 
-				groups.Remove(oldGroup);
-				groups.Add(newGroup);
-				// We need to check if the old group has been referenced as a parent and update those references accordingly
-				database.Query("UPDATE GroupList SET Parent = @0 WHERE Parent = @1", newName, name);
-				foreach (var group in groups.Where(g => g.Parent != null && g.Parent == oldGroup))
-				{
-					group.Parent = newGroup;
-				}
+						var oldGroup = GetGroupByName(name);
+						var newGroup = new Group(newName, oldGroup.Parent, oldGroup.ChatColor, oldGroup.Permissions)
+						{
+							Prefix = oldGroup.Prefix,
+							Suffix = oldGroup.Suffix
+						};
+						groups.Remove(oldGroup);
+						groups.Add(newGroup);
 
-				if (TShock.Config.DefaultGuestGroupName == oldGroup.Name)
-				{
-					TShock.Config.DefaultGuestGroupName = newGroup.Name;
-					Group.DefaultGroup = newGroup;
-				}
-				if (TShock.Config.DefaultRegistrationGroupName == oldGroup.Name)
-				{
-					TShock.Config.DefaultRegistrationGroupName = newGroup.Name;
-				}
+						// We need to check if the old group has been referenced as a parent and update those references accordingly 
+						using (var command = db.CreateCommand())
+						{
+							command.CommandText = "UPDATE GroupList SET Parent = @0 WHERE Parent = @1";
+							command.AddParameter("@0", newName);
+							command.AddParameter("@1", name);
+							command.ExecuteNonQuery();
+						}
+						foreach (var group in groups.Where(g => g.Parent != null && g.Parent == oldGroup))
+						{
+							group.Parent = newGroup;
+						}
 
-				TShock.Config.Write(FileTools.ConfigPath);
-				database.Query("UPDATE Users SET Usergroup = @0 WHERE Usergroup = @1", newName, name);
-				foreach (var player in TShock.Players.Where(p => p?.Group == oldGroup))
-				{
-					player.Group = newGroup;
+						if (TShock.Config.DefaultGuestGroupName == oldGroup.Name)
+						{
+							TShock.Config.DefaultGuestGroupName = newGroup.Name;
+							Group.DefaultGroup = newGroup;
+						}
+						if (TShock.Config.DefaultRegistrationGroupName == oldGroup.Name)
+						{
+							TShock.Config.DefaultRegistrationGroupName = newGroup.Name;
+						}
+						TShock.Config.Write(FileTools.ConfigPath);
+
+						// We also need to check if any users belong to the old group and automatically apply changes
+						using (var command = db.CreateCommand())
+						{
+							command.CommandText = "UPDATE Users SET Usergroup = @0 WHERE Usergroup = @1";
+							command.AddParameter("@0", newName);
+							command.AddParameter("@1", name);
+							command.ExecuteNonQuery();
+						}
+						foreach (var player in TShock.Players.Where(p => p?.Group == oldGroup))
+						{
+							player.Group = newGroup;
+						}
+
+						transaction.Commit();
+						return $"Group \"{name}\" has been renamed to \"{newName}\".";
+					}
+					catch (Exception ex)
+					{
+						TShock.Log.Error($"An exception has occured during database transaction: {ex.Message}");
+						try
+						{
+							transaction.Rollback();
+						}
+						catch (Exception rollbackEx)
+						{
+							TShock.Log.Error($"An exception has occured during database rollback: {rollbackEx.Message}");
+						}
+					}
 				}
-				return $"Group \"{name}\" has been renamed to \"{newName}\".";
 			}
 
 			throw new GroupManagerException($"Failed to rename group \"{name}\".");
@@ -279,7 +325,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group's name.</param>
 		/// <param name="exceptions">Whether exceptions will be thrown in case something goes wrong.</param>
-		/// <returns></returns>
+		/// <returns>The response.</returns>
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			if (!GroupExists(name))
@@ -305,7 +351,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		/// <param name="permissions">The permission list.</param>
-		/// <returns></returns>
+		/// <returns>The response.</returns>
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
@@ -328,7 +374,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		/// <param name="permissions">The permission list.</param>
-		/// <returns></returns>
+		/// <returns>The response.</returns>
 		public String DeletePermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
