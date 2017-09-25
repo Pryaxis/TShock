@@ -225,7 +225,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group's name.</param>
 		/// <param name="newName">The new name.</param>
-		/// <returns>The response.</returns>
+		/// <returns>The result from the operation to be sent back to the user.</returns>
 		public String RenameGroup(string name, string newName)
 		{
 			if (!GroupExists(name))
@@ -325,7 +325,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group's name.</param>
 		/// <param name="exceptions">Whether exceptions will be thrown in case something goes wrong.</param>
-		/// <returns>The response.</returns>
+		/// <returns>The result from the operation to be sent back to the user.</returns>
 		public String DeleteGroup(String name, bool exceptions = false)
 		{
 			if (!GroupExists(name))
@@ -351,7 +351,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		/// <param name="permissions">The permission list.</param>
-		/// <returns>The response.</returns>
+		/// <returns>The result from the operation to be sent back to the user.</returns>
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
@@ -374,7 +374,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		/// <param name="permissions">The permission list.</param>
-		/// <returns>The response.</returns>
+		/// <returns>The result from the operation to be sent back to the user.</returns>
 		public String DeletePermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
