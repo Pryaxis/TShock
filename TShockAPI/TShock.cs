@@ -329,6 +329,12 @@ namespace TShockAPI
 
 				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
 
+				var systemRam = StatTracker.GetFreeSystemRam(ServerApi.RunningMono);
+				if (systemRam > -1 && systemRam < 2048)
+				{
+					Log.ConsoleError("This machine has less than 2 gigabytes of RAM free. Be advised that it might not be enough to run TShock.");
+				}
+
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
 				ServerApi.Hooks.GameHardmodeTileUpdate.Register(this, OnHardUpdate);

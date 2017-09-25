@@ -895,14 +895,14 @@ namespace TShockAPI
 			/// <summary>
 			/// Time the buff lasts
 			/// </summary>
-			public short Time { get; set; }
+			public int Time { get; set; }
 		}
 		/// <summary>
 		/// PlayerBuff - Called when a player is buffed
 		/// </summary>
 		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
 
-		private static bool OnPlayerBuff(byte id, byte type, short time)
+		private static bool OnPlayerBuff(byte id, byte type, int time)
 		{
 			if (PlayerBuff == null)
 				return false;
@@ -911,7 +911,7 @@ namespace TShockAPI
 			{
 				ID = id,
 				Type = type,
-				Time = time,
+				Time = time
 			};
 			PlayerBuff.Invoke(null, args);
 			return args.Handled;
@@ -3425,7 +3425,7 @@ namespace TShockAPI
 		{
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
-			var time = args.Data.ReadInt16();
+			var time = args.Data.ReadInt32();
 
 			if (OnPlayerBuff(id, type, time))
 				return true;
