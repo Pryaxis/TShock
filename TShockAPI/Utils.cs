@@ -465,7 +465,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffDescription(id) : "null";
 		}
 
 		/// <summary>

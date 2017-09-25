@@ -12,23 +12,23 @@ namespace TShockAPI.Sockets
 {
 	public class LinuxTcpSocket : ISocket
 	{
-		private byte[] _packetBuffer = new byte[1024];
+		public byte[] _packetBuffer = new byte[1024];
 
-		private int _packetBufferLength;
+		public int _packetBufferLength;
 
-		private List<object> _callbackBuffer = new List<object>();
+		public List<object> _callbackBuffer = new List<object>();
 
-		private int _messagesInQueue;
+		public int _messagesInQueue;
 
-		private TcpClient _connection;
+		public TcpClient _connection;
 
-		private TcpListener _listener;
+		public TcpListener _listener;
 
-		private SocketConnectionAccepted _listenerCallback;
+		public SocketConnectionAccepted _listenerCallback;
 
-		private RemoteAddress _remoteAddress;
+		public RemoteAddress _remoteAddress;
 
-		private bool _isListening;
+		public bool _isListening;
 
 		public int MessagesInQueue
 		{
