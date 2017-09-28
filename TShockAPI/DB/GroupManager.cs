@@ -275,6 +275,8 @@ namespace TShockAPI.DB
 							group.Parent = newGroup;
 						}
 
+						// Read the config file to prevent the possible loss of any unsaved changes
+						TShock.Config = ConfigFile.Read(FileTools.ConfigPath);
 						if (TShock.Config.DefaultGuestGroupName == oldGroup.Name)
 						{
 							TShock.Config.DefaultGuestGroupName = newGroup.Name;
