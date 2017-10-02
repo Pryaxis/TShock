@@ -401,7 +401,41 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
+		
+		/// <summary>
+		/// Renames a region
+		/// </summary>
+		/// <param name="oldName">Name of the region to rename</param>
+		/// <param name="newName">New name of the region</param>
+		/// <returns>true if renamed successfully, false otherwise</returns>
+		public bool RenameRegion(string oldName, string newName)
+		{
+			Region region = null;
+			string worldID = Main.worldID.ToString();
 
+			bool result = false;
+
+			try
+			{
+				int q = database.Query("UPDATE Regions SET RegionName = @0 WHERE RegionName=@1 AND WorldID=@2",
+																					newName, oldName, worldID);
+
+				if (q > 0)
+				{
+					region = Regions.First(r => r.Name == oldName && r.WorldID == worldID);
+					region.Name = newName;
+					Hooks.RegionHooks.OnRegionRenamed(region, oldName, newName);
+					result = true;
+				}
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+
+			return result;
+		}
+		
 		/// <summary>
 		/// Removes an allowed user from a region
 		/// </summary>
