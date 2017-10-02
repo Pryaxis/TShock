@@ -11,6 +11,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Updated to new stat tracking system with more data so we can actually make informed software decisions (Jordan Coulam)
 * Fixed /time display at the end of Terraria hours (@koneko-nyan)
 * Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
+* Added /region rename and OnRegionRenamed hook (@koneko-nyan, @deadsurgeon42)
 
 ## TShock 4.3.24
 * API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
