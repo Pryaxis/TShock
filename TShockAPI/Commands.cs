@@ -4530,6 +4530,51 @@ namespace TShockAPI
 							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}region resize <region> <u/d/l/r> <amount>", Specifier);
 						break;
 					}
+				case "rename":
+					{
+						if (args.Parameters.Count != 3)
+						{
+							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}region rename <region> <new name>", Specifier);
+							break;
+						}
+						else
+						{
+							string oldName = args.Parameters[1];
+							string newName = args.Parameters[2];
+
+							if (oldName == newName)
+							{
+								args.Player.SendErrorMessage("Error: both names are the same.");
+								break;
+							}
+
+							Region oldRegion = TShock.Regions.GetRegionByName(oldName);
+
+							if (oldRegion == null)
+							{
+								args.Player.SendErrorMessage("Invalid region \"{0}\".", oldName);
+								break;
+							}
+
+							Region newRegion = TShock.Regions.GetRegionByName(newName);
+
+							if (newRegion != null)
+							{
+								args.Player.SendErrorMessage("Region \"{0}\" already exists.", newName);
+								break;
+							}
+							
+							if(TShock.Regions.RenameRegion(oldName, newName))
+							{
+								args.Player.SendInfoMessage("Region renamed successfully!");
+							}
+							else
+							{
+								args.Player.SendErrorMessage("Failed to rename the region.");
+							}
+						}
+						break;
+					}
 				case "tp":
 					{
 						if (!args.Player.HasPermission(Permissions.tp))
@@ -4570,6 +4615,7 @@ namespace TShockAPI
 						  "define <name> - Defines the region with the given name.",
 						  "delete <name> - Deletes the given region.",
 						  "name [-u][-z][-p] - Shows the name of the region at the given point.",
+						  "rename <region> <new name> - Renames the given region.",
 						  "list - Lists all regions.",
 						  "resize <region> <u/d/l/r> <amount> - Resizes a region.",
 						  "allow <user> <region> - Allows a user to a region.",
