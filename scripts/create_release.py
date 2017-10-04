@@ -145,7 +145,7 @@ def update_terraria_source():
 
 def run_bootstrapper():
   for build_config in ['Debug','Release'] :
-    mintaka = subprocess.Popen(['xbuild', './TerrariaServerAPI/TShock.4.OTAPI.sln', '/p:Configuration=' + build_config])
+    mintaka = subprocess.Popen(['msbuild', './TerrariaServerAPI/TShock.4.OTAPI.sln', '/p:Configuration=' + build_config])
     
     mintaka.wait()
     
@@ -161,7 +161,7 @@ def run_bootstrapper():
     if (bootstrapper_proc.returncode != 0):
       raise CalledProcessError(bootstrapper_proc.returncode)
 
-    tsapi_proc = subprocess.Popen(['xbuild', './TerrariaServerAPI/TerrariaServerAPI/TerrariaServerAPI.csproj', '/p:Configuration=' + build_config])
+    tsapi_proc = subprocess.Popen(['msbuild', './TerrariaServerAPI/TerrariaServerAPI/TerrariaServerAPI.csproj', '/p:Configuration=' + build_config])
     
     tsapi_proc.wait()
     
@@ -169,8 +169,8 @@ def run_bootstrapper():
       raise CalledProcessError(tsapi_proc.returncode)
 
 def build_software():
-  release_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
-  debug_proc = subprocess.Popen(['xbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
+  release_proc = subprocess.Popen(['msbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Release'])
+  debug_proc = subprocess.Popen(['msbuild', './TShockAPI/TShockAPI.csproj', '/p:Configuration=Debug'])
   release_proc.wait()
   debug_proc.wait()
   if (release_proc.returncode != 0):
