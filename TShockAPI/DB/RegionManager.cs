@@ -417,7 +417,7 @@ namespace TShockAPI.DB
 
 			try
 			{
-				int q = database.Query("UPDATE Regions SET RegionName = @0 WHERE RegionName=@1 AND WorldID=@2",
+				int q = database.Query("UPDATE Regions SET RegionName = @0 WHERE RegionName = @1 AND WorldID = @2",
 																					newName, oldName, worldID);
 
 				if (q > 0)
