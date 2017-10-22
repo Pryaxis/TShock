@@ -13,6 +13,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed /time display at the end of Terraria hours (@koneko-nyan)
 * Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
 * Added /group rename to allow changing group names (@ColinBohn, @ProfessorXZ)
+* Added /region rename and OnRegionRenamed hook (@koneko-nyan, @deadsurgeon42)
+
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)

@@ -110,5 +110,29 @@ namespace TShockAPI.Hooks
 
 			RegionDeleted(new RegionDeletedEventArgs(region));
 		}
+		
+		public class RegionRenamedEventArgs
+		{
+			public Region Region { get; private set; }
+			public string OldName { get; private set; }
+			public string NewName { get; private set; }
+
+			public RegionRenamedEventArgs(Region region, string oldName, string newName)
+			{
+				Region = region;
+				OldName = oldName;
+				NewName = newName;
+			}
+		}
+
+		public delegate void RegionRenamedD(RegionRenamedEventArgs args);
+		public static event RegionRenamedD RegionRenamed;
+		public static void OnRegionRenamed(Region region, string oldName, string newName)
+		{
+			if (RegionRenamed == null)
+				return;
+
+			RegionRenamed(new RegionRenamedEventArgs(region, oldName, newName));
+		}
 	}
 }
