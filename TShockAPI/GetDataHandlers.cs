@@ -2109,7 +2109,9 @@ namespace TShockAPI
 						return true;
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && ((args.TPlayer.mount.Type != 8 && selectedItem.pick == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
+					// Item frames can be modified without pickaxe tile.
+					else if (tile.type != TileID.ItemFrame
+						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						return true;
@@ -4371,12 +4373,6 @@ namespace TShockAPI
 			}
 
 			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
-
-			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
 			{
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
