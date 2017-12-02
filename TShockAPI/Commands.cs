@@ -1289,8 +1289,6 @@ namespace TShockAPI
 						bool success = false;
 						string targetGeneralizedName = "";
 
-						// What if caller is console? Name?
-
 						// Effective ban target assignment
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
 						User offlineUser = TShock.Users.GetUserByName(args.Parameters[1]);
