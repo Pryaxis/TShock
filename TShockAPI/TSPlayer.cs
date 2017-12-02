@@ -550,11 +550,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Unused.
-		/// </summary>
-		public bool TpLock;
-
-		/// <summary>
 		/// Checks if the player has any inventory slots available.
 		/// </summary>
 		public bool InventorySlotAvailable
