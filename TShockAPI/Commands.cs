@@ -1384,7 +1384,7 @@ namespace TShockAPI
 							string pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
 							Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
 							if (r.IsMatch(args.Parameters[1])) {
-								targetGeneralizedName = String.Join(" ", "IP:", args.Parameters[1]);
+								targetGeneralizedName = "IP: " + args.Parameters[1];
 								success = TShock.Bans.AddBan(args.Parameters[1], "", "", banReason,
 									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
 								if (success && offlineUser != null)
