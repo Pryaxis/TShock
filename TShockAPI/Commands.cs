@@ -311,6 +311,10 @@ namespace TShockAPI
 			{
 				HelpText = "Temporarily sets another player's group."
 			});
+			add(new Command(Permissions.su, SubstituteUser, "su")
+			{
+				HelpText = "Temporarily elevates you to Super Admin."
+			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
 				HelpText = "Shows information about a player."
@@ -685,6 +689,10 @@ namespace TShockAPI
 				{
 					TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
 					player.SendErrorMessage("You do not have access to this command.");
+					if (player.HasPermission(Permissions.su))
+					{
+						player.SendInfoMessage("You can use {0}su to temporarily become Super Admin, which can run this command.", Specifier);
+					}
 				}
 				else if (!cmd.AllowServer && !player.RealPlayer)
 				{
@@ -1811,6 +1819,27 @@ namespace TShockAPI
 					ply[0].Name, g.Name, args.Parameters[2]));
 				ply[0].SendSuccessMessage(String.Format("Your group has been changed to {0} for {1}",
 					g.Name, args.Parameters[2]));
+			}
+		}
+
+		private static void SubstituteUser(CommandArgs args)
+		{
+
+			if (args.Player.tempGroup != null)
+			{
+				args.Player.tempGroup = null;
+				args.Player.tempGroupTimer.Stop();
+				args.Player.SendSuccessMessage("Your previous permission set has been restored.");
+				return;
+			}
+			else
+			{
+				args.Player.tempGroup = new SuperAdminGroup();
+				args.Player.tempGroupTimer = new System.Timers.Timer(600 * 1000);
+				args.Player.tempGroupTimer.Elapsed += args.Player.TempGroupTimerElapsed;
+				args.Player.tempGroupTimer.Start();
+				args.Player.SendSuccessMessage("Your account has been elevated to Super Admin for 10 minutes.");
+				return;
 			}
 		}
 
@@ -4842,10 +4871,10 @@ namespace TShockAPI
 			if (args.Player.Group.Name != "superadmin")
 				args.Player.tempGroup = new SuperAdminGroup();
 
-			args.Player.SendInfoMessage("Superadmin has been temporarily given to you. It will be removed on logout.");
+			args.Player.SendInfoMessage("Temporary system access has been given to you, so you can run one command.");
 			args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
-			args.Player.SendInfoMessage("{0}user add <username> <password> superadmin", Specifier);
-			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the superadmin group.");
+			args.Player.SendInfoMessage("{0}user add <username> <password> owner", Specifier);
+			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the owner group.");
 			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
 			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}auth.", Specifier);
 			return;
