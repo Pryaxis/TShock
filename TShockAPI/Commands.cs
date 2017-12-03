@@ -1450,7 +1450,6 @@ namespace TShockAPI
 									banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
 						}
 
-
 						if (success)
 						{
 							args.Player.SendSuccessMessage("{0} was successfully banned.", targetGeneralizedName);
