@@ -43,11 +43,11 @@ namespace TShockAPI.DB
 									new SqlColumn("IP", MySqlDbType.String, 16) { Primary = true },
 									new SqlColumn("Name", MySqlDbType.Text),
 									new SqlColumn("UUID", MySqlDbType.Text),
-									new SqlColumn("AccountName", MySqlDbType.Text),
 									new SqlColumn("Reason", MySqlDbType.Text),
 									new SqlColumn("BanningUser", MySqlDbType.Text),
 									new SqlColumn("Date", MySqlDbType.Text),
-									new SqlColumn("Expiration", MySqlDbType.Text)
+									new SqlColumn("Expiration", MySqlDbType.Text),
+									new SqlColumn("AccountName", MySqlDbType.Text)
 				);
 			var creator = new SqlTableCreator(db,
 				db.GetSqlType() == SqlType.Sqlite
@@ -147,6 +147,32 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
+		/// Gets a ban by account name (not player/character name).
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <param name="casesensitive">Whether to check with case sensitivity.</param>
+		/// <returns>The ban.</returns>
+		public Ban GetBanByAccountName(string name, bool casesensitive = false)
+		{
+			try
+			{
+				var namecol = casesensitive ? "AccountName" : "UPPER(AccountName)";
+				if (!casesensitive)
+					name = name.ToUpper();
+				using (var reader = database.QueryReader("SELECT * FROM Bans WHERE " + namecol + "=@0", name))
+				{
+					if (reader.Read())
+						return new Ban(reader.Get<string>("IP"), reader.Get<string>("Name"), reader.Get<string>("UUID"), reader.Get<string>("AccountName"), reader.Get<string>("Reason"), reader.Get<string>("BanningUser"), reader.Get<string>("Date"), reader.Get<string>("Expiration"));
+				}
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Gets a ban by UUID.
 		/// </summary>
 		/// <param name="uuid">The UUID.</param>
@@ -179,6 +205,7 @@ namespace TShockAPI.DB
 		/// <param name="exceptions">If set to <c>true</c> enable throwing exceptions.</param>
 		/// <param name="banner">Banner.</param>
 		/// <param name="expiration">Expiration date.</param>
+		[Obsolete("Use AddBan2 instead of AddBan.", true)]
 		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
 		{
 			return AddBan2(ip, name, uuid, "", reason, exceptions, banner, expiration);
@@ -209,7 +236,7 @@ namespace TShockAPI.DB
 				}
 				else
 				{
-					return database.Query("INSERT INTO Bans (IP, Name, UUID, AccountName, Reason, BanningUser, Date, Expiration) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", ip, name, uuid, accountName, reason, banner, DateTime.UtcNow.ToString("s"), expiration) != 0;
+					return database.Query("INSERT INTO Bans (IP, Name, UUID, Reason, BanningUser, Date, Expiration, AccountName) VALUES (@0, @1, @2, @3, @4, @5, @6, @7);", ip, name, uuid, reason, banner, DateTime.UtcNow.ToString("s"), expiration, accountName) != 0;
 				}
 			}
 			catch (Exception ex)

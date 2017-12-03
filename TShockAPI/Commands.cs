@@ -1367,7 +1367,7 @@ namespace TShockAPI
 							}
 
 							targetGeneralizedName = target.Name;
-							success = TShock.Bans.AddBan(target.IP, target.Name, target.UUID, banReason, false, args.Player.User.Name,
+							success = TShock.Bans.AddBan2(target.IP, target.Name, target.UUID, target.User.Name, banReason, false, args.Player.User.Name,
 								banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
 
 							// Since this is an online ban, we need to dc the player and tell them now.
@@ -1397,7 +1397,7 @@ namespace TShockAPI
 							Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
 							if (r.IsMatch(args.Parameters[1])) {
 								targetGeneralizedName = "IP: " + args.Parameters[1];
-								success = TShock.Bans.AddBan(args.Parameters[1], "", "", banReason,
+								success = TShock.Bans.AddBan2(args.Parameters[1], "", "", "", banReason,
 									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
 								if (success && offlineUser != null)
 								{
@@ -1445,8 +1445,8 @@ namespace TShockAPI
 							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUser.KnownIps).Last();
 
 							success = 
-								TShock.Bans.AddBan(lastIP,
-									offlineUser.Name, offlineUser.UUID, banReason, false, args.Player.User.Name,
+								TShock.Bans.AddBan2(lastIP,
+									"", offlineUser.UUID, offlineUser.Name, banReason, false, args.Player.User.Name,
 									banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
 						}
 
