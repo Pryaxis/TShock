@@ -221,6 +221,9 @@ namespace TShockAPI
 		[Description("Meant for super admins only.")]
 		public static readonly string user = "tshock.superadmin.user";
 
+		[Description("Allows a user to elevate to superadmin for 10 minutes.")]
+		public static readonly string su = "tshock.su";
+
 		// tshock.tp nodes
 
 		[Description("User can teleport *everyone* to them.")]
