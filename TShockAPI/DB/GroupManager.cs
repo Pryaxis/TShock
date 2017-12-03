@@ -77,6 +77,8 @@ namespace TShockAPI.DB
 					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item, Permissions.give,
 						Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
 
+				AddDefaultGroup("owner", "trustedadmin", string.Join(",", Permissions.su));
+
 				AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
 			}
 
