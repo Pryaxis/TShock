@@ -1368,7 +1368,7 @@ namespace TShockAPI
 
 							targetGeneralizedName = target.Name;
 							success = TShock.Bans.AddBan2(target.IP, target.Name, target.UUID, target.User.Name, banReason, false, args.Player.User.Name,
-								banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
+								banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
 
 							// Since this is an online ban, we need to dc the player and tell them now.
 							if (success)
@@ -1398,7 +1398,7 @@ namespace TShockAPI
 							if (r.IsMatch(args.Parameters[1])) {
 								targetGeneralizedName = "IP: " + args.Parameters[1];
 								success = TShock.Bans.AddBan2(args.Parameters[1], "", "", "", banReason,
-									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
+									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
 								if (success && offlineUser != null)
 								{
 									args.Player.SendSuccessMessage("Target IP {0} was banned successfully.", targetGeneralizedName);
@@ -1447,7 +1447,7 @@ namespace TShockAPI
 							success = 
 								TShock.Bans.AddBan2(lastIP,
 									"", offlineUser.UUID, offlineUser.Name, banReason, false, args.Player.User.Name,
-									banLengthInSeconds == 0 ? "" : banLengthInSeconds.ToString());
+									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
 						}
 
 						if (success)

@@ -1387,7 +1387,7 @@ namespace TShockAPI
 					DateTime exp;
 					if (!DateTime.TryParse(ban.Expiration, out exp))
 					{
-						player.Disconnect("You are banned forever: " + ban.Reason);
+						player.Disconnect("Permanently banned for: " + ban.Reason);
 					}
 					else
 					{
