@@ -510,7 +510,7 @@ namespace TShockAPI
 			CharacterDB.SeedInitialData(Users.GetUser(args.User));
 		}
 
-		/// <summary>OnPlayerPreLoginOnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
+		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
 		/// <param name="args">args - The PlayerPreLoginEventArgs object.</param>
 		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
 		{
