@@ -1636,7 +1636,7 @@ namespace TShockAPI
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						TShock.CharacterDB.InsertPlayerData(player);
+						TShock.CharacterDB.InsertPlayerData(player, true);
 					}
 				}
 			}
