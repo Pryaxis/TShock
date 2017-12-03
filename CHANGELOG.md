@@ -14,7 +14,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
 * Added /group rename to allow changing group names (@ColinBohn, @ProfessorXZ)
 * Added /region rename and OnRegionRenamed hook (@koneko-nyan, @deadsurgeon42)
-
+* Rebuilt /ban add. New syntax is /ban add <target> [time] [reason] where target is the target online player, offline player, or IP; where time is the time format or 0 for permanent; and where [reason] is the reason. (@hakusaro)
+* Removed /ban addip and /ban addtemp. Now covered under /ban add. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
