@@ -315,6 +315,10 @@ namespace TShockAPI
 			{
 				HelpText = "Temporarily elevates you to Super Admin."
 			});
+			add(new Command(Permissions.su, SubstituteUserDo, "sudo")
+			{
+				HelpText = "Executes a command as the super admin."
+			});
 			add(new Command(Permissions.userinfo, GrabUserUserInfo, "userinfo", "ui")
 			{
 				HelpText = "Shows information about a player."
@@ -691,7 +695,7 @@ namespace TShockAPI
 					player.SendErrorMessage("You do not have access to this command.");
 					if (player.HasPermission(Permissions.su))
 					{
-						player.SendInfoMessage("You can use {0}su to temporarily become Super Admin, which can run this command.", Specifier);
+						player.SendInfoMessage("You can use '{0}sudo {0}{1}' to override this check.", Specifier, cmdText);
 					}
 				}
 				else if (!cmd.AllowServer && !player.RealPlayer)
@@ -1846,6 +1850,23 @@ namespace TShockAPI
 		#endregion Player Management Commands
 
 		#region Server Maintenence Commands
+
+		// Executes a command as a superuser if you have sudo rights.
+		private static void SubstituteUserDo(CommandArgs args)
+		{
+			if (args.Parameters.Count == 0)
+			{
+				args.Player.SendErrorMessage("Usage: /sudo [command].");
+				args.Player.SendErrorMessage("Example: /sudo /ban add Shank 2d Hacking.");
+				return;
+			}
+
+			string replacementCommand = String.Join(" ", args.Parameters);
+			args.Player.tempGroup = new SuperAdminGroup();
+			HandleCommand(args.Player, replacementCommand);
+			args.Player.tempGroup = null;
+			return;
+		}
 
 		private static void Broadcast(CommandArgs args)
 		{
