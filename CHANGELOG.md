@@ -14,7 +14,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
 * Added /group rename to allow changing group names (@ColinBohn, @ProfessorXZ)
 * Added /region rename and OnRegionRenamed hook (@koneko-nyan, @deadsurgeon42)
-* Added /su, which temporarily elevates players with the tshock.su permission to super admin. In addition added, a new group, owner, that is suggested for new users to setup TShock with as opposed to superadmin. If a user has the tshock.su permission, they're informed that they have access to /su if they can't run a command as a result from their degraded permission set. Finally, /su is implemented such that a 10 minute timeout will occur preventing people from just camping with it on. (@hakusaro)
+* Added /su, which temporarily elevates players with the tshock.su permission to super admin. In addition added, a new group, owner, that is suggested for new users to setup TShock with as opposed to superadmin. Finally, /su is implemented such that a 10 minute timeout will occur preventing people from just camping with it on. (@hakusaro)
+* Added /sudo, which runs a command as the superadmin group. If a user fails to execute a command but can sudo, they'll be told that they can override the permission check with sudo. Much better than just telling them to run /su and then re-run the command. (@hakusaro)
 
 
 ## TShock 4.3.24
