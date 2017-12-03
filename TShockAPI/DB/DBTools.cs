@@ -75,6 +75,9 @@ namespace TShockAPI.DB
                     sb.Append(")");
             }
 
+            if (TShock.Config.StorageType.ToLower() == "mysql")
+                sb.append("CHARACTER SET utf8mb4 COLLATE utf8mb4_bin")
+
             using (var com = database.CreateCommand())
             {
                 com.CommandText = sb.ToString();
