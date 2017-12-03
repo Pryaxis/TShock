@@ -1305,15 +1305,13 @@ namespace TShockAPI
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
 						User offlineUser = TShock.Users.GetUserByName(args.Parameters[1]);
 
-						// Determines if the caller is effective root for overriding permissions
-						bool callerIsEffectiveRoot = false;
-
-						// A ban source is effective root if they are not not real and not rest
-						// Super admins ingame who attempt to run this will have to remove
-						// the immune to ban permission if they want to ban an immune player
-						if (!(args.Player is TSRestPlayer) && !args.Player.RealPlayer)
+						// Storage variable to determine if the command executor is the server console
+						// If it is, we assume they have full control and let them override permission checks
+						bool callerIsServerConsole = false;
+						
+						if (args.Player is TSServerPlayer)
 						{
-							callerIsEffectiveRoot = true;
+							callerIsServerConsole = true;
 						}
 
 						// The ban reason the ban is going to have
@@ -1360,7 +1358,7 @@ namespace TShockAPI
 						{
 							TSPlayer target = players[0];
 
-							if (target.HasPermission(Permissions.immunetoban) && !callerIsEffectiveRoot)
+							if (target.HasPermission(Permissions.immunetoban) && !callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", target.Name);
 								return;
@@ -1430,7 +1428,7 @@ namespace TShockAPI
 							targetGeneralizedName = offlineUser.Name;
 
 							if (TShock.Groups.GetGroupByName(offlineUser.Group).HasPermission(Permissions.immunetoban) && 
-								!callerIsEffectiveRoot)
+								!callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
 								return;
