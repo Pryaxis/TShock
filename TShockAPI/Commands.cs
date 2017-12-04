@@ -256,7 +256,7 @@ namespace TShockAPI
 			});
 			#endregion
 			#region Admin Commands
-			add(new Command(Permissions.ban, Ban, "ban")
+			add(new Command(Permissions.ban, Ban, "bees")
 			{
 				HelpText = "Manages player bans."
 			});
