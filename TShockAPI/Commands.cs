@@ -1285,7 +1285,7 @@ namespace TShockAPI
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 			switch (subcmd)
 			{
-				case "add":
+				case "sting":
 					#region Add Ban
 					{
 						if (args.Parameters.Count < 2)
@@ -1477,7 +1477,7 @@ namespace TShockAPI
 						return;
 					}
 					#endregion
-				case "del":
+				case "unsting":
 					#region Delete ban
 					{
 						if (args.Parameters.Count != 2)
@@ -1500,7 +1500,7 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
-				case "delip":
+				case "unstingify":
 					#region Delete IP ban
 					{
 						if (args.Parameters.Count != 2)
@@ -1523,7 +1523,7 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
-				case "help":
+				case "talkto":
 					#region Help
 					{
 						int pageNumber;
@@ -1549,7 +1549,7 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
-				case "list":
+				case "getstings":
 					#region List bans
 					{
 						int pageNumber;
@@ -1574,7 +1574,7 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
-				case "listip":
+				case "getstingers":
 					#region List IP bans
 					{
 						int pageNumber;
