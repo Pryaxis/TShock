@@ -236,6 +236,25 @@ namespace TShockAPI
 			return;
 		}
 
+		/// <summary>
+		/// Tile IDs that can be oriented:
+		/// Cannon,
+		/// Chairs,
+		/// Beds,
+		/// Bathtubs,
+		/// Statues,
+		/// Mannequin,
+		/// Traps,
+		/// MusicBoxes,
+		/// ChristmasTree,
+		/// WaterFountain,
+		/// Womannequin,
+		/// MinecartTrack,
+		/// WeaponsRack,
+		/// LunarMonolith,
+		/// TargetDummy,
+		/// Campfire
+		/// </summary>
 		private static int[] orientableTiles = new int[]
 		{
 			TileID.Cannon,

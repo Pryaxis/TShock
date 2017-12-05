@@ -1694,46 +1694,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		/// <summary>
-		/// Tile IDs that can be oriented:
-		/// Cannon,
-		/// Chairs,
-		/// Beds,
-		/// Bathtubs,
-		/// Statues,
-		/// Mannequin,
-		/// Traps,
-		/// MusicBoxes,
-		/// ChristmasTree,
-		/// WaterFountain,
-		/// Womannequin,
-		/// MinecartTrack,
-		/// WeaponsRack,
-		/// LunarMonolith,
-		/// TargetDummy,
-		/// Campfire
-		/// </summary>
-		private static int[] orientableTiles = new int[]
-		{
-			TileID.Cannon,
-			TileID.Chairs,
-			TileID.Beds,
-			TileID.Bathtubs,
-			TileID.Statues,
-			TileID.Mannequin,
-			TileID.Traps,
-			TileID.MusicBoxes,
-			TileID.ChristmasTree,
-			TileID.WaterFountain,
-			TileID.Womannequin,
-			TileID.MinecartTrack,
-			TileID.WeaponsRack,
-			TileID.ItemFrame,
-			TileID.LunarMonolith,
-			TileID.TargetDummy,
-			TileID.Campfire
-		};
-
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
 			var player = args.Player;
