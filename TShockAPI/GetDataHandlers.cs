@@ -532,6 +532,43 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>HandledEventArgs - The event args object for the HealOtherPlayer event</summary>
+		public class HealOtherPlayerEventArgs : HandledEventArgs
+		{
+			/// <summary>Player - The TSPlayer object that caused the event</summary>
+			public TSPlayer Player { get; set; }
+
+			/// <summary>TargetPlayerIndex - The Terraria player index of the target player</summary>
+			public byte TargetPlayerIndex { get; set; }
+
+			/// <summary>Amount - The amount to heal by</summary>
+			public short Amount { get; set; }
+		}
+
+		/// <summary>HealOtherPlayer - When a player heals another player</summary>
+		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer;
+
+		/// <summary>OnHealOtherPlayer - Fires the HealOtherPlayer event</summary>
+		/// <param name="player">player - The TSPlayer that started the event</param>
+		/// <param name="targetPlayerIndex">targetPlayerIndex - The Terraria player index that the event targets</param>
+		/// <param name="amount">amount - The amount to heal</param>
+		/// <returns>bool</returns>
+		private static bool OnHealOtherPlayer(TSPlayer player, byte targetPlayerIndex, short amount)
+		{
+			if (HealOtherPlayer == null)
+				return false;
+
+			var args = new HealOtherPlayerEventArgs
+			{
+				Player = player,
+				TargetPlayerIndex = targetPlayerIndex,
+				Amount = amount,
+			};
+
+			HealOtherPlayer.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use in a SendTileSquare event
 		/// </summary>
@@ -1312,29 +1349,9 @@ namespace TShockAPI
 			byte plr = args.Data.ReadInt8();
 			short amount = args.Data.ReadInt16();
 
-			if (amount <= 0 || Main.player[plr] == null || !Main.player[plr].active)
-			{
+			if (OnHealOtherPlayer(args.Player, plr, amount))
 				return true;
-			}
 
-			if (amount > TShock.Config.MaxDamage * 0.2)
-			{
-				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (args.Player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
-			{
-				args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player) || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				return true;
-			}
-
-			args.Player.HealOtherThreshold++;
 			return false;
 		}
 

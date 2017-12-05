@@ -49,6 +49,46 @@ namespace TShockAPI
 			// Setup hooks
 
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
+			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
+		}
+
+		/// <summary>OnHealOtherPlayer - The handler for the HealOther events in Bouncer</summary>
+		/// <param name="sender">sender</param>
+		/// <param name="args">args</param>
+		internal void OnHealOtherPlayer(object sender, GetDataHandlers.HealOtherPlayerEventArgs args)
+		{
+			short amount = args.Amount;
+			byte plr = args.TargetPlayerIndex;
+
+			if (amount <= 0 || Main.player[plr] == null || !Main.player[plr].active)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (amount > TShock.Config.MaxDamage * 0.2)
+			{
+				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
+			{
+				args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player) || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			args.Player.HealOtherThreshold++;
+			args.Handled = false;
+			return;
 		}
 
 		/// <summary>OnSendTileSquare - The handler for SendTileSquare events in Bouncer</summary>
