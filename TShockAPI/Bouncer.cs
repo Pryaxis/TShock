@@ -48,7 +48,6 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
-			// SendTileSquareEventArgs args = new GetDataHandlers.SendTileSquareEventArgs();
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 		}
 
