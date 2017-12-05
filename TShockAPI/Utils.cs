@@ -1468,5 +1468,25 @@ namespace TShockAPI
 			float num3 = (num2 * num2) + (num * num);
 			return (float)Math.Sqrt(num3);
 		}
+
+		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
+		internal void ComputeMaxStyles()
+		{
+			var item = new Item();
+			for (int i = 0; i < Main.maxItemTypes; i++)
+			{
+				item.netDefaults(i);
+				if (item.placeStyle > 0)
+				{
+					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
+					{
+						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
+							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
+					}
+					else
+						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
+				}
+			}
+		}
 	}
 }

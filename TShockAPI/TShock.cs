@@ -875,7 +875,7 @@ namespace TShockAPI
 			Regions.Reload();
 			Warps.ReloadWarps();
 
-			ComputeMaxStyles();
+			Utils.ComputeMaxStyles();
 			Utils.FixChestStacks();
 
 			Utils.UpgradeMotD();
@@ -887,26 +887,6 @@ namespace TShockAPI
 
 			UpdateManager = new UpdateManager();
 			StatTracker.Start();
-		}
-
-		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
-		private void ComputeMaxStyles()
-		{
-			var item = new Item();
-			for (int i = 0; i < Main.maxItemTypes; i++)
-			{
-				item.netDefaults(i);
-				if (item.placeStyle > 0)
-				{
-					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
-					{
-						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
-							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
-					}
-					else
-						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
-				}
-			}
 		}
 
 		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>
