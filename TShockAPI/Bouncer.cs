@@ -52,7 +52,10 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 		}
 
-		public void OnSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)
+		/// <summary>OnSendTileSquare - The handler for SendTileSquare events in Bouncer</summary>
+		/// <param name="sender">sender</param>
+		/// <param name="args">args</param>
+		internal void OnSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			short size = args.Size;
 			int tileX = args.TileX;
