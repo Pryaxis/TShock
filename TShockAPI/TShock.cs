@@ -876,7 +876,7 @@ namespace TShockAPI
 			Warps.ReloadWarps();
 
 			ComputeMaxStyles();
-			FixChestStacks();
+			Utils.FixChestStacks();
 
 			Utils.UpgradeMotD();
 
@@ -905,25 +905,6 @@ namespace TShockAPI
 					}
 					else
 						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
-				}
-			}
-		}
-
-		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
-		private void FixChestStacks()
-		{
-			if (Config.IgnoreChestStacksOnLoad)
-				return;
-
-			foreach (Chest chest in Main.chest)
-			{
-				if (chest != null)
-				{
-					foreach (Item item in chest.item)
-					{
-						if (item != null && item.stack > item.maxStack)
-							item.stack = item.maxStack;
-					}
 				}
 			}
 		}
