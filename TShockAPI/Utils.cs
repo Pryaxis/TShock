@@ -1429,7 +1429,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
-		public void FixChestStacks()
+		internal void FixChestStacks()
 		{
 			if (TShock.Config.IgnoreChestStacksOnLoad)
 				return;
@@ -1445,6 +1445,16 @@ namespace TShockAPI
 					}
 				}
 			}
+		}
+
+		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
+		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
+		internal void SetConsoleTitle(bool empty)
+		{
+			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
+					!string.IsNullOrWhiteSpace(TShock.Config.ServerName) ? TShock.Config.ServerName + " - " : "",
+					empty ? 0 : ActivePlayers(),
+					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
 	}
 }

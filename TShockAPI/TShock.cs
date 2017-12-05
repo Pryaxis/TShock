@@ -822,7 +822,7 @@ namespace TShockAPI
 		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle(false);
+			Utils.SetConsoleTitle(false);
 
 			//This is to prevent a bug where a CLI-defined password causes packets to be
 			//sent in an unexpected order, resulting in clients being unable to connect
@@ -1179,17 +1179,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			SetConsoleTitle(false);
-		}
-
-		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
-		private void SetConsoleTitle(bool empty)
-		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
-					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
+			Utils.SetConsoleTitle(false);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
@@ -1435,7 +1425,7 @@ namespace TShockAPI
 			{
 				if (Config.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
-				SetConsoleTitle(true);
+				Utils.SetConsoleTitle(true);
 			}
 		}
 
