@@ -1456,5 +1456,17 @@ namespace TShockAPI
 					empty ? 0 : ActivePlayers(),
 					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
+
+		/// <summary>Distance - Determines the distance between two vectors.</summary>
+		/// <param name="value1">value1 - The first vector location.</param>
+		/// <param name="value2">value2 - The second vector location.</param>
+		/// <returns>float - The distance between the two vectors.</returns>
+		public static float Distance(Vector2 value1, Vector2 value2)
+		{
+			float num2 = value1.X - value2.X;
+			float num = value1.Y - value2.Y;
+			float num3 = (num2 * num2) + (num * num);
+			return (float)Math.Sqrt(num3);
+		}
 	}
 }

@@ -1978,19 +1978,17 @@ namespace TShockAPI
 		{
 			Vector2 tile = new Vector2(x, y);
 			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-			return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
+			return Utils.Distance(spawn, tile) <= Config.SpawnProtectionRadius;
 		}
 
 		/// <summary>Distance - Determines the distance between two vectors.</summary>
 		/// <param name="value1">value1 - The first vector location.</param>
 		/// <param name="value2">value2 - The second vector location.</param>
 		/// <returns>float - The distance between the two vectors.</returns>
+		[Obsolete("Use TShock.Utils.Distance(Vector2, Vector2) instead.", true)]
 		public static float Distance(Vector2 value1, Vector2 value2)
 		{
-			float num2 = value1.X - value2.X;
-			float num = value1.Y - value2.Y;
-			float num3 = (num2 * num2) + (num * num);
-			return (float)Math.Sqrt(num3);
+			return Utils.Distance(value1, value2);
 		}
 
 		/// <summary>HackedInventory - Checks to see if a user has a hacked inventory. In addition, messages players the result.</summary>
