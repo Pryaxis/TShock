@@ -134,6 +134,7 @@
     <Compile Include="Net\WorldInfoMsg.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
+    <Compile Include="Bouncer.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

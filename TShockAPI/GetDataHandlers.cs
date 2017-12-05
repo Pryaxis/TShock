@@ -537,14 +537,22 @@ namespace TShockAPI
 		/// </summary>
 		public class SendTileSquareEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
+
+			/// <summary>The raw memory stream from the original event</summary>
+			public MemoryStream Data { get; set; }
+
 			/// <summary>
 			/// Size of the area
 			/// </summary>
 			public short Size { get; set; }
+
 			/// <summary>
 			/// A corner of the section
 			/// </summary>
 			public int TileX { get; set; }
+
 			/// <summary>
 			/// A corner of the section
 			/// </summary>
@@ -555,13 +563,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
 
-		private static bool OnSendTileSquare(short size, int tilex, int tiley)
+		private static bool OnSendTileSquare(TSPlayer player, MemoryStream data, short size, int tilex, int tiley)
 		{
 			if (SendTileSquare == null)
 				return false;
 
 			var args = new SendTileSquareEventArgs
 			{
+				Player = player,
+				Data = data,
 				Size = size,
 				TileX = tilex,
 				TileY = tiley,
@@ -1726,171 +1736,16 @@ namespace TShockAPI
 
 		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
 		{
+			var player = args.Player;
 			var size = args.Data.ReadInt16();
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
+			var data = args.Data;
 
-			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
-				return false;
-
-			if (OnSendTileSquare(size, tileX, tileY))
+			if (OnSendTileSquare(player, data, size, tileX, tileY))
 				return true;
 
-			if (size > 5)
-				return true;
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-				return true;
-			}
-
-			try
-			{
-				var tiles = new NetTile[size, size];
-				for (int x = 0; x < size; x++)
-				{
-					for (int y = 0; y < size; y++)
-					{
-						tiles[x, y] = new NetTile(args.Data);
-					}
-				}
-
-				bool changed = false;
-				for (int x = 0; x < size; x++)
-				{
-					int realx = tileX + x;
-					if (realx < 0 || realx >= Main.maxTilesX)
-						continue;
-
-					for (int y = 0; y < size; y++)
-					{
-						int realy = tileY + y;
-						if (realy < 0 || realy >= Main.maxTilesY)
-							continue;
-
-						var tile = Main.tile[realx, realy];
-						var newtile = tiles[x, y];
-						if (TShock.CheckTilePermission(args.Player, realx, realy) ||
-							TShock.CheckRangePermission(args.Player, realx, realy))
-						{
-							continue;
-						}
-
-						// Fixes the Flower Boots not creating flowers issue
-						if (size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
-						{
-							if (Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
-							{
-								return false;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.HallowedGrass && (newtile.Type == TileID.HallowedPlants || newtile.Type == TileID.HallowedPlants2))
-							{
-								return false;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.JungleGrass && newtile.Type == TileID.JunglePlants2)
-							{
-								return false;
-							}
-						}
-
-						// Junction Box
-						if (tile.type == TileID.WirePipe)
-							return false;
-
-						// Orientable tiles
-						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
-						{
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							changed = true;
-						}
-						// Landmine
-						if (tile.type == TileID.LandMine && !newtile.Active)
-						{
-							Main.tile[realx, realy].active(false);
-							changed = true;
-						}
-						// Sensors
-						if(newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(true);
-							changed = true;
-						}
-
-						if (tile.active() && newtile.Active && tile.type != newtile.Type)
-						{
-							// Grass <-> Grass
-							if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
-								// Dirt <-> Dirt
-								((tile.type == 0 || tile.type == 59) &&
-								(newtile.Type == 0 || newtile.Type == 59)) ||
-								// Ice <-> Ice
-								(TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newtile.Type]) ||
-								// Stone <-> Stone
-								((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
-								(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
-								// Sand <-> Sand
-								(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
-								// Sandstone <-> Sandstone
-								(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
-								// Hardened Sand <-> Hardened Sand
-								(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
-							{
-								Main.tile[realx, realy].type = newtile.Type;
-								changed = true;
-							}
-						}
-						// Stone wall <-> Stone wall
-						if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
-							(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
-							// Leaf wall <-> Leaf wall
-							(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
-							((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
-						{
-							Main.tile[realx, realy].wall = newtile.Wall;
-							changed = true;
-						}
-
-						if ((tile.type == TileID.TrapdoorClosed && (newtile.Type == TileID.TrapdoorOpen || !newtile.Active)) ||
-							(tile.type == TileID.TrapdoorOpen && (newtile.Type == TileID.TrapdoorClosed || !newtile.Active)) ||
-							(!tile.active() && newtile.Active && (newtile.Type == TileID.TrapdoorOpen||newtile.Type == TileID.TrapdoorClosed)))
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(newtile.Active);
-							changed = true;
-						}
-					}
-				}
-
-				if (changed)
-				{
-					TSPlayer.All.SendTileSquare(tileX, tileY, size + 1);
-					WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
-				}
-				else
-				{
-					args.Player.SendTileSquare(tileX, tileY, size);
-				}
-			}
-			catch
-			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-			}
-			return true;
+			return false;
 		}
 
 		public enum EditAction
