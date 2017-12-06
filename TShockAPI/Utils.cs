@@ -675,7 +675,7 @@ namespace TShockAPI
 				string ip = player.IP;
 				string uuid = player.UUID;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
+				TShock.Bans.AddBan2(ip, playerName, uuid, "", reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
