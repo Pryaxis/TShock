@@ -1428,7 +1428,7 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
+		/// <summary>Verifies that each stack in each chest is valid and not over the max stack count.</summary>
 		internal void FixChestStacks()
 		{
 			if (TShock.Config.IgnoreChestStacksOnLoad)
@@ -1447,8 +1447,8 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
+		/// <summary>Updates the console title with some pertinent information.</summary>
+		/// <param name="empty">If the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
 			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
@@ -1457,10 +1457,10 @@ namespace TShockAPI
 					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
 
-		/// <summary>Distance - Determines the distance between two vectors.</summary>
-		/// <param name="value1">value1 - The first vector location.</param>
-		/// <param name="value2">value2 - The second vector location.</param>
-		/// <returns>float - The distance between the two vectors.</returns>
+		/// <summary>Determines the distance between two vectors.</summary>
+		/// <param name="value1">The first vector location.</param>
+		/// <param name="value2">The second vector location.</param>
+		/// <returns>The distance between the two vectors.</returns>
 		public static float Distance(Vector2 value1, Vector2 value2)
 		{
 			float num2 = value1.X - value2.X;
@@ -1469,7 +1469,7 @@ namespace TShockAPI
 			return (float)Math.Sqrt(num3);
 		}
 
-		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
+		/// <summary>Computes the max styles...</summary>
 		internal void ComputeMaxStyles()
 		{
 			var item = new Item();
