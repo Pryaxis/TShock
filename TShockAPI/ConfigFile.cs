@@ -78,6 +78,18 @@ namespace TShockAPI
 		[Description("Disables any building / placing of blocks.")]
 		public bool DisableBuild;
 
+		/// <summary>SuperAdminChatRGB - The chat color for the superadmin group.</summary>
+		[Description("#.#.# = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255.")]
+		public int[] SuperAdminChatRGB = { 255, 255, 255 };
+
+		/// <summary>SuperAdminChatPrefix - The superadmin chat prefix.</summary>
+		[Description("Super admin group chat prefix.")]
+		public string SuperAdminChatPrefix = "(Super Admin) ";
+
+		/// <summary>SuperAdminChatSuffix - The superadmin chat suffix.</summary>
+		[Description("Super admin group chat suffix.")]
+		public string SuperAdminChatSuffix = "";
+
 		/// <summary>BackupInterval - The backup frequency in minutes.</summary>
 		[Description("Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")]
 		public int BackupInterval;
