@@ -39,10 +39,10 @@ using TShockAPI.Net;
 
 namespace TShockAPI
 {
-	/// <summary>Bouncer - The TShock anti-hack and build guardian system</summary>
+	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
 	public class Bouncer
 	{
-		/// <summary>Bouncer - Constructor call initializes Bouncer & related functionality.</summary>
+		/// <summary>Constructor call initializes Bouncer & related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		public Bouncer(TerrariaPlugin pluginInstance)
 		{
@@ -52,7 +52,7 @@ namespace TShockAPI
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 		}
 
-		/// <summary>OnHealOtherPlayer - The handler for the HealOther events in Bouncer</summary>
+		/// <summary>The handler for the HealOther events in Bouncer</summary>
 		/// <param name="sender">sender</param>
 		/// <param name="args">args</param>
 		internal void OnHealOtherPlayer(object sender, GetDataHandlers.HealOtherPlayerEventArgs args)
@@ -91,7 +91,7 @@ namespace TShockAPI
 			return;
 		}
 
-		/// <summary>OnSendTileSquare - The handler for SendTileSquare events in Bouncer</summary>
+		/// <summary>The handler for SendTileSquare events in Bouncer</summary>
 		/// <param name="sender">sender</param>
 		/// <param name="args">args</param>
 		internal void OnSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)

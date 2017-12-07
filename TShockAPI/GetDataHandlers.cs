@@ -532,26 +532,26 @@ namespace TShockAPI
 			return false;
 		}
 
-		/// <summary>HandledEventArgs - The event args object for the HealOtherPlayer event</summary>
+		/// <summary>The event args object for the HealOtherPlayer event</summary>
 		public class HealOtherPlayerEventArgs : HandledEventArgs
 		{
-			/// <summary>Player - The TSPlayer object that caused the event</summary>
+			/// <summary>The TSPlayer object that caused the event</summary>
 			public TSPlayer Player { get; set; }
 
-			/// <summary>TargetPlayerIndex - The Terraria player index of the target player</summary>
+			/// <summary>The Terraria player index of the target player</summary>
 			public byte TargetPlayerIndex { get; set; }
 
-			/// <summary>Amount - The amount to heal by</summary>
+			/// <summary>The amount to heal by</summary>
 			public short Amount { get; set; }
 		}
 
-		/// <summary>HealOtherPlayer - When a player heals another player</summary>
+		/// <summary>When a player heals another player</summary>
 		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer;
 
-		/// <summary>OnHealOtherPlayer - Fires the HealOtherPlayer event</summary>
-		/// <param name="player">player - The TSPlayer that started the event</param>
-		/// <param name="targetPlayerIndex">targetPlayerIndex - The Terraria player index that the event targets</param>
-		/// <param name="amount">amount - The amount to heal</param>
+		/// <summary>Fires the HealOtherPlayer event</summary>
+		/// <param name="player">The TSPlayer that started the event</param>
+		/// <param name="targetPlayerIndex">The Terraria player index that the event targets</param>
+		/// <param name="amount">The amount to heal</param>
 		/// <returns>bool</returns>
 		private static bool OnHealOtherPlayer(TSPlayer player, byte targetPlayerIndex, short amount)
 		{
@@ -596,7 +596,7 @@ namespace TShockAPI
 			public int TileY { get; set; }
 		}
 		/// <summary>
-		/// SendTileSquare - When the player sends a tile square
+		/// When the player sends a tile square
 		/// </summary>
 		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
 
