@@ -80,11 +80,11 @@ namespace TShockAPI
 
 		/// <summary>SuperAdminChatRGB - The chat color for the superadmin group.</summary>
 		[Description("#.#.# = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255.")]
-		public int[] SuperAdminChatRGB = { 255, 0, 0 };
+		public int[] SuperAdminChatRGB = { 255, 255, 255 };
 
 		/// <summary>SuperAdminChatPrefix - The superadmin chat prefix.</summary>
 		[Description("Super admin group chat prefix.")]
-		public string SuperAdminChatPrefix = "(Admin) ";
+		public string SuperAdminChatPrefix = "(Super Admin) ";
 
 		/// <summary>SuperAdminChatSuffix - The superadmin chat suffix.</summary>
 		[Description("Super admin group chat suffix.")]
