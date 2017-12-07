@@ -31,8 +31,8 @@ using TerrariaApi.Server;
 
 namespace TShockAPI
 {
-    /// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
-    internal sealed class Bouncer
+	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
+	internal sealed class Bouncer
 	{
 		/// <summary>Constructor call initializes Bouncer & related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
