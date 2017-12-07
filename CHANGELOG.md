@@ -14,9 +14,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a warning notifying users of the minimum memory required to run TShock (@bartico6)
 * Added /group rename to allow changing group names (@ColinBohn, @ProfessorXZ)
 * Added /region rename and OnRegionRenamed hook (@koneko-nyan, @deadsurgeon42)
+* Rebuilt /ban add. New syntax is /ban add <target> [time] [reason] where target is the target online player, offline player, or IP; where time is the time format or 0 for permanent; and where [reason] is the reason. (@hakusaro)
+* Removed /ban addip and /ban addtemp. Now covered under /ban add. (@hakusaro)
 * Added /su, which temporarily elevates players with the tshock.su permission to super admin. In addition added, a new group, owner, that is suggested for new users to setup TShock with as opposed to superadmin. Finally, /su is implemented such that a 10 minute timeout will occur preventing people from just camping with it on. (@hakusaro)
 * Added /sudo, which runs a command as the superadmin group. If a user fails to execute a command but can sudo, they'll be told that they can override the permission check with sudo. Much better than just telling them to run /su and then re-run the command. (@hakusaro)
-
+* Fixed /savessc not bothering to save ssc data for people who bypass ssc. (@hakusaro)
+* Default permission sets for new databases are more modern. (@hakusaro)
+* Added the ability to ban by account name instead of just banning a character name assuming its an account name. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)

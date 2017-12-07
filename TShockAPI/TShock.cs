@@ -472,6 +472,28 @@ namespace TShockAPI
 
 			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 			Users.UpdateLogin(args.Player.User);
+
+			Ban potentialBan = Bans.GetBanByAccountName(args.Player.User.Name);
+
+			if (potentialBan != null)
+			{
+				// A user just signed in successfully despite being banned by account name.
+				// We should fix the ban database so that all of their ban info is up to date.
+				Bans.AddBan2(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.User.Name,
+					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
+
+				// And then get rid of them.
+				if (potentialBan.Expiration == "")
+				{
+					Utils.ForceKick(args.Player, String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
+						,potentialBan.Reason), false, false);
+				}
+				else
+				{
+					Utils.ForceKick(args.Player, String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
+						potentialBan.Reason), false, false);
+				}
+			}
 		}
 
 		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
@@ -1365,7 +1387,7 @@ namespace TShockAPI
 					DateTime exp;
 					if (!DateTime.TryParse(ban.Expiration, out exp))
 					{
-						player.Disconnect("You are banned forever: " + ban.Reason);
+						player.Disconnect("Permanently banned for: " + ban.Reason);
 					}
 					else
 					{
