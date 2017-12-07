@@ -106,6 +106,8 @@ namespace TShockAPI
 				return;
 			}
 
+			// From White:
+			// IIRC it's because 5 means a 5x5 square which is normal for a tile square, and anything bigger is a non-vanilla tile modification attempt
 			if (size > 5)
 			{
 				args.Handled = true;
