@@ -1756,7 +1756,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Tiles that can be broken without any pickaxes/etc.
 		/// </summary>
-		private static int[] breakableTiles = new int[]
+		internal static int[] breakableTiles = new int[]
 		{
 			TileID.Books,
 			TileID.Bottles,
@@ -1780,7 +1780,7 @@ namespace TShockAPI
 		/// <summary>
 		/// These projectiles create tiles on death.
 		/// </summary>
-		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
+		internal static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
 			{ ProjectileID.DirtBall, TileID.Dirt },
 			{ ProjectileID.SandBallGun, TileID.Sand },
@@ -1789,7 +1789,7 @@ namespace TShockAPI
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
 		};
 
-		private static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
+		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
 		{
 			{ItemID.RopeCoil, TileID.Rope},
 			{ItemID.SilkRopeCoil, TileID.SilkRope},
@@ -1800,7 +1800,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Extra place style limits for strange hardcoded values in Terraria
 		/// </summary>
-		private static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
+		internal static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
 		{
 			{TileID.MinecartTrack, 3}
 		};
@@ -1810,330 +1810,20 @@ namespace TShockAPI
 			EditAction action = (EditAction)args.Data.ReadInt8();
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
+			var editData = args.Data.ReadInt16();
+			EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
+							 action == EditAction.KillTileNoItem)
+							? EditType.Fail
+							: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+								? EditType.Type
+								: EditType.Slope;
 
-			try
-			{
-				var editData = args.Data.ReadInt16();
-				EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
-								 action == EditAction.KillTileNoItem)
-								? EditType.Fail
-								: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
-									? EditType.Type
-									: EditType.Slope;
+			var style = args.Data.ReadInt8();
 
-				var style = args.Data.ReadInt8();
-
-				if (editData < 0)
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
-					return true;
-				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
-					return true;
-				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
-					return false;
-				if (args.Player.Dead && TShock.Config.PreventDeadModification)
-					return true;
-
-				if (args.Player.AwaitingName)
-				{
-					Debug.Assert(args.Player.AwaitingNameParameters != null);
-
-					bool includeUnprotected = false;
-					bool includeZIndexes = false;
-					bool persistentMode = false;
-					foreach (string parameter in args.Player.AwaitingNameParameters)
-					{
-						if (parameter.Equals("-u", StringComparison.InvariantCultureIgnoreCase))
-							includeUnprotected = true;
-						if (parameter.Equals("-z", StringComparison.InvariantCultureIgnoreCase))
-							includeZIndexes = true;
-						if (parameter.Equals("-p", StringComparison.InvariantCultureIgnoreCase))
-							persistentMode = true;
-					}
-
-					List<string> outputRegions = new List<string>();
-					foreach (Region region in TShock.Regions.Regions.OrderBy(r => r.Z).Reverse())
-					{
-						if (!includeUnprotected && !region.DisableBuild)
-							continue;
-						if (tileX < region.Area.Left || tileX > region.Area.Right)
-							continue;
-						if (tileY < region.Area.Top || tileY > region.Area.Bottom)
-							continue;
-
-						string format = "{1}";
-						if (includeZIndexes)
-							format = "{1} (z:{0})";
-
-						outputRegions.Add(string.Format(format, region.Z, region.Name));
-					}
-
-					if (outputRegions.Count == 0)
-					{
-						if (includeUnprotected)
-							args.Player.SendInfoMessage("There are no regions at this point.");
-						else
-							args.Player.SendInfoMessage("There are no regions at this point or they are not protected.");
-					}
-					else
-					{
-						if (includeUnprotected)
-							args.Player.SendSuccessMessage("Regions at this point:");
-						else
-							args.Player.SendSuccessMessage("Protected regions at this point:");
-
-						foreach (string line in PaginationTools.BuildLinesFromTerms(outputRegions))
-							args.Player.SendMessage(line, Color.White);
-					}
-
-					if (!persistentMode)
-					{
-						args.Player.AwaitingName = false;
-						args.Player.AwaitingNameParameters = null;
-					}
-
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.AwaitingTempPoint > 0)
-				{
-					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
-					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].Y = tileY;
-					args.Player.SendInfoMessage("Set temp point {0}.", args.Player.AwaitingTempPoint);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					args.Player.AwaitingTempPoint = 0;
-					return true;
-				}
-
-				Item selectedItem = args.Player.SelectedItem;
-				int lastKilledProj = args.Player.LastKilledProjectile;
-				ITile tile = Main.tile[tileX, tileY];
-
-				if (action == EditAction.PlaceTile)
-				{
-					if (TShock.TileBans.TileIsBanned(editData, args.Player))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place this tile.");
-						return true;
-					}
-				}
-
-				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
-				{
-					//TPlayer.mount.Type 8 => Drill Containment Unit.
-
-					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
-					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					// Item frames can be modified without pickaxe tile.
-					else if (tile.type != TileID.ItemFrame
-						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-				}
-				else if (action == EditAction.KillWall)
-				{
-					// If they aren't selecting a hammer, they could be hacking.
-					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.PlaceTile && (projectileCreatesTile.ContainsKey(lastKilledProj) && editData == projectileCreatesTile[lastKilledProj]))
-				{
-					args.Player.LastKilledProjectile = 0;
-				}
-				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
-				{
-					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
-						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
-						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-
-					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if (!(selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock) &&
-						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
-						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-
-					// Using the actuation accessory can lead to actuator hacking
-					if (TShock.Itembans.ItemIsBanned("Actuator", args.Player) && args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place actuators.");
-						return true;
-					}
-					if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItem.netID), args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && Main.ServerSideCharacter)
-					{
-						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
-						args.Player.SendTileSquare(tileX, tileY, 3);
-						return true;
-					}
-					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
-					{
-						if (TShock.Utils.MaxChests())
-						{
-							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							return true;
-						}
-						if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Boulder) ||
-							(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Boulder))
-						{
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							return true;
-						}
-					}
-				}
-				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
-				{
-					// If they aren't selecting a wrench, they're hacking.
-					// WireKite = The Grand Design
-					if (selectedItem.type != ItemID.Wrench
-						&& selectedItem.type != ItemID.BlueWrench
-						&& selectedItem.type != ItemID.GreenWrench
-						&& selectedItem.type != ItemID.YellowWrench
-						&& selectedItem.type != ItemID.MulticolorWrench
-						&& selectedItem.type != ItemID.WireKite)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.KillActuator || action == EditAction.KillWire ||
-					action == EditAction.KillWire2 || action == EditAction.KillWire3)
-				{
-					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != ItemID.WireCutter
-						&& selectedItem.type != ItemID.WireKite
-						&& selectedItem.type != ItemID.MulticolorWrench)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.PlaceActuator)
-				{
-					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
-					if (selectedItem.type != ItemID.Actuator && !args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
-				{
-					if (action == EditAction.KillWall)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-					return false;
-				}
-
-				if (TShock.CheckIgnores(args.Player))
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (TShock.CheckRangePermission(args.Player, tileX, tileY))
-				{
-					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
-					{
-						return false;
-					}
-
-					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
-					{
-						return false;
-					}
-
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
-				{
-					args.Player.Disable("Reached TileKill threshold.", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
-				{
-					args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
-				{
-					args.Player.TilePlaceThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesCreated)
-						if (!args.Player.TilesCreated.ContainsKey(coords))
-							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
-				}
-
-				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
-					!args.Player.HasPermission(Permissions.ignorekilltiledetection))
-				{
-					args.Player.TileKillThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesDestroyed)
-						if (!args.Player.TilesDestroyed.ContainsKey(coords))
-							args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
-				}
-				return false;
-			}
-			catch
-			{
-				args.Player.SendTileSquare(tileX, tileY, 4);
+			if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
 				return true;
-			}
+
+			return false;
 		}
 
 
