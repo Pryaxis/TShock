@@ -40,11 +40,11 @@ using TShockAPI.Net;
 namespace TShockAPI
 {
 	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
-	public class Bouncer
+	internal sealed class Bouncer
 	{
 		/// <summary>Constructor call initializes Bouncer & related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
-		public Bouncer(TerrariaPlugin pluginInstance)
+		internal Bouncer(TerrariaPlugin pluginInstance)
 		{
 			// Setup hooks
 
