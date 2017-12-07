@@ -156,17 +156,17 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="player">player to take data from</param>
 		/// <returns>true if inserted successfully</returns>
-		public bool InsertPlayerData(TSPlayer player)
+		public bool InsertPlayerData(TSPlayer player, bool fromCommand = false)
 		{
 			PlayerData playerData = player.PlayerData;
 
 			if (!player.IsLoggedIn)
 				return false;
 
-			if (player.HasPermission(Permissions.bypassssc))
+			if (player.HasPermission(Permissions.bypassssc) && !fromCommand)
 			{
 				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.User.Name); // Debug code
-				return true;
+				return false;
 			}
 
 			if (!GetPlayerData(player, player.User.ID).exists)

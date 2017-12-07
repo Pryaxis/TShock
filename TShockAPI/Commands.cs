@@ -35,6 +35,7 @@ using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
+using System.Text.RegularExpressions;
 
 namespace TShockAPI
 {
@@ -1285,200 +1286,197 @@ namespace TShockAPI
 			switch (subcmd)
 			{
 				case "add":
-					#region Add ban
+					#region Add Ban
 					{
 						if (args.Parameters.Count < 2)
 						{
-							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}ban add <player> [reason]", Specifier);
+							args.Player.SendErrorMessage("Invalid command. Format: {0}ban add <player> [time] [reason]", Specifier);
+							args.Player.SendErrorMessage("Example: {0}ban add Shank 10d Hacking and cheating", Specifier);
+							args.Player.SendErrorMessage("Example: {0}ban add Ash", Specifier);
+							args.Player.SendErrorMessage("Use the time 0 (zero) for a permanent ban.");
 							return;
 						}
 
+						// Used only to notify if a ban was successful and who the ban was about
+						bool success = false;
+						string targetGeneralizedName = "";
+
+						// Effective ban target assignment
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
-						string reason = args.Parameters.Count > 2 ? String.Join(" ", args.Parameters.Skip(2)) : "Misbehavior.";
-						if (players.Count == 0)
+						User offlineUser = TShock.Users.GetUserByName(args.Parameters[1]);
+
+						// Storage variable to determine if the command executor is the server console
+						// If it is, we assume they have full control and let them override permission checks
+						bool callerIsServerConsole = false;
+						
+						if (args.Player is TSServerPlayer)
 						{
-							var user = TShock.Users.GetUserByName(args.Parameters[1]);
-							if (user != null)
-							{
-								bool force = !args.Player.RealPlayer;
-
-								if (user.Name == args.Player.Name && !force)
-								{
-									args.Player.SendErrorMessage("You can't ban yourself!");
-									return;
-								}
-
-								if (TShock.Groups.GetGroupByName(user.Group).HasPermission(Permissions.immunetoban) && !force)
-									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
-								else
-								{
-									if (user.KnownIps == null)
-									{
-										args.Player.SendErrorMessage("Cannot ban {0} because they have no IPs to ban.", user.Name);
-										return;
-									}
-									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name);
-									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
-									{
-										if (args.Silent)
-										{
-											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
-										}
-										else
-										{
-											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "Force " : "", reason);
-										}
-									}
-									else
-									{
-										if (args.Silent)
-										{
-											args.Player.SendInfoMessage("{0}banned {1} for '{2}'.", force ? "Force " : "", user.Name, reason);
-										}
-										else
-										{
-											TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "Force " : "", user.Name, reason);
-										}
-									}
-								}
-							}
-							else
-								args.Player.SendErrorMessage("Invalid player or account!");
+							callerIsServerConsole = true;
 						}
-						else if (players.Count > 1)
+
+						// The ban reason the ban is going to have
+						string banReason = "Unknown.";
+
+						// The default ban length
+						// 0 is permanent ban, otherwise temp ban
+						int banLengthInSeconds = 0;
+
+						// Figure out if param 2 is a time or 0 or garbage
+						if (args.Parameters.Count >= 3)
+						{
+							bool parsedOkay = false;
+							if (!(args.Parameters[2] == "0"))
+							{
+								parsedOkay = TShock.Utils.TryParseTime(args.Parameters[2], out banLengthInSeconds);
+							} else {
+								parsedOkay = true;
+							}
+
+							if (!parsedOkay)
+							{
+								args.Player.SendErrorMessage("Invalid time format. Example: 10d+5h+3m-2s.");
+								args.Player.SendErrorMessage("Use 0 (zero) for a permanent ban.");
+								return;
+							}
+						}
+
+						// If a reason exists, use the given reason.
+						if (args.Parameters.Count > 3)
+						{
+							banReason = String.Join(" ", args.Parameters.Skip(3));
+						}
+
+						// Bad case: Players contains more than 1 person so we can't ban them
+						if (players.Count > 1)
+						{
 							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-						else
-						{
-							if (!TShock.Utils.Ban(players[0], reason, !args.Player.RealPlayer, args.Player.User.Name))
-								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
-						}
-					}
-					#endregion
-					return;
-				case "addip":
-					#region Add IP ban
-					{
-						if (args.Parameters.Count < 2)
-						{
-							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}ban addip <ip> [reason]", Specifier);
 							return;
 						}
 
-						string ip = args.Parameters[1];
-						string reason = args.Parameters.Count > 2
-											? String.Join(" ", args.Parameters.GetRange(2, args.Parameters.Count - 2))
-											: "Manually added IP address ban.";
-						TShock.Bans.AddBan(ip, "", "", reason, false, args.Player.User.Name);
-						args.Player.SendSuccessMessage("Banned IP {0}.", ip);
-					}
-					#endregion
-					return;
-				case "addtemp":
-					#region Add temp ban
-					{
-						if (args.Parameters.Count < 3)
+						// Good case: Online ban for matching character.
+						if (players.Count == 1)
 						{
-							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}ban addtemp <player> <time> [reason]", Specifier);
-							return;
-						}
+							TSPlayer target = players[0];
 
-						int time;
-						if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
-						{
-							args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
-							args.Player.SendErrorMessage("For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not.");
-							return;
-						}
-
-						string reason = args.Parameters.Count > 3
-											? String.Join(" ", args.Parameters.Skip(3))
-											: "Misbehavior.";
-
-						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
-						if (players.Count == 0)
-						{
-							var user = TShock.Users.GetUserByName(args.Parameters[1]);
-							if (user != null)
+							if (target.HasPermission(Permissions.immunetoban) && !callerIsServerConsole)
 							{
-								bool force = !args.Player.RealPlayer;
-								if (TShock.Groups.GetGroupByName(user.Group).HasPermission(Permissions.immunetoban) && !force)
-									args.Player.SendErrorMessage("You can't ban {0}!", user.Name);
-								else
-								{
-									var knownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-									TShock.Bans.AddBan(knownIps.Last(), user.Name, user.UUID, reason, false, args.Player.User.Name, DateTime.UtcNow.AddSeconds(time).ToString("s"));
-									if (String.IsNullOrWhiteSpace(args.Player.User.Name))
-									{
-										if (args.Silent)
-										{
-											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
-										}
-										else
-										{
-											TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
-										}
-									}
-									else
-									{
-										if (args.Silent)
-										{
-											args.Player.SendInfoMessage("{0} was {1}banned for '{2}'.", user.Name, force ? "force " : "", reason);
-										}
-										else
-										{
-											TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", args.Player.Name, force ? "force " : "", user.Name, reason);
-										}
-									}
-								}
-							}
-							else
-							{
-								args.Player.SendErrorMessage("Invalid player or account!");
-							}
-						}
-						else if (players.Count > 1)
-							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
-						else
-						{
-							if (args.Player.RealPlayer && players[0].HasPermission(Permissions.immunetoban))
-							{
-								args.Player.SendErrorMessage("You can't ban {0}!", players[0].Name);
+								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", target.Name);
 								return;
 							}
 
-							if (TShock.Bans.AddBan(players[0].IP, players[0].Name, players[0].UUID, reason,
-								false, args.Player.Name, DateTime.UtcNow.AddSeconds(time).ToString("s")))
+							targetGeneralizedName = target.Name;
+							success = TShock.Bans.AddBan2(target.IP, target.Name, target.UUID, target.User.Name, banReason, false, args.Player.User.Name,
+								banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
+
+							// Since this is an online ban, we need to dc the player and tell them now.
+							if (success)
 							{
-								players[0].Disconnect(String.Format("Banned: {0}", reason));
-								string verb = args.Player.RealPlayer ? "Force " : "";
-								if (args.Player.RealPlayer)
-									if (args.Silent)
-									{
-										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
-									}
-									else
-									{
-										TSPlayer.All.SendSuccessMessage("{0} {1}banned {2} for '{3}'", args.Player.Name, verb, players[0].Name, reason);
-									}
+								if (banLengthInSeconds == 0)
+								{
+									target.Disconnect(String.Format("Permanently banned for {0}", banReason));
+								}
 								else
 								{
-									if (args.Silent)
-									{
-										args.Player.SendSuccessMessage("{0}banned {1} for '{2}'", verb, players[0].Name, reason);
-									}
-									else
-									{
-										TSPlayer.All.SendSuccessMessage("{0} was {1}banned for '{2}'", players[0].Name, verb, reason);
-									}
+									target.Disconnect(String.Format("Banned for {0} seconds for {1}", banLengthInSeconds, banReason));
 								}
 							}
-							else
-								args.Player.SendErrorMessage("Failed to ban {0}, check logs.", players[0].Name);
 						}
+
+						// Case: Players & user are invalid, could be IP?
+						// Note: Order matters. If this method is above the online player check,
+						// This enables you to ban an IP even if the player exists in the database as a player.
+						// You'll get two bans for the price of one, in theory, because both IP and user named IP will be banned.
+						// ??? edge cases are weird, but this is going to happen
+						// The only way around this is to either segregate off the IP code or do something else.
+						if (players.Count == 0)
+						{
+							// If the target is a valid IP...
+							string pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+							Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
+							if (r.IsMatch(args.Parameters[1])) {
+								targetGeneralizedName = "IP: " + args.Parameters[1];
+								success = TShock.Bans.AddBan2(args.Parameters[1], "", "", "", banReason,
+									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
+								if (success && offlineUser != null)
+								{
+									args.Player.SendSuccessMessage("Target IP {0} was banned successfully.", targetGeneralizedName);
+									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
+									args.Player.SendErrorMessage("Note: It will also be banned.");
+								}
+							} else {
+								// Apparently there is no way to not IP ban someone
+								// This means that where we would normally just ban a "character name" here
+								// We can't because it requires some IP as a primary key.
+								if (offlineUser == null)
+								{
+									args.Player.SendErrorMessage("Unable to ban target {0}.", args.Parameters[1]);
+									args.Player.SendErrorMessage("Target is not a valid IP address, a valid online player, or a known offline user.");
+									return;
+								}
+							}
+
+						}
+
+						// Case: Offline ban
+						if (players.Count == 0 && offlineUser != null)
+						{
+							// Catch: we don't know an offline player's last login character name
+							// This means that we're banning their *user name* on the assumption that
+							// user name == character name
+							// (which may not be true)
+							// This needs to be fixed in a future implementation.
+							targetGeneralizedName = offlineUser.Name;
+
+							if (TShock.Groups.GetGroupByName(offlineUser.Group).HasPermission(Permissions.immunetoban) && 
+								!callerIsServerConsole)
+							{
+								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
+								return;
+							}
+
+							if (offlineUser.KnownIps == null)
+							{
+								args.Player.SendErrorMessage("Unable to ban target {0} because they have no valid IP to ban.", targetGeneralizedName);
+								return;
+							}
+
+							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUser.KnownIps).Last();
+
+							success = 
+								TShock.Bans.AddBan2(lastIP,
+									"", offlineUser.UUID, offlineUser.Name, banReason, false, args.Player.User.Name,
+									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
+						}
+
+						if (success)
+						{
+							args.Player.SendSuccessMessage("{0} was successfully banned.", targetGeneralizedName);
+							args.Player.SendInfoMessage("Length: {0}", banLengthInSeconds == 0 ? "Permanent." : banLengthInSeconds + " seconds.");
+							args.Player.SendInfoMessage("Reason: {0}", banReason);
+							if (!args.Silent)
+							{
+								if (banLengthInSeconds == 0)
+								{
+									TSPlayer.All.SendErrorMessage("{0} was permanently banned by {1} for: {2}",
+										targetGeneralizedName, args.Player.User.Name, banReason);
+								}
+								else
+								{
+									TSPlayer.All.SendErrorMessage("{0} was temp banned for {1} seconds by {2} for: {3}",
+										targetGeneralizedName, banLengthInSeconds, args.Player.User.Name, banReason);
+								}
+							}
+						}
+						else
+						{
+							args.Player.SendErrorMessage("{0} was NOT banned due to a database error or other system problem.", targetGeneralizedName);
+							args.Player.SendErrorMessage("If this player is online, they have NOT been kicked.");
+							args.Player.SendErrorMessage("Check the system logs for details.");
+						}
+
+						return;
 					}
 					#endregion
-					return;
 				case "del":
 					#region Delete ban
 					{
@@ -1534,9 +1532,7 @@ namespace TShockAPI
 
 						var lines = new List<string>
 						{
-							"add <player> [reason] - Bans a player or user account if the player is not online.",
-							"addip <ip> [reason] - Bans an IP.",
-							"addtemp <player> <time> [reason] - Temporarily bans a player.",
+							"add <target> <time> [reason] - Bans a player or user account if the player is not online.",
 							"del <player> - Unbans a player.",
 							"delip <ip> - Unbans an IP.",
 							"list [page] - Lists all player bans.",
@@ -1636,7 +1632,7 @@ namespace TShockAPI
 				{
 					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
 					{
-						TShock.CharacterDB.InsertPlayerData(player);
+						TShock.CharacterDB.InsertPlayerData(player, true);
 					}
 				}
 			}

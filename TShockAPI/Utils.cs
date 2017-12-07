@@ -675,7 +675,7 @@ namespace TShockAPI
 				string ip = player.IP;
 				string uuid = player.UUID;
 				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, uuid, reason, false, adminUserName);
+				TShock.Bans.AddBan2(ip, playerName, uuid, "", reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
@@ -1204,6 +1204,7 @@ namespace TShockAPI
 			Permissions.DumpDescriptions();
 			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
 			RestManager.DumpDescriptions();
+			DumpPermissionMatrix("PermissionMatrix.txt");
 			DumpBuffs("BuffList.txt");
 			DumpItems("Items-1_0.txt", -48, 235);
 			DumpItems("Items-1_1.txt", 235, 604);
@@ -1212,6 +1213,7 @@ namespace TShockAPI
 			DumpNPCs("NPCs.txt");
 			DumpProjectiles("Projectiles.txt");
 			DumpPrefixes("Prefixes.txt");
+
 			if (exit)
 			{
 				Environment.Exit(1);
@@ -1222,6 +1224,52 @@ namespace TShockAPI
 		{
 			for(int i = 0; i < Main.recipe.Length; i++)
 				Main.recipe[i] = new Recipe();
+		}
+		
+		// Dumps a matrix of all permissions and all groups in markdown format
+		// Hard coded to default groups because apparently we have poor querying tools
+		public void DumpPermissionMatrix(string path)
+		{
+			StringBuilder output = new StringBuilder();
+			output.Append("|Permission|");
+
+			// Traverse to build group name list
+			foreach (Group g in TShock.Groups.groups)
+			{
+				output.Append(g.Name);
+				output.Append("|");
+			}
+
+			output.AppendLine();
+			output.Append("|-------|");
+
+			foreach (Group g in TShock.Groups.groups)
+			{
+				output.Append("-------|");
+			}
+			output.AppendLine();
+
+			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
+			{
+				output.Append("|");
+				output.Append((string) field.GetValue(null));
+				output.Append("|");
+
+				foreach (Group g in TShock.Groups.groups)
+				{
+					if (g.HasPermission((string) field.GetValue(null)))
+					{
+						output.Append("✔|");
+					}
+					else
+					{
+						output.Append("|");
+					}
+				}
+				output.AppendLine();
+			}
+
+			File.WriteAllText(path, output.ToString());
 		}
 
 		public void DumpBuffs(string path)

@@ -58,28 +58,121 @@ namespace TShockAPI.DB
 			{
 				// Add default groups if they don't exist
 				AddDefaultGroup("guest", "",
-					string.Join(",", Permissions.canbuild, Permissions.canregister, Permissions.canlogin, Permissions.canpartychat,
-						Permissions.cantalkinthird, Permissions.canchat));
+					string.Join(",",
+						Permissions.canbuild,
+						Permissions.canregister,
+						Permissions.canlogin,
+						Permissions.canpartychat,
+						Permissions.cantalkinthird,
+						Permissions.canchat));
 
 				AddDefaultGroup("default", "guest",
-					string.Join(",", Permissions.warp, Permissions.canchangepassword, Permissions.canlogout));
+					string.Join(",",
+						Permissions.warp,
+						Permissions.canchangepassword,
+						Permissions.canlogout,
+						Permissions.summonboss,
+						Permissions.whisper,
+						Permissions.wormhole,
+						Permissions.canpaint));
 
-				AddDefaultGroup("newadmin", "default",
-					string.Join(",", Permissions.kick, Permissions.editspawn, Permissions.reservedslot));
+				AddDefaultGroup("vip", "default",
+					string.Join(",",
+						Permissions.reservedslot,
+						Permissions.renamenpc,
+						Permissions.startinvasion,
+						Permissions.summonboss,
+						Permissions.whisper,
+						Permissions.wormhole));
+
+				AddDefaultGroup("newadmin", "vip",
+					string.Join(",",
+						Permissions.kick,
+						Permissions.editspawn,
+						Permissions.reservedslot,
+						Permissions.annoy,
+						Permissions.checkaccountinfo,
+						Permissions.getpos,
+						Permissions.mute,
+						Permissions.rod,
+						Permissions.savessc,
+						Permissions.seeids,
+						"tshock.world.time.*"));
 
 				AddDefaultGroup("admin", "newadmin",
-					string.Join(",", Permissions.ban, Permissions.whitelist, "tshock.world.time.*", Permissions.spawnboss,
-						Permissions.spawnmob, Permissions.managewarp, Permissions.time, Permissions.tp, Permissions.slap,
-						Permissions.kill, Permissions.logs,
-						Permissions.immunetokick, Permissions.tpothers));
+					string.Join(",",
+						Permissions.ban,
+						Permissions.whitelist,
+						Permissions.spawnboss,
+						Permissions.spawnmob,
+						Permissions.managewarp,
+						Permissions.time,
+						Permissions.tp,
+						Permissions.slap,
+						Permissions.kill,
+						Permissions.logs,
+						Permissions.immunetokick,
+						Permissions.tpothers,
+						Permissions.advaccountinfo,
+						Permissions.broadcast,
+						Permissions.home,
+						Permissions.tpallothers,
+						Permissions.tpallow,
+						Permissions.tpnpc,
+						Permissions.tppos,
+						Permissions.tpsilent,
+						Permissions.userinfo));
 
 				AddDefaultGroup("trustedadmin", "admin",
-					string.Join(",", Permissions.maintenance, "tshock.cfg.*", "tshock.world.*", Permissions.butcher, Permissions.item, Permissions.give,
-						Permissions.heal, Permissions.immunetoban, Permissions.usebanneditem));
+					string.Join(",",
+						Permissions.maintenance,
+						"tshock.cfg.*",
+						"tshock.world.*",
+						Permissions.butcher,
+						Permissions.item,
+						Permissions.give,
+						Permissions.heal,
+						Permissions.immunetoban,
+						Permissions.usebanneditem,
+						Permissions.allowclientsideworldedit,
+						Permissions.buff,
+						Permissions.buffplayer,
+						Permissions.clear,
+						Permissions.clearangler,
+						Permissions.godmode,
+						Permissions.godmodeother,
+						Permissions.ignoredamagecap,
+						Permissions.ignorehp,
+						Permissions.ignorekilltiledetection,
+						Permissions.ignoreliquidsetdetection,
+						Permissions.ignoremp,
+						Permissions.ignorenoclipdetection,
+						Permissions.ignorepaintdetection,
+						Permissions.ignoreplacetiledetection,
+						Permissions.ignoreprojectiledetection,
+						Permissions.ignorestackhackdetection,
+						Permissions.invade,
+						Permissions.startdd2,
+						Permissions.uploaddata,
+						Permissions.uploadothersdata));
 
-				AddDefaultGroup("owner", "trustedadmin", string.Join(",", Permissions.su));
-
-				AddDefaultGroup("vip", "default", string.Join(",", Permissions.reservedslot));
+				AddDefaultGroup("owner", "trustedadmin",
+					string.Join(",",
+						Permissions.su,
+						Permissions.allowdroppingbanneditems,
+						Permissions.antibuild,
+						Permissions.canusebannedprojectiles,
+						Permissions.canusebannedtiles,
+						Permissions.managegroup,
+						Permissions.manageitem,
+						Permissions.manageprojectile,
+						Permissions.manageregion,
+						Permissions.managetile,
+						Permissions.maxspawns,
+						Permissions.serverinfo,
+						Permissions.settempgroup,
+						Permissions.spawnrate,
+						Permissions.tpoverride));
 			}
 
 			// Load Permissions from the DB
