@@ -17,21 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Streams;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria.ID;
 using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
-using Terraria.ObjectData;
-using Terraria.DataStructures;
-using Terraria.GameContent.Tile_Entities;
-using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
@@ -41,8 +31,8 @@ using TerrariaApi.Server;
 
 namespace TShockAPI
 {
-	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
-	internal sealed class Bouncer
+    /// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
+    internal sealed class Bouncer
 	{
 		/// <summary>Constructor call initializes Bouncer & related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
