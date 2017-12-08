@@ -613,30 +613,48 @@ namespace TShockAPI
 				TileX = tilex,
 				TileY = tiley,
 			};
-			
+
 			SendTileSquare.Invoke(null, args);
 			return args.Handled;
 		}
 
+		/// <summary>The arguments to the PlaceObject hook.</summary>
 		public class PlaceObjectEventArgs : HandledEventArgs
 		{
+			/// <summary>The calling Player.</summary>
 			public TSPlayer Player { get; set; }
 
+			/// <summary>The X location where the object was placed.</summary>
 			public short X { get; set ; }
 
+			/// <summary>The Y location where the object was placed.</summary>
 			public short Y { get; set; }
 
+			/// <summary>The type of object that was placed.</summary>
 			public short Type { get; set; }
 
+			/// <summary>The style of the object was placed.</summary>
 			public short Style { get; set; }
 
+			/// <summary>Alternate variation of the object placed.</summary>
 			public byte Alternate { get; set; }
 
+			/// <summary>The direction the object was placed.</summary>
 			public bool Direction { get; set; }
 		}
 
+		/// <summary>Fired when an object is placed in the world.</summary>
 		public static HandlerList<PlaceObjectEventArgs> PlaceObject;
 
+		/// <summary>Fires the PlaceObject hook. To be called when an object is placed in the world.</summary>
+		/// <param name="player">The originating player.</param>
+		/// <param name="x">The x position where the object is placed.</param>
+		/// <param name="y">The y position where the object is placed.</param>
+		/// <param name="type">The type of object.</param>
+		/// <param name="style">The object's style data.</param>
+		/// <param name="alternate">The object's alternate data.</param>
+		/// <param name="direction">The direction of the object.</param>
+		/// <returns>bool</returns>
 		private static bool OnPlaceObject(TSPlayer player, short x, short y, short type, short style, byte alternate, bool direction)
 		{
 			if (PlaceObject == null)
