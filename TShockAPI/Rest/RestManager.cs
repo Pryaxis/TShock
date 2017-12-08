@@ -520,11 +520,11 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			UserAccount user = new UserAccount(username, "", "", group, "", "", "");
+			UserAccount account = new UserAccount(username, "", "", group, "", "", "");
 			try
 			{
-				user.CreateBCryptHash(password);
-				TShock.UserAccounts.AddUserAccount(user);
+				account.CreateBCryptHash(password);
+				TShock.UserAccounts.AddUserAccount(account);
 			}
 			catch (Exception e)
 			{
@@ -553,13 +553,13 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(group) && string.IsNullOrWhiteSpace(password))
 				return RestMissingParam("group", "password");
 
-			UserAccount user = (UserAccount)ret;
+			UserAccount account = (UserAccount)ret;
 			var response = new RestObject();
 			if (!string.IsNullOrWhiteSpace(password))
 			{
 				try
 				{
-					TShock.UserAccounts.SetUserAccountPassword(user, password);
+					TShock.UserAccounts.SetUserAccountPassword(account, password);
 					response.Add("password-response", "Password updated successfully");
 				}
 				catch (Exception e)
@@ -572,7 +572,7 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.UserAccounts.SetUserGroup(user, group);
+					TShock.UserAccounts.SetUserGroup(account, group);
 					response.Add("group-response", "Group updated successfully");
 				}
 				catch (Exception e)
@@ -620,8 +620,8 @@ namespace TShockAPI
 			if (ret is RestObject)
 				return ret;
 
-			UserAccount user = (UserAccount)ret;
-			return new RestObject() { { "group", user.Group }, { "id", user.ID.ToString() }, { "name", user.Name } };
+			UserAccount account = (UserAccount)ret;
+			return new RestObject() { { "group", account.Group }, { "id", account.ID.ToString() }, { "name", account.Name } };
 		}
 
 		#endregion
@@ -1283,7 +1283,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(name))
 				return RestMissingParam("user");
 
-			UserAccount user;
+			UserAccount account;
 			string type = parameters["type"];
 			try
 			{
@@ -1292,10 +1292,10 @@ namespace TShockAPI
 					case null:
 					case "name":
 						type = "name";
-						user = TShock.UserAccounts.GetUserAccountByName(name);
+						account = TShock.UserAccounts.GetUserAccountByName(name);
 						break;
 					case "id":
-						user = TShock.UserAccounts.GetUserAccountByID(Convert.ToInt32(name));
+						account = TShock.UserAccounts.GetUserAccountByID(Convert.ToInt32(name));
 						break;
 					default:
 						return RestError("Invalid Type: '" + type + "'");
@@ -1306,10 +1306,10 @@ namespace TShockAPI
 				return RestError(e.Message);
 			}
 
-			if (null == user)
+			if (null == account)
 				return RestError(String.Format("User {0} '{1}' doesn't exist", type, name));
 
-			return user;
+			return account;
 		}
 
 		private object BanFind(IParameterCollection parameters)
