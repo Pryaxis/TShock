@@ -131,7 +131,7 @@ namespace Rests
 				tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
 			}
 
-			User userAccount = TShock.Users.GetUserByName(username);
+			UserAccount userAccount = TShock.UserAccounts.GetUserAccountByName(username);
 			if (userAccount == null)
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());

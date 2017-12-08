@@ -482,7 +482,7 @@ namespace TShockAPI
 		[Token]
 		private object UserActiveListV2(RestRequestArgs args)
 		{
-			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.User && p.Active).Select(p => p.User.Name)) } };
+			return new RestObject() { { "activeusers", string.Join("\t", TShock.Players.Where(p => null != p && null != p.Account && p.Active).Select(p => p.Account.Name)) } };
 		}
 
 		[Description("Lists all user accounts in the TShock database.")]
@@ -491,7 +491,7 @@ namespace TShockAPI
 		[Token]
 		private object UserListV2(RestRequestArgs args)
 		{
-			return new RestObject() { { "users", TShock.Users.GetUsers().Select(p => new Dictionary<string,object>(){
+			return new RestObject() { { "users", TShock.UserAccounts.GetUserAccounts().Select(p => new Dictionary<string,object>(){
 				{"name", p.Name},
 				{"id", p.ID},
 				{"group", p.Group},
@@ -520,11 +520,11 @@ namespace TShockAPI
 				return RestMissingParam("password");
 
 			// NOTE: ip can be blank
-			User user = new User(username, "", "", group, "", "", "");
+			UserAccount user = new UserAccount(username, "", "", group, "", "", "");
 			try
 			{
 				user.CreateBCryptHash(password);
-				TShock.Users.AddUser(user);
+				TShock.UserAccounts.AddUserAccount(user);
 			}
 			catch (Exception e)
 			{
@@ -553,13 +553,13 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(group) && string.IsNullOrWhiteSpace(password))
 				return RestMissingParam("group", "password");
 
-			User user = (User)ret;
+			UserAccount user = (UserAccount)ret;
 			var response = new RestObject();
 			if (!string.IsNullOrWhiteSpace(password))
 			{
 				try
 				{
-					TShock.Users.SetUserPassword(user, password);
+					TShock.UserAccounts.SetUserAccountPassword(user, password);
 					response.Add("password-response", "Password updated successfully");
 				}
 				catch (Exception e)
@@ -572,7 +572,7 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.Users.SetUserGroup(user, group);
+					TShock.UserAccounts.SetUserGroup(user, group);
 					response.Add("group-response", "Group updated successfully");
 				}
 				catch (Exception e)
@@ -598,7 +598,7 @@ namespace TShockAPI
 
 			try
 			{
-				TShock.Users.RemoveUser((User)ret);
+				TShock.UserAccounts.RemoveUserAccount((UserAccount)ret);
 			}
 			catch (Exception e)
 			{
@@ -620,7 +620,7 @@ namespace TShockAPI
 			if (ret is RestObject)
 				return ret;
 
-			User user = (User)ret;
+			UserAccount user = (UserAccount)ret;
 			return new RestObject() { { "group", user.Group }, { "id", user.ID.ToString() }, { "name", user.Name } };
 		}
 
@@ -938,10 +938,10 @@ namespace TShockAPI
 			return new RestObject()
 			{
 				{"nickname", player.Name},
-				{"username", player.User?.Name},
+				{"username", player.Account?.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
-				{"registered", player.User?.Registered},
+				{"registered", player.Account?.Registered},
 				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
 				{"inventory", string.Join(", ", inventory.Select(p => (p.Name + ":" + p.stack)))},
@@ -979,10 +979,10 @@ namespace TShockAPI
 			return new RestObject
 			{
 				{"nickname", player.Name},
-				{"username", player.User?.Name},
+				{"username", player.Account?.Name},
 				{"ip", player.IP},
 				{"group", player.Group.Name},
-				{"registered", player.User?.Registered},
+				{"registered", player.Account?.Registered},
 				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
 				{"items", items},
@@ -1283,7 +1283,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(name))
 				return RestMissingParam("user");
 
-			User user;
+			UserAccount user;
 			string type = parameters["type"];
 			try
 			{
@@ -1292,10 +1292,10 @@ namespace TShockAPI
 					case null:
 					case "name":
 						type = "name";
-						user = TShock.Users.GetUserByName(name);
+						user = TShock.UserAccounts.GetUserAccountByName(name);
 						break;
 					case "id":
-						user = TShock.Users.GetUserByID(Convert.ToInt32(name));
+						user = TShock.UserAccounts.GetUserAccountByID(Convert.ToInt32(name));
 						break;
 					default:
 						return RestError("Invalid Type: '" + type + "'");
@@ -1359,7 +1359,7 @@ namespace TShockAPI
 			var player = new Dictionary<string, object>
 				{
 					{"nickname", tsPlayer.Name},
-					{"username", tsPlayer.User == null ? "" : tsPlayer.User.Name},
+					{"username", tsPlayer.Account == null ? "" : tsPlayer.Account.Name},
 					{"group", tsPlayer.Group.Name},
 					{"active", tsPlayer.Active},
 					{"state", tsPlayer.State},

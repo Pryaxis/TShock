@@ -94,7 +94,7 @@ namespace TShockAPI
 		/// <summary>Groups - Static reference to the group manager for accessing the group system.</summary>
 		public static GroupManager Groups;
 		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
-		public static UserManager Users;
+		public static UserAccountManager UserAccounts;
 		/// <summary>Itembans - Static reference to the item ban system.</summary>
 		public static ItemManager Itembans;
 		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
@@ -312,7 +312,7 @@ namespace TShockAPI
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
 				Regions = new RegionManager(DB);
-				Users = new UserManager(DB);
+				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
 				ProjectileBans = new ProjectileManagager(DB);
@@ -391,7 +391,7 @@ namespace TShockAPI
 		{
 			foreach (TSPlayer player in TShock.Players)
 			{
-				player.User = null;
+				player.Account = null;
 			}
 		}
 
@@ -447,9 +447,9 @@ namespace TShockAPI
 		private void OnPlayerLogin(PlayerPostLoginEventArgs args)
 		{
 			List<String> KnownIps = new List<string>();
-			if (!string.IsNullOrWhiteSpace(args.Player.User.KnownIps))
+			if (!string.IsNullOrWhiteSpace(args.Player.Account.KnownIps))
 			{
-				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
+				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.Account.KnownIps);
 			}
 
 			if (KnownIps.Count == 0)
@@ -470,16 +470,16 @@ namespace TShockAPI
 				}
 			}
 
-			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-			Users.UpdateLogin(args.Player.User);
+			args.Player.Account.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+			UserAccounts.UpdateLogin(args.Player.Account);
 
-			Ban potentialBan = Bans.GetBanByAccountName(args.Player.User.Name);
+			Ban potentialBan = Bans.GetBanByAccountName(args.Player.Account.Name);
 
 			if (potentialBan != null)
 			{
 				// A user just signed in successfully despite being banned by account name.
 				// We should fix the ban database so that all of their ban info is up to date.
-				Bans.AddBan2(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.User.Name,
+				Bans.AddBan2(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
 					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
 
 				// And then get rid of them.
@@ -507,7 +507,7 @@ namespace TShockAPI
 		/// <param name="args">args - The AccountCreateEventArgs object.</param>
 		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
 		{
-			CharacterDB.SeedInitialData(Users.GetUser(args.User));
+			CharacterDB.SeedInitialData(UserAccounts.GetUserAccount(args.User));
 		}
 
 		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
@@ -535,7 +535,7 @@ namespace TShockAPI
 				}
 				if (player.IsLoggedIn)
 				{
-					var ips = JsonConvert.DeserializeObject<List<string>>(player.User.KnownIps);
+					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
 						Netplay.Clients[player.Index].PendingTermination = true;
@@ -857,7 +857,7 @@ namespace TShockAPI
 			}
 
 			// Disable the auth system if "auth.lck" is present or a superadmin exists
-			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || Users.GetUsers().Exists(u => u.Group == new SuperAdminGroup().Name))
+			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || UserAccounts.GetUserAccounts().Exists(u => u.Group == new SuperAdminGroup().Name))
 			{
 				AuthToken = 0;
 

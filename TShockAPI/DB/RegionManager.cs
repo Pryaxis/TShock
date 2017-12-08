@@ -447,7 +447,7 @@ namespace TShockAPI.DB
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				if (!r.RemoveID(TShock.Users.GetUserID(userName)))
+				if (!r.RemoveID(TShock.UserAccounts.GetUserAccountID(userName)))
 				{
 					return false;
 				}
@@ -479,7 +479,7 @@ namespace TShockAPI.DB
 						mergedIDs = reader.Get<string>("UserIds");
 				}
 
-				string userIdToAdd = Convert.ToString(TShock.Users.GetUserID(userName));
+				string userIdToAdd = Convert.ToString(TShock.UserAccounts.GetUserAccountID(userName));
 				string[] ids = mergedIDs.Split(',');
 				// Is the user already allowed to the region?
 				if (ids.Contains(userIdToAdd))
@@ -788,7 +788,7 @@ namespace TShockAPI.DB
 				return false;
 			}
 
-			return ply.HasPermission(Permissions.editregion) || AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
+			return ply.HasPermission(Permissions.editregion) || AllowedIDs.Contains(ply.Account.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.Account.Name;
 		}
 
 		/// <summary>

@@ -21,9 +21,9 @@ namespace TShockAPI.Hooks
 {
 	public class AccountDeleteEventArgs
 	{
-		public User User { get; private set; }
+		public UserAccount User { get; private set; }
 
-		public AccountDeleteEventArgs(User user)
+		public AccountDeleteEventArgs(UserAccount user)
 		{
 			this.User = user;
 		}
@@ -31,9 +31,9 @@ namespace TShockAPI.Hooks
 
 	public class AccountCreateEventArgs
 	{
-		public User User { get; private set; }
+		public UserAccount User { get; private set; }
 
-		public AccountCreateEventArgs(User user)
+		public AccountCreateEventArgs(UserAccount user)
 		{
 			this.User = user;
 		}
@@ -44,7 +44,7 @@ namespace TShockAPI.Hooks
 		public delegate void AccountCreateD(AccountCreateEventArgs e);
 		public static event AccountCreateD AccountCreate;
 
-		public static void OnAccountCreate(User u)
+		public static void OnAccountCreate(UserAccount u)
 		{
 			if (AccountCreate == null)
 				return;
@@ -55,7 +55,7 @@ namespace TShockAPI.Hooks
 		public delegate void AccountDeleteD(AccountDeleteEventArgs e);
 		public static event AccountDeleteD AccountDelete;
 
-		public static void OnAccountDelete(User u)
+		public static void OnAccountDelete(UserAccount u)
 		{
 			if (AccountDelete == null)
 				return;
