@@ -27,6 +27,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
+using Terraria.ObjectData;
 
 
 namespace TShockAPI
@@ -40,9 +41,136 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlaceObject.Register(OnPlaceObject);
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		internal void OnPlaceObject(object sender, GetDataHandlers.PlaceObjectEventArgs args)
+		{
+			short x = args.X;
+			short y = args.Y;
+			short type = args.Type;
+			short style = args.Style;
+			byte alternate = args.Alternate;
+			bool direction = args.Direction;
+
+			if (type < 0 || type >= Main.maxTileSets)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (x < 0 || x >= Main.maxTilesX)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (y < 0 || y >= Main.maxTilesY)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
+			//These two items cause localised lag and rendering issues
+			if (type == TileID.FakeContainers && (style == 52 || style == 53))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.TileBans.TileIsBanned(type, args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendErrorMessage("You do not have permission to place this tile.");
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Utils.TilePlacementValid(x, y))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.Dead && TShock.Config.PreventDeadModification)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				args.Handled = true;
+				return;
+			}
+
+			// This is neccessary to check in order to prevent special tiles such as 
+			// queen bee larva, paintings etc that use this packet from being placed 
+			// without selecting the right item.
+			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				args.Handled = true;
+				return;
+			}
+
+			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
+			if (tileData == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			x -= tileData.Origin.X;
+			y -= tileData.Origin.Y;
+
+			for (int i = x; i < x + tileData.Width; i++)
+			{
+				for (int j = y; j < y + tileData.Height; j++)
+				{
+					if (TShock.CheckTilePermission(args.Player, i, j, type, EditAction.PlaceTile))
+					{
+						args.Player.SendTileSquare(i, j, 4);
+						args.Handled = true;
+						return;
+					}
+				}
+			}
+
+			// Ignore rope placement range
+			if ((type != TileID.Rope
+					|| type != TileID.SilkRope
+					|| type != TileID.VineRope
+					|| type != TileID.WebRope)
+					&& TShock.CheckRangePermission(args.Player, x, y))
+			{
+				args.Player.SendTileSquare(x, y, 4);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
+			{
+				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
+				args.Player.SendTileSquare(x, y, 4);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+			{
+				args.Player.TilePlaceThreshold++;
+				var coords = new Vector2(x, y);
+				lock (args.Player.TilesCreated)
+					if (!args.Player.TilesCreated.ContainsKey(coords))
+						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
+			}
 		}
 
 		internal void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs args)
@@ -64,14 +192,22 @@ namespace TShockAPI
 				}
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+				{
 					args.Handled = true;
 					return;
+				}
+
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
+				{
 					args.Handled = false;
 					return;
+				}
+					
 				if (args.Player.Dead && TShock.Config.PreventDeadModification)
+				{
 					args.Handled = true;
 					return;
+				}
 
 				if (args.Player.AwaitingName)
 				{

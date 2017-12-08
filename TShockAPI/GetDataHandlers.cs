@@ -613,9 +613,51 @@ namespace TShockAPI
 				TileX = tilex,
 				TileY = tiley,
 			};
+			
 			SendTileSquare.Invoke(null, args);
 			return args.Handled;
 		}
+
+		public class PlaceObjectEventArgs : HandledEventArgs
+		{
+			public TSPlayer Player { get; set; }
+
+			public short X { get; set ; }
+
+			public short Y { get; set; }
+
+			public short Type { get; set; }
+
+			public short Style { get; set; }
+
+			public byte Alternate { get; set; }
+
+			public bool Direction { get; set; }
+		}
+
+		public static HandlerList<PlaceObjectEventArgs> PlaceObject;
+
+		private static bool OnPlaceObject(TSPlayer player, short x, short y, short type, short style, byte alternate, bool direction)
+		{
+			if (PlaceObject == null)
+				return false;
+
+			var args = new PlaceObjectEventArgs
+			{
+				Player = player,
+				X = x,
+				Y = y,
+				Type = type,
+				Style = style,
+				Alternate = alternate,
+				Direction = direction
+			};
+
+			PlaceObject.Invoke(null, args);
+			return args.Handled;
+		}
+
+
 		/// <summary>
 		/// For use in a NewProjectile event
 		/// </summary>
@@ -1826,7 +1868,6 @@ namespace TShockAPI
 			return false;
 		}
 
-
 		/// <summary>
 		/// Handle PlaceObject event
 		/// </summary>
@@ -1839,95 +1880,8 @@ namespace TShockAPI
 			byte alternate = args.Data.ReadInt8();
 			bool direction = args.Data.ReadBoolean();
 
-			if (type < 0 || type >= Main.maxTileSets)
+			if (OnPlaceObject(args.Player, x, y, type, style, alternate, direction))
 				return true;
-
-			if (x < 0 || x >= Main.maxTilesX)
-				return true;
-
-			if (y < 0 || y >= Main.maxTilesY)
-				return true;
-
-			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
-			//These two items cause localised lag and rendering issues
-			if (type == TileID.FakeContainers && (style == 52 || style == 53))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (TShock.TileBans.TileIsBanned(type, args.Player))
-			{
-				args.Player.SendTileSquare(x, y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place this tile.");
-				return true;
-			}
-
-			if (!TShock.Utils.TilePlacementValid(x, y))
-				return true;
-			if (args.Player.Dead && TShock.Config.PreventDeadModification)
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			// This is neccessary to check in order to prevent special tiles such as 
-			// queen bee larva, paintings etc that use this packet from being placed 
-			// without selecting the right item.
-			if (type != args.TPlayer.inventory[args.TPlayer.selectedItem].createTile)
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
-			if (tileData == null)
-				return true;
-
-			x -= tileData.Origin.X;
-			y -= tileData.Origin.Y;
-
-			for (int i = x; i < x + tileData.Width; i++)
-			{
-				for (int j = y; j < y + tileData.Height; j++)
-				{
-					if (TShock.CheckTilePermission(args.Player, i, j, type, EditAction.PlaceTile))
-					{
-						args.Player.SendTileSquare(i, j, 4);
-						return true;
-					}
-				}
-			}
-
-			// Ignore rope placement range
-			if ((type != TileID.Rope
-					|| type != TileID.SilkRope
-					|| type != TileID.VineRope
-					|| type != TileID.WebRope)
-					&& TShock.CheckRangePermission(args.Player, x, y))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
-			{
-				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreplacetiledetection))
-			{
-				args.Player.TilePlaceThreshold++;
-				var coords = new Vector2(x, y);
-				lock (args.Player.TilesCreated)
-					if (!args.Player.TilesCreated.ContainsKey(coords))
-						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
-			}
 
 			return false;
 		}
