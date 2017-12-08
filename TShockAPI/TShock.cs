@@ -500,14 +500,14 @@ namespace TShockAPI
 		/// <param name="args">args - The AccountDeleteEventArgs object.</param>
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
-			CharacterDB.RemovePlayer(args.User.ID);
+			CharacterDB.RemovePlayer(args.Account.ID);
 		}
 
 		/// <summary>OnAccountCreate - Internal hook fired on account creation.</summary>
 		/// <param name="args">args - The AccountCreateEventArgs object.</param>
 		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
 		{
-			CharacterDB.SeedInitialData(UserAccounts.GetUserAccount(args.User));
+			CharacterDB.SeedInitialData(UserAccounts.GetUserAccount(args.Account));
 		}
 
 		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>

@@ -120,7 +120,7 @@ namespace TShockAPI.DB
 			return playerData;
 		}
 
-		public bool SeedInitialData(UserAccount user)
+		public bool SeedInitialData(UserAccount account)
 		{
 			var inventory = new StringBuilder();
 
@@ -132,7 +132,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);",
-							   user.ID,
+							   account.ID,
 							   TShock.ServerSideCharacterConfig.StartingHealth,
 							   TShock.ServerSideCharacterConfig.StartingHealth,
 							   TShock.ServerSideCharacterConfig.StartingMana,
