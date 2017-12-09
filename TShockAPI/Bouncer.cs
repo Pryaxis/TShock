@@ -201,7 +201,7 @@ namespace TShockAPI
 
 			if (!TShock.Utils.TilePlacementValid(x, y))
 			{
-				args.Player.SendTileSquare(x, y, 4);
+				args.Player.SendTileSquare(x, y, 1);
 				args.Handled = true;
 				return;
 			}
@@ -303,7 +303,7 @@ namespace TShockAPI
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
+					args.Player.SendTileSquare(tileX, tileY, 1);
 					args.Handled = true;
 					return;
 				}
