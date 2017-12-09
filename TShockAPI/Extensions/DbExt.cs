@@ -23,6 +23,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Database extensions
+	/// </summary>
 	public static class DbExt
 	{
 		/// <summary>
@@ -189,6 +192,10 @@ namespace TShockAPI.DB
 		                                                                                     			typeof (double?),
 		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetDouble(i)
 		                                                                                     			},
+																									{
+																										typeof (DateTime),
+																										(s, i) => s.IsDBNull(i) ? null : (object)s.GetDateTime(i)
+																									},
 		                                                                                     		{
 		                                                                                     			typeof (object),
 		                                                                                     			(s, i) => s.GetValue(i)
