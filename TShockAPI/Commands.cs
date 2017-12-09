@@ -616,7 +616,7 @@ namespace TShockAPI
 			{
 				HelpText = "Sends a PM to a player."
 			});
-			add(new Command(Permissions.createdumps, CreateDumps, "datadump")
+			add(new Command(Permissions.createdumps, CreateDumps, "dump-reference-data")
 			{
 				HelpText = "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
 			});
