@@ -808,6 +808,15 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Sends a tile square at a location with a given size. 	
+		/// Typically used to revert changes by Bouncer through sending the
+		/// "old" version of modified data back to a client.
+		/// Prevents desync issues.
+		/// </summary>
+		/// <param name="x">The x coordinate to send.</param>
+		/// <param name="y">The y coordinate to send.</param>
+		/// <param name="size">The size square set of tiles to send.</param>
+		/// <returns>Status if the tile square was sent successfully (i.e. no exceptions).</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			try
