@@ -300,6 +300,7 @@ namespace TShockAPI
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
 				}
@@ -312,6 +313,7 @@ namespace TShockAPI
 					
 				if (args.Player.Dead && TShock.Config.PreventDeadModification)
 				{
+					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
 				}
@@ -377,6 +379,7 @@ namespace TShockAPI
 					return;
 				}
 
+				// TODO: REMOVE. This does NOT look like Bouncer code.
 				if (args.Player.AwaitingTempPoint > 0)
 				{
 					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
@@ -656,7 +659,8 @@ namespace TShockAPI
 			}
 
 			// Why 0.2?
-			// @bartico6: Because heal other player only happens when you are using the spectre armor with the hood, and the healing you can do with that is 20% of your damage.
+			// @bartico6: Because heal other player only happens when you are using the spectre armor with the hood,
+			// and the healing you can do with that is 20% of your damage.
 			if (amount > TShock.Config.MaxDamage * 0.2)
 			{
 				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
