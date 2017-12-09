@@ -172,7 +172,8 @@ namespace TShockAPI.DB
 						Permissions.serverinfo,
 						Permissions.settempgroup,
 						Permissions.spawnrate,
-						Permissions.tpoverride));
+						Permissions.tpoverride,
+						Permissions.createdumps));
 			}
 
 			// Load Permissions from the DB
