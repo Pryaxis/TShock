@@ -616,6 +616,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sends a PM to a player."
 			});
+			add(new Command(Permissions.createdumps, CreateDumps, "datadump")
+			{
+				HelpText = "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -5176,6 +5180,14 @@ namespace TShockAPI
 
 			if (!didMatch)
 				args.Player.SendErrorMessage("No command or command alias matching \"{0}\" found.", givenCommandName);
+		}
+
+		private static void CreateDumps(CommandArgs args)
+		{
+			TShock.Utils.DumpPermissionMatrix("PermissionMatrix.txt");
+			TShock.Utils.Dump();
+			args.Player.SendSuccessMessage("Your reference dumps have been created in the server folder.");
+			return;
 		}
 
 		#endregion General Commands

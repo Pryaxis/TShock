@@ -1204,7 +1204,6 @@ namespace TShockAPI
 			Permissions.DumpDescriptions();
 			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
 			RestManager.DumpDescriptions();
-			DumpPermissionMatrix("PermissionMatrix.txt");
 			DumpBuffs("BuffList.txt");
 			DumpItems("Items-1_0.txt", -48, 235);
 			DumpItems("Items-1_1.txt", 235, 604);
