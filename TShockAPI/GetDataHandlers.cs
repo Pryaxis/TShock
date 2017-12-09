@@ -681,6 +681,8 @@ namespace TShockAPI
 		/// </summary>
 		public class NewProjectileEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the new projectile.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ???
 			/// </summary>
@@ -719,7 +721,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile;
 
-		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index)
+		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -734,6 +736,7 @@ namespace TShockAPI
 				Owner = owner,
 				Type = type,
 				Index = index,
+				Player = player,
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
@@ -2261,96 +2264,8 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
+			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
-
-			if (index > Main.maxProjectiles || index < 0)
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
-			{
-				args.Player.Disable("Player does not have permission to create that projectile.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (dmg > TShock.Config.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
-			{
-				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
-			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
-			{
-				if (type == ProjectileID.BlowupSmokeMoonlord
-					|| type == ProjectileID.PhantasmalEye
-					|| type == ProjectileID.CultistBossIceMist
-					|| (type >= ProjectileID.MoonlordBullet && type <= ProjectileID.MoonlordTurretLaser)
-					|| type == ProjectileID.DeathLaser || type == ProjectileID.Landmine
-					|| type == ProjectileID.BulletDeadeye || type == ProjectileID.BoulderStaffOfEarth
-					|| (type > ProjectileID.ConfettiMelee && type < ProjectileID.SpiritHeal)
-					|| (type >= ProjectileID.FlamingWood && type <= ProjectileID.GreekFire3)
-					|| (type >= ProjectileID.PineNeedleHostile && type <= ProjectileID.Spike)
-					|| (type >= ProjectileID.MartianTurretBolt && type <= ProjectileID.RayGunnerLaser)
-					|| type == ProjectileID.CultistBossLightningOrb)
-				{
-					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
-				}
-				else
-				{
-					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
-				}
-				return true;
-			}
-
-			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
-			{
-				args.Player.Disable("Reached projectile update threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
-			{
-				if (type == ProjectileID.CrystalShard && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
-				{
-					TShock.Log.Debug("Ignoring shrapnel per config..");
-				}
-				else if (!Main.projectile[index].active)
-				{
-					args.Player.ProjectileThreshold++; // Creating new projectile
-				}
-			}
-
-			if (hasPermission &&
-				(type == ProjectileID.Bomb
-				|| type == ProjectileID.Dynamite
-				|| type == ProjectileID.StickyBomb
-				|| type == ProjectileID.StickyDynamite))
-			{
-				//  Denotes that the player has recently set a fuse - used for cheat detection.
-				args.Player.RecentFuse = 10;
-				//return true;
-			}
 
 			return false;
 		}
