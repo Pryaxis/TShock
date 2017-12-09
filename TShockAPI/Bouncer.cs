@@ -655,6 +655,8 @@ namespace TShockAPI
 				return;
 			}
 
+			// Why 0.2?
+			// @bartico6: Because heal other player only happens when you are using the spectre armor with the hood, and the healing you can do with that is 20% of your damage.
 			if (amount > TShock.Config.MaxDamage * 0.2)
 			{
 				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
