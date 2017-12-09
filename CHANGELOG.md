@@ -21,6 +21,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed /savessc not bothering to save ssc data for people who bypass ssc. (@hakusaro)
 * Default permission sets for new databases are more modern. (@hakusaro)
 * Added the ability to ban by account name instead of just banning a character name assuming its an account name. (@hakusaro)
+* Renamed TShock.DB.User to TShock.DB.UserAccount, including all the related methods, classes and events. (@Ryozuki)
 * `GetDataHandlers.SendTileSquare` hook now sends a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
 * Added `GetDataHandlers.HealOtherPlayer` hook. (@hakusaro)
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)

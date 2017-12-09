@@ -36,7 +36,7 @@ namespace TShockAPI
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
-			User = new User { Name = AccountName };
+			Account = new UserAccount { Name = AccountName };
 		}
 
 		public override void SendErrorMessage(string msg)
