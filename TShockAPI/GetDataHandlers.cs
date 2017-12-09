@@ -2261,7 +2261,6 @@ namespace TShockAPI
 					ai[i] = 0f;
 			}
 
-
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
