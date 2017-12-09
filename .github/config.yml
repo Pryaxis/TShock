@@ -1,0 +1,10 @@
+updateDocsComment: >
+  Thanks for the pull request! TShock's maintainers would like you to go ahead and give yourself credit by updating the `CHANGELOG.md` file before this gets merged. This helps us document changes to TShock, as well as give you credit for your work. You deserve it! :sparkles:
+
+updateDocsWhiteList:
+  - bug
+  - chore
+
+updateDocsTargetFiles:
+  - README
+  - CHANGELOG.md
