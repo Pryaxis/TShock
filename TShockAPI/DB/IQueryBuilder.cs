@@ -16,12 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using MySql.Data.MySqlClient;
 using TShockAPI.Extensions;
 
 namespace TShockAPI.DB
@@ -37,6 +37,7 @@ namespace TShockAPI.DB
 		/// <param name="table">The SqlTable to create the table from</param>
 		/// <returns>The sql query for the table creation.</returns>
 		string CreateTable(SqlTable table);
+
 		/// <summary>
 		/// Alter a table from source to destination
 		/// </summary>
@@ -44,6 +45,7 @@ namespace TShockAPI.DB
 		/// <param name="to">Must have column names and column types.</param>
 		/// <returns>The SQL Query</returns>
 		string AlterTable(SqlTable from, SqlTable to);
+
 		/// <summary>
 		/// Converts the MySqlDbType enum to it's string representation.
 		/// </summary>
@@ -51,6 +53,7 @@ namespace TShockAPI.DB
 		/// <param name="length">The length of the datatype</param>
 		/// <returns>The string representation</returns>
 		string DbTypeToString(MySqlDbType type, int? length);
+
 		/// <summary>
 		/// A UPDATE Query
 		/// </summary>
@@ -59,6 +62,7 @@ namespace TShockAPI.DB
 		/// <param name="wheres"></param>
 		/// <returns>The SQL query</returns>
 		string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres);
+
 		/// <summary>
 		/// A INSERT query
 		/// </summary>
@@ -66,6 +70,7 @@ namespace TShockAPI.DB
 		/// <param name="values"></param>
 		/// <returns>The SQL Query</returns>
 		string InsertValues(string table, List<SqlValue> values);
+
 		/// <summary>
 		/// A SELECT query to get all columns
 		/// </summary>
@@ -73,6 +78,7 @@ namespace TShockAPI.DB
 		/// <param name="wheres"></param>
 		/// <returns>The SQL query</returns>
 		string ReadColumn(string table, List<SqlValue> wheres);
+
 		/// <summary>
 		/// Deletes row(s).
 		/// </summary>
@@ -80,6 +86,7 @@ namespace TShockAPI.DB
 		/// <param name="wheres"></param>
 		/// <returns>The SQL query</returns>
 		string DeleteRow(string table, List<SqlValue> wheres);
+
 		/// <summary>
 		/// Renames the given table.
 		/// </summary>
@@ -101,18 +108,18 @@ namespace TShockAPI.DB
 		/// <returns>The sql query for the table creation.</returns>
 		public override string CreateTable(SqlTable table)
 		{
-			SqlColumnErrorCheck(table.Columns);
+			ValidateSqlColumnType(table.Columns);
 			var columns =
 				table.Columns.Select(
 					c =>
-					"'{0}' {1} {2} {3} {4} {5}".SFormat(c.Name, 
-													DbTypeToString(c.Type, c.Length), 
+					"'{0}' {1} {2} {3} {4} {5}".SFormat(c.Name,
+													DbTypeToString(c.Type, c.Length),
 													c.Primary ? "PRIMARY KEY" : "",
-													c.AutoIncrement ? "AUTOINCREMENT" : "", 
+													c.AutoIncrement ? "AUTOINCREMENT" : "",
 													c.NotNull ? "NOT NULL" : "",
 													c.DefaultCurrentTimestamp ? "DEFAULT CURRENT_TIMESTAMP" : ""));
 			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
-			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), 
+			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name),
 														string.Join(", ", columns),
 														uniques.Count() > 0 ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "");
 		}
@@ -140,7 +147,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Double, "REAL" },
 			{ MySqlDbType.Int32, "INTEGER" },
 			{ MySqlDbType.Blob, "BLOB" },
-            { MySqlDbType.Int64, "BIGINT"},
+			{ MySqlDbType.Int64, "BIGINT"},
 			{ MySqlDbType.DateTime, "DATETIME"},
 		};
 
@@ -181,7 +188,7 @@ namespace TShockAPI.DB
 		/// <returns>The sql query for the table creation.</returns>
 		public override string CreateTable(SqlTable table)
 		{
-			SqlColumnErrorCheck(table.Columns);
+			ValidateSqlColumnType(table.Columns);
 			var columns =
 				table.Columns.Select(
 					c =>
@@ -219,7 +226,7 @@ namespace TShockAPI.DB
 			{ MySqlDbType.Float, "FLOAT" },
 			{ MySqlDbType.Double, "DOUBLE" },
 			{ MySqlDbType.Int32, "INT" },
-            { MySqlDbType.Int64, "BIGINT"},
+			{ MySqlDbType.Int64, "BIGINT"},
 			{ MySqlDbType.DateTime, "DATETIME"},
 		};
 
@@ -254,18 +261,21 @@ namespace TShockAPI.DB
 	public abstract class GenericQueryCreator
 	{
 		protected static Random rand = new Random();
+
 		/// <summary>
 		/// Escapes the table name
 		/// </summary>
 		/// <param name="table">The name of the table to be escaped</param>
 		/// <returns></returns>
 		protected abstract string EscapeTableName(string table);
+
 		/// <summary>
 		/// Creates a table from a SqlTable object.
 		/// </summary>
 		/// <param name="table">The SqlTable to create the table from</param>
 		/// <returns>The sql query for the table creation.</returns>
 		public abstract string CreateTable(SqlTable table);
+
 		/// <summary>
 		/// Renames the given table.
 		/// </summary>
@@ -299,14 +309,14 @@ namespace TShockAPI.DB
 		/// Check for errors in the columns.
 		/// </summary>
 		/// <param name="columns"></param>
-		/// <exception cref="SqlColumnExcepcion">description</exception>  
-		public void SqlColumnErrorCheck(List<SqlColumn> columns)
+		/// <exception cref="SqlColumnException"></exception>
+		public void ValidateSqlColumnType(List<SqlColumn> columns)
 		{
 			columns.ForEach(x =>
 			{
-				if(x.DefaultCurrentTimestamp && x.Type != MySqlDbType.DateTime)
+				if (x.DefaultCurrentTimestamp && x.Type != MySqlDbType.DateTime)
 				{
-					throw new SqlColumnExcepcion("Can't set to true SqlColumn.DefaultCurrentTimestamp " +
+					throw new SqlColumnException("Can't set to true SqlColumn.DefaultCurrentTimestamp " +
 						"when the MySqlDbType is not DateTime");
 				}
 			});
@@ -387,30 +397,6 @@ namespace TShockAPI.DB
 				return string.Empty;
 
 			return "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => v.Name + " = " + v.Value)));
-		}
-	}
-
-	/// <summary>
-	/// An excepcion generated by the Column check. 
-	/// </summary>
-	[Serializable]
-	public class SqlColumnExcepcion : Exception
-	{
-		public SqlColumnExcepcion()
-		{
-		}
-
-		public SqlColumnExcepcion(string message)
-			: base(message)
-		{
-		}
-
-		public SqlColumnExcepcion(string message, Exception innerException) : base(message, innerException)
-		{
-		}
-
-		protected SqlColumnExcepcion(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
 		}
 	}
 }

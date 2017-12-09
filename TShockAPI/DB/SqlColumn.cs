@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using MySql.Data.MySqlClient;
+using System;
 
 namespace TShockAPI.DB
 {
@@ -68,6 +69,21 @@ namespace TShockAPI.DB
 			Name = name;
 			Type = type;
 			Length = length;
+		}
+	}
+
+	/// <summary>
+	/// Used when a SqlColumn has validation errors.
+	/// </summary>
+	[Serializable]
+	public class SqlColumnException : Exception
+	{
+		/// <summary>
+		/// Creates a new SqlColumnException with the given message.
+		/// </summary>
+		/// <param name="message"></param>
+		public SqlColumnException(string message) : base(message)
+		{
 		}
 	}
 }
