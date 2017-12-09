@@ -28,6 +28,7 @@ using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
 using Terraria.ObjectData;
+using Terraria.ID;
 
 
 namespace TShockAPI
@@ -333,6 +334,8 @@ namespace TShockAPI
 							persistentMode = true;
 					}
 
+
+					// TODO: REMOVE. This does NOT look like Bouncer code.
 					List<string> outputRegions = new List<string>();
 					foreach (Region region in TShock.Regions.Regions.OrderBy(r => r.Z).Reverse())
 					{
@@ -483,7 +486,7 @@ namespace TShockAPI
 						args.Handled = true;
 						return;
 					}
-					if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && Main.ServerSideCharacter)
+					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
 					{
 						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
 						args.Player.SendTileSquare(tileX, tileY, 3);
