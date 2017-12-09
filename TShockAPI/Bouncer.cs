@@ -29,7 +29,7 @@ using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.ID;
-
+using Terraria.DataStructures;
 
 namespace TShockAPI
 {
@@ -42,11 +42,43 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.KillMe.Register(OnKillMe);
 			GetDataHandlers.NewProjectile.Register(OnNewProjectile);
 			GetDataHandlers.PlaceObject.Register(OnPlaceObject);
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		internal void OnKillMe(object sender, GetDataHandlers.KillMeEventArgs args)
+		{
+			short dmg = args.Damage;
+			short id = args.PlayerId;
+			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
+
+			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			{
+				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
+				args.Handled = true;
+				return;
+			}
+
+			if (id >= Main.maxPlayers)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (playerDeathReason != null)
+			{
+				if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
+				{
+					TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
+					args.Handled = true;
+					return;
+				}
+			}
 		}
 
 		internal void OnNewProjectile(object sender, GetDataHandlers.NewProjectileEventArgs args)

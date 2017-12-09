@@ -389,6 +389,8 @@ namespace TShockAPI
 		/// </summary>
 		public class KillMeEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -405,23 +407,27 @@ namespace TShockAPI
 			/// Player's current pvp setting
 			/// </summary>
 			public bool Pvp { get; set; }
+			/// <summary>The reason the player died.</summary>
+			public PlayerDeathReason PlayerDeathReason { get; set; }
 		}
 		/// <summary>
 		/// KillMe - Terraria's crappy way of handling damage from players
 		/// </summary>
 		public static HandlerList<KillMeEventArgs> KillMe;
 
-		private static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
+		private static bool OnKillMe(TSPlayer player, byte plr, byte direction, short damage, bool pvp, PlayerDeathReason playerDeathReason)
 		{
 			if (KillMe == null)
 				return false;
 
 			var args = new KillMeEventArgs
 			{
+				Player = player,
 				PlayerId = plr,
 				Direction = direction,
 				Damage = damage,
 				Pvp = pvp,
+				PlayerDeathReason = playerDeathReason,
 			};
 			KillMe.Invoke(null, args);
 			return args.Handled;
@@ -1341,7 +1347,6 @@ namespace TShockAPI
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
 					{ PacketTypes.TileKill, HandleTileKill },
-					{ PacketTypes.PlayerKillMe, HandlePlayerKillMe },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerSpawn, HandleSpawn },
 					{ PacketTypes.ChestGetContents, HandleChestOpen },
@@ -2315,71 +2320,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadInt8() == 0;
-			var text = args.Data.ReadString();
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				return true;
-			}
-
-			if (OnKillMe(id, direction, dmg, pvp))
-				return true;
-
-			if (text.Length > 500)
-			{
-				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
-				return true;
-			}
-
-			args.Player.Dead = true;
-			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
-
-			foreach (NPC npc in Main.npc)
-			{
-				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
-					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
-				{
-					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
-					break;
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
-			{
-				if (TShock.Config.BanOnHardcoreDeath)
-				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
-				}
-				else
-				{
-					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
-				{
-					TShock.CharacterDB.SeedInitialData(args.Player.Account);
-				}
-			}
-
-			return false;
-		}
-
 		private static bool HandlePlayerKillMeV2(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
@@ -2388,26 +2328,9 @@ namespace TShockAPI
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			BitsByte bits = (BitsByte)args.Data.ReadByte();
 			bool pvp = bits[0];
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
 
-			if (id >= Main.maxPlayers)
-			{
+			if (OnKillMe(args.Player, id, direction, dmg, pvp, playerDeathReason))
 				return true;
-			}
-
-			if (OnKillMe(id, direction, dmg, pvp))
-				return true;
-
-			if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
-			{
-				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
-				return true;
-			}
 
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
