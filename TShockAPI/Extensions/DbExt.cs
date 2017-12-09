@@ -106,7 +106,7 @@ namespace TShockAPI.DB
 
 		public static IDbConnection CloneEx(this IDbConnection conn)
 		{
-			var clone = (IDbConnection) Activator.CreateInstance(conn.GetType());
+			var clone = (IDbConnection)Activator.CreateInstance(conn.GetType());
 			clone.ConnectionString = conn.ConnectionString;
 			return clone;
 		}
@@ -123,84 +123,84 @@ namespace TShockAPI.DB
 
 		private static readonly Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary
 			<Type, Func<IDataReader, int, object>>
-		                                                                                     	{
-		                                                                                     		{
-		                                                                                     			typeof (bool),
-		                                                                                     			(s, i) => s.GetBoolean(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (bool?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetBoolean(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (byte),
-		                                                                                     			(s, i) => s.GetByte(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (byte?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetByte(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int16),
-		                                                                                     			(s, i) => s.GetInt16(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int16?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt16(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int32),
-		                                                                                     			(s, i) => s.GetInt32(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int32?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt32(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int64),
-		                                                                                     			(s, i) => s.GetInt64(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (Int64?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt64(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (string),
-		                                                                                     			(s, i) => s.GetString(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (decimal),
-		                                                                                     			(s, i) => s.GetDecimal(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (decimal?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetDecimal(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (float),
-		                                                                                     			(s, i) => s.GetFloat(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (float?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetFloat(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (double),
-		                                                                                     			(s, i) => s.GetDouble(i)
-		                                                                                     			},
-		                                                                                     		{
-		                                                                                     			typeof (double?),
-		                                                                                     			(s, i) => s.IsDBNull(i) ? null : (object)s.GetDouble(i)
-		                                                                                     			},
-																									{
-																										typeof (DateTime),
-																										(s, i) => s.IsDBNull(i) ? null : (object)s.GetDateTime(i)
-																									},
-		                                                                                     		{
-		                                                                                     			typeof (object),
-		                                                                                     			(s, i) => s.GetValue(i)
-		                                                                                     			},
-		                                                                                     	};
+		{
+			{
+				typeof (bool),
+				(s, i) => s.GetBoolean(i)
+			},
+			{
+				typeof (bool?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetBoolean(i)
+			},
+			{
+				typeof (byte),
+				(s, i) => s.GetByte(i)
+			},
+			{
+				typeof (byte?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetByte(i)
+			},
+			{
+				typeof (Int16),
+				(s, i) => s.GetInt16(i)
+			},
+			{
+				typeof (Int16?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt16(i)
+			},
+			{
+				typeof (Int32),
+				(s, i) => s.GetInt32(i)
+			},
+			{
+				typeof (Int32?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt32(i)
+			},
+			{
+				typeof (Int64),
+				(s, i) => s.GetInt64(i)
+			},
+			{
+				typeof (Int64?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt64(i)
+			},
+			{
+				typeof (string),
+				(s, i) => s.GetString(i)
+			},
+			{
+				typeof (decimal),
+				(s, i) => s.GetDecimal(i)
+			},
+			{
+				typeof (decimal?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetDecimal(i)
+			},
+			{
+				typeof (float),
+				(s, i) => s.GetFloat(i)
+			},
+			{
+				typeof (float?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetFloat(i)
+			},
+			{
+				typeof (double),
+				(s, i) => s.GetDouble(i)
+			},
+			{
+				typeof (double?),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetDouble(i)
+			},
+			{
+				typeof (DateTime),
+				(s, i) => s.IsDBNull(i) ? null : (object)s.GetDateTime(i)
+			},
+			{
+				typeof (object),
+				(s, i) => s.GetValue(i)
+			},
+		};
 
 		public static T Get<T>(this IDataReader reader, string column)
 		{
@@ -212,8 +212,8 @@ namespace TShockAPI.DB
 			if (reader.IsDBNull(column))
 				return default(T);
 
-			if (ReadFuncs.ContainsKey(typeof (T)))
-				return (T) ReadFuncs[typeof (T)](reader, column);
+			if (ReadFuncs.ContainsKey(typeof(T)))
+				return (T)ReadFuncs[typeof(T)](reader, column);
 
 			throw new NotImplementedException();
 		}
