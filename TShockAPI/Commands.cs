@@ -5185,7 +5185,7 @@ namespace TShockAPI
 		private static void CreateDumps(CommandArgs args)
 		{
 			TShock.Utils.DumpPermissionMatrix("PermissionMatrix.txt");
-			TShock.Utils.Dump();
+			TShock.Utils.Dump(false);
 			args.Player.SendSuccessMessage("Your reference dumps have been created in the server folder.");
 			return;
 		}
