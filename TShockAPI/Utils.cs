@@ -90,7 +90,7 @@ namespace TShockAPI
 				{
 					if (includeIDs)
 					{
-						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.User != null ? ", ID: " + ply.User.ID : ""));
+						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
 					}
 					else
 					{

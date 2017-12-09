@@ -28,16 +28,16 @@ using System.Security.Cryptography;
 
 namespace TShockAPI.DB
 {
-	/// <summary>UserManager - Methods for dealing with database users and other user functionality within TShock.</summary>
-	public class UserManager
+	/// <summary>UserAccountManager - Methods for dealing with database user accounts and other related functionality within TShock.</summary>
+	public class UserAccountManager
 	{
 		/// <summary>database - The database object to use for connections.</summary>
 		private IDbConnection _database;
 
-		/// <summary>Creates a UserManager object. During instantiation, this method will verify the table structure against the format below.</summary>
+		/// <summary>Creates a UserAccountManager object. During instantiation, this method will verify the table structure against the format below.</summary>
 		/// <param name="db">The database to connect to.</param>
-		/// <returns>A UserManager object.</returns>
-		public UserManager(IDbConnection db)
+		/// <returns>A UserAccountManager object.</returns>
+		public UserAccountManager(IDbConnection db)
 		{
 			_database = db;
 
@@ -59,145 +59,145 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Adds a given username to the database
+		/// Adds the given user account to the database
 		/// </summary>
-		/// <param name="user">User user</param>
-		public void AddUser(User user)
+		/// <param name="account">The user account to be added</param>
+		public void AddUserAccount(UserAccount account)
 		{
-			if (!TShock.Groups.GroupExists(user.Group))
-				throw new GroupNotExistsException(user.Group);
+			if (!TShock.Groups.GroupExists(account.Group))
+				throw new GroupNotExistsException(account.Group);
 
 			int ret;
 			try
 			{
-				ret = _database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", user.Name,
-					user.Password, user.UUID, user.Group, DateTime.UtcNow.ToString("s"));
+				ret = _database.Query("INSERT INTO Users (Username, Password, UUID, UserGroup, Registered) VALUES (@0, @1, @2, @3, @4);", account.Name,
+					account.Password, account.UUID, account.Group, DateTime.UtcNow.ToString("s"));
 			}
 			catch (Exception ex)
 			{
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
 				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
-					throw new UserExistsException(user.Name);
-				throw new UserManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
+					throw new UserAccountExistsException(account.Name);
+				throw new UserAccountManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
 
 			if (1 > ret)
-				throw new UserExistsException(user.Name);
+				throw new UserAccountExistsException(account.Name);
 
-			Hooks.AccountHooks.OnAccountCreate(user);
+			Hooks.AccountHooks.OnAccountCreate(account);
 		}
 
 		/// <summary>
-		/// Removes a given username from the database
+		/// Removes all user accounts from the database whose usernames match the given user account
 		/// </summary>
-		/// <param name="user">User user</param>
-		public void RemoveUser(User user)
+		/// <param name="account">The user account</param>
+		public void RemoveUserAccount(UserAccount account)
 		{
 			try
 			{
-				var tempuser = GetUser(user);
-				int affected = _database.Query("DELETE FROM Users WHERE Username=@0", user.Name);
+				var tempuser = GetUserAccount(account);
+				int affected = _database.Query("DELETE FROM Users WHERE Username=@0", account.Name);
 
 				if (affected < 1)
-					throw new UserNotExistException(user.Name);
+					throw new UserAccountNotExistException(account.Name);
 
 				Hooks.AccountHooks.OnAccountDelete(tempuser);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("RemoveUser SQL returned an error", ex);
+				throw new UserAccountManagerException("RemoveUser SQL returned an error", ex);
 			}
 		}
 
 		/// <summary>
 		/// Sets the Hashed Password for a given username
 		/// </summary>
-		/// <param name="user">User user</param>
-		/// <param name="password">string password</param>
-		public void SetUserPassword(User user, string password)
+		/// <param name="account">The user account</param>
+		/// <param name="password">The user account password to be set</param>
+		public void SetUserAccountPassword(UserAccount account, string password)
 		{
 			try
 			{
-				user.CreateBCryptHash(password);
+				account.CreateBCryptHash(password);
 
 				if (
-					_database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", user.Password,
-						user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+					_database.Query("UPDATE Users SET Password = @0 WHERE Username = @1;", account.Password,
+						account.Name) == 0)
+					throw new UserAccountNotExistException(account.Name);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("SetUserPassword SQL returned an error", ex);
+				throw new UserAccountManagerException("SetUserPassword SQL returned an error", ex);
 			}
 		}
 
 		/// <summary>
 		/// Sets the UUID for a given username
 		/// </summary>
-		/// <param name="user">User user</param>
-		/// <param name="uuid">string uuid</param>
-		public void SetUserUUID(User user, string uuid)
+		/// <param name="account">The user account</param>
+		/// <param name="uuid">The user account uuid to be set</param>
+		public void SetUserAccountUUID(UserAccount account, string uuid)
 		{
 			try
 			{
 				if (
 					_database.Query("UPDATE Users SET UUID = @0 WHERE Username = @1;", uuid,
-								   user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+								   account.Name) == 0)
+					throw new UserAccountNotExistException(account.Name);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("SetUserUUID SQL returned an error", ex);
+				throw new UserAccountManagerException("SetUserUUID SQL returned an error", ex);
 			}
 		}
 
 		/// <summary>
 		/// Sets the group for a given username
 		/// </summary>
-		/// <param name="user">User user</param>
-		/// <param name="group">string group</param>
-		public void SetUserGroup(User user, string group)
+		/// <param name="account">The user account</param>
+		/// <param name="group">The user account group to be set</param>
+		public void SetUserGroup(UserAccount account, string group)
 		{
 			Group grp = TShock.Groups.GetGroupByName(group);
 			if (null == grp)
 				throw new GroupNotExistsException(group);
 
-			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, user.Name) == 0)
-				throw new UserNotExistException(user.Name);
+			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
+				throw new UserAccountNotExistException(account.Name);
 			
 			try
 			{
 				// Update player group reference for any logged in player
-				foreach (var player in TShock.Players.Where(p => p != null && p.User != null && p.User.Name == user.Name))
+				foreach (var player in TShock.Players.Where(p => p != null && p.Account != null && p.Account.Name == account.Name))
 				{
 					player.Group = grp;
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("SetUserGroup SQL returned an error", ex);
+				throw new UserAccountManagerException("SetUserGroup SQL returned an error", ex);
 			}
 		}
 
-		/// <summary>Updates the last accessed time for a database user to the current time.</summary>
-		/// <param name="user">The user object to modify.</param>
-		public void UpdateLogin(User user)
+		/// <summary>Updates the last accessed time for a database user account to the current time.</summary>
+		/// <param name="account">The user account object to modify.</param>
+		public void UpdateLogin(UserAccount account)
 		{
 			try
 			{
-				if (_database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), user.KnownIps, user.Name) == 0)
-					throw new UserNotExistException(user.Name);
+				if (_database.Query("UPDATE Users SET LastAccessed = @0, KnownIps = @1 WHERE Username = @2;", DateTime.UtcNow.ToString("s"), account.KnownIps, account.Name) == 0)
+					throw new UserAccountNotExistException(account.Name);
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("UpdateLogin SQL returned an error", ex);
+				throw new UserAccountManagerException("UpdateLogin SQL returned an error", ex);
 			}
 		}
 
-		/// <summary>Gets the database ID of a given user object from the database.</summary>
-		/// <param name="username">The username of the user to query for.</param>
-		/// <returns>The user's ID</returns>
-		public int GetUserID(string username)
+		/// <summary>Gets the database ID of a given user account object from the database.</summary>
+		/// <param name="username">The username of the user account to query for.</param>
+		/// <returns>The user account ID</returns>
+		public int GetUserAccountID(string username)
 		{
 			try
 			{
@@ -216,55 +216,55 @@ namespace TShockAPI.DB
 			return -1;
 		}
 
-		/// <summary>Gets a user object by name.</summary>
+		/// <summary>Gets a user account object by name.</summary>
 		/// <param name="name">The user's name.</param>
-		/// <returns>The user object returned from the search.</returns>
-		public User GetUserByName(string name)
+		/// <returns>The user account object returned from the search.</returns>
+		public UserAccount GetUserAccountByName(string name)
 		{
 			try
 			{
-				return GetUser(new User {Name = name});
+				return GetUserAccount(new UserAccount {Name = name});
 			}
-			catch (UserManagerException)
+			catch (UserAccountManagerException)
 			{
 				return null;
 			}
 		}
 
-		/// <summary>Gets a user object by their user ID.</summary>
+		/// <summary>Gets a user account object by their user account ID.</summary>
 		/// <param name="id">The user's ID.</param>
-		/// <returns>The user object returned from the search.</returns>
-		public User GetUserByID(int id)
+		/// <returns>The user account object returned from the search.</returns>
+		public UserAccount GetUserAccountByID(int id)
 		{
 			try
 			{
-				return GetUser(new User {ID = id});
+				return GetUserAccount(new UserAccount {ID = id});
 			}
-			catch (UserManagerException)
+			catch (UserAccountManagerException)
 			{
 				return null;
 			}
 		}
 
-		/// <summary>Gets a user object by a user object.</summary>
-		/// <param name="user">The user object to search by.</param>
+		/// <summary>Gets a user account object by a user account object.</summary>
+		/// <param name="account">The user account object to search by.</param>
 		/// <returns>The user object that is returned from the search.</returns>
-		public User GetUser(User user)
+		public UserAccount GetUserAccount(UserAccount account)
 		{
 			bool multiple = false;
 			string query;
 			string type;
 			object arg;
-			if (0 != user.ID)
+			if (account.ID != 0)
 			{
 				query = "SELECT * FROM Users WHERE ID=@0";
-				arg = user.ID;
+				arg = account.ID;
 				type = "id";
 			}
 			else
 			{
 				query = "SELECT * FROM Users WHERE Username=@0";
-				arg = user.Name;
+				arg = account.Name;
 				type = "name";
 			}
 
@@ -274,38 +274,38 @@ namespace TShockAPI.DB
 				{
 					if (result.Read())
 					{
-						user = LoadUserFromResult(user, result);
+						account = LoadUserAccountFromResult(account, result);
 						// Check for multiple matches
 						if (!result.Read())
-							return user;
+							return account;
 						multiple = true;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new UserManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
+				throw new UserAccountManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
 			}
 			if (multiple)
-				throw new UserManagerException(String.Format("Multiple users found for {0} '{1}'", type, arg));
+				throw new UserAccountManagerException(String.Format("Multiple user accounts found for {0} '{1}'", type, arg));
 
-			throw new UserNotExistException(user.Name);
+			throw new UserAccountNotExistException(account.Name);
 		}
 
-		/// <summary>Gets all users from the database.</summary>
-		/// <returns>The users from the database.</returns>
-		public List<User> GetUsers()
+		/// <summary>Gets all the user accounts from the database.</summary>
+		/// <returns>The user accounts from the database.</returns>
+		public List<UserAccount> GetUserAccounts()
 		{
 			try
 			{
-				List<User> users = new List<User>();
+				List<UserAccount> accounts = new List<UserAccount>();
 				using (var reader = _database.QueryReader("SELECT * FROM Users"))
 				{
 					while (reader.Read())
 					{
-						users.Add(LoadUserFromResult(new User(), reader));
+						accounts.Add(LoadUserAccountFromResult(new UserAccount(), reader));
 					}
-					return users;
+					return accounts;
 				}
 			}
 			catch (Exception ex)
@@ -316,26 +316,26 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Gets all users from the database with a username that starts with or contains <see cref="username"/>
+		/// Gets all user accounts from the database with a username that starts with or contains <see cref="username"/>
 		/// </summary>
 		/// <param name="username">Rough username search. "n" will match "n", "na", "nam", "name", etc</param>
 		/// <param name="notAtStart">If <see cref="username"/> is not the first part of the username. If true then "name" would match "name", "username", "wordsnamewords", etc</param>
 		/// <returns>Matching users or null if exception is thrown</returns>
-		public List<User> GetUsersByName(string username, bool notAtStart = false)
+		public List<UserAccount> GetUserAccountsByName(string username, bool notAtStart = false)
 		{
 			try
 			{
-				List<User> users = new List<User>();
+				List<UserAccount> accounts = new List<UserAccount>();
 				string search = notAtStart ? string.Format("%{0}%", username) : string.Format("{0}%", username);
 				using (var reader = _database.QueryReader("SELECT * FROM Users WHERE Username LIKE @0",
 					search))
 				{
 					while (reader.Read())
 					{
-						users.Add(LoadUserFromResult(new User(), reader));
+						accounts.Add(LoadUserAccountFromResult(new UserAccount(), reader));
 					}
 				}
-				return users;
+				return accounts;
 			}
 			catch (Exception ex)
 			{
@@ -344,61 +344,61 @@ namespace TShockAPI.DB
 			return null;
 		}
 
-		/// <summary>Fills out the fields of a User object with the results from a QueryResult object.</summary>
-		/// <param name="user">The user to add data to.</param>
+		/// <summary>Fills out the fields of a User account object with the results from a QueryResult object.</summary>
+		/// <param name="account">The user account to add data to.</param>
 		/// <param name="result">The QueryResult object to add data from.</param>
 		/// <returns>The 'filled out' user object.</returns>
-		private User LoadUserFromResult(User user, QueryResult result)
+		private UserAccount LoadUserAccountFromResult(UserAccount account, QueryResult result)
 		{
-			user.ID = result.Get<int>("ID");
-			user.Group = result.Get<string>("Usergroup");
-			user.Password = result.Get<string>("Password");
-			user.UUID = result.Get<string>("UUID");
-			user.Name = result.Get<string>("Username");
-			user.Registered = result.Get<string>("Registered");
-			user.LastAccessed = result.Get<string>("LastAccessed");
-			user.KnownIps = result.Get<string>("KnownIps");
-			return user;
+			account.ID = result.Get<int>("ID");
+			account.Group = result.Get<string>("Usergroup");
+			account.Password = result.Get<string>("Password");
+			account.UUID = result.Get<string>("UUID");
+			account.Name = result.Get<string>("Username");
+			account.Registered = result.Get<string>("Registered");
+			account.LastAccessed = result.Get<string>("LastAccessed");
+			account.KnownIps = result.Get<string>("KnownIps");
+			return account;
 		}
 	}
 
-	/// <summary>A database user.</summary>
-	public class User : IEquatable<User>
+	/// <summary>A database user account.</summary>
+	public class UserAccount : IEquatable<UserAccount>
 	{
-		/// <summary>The database ID of the user.</summary>
+		/// <summary>The database ID of the user account.</summary>
 		public int ID { get; set; }
 
 		/// <summary>The user's name.</summary>
 		public string Name { get; set; }
 
-		/// <summary>The hashed password for the user.</summary>
+		/// <summary>The hashed password for the user account.</summary>
 		public string Password { get; internal set; }
 
 		/// <summary>The user's saved Univerally Unique Identifier token.</summary>
 		public string UUID { get; set; }
-		
-		/// <summary>The group object that the user is a part of.</summary>
+
+		/// <summary>The group object that the user account is a part of.</summary>
 		public string Group { get; set; }
 
-		/// <summary>The unix epoch corresponding to the registration date of the user.</summary>
+		/// <summary>The unix epoch corresponding to the registration date of the user account.</summary>
 		public string Registered { get; set; }
 
-		/// <summary>The unix epoch corresponding to the last access date of the user.</summary>
+		/// <summary>The unix epoch corresponding to the last access date of the user account.</summary>
 		public string LastAccessed { get; set; }
 
-		/// <summary>A JSON serialized list of known IP addresses for a user.</summary>
+		/// <summary>A JSON serialized list of known IP addresses for a user account.</summary>
 		public string KnownIps { get; set; }
 
-		/// <summary>Constructor for the user object, assuming you define everything yourself.</summary>
+		/// <summary>Constructor for the user account object, assuming you define everything yourself.</summary>
 		/// <param name="name">The user's name.</param>
 		/// <param name="pass">The user's password hash.</param>
 		/// <param name="uuid">The user's UUID.</param>
 		/// <param name="group">The user's group name.</param>
 		/// <param name="registered">The unix epoch for the registration date.</param>
 		/// <param name="last">The unix epoch for the last access date.</param>
-		/// <param name="known">The known IPs for the user, serialized as a JSON object</param>
-		/// <returns>A completed user object.</returns>
-		public User(string name, string pass, string uuid, string group, string registered, string last, string known)
+		/// <param name="known">The known IPs for the user account, serialized as a JSON object</param>
+		/// <returns>A completed user account object.</returns>
+		public UserAccount(string name, string pass, string uuid, string group, string registered, string last, string known)
 		{
 			Name = name;
 			Password = pass;
@@ -409,9 +409,9 @@ namespace TShockAPI.DB
 			KnownIps = known;
 		}
 
-		/// <summary>Default constructor for a user object; holds no data.</summary>
-		/// <returns>A user object.</returns>
-		public User()
+		/// <summary>Default constructor for a user account object; holds no data.</summary>
+		/// <returns>A user account object.</returns>
+		public UserAccount()
 		{
 			Name = "";
 			Password = "";
@@ -428,7 +428,7 @@ namespace TShockAPI.DB
 		/// If the password is stored using BCrypt, it will be re-saved if the work factor in the config
 		/// is greater than the existing work factor with the new work factor.
 		/// </summary>
-		/// <param name="password">The password to check against the user object.</param>
+		/// <param name="password">The password to check against the user account object.</param>
 		/// <returns>bool true, if the password matched, or false, if it didn't.</returns>
 		public bool VerifyPassword(string password)
 		{
@@ -459,7 +459,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
-		/// <param name="password">The raw user password (unhashed) to upgrade</param>
+		/// <param name="password">The raw user account password (unhashed) to upgrade</param>
 		protected void UpgradePasswordToBCrypt(string password)
 		{
 			// Save the old password, in the event that we have to revert changes.
@@ -467,9 +467,9 @@ namespace TShockAPI.DB
 
 			try
 			{
-				TShock.Users.SetUserPassword(this, password);
+				TShock.UserAccounts.SetUserAccountPassword(this, password);
 			}
-			catch (UserManagerException e)
+			catch (UserAccountManagerException e)
 			{
 				TShock.Log.ConsoleError(e.ToString());
 				Password = oldpassword; // Revert changes
@@ -477,7 +477,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
-		/// <param name="password">The raw user password (unhashed) to upgrade</param>
+		/// <param name="password">The raw user account password (unhashed) to upgrade</param>
 		protected void UpgradePasswordWorkFactor(string password)
 		{
 			// If the destination work factor is not greater, we won't upgrade it or re-hash it
@@ -496,16 +496,16 @@ namespace TShockAPI.DB
 			{
 				try
 				{
-					TShock.Users.SetUserPassword(this, password);
+					TShock.UserAccounts.SetUserAccountPassword(this, password);
 				}
-				catch (UserManagerException e)
+				catch (UserAccountManagerException e)
 				{
 					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
 		}
 
-		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <summary>Creates a BCrypt hash for a user account and stores it in this object.</summary>
 		/// <param name="password">The plain text password to hash</param>
 		public void CreateBCryptHash(string password)
 		{
@@ -524,7 +524,7 @@ namespace TShockAPI.DB
 			}
 		}
 
-		/// <summary>Creates a BCrypt hash for a user and stores it in this object.</summary>
+		/// <summary>Creates a BCrypt hash for a user account and stores it in this object.</summary>
 		/// <param name="password">The plain text password to hash</param>
 		/// <param name="workFactor">The work factor to use in generating the password hash</param>
 		public void CreateBCryptHash(string password, int workFactor)
@@ -583,29 +583,29 @@ namespace TShockAPI.DB
 
 		#region IEquatable
 
-		/// <summary>Indicates whether the current <see cref="User"/> is equal to another <see cref="User"/>.</summary>
-		/// <returns>true if the <see cref="User"/> is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-		/// <param name="other">An <see cref="User"/> to compare with this <see cref="User"/>.</param>
-		public bool Equals(User other)
+		/// <summary>Indicates whether the current <see cref="UserAccount"/> is equal to another <see cref="UserAccount"/>.</summary>
+		/// <returns>true if the <see cref="UserAccount"/> is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
+		/// <param name="other">An <see cref="UserAccount"/> to compare with this <see cref="UserAccount"/>.</param>
+		public bool Equals(UserAccount other)
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
 			return ID == other.ID && string.Equals(Name, other.Name);
 		}
 
-		/// <summary>Indicates whether the current <see cref="User"/> is equal to another object.</summary>
-		/// <returns>true if the <see cref="User"/> is equal to the <paramref name="obj" /> parameter; otherwise, false.</returns>
-		/// <param name="obj">An <see cref="object"/> to compare with this <see cref="User"/>.</param>
+		/// <summary>Indicates whether the current <see cref="UserAccount"/> is equal to another object.</summary>
+		/// <returns>true if the <see cref="UserAccount"/> is equal to the <paramref name="obj" /> parameter; otherwise, false.</returns>
+		/// <param name="obj">An <see cref="object"/> to compare with this <see cref="UserAccount"/>.</param>
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			if (obj.GetType() != this.GetType()) return false;
-			return Equals((User)obj);
+			return Equals((UserAccount)obj);
 		}
 
 		/// <summary>Serves as the hash function. </summary>
-		/// <returns>A hash code for the current <see cref="User"/>.</returns>
+		/// <returns>A hash code for the current <see cref="UserAccount"/>.</returns>
 		public override int GetHashCode()
 		{
 			unchecked
@@ -615,86 +615,87 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Compares equality of two <see cref="User"/> objects.
+		/// Compares equality of two <see cref="UserAccount"/> objects.
 		/// </summary>
 		/// <param name="left">Left hand of the comparison.</param>
 		/// <param name="right">Right hand of the comparison.</param>
-		/// <returns>true if the <see cref="User"/> objects are equal; otherwise, false.</returns>
-		public static bool operator ==(User left, User right)
+		/// <returns>true if the <see cref="UserAccount"/> objects are equal; otherwise, false.</returns>
+		public static bool operator ==(UserAccount left, UserAccount right)
 		{
 			return Equals(left, right);
 		}
 
 		/// <summary>
-		/// Compares equality of two <see cref="User"/> objects.
+		/// Compares equality of two <see cref="UserAccount"/> objects.
 		/// </summary>
 		/// <param name="left">Left hand of the comparison.</param>
 		/// <param name="right">Right hand of the comparison.</param>
-		/// <returns>true if the <see cref="User"/> objects aren't equal; otherwise, false.</returns>
-		public static bool operator !=(User left, User right)
+		/// <returns>true if the <see cref="UserAccount"/> objects aren't equal; otherwise, false.</returns>
+		public static bool operator !=(UserAccount left, UserAccount right)
 		{
 			return !Equals(left, right);
 		}
 
 		#endregion
 
-		public override string ToString()
-		{
-			return Name;
-		}
+		/// <summary>
+		/// Converts the UserAccount to it's string representation
+		/// </summary>
+		/// <returns>Returns the UserAccount string representation</returns>
+		public override string ToString() => Name;
 	}
 
-	/// <summary>UserManagerException - An exception generated by the user manager.</summary>
+	/// <summary>UserAccountManagerException - An exception generated by the user account manager.</summary>
 	[Serializable]
-	public class UserManagerException : Exception
+	public class UserAccountManagerException : Exception
 	{
-		/// <summary>Creates a new UserManagerException object.</summary>
+		/// <summary>Creates a new UserAccountManagerException object.</summary>
 		/// <param name="message">The message for the object.</param>
-		/// <returns>A new UserManagerException object.</returns>
-		public UserManagerException(string message)
+		/// <returns>A new UserAccountManagerException object.</returns>
+		public UserAccountManagerException(string message)
 			: base(message)
 		{
 		}
 
-		/// <summary>Creates a new UserManagerObject with an internal exception.</summary>
+		/// <summary>Creates a new UserAccountManager Object with an internal exception.</summary>
 		/// <param name="message">The message for the object.</param>
 		/// <param name="inner">The inner exception for the object.</param>
-		/// <returns>A new UserManagerException with a defined inner exception.</returns>
-		public UserManagerException(string message, Exception inner)
+		/// <returns>A new UserAccountManagerException with a defined inner exception.</returns>
+		public UserAccountManagerException(string message, Exception inner)
 			: base(message, inner)
 		{
 		}
 	}
 
-	/// <summary>A UserExistsException object, used when a user already exists when attempting to create a new one.</summary>
+	/// <summary>A UserExistsException object, used when a user account already exists when attempting to create a new one.</summary>
 	[Serializable]
-	public class UserExistsException : UserManagerException
+	public class UserAccountExistsException : UserAccountManagerException
 	{
-		/// <summary>Creates a new UserExistsException object.</summary>
-		/// <param name="name">The name of the user that already exists.</param>
-		/// <returns>A UserExistsException object with the user's name passed in the message.</returns>
-		public UserExistsException(string name)
-			: base("User '" + name + "' already exists")
+		/// <summary>Creates a new UserAccountExistsException object.</summary>
+		/// <param name="name">The name of the user account that already exists.</param>
+		/// <returns>A UserAccountExistsException object with the user's name passed in the message.</returns>
+		public UserAccountExistsException(string name)
+			: base("User account '" + name + "' already exists")
 		{
 		}
 	}
 
 	/// <summary>A UserNotExistException, used when a user does not exist and a query failed as a result of it.</summary>
 	[Serializable]
-	public class UserNotExistException : UserManagerException
+	public class UserAccountNotExistException : UserAccountManagerException
 	{
-		/// <summary>Creates a new UserNotExistException object, with the user's name in the message.</summary>
-		/// <param name="name">The user's name to be pasesd in the message.</param>
-		/// <returns>A new UserNotExistException object with a message containing the user's name that does not exist.</returns>
-		public UserNotExistException(string name)
-			: base("User '" + name + "' does not exist")
+		/// <summary>Creates a new UserAccountNotExistException object, with the user account name in the message.</summary>
+		/// <param name="name">The user account name to be pasesd in the message.</param>
+		/// <returns>A new UserAccountNotExistException object with a message containing the user account name that does not exist.</returns>
+		public UserAccountNotExistException(string name)
+			: base("User account '" + name + "' does not exist")
 		{
 		}
 	}
 
 	/// <summary>A GroupNotExistsException, used when a group does not exist.</summary>
 	[Serializable]
-	public class GroupNotExistsException : UserManagerException
+	public class GroupNotExistsException : UserAccountManagerException
 	{
 		/// <summary>Creates a new GroupNotExistsException object with the group's name in the message.</summary>
 		/// <param name="group">The group name.</param>

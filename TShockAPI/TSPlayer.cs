@@ -218,10 +218,10 @@ namespace TShockAPI
 		public Vector2 LastNetPosition = Vector2.Zero;
 
 		/// <summary>
-		/// User object associated with the player.
+		/// UserAccount object associated with the player.
 		/// Set when the player logs in.
 		/// </summary>
-		public User User { get; set; }
+		public UserAccount Account { get; set; }
 
 		/// <summary>
 		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
@@ -448,7 +448,7 @@ namespace TShockAPI
 			{
 				if (HasPermission(Permissions.bypassssc))
 				{
-					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
+					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + Account.Name); // Debug Code
 					return true;
 				}
 				PlayerData.CopyCharacter(this);
@@ -656,7 +656,7 @@ namespace TShockAPI
 			{
 				tempGroupTimer.Stop();
 			}
-			User = null;
+			Account = null;
 			IsLoggedIn = false;
 		}
 
