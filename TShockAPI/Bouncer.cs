@@ -201,14 +201,14 @@ namespace TShockAPI
 
 			if (!TShock.Utils.TilePlacementValid(x, y))
 			{
-				args.Player.SendTileSquare(tileX, tileY, 4);
+				args.Player.SendTileSquare(x, y, 4);
 				args.Handled = true;
 				return;
 			}
 
 			if (args.Player.Dead && TShock.Config.PreventDeadModification)
 			{
-				args.Player.SendTileSquare(tileX, tileY, 4);
+				args.Player.SendTileSquare(x, y, 4);
 				args.Handled = true;
 				return;
 			}
