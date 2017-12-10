@@ -2220,14 +2220,6 @@ namespace TShockAPI
 
 			var type = Main.projectile[index].type;
 
-			// Players can no longer destroy projectiles that are not theirs as of 1.1.2
-			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
-			{
-				args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to kill projectile of type: {3}", Main.projectile[index].owner, args.Player.Index, type));
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}*/
-
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.RemoveProjectile(ident, owner);
