@@ -232,6 +232,7 @@ namespace TShockAPI
 				return;
 			}
 
+			// TODO: REMOVE. This does NOT look like Bouncer code.
 			if (TShock.TileBans.TileIsBanned(type, args.Player))
 			{
 				args.Player.SendTileSquare(x, y, 1);
