@@ -165,10 +165,16 @@ namespace TShockAPI.CLI
 		{
 			_source = source;
 
-			for (int i = 0; i < (source.Length - 1 == 0 ? 1 : source.Length - 1); i++)
+			for (int i = 0; i < (source.Length - 1 == 0 ? 1 : source.Length); i++)
 			{
 				string flag = source[i].ToLowerInvariant();
 				string argument = null;
+
+				if (string.IsNullOrWhiteSpace(flag))
+				{
+					continue;
+				}
+
 				if (i + 1 < source.Length)
 				{
 					argument = source[i + 1];
