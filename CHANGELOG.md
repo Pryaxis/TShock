@@ -23,6 +23,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added the ability to ban by account name instead of just banning a character name assuming its an account name. (@hakusaro)
 * Renamed TShock.DB.User to TShock.DB.UserAccount, including all the related methods, classes and events. (@Ryozuki)
 * Update OTAPI to 2.0.0.31, which also updates Newtonsoft.Json to 10.0.3 (@Ryozuki)
+* Fixed DumpItems() from trying to dump older versions of certain items (negative item IDs). (@Zaicon)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
