@@ -25,6 +25,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Renamed TShock.DB.User to TShock.DB.UserAccount, including all the related methods, classes and events. (@Ryozuki)
 * Update OTAPI to 2.0.0.31, which also updates Newtonsoft.Json to 10.0.3 (@Ryozuki)
 * Fixed DumpItems() from trying to dump older versions of certain items (negative item IDs). (@Zaicon)
+* Added the `/dump-reference-data` command, which when run, runs Utils.Dump() and outputs Terraria reference data to the server folder. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)

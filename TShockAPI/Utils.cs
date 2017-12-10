@@ -1204,7 +1204,6 @@ namespace TShockAPI
 			Permissions.DumpDescriptions();
 			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
 			RestManager.DumpDescriptions();
-			DumpPermissionMatrix("PermissionMatrix.txt");
 			DumpBuffs("BuffList.txt");
 			DumpItems("Items-1_0.txt", 1, 235);
 			DumpItems("Items-1_1.txt", 235, 604);
@@ -1226,9 +1225,9 @@ namespace TShockAPI
 				Main.recipe[i] = new Recipe();
 		}
 		
-		// Dumps a matrix of all permissions and all groups in markdown format
-		// Hard coded to default groups because apparently we have poor querying tools
-		public void DumpPermissionMatrix(string path)
+		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
+		/// <param name="path">The save destination.</param>
+		internal void DumpPermissionMatrix(string path)
 		{
 			StringBuilder output = new StringBuilder();
 			output.Append("|Permission|");
