@@ -103,9 +103,6 @@ namespace TShockAPI
 		[Description("User can get other users' info.")]
 		public static readonly string userinfo = "tshock.admin.userinfo";
 
-		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
-		public static readonly string createdumps = "tshock.admin.createdumps";
-
 		// tshock.buff nodes
 
 		[Description("User can buff self.")]
@@ -130,6 +127,9 @@ namespace TShockAPI
 
 		[Description("User can download updates to plugins that are currently running.")]
 		public static readonly string updateplugins = "tshock.cfg.updateplugins";
+
+		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
+		public static readonly string createdumps = "tshock.cfg.createdumps";
 
 		// tshock.ignore nodes
 
