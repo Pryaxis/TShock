@@ -50,6 +50,9 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>Bouncer's KillMe hook stops crash exploits from out of bounds values.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnKillMe(object sender, GetDataHandlers.KillMeEventArgs args)
 		{
 			short dmg = args.Damage;
@@ -81,6 +84,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Bouncer's projectile trigger hook stops world damaging projectiles from destroying the world.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnNewProjectile(object sender, GetDataHandlers.NewProjectileEventArgs args)
 		{
 			short ident = args.Identity;
@@ -187,6 +193,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Bouncer's PlaceObject hook reverts malicious tile placement.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceObject(object sender, GetDataHandlers.PlaceObjectEventArgs args)
 		{
 			short x = args.X;
@@ -315,6 +324,9 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Bouncer's TileEdit hook is used to revert malicious tile changes.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs args)
 		{
 			EditAction action = args.Action;
@@ -681,9 +693,9 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>The handler for the HealOther events in Bouncer</summary>
-		/// <param name="sender">sender</param>
-		/// <param name="args">args</param>
+		/// <summary>Bouncer's HealOther handler prevents gross misuse of HealOther packets by hackers.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnHealOtherPlayer(object sender, GetDataHandlers.HealOtherPlayerEventArgs args)
 		{
 			short amount = args.Amount;
@@ -723,9 +735,9 @@ namespace TShockAPI
 			return;
 		}
 
-		/// <summary>The handler for SendTileSquare events in Bouncer</summary>
-		/// <param name="sender">sender</param>
-		/// <param name="args">args</param>
+		/// <summary>Bouncer's SendTileSquare hook halts large scope world destruction.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			short size = args.Size;
