@@ -42,12 +42,116 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlayerUpdate.Register(OnPlayerUpdate);
 			GetDataHandlers.KillMe.Register(OnKillMe);
 			GetDataHandlers.NewProjectile.Register(OnNewProjectile);
 			GetDataHandlers.PlaceObject.Register(OnPlaceObject);
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Handles disabling enforcement & minor anti-exploit stuff</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlayerUpdate(object sender, GetDataHandlers.PlayerUpdateEventArgs args)
+		{
+			byte plr = args.PlayerId;
+			BitsByte control = args.Control;
+			BitsByte pulley = args.Pulley;
+			byte item = args.Item;
+			var pos = args.Position;
+			var vel = args.Velocity;
+
+			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (item < 0 || item >= args.Player.TPlayer.inventory.Length)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.LastNetPosition == Vector2.Zero)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (!pos.Equals(args.Player.LastNetPosition))
+			{
+				float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f),
+					new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
+
+				if (TShock.CheckIgnores(args.Player))
+				{
+					// If the player has moved outside the disabled zone...
+					if (distance > TShock.Config.MaxRangeForDisabled)
+					{
+						// We need to tell them they were disabled and why, then revert the change.
+						if (args.Player.IgnoreActionsForCheating != "none")
+						{
+							args.Player.SendErrorMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating);
+						}
+						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
+						{
+							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
+						}
+						else if (args.Player.IgnoreActionsForInventory != "none")
+						{
+							args.Player.SendErrorMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory);
+						}
+						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+						{
+							args.Player.SendErrorMessage("Please /register or /login to play!");
+						}
+						else if (args.Player.IgnoreActionsForClearingTrashCan)
+						{
+							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
+						}
+
+						// ??
+						var lastTileX = args.Player.LastNetPosition.X;
+						var lastTileY = args.Player.LastNetPosition.Y - 48;
+						if (!args.Player.Teleport(lastTileX, lastTileY))
+						{
+							args.Player.Spawn();
+						}
+						args.Handled = true;
+						return;
+					}
+					args.Handled = true;
+					return;
+				}
+
+				// Corpses don't move
+				if (args.Player.Dead)
+				{
+					args.Handled = true;
+					return;
+				}
+
+				// Noclip detection
+				if (!args.Player.HasPermission(Permissions.ignorenoclipdetection) &&
+					TSCheckNoclip(pos, args.Player.TPlayer.width, args.Player.TPlayer.height - (args.Player.TPlayer.mount.Active ? args.Player.TPlayer.mount.HeightBoost : 0)) && !TShock.Config.IgnoreNoClip
+					&& !args.Player.TPlayer.tongued)
+				{
+					var lastTileX = args.Player.LastNetPosition.X;
+					var lastTileY = args.Player.LastNetPosition.Y;
+					if (!args.Player.Teleport(lastTileX, lastTileY))
+					{
+						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
+						args.Player.Spawn();
+					}
+					args.Handled = true;
+					return;
+				}
+			}
+
+			return;
 		}
 
 		/// <summary>Bouncer's KillMe hook stops crash exploits from out of bounds values.</summary>

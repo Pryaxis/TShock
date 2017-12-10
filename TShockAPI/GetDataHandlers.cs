@@ -438,16 +438,18 @@ namespace TShockAPI
 		/// </summary>
 		public class PlayerUpdateEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer object that triggered the event</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
 			public byte PlayerId { get; set; }
 			/// <summary>
-			/// ???
+			/// Control direction (BitFlags)
 			/// </summary>
 			public byte Control { get; set; }
 			/// <summary>
-			/// Current item?
+			/// Selected item
 			/// </summary>
 			public byte Item { get; set; }
 			/// <summary>
@@ -458,7 +460,7 @@ namespace TShockAPI
 			/// Velocity of the player
 			/// </summary>
 			public Vector2 Velocity { get; set; }
-
+			/// <summary>Pulley update (BitFlags)</summary>
 			public byte Pulley { get; set; }
 		}
 		/// <summary>
@@ -466,14 +468,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
 
-		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
+		private static bool OnPlayerUpdate(TSPlayer player, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
 		{
 			if (PlayerUpdate == null)
 				return false;
 
 			var args = new PlayerUpdateEventArgs
 			{
-				PlayerId = player,
+				Player = player,
+				PlayerId = plr,
 				Control = control,
 				Item = item,
 				Position = position,
@@ -2034,6 +2037,9 @@ namespace TShockAPI
 		{
 			if (args.Player == null || args.TPlayer == null || args.Data == null)
 			{
+				// Is this really the best option?
+				// If we're getting a packet that doesn't have a player or a TPlayer or data...
+				// Should we really let it through?
 				return false;
 			}
 
@@ -2046,86 +2052,12 @@ namespace TShockAPI
 			if (pulley[2])
 				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
-			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
+			if (OnPlayerUpdate(args.Player, plr, control, item, pos, vel, pulley))
 				return true;
-
-			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
-			{
-				return true;
-			}
-
-			if (item < 0 || item >= args.TPlayer.inventory.Length)
-			{
-				return true;
-			}
-
-			if (args.Player.LastNetPosition == Vector2.Zero)
-			{
-				return true;
-			}
-
-			if (!pos.Equals(args.Player.LastNetPosition))
-			{
-				float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f),
-													new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
-				if (TShock.CheckIgnores(args.Player))
-				{
-					if (distance > TShock.Config.MaxRangeForDisabled)
-					{
-						if (args.Player.IgnoreActionsForCheating != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating);
-						}
-						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
-						}
-						else if (args.Player.IgnoreActionsForInventory != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory);
-						}
-						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
-						{
-							args.Player.SendErrorMessage("Please /register or /login to play!");
-						}
-						else if (args.Player.IgnoreActionsForClearingTrashCan)
-						{
-							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
-						}
-						var lastTileX = args.Player.LastNetPosition.X;
-						var lastTileY = args.Player.LastNetPosition.Y - 48;
-						if (!args.Player.Teleport(lastTileX, lastTileY))
-						{
-							args.Player.Spawn();
-						}
-						return true;
-					}
-					return true;
-				}
-
-				if (args.Player.Dead)
-				{
-					return true;
-				}
-
-				if (!args.Player.HasPermission(Permissions.ignorenoclipdetection) &&
-					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height - (args.TPlayer.mount.Active ? args.Player.TPlayer.mount.HeightBoost : 0)) && !TShock.Config.IgnoreNoClip
-					&& !args.TPlayer.tongued)
-				{
-					var lastTileX = args.Player.LastNetPosition.X;
-					var lastTileY = args.Player.LastNetPosition.Y;
-					if (!args.Player.Teleport(lastTileX, lastTileY))
-					{
-						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
-						args.Player.Spawn();
-					}
-					return true;
-				}
-				args.Player.LastNetPosition = pos;
-			}
 
 			if (control[5])
 			{
+				// ItemBan system
 				string itemName = args.TPlayer.inventory[item].Name;
 				if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(args.TPlayer.inventory[item].netID), args.Player))
 				{
@@ -2134,6 +2066,7 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
 				}
 
+				// Reimplementation of normal Terraria stuff?
 				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
@@ -2154,6 +2087,7 @@ namespace TShockAPI
 				}
 			}
 
+			// Where we rebuild sync data for Terraria?
 			args.TPlayer.selectedItem = item;
 			args.TPlayer.position = pos;
 			args.TPlayer.oldVelocity = args.TPlayer.velocity;
@@ -2210,7 +2144,6 @@ namespace TShockAPI
 				args.TPlayer.direction = -1;
 			}
 
-
 			if (args.Player.Confused && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
 				if (args.TPlayer.controlUp)
@@ -2234,7 +2167,6 @@ namespace TShockAPI
 					args.TPlayer.controlRight = false;
 					args.TPlayer.controlLeft = true;
 				}
-
 
 				args.TPlayer.Update(args.TPlayer.whoAmI);
 				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
