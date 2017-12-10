@@ -193,11 +193,17 @@ namespace TShockAPI
 		public static List<Command> ChatCommands = new List<Command>();
 		public static ReadOnlyCollection<Command> TShockCommands = new ReadOnlyCollection<Command>(new List<Command>());
 
+		/// <summary>
+		/// The command specifier, defaults to "/"
+		/// </summary>
 		public static string Specifier
 		{
 			get { return string.IsNullOrWhiteSpace(TShock.Config.CommandSpecifier) ? "/" : TShock.Config.CommandSpecifier; }
 		}
 
+		/// <summary>
+		/// The silent command specifier, defaults to "."
+		/// </summary>
 		public static string SilentSpecifier
 		{
 			get { return string.IsNullOrWhiteSpace(TShock.Config.CommandSilentSpecifier) ? "." : TShock.Config.CommandSilentSpecifier; }
@@ -787,7 +793,7 @@ namespace TShockAPI
 				return;
 			}
 
-			User user = TShock.Users.GetUserByName(args.Player.Name);
+			UserAccount account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 			string password = "";
 			bool usingUUID = false;
 			if (args.Parameters.Count == 0 && !TShock.Config.DisableUUIDLogin)
@@ -813,7 +819,7 @@ namespace TShockAPI
 				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Parameters[0], args.Parameters[1]))
 					return;
 
-				user = TShock.Users.GetUserByName(args.Parameters[0]);
+				account = TShock.UserAccounts.GetUserAccountByName(args.Parameters[0]);
 				password = args.Parameters[1];
 			}
 			else
@@ -826,21 +832,21 @@ namespace TShockAPI
 			}
 			try
 			{
-				if (user == null)
+				if (account == null)
 				{
-					args.Player.SendErrorMessage("A user by that name does not exist.");
+					args.Player.SendErrorMessage("A user account by that name does not exist.");
 				}
-				else if (user.VerifyPassword(password) ||
-						(usingUUID && user.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
+				else if (account.VerifyPassword(password) ||
+						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
-					var group = TShock.Utils.GetGroup(user.Group);
+					var group = TShock.Utils.GetGroup(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
-					args.Player.User = user;
+					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
 					args.Player.IgnoreActionsForInventory = "none";
 
@@ -861,9 +867,9 @@ namespace TShockAPI
 					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";
 
-					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
+					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 
-					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + user.Name + ".");
+					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + account.Name + ".");
 					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos))
 					{
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
@@ -874,7 +880,7 @@ namespace TShockAPI
 						args.Player.LoginHarassed = false;
 
 					}
-					TShock.Users.SetUserUUID(user, args.Player.UUID);
+					TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
 
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 				}
@@ -888,7 +894,7 @@ namespace TShockAPI
 					{
 						args.Player.SendErrorMessage("Invalid password!");
 					}
-					TShock.Log.Warn(args.Player.IP + " failed to authenticate as user: " + user.Name + ".");
+					TShock.Log.Warn(args.Player.IP + " failed to authenticate as user: " + account.Name + ".");
 					args.Player.LoginAttempts++;
 				}
 			}
@@ -922,14 +928,14 @@ namespace TShockAPI
 				if (args.Player.IsLoggedIn && args.Parameters.Count == 2)
 				{
 					string password = args.Parameters[0];
-					if (args.Player.User.VerifyPassword(password))
+					if (args.Player.Account.VerifyPassword(password))
 					{
 						try
 						{
 							args.Player.SendSuccessMessage("You changed your password!");
-							TShock.Users.SetUserPassword(args.Player.User, args.Parameters[1]); // SetUserPassword will hash it for you.
+							TShock.UserAccounts.SetUserAccountPassword(args.Player.Account, args.Parameters[1]); // SetUserPassword will hash it for you.
 							TShock.Log.ConsoleInfo(args.Player.IP + " named " + args.Player.Name + " changed the password of account " +
-												   args.Player.User.Name + ".");
+												   args.Player.Account.Name + ".");
 						}
 						catch (ArgumentOutOfRangeException)
 						{
@@ -940,7 +946,7 @@ namespace TShockAPI
 					{
 						args.Player.SendErrorMessage("You failed to change your password!");
 						TShock.Log.ConsoleError(args.Player.IP + " named " + args.Player.Name + " failed to change password for account: " +
-												args.Player.User.Name + ".");
+												args.Player.Account.Name + ".");
 					}
 				}
 				else
@@ -948,7 +954,7 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("Not logged in or invalid syntax! Proper syntax: {0}password <oldpassword> <newpassword>", Specifier);
 				}
 			}
-			catch (UserManagerException ex)
+			catch (UserAccountManagerException ex)
 			{
 				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
 				TShock.Log.ConsoleError("PasswordUser returned an error: " + ex);
@@ -959,15 +965,15 @@ namespace TShockAPI
 		{
 			try
 			{
-				var user = new User();
+				var account = new UserAccount();
 				string echoPassword = "";
 				if (args.Parameters.Count == 1)
 				{
-					user.Name = args.Player.Name;
+					account.Name = args.Player.Name;
 					echoPassword = args.Parameters[0];
 					try
 					{
-						user.CreateBCryptHash(args.Parameters[0]);
+						account.CreateBCryptHash(args.Parameters[0]);
 					}
 					catch (ArgumentOutOfRangeException)
 					{
@@ -977,11 +983,11 @@ namespace TShockAPI
 				}
 				else if (args.Parameters.Count == 2 && TShock.Config.AllowRegisterAnyUsername)
 				{
-					user.Name = args.Parameters[0];
+					account.Name = args.Parameters[0];
 					echoPassword = args.Parameters[1];
 					try
 					{
-						user.CreateBCryptHash(args.Parameters[1]);
+						account.CreateBCryptHash(args.Parameters[1]);
 					}
 					catch (ArgumentOutOfRangeException)
 					{
@@ -995,24 +1001,24 @@ namespace TShockAPI
 					return;
 				}
 
-				user.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
-				user.UUID = args.Player.UUID;
+				account.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
+				account.UUID = args.Player.UUID;
 
-				if (TShock.Users.GetUserByName(user.Name) == null && user.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
+				if (TShock.UserAccounts.GetUserAccountByName(account.Name) == null && account.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
 				{
-					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", user.Name);
+					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
-					TShock.Users.AddUser(user);
-					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, user.Name);
+					TShock.UserAccounts.AddUserAccount(account);
+					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Sorry, " + user.Name + " was already taken by another person.");
+					args.Player.SendErrorMessage("Sorry, " + account.Name + " was already taken by another person.");
 					args.Player.SendErrorMessage("Please try a different username.");
-					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + user.Name);
+					TShock.Log.ConsoleInfo(args.Player.Name + " failed to register an existing account: " + account.Name);
 				}
 			}
-			catch (UserManagerException ex)
+			catch (UserAccountManagerException ex)
 			{
 				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
 				TShock.Log.ConsoleError("RegisterUser returned an error: " + ex);
@@ -1033,57 +1039,57 @@ namespace TShockAPI
 			// Add requires a username, password, and a group specified.
 			if (subcmd == "add" && args.Parameters.Count == 4)
 			{
-				var user = new User();
+				var account = new UserAccount();
 
-				user.Name = args.Parameters[1];
+				account.Name = args.Parameters[1];
 				try
 				{
-					user.CreateBCryptHash(args.Parameters[2]);
+					account.CreateBCryptHash(args.Parameters[2]);
 				}
 				catch (ArgumentOutOfRangeException)
 				{
 					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
 					return;
 				}
-				user.Group = args.Parameters[3];
+				account.Group = args.Parameters[3];
 
 				try
 				{
-					TShock.Users.AddUser(user);
-					args.Player.SendSuccessMessage("Account " + user.Name + " has been added to group " + user.Group + "!");
-					TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + user.Name + " to group " + user.Group);
+					TShock.UserAccounts.AddUserAccount(account);
+					args.Player.SendSuccessMessage("Account " + account.Name + " has been added to group " + account.Group + "!");
+					TShock.Log.ConsoleInfo(args.Player.Name + " added Account " + account.Name + " to group " + account.Group);
 				}
 				catch (GroupNotExistsException)
 				{
-					args.Player.SendErrorMessage("Group " + user.Group + " does not exist!");
+					args.Player.SendErrorMessage("Group " + account.Group + " does not exist!");
 				}
-				catch (UserExistsException)
+				catch (UserAccountExistsException)
 				{
-					args.Player.SendErrorMessage("User " + user.Name + " already exists!");
+					args.Player.SendErrorMessage("User " + account.Name + " already exists!");
 				}
-				catch (UserManagerException e)
+				catch (UserAccountManagerException e)
 				{
-					args.Player.SendErrorMessage("User " + user.Name + " could not be added, check console for details.");
+					args.Player.SendErrorMessage("User " + account.Name + " could not be added, check console for details.");
 					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
 			// User deletion requires a username
 			else if (subcmd == "del" && args.Parameters.Count == 2)
 			{
-				var user = new User();
-				user.Name = args.Parameters[1];
+				var account = new UserAccount();
+				account.Name = args.Parameters[1];
 
 				try
 				{
-					TShock.Users.RemoveUser(user);
+					TShock.UserAccounts.RemoveUserAccount(account);
 					args.Player.SendSuccessMessage("Account removed successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " successfully deleted account: " + args.Parameters[1] + ".");
 				}
-				catch (UserNotExistException)
+				catch (UserAccountNotExistException)
 				{
-					args.Player.SendErrorMessage("The user " + user.Name + " does not exist! Deleted nobody!");
+					args.Player.SendErrorMessage("The user " + account.Name + " does not exist! Deleted nobody!");
 				}
-				catch (UserManagerException ex)
+				catch (UserAccountManagerException ex)
 				{
 					args.Player.SendErrorMessage(ex.Message);
 					TShock.Log.ConsoleError(ex.ToString());
@@ -1093,22 +1099,22 @@ namespace TShockAPI
 			// Password changing requires a username, and a new password to set
 			else if (subcmd == "password" && args.Parameters.Count == 3)
 			{
-				var user = new User();
-				user.Name = args.Parameters[1];
+				var account = new UserAccount();
+				account.Name = args.Parameters[1];
 
 				try
 				{
-					TShock.Users.SetUserPassword(user, args.Parameters[2]);
-					TShock.Log.ConsoleInfo(args.Player.Name + " changed the password of account " + user.Name);
-					args.Player.SendSuccessMessage("Password change succeeded for " + user.Name + ".");
+					TShock.UserAccounts.SetUserAccountPassword(account, args.Parameters[2]);
+					TShock.Log.ConsoleInfo(args.Player.Name + " changed the password of account " + account.Name);
+					args.Player.SendSuccessMessage("Password change succeeded for " + account.Name + ".");
 				}
-				catch (UserNotExistException)
+				catch (UserAccountNotExistException)
 				{
-					args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					args.Player.SendErrorMessage("User " + account.Name + " does not exist!");
 				}
-				catch (UserManagerException e)
+				catch (UserAccountManagerException e)
 				{
-					args.Player.SendErrorMessage("Password change for " + user.Name + " failed! Check console!");
+					args.Player.SendErrorMessage("Password change for " + account.Name + " failed! Check console!");
 					TShock.Log.ConsoleError(e.ToString());
 				}
 				catch (ArgumentOutOfRangeException)
@@ -1119,26 +1125,26 @@ namespace TShockAPI
 			// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group" && args.Parameters.Count == 3)
 			{
-				var user = new User();
-				user.Name = args.Parameters[1];
+				var account = new UserAccount();
+				account.Name = args.Parameters[1];
 
 				try
 				{
-					TShock.Users.SetUserGroup(user, args.Parameters[2]);
-					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + user.Name + " to group " + args.Parameters[2] + ".");
-					args.Player.SendSuccessMessage("Account " + user.Name + " has been changed to group " + args.Parameters[2] + "!");
+					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
+					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
+					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
 				}
 				catch (GroupNotExistsException)
 				{
 					args.Player.SendErrorMessage("That group does not exist!");
 				}
-				catch (UserNotExistException)
+				catch (UserAccountNotExistException)
 				{
-					args.Player.SendErrorMessage("User " + user.Name + " does not exist!");
+					args.Player.SendErrorMessage("User " + account.Name + " does not exist!");
 				}
-				catch (UserManagerException e)
+				catch (UserAccountManagerException e)
 				{
-					args.Player.SendErrorMessage("User " + user.Name + " could not be added. Check console for details.");
+					args.Player.SendErrorMessage("User " + account.Name + " could not be added. Check console for details.");
 					TShock.Log.ConsoleError(e.ToString());
 				}
 			}
@@ -1198,8 +1204,8 @@ namespace TShockAPI
 			{
 				var message = new StringBuilder();
 				message.Append("IP Address: ").Append(players[0].IP);
-				if (players[0].User != null && players[0].IsLoggedIn)
-					message.Append(" | Logged in as: ").Append(players[0].User.Name).Append(" | Group: ").Append(players[0].Group.Name);
+				if (players[0].Account != null && players[0].IsLoggedIn)
+					message.Append(" | Logged in as: ").Append(players[0].Account.Name).Append(" | Group: ").Append(players[0].Group.Name);
 				args.Player.SendSuccessMessage(message.ToString());
 			}
 		}
@@ -1215,28 +1221,28 @@ namespace TShockAPI
 			string username = String.Join(" ", args.Parameters);
 			if (!string.IsNullOrWhiteSpace(username))
 			{
-				var user = TShock.Users.GetUserByName(username);
-				if (user != null)
+				var account = TShock.UserAccounts.GetUserAccountByName(username);
+				if (account != null)
 				{
 					DateTime LastSeen;
 					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
 
-					if (DateTime.TryParse(user.LastAccessed, out LastSeen))
+					if (DateTime.TryParse(account.LastAccessed, out LastSeen))
 					{
-						LastSeen = DateTime.Parse(user.LastAccessed).ToLocalTime();
-						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", user.Name, LastSeen.ToShortDateString(),
+						LastSeen = DateTime.Parse(account.LastAccessed).ToLocalTime();
+						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
 							LastSeen.ToShortTimeString(), Timezone);
 					}
 
 					if (args.Player.Group.HasPermission(Permissions.advaccountinfo))
 					{
-						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(user.KnownIps?.ToString() ?? string.Empty);
+						List<string> KnownIps = JsonConvert.DeserializeObject<List<string>>(account.KnownIps?.ToString() ?? string.Empty);
 						string ip = KnownIps?[KnownIps.Count - 1] ?? "N/A";
-						DateTime Registered = DateTime.Parse(user.Registered).ToLocalTime();
+						DateTime Registered = DateTime.Parse(account.Registered).ToLocalTime();
 
-						args.Player.SendSuccessMessage("{0}'s group is {1}.", user.Name, user.Group);
-						args.Player.SendSuccessMessage("{0}'s last known IP is {1}.", user.Name, ip);
-						args.Player.SendSuccessMessage("{0}'s register date is {1} {2} UTC{3}.", user.Name, Registered.ToShortDateString(), Registered.ToShortTimeString(), Timezone);
+						args.Player.SendSuccessMessage("{0}'s group is {1}.", account.Name, account.Group);
+						args.Player.SendSuccessMessage("{0}'s last known IP is {1}.", account.Name, ip);
+						args.Player.SendSuccessMessage("{0}'s register date is {1} {2} UTC{3}.", account.Name, Registered.ToShortDateString(), Registered.ToShortTimeString(), Timezone);
 					}
 				}
 				else
@@ -1303,7 +1309,7 @@ namespace TShockAPI
 
 						// Effective ban target assignment
 						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
-						User offlineUser = TShock.Users.GetUserByName(args.Parameters[1]);
+						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
 
 						// Storage variable to determine if the command executor is the server console
 						// If it is, we assume they have full control and let them override permission checks
@@ -1365,7 +1371,7 @@ namespace TShockAPI
 							}
 
 							targetGeneralizedName = target.Name;
-							success = TShock.Bans.AddBan2(target.IP, target.Name, target.UUID, target.User.Name, banReason, false, args.Player.User.Name,
+							success = TShock.Bans.AddBan2(target.IP, target.Name, target.UUID, target.Account.Name, banReason, false, args.Player.Account.Name,
 								banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
 
 							// Since this is an online ban, we need to dc the player and tell them now.
@@ -1396,8 +1402,8 @@ namespace TShockAPI
 							if (r.IsMatch(args.Parameters[1])) {
 								targetGeneralizedName = "IP: " + args.Parameters[1];
 								success = TShock.Bans.AddBan2(args.Parameters[1], "", "", "", banReason,
-									false, args.Player.User.Name, banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
-								if (success && offlineUser != null)
+									false, args.Player.Account.Name, banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
+								if (success && offlineUserAccount != null)
 								{
 									args.Player.SendSuccessMessage("Target IP {0} was banned successfully.", targetGeneralizedName);
 									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
@@ -1407,7 +1413,7 @@ namespace TShockAPI
 								// Apparently there is no way to not IP ban someone
 								// This means that where we would normally just ban a "character name" here
 								// We can't because it requires some IP as a primary key.
-								if (offlineUser == null)
+								if (offlineUserAccount == null)
 								{
 									args.Player.SendErrorMessage("Unable to ban target {0}.", args.Parameters[1]);
 									args.Player.SendErrorMessage("Target is not a valid IP address, a valid online player, or a known offline user.");
@@ -1418,33 +1424,33 @@ namespace TShockAPI
 						}
 
 						// Case: Offline ban
-						if (players.Count == 0 && offlineUser != null)
+						if (players.Count == 0 && offlineUserAccount != null)
 						{
 							// Catch: we don't know an offline player's last login character name
 							// This means that we're banning their *user name* on the assumption that
 							// user name == character name
 							// (which may not be true)
 							// This needs to be fixed in a future implementation.
-							targetGeneralizedName = offlineUser.Name;
+							targetGeneralizedName = offlineUserAccount.Name;
 
-							if (TShock.Groups.GetGroupByName(offlineUser.Group).HasPermission(Permissions.immunetoban) && 
+							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) && 
 								!callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
 								return;
 							}
 
-							if (offlineUser.KnownIps == null)
+							if (offlineUserAccount.KnownIps == null)
 							{
 								args.Player.SendErrorMessage("Unable to ban target {0} because they have no valid IP to ban.", targetGeneralizedName);
 								return;
 							}
 
-							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUser.KnownIps).Last();
+							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUserAccount.KnownIps).Last();
 
 							success = 
 								TShock.Bans.AddBan2(lastIP,
-									"", offlineUser.UUID, offlineUser.Name, banReason, false, args.Player.User.Name,
+									"", offlineUserAccount.UUID, offlineUserAccount.Name, banReason, false, args.Player.Account.Name,
 									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
 						}
 
@@ -1458,12 +1464,12 @@ namespace TShockAPI
 								if (banLengthInSeconds == 0)
 								{
 									TSPlayer.All.SendErrorMessage("{0} was permanently banned by {1} for: {2}",
-										targetGeneralizedName, args.Player.User.Name, banReason);
+										targetGeneralizedName, args.Player.Account.Name, banReason);
 								}
 								else
 								{
 									TSPlayer.All.SendErrorMessage("{0} was temp banned for {1} seconds by {2} for: {3}",
-										targetGeneralizedName, banLengthInSeconds, args.Player.User.Name, banReason);
+										targetGeneralizedName, banLengthInSeconds, args.Player.Account.Name, banReason);
 								}
 							}
 						}
@@ -1780,7 +1786,7 @@ namespace TShockAPI
 
 			if (ply.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.User.Name));
+				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.Account.Name));
 			}
 
 			if (!TShock.Groups.GroupExists(args.Parameters[1]))
@@ -4187,7 +4193,7 @@ namespace TShockAPI
 								var width = Math.Abs(args.Player.TempPoints[0].X - args.Player.TempPoints[1].X);
 								var height = Math.Abs(args.Player.TempPoints[0].Y - args.Player.TempPoints[1].Y);
 
-								if (TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.User.Name,
+								if (TShock.Regions.AddRegion(x, y, width, height, regionName, args.Player.Account.Name,
 															 Main.worldID.ToString()))
 								{
 									args.Player.TempPoints[0] = Point.Zero;
@@ -4276,7 +4282,7 @@ namespace TShockAPI
 									regionName = regionName + " " + args.Parameters[i];
 								}
 							}
-							if (TShock.Users.GetUserByName(playerName) != null)
+							if (TShock.UserAccounts.GetUserAccountByName(playerName) != null)
 							{
 								if (TShock.Regions.AddNewUser(regionName, playerName))
 								{
@@ -4311,7 +4317,7 @@ namespace TShockAPI
 								regionName = regionName + " " + args.Parameters[i];
 							}
 						}
-						if (TShock.Users.GetUserByName(playerName) != null)
+						if (TShock.UserAccounts.GetUserAccountByName(playerName) != null)
 						{
 							if (TShock.Regions.RemoveUser(regionName, playerName))
 							{
@@ -4452,9 +4458,9 @@ namespace TShockAPI
 						{
 							IEnumerable<string> sharedUsersSelector = region.AllowedIDs.Select(userId =>
 							{
-								User user = TShock.Users.GetUserByID(userId);
-								if (user != null)
-									return user.Name;
+								UserAccount account = TShock.UserAccounts.GetUserAccountByID(userId);
+								if (account != null)
+									return account.Name;
 
 								return string.Concat("{ID: ", userId, "}");
 							});

@@ -90,7 +90,7 @@ namespace TShockAPI
 				{
 					if (includeIDs)
 					{
-						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.User != null ? ", ID: " + ply.User.ID : ""));
+						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
 					}
 					else
 					{
@@ -1206,7 +1206,7 @@ namespace TShockAPI
 			RestManager.DumpDescriptions();
 			DumpPermissionMatrix("PermissionMatrix.txt");
 			DumpBuffs("BuffList.txt");
-			DumpItems("Items-1_0.txt", -48, 235);
+			DumpItems("Items-1_0.txt", 1, 235);
 			DumpItems("Items-1_1.txt", 235, 604);
 			DumpItems("Items-1_2.txt", 604, 2749);
 			DumpItems("Items-1_3.txt", 2749, Main.maxItemTypes);
