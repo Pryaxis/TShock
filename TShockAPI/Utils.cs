@@ -1225,8 +1225,8 @@ namespace TShockAPI
 				Main.recipe[i] = new Recipe();
 		}
 		
-		// Dumps a matrix of all permissions and all groups in markdown format
-		// Hard coded to default groups because apparently we have poor querying tools
+		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
+		/// <param name="path">The save destination.</param>
 		public void DumpPermissionMatrix(string path)
 		{
 			StringBuilder output = new StringBuilder();
