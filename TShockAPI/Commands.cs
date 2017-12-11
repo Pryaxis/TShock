@@ -366,10 +366,6 @@ namespace TShockAPI
 			{
 				HelpText = "Reloads the server configuration file."
 			});
-			add(new Command(Permissions.maintenance, Restart, "restart")
-			{
-				HelpText = "Restarts the server."
-			});
 			add(new Command(Permissions.cfgpassword, ServerPassword, "serverpassword")
 			{
 				HelpText = "Changes the server password."
@@ -1900,25 +1896,6 @@ namespace TShockAPI
 
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
-		}
-
-		private static void Restart(CommandArgs args)
-		{
-			if (TShock.NoRestart)
-			{
-				args.Player.SendErrorMessage("This command has been disabled.");
-				return;
-			}
-
-			if (ServerApi.RunningMono)
-			{
-				TShock.Log.ConsoleInfo("Sorry, this command has not yet been implemented in Mono.");
-			}
-			else
-			{
-				string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
-				TShock.Utils.RestartServer(true, reason);
-			}
 		}
 
 		private static void OffNoSave(CommandArgs args)
