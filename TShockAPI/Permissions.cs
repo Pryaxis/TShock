@@ -125,9 +125,6 @@ namespace TShockAPI
 		[Description("User can reload the configurations file.")]
 		public static readonly string cfgreload = "tshock.cfg.reload";
 
-		[Description("User can download updates to plugins that are currently running.")]
-		public static readonly string updateplugins = "tshock.cfg.updateplugins";
-
 		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
 		public static readonly string createdumps = "tshock.cfg.createdumps";
 
