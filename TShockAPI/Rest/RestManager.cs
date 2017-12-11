@@ -205,7 +205,6 @@ namespace TShockAPI
 			Rest.RegisterRedirect("/server/broadcast", "/v2/server/broadcast");
 			Rest.RegisterRedirect("/server/reload", "/v2/server/reload");
 			Rest.RegisterRedirect("/server/off", "/v2/server/off");
-			Rest.RegisterRedirect("/server/restart", "/v3/server/restart");
 			Rest.RegisterRedirect("/server/rawcmd", "/v3/server/rawcmd");
 
 			//user commands
@@ -247,7 +246,6 @@ namespace TShockAPI
 			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
 			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
-			Rest.Register(new SecureRestCommand("/v3/server/restart", ServerRestart, RestPermissions.restmaintenance));
 			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
 			Rest.Register(new SecureRestCommand("/tokentest", ServerTokenTest));
 
@@ -333,25 +331,6 @@ namespace TShockAPI
 			TShock.Utils.StopServer(!GetBool(args.Parameters["nosave"], false), reason);
 
 			return RestResponse("The server is shutting down");
-		}
-
-		[Description("Attempt to restart the server.")]
-		[Route("/v3/server/restart")]
-		[Permission(RestPermissions.restmaintenance)]
-		[Noun("confirm", true, "Confirm that you actually want to restart the server", typeof(bool))]
-		[Noun("message", false, "The shutdown message.", typeof(String))]
-		[Noun("nosave", false, "Shutdown without saving.", typeof(bool))]
-		[Token]
-		private object ServerRestart(RestRequestArgs args)
-		{
-			if (!GetBool(args.Parameters["confirm"], false))
-				return RestInvalidParam("confirm");
-
-			// Inform players the server is shutting down
-			var reason = string.IsNullOrWhiteSpace(args.Parameters["message"]) ? "Server is restarting" : args.Parameters["message"];
-			TShock.Utils.RestartServer(!GetBool(args.Parameters["nosave"], false), reason);
-
-			return RestResponse("The server is shutting down and will attempt to restart");
 		}
 
 		[Description("Reload config files for the server.")]
