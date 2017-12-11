@@ -59,8 +59,7 @@ namespace TShockAPI
 		{
 			if (args.ProjectileIndex > Main.maxProjectiles || args.ProjectileIndex < 0)
 			{
-				// TODO: Should this be /true/ to stop the server from processing it?
-				args.Handled = false;
+				args.Handled = true;
 				return;
 			}
 
