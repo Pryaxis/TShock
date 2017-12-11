@@ -28,6 +28,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed DumpItems() from trying to dump older versions of certain items (negative item IDs). (@Zaicon)
 * Added the `/dump-reference-data` command, which when run, runs Utils.Dump() and outputs Terraria reference data to the server folder. (@hakusaro)
 * Fixed builds to not require a specific version of OTAPI and to not fail when in Release mode (@bartico6)
+* Update Assembly Company to Pryaxis (@Ryozuki)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
