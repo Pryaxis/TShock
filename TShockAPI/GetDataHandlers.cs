@@ -2076,10 +2076,7 @@ namespace TShockAPI
 		{
 			if (args.Player == null || args.TPlayer == null || args.Data == null)
 			{
-				// Is this really the best option?
-				// If we're getting a packet that doesn't have a player or a TPlayer or data...
-				// Should we really let it through?
-				return false;
+				return true;
 			}
 
 			byte plr = args.Data.ReadInt8();
