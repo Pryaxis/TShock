@@ -31,6 +31,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
 * `GetDataHandlers.KillMe` now sends a `TSPlayer` and a `PlayerDeathReason`. (@hakusaro)
 * Added `GetDataHandlers.ProjectileKill` hook. (@hakusaro)
+* Removed `TShock.CheckProjectilePermission` and replaced it with `TSPlayer.HasProjectilePermission` and `TSPlayer.LacksProjectilePermission` respectively. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)

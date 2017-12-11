@@ -2260,7 +2260,7 @@ namespace TShockAPI
 			var type = Main.projectile[index].type;
 
 			// TODO: This needs to be moved somewhere else.
-			if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
+			if (args.Player.LacksProjectilePermission(index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
 				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
 				args.Player.RemoveProjectile(ident, owner);

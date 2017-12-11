@@ -1772,41 +1772,6 @@ namespace TShockAPI
 			Main.StartInvasion(type);
 		}
 
-		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
-		/// <param name="player">player - The TSPlayer object that created the projectile.</param>
-		/// <param name="index">index - The projectile index.</param>
-		/// <param name="type">type - The projectile type.</param>
-		/// <returns>bool - True if the player does not have permission to use a projectile.</returns>
-		public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
-		{
-			if (type == 43)
-			{
-				return true;
-			}
-
-			if (type == 17 && Itembans.ItemIsBanned("Dirt Rod", player))
-			//Dirt Rod Projectile
-			{
-				return true;
-			}
-
-			if ((type == 42 || type == 65 || type == 68) && Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
-			{
-				return true;
-			}
-
-			Projectile proj = new Projectile();
-			proj.SetDefaults(type);
-
-			if (Main.projHostile[type])
-			{
-				//player.SendMessage( proj.name, Color.Yellow);
-				return true;
-			}
-
-			return false;
-		}
-
 		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
 		/// <param name="player">player - The TSPlayer object.</param>
 		/// <param name="x">x - The x coordinate of the tile.</param>

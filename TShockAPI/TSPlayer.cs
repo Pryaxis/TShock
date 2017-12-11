@@ -789,6 +789,57 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Checks to see if this player object lacks access rights to a given projectile. Used by projectile bans.</summary>
+		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
+		/// <param name="type">The type of projectile, from Main.projectiles.</param>
+		/// <returns>If the player has lacks access rights to the projectile.</returns>
+		public bool LacksProjectilePermission(int index, int type)
+		{
+			return !HasProjectilePermission(index, type);
+		}
+
+		/// <summary>Checks to see if this player object has access rights to a given projectile. Used by projectile bans.</summary>
+		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
+		/// <param name="type">The type of projectile, from Main.projectiles.</param>
+		/// <returns>If the player has access rights to the projectile.</returns>
+		public bool HasProjectilePermission(int index, int type)
+		{
+			// Players never have the rights to tombstones.
+			if (type == ProjectileID.Tombstone)
+			{
+				return false;
+			}
+
+			// Dirt balls are the projectiles from dirt rods.
+			// If the dirt rod item is banned, they probably shouldn't have this projectile.
+			if (type == ProjectileID.DirtBall && TShock.Itembans.ItemIsBanned("Dirt Rod", this))
+			{
+				return false;
+			}
+
+			// If the sandgun is banned, block sand bullets.
+			if (TShock.Itembans.ItemIsBanned("Sandgun", this))
+			{
+				if (type == ProjectileID.SandBallGun
+						|| type == ProjectileID.EbonsandBallGun
+						|| type == ProjectileID.PearlSandBallGun)
+				{
+					return false;
+				}
+			}
+
+			// If the projectile is hostile, block it?
+			Projectile tempProjectile = new Projectile();
+			tempProjectile.SetDefaults(type);
+
+			if (Main.projHostile[type])
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Removes the projectile with the given index and owner.
 		/// </summary>

@@ -261,7 +261,7 @@ namespace TShockAPI
 				return;
 			}
 
-			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
+			bool hasPermission = args.Player.HasProjectilePermission(index, type);
 			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord
