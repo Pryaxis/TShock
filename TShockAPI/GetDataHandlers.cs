@@ -384,6 +384,45 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>The arguments to the ProjectileKill packet.</summary>
+		public class ProjectileKillEventArgs : HandledEventArgs
+		{
+			/// <summary>The TSPlayer that fired the event.</summary>
+			public TSPlayer Player;
+			/// <summary>The projectile's identity...?</summary>
+			public int ProjectileIdentity;
+			/// <summary>The the player index of the projectile's owner (Main.players).</summary>
+			public byte ProjectileOwner;
+			/// <summary>The index of the projectile in Main.projectile.</summary>
+			public int ProjectileIndex;
+		}
+
+		/// <summary>The event fired when a projectile kill packet is received.</summary>
+		public static HandlerList<ProjectileKillEventArgs> ProjectileKill;
+
+		/// <summary>Fires the ProjectileKill event.</summary>
+		/// <param name="player">The TSPlayer that caused the event.</param>
+		/// <param name="identity">The projectile identity (from the packet).</param>
+		/// <param name="owner">The projectile's owner (from the packet).</param>
+		/// <param name="index">The projectile's index (from Main.projectiles).</param>
+		/// <returns>bool</returns>
+		private static bool OnProjectileKill(TSPlayer player, int identity, byte owner, int index)
+		{
+			if (ProjectileKill == null)
+				return false;
+
+			var args = new ProjectileKillEventArgs
+			{
+				Player = player,
+				ProjectileIdentity = identity,
+				ProjectileOwner = owner,
+				ProjectileIndex = index,
+			};
+
+			ProjectileKill.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use in a KillMe event
 		/// </summary>
@@ -2213,28 +2252,17 @@ namespace TShockAPI
 			owner = (byte)args.Player.Index;
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (index > Main.maxProjectiles || index < 0)
+			if (OnProjectileKill(args.Player, ident, owner, index))
 			{
-				return false;
+				return true;
 			}
 
 			var type = Main.projectile[index].type;
 
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
+			// TODO: This needs to be moved somewhere else.
 			if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
 			{
 				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}

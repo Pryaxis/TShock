@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.ProjectileKill.Register(OnProjectileKill);
 			GetDataHandlers.PlayerUpdate.Register(OnPlayerUpdate);
 			GetDataHandlers.KillMe.Register(OnKillMe);
 			GetDataHandlers.NewProjectile.Register(OnNewProjectile);
@@ -49,6 +50,33 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Handles ProjectileKill events for throttling & out of bounds projectiles.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnProjectileKill(object sender, GetDataHandlers.ProjectileKillEventArgs args)
+		{
+			if (args.ProjectileIndex > Main.maxProjectiles || args.ProjectileIndex < 0)
+			{
+				// TODO: Should this be /true/ to stop the server from processing it?
+				args.Handled = false;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
+				args.Handled = true;
+				return;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Handles disabling enforcement & minor anti-exploit stuff</summary>

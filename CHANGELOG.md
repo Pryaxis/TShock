@@ -30,6 +30,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `GetDataHandlers.HealOtherPlayer` hook. (@hakusaro)
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
 * `GetDataHandlers.KillMe` now sends a `TSPlayer` and a `PlayerDeathReason`. (@hakusaro)
+* Added `GetDataHandlers.ProjectileKill` hook. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
