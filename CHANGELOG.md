@@ -31,6 +31,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update Assembly Company to Pryaxis (@Ryozuki)
 * Removed `/restart` command. (@hakusaro)
 * Removed `Permissions.updateplugins` permission. (@hakusaro)
+* Removed REST `/v3/server/restart/` route and `/server/restart/` route. (@hakusaro)
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
