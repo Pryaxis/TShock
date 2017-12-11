@@ -3,6 +3,7 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
+* API: Added return in OnNameCollision if hook has been handled. (@Patrikkk)
 * API: Added hooks for item, projectile and tile bans (@deadsurgeon42)
 * API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
 * API: New WorldGrassSpread hook which shold allow corruption/crimson/hallow creep config options to work (@DeathCradle)
@@ -26,6 +27,33 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update OTAPI to 2.0.0.31, which also updates Newtonsoft.Json to 10.0.3 (@Ryozuki)
 * Fixed DumpItems() from trying to dump older versions of certain items (negative item IDs). (@Zaicon)
 * Added the `/dump-reference-data` command, which when run, runs Utils.Dump() and outputs Terraria reference data to the server folder. (@hakusaro)
+* Fixed builds to not require a specific version of OTAPI and to not fail when in Release mode (@bartico6)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Bouncer changes
+
+Putting this stuff down here so things don't conflict as often.
+
 * `GetDataHandlers.SendTileSquare` hook now sends a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
 * Added `GetDataHandlers.HealOtherPlayer` hook. (@hakusaro)
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)

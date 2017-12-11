@@ -524,6 +524,11 @@ namespace TShockAPI
 		/// <param name="args">args - The NameCollisionEventArgs object.</param>
 		private void NetHooks_NameCollision(NameCollisionEventArgs args)
 		{
+			if (args.Handled)
+			{
+				return;
+			}
+
 			string ip = Utils.GetRealIP(Netplay.Clients[args.Who].Socket.GetRemoteAddress().ToString());
 
 			var player = Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
