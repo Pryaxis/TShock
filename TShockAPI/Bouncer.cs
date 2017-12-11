@@ -57,7 +57,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnProjectileKill(object sender, GetDataHandlers.ProjectileKillEventArgs args)
 		{
-			if (args.ProjectileIndex > Main.maxProjectiles || args.ProjectileIndex < 0)
+			if (args.ProjectileIndex < 0)
 			{
 				args.Handled = true;
 				return;
