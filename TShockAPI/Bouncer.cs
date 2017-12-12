@@ -204,11 +204,12 @@ namespace TShockAPI
 				return;
 			}
 
+			// This was formerly marked as a crash check; does not actually crash on this specific packet.
 			if (playerDeathReason != null)
 			{
 				if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 				{
-					TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
+					TShock.Utils.Kick(TShock.Players[id], "Death reason outside of normal bounds.", true);
 					args.Handled = true;
 					return;
 				}
