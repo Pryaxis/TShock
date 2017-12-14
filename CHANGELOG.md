@@ -67,6 +67,7 @@ Putting this stuff down here so things don't conflict as often.
 * Removed `TShock.CheckProjectilePermission` and replaced it with `TSPlayer.HasProjectilePermission` and `TSPlayer.LacksProjectilePermission` respectively. (@hakusaro)
 * Added `TSPlayer` object to `GetDataHandlers.LiquidSetEventArgs`. (@hakusaro)
 * Removed `TShock.StartInvasion` for public use (moved to Utils and marked internal). (@hakusaro)
+* Fixed invasions started by TShock not reporting size correctly and probably not working at all. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

@@ -1465,6 +1465,7 @@ namespace TShockAPI
 
 			if (TShock.Config.InfiniteInvasion)
 			{
+				// Not really an infinite size
 				invasionSize = 20000000;
 			}
 			else
@@ -1472,10 +1473,15 @@ namespace TShockAPI
 				invasionSize = 100 + (TShock.Config.InvasionMultiplier * ActivePlayers());
 			}
 
-			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
-			Main.invasionSize = invasionSize;
+			// Order matters
+			// StartInvasion will reset the invasion size
 
 			Main.StartInvasion(type);
+
+			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
+			// Have to set start size to report progress correctly
+			Main.invasionSizeStart = invasionSize;
+			Main.invasionSize = invasionSize;
 		}
 
 		/// <summary>Verifies that each stack in each chest is valid and not over the max stack count.</summary>
