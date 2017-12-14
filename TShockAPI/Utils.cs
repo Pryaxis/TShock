@@ -1457,6 +1457,27 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Starts an invasion on the server.</summary>
+		/// <param name="type">The invasion type id.</param>
+		internal void StartInvasion(int type)
+		{
+			int invasionSize = 0;
+
+			if (TShock.Config.InfiniteInvasion)
+			{
+				invasionSize = 20000000;
+			}
+			else
+			{
+				invasionSize = 100 + (TShock.Config.InvasionMultiplier * ActivePlayers());
+			}
+
+			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
+			Main.invasionSize = invasionSize;
+
+			Main.StartInvasion(type);
+		}
+
 		/// <summary>Verifies that each stack in each chest is valid and not over the max stack count.</summary>
 		internal void FixChestStacks()
 		{

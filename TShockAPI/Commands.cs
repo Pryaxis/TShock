@@ -2044,19 +2044,19 @@ namespace TShockAPI
 					case "goblin":
 					case "goblins":
 						TSPlayer.All.SendInfoMessage("{0} has started a goblin army invasion.", args.Player.Name);
-						TShock.StartInvasion(1);
+						TShock.Utils.StartInvasion(1);
 						break;
 
 					case "snowman":
 					case "snowmen":
 						TSPlayer.All.SendInfoMessage("{0} has started a snow legion invasion.", args.Player.Name);
-						TShock.StartInvasion(2);
+						TShock.Utils.StartInvasion(2);
 						break;
 
 					case "pirate":
 					case "pirates":
 						TSPlayer.All.SendInfoMessage("{0} has started a pirate invasion.", args.Player.Name);
-						TShock.StartInvasion(3);
+						TShock.Utils.StartInvasion(3);
 						break;
 
 					case "pumpkin":
@@ -2098,7 +2098,7 @@ namespace TShockAPI
 					case "martian":
 					case "martians":
 						TSPlayer.All.SendInfoMessage("{0} has started a martian invasion.", args.Player.Name);
-						TShock.StartInvasion(4);
+						TShock.Utils.StartInvasion(4);
 						break;
 				}
 			}

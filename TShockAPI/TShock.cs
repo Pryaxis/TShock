@@ -1755,27 +1755,7 @@ namespace TShockAPI
 		}
 
 
-		/// <summary>StartInvasion - Starts an invasion on the server.</summary>
-		/// <param name="type">type - The invasion type id.</param>
-		//TODO: Why is this in TShock's main class?
-		public static void StartInvasion(int type)
-		{
-			int invasionSize = 0;
 
-			if (Config.InfiniteInvasion)
-			{
-				invasionSize = 20000000;
-			}
-			else
-			{
-				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
-			}
-
-			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
-			Main.invasionSize = invasionSize;
-
-			Main.StartInvasion(type);
-		}
 
 		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
 		/// <param name="player">player - The TSPlayer object.</param>
