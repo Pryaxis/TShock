@@ -16,6 +16,16 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 
   * [New to TShock?](#new-to-tshock)
   * [Developer's Guide](#developers-guide)
+    * [Background](#background)
+    * [Building](#building)
+      * [On Windows](#on-windows)
+        * [The Terraria Server API](#the-terraria-server-api-1)
+        * [TShock](#tshock-1)
+      * [On macOS](#on-macos)
+      * [On Linux](#on-linux)
+      * [On Unix](#on-unix)
+        * [The Terraria Server API](#the-terraria-server-api-2)
+        * [TShock](#tshock-2)
 
 ## New to TShock?
 
@@ -145,11 +155,48 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
           $ mkdir ~/bin/
 
+1. Set an environment variable to store if you plan to build in debug or release.
+
+          $ export BUILD_MODE=Debug
+
+          or
+
+          $ export BUILD_MODE=Release
+
+
 ##### The Terraria Server API
 
-1. Move into the `TerrariaServerAPI` project and then perform a NuGet restore.
+1. Perform a NuGet restore in the directory above `TerrariaServerAPI`.
 
-          $ cd ./TerrariaServerAPI/
+          $ mono ~/bin/nuget.exe restore ./TerrariaServerAPI/
+
+1. Build the `TShock.4.OTAPI.sln` solution the configuration you chose:
+
+          $ xbuild ./TerrariaServerAPI/TShock.4.OTAPI.sln /p:Configuration=$BUILD_MODE
+
+1. Run the `TShock Mintaka Bootstrapper` with the TShock modifications. If you don't use `/bin/bash` as your primary shell, you might want to temporarily switch to it, or the bootstrapper may fail.
+
+          $ cd ./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/$BUILD_MODE/
+          $ mono TShock.Modifications.Bootstrapper.exe -in=OTAPI.dll \
+                -mod=../../../TShock.Modifications.**/bin/$BUILD_MODE/TShock.Modifications.*.dll \ 
+                -o=Output/OTAPI.dll
+
+1. Verify that non-zero modifications ran successfully. Then, build the Terraria Server API executable.
+
+          $ cd ./../../../
+          $ xbuild ./TerrariaServerAPI/TerrariaServerAPI/TerrariaServerAPI.csproj \
+                /p:Configuration=$BUILD_MODE
+
+You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `TerrariaServerAPI` any time that the submodule in `TShock` gets changed, if you're doing this from inside the TShock repo. You also need to update the submodules (`git submodule update`) if they're out of date on a pull too.
+
+##### TShock
+
+1. Perform a NuGet restore in `TShockAPI` folder that contains `TShockAPI.sln`.
+
           $ mono ~/bin/nuget.exe restore
 
-1. 
+1. Build TShock in the `BUILD_MODE` you set earlier.
+
+          $ xbuild ./TShockAPI.sln /p:Configuration=
+
+You're done!
