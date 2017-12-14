@@ -149,6 +149,8 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
 1. Follow the [official install instructions for mono](http://www.mono-project.com/download/). **DO** install `mono-complete` or you're missing components.
 
+1. Proceed to the [unix build steps](#unix-build-steps) to continue.
+
 #### On Unix
 
 1. You need to get NuGet. Download the latest `nuget.exe` from [NuGet](https://www.nuget.org/downloads).
