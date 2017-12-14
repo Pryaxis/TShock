@@ -14,8 +14,8 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 
 ## Table of Contents
 
-  * New to TShock?(#new-to-tshock)
-  * Code of conduct(#code-of-conduct)
+  * [New to TShock?](#new-to-tshock)
+  * [Code of Conduct](#code-of-conduct)
 
 ## New to TShock?
 
