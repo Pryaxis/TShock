@@ -2314,6 +2314,7 @@ namespace TShockAPI
 			{
 				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
 				{
+					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
 					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
 			}
