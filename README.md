@@ -73,19 +73,43 @@ With all of this in mind, the primary goal when compiling TShock is to remember 
 
 Let's get started.
 
-## Building
+### Building
 
 You need to get the source code. Using git, [clone this repository](https://help.github.com/articles/cloning-a-repository/). 
 
-The next set of instructions are the technical details to setup both the Terraria Server API and TShock. More importantly, the Terraria API steps here are written under the assumption that you are building TShock primarily. Before you start, you need to **initialize the git submodules** and then **update them**. You can do this in a graphical git client, or use the following commands.
+The next set of instructions are the technical details to setup both the Terraria Server API and TShock. More importantly, the Terraria API steps here are written under the assumption that you are building TShock primarily. Before you start, you need to **initialize the git submodules** and then **update them**. You need to use the following commands to do this.
 
           $ git submodule init
           $ git submodule update
 
-### On Windows
+If you're using [GitHub Desktop](https://desktop.github.com), you need to perform additional steps. After cloning the TShock repository, go to the `Repository` menu and select `Open in Command Prompt`. If you don't have Git (not GitHub Desktop) installed, you can follow the prompts to to install Git for your command line. Once Git is installed, use this same process to get to the command prompt. Then, run the above commands. 
 
-#### The Terraria Server API
+#### On Windows
 
+On Windows, you need to install [Visual Studio Community Edition](https://www.visualstudio.com/downloads/) or a better (more expensive) version of Visual Studio.
 
+##### The Terraria Server API
 
-#### 
+1. Open the `TShock.4.OTAPI.sln` solution in the `TerrariaServerAPI` folder.
+
+1. Set the `TShock.Modifications.Bootstrapper` project as the StartUp project, then build the solution.
+
+1. Build the solution in either debug or release mode, depending on your preference. NuGet will automatically fetch the appropriate packages as a result of its magical powers.
+
+1. Hit the "Start" button in Visual Studio to run the `TShock Mintaka Bootstrapper`.
+
+1. Watch the output window and make sure that a non-zero number of modifications ran. When it completes, you have successfully bootstrapped `TShock Mintaka`.
+
+1. Set the `TerrariaServerAPI` project as the StartUp project.
+
+1. Build the solution in either debug or release mode, depending on your preference.
+
+1. Close `TShock.4.OTAPI.sln` in Visual Studio. 
+
+You need to do re-run the patcher any time OTAPI updates. You need to rebuild `TerrariaServerAPI` any time that the submodule in `TShock` gets changed, if you're doing this from inside the TShock repo. You also need to update the submodules (`git submodule update`) if they're out of date on a pull too.
+
+##### TShock
+
+1. Open the `TShockAPI.sln` solution in the root of the repository.
+
+1. Build the solution. It should correctly download NuGet packages automatically and build against the aforementioned `TerrariaServerAPI` project you just built.
