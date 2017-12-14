@@ -1,36 +1,51 @@
 <p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
   <a href="https://travis-ci.org/Pryaxis/TShock"><img src="https://travis-ci.org/Pryaxis/TShock.svg?branch=general-devel" alt="Build Status"></a><a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><br />
-  <hr />
 </p>
 
-TShock is a toolbox for Terraria servers and communities. TShock is trusted by hundreds of server owners to provide exploit patches, game updates, and more in a reliable and timely fashion.
+TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
 
-Why do people love TShock?
+* Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](https://travis.tshock.co/).
+* Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
+* Join [Discord](https://discord.gg/XUJdH58) to get help, chat, and enjoy some swell Australian company.
+* Download [other plugins](https://tshock.co/xf/index.php?resources/) to supercharge your server.
 
-* Server-side characters.
-  * Players can't cheat and hack-in items. They have to earn everything on the server.
-* Groups & Permissions
-  * Categorize who can do what. Give your donors special abilities, like infinite sand.
-* Customizable world settings
-  * Make Terraria your own with custom difficulty, spawn rates, regions, and more.
-* Fast acting bans and exploit defense make hackers have a bad time.
+----
 
-## :star: Quick Start
+## Table of Contents
 
-https://tshock.readme.io/docs/getting-started
+  * New to TShock?(#new-to-tshock)
+  * Code of conduct(#code-of-conduct)
 
-## Features
+## New to TShock?
 
-* MySQL support
-* Permissions
-* Multiple administrators
-* Anti-cheat
-* User registration
-* Reserved slots
-* User punishment (kicking, banning, muting)
-* Server side characters
-* JSON based configuration management
+1. Download [the latest stable version](https://github.com/TShock/TShock/releases) and `unzip` the folder using your favorite unzip tool. Make sure that all of the files in the zip get into one folder. This is where your server will be stored. The file structure looks like this:
+
+      
+          GeoIP.dat
+          Newtonsoft.Json.dll
+          OTAPI.dll
+          ServerPlugins\
+          |------BCrypt.Net.dll
+          |------HttpServer.dll
+          |------Mono.Data.Sqlite.dll
+          |------MySql.Data.dll
+          |------TShockAPI.dll
+          TerrariaServer.exe
+          sqlite3.dll
+      
+
+1. Start `TerrariaServer.exe` and TShock will boot. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
+
+1. Startup Terraria. Connect to a `multiplayer` server via IP and enter `localhost` if you're doing this on your local computer. If you're doing it on another computer, you need its IP address.
+
+1. Look at the server console for the _auth code_. Type `/auth [code]` (example: `/auth 12345`), then a space, then the code you see in the console in your game chat. Instead of chatting, you'll run a command on the server. This one makes you temporary admin. All commands are prefixed with `/` or `!` (to make them silent).
+
+1. Use the in-game command `/user add [username] [password] owner` (example: `/user add shank ashes owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
+
+1. Login to your newly created account with `/login [username] [password]` (example: `/login shank ashes`). You should see a login success message.
+
+1. Turn off the backdoor with `/auth` and your server is setup for initial use!
 
 ## Community
 
@@ -50,7 +65,6 @@ Please see the contributing file before sending pull requests.
 
 ## Download
 
-* [Github Releases](https://github.com/TShock/TShock/releases)
 * [Development Builds](https://travis.tshock.co/)
 * [Plugins](https://tshock.co/xf/index.php?resources/)
 * [Very, very old versions of TShock](https://github.com/TShock/TShock/downloads)
