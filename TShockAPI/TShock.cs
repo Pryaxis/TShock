@@ -57,7 +57,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Mintaka";
+		public static readonly string VersionCodename = "Alnitak";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -843,8 +843,8 @@ namespace TShockAPI
 			CliParser.ParseFromSource(parms);
 		}
 
-		/// <summary>AuthToken - The auth token used by the /auth system to grant temporary superadmin access to new admins.</summary>
-		public static int AuthToken = -1;
+		/// <summary>SetupToken - The auth token used by the setup system to grant temporary superadmin access to new admins.</summary>
+		public static int SetupToken = -1;
 		private string _cliPassword = null;
 
 		/// <summary>OnPostInit - Fired when the server loads a map, to perform world specific operations.</summary>
@@ -863,41 +863,41 @@ namespace TShockAPI
 				Config.ServerPassword = _cliPassword;
 			}
 
-			// Disable the auth system if "auth.lck" is present or a superadmin exists
-			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || UserAccounts.GetUserAccounts().Exists(u => u.Group == new SuperAdminGroup().Name))
+			// Disable the auth system if "setup.lock" is present or a user account already exists
+			if (File.Exists(Path.Combine(SavePath, "setup.lock")) || (UserAccounts.GetUserAccounts().Count() > 0))
 			{
-				AuthToken = 0;
+				SetupToken = 0;
 
-				if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+				if (File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 				{
-					Log.ConsoleInfo("A superadmin account has been detected in the user database, but authcode.txt is still present.");
-					Log.ConsoleInfo("TShock will now disable the auth system and remove authcode.txt as it is no longer needed.");
-					File.Delete(Path.Combine(SavePath, "authcode.txt"));
+					Log.ConsoleInfo("A superadmin account has been detected in the user database, but setup-code.txt is still present.");
+					Log.ConsoleInfo("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed.");
+					File.Delete(Path.Combine(SavePath, "setup-code.txt"));
 				}
 
-				if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
+				if (!File.Exists(Path.Combine(SavePath, "setup.lock")))
 				{
 					// This avoids unnecessary database work, which can get ridiculously high on old servers as all users need to be fetched
-					File.Create(Path.Combine(SavePath, "auth.lck"));
+					File.Create(Path.Combine(SavePath, "setup.lock"));
 				}
 			}
-			else if (!File.Exists(Path.Combine(SavePath, "authcode.txt")))
+			else if (!File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 			{
 				var r = new Random((int)DateTime.Now.ToBinary());
-				AuthToken = r.Next(100000, 10000000);
+				SetupToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
 				Console.ResetColor();
-				File.WriteAllText(Path.Combine(SavePath, "authcode.txt"), AuthToken.ToString());
+				File.WriteAllText(Path.Combine(SavePath, "setup-code.txt"), SetupToken.ToString());
 			}
 			else
 			{
-				AuthToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "authcode.txt")));
+				SetupToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "setup-code.txt")));
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.WriteLine("TShock Notice: setup-code.txt is still present, and the code located in that file will be used.");
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
 				Console.ResetColor();
 			}
 

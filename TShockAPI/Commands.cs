@@ -220,7 +220,7 @@ namespace TShockAPI
 				ChatCommands.Add(cmd);
 			};
 
-			add(new Command(AuthToken, "auth")
+			add(new Command(SetupToken, "setup")
 			{
 				AllowServer = false,
 				HelpText = "Used to authenticate as superadmin when first setting up TShock."
@@ -4736,7 +4736,7 @@ namespace TShockAPI
 				}
 
 				IEnumerable<string> cmdNames = from cmd in ChatCommands
-											   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.AuthToken != 0)
+											   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.SetupToken != 0)
 											   select Specifier + cmd.Name;
 
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
@@ -4829,17 +4829,17 @@ namespace TShockAPI
 			);
 		}
 
-		private static void AuthToken(CommandArgs args)
+		private static void SetupToken(CommandArgs args)
 		{
-			if (TShock.AuthToken == 0)
+			if (TShock.SetupToken == 0)
 			{
 				if (args.Player.Group.Name == new SuperAdminGroup().Name)
-					args.Player.SendInfoMessage("The auth system is already disabled.");
+					args.Player.SendInfoMessage("The initial setup system is already disabled.");
 				else
 				{
-					args.Player.SendWarningMessage("The auth system is disabled. This incident has been logged.");
-					TShock.Utils.ForceKick(args.Player, "Auth system is disabled.", true, true);
-					TShock.Log.Warn("{0} attempted to use {1}auth even though it's disabled.", args.Player.IP, Specifier);
+					args.Player.SendWarningMessage("The initial setup system is disabled. This incident has been logged.");
+					TShock.Utils.ForceKick(args.Player, "The initial setup system is disabled.", true, true);
+					TShock.Log.Warn("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP);
 					return;
 				}
 			}
@@ -4847,28 +4847,28 @@ namespace TShockAPI
 			// If the user account is already a superadmin (permanent), disable the system
 			if (args.Player.IsLoggedIn && args.Player.tempGroup == null && args.Player.Group.Name == new SuperAdminGroup().Name)
 			{
-				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}auth system has been turned off.", Specifier);
+				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}setup system has been turned off.", Specifier);
 				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
-				args.Player.SendSuccessMessage("The auth system will remain disabled as long as a superadmin exists (even if you delete auth.lck).");
+				args.Player.SendSuccessMessage("The setup system will remain disabled as long as a superadmin exists (even if you delete setup.lock).");
 				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
 				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
-				FileTools.CreateFile(Path.Combine(TShock.SavePath, "auth.lck"));
-				File.Delete(Path.Combine(TShock.SavePath, "authcode.txt"));
-				TShock.AuthToken = 0;
+				FileTools.CreateFile(Path.Combine(TShock.SavePath, "setup.lock"));
+				File.Delete(Path.Combine(TShock.SavePath, "setup-code.txt"));
+				TShock.SetupToken = 0;
 				return;
 			}
 
 			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendErrorMessage("You must provide an auth code!");
+				args.Player.SendErrorMessage("You must provide a setup code!");
 				return;
 			}
 
 			int givenCode;
-			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.AuthToken)
+			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.SetupToken)
 			{
-				args.Player.SendErrorMessage("Incorrect auth code. This incident has been logged.");
-				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect auth code.");
+				args.Player.SendErrorMessage("Incorrect setup code. This incident has been logged.");
+				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect setup code.");
 				return;
 			}
 
@@ -4880,7 +4880,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("{0}user add <username> <password> owner", Specifier);
 			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the owner group.");
 			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
-			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}auth.", Specifier);
+			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}setup.", Specifier);
 			return;
 		}
 
