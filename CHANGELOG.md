@@ -32,6 +32,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `/restart` command. (@hakusaro)
 * Removed `Permissions.updateplugins` permission. (@hakusaro)
 * Removed REST `/v3/server/restart/` route and `/server/restart/` route. (@hakusaro)
+* The "auth system" is now referred to as the initial setup system (what it actually is). This is better verbiage for basically all situations. Who really wants to turn off the "authentication system?" In addition, the system now makes it more clear what the point of it is, rather than that it grants permissions. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
