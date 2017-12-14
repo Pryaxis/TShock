@@ -53,7 +53,7 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 ## Developer's Guide
 
-Whether you want to contribute to TShock by sending a pull request, customize it to suit your own elfish desires, or want to build your own plugin, this is the best starting point. By the end of this, you'll be able to build TShock from source, start to finish. More than that, though, you'll know how to start on the path of becoming an expert TShock developer.
+Whether you want to contribute to TShock by sending a pull request, customize it to suit your own elvish desires, or want to build your own plugin, this is the best starting point. By the end of this, you'll be able to build TShock from source, start to finish. More than that, though, you'll know how to start on the path of becoming an expert TShock developer.
 
 But first, you need some background.
 
@@ -69,7 +69,7 @@ Now, the way that `TShock` runs on `TSAPI` through `OTAPI` can be summarized as 
 2. The `Terraria Server API` uses hooks provided by `OTAPI` to provide higher level hooks as well as legacy hooks for existing TSAPI applications.
 3. `TShock` is executed by `TSAPI`, uses hooks provided by both `TSAPI` and `OTAPI`, and provides even higher level hooks and support tools to other `TSAPI` plugins.
 
-With all of this in mind, the primary goal when compiling TShock is to remember that only the second and third layers are required to be interacted with. The first layer, `OTAPI`, is provided pre-compiled through NuGet. The second layer, `TSAPI`, is provided in the `TShock` repository through a git submodule.
+With all of this in mind, the primary goal when compiling TShock is to remember that only the second and third layers are required to be interacted with. The first layer, `OTAPI`, is provided pre-compiled through NuGet. The second layer, `TSAPI`, is provided in the `TShock` repository through a git submodule. It's primary home is the [Terraria Server API repository](https://github.com/Pryaxis/TerrariaAPI-Server).
 
 Let's get started.
 
