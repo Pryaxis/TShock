@@ -4,10 +4,17 @@
   <hr />
 </p>
 
-[![OpenCollective](https://opencollective.com/tshock/backers/badge.svg)](#backers) 
-[![OpenCollective](https://opencollective.com/tshock/sponsors/badge.svg)](#sponsors)
+TShock is a toolbox for Terraria servers and communities. TShock is trusted by hundreds of server owners to provide exploit patches, game updates, and more in a reliable and timely fashion.
 
-TShock is a server modification for Terraria, written in C#, and based upon the [Terraria Server API](https://github.com/NyxStudios/TerrariaAPI-Server). It uses JSON for configuration management, and offers several features not present in the Terraria Server normally.
+Why do people love TShock?
+
+* Server-side characters.
+  * Players can't cheat and hack-in items. They have to earn everything on the server.
+* Groups & Permissions
+  * Categorize who can do what. Give your donors special abilities, like infinite sand.
+* Customizable world settings
+  * Make Terraria your own with custom difficulty, spawn rates, regions, and more.
+* Fast acting bans and exploit defense make hackers have a bad time.
 
 ## :star: Quick Start
 
