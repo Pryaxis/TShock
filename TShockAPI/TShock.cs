@@ -861,8 +861,8 @@ namespace TShockAPI
 				Config.ServerPassword = _cliPassword;
 			}
 
-			// Disable the auth system if "setup.lock" is present or a superadmin exists
-			if (File.Exists(Path.Combine(SavePath, "setup.lock")) || UserAccounts.GetUserAccounts().Exists(u => u.Group == new SuperAdminGroup().Name))
+			// Disable the auth system if "setup.lock" is present or a user account already exists
+			if (File.Exists(Path.Combine(SavePath, "setup.lock")) || (UserAccounts.GetUserAccounts().Count() > 0))
 			{
 				SetupToken = 0;
 
