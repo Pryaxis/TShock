@@ -45,9 +45,9 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 1. Use the in-game command `/register [password]` (example: `/register lovely-ashes`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later. Your `character name` is your `account name`.
 
-1. Login to your newly created account with `/login [username] [password]` (example: `/login shank ashes`). You should see a login success message.
+1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank lovely-ashes`). You should see a login success message.
 
-1. Turn off the backdoor with `/auth-verify` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock all over again.
+1. Turn off the setup system with `/auth-verify` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock.
 
 1. You can now [customize your configuration](https://tshock.readme.io/docs/config-settings), build groups, ban items, and install more plugins.
 
@@ -69,7 +69,7 @@ Now, the way that `TShock` runs on `TSAPI` through `OTAPI` can be summarized as 
 2. The `Terraria Server API` uses hooks provided by `OTAPI` to provide higher level hooks as well as legacy hooks for existing TSAPI applications.
 3. `TShock` is executed by `TSAPI`, uses hooks provided by both `TSAPI` and `OTAPI`, and provides even higher level hooks and support tools to other `TSAPI` plugins.
 
-With all of this in mind, the primary goal when compiling TShock is to remember that only the second and third layers are required to be interacted with. The first layer, `OTAPI`, is provided pre-compiled through NuGet. The second layer, `TSAPI`, is provided in the `TShock` repository through a git submodule. It's primary home is the [Terraria Server API repository](https://github.com/Pryaxis/TerrariaAPI-Server).
+With all of this in mind, the primary goal when compiling TShock is to remember that only the second and third layers are required to be interacted with. The first layer, `OTAPI`, is provided pre-compiled through NuGet. The second layer, `TSAPI`, is provided in the `TShock` repository through a git submodule. Its primary home is the [Terraria Server API repository](https://github.com/Pryaxis/TerrariaAPI-Server).
 
 Let's get started.
 
@@ -92,7 +92,7 @@ On Windows, you need to install [Visual Studio Community Edition](https://www.vi
 
 1. Open the `TShock.4.OTAPI.sln` solution in the `TerrariaServerAPI` folder.
 
-1. Set the `TShock.Modifications.Bootstrapper` project as the StartUp project, then build the solution.
+1. Set the `TShock.Modifications.Bootstrapper` project as the StartUp project.
 
 1. Build the solution in either debug or release mode, depending on your preference. NuGet will automatically fetch the appropriate packages as a result of its magical powers.
 
@@ -106,10 +106,50 @@ On Windows, you need to install [Visual Studio Community Edition](https://www.vi
 
 1. Close `TShock.4.OTAPI.sln` in Visual Studio. 
 
-You need to do re-run the patcher any time OTAPI updates. You need to rebuild `TerrariaServerAPI` any time that the submodule in `TShock` gets changed, if you're doing this from inside the TShock repo. You also need to update the submodules (`git submodule update`) if they're out of date on a pull too.
+You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `TerrariaServerAPI` any time that the submodule in `TShock` gets changed, if you're doing this from inside the TShock repo. You also need to update the submodules (`git submodule update`) if they're out of date on a pull too.
 
 ##### TShock
 
 1. Open the `TShockAPI.sln` solution in the root of the repository.
 
 1. Build the solution. It should correctly download NuGet packages automatically and build against the aforementioned `TerrariaServerAPI` project you just built.
+
+#### On macOS
+
+1. Install [Homebrew](https://brew.sh) if you haven't already.
+
+1. Install mono:
+
+          $ brew install mono
+
+1. Verify that mono is available:
+
+          $ mono --version
+
+          Mono JIT compiler version 5.0.1.1 (2017-02/5077205 Sun Sep 17 18:29:46 BST 2017)
+          ...
+
+1. Proceed to the [unix build steps](#unix-build-steps) to continue.
+
+#### On Linux
+
+1. **DO NOT** just install mono from your package manager unless told to do so. If you do and it's out of date, you probably won't be able to successfully develop for TShock.
+
+1. Follow the [official install instructions for mono](http://www.mono-project.com/download/). **DO** install `mono-complete` or you're missing components.
+
+#### On Unix
+
+1. You need to get NuGet. Download the latest `nuget.exe` from [NuGet](https://www.nuget.org/downloads).
+
+1. Make a `~/bin` folder if you don't have one.
+
+          $ mkdir ~/bin/
+
+##### The Terraria Server API
+
+1. Move into the `TerrariaServerAPI` project and then perform a NuGet restore.
+
+          $ cd ./TerrariaServerAPI/
+          $ mono ~/bin/nuget.exe restore
+
+1. 
