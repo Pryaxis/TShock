@@ -26,6 +26,7 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
       * [On Unix](#on-unix)
         * [The Terraria Server API](#the-terraria-server-api-1)
         * [TShock](#tshock-1)
+    * [Working with Terraria](#working-with-terraria)
 
 ## New to TShock?
 
@@ -200,3 +201,13 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
           $ xbuild ./TShockAPI.sln /p:Configuration=$BUILD_MODE
 
 You're done!
+
+### Working with Terraria
+
+Working with Terraria in TShock and in other Terraria Server API plugins is different from most other APIs. Due to the nature of how OTAPI works, you have direct access to all public fields in the `Terraria` namespace. This means that you can access Terraria member methods directly. TShock and other plugins do this quite often, mostly to modify the game world, send data, and receive data. Calls to `Main` are one such example of direct access to Terraria. This is the equivalent to `net.minecraft.server` (NMS) calls in CraftBukkit.
+
+You might find yourself wondering where these fields are. Pryaxis provides the decompiled [Sources](https://github.com/pryaxis/Sources) to Terraria's server, updated with each release. Note that these decompiled servers do not re-compile. The process of fixing the decompiles has proven to be nearly impossible in a reasonable timeframe with the modern Terraria Server.
+
+Finally, you may be interested in developing other Terraria Server API plugins. The [TShockResources](https://github.com/TShockResources) organization has several plugins you can look at and build on. TShock is itself a plugin, and most plugins are open source. This gives you ample room to figure out where to go next.
+
+Need help? Join us on [#tshock-programming in Discord](https://discord.gg/ABtrBaY).
