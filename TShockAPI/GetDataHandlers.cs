@@ -795,6 +795,8 @@ namespace TShockAPI
 		/// </summary>
 		public class LiquidSetEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// X location of the tile
 			/// </summary>
@@ -817,13 +819,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<LiquidSetEventArgs> LiquidSet;
 
-		private static bool OnLiquidSet(int tilex, int tiley, byte amount, byte type)
+		private static bool OnLiquidSet(TSPlayer player, int tilex, int tiley, byte amount, byte type)
 		{
 			if (LiquidSet == null)
 				return false;
 
 			var args = new LiquidSetEventArgs
 			{
+				Player = player,
 				TileX = tilex,
 				TileY = tiley,
 				Amount = amount,
@@ -2325,120 +2328,8 @@ namespace TShockAPI
 			byte amount = args.Data.ReadInt8();
 			byte type = args.Data.ReadInt8();
 
-			if (OnLiquidSet(tileX, tileY, amount, type))
+			if (OnLiquidSet(args.Player, tileX, tileY, amount, type))
 				return true;
-
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
-			{
-				args.Player.Disable("Reached TileLiquid threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreliquidsetdetection))
-			{
-				args.Player.TileLiquidThreshold++;
-			}
-			if (amount != 0)
-			{
-				int bucket = -1;
-				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 205)
-				{
-					bucket = 0;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
-				{
-					bucket = 1;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
-				{
-					bucket = 2;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 1128)
-				{
-					bucket = 3;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3031 ||
-					args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3032)
-				{
-					bucket = 4;
-				}
-
-				if (type == 1 && !(bucket == 2 || bucket == 0))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading lava without holding a lava bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned lava bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading water without holding a water bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 0 && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned water bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 2 && !(bucket == 3 || bucket == 0))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading honey without holding a honey bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned honey bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-			}
-
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY, 16))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
 
 			return false;
 		}
