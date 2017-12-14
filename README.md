@@ -19,13 +19,13 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
     * [Background](#background)
     * [Building](#building)
       * [On Windows](#on-windows)
-        * [The Terraria Server API](#the-terraria-server-api-1)
-        * [TShock](#tshock-1)
+        * [The Terraria Server API](#the-terraria-server-api)
+        * [TShock](#tshock)
       * [On macOS](#on-macos)
       * [On Linux](#on-linux)
       * [On Unix](#on-unix)
-        * [The Terraria Server API](#the-terraria-server-api-2)
-        * [TShock](#tshock-2)
+        * [The Terraria Server API](#the-terraria-server-api-1)
+        * [TShock](#tshock-1)
 
 ## New to TShock?
 
@@ -197,6 +197,6 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
 1. Build TShock in the `BUILD_MODE` you set earlier.
 
-          $ xbuild ./TShockAPI.sln /p:Configuration=
+          $ xbuild ./TShockAPI.sln /p:Configuration=$BUILD_MODE
 
 You're done!
