@@ -54,6 +54,9 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>The place chest event that Bouncer hooks to prevent accidental damage.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceChest(object sender, GetDataHandlers.PlaceChestEventArgs args)
 		{
 			int tileX = args.TileX;
