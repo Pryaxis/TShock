@@ -1008,6 +1008,8 @@ namespace TShockAPI
 		/// </summary>
 		public class NPCHomeChangeEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that caused the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -1030,13 +1032,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
 
-		private static bool OnUpdateNPCHome(short id, short x, short y, byte homeless)
+		private static bool OnUpdateNPCHome(TSPlayer player, short id, short x, short y, byte homeless)
 		{
 			if (NPCHome == null)
 				return false;
 
 			var args = new NPCHomeChangeEventArgs
 			{
+				Player = player,
 				ID = id,
 				X = x,
 				Y = y,
@@ -2514,7 +2517,7 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			var homeless = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(id, x, y, homeless))
+			if (OnUpdateNPCHome(args.Player, id, x, y, homeless))
 				return true;
 
 			if (!args.Player.HasPermission(Permissions.movenpc))
@@ -2524,22 +2527,6 @@ namespace TShockAPI
 									 Convert.ToByte(Main.npc[id].homeless));
 				return true;
 			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				args.Player.SendErrorMessage("You do not have access to modify this area.");
-				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
-									 Convert.ToByte(Main.npc[id].homeless));
-				return true;
-			}
-
-			//removed until NPC Home packet actually sends their home coords.
-			/*if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
-									 Convert.ToByte(Main.npc[id].homeless));
-				return true;
-			}*/
 			return false;
 		}
 

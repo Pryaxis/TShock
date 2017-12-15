@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.NPCHome.Register(OnUpdateNPCHome);
 			GetDataHandlers.ChestOpen.Register(OnChestOpen);
 			GetDataHandlers.PlaceChest.Register(OnPlaceChest);
 			GetDataHandlers.LiquidSet.Register(OnLiquidSet);
@@ -55,9 +56,41 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>The Bouncer handler for when an NPC is rehomed.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnUpdateNPCHome(object sender, GetDataHandlers.NPCHomeChangeEventArgs args)
+		{
+			int id = args.ID;
+			short x = args.X;
+			short y = args.Y;
+			byte homeless = args.Homeless;
+
+			// Calls to TShock.CheckTilePermission need to be broken up into different subsystems
+			// In particular, this handles both regions and other things. Ouch.
+			if (TShock.CheckTilePermission(args.Player, x, y))
+			{
+				args.Player.SendErrorMessage("You do not have access to modify this area.");
+				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
+									 Convert.ToByte(Main.npc[id].homeless));
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, x, y))
+			{
+				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
+									 Convert.ToByte(Main.npc[id].homeless));
+				args.Handled = true;
+				return;
+			}
+		}
+
+		/// <summary>The Bouncer handler for when chests are opened.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnChestOpen(object sender, GetDataHandlers.ChestOpenEventArgs args)
 		{
-
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Handled = true;
