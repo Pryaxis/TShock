@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.ChestOpen.Register(OnChestOpen);
 			GetDataHandlers.PlaceChest.Register(OnPlaceChest);
 			GetDataHandlers.LiquidSet.Register(OnLiquidSet);
 			GetDataHandlers.ProjectileKill.Register(OnProjectileKill);
@@ -52,6 +53,31 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		internal void OnChestOpen(object sender, GetDataHandlers.ChestOpenEventArgs args)
+		{
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, args.X, args.Y) && TShock.Config.RegionProtectChests)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			int id = Chest.FindChest(args.X, args.Y);
+			args.Player.ActiveChest = id;
 		}
 
 		/// <summary>The place chest event that Bouncer hooks to prevent accidental damage.</summary>

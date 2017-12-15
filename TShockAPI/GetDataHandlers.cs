@@ -2413,24 +2413,6 @@ namespace TShockAPI
 			if (OnChestOpen(x, y, args.Player))
 				return true;
 
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
-			{
-				return true;
-			}
-
-			int id = Chest.FindChest(x, y);
-			args.Player.ActiveChest = id;
-
 			return false;
 		}
 
