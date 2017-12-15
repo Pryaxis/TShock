@@ -1230,7 +1230,7 @@ namespace TShockAPI
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.TileKill, HandleTileKill },
+					{ PacketTypes.PlaceChest, HandleTileKill },
 					{ PacketTypes.PlayerKillMe, HandlePlayerKillMe },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerSpawn, HandleSpawn },
