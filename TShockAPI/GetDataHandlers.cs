@@ -352,35 +352,41 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// For use in a TileKill event
+		/// For use in a PlaceChest event
 		/// </summary>
-		public class TileKillEventArgs : HandledEventArgs
+		public class PlaceChestEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event</summary>
+			public TSPlayer Player { get; set; }
+			/// <summary>What the packet is doing (see MP packet docs).</summary>
+			public int Flag { get; set; }
 			/// <summary>
-			/// The X coordinate that is being killed
+			/// The X coordinate
 			/// </summary>
 			public int TileX { get; set; }
 			/// <summary>
-			/// The Y coordinate that is being killed
+			/// The Y coordinate
 			/// </summary>
 			public int TileY { get; set; }
 		}
 		/// <summary>
-		/// TileKill - When a tile is removed from the world
+		/// When a chest is added or removed from the world.
 		/// </summary>
-		public static HandlerList<TileKillEventArgs> TileKill;
+		public static HandlerList<PlaceChestEventArgs> PlaceChest;
 
-		private static bool OnTileKill(int tilex, int tiley)
+		private static bool OnPlaceChest(TSPlayer player, int flag, int tilex, int tiley)
 		{
-			if (TileKill == null)
+			if (PlaceChest == null)
 				return false;
 
-			var args = new TileKillEventArgs
+			var args = new PlaceChestEventArgs
 			{
+				Player = player,
+				Flag = flag,
 				TileX = tilex,
 				TileY = tiley,
 			};
-			TileKill.Invoke(null, args);
+			PlaceChest.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -1391,7 +1397,7 @@ namespace TShockAPI
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.TileKill, HandleTileKill },
+					{ PacketTypes.TileKill, HandlePlaceChest },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerSpawn, HandleSpawn },
 					{ PacketTypes.ChestGetContents, HandleChestOpen },
@@ -2335,56 +2341,16 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleTileKill(GetDataHandlerArgs args)
+		private static bool HandlePlaceChest(GetDataHandlerArgs args)
 		{
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
 			args.Data.ReadInt16(); // Ignore style
 
-			if (OnTileKill(tileX, tileY))
+			if (OnPlaceChest(args.Player, flag, tileX, tileY))
 				return true;
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (flag != 0 && flag != 4 // if no container or container2 placement
-				&& Main.tile[tileX, tileY].type != TileID.Containers
-				&& Main.tile[tileX, tileY].type != TileID.Dressers
-				&& Main.tile[tileX, tileY].type != TileID.Containers2
-				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (flag == 2) //place dresser
-			{
-				if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Teleporter) ||
-					(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Teleporter))
-				{
-					//Prevent a dresser from being placed on a teleporter, as this can cause client and server crashes.
-					args.Player.SendTileSquare(tileX, tileY, 3);
-					return true;
-				}
-			}
-
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
+			
 			return false;
 		}
 

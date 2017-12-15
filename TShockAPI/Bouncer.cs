@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlaceChest.Register(OnPlaceChest);
 			GetDataHandlers.LiquidSet.Register(OnLiquidSet);
 			GetDataHandlers.ProjectileKill.Register(OnProjectileKill);
 			GetDataHandlers.PlayerUpdate.Register(OnPlayerUpdate);
@@ -51,6 +52,61 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		internal void OnPlaceChest(object sender, GetDataHandlers.PlaceChestEventArgs args)
+		{
+			int tileX = args.TileX;
+			int tileY = args.TileY;
+			int flag = args.Flag;
+
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				args.Handled = true;
+				return;
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendTileSquare(tileX, tileY, 3);
+				args.Handled = true;
+				return;
+			}
+
+			if (flag != 0 && flag != 4 // if no container or container2 placement
+				&& Main.tile[tileX, tileY].type != TileID.Containers
+				&& Main.tile[tileX, tileY].type != TileID.Dressers
+				&& Main.tile[tileX, tileY].type != TileID.Containers2
+				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
+			{
+				args.Player.SendTileSquare(tileX, tileY, 3);
+				args.Handled = true;
+				return;
+			}
+
+			if (flag == 2) //place dresser
+			{
+				if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Teleporter) ||
+					(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Teleporter))
+				{
+					//Prevent a dresser from being placed on a teleporter, as this can cause client and server crashes.
+					args.Player.SendTileSquare(tileX, tileY, 3);
+					args.Handled = true;
+					return;
+				}
+			}
+
+			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
+			{
+				args.Player.SendTileSquare(tileX, tileY, 3);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
+			{
+				args.Player.SendTileSquare(tileX, tileY, 3);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Handles Bouncer's liquid set anti-cheat.</summary>
