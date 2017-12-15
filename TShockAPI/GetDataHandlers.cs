@@ -922,6 +922,8 @@ namespace TShockAPI
 		/// </summary>
 		public class ChestItemEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ChestID
 			/// </summary>
@@ -948,13 +950,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ChestItemEventArgs> ChestItemChange;
 
-		private static bool OnChestItemChange(short id, byte slot, short stacks, byte prefix, short type)
+		private static bool OnChestItemChange(TSPlayer player, short id, byte slot, short stacks, byte prefix, short type)
 		{
 			if (ChestItemChange == null)
 				return false;
 
 			var args = new ChestItemEventArgs
 			{
+				Player = player,
 				ID = id,
 				Slot = slot,
 				Stacks = stacks,
@@ -2452,35 +2455,14 @@ namespace TShockAPI
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
 
-			if (OnChestItemChange(id, slot, stacks, prefix, type))
+			if (OnChestItemChange(args.Player, id, slot, stacks, prefix, type))
 				return true;
-
-			if (args.TPlayer.chest != id)
-			{
-				return false;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
-				return true;
-			}
 
 			Item item = new Item();
 			item.netDefaults(type);
 			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
 			{
-				return false;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
-			{
-				return false;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
-			{
-				return false;
+				return true;
 			}
 
 			return false;

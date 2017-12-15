@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.ChestItemChange.Register(OnChestItemChange);
 			GetDataHandlers.NPCHome.Register(OnUpdateNPCHome);
 			GetDataHandlers.ChestOpen.Register(OnChestOpen);
 			GetDataHandlers.PlaceChest.Register(OnPlaceChest);
@@ -54,6 +55,40 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		internal void OnChestItemChange(object sender, GetDataHandlers.ChestItemEventArgs args)
+		{
+			short id = args.ID;
+			byte slot = args.Slot;
+			short stacks = args.Stacks;
+			byte prefix = args.Prefix;
+			short type = args.Type;
+
+			if (args.Player.TPlayer.chest != id)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
+			{
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>The Bouncer handler for when an NPC is rehomed.</summary>
