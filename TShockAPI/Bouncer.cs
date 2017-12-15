@@ -57,6 +57,9 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>Handles when a chest item is changed.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnChestItemChange(object sender, GetDataHandlers.ChestItemEventArgs args)
 		{
 			short id = args.ID;
