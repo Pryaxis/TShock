@@ -66,7 +66,7 @@ namespace TShockAPI
 		{
 			short id = args.ID;
 			byte direction = args.Direction;
-			short dmg = args.Damage;
+			short damage = args.Damage;
 			float knockback = args.Knockback;
 			byte crit = args.Critical;
 			
@@ -76,7 +76,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
+			if (damage > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
@@ -122,7 +122,7 @@ namespace TShockAPI
 		internal void OnPlayerDamage(object sender, GetDataHandlers.PlayerDamageEventArgs args)
 		{
 			byte id = args.ID;
-			short dmg = args.Damage;
+			short damage = args.Damage;
 			bool pvp = args.PVP;
 			bool crit = args.Critical;
 			byte direction = args.Direction;
@@ -133,7 +133,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			if (damage > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
@@ -758,14 +758,14 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnKillMe(object sender, GetDataHandlers.KillMeEventArgs args)
 		{
-			short dmg = args.Damage;
+			short damage = args.Damage;
 			short id = args.PlayerId;
 			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
 
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
+				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", damage);
 				args.Handled = true;
 				return;
 			}
@@ -797,7 +797,7 @@ namespace TShockAPI
 			Vector2 pos = args.Position;
 			Vector2 vel = args.Velocity;
 			float knockback = args.Knockback;
-			short dmg = args.Damage;
+			short damage = args.Damage;
 			byte owner = args.Owner;
 			short type = args.Type;
 			int index = args.Index;
@@ -818,7 +818,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (dmg > TShock.Config.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
+			if (damage > TShock.Config.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
 			{
 				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
 				args.Player.RemoveProjectile(ident, owner);
