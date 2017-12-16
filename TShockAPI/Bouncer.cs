@@ -41,6 +41,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.NPCStrike.Register(OnNPCStrike);
 			GetDataHandlers.ItemDrop.Register(OnItemDrop);
 			GetDataHandlers.PlayerBuff.Register(OnPlayerBuff);
 			GetDataHandlers.ChestItemChange.Register(OnChestItemChange);
@@ -56,6 +57,63 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Handles the NPC Strike event for Bouncer.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnNPCStrike(object sender, GetDataHandlers.NPCStrikeEventArgs args)
+		{
+			short id = args.ID;
+			byte direction = args.Direction;
+			short dmg = args.Damage;
+			float knockback = args.Knockback;
+			byte crit = args.Critical;
+			
+			if (Main.npc[id] == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
+			{
+				if (TShock.Config.KickOnDamageThresholdBroken)
+				{
+					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Handled = true;
+					return;
+				}
+				else
+				{
+					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+				}
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.Config.RangeChecks &&
+				TShock.CheckRangePermission(args.Player, (int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Called when a player is damaged.</summary>

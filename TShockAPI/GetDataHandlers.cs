@@ -1214,6 +1214,8 @@ namespace TShockAPI
 		/// </summary>
 		public class NPCStrikeEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ???
 			/// </summary>
@@ -1240,13 +1242,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
 
-		private static bool OnNPCStrike(short id, byte dir, short dmg, float knockback, byte crit)
+		private static bool OnNPCStrike(TSPlayer player, short id, byte dir, short dmg, float knockback, byte crit)
 		{
 			if (NPCStrike == null)
 				return false;
 
 			var args = new NPCStrikeEventArgs
 			{
+				Player = player,
 				ID = id,
 				Direction = dir,
 				Damage = dmg,
@@ -2593,49 +2596,12 @@ namespace TShockAPI
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
 
-			if (OnNPCStrike(id, direction, dmg, knockback, crit))
+			if (OnNPCStrike(args.Player, id, direction, dmg, knockback, crit))
 				return true;
-
-			if (Main.npc[id] == null)
-				return true;
-
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
-			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
-				{
-					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
-					return true;
-				}
-				else
-				{
-					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
-				}
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
 
 			if (Main.npc[id].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
 			{
 				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.Config.RangeChecks &&
-				TShock.CheckRangePermission(args.Player, (int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
 			}
