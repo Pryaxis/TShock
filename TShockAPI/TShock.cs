@@ -138,6 +138,9 @@ namespace TShockAPI
 		/// </summary>
 		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
+		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
+		internal Bouncer Bouncer;
+
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
@@ -322,6 +325,7 @@ namespace TShockAPI
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
+				Bouncer = new Bouncer();
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -379,7 +383,6 @@ namespace TShockAPI
 				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
 				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
 
-				Bouncer b = new Bouncer(this);
 			}
 			catch (Exception ex)
 			{

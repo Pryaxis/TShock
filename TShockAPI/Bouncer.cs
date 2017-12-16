@@ -33,12 +33,12 @@ using Terraria.Localization;
 
 namespace TShockAPI
 {
-	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
+	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
-		internal Bouncer(TerrariaPlugin pluginInstance)
+		internal Bouncer()
 		{
 			// Setup hooks
 
