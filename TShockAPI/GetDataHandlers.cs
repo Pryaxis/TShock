@@ -2540,65 +2540,6 @@ namespace TShockAPI
 			if (OnItemDrop(args.Player, id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
 
-			// player is attempting to crash clients
-			if (type < -48 || type >= Main.maxItemTypes)
-			{
-				// Causes item duplications. Will be re added later if necessary
-				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (prefix > PrefixID.Count) //make sure the prefix is a legit value
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (type == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check)
-			{
-				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
-				{
-					// Causes item duplications. Will be re added if necessary
-					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-					return true;
-				}
-
-				return false;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (Main.item[id].active && Main.item[id].netID != type) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			Item item = new Item();
-			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
-			{
-				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-
-			}
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
 			return false;
 		}
 

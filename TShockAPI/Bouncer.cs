@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.ItemDrop.Register(OnItemDrop);
 			GetDataHandlers.PlayerBuff.Register(OnPlayerBuff);
 			GetDataHandlers.ChestItemChange.Register(OnChestItemChange);
 			GetDataHandlers.NPCHome.Register(OnUpdateNPCHome);
@@ -56,6 +57,96 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Registered when items fall to the ground to prevent cheating.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnItemDrop(object sender, GetDataHandlers.ItemDropEventArgs args)
+		{
+			short id = args.ID;
+			Vector2 pos = args.Position;
+			Vector2 vel = args.Velocity;
+			short stacks = args.Stacks;
+			short prefix = args.Prefix;
+			bool noDelay = args.NoDelay;
+			short type = args.Type;
+
+			// player is attempting to crash clients
+			if (type < -48 || type >= Main.maxItemTypes)
+			{
+				// Causes item duplications. Will be re added later if necessary
+				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			//make sure the prefix is a legit value
+			if (prefix > PrefixID.Count) 
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			//Item removed, let client do this to prevent item duplication
+			// client side (but only if it passed the range check)
+			if (type == 0)
+			{
+				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					args.Handled = true;
+					return;
+				}
+
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			// stop the client from changing the item type of a drop but
+			// only if the client isn't picking up the item
+			if (Main.item[id].active && Main.item[id].netID != type)
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			Item item = new Item();
+			item.netDefaults(type);
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			// TODO: Remove item ban part of this check
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
+			{
+				//Player is probably trying to sneak items onto the server in their hands!!!
+				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Handles Buff events.</summary>
