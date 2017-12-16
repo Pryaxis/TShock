@@ -3080,14 +3080,16 @@ namespace TShockAPI
 		/// </summary>
 		public class GemLockToggleEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// X Location
 			/// </summary>
-			public Int32 X { get; set; }
+			public short X { get; set; }
 			/// <summary>
 			/// Y Location
 			/// </summary>
-			public Int32 Y { get; set; }
+			public short Y { get; set; }
 			/// <summary>
 			/// On status
 			/// </summary>
@@ -3099,7 +3101,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<GemLockToggleEventArgs> GemLockToggle;
 
-		private static bool OnGemLockToggle(Int32 x, Int32 y, bool on)
+		private static bool OnGemLockToggle(short x, short y, bool on)
 		{
 			if (GemLockToggle == null)
 				return false;
@@ -3116,14 +3118,9 @@ namespace TShockAPI
 
 		private static bool HandleGemLockToggle(GetDataHandlerArgs args)
 		{
-			var x = (int)args.Data.ReadInt16();
-			var y = (int)args.Data.ReadInt16();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
 			var on = args.Data.ReadBoolean();
-
-			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
-			{
-				return true;
-			}
 
 			if (OnGemLockToggle(x, y, on))
 			{
@@ -3133,21 +3130,6 @@ namespace TShockAPI
 			if (!TShock.Config.RegionProtectGemLocks)
 			{
 				return false;
-			}
-
-			if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-			{
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				return true;
 			}
 
 			return false;

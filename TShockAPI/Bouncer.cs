@@ -41,6 +41,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.GemLockToggle.Register(OnGemLockToggle);
 			GetDataHandlers.PlaceTileEntity.Register(OnPlaceTileEntity);
 			GetDataHandlers.PlayerAnimation.Register(OnPlayerAnimation);
 			GetDataHandlers.NPCStrike.Register(OnNPCStrike);
@@ -59,6 +60,36 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Handles the anti-cheat components of gem lock toggles.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnGemLockToggle(object sender, GetDataHandlers.GemLockToggleEventArgs args)
+		{
+			if (args.X < 0 || args.Y < 0 || args.X >= Main.maxTilesX || args.Y >= Main.maxTilesY)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			{
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Fired when a PlaceTileEntity occurs for basic anti-cheat on perms and range.</summary>
