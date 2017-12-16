@@ -1298,6 +1298,8 @@ namespace TShockAPI
 		/// </summary>
 		public class PlayerAnimationEventArgs : HandledEventArgs
 		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
 		}
 
 		/// <summary>
@@ -1305,12 +1307,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
 
-		private static bool OnPlayerAnimation()
+		private static bool OnPlayerAnimation(TSPlayer player)
 		{
 			if (PlayerAnimation == null)
 				return false;
 
-			var args = new PlayerAnimationEventArgs { };
+			var args = new PlayerAnimationEventArgs 
+			{
+				Player = player,
+			};
 			PlayerAnimation.Invoke(null, args);
 			return args.Handled;
 		}
@@ -2635,20 +2640,8 @@ namespace TShockAPI
 
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
-			if (OnPlayerAnimation())
+			if (OnPlayerAnimation(args.Player))
 				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
-				return true;
-			}
 
 			return false;
 		}

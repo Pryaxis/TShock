@@ -41,6 +41,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlayerAnimation.Register(OnPlayerAnimation);
 			GetDataHandlers.NPCStrike.Register(OnNPCStrike);
 			GetDataHandlers.ItemDrop.Register(OnItemDrop);
 			GetDataHandlers.PlayerBuff.Register(OnPlayerBuff);
@@ -59,6 +60,26 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>Handles basic animation throttling for disabled players.</summary>
+		/// <param name="sender">sender</param>
+		/// <param name="args">args</param>
+		internal void OnPlayerAnimation(object sender, GetDataHandlers.PlayerAnimationEventArgs args)
+		{
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+				args.Handled = true;
+				return;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
+				args.Handled = true;
+				return;
+			}
+		}
+
 		/// <summary>Handles the NPC Strike event for Bouncer.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -69,7 +90,7 @@ namespace TShockAPI
 			short damage = args.Damage;
 			float knockback = args.Knockback;
 			byte crit = args.Critical;
-			
+
 			if (Main.npc[id] == null)
 			{
 				args.Handled = true;
