@@ -2761,7 +2761,7 @@ namespace TShockAPI
 
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				return true;
 			}
@@ -2896,7 +2896,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
+			if (args.Player.IsBouncerThrottled() ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
 			{
@@ -2940,7 +2940,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
+			if (args.Player.IsBouncerThrottled() ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
 				TShock.CheckRangePermission(args.Player, x, y))
 			{
@@ -3320,7 +3320,7 @@ namespace TShockAPI
 
 		private static bool HandleOldOnesArmy(GetDataHandlerArgs args)
 		{
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				return true;
 			}

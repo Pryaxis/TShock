@@ -203,7 +203,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
 				args.Handled = true;
@@ -260,7 +260,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				args.Handled = true;
@@ -327,7 +327,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -470,7 +470,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				args.Handled = true;
@@ -770,7 +770,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendTileSquare(tileX, tileY, 1);
 				args.Handled = true;
@@ -796,7 +796,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
 				args.Handled = true;
@@ -1021,7 +1021,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
@@ -1516,7 +1516,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+				if (args.Player.IsBouncerThrottled())
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
@@ -1583,7 +1583,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.CheckIgnores() || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.CheckIgnores() || args.Player.IsBouncerThrottled())
 			{
 				args.Handled = true;
 				return;
@@ -1617,7 +1617,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
 				args.Handled = true;

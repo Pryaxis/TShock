@@ -285,6 +285,13 @@ namespace TShockAPI
 
 		public bool IgnoreActionsForClearingTrashCan;
 
+		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
+		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
+		public bool IsBouncerThrottled()
+		{
+			return (DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000;
+		}
+
 		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
 		/// <param name="player">player - The TSPlayer object.</param>
 		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
