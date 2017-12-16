@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlayerBuff.Register(OnPlayerBuff);
 			GetDataHandlers.ChestItemChange.Register(OnChestItemChange);
 			GetDataHandlers.NPCHome.Register(OnUpdateNPCHome);
 			GetDataHandlers.ChestOpen.Register(OnChestOpen);
@@ -55,6 +56,63 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Handles Buff events.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlayerBuff(object sender, GetDataHandlers.PlayerBuffEventArgs args)
+		{
+			byte id = args.ID;
+			byte type = args.Type;
+			int time = args.Time;
+
+			if (TShock.Players[id] == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (id >= Main.maxPlayers)
+			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Players[id].TPlayer.hostile || !Main.pvpBuff[type])
+			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+			
+			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
+			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (WhitelistBuffMaxTime[type] > 0 && time <= WhitelistBuffMaxTime[type])
+			{
+				args.Handled = false;
+				return;
+			}
 		}
 
 		/// <summary>Handles when a chest item is changed.</summary>

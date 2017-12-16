@@ -1057,6 +1057,7 @@ namespace TShockAPI
 		/// </summary>
 		public class PlayerBuffEventArgs : HandledEventArgs
 		{
+			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -1075,13 +1076,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
 
-		private static bool OnPlayerBuff(byte id, byte type, int time)
+		private static bool OnPlayerBuff(TSPlayer player, byte id, byte type, int time)
 		{
 			if (PlayerBuff == null)
 				return false;
 
 			var args = new PlayerBuffEventArgs
 			{
+				Player = player,
 				ID = id,
 				Type = type,
 				Time = time
@@ -2518,44 +2520,8 @@ namespace TShockAPI
 			var type = args.Data.ReadInt8();
 			var time = args.Data.ReadInt32();
 
-			if (OnPlayerBuff(id, type, time))
+			if (OnPlayerBuff(args.Player, id, type, time))
 				return true;
-
-			if (TShock.Players[id] == null)
-				return false;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile || !Main.pvpBuff[type])
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (WhitelistBuffMaxTime[type] > 0 && time <= WhitelistBuffMaxTime[type])
-			{
-				return false;
-			}
 
 			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 			return true;
