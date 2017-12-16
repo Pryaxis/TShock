@@ -29,6 +29,7 @@ using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
+using Terraria.Localization;
 
 namespace TShockAPI
 {
@@ -41,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlaceItemFrame.Register(OnPlaceItemFrame);
 			GetDataHandlers.GemLockToggle.Register(OnGemLockToggle);
 			GetDataHandlers.PlaceTileEntity.Register(OnPlaceTileEntity);
 			GetDataHandlers.PlayerAnimation.Register(OnPlayerAnimation);
@@ -60,6 +62,33 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Fired when an item frame is placed for anti-cheat detection.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlaceItemFrame(object sender, GetDataHandlers.PlaceItemFrameEventArgs args)
+		{
+			if (TShock.CheckIgnores(args.Player))
+			{
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			{
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			{
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Handles the anti-cheat components of gem lock toggles.</summary>

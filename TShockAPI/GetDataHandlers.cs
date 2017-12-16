@@ -3075,6 +3075,54 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>The arguments to the PlaceItemFrame event.</summary>
+		public class PlaceItemFrameEventArgs : HandledEventArgs
+		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
+			
+			/// <summary>The X coordinate of the item frame.</summary>
+			public short X { get; set; }
+			
+			/// <summary>The Y coordinate of the item frame.</summary>
+			public short Y { get; set; }
+			
+			/// <summary>The ItemID of the item frame.</summary>
+			public short ItemID { get; set; }
+			
+			/// <summary>The prefix.</summary>
+			public byte Prefix { get; set; }
+			
+			/// <summary>The stack.</summary>
+			public short Stack { get; set; }
+			
+			/// <summary>The ItemFrame object associated with this event.</summary>
+			public TEItemFrame ItemFrame { get; set; }
+		}
+
+		/// <summary>Fired when an ItemFrame is placed.</summary>
+		public static HandlerList<PlaceItemFrameEventArgs> PlaceItemFrame;
+
+		private static bool OnPlaceItemFrame(TSPlayer player, short x, short y, short itemID, byte prefix, short stack, TEItemFrame itemFrame)
+		{
+			if (PlaceItemFrame == null)
+				return false;
+
+			var args = new PlaceItemFrameEventArgs
+			{
+				Player = player,
+				X = x,
+				Y = y,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+				ItemFrame = itemFrame,
+			};
+
+			PlaceItemFrame.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use with a ToggleGemLock event
 		/// </summary>
@@ -3221,21 +3269,8 @@ namespace TShockAPI
 			var stack = args.Data.ReadInt16();
 			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
 
-			if (TShock.CheckIgnores(args.Player))
+			if (OnPlaceItemFrame(args.Player, x, y, itemID, prefix, stack, itemFrame))
 			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
 				return true;
 			}
 
