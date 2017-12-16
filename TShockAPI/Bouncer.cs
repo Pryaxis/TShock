@@ -60,6 +60,9 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		/// <summary>Handles validation of of basic anti-cheat on mass wire operations.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnMassWireOperation(object sender, GetDataHandlers.MassWireOperationEventArgs args)
 		{
 			short startX = args.StartX;
