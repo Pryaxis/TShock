@@ -42,26 +42,26 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
-			GetDataHandlers.PlaceItemFrame.Register(OnPlaceItemFrame);
-			GetDataHandlers.GemLockToggle.Register(OnGemLockToggle);
-			GetDataHandlers.PlaceTileEntity.Register(OnPlaceTileEntity);
-			GetDataHandlers.PlayerAnimation.Register(OnPlayerAnimation);
-			GetDataHandlers.NPCStrike.Register(OnNPCStrike);
-			GetDataHandlers.ItemDrop.Register(OnItemDrop);
-			GetDataHandlers.PlayerBuff.Register(OnPlayerBuff);
-			GetDataHandlers.ChestItemChange.Register(OnChestItemChange);
-			GetDataHandlers.NPCHome.Register(OnUpdateNPCHome);
-			GetDataHandlers.ChestOpen.Register(OnChestOpen);
-			GetDataHandlers.PlaceChest.Register(OnPlaceChest);
-			GetDataHandlers.LiquidSet.Register(OnLiquidSet);
-			GetDataHandlers.ProjectileKill.Register(OnProjectileKill);
-			GetDataHandlers.PlayerUpdate.Register(OnPlayerUpdate);
-			GetDataHandlers.KillMe.Register(OnKillMe);
-			GetDataHandlers.NewProjectile.Register(OnNewProjectile);
-			GetDataHandlers.PlaceObject.Register(OnPlaceObject);
-			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
-			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
-			GetDataHandlers.TileEdit.Register(OnTileEdit);
+			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
+			GetDataHandlers.GemLockToggle += OnGemLockToggle;
+			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
+			GetDataHandlers.PlayerAnimation += OnPlayerAnimation;
+			GetDataHandlers.NPCStrike += OnNPCStrike;
+			GetDataHandlers.ItemDrop += OnItemDrop;
+			GetDataHandlers.PlayerBuff += OnPlayerBuff;
+			GetDataHandlers.ChestItemChange += OnChestItemChange;
+			GetDataHandlers.NPCHome += OnUpdateNPCHome;
+			GetDataHandlers.ChestOpen += OnChestOpen;
+			GetDataHandlers.PlaceChest += OnPlaceChest;
+			GetDataHandlers.LiquidSet += OnLiquidSet;
+			GetDataHandlers.ProjectileKill += OnProjectileKill;
+			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
+			GetDataHandlers.KillMe += OnKillMe;
+			GetDataHandlers.NewProjectile += OnNewProjectile;
+			GetDataHandlers.PlaceObject += OnPlaceObject;
+			GetDataHandlers.SendTileSquare += OnSendTileSquare;
+			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
+			GetDataHandlers.TileEdit += OnTileEdit;
 		}
 
 		/// <summary>Fired when an item frame is placed for anti-cheat detection.</summary>
