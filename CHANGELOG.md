@@ -34,32 +34,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `Permissions.updateplugins` permission. (@hakusaro)
 * Removed REST `/v3/server/restart/` route and `/server/restart/` route. (@hakusaro)
 * The "auth system" is now referred to as the initial setup system (what it actually is). This is better verbiage for basically all situations. Who really wants to turn off the "authentication system?" In addition, the system now makes it more clear what the point of it is, rather than that it grants permissions. (@hakusaro)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Bouncer changes
-
-Putting this stuff down here so things don't conflict as often.
-
 * `GetDataHandlers.SendTileSquare` hook now sends a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
 * Added `GetDataHandlers.HealOtherPlayer` hook. (@hakusaro)
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
@@ -81,6 +55,8 @@ Putting this stuff down here so things don't conflict as often.
 * Added `GetDataHandlers.PlaceTileEntity` hook and related arguments. (@hakusaro)
 * Added `TSPlayer` to `GetDataHandlers.GemLockToggle`. (@hakusaro)
 * Added `GetDataHandlers.PlaceItemFrame` hook and related arguments. (@hakusaro)
+* Added `TSPlayer.IsBouncerThrottled()`. (@hakusaro)
+* Added `TSPlayer.CheckIgnores()` and removed `TShock.CheckIgnores(TSPlayer)`. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
