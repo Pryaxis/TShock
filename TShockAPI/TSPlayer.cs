@@ -285,6 +285,21 @@ namespace TShockAPI
 
 		public bool IgnoreActionsForClearingTrashCan;
 
+		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
+		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
+		public bool IsBouncerThrottled()
+		{
+			return (DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000;
+		}
+
+		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
+		public bool CheckIgnores()
+		{
+			return IgnoreActionsForInventory != "none" || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+		}
+
 		/// <summary>
 		/// The player's server side inventory data.
 		/// </summary>
@@ -789,6 +804,57 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Checks to see if this player object lacks access rights to a given projectile. Used by projectile bans.</summary>
+		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
+		/// <param name="type">The type of projectile, from Main.projectiles.</param>
+		/// <returns>If the player has lacks access rights to the projectile.</returns>
+		public bool LacksProjectilePermission(int index, int type)
+		{
+			return !HasProjectilePermission(index, type);
+		}
+
+		/// <summary>Checks to see if this player object has access rights to a given projectile. Used by projectile bans.</summary>
+		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
+		/// <param name="type">The type of projectile, from Main.projectiles.</param>
+		/// <returns>If the player has access rights to the projectile.</returns>
+		public bool HasProjectilePermission(int index, int type)
+		{
+			// Players never have the rights to tombstones.
+			if (type == ProjectileID.Tombstone)
+			{
+				return false;
+			}
+
+			// Dirt balls are the projectiles from dirt rods.
+			// If the dirt rod item is banned, they probably shouldn't have this projectile.
+			if (type == ProjectileID.DirtBall && TShock.Itembans.ItemIsBanned("Dirt Rod", this))
+			{
+				return false;
+			}
+
+			// If the sandgun is banned, block sand bullets.
+			if (TShock.Itembans.ItemIsBanned("Sandgun", this))
+			{
+				if (type == ProjectileID.SandBallGun
+						|| type == ProjectileID.EbonsandBallGun
+						|| type == ProjectileID.PearlSandBallGun)
+				{
+					return false;
+				}
+			}
+
+			// If the projectile is hostile, block it?
+			Projectile tempProjectile = new Projectile();
+			tempProjectile.SetDefaults(type);
+
+			if (Main.projHostile[type])
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Removes the projectile with the given index and owner.
 		/// </summary>
@@ -808,6 +874,15 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Sends a tile square at a location with a given size. 	
+		/// Typically used to revert changes by Bouncer through sending the
+		/// "old" version of modified data back to a client.
+		/// Prevents desync issues.
+		/// </summary>
+		/// <param name="x">The x coordinate to send.</param>
+		/// <param name="y">The y coordinate to send.</param>
+		/// <param name="size">The size square set of tiles to send.</param>
+		/// <returns>Status if the tile square was sent successfully (i.e. no exceptions).</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			try

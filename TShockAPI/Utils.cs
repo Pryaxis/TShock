@@ -925,7 +925,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="identity">identity</param>
 		/// <param name="owner">owner</param>
-		/// <returns>projectile ID</returns>
+		/// <returns>projectile ID or -1 if not found</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
 			for (int i = 0; i < Main.maxProjectiles; i++)
@@ -933,7 +933,7 @@ namespace TShockAPI
 				if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner)
 					return i;
 			}
-			return 1000;
+			return -1;
 		}
 
 		/// <summary>
@@ -1453,6 +1453,94 @@ namespace TShockAPI
 						if (j != rows - 1 || i != columns - 1)
 							buffer.AppendLine(",");
 					}
+				}
+			}
+		}
+
+		/// <summary>Starts an invasion on the server.</summary>
+		/// <param name="type">The invasion type id.</param>
+		internal void StartInvasion(int type)
+		{
+			int invasionSize = 0;
+
+			if (TShock.Config.InfiniteInvasion)
+			{
+				// Not really an infinite size
+				invasionSize = 20000000;
+			}
+			else
+			{
+				invasionSize = 100 + (TShock.Config.InvasionMultiplier * ActivePlayers());
+			}
+
+			// Order matters
+			// StartInvasion will reset the invasion size
+
+			Main.StartInvasion(type);
+
+			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
+			// Have to set start size to report progress correctly
+			Main.invasionSizeStart = invasionSize;
+			Main.invasionSize = invasionSize;
+		}
+
+		/// <summary>Verifies that each stack in each chest is valid and not over the max stack count.</summary>
+		internal void FixChestStacks()
+		{
+			if (TShock.Config.IgnoreChestStacksOnLoad)
+				return;
+
+			foreach (Chest chest in Main.chest)
+			{
+				if (chest != null)
+				{
+					foreach (Item item in chest.item)
+					{
+						if (item != null && item.stack > item.maxStack)
+							item.stack = item.maxStack;
+					}
+				}
+			}
+		}
+
+		/// <summary>Updates the console title with some pertinent information.</summary>
+		/// <param name="empty">If the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
+		internal void SetConsoleTitle(bool empty)
+		{
+			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
+					!string.IsNullOrWhiteSpace(TShock.Config.ServerName) ? TShock.Config.ServerName + " - " : "",
+					empty ? 0 : ActivePlayers(),
+					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
+		}
+
+		/// <summary>Determines the distance between two vectors.</summary>
+		/// <param name="value1">The first vector location.</param>
+		/// <param name="value2">The second vector location.</param>
+		/// <returns>The distance between the two vectors.</returns>
+		public static float Distance(Vector2 value1, Vector2 value2)
+		{
+			float num2 = value1.X - value2.X;
+			float num = value1.Y - value2.Y;
+			float num3 = (num2 * num2) + (num * num);
+			return (float)Math.Sqrt(num3);
+		}
+
+		/// <summary>Computes the max styles...</summary>
+		internal void ComputeMaxStyles()
+		{
+			var item = new Item();
+			for (int i = 0; i < Main.maxItemTypes; i++)
+			{
+				item.netDefaults(i);
+				if (item.placeStyle > 0)
+				{
+					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
+					{
+						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
+							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
+					}
+					else
+						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
 				}
 			}
 		}

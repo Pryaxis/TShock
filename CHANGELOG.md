@@ -35,6 +35,53 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed REST `/v3/server/restart/` route and `/server/restart/` route. (@hakusaro)
 * The "auth system" is now referred to as the initial setup system (what it actually is). This is better verbiage for basically all situations. Who really wants to turn off the "authentication system?" In addition, the system now makes it more clear what the point of it is, rather than that it grants permissions. (@hakusaro)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Bouncer changes
+
+Putting this stuff down here so things don't conflict as often.
+
+* `GetDataHandlers.SendTileSquare` hook now sends a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
+* Added `GetDataHandlers.HealOtherPlayer` hook. (@hakusaro)
+* Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
+* `GetDataHandlers.KillMe` now sends a `TSPlayer` and a `PlayerDeathReason`. (@hakusaro)
+* Added `GetDataHandlers.ProjectileKill` hook. (@hakusaro)
+* Removed `TShock.CheckProjectilePermission` and replaced it with `TSPlayer.HasProjectilePermission` and `TSPlayer.LacksProjectilePermission` respectively. (@hakusaro)
+* Added `TSPlayer` object to `GetDataHandlers.LiquidSetEventArgs`. (@hakusaro)
+* Removed `TShock.StartInvasion` for public use (moved to Utils and marked internal). (@hakusaro)
+* Fixed invasions started by TShock not reporting size correctly and probably not working at all. (@hakusaro)
+* Removed `GetDataHandlers.TileKill` and replaced it with `GetDataHandlers.PlaceChest` as the packet originally designated as tile kill is now only used for chests. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.NPCHome`. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.ChestItemChanged`. (@hakusaro)
+* Fixed chest item changes not triggering any range checks, tile checks, or correct chest checks. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.PlayerBuff`. (@hakusaro)
+* Added `TSPlayer` and `PlayerDeathReason` to `GetDataHandlers.PlayerDamage`. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.NPCStrike`. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.PlayerAnimation`. (@hakusaro)
+* Added `GetDataHandlers.MassWireOperation` hook and related arguments. (@hakusaro)
+* Added `GetDataHandlers.PlaceTileEntity` hook and related arguments. (@hakusaro)
+* Added `TSPlayer` to `GetDataHandlers.GemLockToggle`. (@hakusaro)
+* Added `GetDataHandlers.PlaceItemFrame` hook and related arguments. (@hakusaro)
+
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
 
