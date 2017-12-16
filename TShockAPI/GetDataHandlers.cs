@@ -1304,6 +1304,42 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>For use in a PlaceTileEntity event.</summary>
+		public class PlaceTileEntityEventArgs : HandledEventArgs
+		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
+
+			/// <summary>The X coordinate of the event.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y coordinate of the event.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The Type of event.</summary>
+			public byte Type { get; set; }
+		}
+
+		/// <summary>Fired when a PlaceTileEntity event occurs.</summary>
+		public static HandlerList<PlaceTileEntityEventArgs> PlaceTileEntity;
+
+		private static bool OnPlaceTileEntity(TSPlayer player, short x, short y, byte type)
+		{
+			if (PlaceTileEntity == null)
+				return false;
+
+			var args = new PlaceTileEntityEventArgs
+			{
+				Player = player,
+				X = x,
+				Y = y,
+				Type = type
+			};
+
+			PlaceTileEntity.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use with a NPCSpecial event
 		/// </summary>
@@ -3175,27 +3211,19 @@ namespace TShockAPI
 		{
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var type = args.Data.ReadByte();
+			var type = (byte) args.Data.ReadByte();
+
+			if (OnPlaceTileEntity(args.Player, x, y, type))
+			{
+				return true;
+			}
+
+			// ItemBan subsystem
 
 			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
 			{
 				args.Player.SendTileSquare(x, y, 1);
 				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
 				return true;
 			}
 

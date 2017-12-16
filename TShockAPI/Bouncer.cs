@@ -41,6 +41,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.PlaceTileEntity.Register(OnPlaceTileEntity);
 			GetDataHandlers.PlayerAnimation.Register(OnPlayerAnimation);
 			GetDataHandlers.NPCStrike.Register(OnNPCStrike);
 			GetDataHandlers.ItemDrop.Register(OnItemDrop);
@@ -58,6 +59,30 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Fired when a PlaceTileEntity occurs for basic anti-cheat on perms and range.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlaceTileEntity(object sender, GetDataHandlers.PlaceTileEntityEventArgs args)
+		{
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			{
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Handles validation of of basic anti-cheat on mass wire operations.</summary>
@@ -87,16 +112,22 @@ namespace TShockAPI
 				y = p.Y;
 
 				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				{
 					args.Handled = true;
 					return;
+				}	
 
 				if (TShock.CheckIgnores(args.Player))
+				{
 					args.Handled = true;
 					return;
+				}
 
 				if (TShock.CheckTilePermission(args.Player, x, y))
+				{
 					args.Handled = true;
 					return;
+				}
 			}
 		}
 
@@ -497,8 +528,10 @@ namespace TShockAPI
 			int flag = args.Flag;
 
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+			{
 				args.Handled = true;
 				return;
+			}
 
 			if (TShock.CheckIgnores(args.Player))
 			{
