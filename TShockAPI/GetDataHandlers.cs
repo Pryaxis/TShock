@@ -1260,6 +1260,50 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>The arguments to the MassWireOperation event.</summary>
+		public class MassWireOperationEventArgs : HandledEventArgs
+		{
+			/// <summary>The TSPlayer that triggered the event.</summary>
+			public TSPlayer Player { get; set; }
+
+			/// <summary>The start X point in the operation.</summary>
+			public short StartX { get; set; }
+
+			/// <summary>The start Y point in the operation.</summary>
+			public short StartY { get; set; }
+
+			/// <summary>The end X point in the operation.</summary>
+			public short EndX { get; set; }
+
+			/// <summary>The end Y point in the operation.</summary>
+			public short EndY { get; set; }
+
+			/// <summary>ToolMode</summary>
+			public byte ToolMode { get; set; }
+		}
+
+		/// <summary>Fired on a mass wire edit operation.</summary>
+		public static HandlerList<MassWireOperationEventArgs> MassWireOperation;
+
+		private static bool OnMassWireOperation(TSPlayer player, short startX, short startY, short endX, short endY, byte toolMode)
+		{
+			if (MassWireOperation == null)
+				return false;
+
+			var args = new MassWireOperationEventArgs
+			{
+				Player = player,
+				StartX = startX,
+				StartY = startY,
+				EndX = endX,
+				EndY = endY,
+				ToolMode = toolMode,
+			};
+
+			MassWireOperation.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use with a NPCSpecial event
 		/// </summary>
@@ -2987,33 +3031,10 @@ namespace TShockAPI
 			short startY = args.Data.ReadInt16();
 			short endX = args.Data.ReadInt16();
 			short endY = args.Data.ReadInt16();
-			args.Data.ReadByte(); // Ignore toolmode
+			byte toolMode = (byte) args.Data.ReadByte();
 
-			List<Point> points = Utils.Instance.GetMassWireOperationRange(
-				new Point(startX, startY),
-				new Point(endX, endY),
-				args.Player.TPlayer.direction == 1);
-
-			int x;
-			int y;
-			foreach (Point p in points)
-			{
-				/* Perform similar checks to TileKill
-				 * The server-side nature of this packet removes the need to use SendTileSquare
-				 * Range checks are currently ignored here as the items that send this seem to have infinite range */
-
-				x = p.X;
-				y = p.Y;
-
-				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-					return true;
-
-				if (TShock.CheckIgnores(args.Player))
-					return true;
-
-				if (TShock.CheckTilePermission(args.Player, x, y))
-					return true;
-			}
+			if (OnMassWireOperation(args.Player, startX, startY, endX, endY, toolMode))
+				return true;
 
 			return false;
 		}

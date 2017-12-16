@@ -60,6 +60,43 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
 		}
 
+		internal void OnMassWireOperation(object sender, GetDataHandlers.MassWireOperationEventArgs args)
+		{
+			short startX = args.StartX;
+			short startY = args.StartY;
+			short endX = args.EndX;
+			short endY = args.EndY;
+
+			List<Point> points = Utils.Instance.GetMassWireOperationRange(
+				new Point(startX, startY),
+				new Point(endX, endY),
+				args.Player.TPlayer.direction == 1);
+
+			int x;
+			int y;
+			foreach (Point p in points)
+			{
+				/* Perform similar checks to TileKill
+				 * The server-side nature of this packet removes the need to use SendTileSquare
+				 * Range checks are currently ignored here as the items that send this seem to have infinite range */
+
+				x = p.X;
+				y = p.Y;
+
+				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+					args.Handled = true;
+					return;
+
+				if (TShock.CheckIgnores(args.Player))
+					args.Handled = true;
+					return;
+
+				if (TShock.CheckTilePermission(args.Player, x, y))
+					args.Handled = true;
+					return;
+			}
+		}
+
 		/// <summary>Handles basic animation throttling for disabled players.</summary>
 		/// <param name="sender">sender</param>
 		/// <param name="args">args</param>

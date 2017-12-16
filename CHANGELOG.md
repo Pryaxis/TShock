@@ -77,6 +77,7 @@ Putting this stuff down here so things don't conflict as often.
 * Added `TSPlayer` and `PlayerDeathReason` to `GetDataHandlers.PlayerDamage`. (@hakusaro)
 * Added `TSPlayer` to `GetDataHandlers.NPCStrike`. (@hakusaro)
 * Added `TSPlayer` to `GetDataHandlers.PlayerAnimation`. (@hakusaro)
+* Added `GetDataHandlers.MassWireOperation` hook and related arguments. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
