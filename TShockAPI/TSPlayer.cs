@@ -285,6 +285,14 @@ namespace TShockAPI
 
 		public bool IgnoreActionsForClearingTrashCan;
 
+		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
+		/// <param name="player">player - The TSPlayer object.</param>
+		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
+		public bool CheckIgnores()
+		{
+			return IgnoreActionsForInventory != "none" || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+		}
+
 		/// <summary>
 		/// The player's server side inventory data.
 		/// </summary>

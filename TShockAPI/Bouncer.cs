@@ -69,7 +69,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceItemFrame(object sender, GetDataHandlers.PlaceItemFrameEventArgs args)
 		{
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
 				args.Handled = true;
@@ -108,7 +108,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Handled = true;
 				return;
@@ -126,7 +126,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceTileEntity(object sender, GetDataHandlers.PlaceTileEntityEventArgs args)
 		{
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Handled = true;
 				return;
@@ -177,7 +177,7 @@ namespace TShockAPI
 					return;
 				}	
 
-				if (TShock.CheckIgnores(args.Player))
+				if (args.Player.CheckIgnores())
 				{
 					args.Handled = true;
 					return;
@@ -196,7 +196,7 @@ namespace TShockAPI
 		/// <param name="args">args</param>
 		internal void OnPlayerAnimation(object sender, GetDataHandlers.PlayerAnimationEventArgs args)
 		{
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
 				args.Handled = true;
@@ -245,7 +245,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				args.Handled = true;
@@ -311,7 +311,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -419,7 +419,7 @@ namespace TShockAPI
 
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
@@ -442,7 +442,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				args.Handled = true;
@@ -501,7 +501,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
 				args.Handled = true;
@@ -556,7 +556,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnChestOpen(object sender, GetDataHandlers.ChestOpenEventArgs args)
 		{
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Handled = true;
 				return;
@@ -593,7 +593,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
@@ -654,7 +654,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendTileSquare(tileX, tileY, 1);
 				args.Handled = true;
@@ -789,7 +789,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
 				args.Handled = true;
@@ -839,7 +839,7 @@ namespace TShockAPI
 				float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f),
 					new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
 
-				if (TShock.CheckIgnores(args.Player))
+				if (args.Player.CheckIgnores())
 				{
 					// If the player has moved outside the disabled zone...
 					if (distance > TShock.Config.MaxRangeForDisabled)
@@ -980,7 +980,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
@@ -1113,7 +1113,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendTileSquare(x, y, 4);
 				args.Handled = true;
@@ -1467,7 +1467,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (TShock.CheckIgnores(args.Player))
+				if (args.Player.CheckIgnores())
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
@@ -1583,7 +1583,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player) || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.CheckIgnores() || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
 				args.Handled = true;
 				return;
@@ -1624,7 +1624,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			if (args.Player.CheckIgnores())
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
 				args.Handled = true;

@@ -1080,7 +1080,7 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						if (CheckIgnores(player))
+						if (player.CheckIgnores())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1160,7 +1160,7 @@ namespace TShockAPI
 						}
 						player.IgnoreActionsForDisabledArmor = check;
 
-						if (CheckIgnores(player))
+						if (player.CheckIgnores())
 						{
 							player.Disable(flags: flags);
 						}
@@ -2140,14 +2140,6 @@ namespace TShockAPI
 			}
 
 			return check;
-		}
-
-		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
-		public static bool CheckIgnores(TSPlayer player)
-		{
-			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
 		}
 
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
