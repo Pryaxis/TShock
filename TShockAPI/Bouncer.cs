@@ -28,7 +28,6 @@ using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
 using Terraria.ObjectData;
-using Terraria.ID;
 using Terraria.DataStructures;
 
 namespace TShockAPI
@@ -36,7 +35,7 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and build guardian system</summary>
 	internal sealed class Bouncer
 	{
-		/// <summary>Constructor call initializes Bouncer & related functionality.</summary>
+		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer(TerrariaPlugin pluginInstance)
 		{
@@ -57,6 +56,75 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare.Register(OnSendTileSquare);
 			GetDataHandlers.HealOtherPlayer.Register(OnHealOtherPlayer);
 			GetDataHandlers.TileEdit.Register(OnTileEdit);
+		}
+
+		/// <summary>Called when a player is damaged.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlayerDamage(object sender, GetDataHandlers.PlayerDamageEventArgs args)
+		{
+			byte id = args.ID;
+			short dmg = args.Damage;
+			bool pvp = args.PVP;
+			bool crit = args.Critical;
+			byte direction = args.Direction;
+
+			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			{
+				if (TShock.Config.KickOnDamageThresholdBroken)
+				{
+					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Handled = true;
+					return;
+				}
+				else
+				{
+					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+				}
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.PlayerHp, "", id);
+				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
+				args.Handled = true;
+				return;
+			}
+
 		}
 
 		/// <summary>Registered when items fall to the ground to prevent cheating.</summary>
@@ -498,7 +566,7 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>Handles ProjectileKill events for throttling & out of bounds projectiles.</summary>
+		/// <summary>Handles ProjectileKill events for throttling and out of bounds projectiles.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnProjectileKill(object sender, GetDataHandlers.ProjectileKillEventArgs args)
@@ -524,7 +592,7 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>Handles disabling enforcement & minor anti-exploit stuff</summary>
+		/// <summary>Handles disabling enforcement and minor anti-exploit stuff</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlayerUpdate(object sender, GetDataHandlers.PlayerUpdateEventArgs args)
