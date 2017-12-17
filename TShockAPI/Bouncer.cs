@@ -359,8 +359,10 @@ namespace TShockAPI
 				return;
 			}
 
-			//make sure the prefix is a legit value
-			if (prefix > PrefixID.Count || prefix < 1) 
+			// make sure the prefix is a legit value
+			// Note: Not checking if prefix is less than 1 because if it is, this check
+			// will break item pickups on the client.
+			if (prefix > PrefixID.Count) 
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
