@@ -4845,7 +4845,7 @@ namespace TShockAPI
 			}
 
 			// If the user account is already a superadmin (permanent), disable the system
-			if (args.Player.IsLoggedIn && args.Player.tempGroup == null && args.Player.Group.Name == new SuperAdminGroup().Name)
+			if (args.Player.IsLoggedIn && args.Player.tempGroup == null)
 			{
 				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}setup system has been turned off.", Specifier);
 				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
