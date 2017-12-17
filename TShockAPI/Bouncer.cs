@@ -1224,6 +1224,7 @@ namespace TShockAPI
 					return;
 				}
 
+				// TODO: Remove from bouncer (does't look like Bouncer code)
 				if (args.Player.AwaitingName)
 				{
 					bool includeUnprotected = false;
