@@ -370,7 +370,7 @@ namespace TShockAPI
 			}
 
 			//Item removed, let client do this to prevent item duplication
-			// client side (but only if it passed the range check)
+			// client side (but only if it passed the range check) (i.e., return false)
 			if (type == 0)
 			{
 				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
@@ -381,7 +381,7 @@ namespace TShockAPI
 					return;
 				}
 
-				args.Handled = true;
+				args.Handled = false;
 				return;
 			}
 
