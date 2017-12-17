@@ -55,7 +55,7 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 1. Look at the server console for the _setup code_. Type `/setup [code]` (example: `/setup 12345`), then a space, then the code you see in the console in your game chat. Instead of chatting, you'll run a command on the server. This one makes you temporary admin. All commands are prefixed with `/` or `!` (to make them silent).
 
-1. Use the in-game command `/register [password]` (example: `/register lovely-ashes`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later. Your `character name` is your `account name`.
+1. Use the in-game command `/user add [account name] [password] owner` (example: `/user add shank lovely-ashes owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
 
 1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank lovely-ashes`). You should see a login success message.
 
