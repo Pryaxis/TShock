@@ -360,7 +360,7 @@ namespace TShockAPI
 			}
 
 			//make sure the prefix is a legit value
-			if (prefix > PrefixID.Count) 
+			if (prefix > PrefixID.Count || prefix < 1) 
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
