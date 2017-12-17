@@ -804,15 +804,6 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>Checks to see if this player object lacks access rights to a given projectile. Used by projectile bans.</summary>
-		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
-		/// <param name="type">The type of projectile, from Main.projectiles.</param>
-		/// <returns>If the player has lacks access rights to the projectile.</returns>
-		public bool LacksProjectilePermission(int index, int type)
-		{
-			return !HasProjectilePermission(index, type);
-		}
-
 		/// <summary>Checks to see if this player object has access rights to a given projectile. Used by projectile bans.</summary>
 		/// <param name="index">The projectile index from Main.projectiles (NOT from a packet directly).</param>
 		/// <param name="type">The type of projectile, from Main.projectiles.</param>
