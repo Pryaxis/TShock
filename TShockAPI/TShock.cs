@@ -138,6 +138,9 @@ namespace TShockAPI
 		/// </summary>
 		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
+		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
+		internal Bouncer Bouncer;
+
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
@@ -322,6 +325,7 @@ namespace TShockAPI
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
+				Bouncer = new Bouncer();
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -378,6 +382,7 @@ namespace TShockAPI
 				Log.ConsoleInfo("Welcome to TShock for Terraria!");
 				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
 				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
+
 			}
 			catch (Exception ex)
 			{
@@ -849,7 +854,7 @@ namespace TShockAPI
 		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle(false);
+			Utils.SetConsoleTitle(false);
 
 			//This is to prevent a bug where a CLI-defined password causes packets to be
 			//sent in an unexpected order, resulting in clients being unable to connect
@@ -902,8 +907,8 @@ namespace TShockAPI
 			Regions.Reload();
 			Warps.ReloadWarps();
 
-			ComputeMaxStyles();
-			FixChestStacks();
+			Utils.ComputeMaxStyles();
+			Utils.FixChestStacks();
 
 			Utils.UpgradeMotD();
 
@@ -914,45 +919,6 @@ namespace TShockAPI
 
 			UpdateManager = new UpdateManager();
 			StatTracker.Start();
-		}
-
-		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
-		private void ComputeMaxStyles()
-		{
-			var item = new Item();
-			for (int i = 0; i < Main.maxItemTypes; i++)
-			{
-				item.netDefaults(i);
-				if (item.placeStyle > 0)
-				{
-					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
-					{
-						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
-							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
-					}
-					else
-						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
-				}
-			}
-		}
-
-		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
-		private void FixChestStacks()
-		{
-			if (Config.IgnoreChestStacksOnLoad)
-				return;
-
-			foreach (Chest chest in Main.chest)
-			{
-				if (chest != null)
-				{
-					foreach (Item item in chest.item)
-					{
-						if (item != null && item.stack > item.maxStack)
-							item.stack = item.maxStack;
-					}
-				}
-			}
 		}
 
 		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>
@@ -1117,7 +1083,7 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						if (CheckIgnores(player))
+						if (player.CheckIgnores())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1197,7 +1163,7 @@ namespace TShockAPI
 						}
 						player.IgnoreActionsForDisabledArmor = check;
 
-						if (CheckIgnores(player))
+						if (player.CheckIgnores())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1225,17 +1191,7 @@ namespace TShockAPI
 					}
 				}
 			}
-			SetConsoleTitle(false);
-		}
-
-		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
-		private void SetConsoleTitle(bool empty)
-		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
-					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
+			Utils.SetConsoleTitle(false);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
@@ -1481,7 +1437,7 @@ namespace TShockAPI
 			{
 				if (Config.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
-				SetConsoleTitle(true);
+				Utils.SetConsoleTitle(true);
 			}
 		}
 
@@ -1802,62 +1758,7 @@ namespace TShockAPI
 		}
 
 
-		/// <summary>StartInvasion - Starts an invasion on the server.</summary>
-		/// <param name="type">type - The invasion type id.</param>
-		//TODO: Why is this in TShock's main class?
-		public static void StartInvasion(int type)
-		{
-			int invasionSize = 0;
 
-			if (Config.InfiniteInvasion)
-			{
-				invasionSize = 20000000;
-			}
-			else
-			{
-				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
-			}
-
-			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
-			Main.invasionSize = invasionSize;
-
-			Main.StartInvasion(type);
-		}
-
-		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
-		/// <param name="player">player - The TSPlayer object that created the projectile.</param>
-		/// <param name="index">index - The projectile index.</param>
-		/// <param name="type">type - The projectile type.</param>
-		/// <returns>bool - True if the player does not have permission to use a projectile.</returns>
-		public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
-		{
-			if (type == 43)
-			{
-				return true;
-			}
-
-			if (type == 17 && Itembans.ItemIsBanned("Dirt Rod", player))
-			//Dirt Rod Projectile
-			{
-				return true;
-			}
-
-			if ((type == 42 || type == 65 || type == 68) && Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
-			{
-				return true;
-			}
-
-			Projectile proj = new Projectile();
-			proj.SetDefaults(type);
-
-			if (Main.projHostile[type])
-			{
-				//player.SendMessage( proj.name, Color.Yellow);
-				return true;
-			}
-
-			return false;
-		}
 
 		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
 		/// <param name="player">player - The TSPlayer object.</param>
@@ -2034,19 +1935,17 @@ namespace TShockAPI
 		{
 			Vector2 tile = new Vector2(x, y);
 			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-			return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
+			return Utils.Distance(spawn, tile) <= Config.SpawnProtectionRadius;
 		}
 
 		/// <summary>Distance - Determines the distance between two vectors.</summary>
 		/// <param name="value1">value1 - The first vector location.</param>
 		/// <param name="value2">value2 - The second vector location.</param>
 		/// <returns>float - The distance between the two vectors.</returns>
+		[Obsolete("Use TShock.Utils.Distance(Vector2, Vector2) instead.", true)]
 		public static float Distance(Vector2 value1, Vector2 value2)
 		{
-			float num2 = value1.X - value2.X;
-			float num = value1.Y - value2.Y;
-			float num3 = (num2 * num2) + (num * num);
-			return (float)Math.Sqrt(num3);
+			return Utils.Distance(value1, value2);
 		}
 
 		/// <summary>HackedInventory - Checks to see if a user has a hacked inventory. In addition, messages players the result.</summary>
@@ -2244,14 +2143,6 @@ namespace TShockAPI
 			}
 
 			return check;
-		}
-
-		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
-		public static bool CheckIgnores(TSPlayer player)
-		{
-			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
 		}
 
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
