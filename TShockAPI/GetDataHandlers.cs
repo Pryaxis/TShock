@@ -108,7 +108,7 @@ namespace TShockAPI
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
-		public static HandlerList<TileEditEventArgs> TileEdit;
+		public static HandlerList<TileEditEventArgs> TileEdit = new HandlerList<TileEditEventArgs>();
 		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, short editData, byte style)
 		{
 			if (TileEdit == null)
@@ -144,7 +144,7 @@ namespace TShockAPI
 		/// <summary>
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
-		public static HandlerList<TogglePvpEventArgs> TogglePvp;
+		public static HandlerList<TogglePvpEventArgs> TogglePvp = new HandlerList<TogglePvpEventArgs>();
 		private static bool OnPvpToggled(byte _id, bool _pvp)
 		{
 			if (TogglePvp == null)
@@ -176,7 +176,7 @@ namespace TShockAPI
 		/// <summary>
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
-		public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
+		public static HandlerList<PlayerTeamEventArgs> PlayerTeam = new HandlerList<PlayerTeamEventArgs>();
 		private static bool OnPlayerTeam(byte _id, byte _team)
 		{
 			if (PlayerTeam == null)
@@ -220,7 +220,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
-		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
+		public static HandlerList<PlayerSlotEventArgs> PlayerSlot = new HandlerList<PlayerSlotEventArgs>();
 		private static bool OnPlayerSlot(byte _plr, byte _slot, short _stack, byte _prefix, short _type)
 		{
 			if (PlayerSlot == null)
@@ -259,7 +259,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerHP - called at a PlayerHP event
 		/// </summary>
-		public static HandlerList<PlayerHPEventArgs> PlayerHP;
+		public static HandlerList<PlayerHPEventArgs> PlayerHP = new HandlerList<PlayerHPEventArgs>();
 
 		private static bool OnPlayerHP(byte _plr, short _cur, short _max)
 		{
@@ -288,7 +288,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerMana - called at a PlayerMana event
 		/// </summary>
-		public static HandlerList<PlayerManaEventArgs> PlayerMana;
+		public static HandlerList<PlayerManaEventArgs> PlayerMana = new HandlerList<PlayerManaEventArgs>();
 
 		private static bool OnPlayerMana(byte _plr, short _cur, short _max)
 		{
@@ -332,7 +332,7 @@ namespace TShockAPI
 		/// PlayerInfo - called at a PlayerInfo event
 		/// If this is cancelled, the server will ForceKick the player. If this should be changed in the future, let someone know.
 		/// </summary>
-		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
+		public static HandlerList<PlayerInfoEventArgs> PlayerInfo = new HandlerList<PlayerInfoEventArgs>();
 
 		private static bool OnPlayerInfo(byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
 		{
@@ -372,7 +372,7 @@ namespace TShockAPI
 		/// <summary>
 		/// When a chest is added or removed from the world.
 		/// </summary>
-		public static HandlerList<PlaceChestEventArgs> PlaceChest;
+		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
 
 		private static bool OnPlaceChest(TSPlayer player, int flag, int tilex, int tiley)
 		{
@@ -404,7 +404,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>The event fired when a projectile kill packet is received.</summary>
-		public static HandlerList<ProjectileKillEventArgs> ProjectileKill;
+		public static HandlerList<ProjectileKillEventArgs> ProjectileKill = new HandlerList<ProjectileKillEventArgs>();
 
 		/// <summary>Fires the ProjectileKill event.</summary>
 		/// <param name="player">The TSPlayer that caused the event.</param>
@@ -458,7 +458,7 @@ namespace TShockAPI
 		/// <summary>
 		/// KillMe - Terraria's crappy way of handling damage from players
 		/// </summary>
-		public static HandlerList<KillMeEventArgs> KillMe;
+		public static HandlerList<KillMeEventArgs> KillMe = new HandlerList<KillMeEventArgs>();
 
 		private static bool OnKillMe(TSPlayer player, byte plr, byte direction, short damage, bool pvp, PlayerDeathReason playerDeathReason)
 		{
@@ -511,7 +511,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerUpdate - When the player sends it's updated information to the server
 		/// </summary>
-		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
+		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate = new HandlerList<PlayerUpdateEventArgs>();
 
 		private static bool OnPlayerUpdate(TSPlayer player, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
 		{
@@ -600,7 +600,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>When a player heals another player</summary>
-		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer;
+		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer = new HandlerList<HealOtherPlayerEventArgs>();
 
 		/// <summary>Fires the HealOtherPlayer event</summary>
 		/// <param name="player">The TSPlayer that started the event</param>
@@ -652,7 +652,7 @@ namespace TShockAPI
 		/// <summary>
 		/// When the player sends a tile square
 		/// </summary>
-		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
+		public static HandlerList<SendTileSquareEventArgs> SendTileSquare = new HandlerList<SendTileSquareEventArgs>();
 
 		private static bool OnSendTileSquare(TSPlayer player, MemoryStream data, short size, int tilex, int tiley)
 		{
@@ -698,7 +698,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>Fired when an object is placed in the world.</summary>
-		public static HandlerList<PlaceObjectEventArgs> PlaceObject;
+		public static HandlerList<PlaceObjectEventArgs> PlaceObject = new HandlerList<PlaceObjectEventArgs>();
 
 		/// <summary>Fires the PlaceObject hook. To be called when an object is placed in the world.</summary>
 		/// <param name="player">The originating player.</param>
@@ -773,7 +773,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
-		public static HandlerList<NewProjectileEventArgs> NewProjectile;
+		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
 
 		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
 		{
@@ -823,7 +823,7 @@ namespace TShockAPI
 		/// <summary>
 		/// LiquidSet - When ever a liquid is set
 		/// </summary>
-		public static HandlerList<LiquidSetEventArgs> LiquidSet;
+		public static HandlerList<LiquidSetEventArgs> LiquidSet = new HandlerList<LiquidSetEventArgs>();
 
 		private static bool OnLiquidSet(TSPlayer player, int tilex, int tiley, byte amount, byte type)
 		{
@@ -862,7 +862,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerSpawn - When a player spawns
 		/// </summary>
-		public static HandlerList<SpawnEventArgs> PlayerSpawn;
+		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
 
 		private static bool OnPlayerSpawn(byte player, int spawnX, int spawnY)
 		{
@@ -900,7 +900,7 @@ namespace TShockAPI
 		/// <summary>
 		/// ChestOpen - Called when any chest is opened
 		/// </summary>
-		public static HandlerList<ChestOpenEventArgs> ChestOpen;
+		public static HandlerList<ChestOpenEventArgs> ChestOpen = new HandlerList<ChestOpenEventArgs>();
 
 		private static bool OnChestOpen(int x, int y, TSPlayer player)
 		{
@@ -948,7 +948,7 @@ namespace TShockAPI
 		/// <summary>
 		/// ChestItemChange - Called when an item in a chest changes
 		/// </summary>
-		public static HandlerList<ChestItemEventArgs> ChestItemChange;
+		public static HandlerList<ChestItemEventArgs> ChestItemChange = new HandlerList<ChestItemEventArgs>();
 
 		private static bool OnChestItemChange(TSPlayer player, short id, byte slot, short stacks, byte prefix, short type)
 		{
@@ -989,7 +989,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Sign - Called when a sign is changed
 		/// </summary>
-		public static HandlerList<SignEventArgs> Sign;
+		public static HandlerList<SignEventArgs> Sign = new HandlerList<SignEventArgs>();
 
 		private static bool OnSignEvent(short id, int x, int y)
 		{
@@ -1033,7 +1033,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCHome - Called when an NPC's home is changed
 		/// </summary>
-		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
+		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
 
 		private static bool OnUpdateNPCHome(TSPlayer player, short id, short x, short y, byte homeless)
 		{
@@ -1074,7 +1074,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerBuff - Called when a player is buffed
 		/// </summary>
-		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
+		public static HandlerList<PlayerBuffEventArgs> PlayerBuff = new HandlerList<PlayerBuffEventArgs>();
 
 		private static bool OnPlayerBuff(TSPlayer player, byte id, byte type, int time)
 		{
@@ -1134,7 +1134,7 @@ namespace TShockAPI
 		/// <summary>
 		/// ItemDrop - Called when an item is dropped
 		/// </summary>
-		public static HandlerList<ItemDropEventArgs> ItemDrop;
+		public static HandlerList<ItemDropEventArgs> ItemDrop = new HandlerList<ItemDropEventArgs>();
 
 		private static bool OnItemDrop(TSPlayer player, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
 		{
@@ -1188,7 +1188,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerDamage - Called when a player is damaged
 		/// </summary>
-		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
+		public static HandlerList<PlayerDamageEventArgs> PlayerDamage = new HandlerList<PlayerDamageEventArgs>();
 
 		private static bool OnPlayerDamage(TSPlayer player, byte id, byte dir, short dmg, bool pvp, bool crit, PlayerDeathReason playerDeathReason)
 		{
@@ -1240,7 +1240,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
-		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
+		public static HandlerList<NPCStrikeEventArgs> NPCStrike = new HandlerList<NPCStrikeEventArgs>();
 
 		private static bool OnNPCStrike(TSPlayer player, short id, byte dir, short dmg, float knockback, byte crit)
 		{
@@ -1283,7 +1283,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>Fired on a mass wire edit operation.</summary>
-		public static HandlerList<MassWireOperationEventArgs> MassWireOperation;
+		public static HandlerList<MassWireOperationEventArgs> MassWireOperation = new HandlerList<MassWireOperationEventArgs>();
 
 		private static bool OnMassWireOperation(TSPlayer player, short startX, short startY, short endX, short endY, byte toolMode)
 		{
@@ -1321,7 +1321,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>Fired when a PlaceTileEntity event occurs.</summary>
-		public static HandlerList<PlaceTileEntityEventArgs> PlaceTileEntity;
+		public static HandlerList<PlaceTileEntityEventArgs> PlaceTileEntity = new HandlerList<PlaceTileEntityEventArgs>();
 
 		private static bool OnPlaceTileEntity(TSPlayer player, short x, short y, byte type)
 		{
@@ -1357,7 +1357,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCSpecial - Called at some point
 		/// </summary>
-		public static HandlerList<NPCSpecialEventArgs> NPCSpecial;
+		public static HandlerList<NPCSpecialEventArgs> NPCSpecial = new HandlerList<NPCSpecialEventArgs>();
 
 		private static bool OnNPCSpecial(byte id, byte type)
 		{
@@ -1385,7 +1385,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerAnimation - Called when a player animates
 		/// </summary>
-		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
+		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation = new HandlerList<PlayerAnimationEventArgs>();
 
 		private static bool OnPlayerAnimation(TSPlayer player)
 		{
@@ -1413,7 +1413,7 @@ namespace TShockAPI
 		/// <summary>
 		/// PlayerBuffUpdate - Called when a player updates buffs
 		/// </summary>
-		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate;
+		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate = new HandlerList<PlayerBuffUpdateEventArgs>();
 
 		private static bool OnPlayerBuffUpdate(byte id)
 		{
@@ -1457,7 +1457,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
-		public static HandlerList<TeleportEventArgs> Teleport;
+		public static HandlerList<TeleportEventArgs> Teleport = new HandlerList<TeleportEventArgs>();
 
 		private static bool OnTeleport(Int16 id, byte f, float x, float y)
 		{
@@ -2084,7 +2084,7 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
-		public static HandlerList<PaintTileEventArgs> PaintTile;
+		public static HandlerList<PaintTileEventArgs> PaintTile = new HandlerList<PaintTileEventArgs>();
 
 		private static bool OnPaintTile(Int32 x, Int32 y, byte t)
 		{
@@ -2123,7 +2123,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Called When a wall is painted
 		/// </summary>
-		public static HandlerList<PaintWallEventArgs> PaintWall;
+		public static HandlerList<PaintWallEventArgs> PaintWall = new HandlerList<PaintWallEventArgs>();
 
 		private static bool OnPaintWall(Int32 x, Int32 y, byte t)
 		{
@@ -3101,7 +3101,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>Fired when an ItemFrame is placed.</summary>
-		public static HandlerList<PlaceItemFrameEventArgs> PlaceItemFrame;
+		public static HandlerList<PlaceItemFrameEventArgs> PlaceItemFrame = new HandlerList<PlaceItemFrameEventArgs>();
 
 		private static bool OnPlaceItemFrame(TSPlayer player, short x, short y, short itemID, byte prefix, short stack, TEItemFrame itemFrame)
 		{
@@ -3147,7 +3147,7 @@ namespace TShockAPI
 		/// <summary>
 		/// GemLockToggle - Called when a gem lock is switched
 		/// </summary>
-		public static HandlerList<GemLockToggleEventArgs> GemLockToggle;
+		public static HandlerList<GemLockToggleEventArgs> GemLockToggle = new HandlerList<GemLockToggleEventArgs>();
 
 		private static bool OnGemLockToggle(short x, short y, bool on)
 		{
