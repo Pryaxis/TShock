@@ -1784,7 +1784,7 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{
@@ -1856,7 +1856,7 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{

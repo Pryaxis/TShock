@@ -277,7 +277,8 @@ namespace TShockAPI
 
 		private string CacheIP;
 
-		public string IgnoreActionsForInventory = "none";
+		/// <summary>Determines if the player is disabled by the SSC subsystem for not being logged in.</summary>
+		public bool IsDisabledForSSC = false;
 
 		public string IgnoreActionsForCheating = "none";
 
@@ -297,7 +298,7 @@ namespace TShockAPI
 		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
 		public bool CheckIgnores()
 		{
-			return IgnoreActionsForInventory != "none" || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>
@@ -656,7 +657,7 @@ namespace TShockAPI
 			PlayerHooks.OnPlayerLogout(this);
 			if (Main.ServerSideCharacter)
 			{
-				IgnoreActionsForInventory = $"Server side characters is enabled! Please {Commands.Specifier}register or {Commands.Specifier}login to play!";
+				IsDisabledForSSC = true;
 				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
 				{
 					PlayerData.CopyCharacter(this);

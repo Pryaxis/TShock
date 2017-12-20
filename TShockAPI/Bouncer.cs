@@ -855,9 +855,9 @@ namespace TShockAPI
 						{
 							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
 						}
-						else if (args.Player.IgnoreActionsForInventory != "none")
+						else if (args.Player.IsDisabledForSSC == true)
 						{
-							args.Player.SendErrorMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory);
+							args.Player.SendErrorMessage("Disabled. Server side characters is enabled, and you aren't logged in.");
 						}
 						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
 						{
