@@ -300,6 +300,212 @@ namespace TShockAPI
 			return IgnoreActionsForInventory != "none" || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
+		/// <summary>Checks to see if a player has hacked item stacks in their inventory, and messages them as it checks.</summary>
+		/// <param name="message">If the check should send a message to the player with the results of the check.</param>
+		/// <returns>True if any stacks don't conform.</returns>
+		public bool HasHackedItemStacks(bool shouldSendMessage = false)
+		{
+			bool check = false;
+
+			Item[] inventory = TPlayer.inventory;
+			Item[] armor = TPlayer.armor;
+			Item[] dye = TPlayer.dye;
+			Item[] miscEquips = TPlayer.miscEquips;
+			Item[] miscDyes = TPlayer.miscDyes;
+			Item[] piggy = TPlayer.bank.item;
+			Item[] safe = TPlayer.bank2.item;
+			Item[] forge = TPlayer.bank3.item;
+			Item trash = TPlayer.trashItem;
+			for (int i = 0; i < NetItem.MaxInventory; i++)
+			{
+				if (i < NetItem.InventoryIndex.Item2)
+				{
+					//0-58
+					Item item = new Item();
+					if (inventory[i] != null && inventory[i].netID != 0)
+					{
+						item.netDefaults(inventory[i].netID);
+						item.Prefix(inventory[i].prefix);
+						item.AffixName();
+						if (inventory[i].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.ArmorIndex.Item2)
+				{
+					//59-78
+					var index = i - NetItem.ArmorIndex.Item1;
+					Item item = new Item();
+					if (armor[index] != null && armor[index].netID != 0)
+					{
+						item.netDefaults(armor[index].netID);
+						item.Prefix(armor[index].prefix);
+						item.AffixName();
+						if (armor[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.DyeIndex.Item2)
+				{
+					//79-88
+					var index = i - NetItem.DyeIndex.Item1;
+					Item item = new Item();
+					if (dye[index] != null && dye[index].netID != 0)
+					{
+						item.netDefaults(dye[index].netID);
+						item.Prefix(dye[index].prefix);
+						item.AffixName();
+						if (dye[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.MiscEquipIndex.Item2)
+				{
+					//89-93
+					var index = i - NetItem.MiscEquipIndex.Item1;
+					Item item = new Item();
+					if (miscEquips[index] != null && miscEquips[index].netID != 0)
+					{
+						item.netDefaults(miscEquips[index].netID);
+						item.Prefix(miscEquips[index].prefix);
+						item.AffixName();
+						if (miscEquips[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.MiscDyeIndex.Item2)
+				{
+					//93-98
+					var index = i - NetItem.MiscDyeIndex.Item1;
+					Item item = new Item();
+					if (miscDyes[index] != null && miscDyes[index].netID != 0)
+					{
+						item.netDefaults(miscDyes[index].netID);
+						item.Prefix(miscDyes[index].prefix);
+						item.AffixName();
+						if (miscDyes[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.PiggyIndex.Item2)
+				{
+					//98-138
+					var index = i - NetItem.PiggyIndex.Item1;
+					Item item = new Item();
+					if (piggy[index] != null && piggy[index].netID != 0)
+					{
+						item.netDefaults(piggy[index].netID);
+						item.Prefix(piggy[index].prefix);
+						item.AffixName();
+
+						if (piggy[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.SafeIndex.Item2)
+				{
+					//138-178
+					var index = i - NetItem.SafeIndex.Item1;
+					Item item = new Item();
+					if (safe[index] != null && safe[index].netID != 0)
+					{
+						item.netDefaults(safe[index].netID);
+						item.Prefix(safe[index].prefix);
+						item.AffixName();
+
+						if (safe[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.TrashIndex.Item2)
+				{
+					//179-219
+					Item item = new Item();
+					if (trash != null && trash.netID != 0)
+					{
+						item.netDefaults(trash.netID);
+						item.Prefix(trash.prefix);
+						item.AffixName();
+
+						if (trash.stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack);
+							}
+						}
+					}
+				}
+				else
+				{
+					//220
+					var index = i - NetItem.ForgeIndex.Item1;
+					Item item = new Item();
+					if (forge[index] != null && forge[index].netID != 0)
+					{
+						item.netDefaults(forge[index].netID);
+						item.Prefix(forge[index].prefix);
+						item.AffixName();
+
+						if (forge[index].stack > item.maxStack)
+						{
+							check = true;
+							if (shouldSendMessage)
+							{
+								SendErrorMessage("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack);
+							}
+						}
+					}
+
+				}
+			}
+
+			return check;
+		}
+
 		/// <summary>
 		/// The player's server side inventory data.
 		/// </summary>

@@ -1916,7 +1916,9 @@ namespace TShockAPI
 
 			if (!args.Player.HasPermission(Permissions.ignorestackhackdetection))
 			{
-				TShock.HackedInventory(args.Player);
+				// TODO: When checkignores gets merged, this needs to set the hacked item stack flag
+				// and get moved to bouncer
+				args.Player.HasHackedItemStacks(true);
 			}
 
 			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
