@@ -1612,7 +1612,7 @@ namespace TShockAPI
 				args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
 			{
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
-				args.Player.IgnoreActionsForClearingTrashCan = true;
+				args.Player.IsDisabledPendingTrashRemoval = true;
 			}
 
 			if (slot == 58) //this is the hand

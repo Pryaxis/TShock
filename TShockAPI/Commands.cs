@@ -1636,7 +1636,7 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage("SSC has been saved.");
 				foreach (TSPlayer player in TShock.Players)
 				{
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 						TShock.CharacterDB.InsertPlayerData(player, true);
 					}
@@ -1681,7 +1681,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Player \"{0}\" has to perform a /login attempt first.", matchedPlayer.Name);
 				return;
 			}
-			if (matchedPlayer.IgnoreActionsForClearingTrashCan)
+			if (matchedPlayer.IsDisabledPendingTrashRemoval)
 			{
 				args.Player.SendErrorMessage("Player \"{0}\" has to reconnect first.", matchedPlayer.Name);
 				return;
@@ -1887,7 +1887,7 @@ namespace TShockAPI
 			{
 				foreach (TSPlayer player in TShock.Players)
 				{
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 						player.SaveServerCharacter();
 					}

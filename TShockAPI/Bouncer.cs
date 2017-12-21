@@ -863,7 +863,7 @@ namespace TShockAPI
 						{
 							args.Player.SendErrorMessage("Please /register or /login to play!");
 						}
-						else if (args.Player.IgnoreActionsForClearingTrashCan)
+						else if (args.Player.IsDisabledPendingTrashRemoval)
 						{
 							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
 						}

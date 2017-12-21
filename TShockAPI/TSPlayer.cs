@@ -286,7 +286,8 @@ namespace TShockAPI
 		/// <summary>Determines if the player is disabled by the item bans system for having banned wearables on the server.</summary>
 		public bool IsDisabledForBannedWearable = false;
 
-		public bool IgnoreActionsForClearingTrashCan;
+		/// <summary>Determines if the player is disabled for not clearing their trash. A re-login is the only way to reset this.</summary>
+		public bool IsDisabledPendingTrashRemoval;
 
 		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
 		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
@@ -300,7 +301,7 @@ namespace TShockAPI
 		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
 		public bool CheckIgnores()
 		{
-			return IsDisabledForSSC || IsDisabledForStackDetection || IsDisabledForBannedWearable || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC || IsDisabledForStackDetection || IsDisabledForBannedWearable || IsDisabledPendingTrashRemoval || !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>
@@ -660,7 +661,7 @@ namespace TShockAPI
 			if (Main.ServerSideCharacter)
 			{
 				IsDisabledForSSC = true;
-				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
+				if (!IsDisabledPendingTrashRemoval && (!Dead || TPlayer.difficulty != 2))
 				{
 					PlayerData.CopyCharacter(this);
 					TShock.CharacterDB.InsertPlayerData(this);

@@ -945,7 +945,7 @@ namespace TShockAPI
 				foreach (TSPlayer player in Players)
 				{
 					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 
 						CharacterDB.InsertPlayerData(player);
@@ -1409,7 +1409,7 @@ namespace TShockAPI
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info("{0} disconnected.", tsplr.Name);
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
