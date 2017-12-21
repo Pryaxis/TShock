@@ -283,7 +283,8 @@ namespace TShockAPI
 		/// <summary>Determines if the player is disabled by Bouncer for having hacked item stacks.</summary>
 		public bool IsDisabledForStackDetection = false;
 
-		public string IgnoreActionsForDisabledArmor = "none";
+		/// <summary>Determines if the player is disabled by the item bans system for having banned wearables on the server.</summary>
+		public bool IsDisabledForBannedWearable = false;
 
 		public bool IgnoreActionsForClearingTrashCan;
 
@@ -299,7 +300,7 @@ namespace TShockAPI
 		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
 		public bool CheckIgnores()
 		{
-			return IsDisabledForSSC || IsDisabledForStackDetection || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC || IsDisabledForStackDetection || IsDisabledForBannedWearable || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>

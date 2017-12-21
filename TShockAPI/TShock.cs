@@ -1161,7 +1161,7 @@ namespace TShockAPI
 								break;
 							}
 						}
-						player.IgnoreActionsForDisabledArmor = check;
+						player.IsDisabledForBannedWearable = true;
 
 						if (player.CheckIgnores())
 						{

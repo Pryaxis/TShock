@@ -1801,7 +1801,7 @@ namespace TShockAPI
 						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
@@ -1873,7 +1873,7 @@ namespace TShockAPI
 						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 
 					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);

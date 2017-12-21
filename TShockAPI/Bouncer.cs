@@ -847,15 +847,15 @@ namespace TShockAPI
 					if (distance > TShock.Config.MaxRangeForDisabled)
 					{
 						// We need to tell them they were disabled and why, then revert the change.
-						if (args.Player.IsDisabledForStackDetection == true)
+						if (args.Player.IsDisabledForStackDetection)
 						{
 							args.Player.SendErrorMessage("Disabled. You went too far with hacked item stacks.");
 						}
-						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
+						else if (args.Player.IsDisabledForBannedWearable)
 						{
-							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
+							args.Player.SendErrorMessage("Disabled. You went too far with banned armor.");
 						}
-						else if (args.Player.IsDisabledForSSC == true)
+						else if (args.Player.IsDisabledForSSC)
 						{
 							args.Player.SendErrorMessage("Disabled. You need to {0}login, since server side characters is enabled.", TShock.Config.CommandSpecifier);
 						}

@@ -865,7 +865,7 @@ namespace TShockAPI
 						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 
