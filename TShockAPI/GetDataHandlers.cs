@@ -1612,7 +1612,7 @@ namespace TShockAPI
 				args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
 			{
 				// The player might have moved an item to their trash can before they performed a single login attempt yet.
-				args.Player.IgnoreActionsForClearingTrashCan = true;
+				args.Player.IsDisabledPendingTrashRemoval = true;
 			}
 
 			if (slot == 58) //this is the hand
@@ -1784,7 +1784,7 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{
@@ -1798,10 +1798,10 @@ namespace TShockAPI
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
@@ -1856,7 +1856,7 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{
@@ -1870,10 +1870,10 @@ namespace TShockAPI
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 
 					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);

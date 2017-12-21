@@ -945,7 +945,7 @@ namespace TShockAPI
 				foreach (TSPlayer player in Players)
 				{
 					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 
 						CharacterDB.InsertPlayerData(player);
@@ -1083,7 +1083,7 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						if (player.CheckIgnores())
+						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1106,7 +1106,7 @@ namespace TShockAPI
 								break;
 							}
 						}
-						player.IgnoreActionsForCheating = check;
+						player.IsDisabledForStackDetection = true;
 						check = "none";
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
@@ -1161,9 +1161,9 @@ namespace TShockAPI
 								break;
 							}
 						}
-						player.IgnoreActionsForDisabledArmor = check;
+						player.IsDisabledForBannedWearable = true;
 
-						if (player.CheckIgnores())
+						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1409,7 +1409,7 @@ namespace TShockAPI
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info("{0} disconnected.", tsplr.Name);
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -1684,8 +1684,8 @@ namespace TShockAPI
 			{
 				if (Main.ServerSideCharacter)
 				{
-					player.SendErrorMessage(
-						player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					player.IsDisabledForSSC = true;
+					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)

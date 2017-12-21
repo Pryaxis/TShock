@@ -848,7 +848,7 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{
@@ -862,10 +862,10 @@ namespace TShockAPI
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
 					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 
@@ -1636,7 +1636,7 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage("SSC has been saved.");
 				foreach (TSPlayer player in TShock.Players)
 				{
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 						TShock.CharacterDB.InsertPlayerData(player, true);
 					}
@@ -1681,7 +1681,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Player \"{0}\" has to perform a /login attempt first.", matchedPlayer.Name);
 				return;
 			}
-			if (matchedPlayer.IgnoreActionsForClearingTrashCan)
+			if (matchedPlayer.IsDisabledPendingTrashRemoval)
 			{
 				args.Player.SendErrorMessage("Player \"{0}\" has to reconnect first.", matchedPlayer.Name);
 				return;
@@ -1887,7 +1887,7 @@ namespace TShockAPI
 			{
 				foreach (TSPlayer player in TShock.Players)
 				{
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 						player.SaveServerCharacter();
 					}
