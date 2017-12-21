@@ -296,12 +296,15 @@ namespace TShockAPI
 			return (DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000;
 		}
 
-		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
-		public bool CheckIgnores()
+		/// <summary>Easy check if a player has any of IsDisabledForSSC, IsDisabledForStackDetection, IsDisabledForBannedWearable, or IsDisabledPendingTrashRemoval set. Or if they're not logged in and a login is required.</summary>
+		/// <returns>If any of the checks that warrant disabling are set on this player. If true, Disable() is repeatedly called on them.</returns>
+		public bool IsBeingDisabled()
 		{
-			return IsDisabledForSSC || IsDisabledForStackDetection || IsDisabledForBannedWearable || IsDisabledPendingTrashRemoval || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC
+			|| IsDisabledForStackDetection
+			|| IsDisabledForBannedWearable
+			|| IsDisabledPendingTrashRemoval
+			|| !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>

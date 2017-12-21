@@ -1083,7 +1083,7 @@ namespace TShockAPI
 
 					if (Main.ServerSideCharacter && !player.IsLoggedIn)
 					{
-						if (player.CheckIgnores())
+						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
 						}
@@ -1163,7 +1163,7 @@ namespace TShockAPI
 						}
 						player.IsDisabledForBannedWearable = true;
 
-						if (player.CheckIgnores())
+						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
 						}
