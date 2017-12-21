@@ -861,7 +861,7 @@ namespace TShockAPI
 						}
 						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
 						{
-							args.Player.SendErrorMessage("Please /register or /login to play!");
+							args.Player.SendErrorMessage("Account needed! Please {0}register or {0}login to play!", TShock.Config.CommandSpecifier);
 						}
 						else if (args.Player.IsDisabledPendingTrashRemoval)
 						{

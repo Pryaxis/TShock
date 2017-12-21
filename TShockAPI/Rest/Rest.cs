@@ -258,7 +258,7 @@ namespace Rests
 		}
 
 		[Obsolete("This method will be removed in the next release")]
-		public static HandlerList<RestRequestEventArgs> RestRequestEvent;
+		public static HandlerList<RestRequestEventArgs> RestRequestEvent = new HandlerList<RestRequestEventArgs>();
 
 		private static bool OnRestRequestCall(RequestEventArgs request)
 		{
