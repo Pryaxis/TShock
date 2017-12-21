@@ -862,7 +862,7 @@ namespace TShockAPI
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
 						args.Player.IgnoreActionsForDisabledArmor = "none";

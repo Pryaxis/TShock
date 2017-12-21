@@ -847,9 +847,9 @@ namespace TShockAPI
 					if (distance > TShock.Config.MaxRangeForDisabled)
 					{
 						// We need to tell them they were disabled and why, then revert the change.
-						if (args.Player.IgnoreActionsForCheating != "none")
+						if (args.Player.IsDisabledForStackDetection == true)
 						{
-							args.Player.SendErrorMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating);
+							args.Player.SendErrorMessage("Disabled. You went too far with hacked item stacks.");
 						}
 						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
 						{
@@ -857,7 +857,7 @@ namespace TShockAPI
 						}
 						else if (args.Player.IsDisabledForSSC == true)
 						{
-							args.Player.SendErrorMessage("Disabled. Server side characters is enabled, and you aren't logged in.");
+							args.Player.SendErrorMessage("Disabled. You need to {0}login, since server side characters is enabled.", TShock.Config.CommandSpecifier);
 						}
 						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
 						{

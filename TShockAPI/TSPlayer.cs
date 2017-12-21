@@ -280,7 +280,8 @@ namespace TShockAPI
 		/// <summary>Determines if the player is disabled by the SSC subsystem for not being logged in.</summary>
 		public bool IsDisabledForSSC = false;
 
-		public string IgnoreActionsForCheating = "none";
+		/// <summary>Determines if the player is disabled by Bouncer for having hacked item stacks.</summary>
+		public bool IsDisabledForStackDetection = false;
 
 		public string IgnoreActionsForDisabledArmor = "none";
 
@@ -298,7 +299,7 @@ namespace TShockAPI
 		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
 		public bool CheckIgnores()
 		{
-			return IsDisabledForSSC || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC || IsDisabledForStackDetection || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>
