@@ -857,7 +857,7 @@ namespace TShockAPI
 						}
 						else if (args.Player.IsDisabledForSSC)
 						{
-							args.Player.SendErrorMessage("Disabled. You need to {0}login to use your server inventory and items.", TShock.Config.CommandSpecifier);
+							args.Player.SendErrorMessage("Disabled. You need to {0}login to load your saved data.", TShock.Config.CommandSpecifier);
 						}
 						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
 						{
