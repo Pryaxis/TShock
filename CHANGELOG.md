@@ -56,6 +56,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `TSPlayer` to `GetDataHandlers.GemLockToggle`. (@hakusaro)
 * Added `GetDataHandlers.PlaceItemFrame` hook and related arguments. (@hakusaro)
 * Added `TSPlayer.IsBouncerThrottled()`. (@hakusaro)
+* Added `TSPlayer.IsBeingDisabled()` and removed `TShock.CheckIgnores(TSPlayer)`. (@hakusaro)
 * Added `TSPlayer.CheckIgnores()` and removed `TShock.CheckIgnores(TSPlayer)`. (@hakusaro)
 * Hooks inside TShock can now be registered with their `Register` method and can be prioritized according to the TShock HandlerList system. (@hakusaro)
 * Fix message requiring login not using the command specifier set in the config file. (@hakusaro)

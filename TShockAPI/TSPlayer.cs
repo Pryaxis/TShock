@@ -277,13 +277,17 @@ namespace TShockAPI
 
 		private string CacheIP;
 
-		public string IgnoreActionsForInventory = "none";
+		/// <summary>Determines if the player is disabled by the SSC subsystem for not being logged in.</summary>
+		public bool IsDisabledForSSC = false;
 
-		public string IgnoreActionsForCheating = "none";
+		/// <summary>Determines if the player is disabled by Bouncer for having hacked item stacks.</summary>
+		public bool IsDisabledForStackDetection = false;
 
-		public string IgnoreActionsForDisabledArmor = "none";
+		/// <summary>Determines if the player is disabled by the item bans system for having banned wearables on the server.</summary>
+		public bool IsDisabledForBannedWearable = false;
 
-		public bool IgnoreActionsForClearingTrashCan;
+		/// <summary>Determines if the player is disabled for not clearing their trash. A re-login is the only way to reset this.</summary>
+		public bool IsDisabledPendingTrashRemoval;
 
 		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
 		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
@@ -292,12 +296,15 @@ namespace TShockAPI
 			return (DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000;
 		}
 
-		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
-		public bool CheckIgnores()
+		/// <summary>Easy check if a player has any of IsDisabledForSSC, IsDisabledForStackDetection, IsDisabledForBannedWearable, or IsDisabledPendingTrashRemoval set. Or if they're not logged in and a login is required.</summary>
+		/// <returns>If any of the checks that warrant disabling are set on this player. If true, Disable() is repeatedly called on them.</returns>
+		public bool IsBeingDisabled()
 		{
-			return IgnoreActionsForInventory != "none" || IgnoreActionsForCheating != "none" || IgnoreActionsForDisabledArmor != "none" || IgnoreActionsForClearingTrashCan || !IsLoggedIn && TShock.Config.RequireLogin;
+			return IsDisabledForSSC
+			|| IsDisabledForStackDetection
+			|| IsDisabledForBannedWearable
+			|| IsDisabledPendingTrashRemoval
+			|| !IsLoggedIn && TShock.Config.RequireLogin;
 		}
 
 		/// <summary>
@@ -656,8 +663,8 @@ namespace TShockAPI
 			PlayerHooks.OnPlayerLogout(this);
 			if (Main.ServerSideCharacter)
 			{
-				IgnoreActionsForInventory = $"Server side characters is enabled! Please {Commands.Specifier}register or {Commands.Specifier}login to play!";
-				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
+				IsDisabledForSSC = true;
+				if (!IsDisabledPendingTrashRemoval && (!Dead || TPlayer.difficulty != 2))
 				{
 					PlayerData.CopyCharacter(this);
 					TShock.CharacterDB.InsertPlayerData(this);
