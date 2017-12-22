@@ -1146,7 +1146,8 @@ namespace TShockAPI
 			{
 				for (int j = y; j < y + tileData.Height; j++)
 				{
-					if (TShock.CheckTilePermission(args.Player, i, j, type, EditAction.PlaceTile))
+					if (!args.Player.HasModifiedIceSuccessfully(i, j, type, EditAction.PlaceTile)
+						&& !args.Player.HasBuildPermission(i, j))
 					{
 						args.Player.SendTileSquare(i, j, 4);
 						args.Handled = true;
@@ -1477,7 +1478,8 @@ namespace TShockAPI
 					return;
 				}
 
-				if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
+				if (!args.Player.HasModifiedIceSuccessfully(tileX, tileY, editData, action)
+					&& !args.Player.HasBuildPermission(tileX, tileY))
 				{
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;

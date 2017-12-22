@@ -385,6 +385,46 @@ namespace TShockAPI
 			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
 		}
 
+		/// <summary>Checks if a player can place ice, and if they can, tracks ice placements and removals.</summary>
+		/// <param name="x">The x coordinate of the suspected ice block.</param>
+		/// <param name="y">The y coordinate of the suspected ice block.</param>
+		/// <param name="tileType">The tile type of the suspected ice block.</param>
+		/// <param name="editAction">The EditAction on the suspected ice block.</param>
+		/// <returns>True if a player successfully places an ice tile or removes one of their past ice tiles.</returns>
+		public bool HasModifiedIceSuccessfully(int x, int y, short tileType, GetDataHandlers.EditAction editAction)
+		{
+			// The goal is to short circuit ASAP.
+			// A subsequent call to HasBuildPermission can figure this out if not explicitly ice.
+			if (!TShock.Config.AllowIce)
+			{
+				return false;
+			}
+
+			// They've placed some ice. Horrible!
+			if (editAction == GetDataHandlers.EditAction.PlaceTile && tileType == TileID.MagicalIceBlock)
+			{
+				IceTiles.Add(new Point(x, y));
+				return true;
+			}
+
+			// The edit wasn't an add, so we check to see if the position matches any of the known ice tiles
+			if (editAction == GetDataHandlers.EditAction.KillTile)
+			{
+				foreach (Point p in IceTiles)
+				{
+					// If they're trying to kill ice or dirt, and the tile was in the list, we allow it.
+					if (p.X == x && p.Y == y && (Main.tile[p.X, p.Y].type == TileID.Dirt || Main.tile[p.X, p.Y].type == TileID.MagicalIceBlock))
+					{
+						IceTiles.Remove(p);
+						return true;
+					}
+				}
+			}
+
+			// Only a small number of cases let this happen.
+			return false;
+		}
+
 		/// <summary>
 		/// A list of points where ice tiles have been placed.
 		/// </summary>
