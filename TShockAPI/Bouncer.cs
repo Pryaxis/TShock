@@ -533,11 +533,8 @@ namespace TShockAPI
 			short y = args.Y;
 			byte homeless = args.Homeless;
 
-			// Calls to TShock.CheckTilePermission need to be broken up into different subsystems
-			// In particular, this handles both regions and other things. Ouch.
 			if (!args.Player.HasBuildPermission(x, y))
 			{
-				args.Player.SendErrorMessage("You do not have access to modify this area.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
 				args.Handled = true;

@@ -62,6 +62,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fix message requiring login not using the command specifier set in the config file. (@hakusaro)
 * Move `TShock.CheckRangePermission()` to `TSPlayer.IsInRange` which **returns the opposite** of what the previous method did (see updated docs). (@hakusaro)
 * Move `TShock.CheckSpawn` to `Utils.IsInSpawn`. (@hakusaro)
+* Replace `TShock.CheckTilePermission` with `TSPlayer.HasBuildPermission`, `TSPlayer.HasPaintPermission`, and `TSPlayer.HasModifiedIceSuccessfully` respectively. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

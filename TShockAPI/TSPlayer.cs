@@ -346,7 +346,7 @@ namespace TShockAPI
 		/// <param name="x">The x coordinate they want to build at.</param>
 		/// <param name="y">The y coordinate they want to paint at.</param>
 		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
-		public bool HasBuildPermission(int x, int y)
+		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
 		{
 			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
 			// The goal is to short circuit on easy stuff as much as possible.
@@ -356,10 +356,12 @@ namespace TShockAPI
 			// (General build protection takes precedence over spawn protection)
 			if (!TShock.Config.DisableBuild || HasPermission(Permissions.antibuild))
 			{
+				failure = BuildPermissionFailPoint.SpawnProtect;
 				// If they have spawn protect bypass, or it isn't spawn, or it isn't in spawn; continue
 				// (If they have spawn protect bypass, we don't care if it's spawn or not)
 				if (!TShock.Config.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
 				{
+					failure = BuildPermissionFailPoint.Regions;
 					// If they have build permission in this region, then they're allowed to continue
 					if (TShock.Regions.CanBuild(x, y, this))
 					{
@@ -367,12 +369,28 @@ namespace TShockAPI
 					}
 				}
 			}
-
-			// TODO: Implement warning system.
-
 			// If they lack build permission, they end up here.
 			// If they have build permission but lack the ability to edit spawn and it's spawn, they end up here.
 			// If they have build, it isn't spawn, or they can edit spawn, but they fail the region check, they end up here.
+
+			// If they shouldn't be warned, exit early.
+			if (!shouldWarnPlayer)
+				return false;
+
+			// If they should be warned, warn them.
+			switch (failure)
+			{
+				case BuildPermissionFailPoint.GeneralBuild:
+					SendErrorMessage("You lack permission to build on this server.");
+					break;
+				case BuildPermissionFailPoint.SpawnProtect:
+					SendErrorMessage("You lack permission to build in the spawn point.");
+					break;
+				case BuildPermissionFailPoint.Regions:
+					SendErrorMessage("You lack permission to build in this region.");
+					break;
+			}
+
 			return false;
 		}
 
