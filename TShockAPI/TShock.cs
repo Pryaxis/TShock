@@ -1085,7 +1085,7 @@ namespace TShockAPI
 						{
 							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
-						check = "none";
+						string check = "none";
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
 						{
