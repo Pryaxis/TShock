@@ -308,9 +308,9 @@ namespace TShockAPI
 		}
 
 		/// <summary>Checks to see if a player has hacked item stacks in their inventory, and messages them as it checks.</summary>
-		/// <param name="shouldSendMessage">If the check should send a message to the player with the results of the check.</param>
+		/// <param name="shouldWarnPlayer">If the check should send a message to the player with the results of the check.</param>
 		/// <returns>True if any stacks don't conform.</returns>
-		public bool HasHackedItemStacks(bool shouldSendMessage = false)
+		public bool HasHackedItemStacks(bool shouldWarnPlayer = false)
 		{
 			// Iterates through each inventory location a player has.
 			// This section is sub divided into number ranges for what each range of slots corresponds to.
@@ -340,7 +340,7 @@ namespace TShockAPI
 						if (inventory[i].stack > item.maxStack || inventory[i].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack);
 							}
@@ -360,7 +360,7 @@ namespace TShockAPI
 						if (armor[index].stack > item.maxStack || armor[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack);
 							}
@@ -380,7 +380,7 @@ namespace TShockAPI
 						if (dye[index].stack > item.maxStack || dye[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack);
 							}
@@ -400,7 +400,7 @@ namespace TShockAPI
 						if (miscEquips[index].stack > item.maxStack || miscEquips[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack);
 							}
@@ -420,7 +420,7 @@ namespace TShockAPI
 						if (miscDyes[index].stack > item.maxStack || miscDyes[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack);
 							}
@@ -441,7 +441,7 @@ namespace TShockAPI
 						if (piggy[index].stack > item.maxStack || piggy[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
 							}
@@ -462,7 +462,7 @@ namespace TShockAPI
 						if (safe[index].stack > item.maxStack || safe[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
 							}
@@ -482,7 +482,7 @@ namespace TShockAPI
 						if (trash.stack > item.maxStack)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack);
 							}
@@ -503,7 +503,7 @@ namespace TShockAPI
 						if (forge[index].stack > item.maxStack || forge[index].stack < 0)
 						{
 							check = true;
-							if (shouldSendMessage)
+							if (shouldWarnPlayer)
 							{
 								SendErrorMessage("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack);
 							}

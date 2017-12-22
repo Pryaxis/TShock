@@ -1098,7 +1098,7 @@ namespace TShockAPI
 						string check = "none";
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
-							player.IsDisabledForStackDetection = player.HasHackedItemStacks(true);
+							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
 						check = "none";
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once

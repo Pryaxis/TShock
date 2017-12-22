@@ -83,7 +83,7 @@ namespace TShockAPI
 
 			if (!args.Player.HasPermission(Permissions.ignorestackhackdetection))
 			{
-				args.Player.IsDisabledForStackDetection = args.Player.HasHackedItemStacks(true);
+				args.Player.IsDisabledForStackDetection = args.Player.HasHackedItemStacks(shouldWarnPlayer: true);
 			}
 		}
 
