@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			// Setup hooks
 
+			GetDataHandlers.GetSection += OnGetSection;
 			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
 			GetDataHandlers.GemLockToggle += OnGemLockToggle;
 			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
@@ -62,6 +63,28 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare += OnSendTileSquare;
 			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
 			GetDataHandlers.TileEdit += OnTileEdit;
+		}
+
+		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
+		{
+			if (args.Player.RequestedSection)
+			{
+				args.Handled = true;
+				return;
+			}
+			args.Player.RequestedSection = true;
+
+			if (String.IsNullOrEmpty(args.Player.Name))
+			{
+				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasPermission(Permissions.ignorestackhackdetection))
+			{
+				args.Player.IsDisabledForStackDetection = args.Player.HasHackedItemStacks(true);
+			}
 		}
 
 		/// <summary>Fired when an item frame is placed for anti-cheat detection.</summary>

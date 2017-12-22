@@ -58,6 +58,19 @@ namespace TShockAPI
 		}
 	}
 
+	/// <summary>
+	/// A custom HandledEventArgs that contains TShock's TSPlayer for the triggering uesr and the Terraria MP data stream.
+	/// Differentiated by GetDataHandlerArgs because it can be handled and responds to being handled.
+	/// </summary>
+	public class GetDataHandledEventArgs : HandledEventArgs
+	{
+		/// <summary>The TSPlayer that triggered the event.</summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>The raw MP packet data associated with the event.</summary>
+		public MemoryStream Data { get; set; }
+	}
+
 	public static class GetDataHandlers
 	{
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
@@ -1903,21 +1916,47 @@ namespace TShockAPI
 			return true;
 		}
 
+		/// <summary>The arguments to a GetSection packet.</summary>
+		public class GetSectionEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X position requested. Or -1 for spawn.</summary>
+			public int X { get; set; }
+
+			/// <summary>The Y position requested. Or -1 for spawn.</summary>
+			public int Y { get; set; }
+		}
+
+		/// <summary>The hook for a GetSection event.</summary>
+		public static HandlerList<GetSectionEventArgs> GetSection = new HandlerList<GetSectionEventArgs>();
+
+		/// <summary>Fires a GetSection event.</summary>
+		/// <param name="player">The TSPlayer that caused the GetSection.</param>
+		/// <param name="data">The raw MP protocol data.</param>
+		/// <param name="x">The x coordinate requested or -1 for spawn.</param>
+		/// <param name="y">The y coordinate requested or -1 for spawn.</param>
+		/// <returns>bool</returns>
+		private static bool OnGetSection(TSPlayer player, MemoryStream data, int x, int y)
+		{
+			if (GetSection == null)
+				return false;
+
+			var args = new GetSectionEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+			};
+
+			GetSection.Invoke(null, args);
+			return args.Handled;
+		}
+
 		private static bool HandleGetSection(GetDataHandlerArgs args)
 		{
-			if (args.Player.RequestedSection)
-				return true;
-			args.Player.RequestedSection = true;
-			if (String.IsNullOrEmpty(args.Player.Name))
-			{
-				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
-				return true;
-			}
 
-			if (!args.Player.HasPermission(Permissions.ignorestackhackdetection))
-			{
-				args.Player.IsDisabledForStackDetection = args.Player.HasHackedItemStacks(true);
-			}
+			if (OnGetSection(args.Player, args.Data, args.Data.ReadInt32(), args.Data.ReadInt32()))
+				return true;
 
 			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
 				!args.Player.HasPermission(Permissions.reservedslot))
