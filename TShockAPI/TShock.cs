@@ -772,20 +772,6 @@ namespace TShockAPI
 				.AddFlag("--no-restart", () => NoRestart = true);
 
 			CliParser.ParseFromSource(parms);
-
-			/*"-connperip": Todo - Requires an OTAPI modification
-			{
-				int limit;
-				if (int.TryParse(parms[++i], out limit))
-				{
-					//Netplay.MaxConnections = limit;
-					//ServerApi.LogWriter.PluginWriteLine(this, string.Format(
-					//	"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);
-					ServerApi.LogWriter.PluginWriteLine(this, "\"-connperip\" is not supported in this version of TShock.", TraceLevel.Verbose);
-				}
-				else
-					ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-connperip\".", TraceLevel.Warning);
-			}*/
 		}
 
 		/// <summary>HandleCommandLinePostConfigLoad - Handles additional command line options after the config file is read.</summary>
