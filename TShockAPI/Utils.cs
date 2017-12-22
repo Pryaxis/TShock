@@ -1525,6 +1525,17 @@ namespace TShockAPI
 			return (float)Math.Sqrt(num3);
 		}
 
+		/// <summary>Checks to see if a location is in the spawn protection area.</summary>
+		/// <param name="x">The x coordinate to check.</param>
+		/// <param name="y">The y coordinate to check.</param>
+		/// <returns>If the given x,y location is in the spawn area.</returns>
+		public static bool IsInSpawn(int x, int y)
+		{
+			Vector2 tile = new Vector2(x, y);
+			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
+			return Distance(spawn, tile) <= TShock.Config.SpawnProtectionRadius;
+		}
+
 		/// <summary>Computes the max styles...</summary>
 		internal void ComputeMaxStyles()
 		{

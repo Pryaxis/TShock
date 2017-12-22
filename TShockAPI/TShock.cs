@@ -1828,7 +1828,7 @@ namespace TShockAPI
 			{
 				if (!player.HasPermission(Permissions.editspawn))
 				{
-					if (CheckSpawn(tileX, tileY))
+					if (Utils.IsInSpawn(tileX, tileY))
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000)
 						{
@@ -1895,7 +1895,7 @@ namespace TShockAPI
 			{
 				if (!player.HasPermission(Permissions.editspawn))
 				{
-					if (CheckSpawn(tileX, tileY))
+					if (Utils.IsInSpawn(tileX, tileY))
 					{
 						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000)
 						{
@@ -1909,16 +1909,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		/// <summary>CheckSpawn - Checks to see if a location is inside the spawn protection zone.</summary>
-		/// <param name="x">x - The x coordinate to check.</param>
-		/// <param name="y">y - The y coordinate to check.</param>
-		/// <returns>bool - True if the location is inside the spawn protection zone.</returns>
-		public static bool CheckSpawn(int x, int y)
-		{
-			Vector2 tile = new Vector2(x, y);
-			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-			return Utils.Distance(spawn, tile) <= Config.SpawnProtectionRadius;
-		}
+
 
 		/// <summary>Distance - Determines the distance between two vectors.</summary>
 		/// <param name="value1">value1 - The first vector location.</param>
