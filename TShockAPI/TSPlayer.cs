@@ -335,6 +335,56 @@ namespace TShockAPI
 			return true;
 		}
 
+		private enum BuildPermissionFailPoint
+		{
+			GeneralBuild,
+			SpawnProtect,
+			Regions
+		}
+
+		/// <summary>Determines if the player can build on a given point.</summary>
+		/// <param name="x">The x coordinate they want to build at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
+		public bool HasBuildPermission(int x, int y)
+		{
+			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
+			// The goal is to short circuit on easy stuff as much as possible.
+			// Don't compute permissions unless needed, and don't compute taxing stuff unless needed.
+
+			// If the player has bypass on build protection or building is enabled; continue
+			// (General build protection takes precedence over spawn protection)
+			if (!TShock.Config.DisableBuild || HasPermission(Permissions.antibuild))
+			{
+				// If they have spawn protect bypass, or it isn't spawn, or it isn't in spawn; continue
+				// (If they have spawn protect bypass, we don't care if it's spawn or not)
+				if (!TShock.Config.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
+				{
+					// If they have build permission in this region, then they're allowed to continue
+					if (TShock.Regions.CanBuild(x, y, this))
+					{
+						return true;
+					}
+				}
+			}
+
+			// TODO: Implement warning system.
+
+			// If they lack build permission, they end up here.
+			// If they have build permission but lack the ability to edit spawn and it's spawn, they end up here.
+			// If they have build, it isn't spawn, or they can edit spawn, but they fail the region check, they end up here.
+			return false;
+		}
+
+		/// <summary>Determines if the player can paint on a given point. Checks general build permissions, then paint.</summary>
+		/// <param name="x">The x coordinate they want to paint at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if they can paint.</returns>
+		public bool HasPaintPermission(int x, int y)
+		{
+			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
+		}
+
 		/// <summary>
 		/// A list of points where ice tiles have been placed.
 		/// </summary>

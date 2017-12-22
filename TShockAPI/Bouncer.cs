@@ -76,7 +76,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			if (!args.Player.HasBuildPermission(args.X, args.Y))
 			{
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
 				args.Handled = true;
@@ -114,7 +114,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			if (!args.Player.HasBuildPermission(args.X, args.Y))
 			{
 				args.Handled = true;
 				return;
@@ -132,7 +132,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, args.X, args.Y))
+			if (!args.Player.HasBuildPermission(args.X, args.Y))
 			{
 				args.Handled = true;
 				return;
@@ -183,7 +183,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (TShock.CheckTilePermission(args.Player, x, y))
+				if (!args.Player.HasBuildPermission(x, y))
 				{
 					args.Handled = true;
 					return;
@@ -510,7 +510,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
+			if (!args.Player.HasBuildPermission(Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
 			{
 				args.Handled = true;
 				return;
@@ -535,7 +535,7 @@ namespace TShockAPI
 
 			// Calls to TShock.CheckTilePermission need to be broken up into different subsystems
 			// In particular, this handles both regions and other things. Ouch.
-			if (TShock.CheckTilePermission(args.Player, x, y))
+			if (!args.Player.HasBuildPermission(x, y))
 			{
 				args.Player.SendErrorMessage("You do not have access to modify this area.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
@@ -570,7 +570,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, args.X, args.Y) && TShock.Config.RegionProtectChests)
+			if (!args.Player.HasBuildPermission(args.X, args.Y) && TShock.Config.RegionProtectChests)
 			{
 				args.Handled = true;
 				return;
@@ -625,7 +625,7 @@ namespace TShockAPI
 				}
 			}
 
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
+			if (!args.Player.HasBuildPermission(tileX, tileY))
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
@@ -758,7 +758,7 @@ namespace TShockAPI
 				}
 			}
 
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
+			if (!args.Player.HasBuildPermission(tileX, tileY))
 			{
 				args.Player.SendTileSquare(tileX, tileY, 1);
 				args.Handled = true;
@@ -1660,7 +1660,7 @@ namespace TShockAPI
 
 						var tile = Main.tile[realx, realy];
 						var newtile = tiles[x, y];
-						if (TShock.CheckTilePermission(args.Player, realx, realy) ||
+						if (!args.Player.HasBuildPermission(realx, realy) ||
 							!args.Player.IsInRange(realx, realy))
 						{
 							continue;
