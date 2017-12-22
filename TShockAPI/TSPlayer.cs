@@ -321,6 +321,20 @@ namespace TShockAPI
 
 		public bool SilentJoinInProgress;
 
+		/// <summary>Checks if a player has permission to modify a tile dependent on range checks.</summary>
+		/// <param name="x"> The x coordinate of the tile.</param>
+		/// <param name="y">The y coordinate of the tile.</param>
+		/// <param name="range">The range to check for.</param>
+		/// <returns>True if the player is in range of a tile or if range checks are off. False if not.</returns>
+		public bool IsInRange(int x, int y, int range = 32)
+		{
+			if (TShock.Config.RangeChecks && ((Math.Abs(TileX - x) > range) || (Math.Abs(TileY - y) > range)))
+			{
+				return false;
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// A list of points where ice tiles have been placed.
 		/// </summary>

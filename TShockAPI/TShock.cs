@@ -585,7 +585,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (CheckRangePermission(tsplr, args.Chest.x, args.Chest.y))
+				if (!tsplr.IsInRange(args.Chest.x, args.Chest.y))
 				{
 					args.Handled = true;
 					return;
@@ -1755,24 +1755,6 @@ namespace TShockAPI
 		{
 			if (Config.DisableHardmode)
 				e.Handled = true;
-		}
-
-
-
-
-		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <param name="x">x - The x coordinate of the tile.</param>
-		/// <param name="y">y - The y coordinate of the tile.</param>
-		/// <param name="range">range - The range to check for.</param>
-		/// <returns>bool - True if the player should not be able to place the tile. False if they can, or if range checks are off.</returns>
-		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
-		{
-			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > range) || (Math.Abs(player.TileY - y) > range)))
-			{
-				return true;
-			}
-			return false;
 		}
 
 		/// <summary>CheckTilePermission - Checks to see if a player has permission to modify a tile in general.</summary>

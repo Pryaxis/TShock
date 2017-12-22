@@ -2578,7 +2578,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, x, y))
+			if (!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.SignNew, "", id);
 				return true;
@@ -2898,7 +2898,7 @@ namespace TShockAPI
 
 			if (args.Player.IsBouncerThrottled() ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
-				TShock.CheckRangePermission(args.Player, x, y))
+				!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
@@ -2942,7 +2942,7 @@ namespace TShockAPI
 
 			if (args.Player.IsBouncerThrottled() ||
 				TShock.CheckTilePermission(args.Player, x, y, true) ||
-				TShock.CheckRangePermission(args.Player, x, y))
+				!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
 				return true;
@@ -3293,7 +3293,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, (int)position.X, (int)position.Y))
+			if (!args.Player.IsInRange((int)position.X, (int)position.Y))
 			{
 				return true;
 			}

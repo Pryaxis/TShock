@@ -83,7 +83,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			if (!args.Player.IsInRange(args.X, args.Y))
 			{
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
 				args.Handled = true;
@@ -138,7 +138,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			if (!args.Player.IsInRange(args.X, args.Y))
 			{
 				args.Handled = true;
 				return;
@@ -253,7 +253,7 @@ namespace TShockAPI
 			}
 
 			if (TShock.Config.RangeChecks &&
-				TShock.CheckRangePermission(args.Player, (int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
+				!args.Player.IsInRange((int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
 			{
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				args.Handled = true;
@@ -319,7 +319,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
+			if (!args.Player.IsInRange(TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
 			{
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -373,7 +373,7 @@ namespace TShockAPI
 			// client side (but only if it passed the range check) (i.e., return false)
 			if (type == 0)
 			{
-				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
 				{
 					// Causes item duplications. Will be re added if necessary
 					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -385,7 +385,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
+			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f)))
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
@@ -465,7 +465,7 @@ namespace TShockAPI
 				return;
 			}
 			
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
+			if (!args.Player.IsInRange(TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
 			{
 				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
 				args.Handled = true;
@@ -516,7 +516,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
+			if (!args.Player.IsInRange(Main.chest[id].x, Main.chest[id].y))
 			{
 				args.Handled = true;
 				return;
@@ -544,7 +544,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, x, y))
+			if (!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
@@ -564,7 +564,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, args.X, args.Y))
+			if (!args.Player.IsInRange(args.X, args.Y))
 			{
 				args.Handled = true;
 				return;
@@ -632,7 +632,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
+			if (!args.Player.IsInRange(tileX, tileY))
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
@@ -765,7 +765,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY, 16))
+			if (!args.Player.IsInRange(tileX, tileY, 16))
 			{
 				args.Player.SendTileSquare(tileX, tileY, 1);
 				args.Handled = true;
@@ -1160,7 +1160,7 @@ namespace TShockAPI
 					|| type != TileID.SilkRope
 					|| type != TileID.VineRope
 					|| type != TileID.WebRope)
-					&& TShock.CheckRangePermission(args.Player, x, y))
+					&& !args.Player.IsInRange(x, y))
 			{
 				args.Player.SendTileSquare(x, y, 4);
 				args.Handled = true;
@@ -1484,7 +1484,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (TShock.CheckRangePermission(args.Player, tileX, tileY))
+				if (!args.Player.IsInRange(tileX, tileY))
 				{
 					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
 					{
@@ -1661,7 +1661,7 @@ namespace TShockAPI
 						var tile = Main.tile[realx, realy];
 						var newtile = tiles[x, y];
 						if (TShock.CheckTilePermission(args.Player, realx, realy) ||
-							TShock.CheckRangePermission(args.Player, realx, realy))
+							!args.Player.IsInRange(realx, realy))
 						{
 							continue;
 						}
