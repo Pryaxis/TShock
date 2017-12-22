@@ -377,6 +377,12 @@ namespace TShockAPI
 			if (!shouldWarnPlayer)
 				return false;
 
+			// Space out warnings by 2 seconds so that they don't get spammed.
+			if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - lastPermissionWarning) < 2000)
+			{
+				return false;
+			}
+
 			// If they should be warned, warn them.
 			switch (failure)
 			{
@@ -390,6 +396,9 @@ namespace TShockAPI
 					SendErrorMessage("You lack permission to build in this region.");
 					break;
 			}
+
+			// Set the last warning time to now.
+			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 			return false;
 		}
@@ -449,24 +458,10 @@ namespace TShockAPI
 		public List<Point> IceTiles;
 
 		/// <summary>
-		/// Unused, can be removed.
+		/// The last time the player was warned for build permissions.
+		/// In MS, defaults to 1 (so it will warn on the first attempt).
 		/// </summary>
-		public long RPm = 1;
-
-		/// <summary>
-		/// World protection message cool down.
-		/// </summary>
-		public long WPm = 1;
-
-		/// <summary>
-		/// Spawn protection message cool down.
-		/// </summary>
-		public long SPm = 1;
-
-		/// <summary>
-		/// Permission to build message cool down.
-		/// </summary>
-		public long BPm = 1;
+		public long lastPermissionWarning = 1;
 
 		/// <summary>
 		/// The time in ms when the player has logged in.
