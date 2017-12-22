@@ -308,10 +308,12 @@ namespace TShockAPI
 		}
 
 		/// <summary>Checks to see if a player has hacked item stacks in their inventory, and messages them as it checks.</summary>
-		/// <param name="message">If the check should send a message to the player with the results of the check.</param>
+		/// <param name="shouldSendMessage">If the check should send a message to the player with the results of the check.</param>
 		/// <returns>True if any stacks don't conform.</returns>
 		public bool HasHackedItemStacks(bool shouldSendMessage = false)
 		{
+			// Iterates through each inventory location a player has.
+			// This section is sub divided into number ranges for what each range of slots corresponds to.
 			bool check = false;
 
 			Item[] inventory = TPlayer.inventory;
@@ -327,14 +329,15 @@ namespace TShockAPI
 			{
 				if (i < NetItem.InventoryIndex.Item2)
 				{
-					//0-58
+					// From above: this is slots 0-58 in the inventory.
+					// 0-58
 					Item item = new Item();
 					if (inventory[i] != null && inventory[i].netID != 0)
 					{
 						item.netDefaults(inventory[i].netID);
 						item.Prefix(inventory[i].prefix);
 						item.AffixName();
-						if (inventory[i].stack > item.maxStack)
+						if (inventory[i].stack > item.maxStack || inventory[i].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
@@ -346,7 +349,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.ArmorIndex.Item2)
 				{
-					//59-78
+					// 59-78
 					var index = i - NetItem.ArmorIndex.Item1;
 					Item item = new Item();
 					if (armor[index] != null && armor[index].netID != 0)
@@ -354,7 +357,7 @@ namespace TShockAPI
 						item.netDefaults(armor[index].netID);
 						item.Prefix(armor[index].prefix);
 						item.AffixName();
-						if (armor[index].stack > item.maxStack)
+						if (armor[index].stack > item.maxStack || armor[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
@@ -366,7 +369,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.DyeIndex.Item2)
 				{
-					//79-88
+					// 79-88
 					var index = i - NetItem.DyeIndex.Item1;
 					Item item = new Item();
 					if (dye[index] != null && dye[index].netID != 0)
@@ -374,7 +377,7 @@ namespace TShockAPI
 						item.netDefaults(dye[index].netID);
 						item.Prefix(dye[index].prefix);
 						item.AffixName();
-						if (dye[index].stack > item.maxStack)
+						if (dye[index].stack > item.maxStack || dye[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
@@ -386,7 +389,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.MiscEquipIndex.Item2)
 				{
-					//89-93
+					// 89-93
 					var index = i - NetItem.MiscEquipIndex.Item1;
 					Item item = new Item();
 					if (miscEquips[index] != null && miscEquips[index].netID != 0)
@@ -394,7 +397,7 @@ namespace TShockAPI
 						item.netDefaults(miscEquips[index].netID);
 						item.Prefix(miscEquips[index].prefix);
 						item.AffixName();
-						if (miscEquips[index].stack > item.maxStack)
+						if (miscEquips[index].stack > item.maxStack || miscEquips[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
@@ -406,7 +409,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.MiscDyeIndex.Item2)
 				{
-					//93-98
+					// 93-98
 					var index = i - NetItem.MiscDyeIndex.Item1;
 					Item item = new Item();
 					if (miscDyes[index] != null && miscDyes[index].netID != 0)
@@ -414,7 +417,7 @@ namespace TShockAPI
 						item.netDefaults(miscDyes[index].netID);
 						item.Prefix(miscDyes[index].prefix);
 						item.AffixName();
-						if (miscDyes[index].stack > item.maxStack)
+						if (miscDyes[index].stack > item.maxStack || miscDyes[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
@@ -426,7 +429,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.PiggyIndex.Item2)
 				{
-					//98-138
+					// 98-138
 					var index = i - NetItem.PiggyIndex.Item1;
 					Item item = new Item();
 					if (piggy[index] != null && piggy[index].netID != 0)
@@ -435,19 +438,19 @@ namespace TShockAPI
 						item.Prefix(piggy[index].prefix);
 						item.AffixName();
 
-						if (piggy[index].stack > item.maxStack)
+						if (piggy[index].stack > item.maxStack || piggy[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
+								SendErrorMessage("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
 							}
 						}
 					}
 				}
 				else if (i < NetItem.SafeIndex.Item2)
 				{
-					//138-178
+					// 138-178
 					var index = i - NetItem.SafeIndex.Item1;
 					Item item = new Item();
 					if (safe[index] != null && safe[index].netID != 0)
@@ -456,19 +459,19 @@ namespace TShockAPI
 						item.Prefix(safe[index].prefix);
 						item.AffixName();
 
-						if (safe[index].stack > item.maxStack)
+						if (safe[index].stack > item.maxStack || safe[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
+								SendErrorMessage("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
 							}
 						}
 					}
 				}
 				else if (i < NetItem.TrashIndex.Item2)
 				{
-					//179-219
+					// 179-219
 					Item item = new Item();
 					if (trash != null && trash.netID != 0)
 					{
@@ -488,7 +491,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					//220
+					// 220
 					var index = i - NetItem.ForgeIndex.Item1;
 					Item item = new Item();
 					if (forge[index] != null && forge[index].netID != 0)
@@ -497,7 +500,7 @@ namespace TShockAPI
 						item.Prefix(forge[index].prefix);
 						item.AffixName();
 
-						if (forge[index].stack > item.maxStack)
+						if (forge[index].stack > item.maxStack || forge[index].stack < 0)
 						{
 							check = true;
 							if (shouldSendMessage)

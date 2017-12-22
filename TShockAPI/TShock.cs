@@ -1096,17 +1096,10 @@ namespace TShockAPI
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
 						string check = "none";
-						foreach (Item item in player.TPlayer.inventory)
+						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
-							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
-								item.type != 0)
-							{
-								check = "Remove item " + item.Name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-								player.SendErrorMessage(check);
-								break;
-							}
+							player.IsDisabledForStackDetection = player.HasHackedItemStacks(true);
 						}
-						player.IsDisabledForStackDetection = true;
 						check = "none";
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
