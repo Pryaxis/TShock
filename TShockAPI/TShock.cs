@@ -1081,7 +1081,6 @@ namespace TShockAPI
 					}
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
-						string check = "none";
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
 							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
@@ -1140,7 +1139,8 @@ namespace TShockAPI
 								break;
 							}
 						}
-						player.IsDisabledForBannedWearable = true;
+						if (check != "none")
+							player.IsDisabledForBannedWearable = true;
 
 						if (player.IsBeingDisabled())
 						{
