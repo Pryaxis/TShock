@@ -1162,9 +1162,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerDamage event
 		/// </summary>
-		public class PlayerDamageEventArgs : HandledEventArgs
+		public class PlayerDamageEventArgs : GetDataHandledEventArgs
 		{
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -1193,7 +1192,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerDamageEventArgs> PlayerDamage = new HandlerList<PlayerDamageEventArgs>();
 
-		private static bool OnPlayerDamage(TSPlayer player, byte id, byte dir, short dmg, bool pvp, bool crit, PlayerDeathReason playerDeathReason)
+		private static bool OnPlayerDamage(TSPlayer player, MemoryStream data, byte id, byte dir, short dmg, bool pvp, bool crit, PlayerDeathReason playerDeathReason)
 		{
 			if (PlayerDamage == null)
 				return false;
@@ -1201,6 +1200,7 @@ namespace TShockAPI
 			var args = new PlayerDamageEventArgs
 			{
 				Player = player,
+				Data = data,
 				ID = id,
 				Direction = dir,
 				Damage = dmg,
@@ -2692,7 +2692,7 @@ namespace TShockAPI
 			var crit = bits[0];
 			var pvp = bits[1];
 
-			if (OnPlayerDamage(args.Player, id, direction, dmg, pvp, crit, playerDeathReason))
+			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
 				return true;
 
 			if (TShock.Players[id].GodMode)
