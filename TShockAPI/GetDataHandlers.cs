@@ -743,10 +743,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a NewProjectile event
 		/// </summary>
-		public class NewProjectileEventArgs : HandledEventArgs
+		public class NewProjectileEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the new projectile.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ???
 			/// </summary>
@@ -785,13 +783,14 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
 
-		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
 		{
 			if (NewProjectile == null)
 				return false;
 
 			var args = new NewProjectileEventArgs
 			{
+				Data = data,
 				Identity = ident,
 				Position = pos,
 				Velocity = vel,
@@ -2382,7 +2381,7 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
 			return false;
