@@ -426,6 +426,7 @@ namespace TShockAPI
 
 		/// <summary>Fires the ProjectileKill event.</summary>
 		/// <param name="player">The TSPlayer that caused the event.</param>
+		/// <param name="data">The MemoryStream containing the raw event data.</param>
 		/// <param name="identity">The projectile identity (from the packet).</param>
 		/// <param name="owner">The projectile's owner (from the packet).</param>
 		/// <param name="index">The projectile's index (from Main.projectiles).</param>
@@ -618,6 +619,8 @@ namespace TShockAPI
 		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer = new HandlerList<HealOtherPlayerEventArgs>();
 
 		/// <summary>Fires the HealOtherPlayer event</summary>
+		/// <param name="player">The TSPlayer that caused the event.</param>
+		/// <param name="data">The MemoryStream containing the raw event data.</param>
 		/// <param name="targetPlayerIndex">The Terraria player index that the event targets</param>
 		/// <param name="amount">The amount to heal</param>
 		/// <returns>bool</returns>
@@ -684,9 +687,6 @@ namespace TShockAPI
 		/// <summary>The arguments to the PlaceObject hook.</summary>
 		public class PlaceObjectEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The calling Player.</summary>
-			public TSPlayer Player { get; set; }
-
 			/// <summary>The X location where the object was placed.</summary>
 			public short X { get; set ; }
 
@@ -710,7 +710,8 @@ namespace TShockAPI
 		public static HandlerList<PlaceObjectEventArgs> PlaceObject = new HandlerList<PlaceObjectEventArgs>();
 
 		/// <summary>Fires the PlaceObject hook. To be called when an object is placed in the world.</summary>
-		/// <param name="player">The originating player.</param>
+		/// <param name="player">The TSPlayer that caused the event.</param>
+		/// <param name="data">The MemoryStream containing the raw event data.</param>
 		/// <param name="x">The x position where the object is placed.</param>
 		/// <param name="y">The y position where the object is placed.</param>
 		/// <param name="type">The type of object.</param>
