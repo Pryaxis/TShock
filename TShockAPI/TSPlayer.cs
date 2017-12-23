@@ -530,7 +530,7 @@ namespace TShockAPI
 
 		public bool SilentJoinInProgress;
 
-		/// <summary>Checks if a player has permission to modify a tile dependent on range checks.</summary>
+		/// <summary>Checks if a player is in range of a given tile if range checks are enabled.</summary>
 		/// <param name="x"> The x coordinate of the tile.</param>
 		/// <param name="y">The y coordinate of the tile.</param>
 		/// <param name="range">The range to check for.</param>
