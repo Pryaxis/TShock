@@ -256,7 +256,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerHP event
 		/// </summary>
-		public class PlayerHPEventArgs : HandledEventArgs
+		public class PlayerHPEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
@@ -276,13 +276,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerHPEventArgs> PlayerHP = new HandlerList<PlayerHPEventArgs>();
 
-		private static bool OnPlayerHP(byte _plr, short _cur, short _max)
+		private static bool OnPlayerHP(TSPlayer player, MemoryStream data, byte _plr, short _cur, short _max)
 		{
 			if (PlayerHP == null)
 				return false;
 
 			var args = new PlayerHPEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _plr,
 				Current = _cur,
 				Max = _max,
@@ -1645,7 +1647,7 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerHP(plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
+			if (OnPlayerHP(args.Player, args.Data, plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
 			if (max > TShock.Config.MaxHP && !args.Player.HasPermission(Permissions.ignorehp))
