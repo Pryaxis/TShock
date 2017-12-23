@@ -1263,11 +1263,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>The arguments to the MassWireOperation event.</summary>
-		public class MassWireOperationEventArgs : HandledEventArgs
+		public class MassWireOperationEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
-
 			/// <summary>The start X point in the operation.</summary>
 			public short StartX { get; set; }
 
@@ -1287,7 +1284,7 @@ namespace TShockAPI
 		/// <summary>Fired on a mass wire edit operation.</summary>
 		public static HandlerList<MassWireOperationEventArgs> MassWireOperation = new HandlerList<MassWireOperationEventArgs>();
 
-		private static bool OnMassWireOperation(TSPlayer player, short startX, short startY, short endX, short endY, byte toolMode)
+		private static bool OnMassWireOperation(TSPlayer player, MemoryStream data, short startX, short startY, short endX, short endY, byte toolMode)
 		{
 			if (MassWireOperation == null)
 				return false;
@@ -1295,6 +1292,7 @@ namespace TShockAPI
 			var args = new MassWireOperationEventArgs
 			{
 				Player = player,
+				Data = data,
 				StartX = startX,
 				StartY = startY,
 				EndX = endX,
@@ -3098,7 +3096,7 @@ namespace TShockAPI
 			short endY = args.Data.ReadInt16();
 			byte toolMode = (byte) args.Data.ReadByte();
 
-			if (OnMassWireOperation(args.Player, startX, startY, endX, endY, toolMode))
+			if (OnMassWireOperation(args.Player, args.Data, startX, startY, endX, endY, toolMode))
 				return true;
 
 			return false;
