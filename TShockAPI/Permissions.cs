@@ -448,19 +448,4 @@ namespace TShockAPI
 			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
 		}
 	}
-
-	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public sealed class TodoAttribute : Attribute
-	{
-		public string Info { get; private set; }
-
-		public TodoAttribute(string info)
-		{
-			Info = info;
-		}
-
-		public TodoAttribute()
-		{
-		}
-	}
 }
