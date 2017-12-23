@@ -296,7 +296,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerMana event
 		/// </summary>
-		public class PlayerManaEventArgs : HandledEventArgs
+		public class PlayerManaEventArgs : GetDataHandledEventArgs
 		{
 			public byte PlayerId { get; set; }
 			public short Current { get; set; }
@@ -307,13 +307,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerManaEventArgs> PlayerMana = new HandlerList<PlayerManaEventArgs>();
 
-		private static bool OnPlayerMana(byte _plr, short _cur, short _max)
+		private static bool OnPlayerMana(TSPlayer player, MemoryStream data, byte _plr, short _cur, short _max)
 		{
 			if (PlayerMana == null)
 				return false;
 
 			var args = new PlayerManaEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _plr,
 				Current = _cur,
 				Max = _max,
@@ -1676,7 +1678,7 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerMana(plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
+			if (OnPlayerMana(args.Player, args.Data, plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
 				return true;
 
 			if (max > TShock.Config.MaxMP && !args.Player.HasPermission(Permissions.ignoremp))
