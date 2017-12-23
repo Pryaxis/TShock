@@ -411,10 +411,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>The arguments to the ProjectileKill packet.</summary>
-		public class ProjectileKillEventArgs : HandledEventArgs
+		public class ProjectileKillEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that fired the event.</summary>
-			public TSPlayer Player;
 			/// <summary>The projectile's identity...?</summary>
 			public int ProjectileIdentity;
 			/// <summary>The the player index of the projectile's owner (Main.players).</summary>
@@ -432,7 +430,7 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner (from the packet).</param>
 		/// <param name="index">The projectile's index (from Main.projectiles).</param>
 		/// <returns>bool</returns>
-		private static bool OnProjectileKill(TSPlayer player, int identity, byte owner, int index)
+		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index)
 		{
 			if (ProjectileKill == null)
 				return false;
@@ -440,6 +438,7 @@ namespace TShockAPI
 			var args = new ProjectileKillEventArgs
 			{
 				Player = player,
+				Data = data,
 				ProjectileIdentity = identity,
 				ProjectileOwner = owner,
 				ProjectileIndex = index,
@@ -2405,7 +2404,7 @@ namespace TShockAPI
 			owner = (byte)args.Player.Index;
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnProjectileKill(args.Player, ident, owner, index))
+			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
 			{
 				return true;
 			}
