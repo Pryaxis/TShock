@@ -1430,7 +1430,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a NPCStrike event
 		/// </summary>
-		public class TeleportEventArgs : HandledEventArgs
+		public class TeleportEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -1458,13 +1458,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<TeleportEventArgs> Teleport = new HandlerList<TeleportEventArgs>();
 
-		private static bool OnTeleport(Int16 id, byte f, float x, float y)
+		private static bool OnTeleport(TSPlayer player, MemoryStream data, Int16 id, byte f, float x, float y)
 		{
 			if (Teleport == null)
 				return false;
 
 			var args = new TeleportEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				Flag = f,
 				X = x,
@@ -2988,7 +2990,7 @@ namespace TShockAPI
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
 
-			if (OnTeleport(id, flag, x, y))
+			if (OnTeleport(args.Player, args.Data, id, flag, x, y))
 				return true;
 
 			int type = 0;
