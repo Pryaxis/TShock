@@ -499,10 +499,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerUpdate event
 		/// </summary>
-		public class PlayerUpdateEventArgs : HandledEventArgs
+		public class PlayerUpdateEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer object that triggered the event</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -531,7 +529,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate = new HandlerList<PlayerUpdateEventArgs>();
 
-		private static bool OnPlayerUpdate(TSPlayer player, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
+		private static bool OnPlayerUpdate(TSPlayer player, MemoryStream data, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
 		{
 			if (PlayerUpdate == null)
 				return false;
@@ -539,6 +537,7 @@ namespace TShockAPI
 			var args = new PlayerUpdateEventArgs
 			{
 				Player = player,
+				Data = data,
 				PlayerId = plr,
 				Control = control,
 				Item = item,
@@ -549,6 +548,7 @@ namespace TShockAPI
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
 		}
+
 		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
 		{
 			int num = (int)(Position.X / 16f);
@@ -2242,7 +2242,7 @@ namespace TShockAPI
 			if (pulley[2])
 				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
-			if (OnPlayerUpdate(args.Player, plr, control, item, pos, vel, pulley))
+			if (OnPlayerUpdate(args.Player, args.Data, plr, control, item, pos, vel, pulley))
 				return true;
 
 			if (control[5])
