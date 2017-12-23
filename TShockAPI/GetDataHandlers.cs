@@ -3170,10 +3170,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a ToggleGemLock event
 		/// </summary>
-		public class GemLockToggleEventArgs : HandledEventArgs
+		public class GemLockToggleEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// X Location
 			/// </summary>
@@ -3193,13 +3191,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<GemLockToggleEventArgs> GemLockToggle = new HandlerList<GemLockToggleEventArgs>();
 
-		private static bool OnGemLockToggle(short x, short y, bool on)
+		private static bool OnGemLockToggle(TSPlayer player, MemoryStream data, short x, short y, bool on)
 		{
 			if (GemLockToggle == null)
 				return false;
 
 			var args = new GemLockToggleEventArgs
 			{
+				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				On = on
@@ -3214,7 +3214,7 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			var on = args.Data.ReadBoolean();
 
-			if (OnGemLockToggle(x, y, on))
+			if (OnGemLockToggle(args.Player, args.Data, x, y, on))
 			{
 				return true;
 			}
