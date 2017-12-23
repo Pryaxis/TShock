@@ -852,12 +852,12 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerSpawn event
 		/// </summary>
-		public class SpawnEventArgs : HandledEventArgs
+		public class SpawnEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
-			public byte Player { get; set; }
+			public byte PlayerID { get; set; }
 			/// <summary>
 			/// X location of the player's spawn
 			/// </summary>
@@ -872,7 +872,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
 
-		private static bool OnPlayerSpawn(byte player, int spawnX, int spawnY)
+		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY)
 		{
 			if (PlayerSpawn == null)
 				return false;
@@ -880,6 +880,8 @@ namespace TShockAPI
 			var args = new SpawnEventArgs
 			{
 				Player = player,
+				Data = data,
+				PlayerID = pid,
 				SpawnX = spawnX,
 				SpawnY = spawnY,
 			};
@@ -2495,7 +2497,7 @@ namespace TShockAPI
 			var spawnx = args.Data.ReadInt16();
 			var spawny = args.Data.ReadInt16();
 
-			if (OnPlayerSpawn(player, spawnx, spawny))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
 				return true;
 
 			if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
