@@ -1016,10 +1016,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a NPCHome event
 		/// </summary>
-		public class NPCHomeChangeEventArgs : HandledEventArgs
+		public class NPCHomeChangeEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that caused the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -1042,7 +1040,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
 
-		private static bool OnUpdateNPCHome(TSPlayer player, short id, short x, short y, byte homeless)
+		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte homeless)
 		{
 			if (NPCHome == null)
 				return false;
@@ -1050,6 +1048,7 @@ namespace TShockAPI
 			var args = new NPCHomeChangeEventArgs
 			{
 				Player = player,
+				Data = data,
 				ID = id,
 				X = x,
 				Y = y,
@@ -2627,7 +2626,7 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			var homeless = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(args.Player, id, x, y, homeless))
+			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, homeless))
 				return true;
 
 			if (!args.Player.HasPermission(Permissions.movenpc))
