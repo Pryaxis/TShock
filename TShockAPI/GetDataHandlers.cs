@@ -207,7 +207,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerSlot event
 		/// </summary>
-		public class PlayerSlotEventArgs : HandledEventArgs
+		public class PlayerSlotEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID
@@ -234,13 +234,15 @@ namespace TShockAPI
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot = new HandlerList<PlayerSlotEventArgs>();
-		private static bool OnPlayerSlot(byte _plr, byte _slot, short _stack, byte _prefix, short _type)
+		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, byte _slot, short _stack, byte _prefix, short _type)
 		{
 			if (PlayerSlot == null)
 				return false;
 
 			var args = new PlayerSlotEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _plr,
 				Slot = _slot,
 				Stack = _stack,
@@ -1603,7 +1605,7 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
+			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
 				slot > NetItem.MaxInventory)
 				return true;
 			if (args.Player.IgnoreSSCPackets)
