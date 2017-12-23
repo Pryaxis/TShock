@@ -451,10 +451,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a KillMe event
 		/// </summary>
-		public class KillMeEventArgs : HandledEventArgs
+		public class KillMeEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -479,7 +477,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<KillMeEventArgs> KillMe = new HandlerList<KillMeEventArgs>();
 
-		private static bool OnKillMe(TSPlayer player, byte plr, byte direction, short damage, bool pvp, PlayerDeathReason playerDeathReason)
+		private static bool OnKillMe(TSPlayer player, MemoryStream data, byte plr, byte direction, short damage, bool pvp, PlayerDeathReason playerDeathReason)
 		{
 			if (KillMe == null)
 				return false;
@@ -487,6 +485,7 @@ namespace TShockAPI
 			var args = new KillMeEventArgs
 			{
 				Player = player,
+				Data = data,
 				PlayerId = plr,
 				Direction = direction,
 				Damage = damage,
@@ -2433,7 +2432,7 @@ namespace TShockAPI
 			BitsByte bits = (BitsByte)args.Data.ReadByte();
 			bool pvp = bits[0];
 
-			if (OnKillMe(args.Player, id, direction, dmg, pvp, playerDeathReason))
+			if (OnKillMe(args.Player, args.Data, id, direction, dmg, pvp, playerDeathReason))
 				return true;
 
 			args.Player.Dead = true;
