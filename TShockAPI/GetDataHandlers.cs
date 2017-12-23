@@ -926,10 +926,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a ChestItemChange event
 		/// </summary>
-		public class ChestItemEventArgs : HandledEventArgs
+		public class ChestItemEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ChestID
 			/// </summary>
@@ -956,7 +954,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ChestItemEventArgs> ChestItemChange = new HandlerList<ChestItemEventArgs>();
 
-		private static bool OnChestItemChange(TSPlayer player, short id, byte slot, short stacks, byte prefix, short type)
+		private static bool OnChestItemChange(TSPlayer player, MemoryStream data, short id, byte slot, short stacks, byte prefix, short type)
 		{
 			if (ChestItemChange == null)
 				return false;
@@ -964,6 +962,7 @@ namespace TShockAPI
 			var args = new ChestItemEventArgs
 			{
 				Player = player,
+				Data = data,
 				ID = id,
 				Slot = slot,
 				Stacks = stacks,
@@ -2582,7 +2581,7 @@ namespace TShockAPI
 			var prefix = args.Data.ReadInt8();
 			var type = args.Data.ReadInt16();
 
-			if (OnChestItemChange(args.Player, id, slot, stacks, prefix, type))
+			if (OnChestItemChange(args.Player, args.Data, id, slot, stacks, prefix, type))
 				return true;
 
 			Item item = new Item();
