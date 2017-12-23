@@ -605,11 +605,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>The event args object for the HealOtherPlayer event</summary>
-		public class HealOtherPlayerEventArgs : HandledEventArgs
+		public class HealOtherPlayerEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer object that caused the event</summary>
-			public TSPlayer Player { get; set; }
-
 			/// <summary>The Terraria player index of the target player</summary>
 			public byte TargetPlayerIndex { get; set; }
 
@@ -621,11 +618,10 @@ namespace TShockAPI
 		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer = new HandlerList<HealOtherPlayerEventArgs>();
 
 		/// <summary>Fires the HealOtherPlayer event</summary>
-		/// <param name="player">The TSPlayer that started the event</param>
 		/// <param name="targetPlayerIndex">The Terraria player index that the event targets</param>
 		/// <param name="amount">The amount to heal</param>
 		/// <returns>bool</returns>
-		private static bool OnHealOtherPlayer(TSPlayer player, byte targetPlayerIndex, short amount)
+		private static bool OnHealOtherPlayer(TSPlayer player, MemoryStream data, byte targetPlayerIndex, short amount)
 		{
 			if (HealOtherPlayer == null)
 				return false;
@@ -633,6 +629,7 @@ namespace TShockAPI
 			var args = new HealOtherPlayerEventArgs
 			{
 				Player = player,
+				Data = data,
 				TargetPlayerIndex = targetPlayerIndex,
 				Amount = amount,
 			};
@@ -1586,7 +1583,7 @@ namespace TShockAPI
 			byte plr = args.Data.ReadInt8();
 			short amount = args.Data.ReadInt16();
 
-			if (OnHealOtherPlayer(args.Player, plr, amount))
+			if (OnHealOtherPlayer(args.Player, args.Data, plr, amount))
 				return true;
 
 			return false;
