@@ -1305,11 +1305,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>For use in a PlaceTileEntity event.</summary>
-		public class PlaceTileEntityEventArgs : HandledEventArgs
+		public class PlaceTileEntityEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
-
 			/// <summary>The X coordinate of the event.</summary>
 			public short X { get; set; }
 
@@ -1323,7 +1320,7 @@ namespace TShockAPI
 		/// <summary>Fired when a PlaceTileEntity event occurs.</summary>
 		public static HandlerList<PlaceTileEntityEventArgs> PlaceTileEntity = new HandlerList<PlaceTileEntityEventArgs>();
 
-		private static bool OnPlaceTileEntity(TSPlayer player, short x, short y, byte type)
+		private static bool OnPlaceTileEntity(TSPlayer player, MemoryStream data, short x, short y, byte type)
 		{
 			if (PlaceTileEntity == null)
 				return false;
@@ -1331,6 +1328,7 @@ namespace TShockAPI
 			var args = new PlaceTileEntityEventArgs
 			{
 				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				Type = type
@@ -3268,7 +3266,7 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			var type = (byte) args.Data.ReadByte();
 
-			if (OnPlaceTileEntity(args.Player, x, y, type))
+			if (OnPlaceTileEntity(args.Player, args.Data, x, y, type))
 			{
 				return true;
 			}
