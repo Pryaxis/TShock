@@ -976,7 +976,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a Sign event
 		/// </summary>
-		public class SignEventArgs : HandledEventArgs
+		public class SignEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
@@ -996,13 +996,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<SignEventArgs> Sign = new HandlerList<SignEventArgs>();
 
-		private static bool OnSignEvent(short id, int x, int y)
+		private static bool OnSignEvent(TSPlayer player, MemoryStream data, short id, int x, int y)
 		{
 			if (Sign == null)
 				return false;
 
 			var args = new SignEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				X = x,
 				Y = y,
@@ -2601,7 +2603,7 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			args.Data.ReadString(); // Ignore sign text
 
-			if (OnSignEvent(id, x, y))
+			if (OnSignEvent(args.Player, args.Data, id, x, y))
 				return true;
 
 			if (TShock.CheckTilePermission(args.Player, x, y))
