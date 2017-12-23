@@ -682,7 +682,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>The arguments to the PlaceObject hook.</summary>
-		public class PlaceObjectEventArgs : HandledEventArgs
+		public class PlaceObjectEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>The calling Player.</summary>
 			public TSPlayer Player { get; set; }
@@ -718,7 +718,7 @@ namespace TShockAPI
 		/// <param name="alternate">The object's alternate data.</param>
 		/// <param name="direction">The direction of the object.</param>
 		/// <returns>bool</returns>
-		private static bool OnPlaceObject(TSPlayer player, short x, short y, short type, short style, byte alternate, bool direction)
+		private static bool OnPlaceObject(TSPlayer player, MemoryStream data, short x, short y, short type, short style, byte alternate, bool direction)
 		{
 			if (PlaceObject == null)
 				return false;
@@ -726,6 +726,7 @@ namespace TShockAPI
 			var args = new PlaceObjectEventArgs
 			{
 				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				Type = type,
@@ -2091,7 +2092,7 @@ namespace TShockAPI
 			byte alternate = args.Data.ReadInt8();
 			bool direction = args.Data.ReadBoolean();
 
-			if (OnPlaceObject(args.Player, x, y, type, style, alternate, direction))
+			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, direction))
 				return true;
 
 			return false;
