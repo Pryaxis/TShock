@@ -891,7 +891,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a ChestOpen event
 		/// </summary>
-		public class ChestOpenEventArgs : HandledEventArgs
+		public class ChestOpenEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// X location of said chest
@@ -901,24 +901,20 @@ namespace TShockAPI
 			/// Y location of said chest
 			/// </summary>
 			public int Y { get; set; }
-
-			/// <summary>
-			/// The player opening the chest
-			/// </summary>
-			public TSPlayer Player { get; set; }
 		}
 		/// <summary>
 		/// ChestOpen - Called when any chest is opened
 		/// </summary>
 		public static HandlerList<ChestOpenEventArgs> ChestOpen = new HandlerList<ChestOpenEventArgs>();
 
-		private static bool OnChestOpen(int x, int y, TSPlayer player)
+		private static bool OnChestOpen(MemoryStream data, int x, int y, TSPlayer player)
 		{
 			if (ChestOpen == null)
 				return false;
 
 			var args = new ChestOpenEventArgs
 			{
+				Data = data,
 				X = x,
 				Y = y,
 				Player = player,
@@ -2547,7 +2543,7 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 
-			if (OnChestOpen(x, y, args.Player))
+			if (OnChestOpen(args.Data, x, y, args.Player))
 				return true;
 
 			return false;
