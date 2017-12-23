@@ -641,14 +641,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a SendTileSquare event
 		/// </summary>
-		public class SendTileSquareEventArgs : HandledEventArgs
+		public class SendTileSquareEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
-
-			/// <summary>The raw memory stream from the original event</summary>
-			public MemoryStream Data { get; set; }
-
 			/// <summary>
 			/// Size of the area
 			/// </summary>
