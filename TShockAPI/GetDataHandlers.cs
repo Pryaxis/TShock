@@ -2133,7 +2133,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a PaintWall event
 		/// </summary>
-		public class PaintWallEventArgs : HandledEventArgs
+		public class PaintWallEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// X Location
@@ -2153,13 +2153,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PaintWallEventArgs> PaintWall = new HandlerList<PaintWallEventArgs>();
 
-		private static bool OnPaintWall(Int32 x, Int32 y, byte t)
+		private static bool OnPaintWall(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
 		{
 			if (PaintWall == null)
 				return false;
 
 			var args = new PaintWallEventArgs
 			{
+				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				type = t
@@ -2949,7 +2951,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			if (OnPaintWall(x, y, t))
+			if (OnPaintWall(args.Player, args.Data, x, y, t))
 			{
 				return true;
 			}
