@@ -3120,11 +3120,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>The arguments to the PlaceItemFrame event.</summary>
-		public class PlaceItemFrameEventArgs : HandledEventArgs
+		public class PlaceItemFrameEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
-			
 			/// <summary>The X coordinate of the item frame.</summary>
 			public short X { get; set; }
 			
@@ -3147,7 +3144,7 @@ namespace TShockAPI
 		/// <summary>Fired when an ItemFrame is placed.</summary>
 		public static HandlerList<PlaceItemFrameEventArgs> PlaceItemFrame = new HandlerList<PlaceItemFrameEventArgs>();
 
-		private static bool OnPlaceItemFrame(TSPlayer player, short x, short y, short itemID, byte prefix, short stack, TEItemFrame itemFrame)
+		private static bool OnPlaceItemFrame(TSPlayer player, MemoryStream data, short x, short y, short itemID, byte prefix, short stack, TEItemFrame itemFrame)
 		{
 			if (PlaceItemFrame == null)
 				return false;
@@ -3155,6 +3152,7 @@ namespace TShockAPI
 			var args = new PlaceItemFrameEventArgs
 			{
 				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				ItemID = itemID,
@@ -3313,7 +3311,7 @@ namespace TShockAPI
 			var stack = args.Data.ReadInt16();
 			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
 
-			if (OnPlaceItemFrame(args.Player, x, y, itemID, prefix, stack, itemFrame))
+			if (OnPlaceItemFrame(args.Player, args.Data, x, y, itemID, prefix, stack, itemFrame))
 			{
 				return true;
 			}
