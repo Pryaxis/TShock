@@ -1341,7 +1341,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a NPCSpecial event
 		/// </summary>
-		public class NPCSpecialEventArgs : HandledEventArgs
+		public class NPCSpecialEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -1357,13 +1357,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCSpecialEventArgs> NPCSpecial = new HandlerList<NPCSpecialEventArgs>();
 
-		private static bool OnNPCSpecial(byte id, byte type)
+		private static bool OnNPCSpecial(TSPlayer player, MemoryStream data, byte id, byte type)
 		{
 			if (NPCSpecial == null)
 				return false;
 
 			var args = new NPCSpecialEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				Type = type,
 			};
@@ -2724,7 +2726,7 @@ namespace TShockAPI
 			var id = args.Data.ReadInt8();
 			var type = args.Data.ReadInt8();
 
-			if (OnNPCSpecial(id, type))
+			if (OnNPCSpecial(args.Player, args.Data, id, type))
 				return true;
 
 			if (type == 1 && TShock.Config.DisableDungeonGuardian)
