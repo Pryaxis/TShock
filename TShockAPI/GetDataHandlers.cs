@@ -1400,7 +1400,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerBuffUpdate event
 		/// </summary>
-		public class PlayerBuffUpdateEventArgs : HandledEventArgs
+		public class PlayerBuffUpdateEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
@@ -1412,13 +1412,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate = new HandlerList<PlayerBuffUpdateEventArgs>();
 
-		private static bool OnPlayerBuffUpdate(byte id)
+		private static bool OnPlayerBuffUpdate(TSPlayer player, MemoryStream data, byte id)
 		{
 			if (PlayerBuffUpdate == null)
 				return false;
 
 			var args = new PlayerBuffUpdateEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 			};
 			PlayerBuffUpdate.Invoke(null, args);
@@ -2754,7 +2756,7 @@ namespace TShockAPI
 		{
 			var id = args.Data.ReadInt8();
 
-			if (OnPlayerBuffUpdate(id))
+			if (OnPlayerBuffUpdate(args.Player, args.Data, id))
 				return true;
 
 			for (int i = 0; i < Terraria.Player.maxBuffs; i++)
