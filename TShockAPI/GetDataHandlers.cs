@@ -139,7 +139,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a TogglePvp event
 		/// </summary>
-		public class TogglePvpEventArgs : HandledEventArgs
+		public class TogglePvpEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria player ID of the player
@@ -154,13 +154,15 @@ namespace TShockAPI
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
 		public static HandlerList<TogglePvpEventArgs> TogglePvp = new HandlerList<TogglePvpEventArgs>();
-		private static bool OnPvpToggled(byte _id, bool _pvp)
+		private static bool OnPvpToggled(TSPlayer player, MemoryStream data, byte _id, bool _pvp)
 		{
 			if (TogglePvp == null)
 				return false;
 
 			var args = new TogglePvpEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _id,
 				Pvp = _pvp,
 			};
@@ -2178,7 +2180,7 @@ namespace TShockAPI
 		{
 			byte id = args.Data.ReadInt8();
 			bool pvp = args.Data.ReadBoolean();
-			if (OnPvpToggled(id, pvp))
+			if (OnPvpToggled(args.Player, args.Data, id, pvp))
 				return true;
 
 			if (id != args.Player.Index)
