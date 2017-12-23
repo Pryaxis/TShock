@@ -60,6 +60,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `TSPlayer.CheckIgnores()` and removed `TShock.CheckIgnores(TSPlayer)`. (@hakusaro)
 * Hooks inside TShock can now be registered with their `Register` method and can be prioritized according to the TShock HandlerList system. (@hakusaro)
 * Fix message requiring login not using the command specifier set in the config file. (@hakusaro)
+* Move `TShock.CheckSpawn` to `Utils.IsInSpawn`. (@hakusaro)
 * Fix stack hack detection being inconsistent between two different check points. Moved `TShock.HackedInventory` to `TSPlayer.HasHackedItemStacks`. Added `GetDataHandlers.GetDataHandledEventArgs` which is where most hooks will inherit from in the future. (@hakusaro)
 
 ## TShock 4.3.25
