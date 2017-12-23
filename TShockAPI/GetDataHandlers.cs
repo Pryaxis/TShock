@@ -324,7 +324,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		public class PlayerInfoEventArgs : HandledEventArgs
+		public class PlayerInfoEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
@@ -353,13 +353,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo = new HandlerList<PlayerInfoEventArgs>();
 
-		private static bool OnPlayerInfo(byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
+		private static bool OnPlayerInfo(TSPlayer player, MemoryStream data, byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
 		{
 			if (PlayerInfo == null)
 				return false;
 
 			var args = new PlayerInfoEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _plrid,
 				Hair = _hair,
 				Style = _style,
@@ -1730,7 +1732,7 @@ namespace TShockAPI
 
 			bool extraSlot = extra[2];
 
-			if (OnPlayerInfo(playerid, hair, skinVariant, difficulty, name))
+			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
 				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
 				return true;
