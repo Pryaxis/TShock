@@ -808,10 +808,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a LiquidSet event
 		/// </summary>
-		public class LiquidSetEventArgs : HandledEventArgs
+		public class LiquidSetEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// X location of the tile
 			/// </summary>
@@ -834,7 +832,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<LiquidSetEventArgs> LiquidSet = new HandlerList<LiquidSetEventArgs>();
 
-		private static bool OnLiquidSet(TSPlayer player, int tilex, int tiley, byte amount, byte type)
+		private static bool OnLiquidSet(TSPlayer player, MemoryStream data, int tilex, int tiley, byte amount, byte type)
 		{
 			if (LiquidSet == null)
 				return false;
@@ -842,6 +840,7 @@ namespace TShockAPI
 			var args = new LiquidSetEventArgs
 			{
 				Player = player,
+				Data = data,
 				TileX = tilex,
 				TileY = tiley,
 				Amount = amount,
@@ -2471,7 +2470,7 @@ namespace TShockAPI
 			byte amount = args.Data.ReadInt8();
 			byte type = args.Data.ReadInt8();
 
-			if (OnLiquidSet(args.Player, tileX, tileY, amount, type))
+			if (OnLiquidSet(args.Player, args.Data, tileX, tileY, amount, type))
 				return true;
 
 			return false;
