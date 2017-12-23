@@ -18,8 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.ComponentModel;
 
+// Since the permission nodes have annotations that say what they are, we don't need XML comments.
+#pragma warning disable 1591
+
 namespace Rests
 {
+	/// <summary>Contains the REST permission nodes used in TShock.</summary>
 	public static class RestPermissions
 	{
 		// tshock.rest.bans nodes
