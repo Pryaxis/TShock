@@ -1081,19 +1081,11 @@ namespace TShockAPI
 					}
 					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
-						string check = "none";
-						foreach (Item item in player.TPlayer.inventory)
+						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
-							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
-								item.type != 0)
-							{
-								check = "Remove item " + item.Name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-								player.SendErrorMessage(check);
-								break;
-							}
+							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
-						player.IsDisabledForStackDetection = true;
-						check = "none";
+						string check = "none";
 						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
 						foreach (Item item in player.TPlayer.armor)
 						{
@@ -1147,7 +1139,8 @@ namespace TShockAPI
 								break;
 							}
 						}
-						player.IsDisabledForBannedWearable = true;
+						if (check != "none")
+							player.IsDisabledForBannedWearable = true;
 
 						if (player.IsBeingDisabled())
 						{
@@ -1932,203 +1925,6 @@ namespace TShockAPI
 		public static float Distance(Vector2 value1, Vector2 value2)
 		{
 			return Utils.Distance(value1, value2);
-		}
-
-		/// <summary>HackedInventory - Checks to see if a user has a hacked inventory. In addition, messages players the result.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if the player has a hacked inventory.</returns>
-		public static bool HackedInventory(TSPlayer player)
-		{
-			bool check = false;
-
-			Item[] inventory = player.TPlayer.inventory;
-			Item[] armor = player.TPlayer.armor;
-			Item[] dye = player.TPlayer.dye;
-			Item[] miscEquips = player.TPlayer.miscEquips;
-			Item[] miscDyes = player.TPlayer.miscDyes;
-			Item[] piggy = player.TPlayer.bank.item;
-			Item[] safe = player.TPlayer.bank2.item;
-			Item[] forge = player.TPlayer.bank3.item;
-			Item trash = player.TPlayer.trashItem;
-			for (int i = 0; i < NetItem.MaxInventory; i++)
-			{
-				if (i < NetItem.InventoryIndex.Item2)
-				{
-					//0-58
-					Item item = new Item();
-					if (inventory[i] != null && inventory[i].netID != 0)
-					{
-						item.netDefaults(inventory[i].netID);
-						item.Prefix(inventory[i].prefix);
-						item.AffixName();
-						if (inventory[i].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, inventory[i].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.ArmorIndex.Item2)
-				{
-					//59-78
-					var index = i - NetItem.ArmorIndex.Item1;
-					Item item = new Item();
-					if (armor[index] != null && armor[index].netID != 0)
-					{
-						item.netDefaults(armor[index].netID);
-						item.Prefix(armor[index].prefix);
-						item.AffixName();
-						if (armor[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.Name, armor[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.DyeIndex.Item2)
-				{
-					//79-88
-					var index = i - NetItem.DyeIndex.Item1;
-					Item item = new Item();
-					if (dye[index] != null && dye[index].netID != 0)
-					{
-						item.netDefaults(dye[index].netID);
-						item.Prefix(dye[index].prefix);
-						item.AffixName();
-						if (dye[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.Name, dye[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.MiscEquipIndex.Item2)
-				{
-					//89-93
-					var index = i - NetItem.MiscEquipIndex.Item1;
-					Item item = new Item();
-					if (miscEquips[index] != null && miscEquips[index].netID != 0)
-					{
-						item.netDefaults(miscEquips[index].netID);
-						item.Prefix(miscEquips[index].prefix);
-						item.AffixName();
-						if (miscEquips[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, miscEquips[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.MiscDyeIndex.Item2)
-				{
-					//93-98
-					var index = i - NetItem.MiscDyeIndex.Item1;
-					Item item = new Item();
-					if (miscDyes[index] != null && miscDyes[index].netID != 0)
-					{
-						item.netDefaults(miscDyes[index].netID);
-						item.Prefix(miscDyes[index].prefix);
-						item.AffixName();
-						if (miscDyes[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.Name, miscDyes[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.PiggyIndex.Item2)
-				{
-					//98-138
-					var index = i - NetItem.PiggyIndex.Item1;
-					Item item = new Item();
-					if (piggy[index] != null && piggy[index].netID != 0)
-					{
-						item.netDefaults(piggy[index].netID);
-						item.Prefix(piggy[index].prefix);
-						item.AffixName();
-
-						if (piggy[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.Name, piggy[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.SafeIndex.Item2)
-				{
-					//138-178
-					var index = i - NetItem.SafeIndex.Item1;
-					Item item = new Item();
-					if (safe[index] != null && safe[index].netID != 0)
-					{
-						item.netDefaults(safe[index].netID);
-						item.Prefix(safe[index].prefix);
-						item.AffixName();
-
-						if (safe[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.Name, safe[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.TrashIndex.Item2)
-				{
-					//179-219
-					Item item = new Item();
-					if (trash != null && trash.netID != 0)
-					{
-						item.netDefaults(trash.netID);
-						item.Prefix(trash.prefix);
-						item.AffixName();
-
-						if (trash.stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.Name, trash.stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else
-				{
-					//220
-					var index = i - NetItem.ForgeIndex.Item1;
-					Item item = new Item();
-					if (forge[index] != null && forge[index].netID != 0)
-					{
-						item.netDefaults(forge[index].netID);
-						item.Prefix(forge[index].prefix);
-						item.AffixName();
-
-						if (forge[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.Name, forge[index].stack),
-								Color.Cyan);
-						}
-					}
-
-				}
-			}
-
-			return check;
 		}
 
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
