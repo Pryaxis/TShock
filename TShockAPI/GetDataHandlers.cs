@@ -375,10 +375,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlaceChest event
 		/// </summary>
-		public class PlaceChestEventArgs : HandledEventArgs
+		public class PlaceChestEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>What the packet is doing (see MP packet docs).</summary>
 			public int Flag { get; set; }
 			/// <summary>
@@ -395,7 +393,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
 
-		private static bool OnPlaceChest(TSPlayer player, int flag, int tilex, int tiley)
+		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley)
 		{
 			if (PlaceChest == null)
 				return false;
@@ -403,6 +401,7 @@ namespace TShockAPI
 			var args = new PlaceChestEventArgs
 			{
 				Player = player,
+				Data = data,
 				Flag = flag,
 				TileX = tilex,
 				TileY = tiley,
@@ -2496,7 +2495,7 @@ namespace TShockAPI
 			int tileY = args.Data.ReadInt16();
 			args.Data.ReadInt16(); // Ignore style
 
-			if (OnPlaceChest(args.Player, flag, tileX, tileY))
+			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY))
 				return true;
 			
 			return false;
