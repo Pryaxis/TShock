@@ -1215,10 +1215,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a NPCStrike event
 		/// </summary>
-		public class NPCStrikeEventArgs : HandledEventArgs
+		public class NPCStrikeEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// ???
 			/// </summary>
@@ -1245,7 +1243,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<NPCStrikeEventArgs> NPCStrike = new HandlerList<NPCStrikeEventArgs>();
 
-		private static bool OnNPCStrike(TSPlayer player, short id, byte dir, short dmg, float knockback, byte crit)
+		private static bool OnNPCStrike(TSPlayer player, MemoryStream data, short id, byte dir, short dmg, float knockback, byte crit)
 		{
 			if (NPCStrike == null)
 				return false;
@@ -1253,6 +1251,7 @@ namespace TShockAPI
 			var args = new NPCStrikeEventArgs
 			{
 				Player = player,
+				Data = data,
 				ID = id,
 				Direction = dir,
 				Damage = dmg,
@@ -2711,7 +2710,7 @@ namespace TShockAPI
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
 
-			if (OnNPCStrike(args.Player, id, direction, dmg, knockback, crit))
+			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
 
 			if (Main.npc[id].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
