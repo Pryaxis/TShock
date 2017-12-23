@@ -2108,7 +2108,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a PaintTile event
 		/// </summary>
-		public class PaintTileEventArgs : HandledEventArgs
+		public class PaintTileEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// X Location
@@ -2128,13 +2128,15 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PaintTileEventArgs> PaintTile = new HandlerList<PaintTileEventArgs>();
 
-		private static bool OnPaintTile(Int32 x, Int32 y, byte t)
+		private static bool OnPaintTile(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
 		{
 			if (PaintTile == null)
 				return false;
 
 			var args = new PaintTileEventArgs
 			{
+				Player = player,
+				Data = data,
 				X = x,
 				Y = y,
 				type = t
@@ -2919,7 +2921,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			if (OnPaintTile(x, y, t))
+			if (OnPaintTile(args.Player, args.Data, x, y, t))
 			{
 				return true;
 			}
