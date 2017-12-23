@@ -1376,18 +1376,14 @@ namespace TShockAPI
 		/// <summary>
 		/// For use with a PlayerAnimation event
 		/// </summary>
-		public class PlayerAnimationEventArgs : HandledEventArgs
-		{
-			/// <summary>The TSPlayer that triggered the event.</summary>
-			public TSPlayer Player { get; set; }
-		}
+		public class PlayerAnimationEventArgs : GetDataHandledEventArgs { }
 
 		/// <summary>
 		/// PlayerAnimation - Called when a player animates
 		/// </summary>
 		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation = new HandlerList<PlayerAnimationEventArgs>();
 
-		private static bool OnPlayerAnimation(TSPlayer player)
+		private static bool OnPlayerAnimation(TSPlayer player, MemoryStream data)
 		{
 			if (PlayerAnimation == null)
 				return false;
@@ -1395,6 +1391,7 @@ namespace TShockAPI
 			var args = new PlayerAnimationEventArgs 
 			{
 				Player = player,
+				Data = data,
 			};
 			PlayerAnimation.Invoke(null, args);
 			return args.Handled;
@@ -2747,7 +2744,7 @@ namespace TShockAPI
 
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
-			if (OnPlayerAnimation(args.Player))
+			if (OnPlayerAnimation(args.Player, args.Data))
 				return true;
 
 			return false;
