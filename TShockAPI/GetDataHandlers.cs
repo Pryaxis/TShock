@@ -173,7 +173,7 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerTeam event
 		/// </summary>
-		public class PlayerTeamEventArgs : HandledEventArgs
+		public class PlayerTeamEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria player ID of the player
@@ -188,13 +188,15 @@ namespace TShockAPI
 		/// TogglePvp - called when a player toggles pvp
 		/// </summary>
 		public static HandlerList<PlayerTeamEventArgs> PlayerTeam = new HandlerList<PlayerTeamEventArgs>();
-		private static bool OnPlayerTeam(byte _id, byte _team)
+		private static bool OnPlayerTeam(TSPlayer player, MemoryStream data, byte _id, byte _team)
 		{
 			if (PlayerTeam == null)
 				return false;
 
 			var args = new PlayerTeamEventArgs
 			{
+				Player = player,
+				Data = data,
 				PlayerId = _id,
 				Team = _team,
 			};
@@ -2201,7 +2203,7 @@ namespace TShockAPI
 		{
 			byte id = args.Data.ReadInt8();
 			byte team = args.Data.ReadInt8();
-			if (OnPlayerTeam(id, team))
+			if (OnPlayerTeam(args.Player, args.Data, id, team))
 				return true;
 
 			if (id != args.Player.Index)
