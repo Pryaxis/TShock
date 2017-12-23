@@ -1061,9 +1061,8 @@ namespace TShockAPI
 		/// <summary>
 		/// For use in a PlayerBuff event
 		/// </summary>
-		public class PlayerBuffEventArgs : HandledEventArgs
+		public class PlayerBuffEventArgs : GetDataHandledEventArgs
 		{
-			public TSPlayer Player { get; set; }
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
@@ -1082,7 +1081,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<PlayerBuffEventArgs> PlayerBuff = new HandlerList<PlayerBuffEventArgs>();
 
-		private static bool OnPlayerBuff(TSPlayer player, byte id, byte type, int time)
+		private static bool OnPlayerBuff(TSPlayer player, MemoryStream data, byte id, byte type, int time)
 		{
 			if (PlayerBuff == null)
 				return false;
@@ -1090,6 +1089,7 @@ namespace TShockAPI
 			var args = new PlayerBuffEventArgs
 			{
 				Player = player,
+				Data = data,
 				ID = id,
 				Type = type,
 				Time = time
@@ -2645,7 +2645,7 @@ namespace TShockAPI
 			var type = args.Data.ReadInt8();
 			var time = args.Data.ReadInt32();
 
-			if (OnPlayerBuff(args.Player, id, type, time))
+			if (OnPlayerBuff(args.Player, args.Data, id, type, time))
 				return true;
 
 			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
