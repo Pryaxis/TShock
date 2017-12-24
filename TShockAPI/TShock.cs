@@ -220,10 +220,6 @@ namespace TShockAPI
 
 				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
 
-				//TSAPI previously would do this automatically, but the vanilla server wont
-				if (Netplay.ServerIP == null)
-					Netplay.ServerIP = IPAddress.Any;
-
 				DateTime now = DateTime.Now;
 				// Log path was not already set by the command line parameter?
 				if (LogPath == LogPathDefault)
