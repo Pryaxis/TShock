@@ -73,11 +73,6 @@ namespace TShockAPI
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
 
-		/// <summary>
-		/// Set by the command line, disables the '/restart' command.
-		/// </summary>
-		internal static bool NoRestart;
-
 		/// <summary>Will be set to true once Utils.StopServer() is called.</summary>
 		public static bool ShuttingDown;
 
@@ -768,8 +763,7 @@ namespace TShockAPI
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
 				.AddFlag("-dump", () => Utils.Dump())
-				.AddFlag("--stats-optout", () => StatTracker.OptOut = true)
-				.AddFlag("--no-restart", () => NoRestart = true);
+				.AddFlag("--stats-optout", () => StatTracker.OptOut = true);
 
 			CliParser.ParseFromSource(parms);
 		}
