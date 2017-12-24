@@ -530,30 +530,147 @@ namespace TShockAPI
 
 		public bool SilentJoinInProgress;
 
+		/// <summary>Checks if a player is in range of a given tile if range checks are enabled.</summary>
+		/// <param name="x"> The x coordinate of the tile.</param>
+		/// <param name="y">The y coordinate of the tile.</param>
+		/// <param name="range">The range to check for.</param>
+		/// <returns>True if the player is in range of a tile or if range checks are off. False if not.</returns>
+		public bool IsInRange(int x, int y, int range = 32)
+		{
+			if (TShock.Config.RangeChecks && ((Math.Abs(TileX - x) > range) || (Math.Abs(TileY - y) > range)))
+			{
+				return false;
+			}
+			return true;
+		}
+
+		private enum BuildPermissionFailPoint
+		{
+			GeneralBuild,
+			SpawnProtect,
+			Regions
+		}
+
+		/// <summary>Determines if the player can build on a given point.</summary>
+		/// <param name="x">The x coordinate they want to build at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
+		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
+		{
+			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
+			// The goal is to short circuit on easy stuff as much as possible.
+			// Don't compute permissions unless needed, and don't compute taxing stuff unless needed.
+
+			// If the player has bypass on build protection or building is enabled; continue
+			// (General build protection takes precedence over spawn protection)
+			if (!TShock.Config.DisableBuild || HasPermission(Permissions.antibuild))
+			{
+				failure = BuildPermissionFailPoint.SpawnProtect;
+				// If they have spawn protect bypass, or it isn't spawn, or it isn't in spawn; continue
+				// (If they have spawn protect bypass, we don't care if it's spawn or not)
+				if (!TShock.Config.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
+				{
+					failure = BuildPermissionFailPoint.Regions;
+					// If they have build permission in this region, then they're allowed to continue
+					if (TShock.Regions.CanBuild(x, y, this))
+					{
+						return true;
+					}
+				}
+			}
+			// If they lack build permission, they end up here.
+			// If they have build permission but lack the ability to edit spawn and it's spawn, they end up here.
+			// If they have build, it isn't spawn, or they can edit spawn, but they fail the region check, they end up here.
+
+			// If they shouldn't be warned, exit early.
+			if (!shouldWarnPlayer)
+				return false;
+
+			// Space out warnings by 2 seconds so that they don't get spammed.
+			if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - lastPermissionWarning) < 2000)
+			{
+				return false;
+			}
+
+			// If they should be warned, warn them.
+			switch (failure)
+			{
+				case BuildPermissionFailPoint.GeneralBuild:
+					SendErrorMessage("You lack permission to build on this server.");
+					break;
+				case BuildPermissionFailPoint.SpawnProtect:
+					SendErrorMessage("You lack permission to build in the spawn point.");
+					break;
+				case BuildPermissionFailPoint.Regions:
+					SendErrorMessage("You lack permission to build in this region.");
+					break;
+			}
+
+			// Set the last warning time to now.
+			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+			return false;
+		}
+
+		/// <summary>Determines if the player can paint on a given point. Checks general build permissions, then paint.</summary>
+		/// <param name="x">The x coordinate they want to paint at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if they can paint.</returns>
+		public bool HasPaintPermission(int x, int y)
+		{
+			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
+		}
+
+		/// <summary>Checks if a player can place ice, and if they can, tracks ice placements and removals.</summary>
+		/// <param name="x">The x coordinate of the suspected ice block.</param>
+		/// <param name="y">The y coordinate of the suspected ice block.</param>
+		/// <param name="tileType">The tile type of the suspected ice block.</param>
+		/// <param name="editAction">The EditAction on the suspected ice block.</param>
+		/// <returns>True if a player successfully places an ice tile or removes one of their past ice tiles.</returns>
+		public bool HasModifiedIceSuccessfully(int x, int y, short tileType, GetDataHandlers.EditAction editAction)
+		{
+			// The goal is to short circuit ASAP.
+			// A subsequent call to HasBuildPermission can figure this out if not explicitly ice.
+			if (!TShock.Config.AllowIce)
+			{
+				return false;
+			}
+
+			// They've placed some ice. Horrible!
+			if (editAction == GetDataHandlers.EditAction.PlaceTile && tileType == TileID.MagicalIceBlock)
+			{
+				IceTiles.Add(new Point(x, y));
+				return true;
+			}
+
+			// The edit wasn't an add, so we check to see if the position matches any of the known ice tiles
+			if (editAction == GetDataHandlers.EditAction.KillTile)
+			{
+				foreach (Point p in IceTiles)
+				{
+					// If they're trying to kill ice or dirt, and the tile was in the list, we allow it.
+					if (p.X == x && p.Y == y && (Main.tile[p.X, p.Y].type == TileID.Dirt || Main.tile[p.X, p.Y].type == TileID.MagicalIceBlock))
+					{
+						IceTiles.Remove(p);
+						return true;
+					}
+				}
+			}
+
+			// Only a small number of cases let this happen.
+			return false;
+		}
+
 		/// <summary>
 		/// A list of points where ice tiles have been placed.
 		/// </summary>
 		public List<Point> IceTiles;
 
 		/// <summary>
-		/// Unused, can be removed.
+		/// The last time the player was warned for build permissions.
+		/// In MS, defaults to 1 (so it will warn on the first attempt).
 		/// </summary>
-		public long RPm = 1;
-
-		/// <summary>
-		/// World protection message cool down.
-		/// </summary>
-		public long WPm = 1;
-
-		/// <summary>
-		/// Spawn protection message cool down.
-		/// </summary>
-		public long SPm = 1;
-
-		/// <summary>
-		/// Permission to build message cool down.
-		/// </summary>
-		public long BPm = 1;
+		public long lastPermissionWarning = 1;
 
 		/// <summary>
 		/// The time in ms when the player has logged in.
