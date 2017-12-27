@@ -832,7 +832,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="identity">identity</param>
 		/// <param name="owner">owner</param>
-		/// <returns>projectile ID or -1 if not found</returns>
+		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
 			for (int i = 0; i < Main.maxProjectiles; i++)
@@ -840,7 +840,7 @@ namespace TShockAPI
 				if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner)
 					return i;
 			}
-			return -1;
+			return 1000;
 		}
 
 		/// <summary>
