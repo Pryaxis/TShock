@@ -1195,7 +1195,7 @@ namespace TShockAPI
 				return;
 			}
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count < 1)
 				args.Player.SendErrorMessage("Invalid player.");
 			else if (players.Count > 1)
@@ -1265,7 +1265,7 @@ namespace TShockAPI
 			}
 
 			string plStr = args.Parameters[0];
-			var players = TShock.Utils.FindPlayer(plStr);
+			var players = TSPlayer.FindByNameOrID(plStr);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -1308,7 +1308,7 @@ namespace TShockAPI
 						string targetGeneralizedName = "";
 
 						// Effective ban target assignment
-						List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[1]);
+						List<TSPlayer> players = TSPlayer.FindByNameOrID(args.Parameters[1]);
 						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
 
 						// Storage variable to determine if the command executor is the server console
@@ -1658,7 +1658,7 @@ namespace TShockAPI
 			}
 
 			string playerNameToMatch = string.Join(" ", args.Parameters);
-			var matchedPlayers = TShock.Utils.FindPlayer(playerNameToMatch);
+			var matchedPlayers = TSPlayer.FindByNameOrID(playerNameToMatch);
 			if (matchedPlayers.Count < 1)
 			{
 				args.Player.SendErrorMessage("No players matched \"{0}\".", playerNameToMatch);
@@ -1696,7 +1696,7 @@ namespace TShockAPI
 			TSPlayer targetPlayer = args.Player;
 			if (args.Parameters.Count == 1 && args.Player.HasPermission(Permissions.uploadothersdata))
 			{
-				List<TSPlayer> players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				List<TSPlayer> players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 				if (players.Count > 1)
 				{
 					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
@@ -1777,7 +1777,7 @@ namespace TShockAPI
 				return;
 			}
 
-			List<TSPlayer> ply = TShock.Utils.FindPlayer(args.Parameters[0]);
+			List<TSPlayer> ply = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (ply.Count < 1)
 			{
 				args.Player.SendErrorMessage("Could not find player {0}.", args.Parameters[0]);
@@ -2396,7 +2396,7 @@ namespace TShockAPI
 
 			if (args.Parameters.Count == 1)
 			{
-				var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+				var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 				if (players.Count == 0)
 					args.Player.SendErrorMessage("Invalid player!");
 				else if (players.Count > 1)
@@ -2425,8 +2425,8 @@ namespace TShockAPI
 					return;
 				}
 
-				var players1 = TShock.Utils.FindPlayer(args.Parameters[0]);
-				var players2 = TShock.Utils.FindPlayer(args.Parameters[1]);
+				var players1 = TSPlayer.FindByNameOrID(args.Parameters[0]);
+				var players2 = TSPlayer.FindByNameOrID(args.Parameters[1]);
 
 				if (players2.Count == 0)
 					args.Player.SendErrorMessage("Invalid player!");
@@ -2520,7 +2520,7 @@ namespace TShockAPI
 			}
 
 			string playerName = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(playerName);
+			var players = TSPlayer.FindByNameOrID(playerName);
 			if (players.Count == 0)
 			{
 				if (playerName == "*")
@@ -2605,7 +2605,7 @@ namespace TShockAPI
 				player = String.Join(" ", args.Parameters);
 			}
 
-			var players = TShock.Utils.FindPlayer(player);
+			var players = TSPlayer.FindByNameOrID(player);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -2766,7 +2766,7 @@ namespace TShockAPI
 					return;
 				}
 
-				var foundplr = TShock.Utils.FindPlayer(args.Parameters[1]);
+				var foundplr = TSPlayer.FindByNameOrID(args.Parameters[1]);
 				if (foundplr.Count == 0)
 				{
 					args.Player.SendErrorMessage("Invalid player!");
@@ -4075,7 +4075,7 @@ namespace TShockAPI
 			}
 
 			string plStr = args.Parameters[0];
-			var players = TShock.Utils.FindPlayer(plStr);
+			var players = TSPlayer.FindByNameOrID(plStr);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -4929,7 +4929,7 @@ namespace TShockAPI
 				return;
 			}
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -4977,7 +4977,7 @@ namespace TShockAPI
 				return;
 			}
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -5029,7 +5029,7 @@ namespace TShockAPI
 			int annoy = 5;
 			int.TryParse(args.Parameters[1], out annoy);
 
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
@@ -5049,7 +5049,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}confuse <player>", Specifier);
 				return;
 			}
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
@@ -5069,7 +5069,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rocket <player>", Specifier);
 				return;
 			}
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
@@ -5098,7 +5098,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}firework <player> [red|green|blue|yellow]", Specifier);
 				return;
 			}
-			var players = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
@@ -5266,7 +5266,7 @@ namespace TShockAPI
 			}
 
 			string plStr = String.Join(" ", args.Parameters);
-			var players = TShock.Utils.FindPlayer(plStr);
+			var players = TSPlayer.FindByNameOrID(plStr);
 			if (players.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -5531,7 +5531,7 @@ namespace TShockAPI
 
 				if (item.type >= 1 && item.type < Main.maxItemTypes)
 				{
-					var players = TShock.Utils.FindPlayer(plStr);
+					var players = TSPlayer.FindByNameOrID(plStr);
 					if (players.Count == 0)
 					{
 						args.Player.SendErrorMessage("Invalid player!");
@@ -5577,7 +5577,7 @@ namespace TShockAPI
 			if (args.Parameters.Count > 0)
 			{
 				string plStr = String.Join(" ", args.Parameters);
-				var players = TShock.Utils.FindPlayer(plStr);
+				var players = TSPlayer.FindByNameOrID(plStr);
 				if (players.Count == 0)
 				{
 					args.Player.SendErrorMessage("Invalid player!");
@@ -5662,7 +5662,7 @@ namespace TShockAPI
 			}
 			int id = 0;
 			int time = 60;
-			var foundplr = TShock.Utils.FindPlayer(args.Parameters[0]);
+			var foundplr = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (foundplr.Count == 0)
 			{
 				args.Player.SendErrorMessage("Invalid player!");
@@ -5794,7 +5794,7 @@ namespace TShockAPI
 					return;
 				}
 				string plStr = String.Join(" ", args.Parameters);
-				var players = TShock.Utils.FindPlayer(plStr);
+				var players = TSPlayer.FindByNameOrID(plStr);
 				if (players.Count == 0)
 				{
 					args.Player.SendErrorMessage("Invalid player!");

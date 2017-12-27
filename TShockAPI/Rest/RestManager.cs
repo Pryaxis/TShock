@@ -1244,7 +1244,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(name))
 				return RestMissingParam("player");
 
-			var found = TShock.Utils.FindPlayer(name);
+			var found = TSPlayer.FindByNameOrID(name);
 			switch(found.Count)
 			{
 				case 1:
