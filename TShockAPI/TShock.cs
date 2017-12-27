@@ -1724,16 +1724,6 @@ namespace TShockAPI
 				e.Handled = true;
 		}
 
-		/// <summary>Distance - Determines the distance between two vectors.</summary>
-		/// <param name="value1">value1 - The first vector location.</param>
-		/// <param name="value2">value2 - The second vector location.</param>
-		/// <returns>float - The distance between the two vectors.</returns>
-		[Obsolete("Use TShock.Utils.Distance(Vector2, Vector2) instead.", true)]
-		public static float Distance(Vector2 value1, Vector2 value2)
-		{
-			return Utils.Distance(value1, value2);
-		}
-
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
 		/// <param name="file">file - The config file object.</param>
 		public void OnConfigRead(ConfigFile file)
