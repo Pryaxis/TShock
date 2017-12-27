@@ -1288,22 +1288,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gives an item to the player.
-		/// </summary>
-		/// <param name="type">The item ID.</param>
-		/// <param name="name">The item name. This parameter is unused.</param>
-		/// <param name="width">The width of the receiver.</param>
-		/// <param name="height">The height of the receiver.</param>
-		/// <param name="stack">The item stack.</param>
-		/// <param name="prefix">The item prefix.</param>
-		[Obsolete("Use the GiveItem overload with fewer parameters.")]
-		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
-		{
-			int itemIndex = Item.NewItem((int)X, (int)Y, width, height, type, stack, true, prefix, true);
-			SendData(PacketTypes.ItemDrop, "", itemIndex);
-		}
-
-		/// <summary>
 		/// Sends an information message to the player.
 		/// </summary>
 		/// <param name="msg">The message.</param>
