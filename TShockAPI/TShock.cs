@@ -886,8 +886,6 @@ namespace TShockAPI
 			Utils.ComputeMaxStyles();
 			Utils.FixChestStacks();
 
-			Utils.UpgradeMotD();
-
 			if (Config.UseServerName)
 			{
 				Main.worldName = Config.ServerName;
