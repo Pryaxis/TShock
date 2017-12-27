@@ -963,7 +963,7 @@ namespace TShockAPI
 			short type = args.Type;
 			int index = args.Index;
 
-			if (index > Main.maxProjectiles || index < 0)
+			if (index > Main.maxProjectiles)
 			{
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
