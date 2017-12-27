@@ -210,8 +210,6 @@ namespace TShockAPI
 			return Main.player.Where(p => null != p && p.active).Count();
 		}
 
-
-
 		//Random should not be generated in a method
 		Random r = new Random();
 
