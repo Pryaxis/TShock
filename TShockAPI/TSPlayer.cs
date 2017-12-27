@@ -1276,27 +1276,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
-		/// </summary>
-		/// <param name="type">The item ID.</param>
-		/// <param name="name">The item name.</param>
-		/// <param name="width">The width of the receiver.</param>
-		/// <param name="height">The height of the receiver.</param>
-		/// <param name="stack">The item stack.</param>
-		/// <param name="prefix">The item prefix.</param>
-		/// <returns>True or false, depending if the item passed the check or not.</returns>
-		[Obsolete("Use the GiveItemCheck overload with fewer parameters.")]
-		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
-		{
-			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
-			    (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-				return false;
-
-			GiveItem(type, name, width, height, stack, prefix);
-			return true;
-		}
-
-		/// <summary>
 		/// Gives an item to the player.
 		/// </summary>
 		/// <param name="type">The item ID.</param>
