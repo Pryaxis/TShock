@@ -475,7 +475,7 @@ namespace TShockAPI
 			{
 				// A user just signed in successfully despite being banned by account name.
 				// We should fix the ban database so that all of their ban info is up to date.
-				Bans.AddBan2(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
+				Bans.AddBan(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
 					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
 
 				// And then get rid of them.
