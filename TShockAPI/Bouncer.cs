@@ -63,6 +63,7 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare += OnSendTileSquare;
 			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
 			GetDataHandlers.TileEdit += OnTileEdit;
+			GetDataHandlers.MassWireOperation += OnMassWireOperation;
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
