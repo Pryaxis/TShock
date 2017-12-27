@@ -783,7 +783,7 @@ namespace TShockAPI
 			{
 				TShock.Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
 					args.Player.IP, args.Player.Name, TShock.Config.MaximumLoginAttempts));
-				TShock.Utils.Kick(args.Player, "Too many invalid login attempts.");
+				args.Player.Kick("Too many invalid login attempts.");
 				return;
 			}
 
@@ -1279,7 +1279,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!TShock.Utils.Kick(players[0], reason, !args.Player.RealPlayer, false, args.Player.Name))
+				if (!players[0].Kick(reason, !args.Player.RealPlayer, false, args.Player.Name))
 				{
 					args.Player.SendErrorMessage("You can't kick another admin!");
 				}

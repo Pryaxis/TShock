@@ -558,41 +558,7 @@ namespace TShockAPI
 		/// <param name="saveSSI">bool saveSSI (default: false)</param>
 		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
 		{
-			Kick(player, reason, true, silent, null, saveSSI);
-		}
-
-		/// <summary>
-		/// Kicks a player from the server..
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="force">bool force (default: false)</param>
-		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="adminUserName">string adminUserName (default: null)</param>
-		/// <param name="saveSSI">bool saveSSI (default: false)</param>
-		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
-		{
-			if (!player.ConnectionAlive)
-				return true;
-			if (force || !player.HasPermission(Permissions.immunetokick))
-			{
-				string playerName = player.Name;
-				player.SilentKickInProgress = silent;
-				if (player.IsLoggedIn && saveSSI)
-					player.SaveServerCharacter();
-				player.Disconnect(string.Format("Kicked: {0}", reason));
-				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
-				string verb = force ? "force " : "";
-				if (!silent)
-				{
-					if (string.IsNullOrWhiteSpace(adminUserName))
-						Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
-					else
-						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
-				}
-				return true;
-			}
-			return false;
+			player.Kick(reason, true, silent, null, saveSSI);
 		}
 
 		/// <summary>

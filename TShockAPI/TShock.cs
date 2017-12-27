@@ -1426,7 +1426,7 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				Utils.Kick(tsplr, "Crash attempt via long chat packet.", true);
+				tsplr.Kick("Crash attempt via long chat packet.", true);
 				args.Handled = true;
 				return;
 			}

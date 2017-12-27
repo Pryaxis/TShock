@@ -67,6 +67,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * All `GetDataHandlers` hooks now inherit from `GetDataHandledEventArgs` which includes a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
 * Replaced `Utils.FindPlayer` with `TSPlayer.FindByNameOrID` to more appropriately be object orientated. (@hakusaro)
 * Removed `Utils.ActivePlayers()` -- use `TShock.Players.Length` instead. (@hakusaro)
+* Moved `Utils.Kick()` to `TSPlayer` since its first argument was a `TSPlayer` object. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

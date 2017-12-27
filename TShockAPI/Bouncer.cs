@@ -256,7 +256,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
-					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Kick(string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
 					args.Handled = true;
 					return;
 				}
@@ -313,7 +313,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
-					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Kick(string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
 					args.Handled = true;
 					return;
 				}
@@ -958,7 +958,7 @@ namespace TShockAPI
 			{
 				if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 				{
-					TShock.Utils.Kick(TShock.Players[id], "Death reason outside of normal bounds.", true);
+					TShock.Players[id].Kick("Death reason outside of normal bounds.", true);
 					args.Handled = true;
 					return;
 				}

@@ -1579,6 +1579,38 @@ namespace TShockAPI
 			LogStackFrame();
 		}
 
+		/// <summary>
+		/// Disconnects this player from the server with a reason.
+		/// </summary>
+		/// <param name="reason">The reason to display to the user and to the server on kick.</param>
+		/// <param name="force">If the kick should happen regardless of immunity to kick permissions.</param>
+		/// <param name="silent">If no message should be broadcasted to the server.</param>
+		/// <param name="adminUserName">The originator of the kick, for display purposes.</param>
+		/// <param name="saveSSI">If the player's server side character should be saved on kick.</param>
+		public bool Kick(string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetokick))
+			{
+				SilentKickInProgress = silent;
+				if (IsLoggedIn && saveSSI)
+					SaveServerCharacter();
+				Disconnect(string.Format("Kicked: {0}", reason));
+				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", Name, reason));
+				string verb = force ? "force " : "";
+				if (!silent)
+				{
+					if (string.IsNullOrWhiteSpace(adminUserName))
+						TShock.Utils.Broadcast(string.Format("{0} was {1}kicked for '{2}'", Name, verb, reason.ToLower()), Color.Green);
+					else
+						TShock.Utils.Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, Name, reason.ToLower()), Color.Green);
+				}
+				return true;
+			}
+			return false;
+		}
+
 		[Conditional("DEBUG")]
 		private void LogStackFrame()
 		{
