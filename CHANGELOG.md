@@ -65,6 +65,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Replace `TShock.CheckTilePermission` with `TSPlayer.HasBuildPermission`, `TSPlayer.HasPaintPermission`, and `TSPlayer.HasModifiedIceSuccessfully` respectively. (@hakusaro)
 * Fix stack hack detection being inconsistent between two different check points. Moved `TShock.HackedInventory` to `TSPlayer.HasHackedItemStacks`. Added `GetDataHandlers.GetDataHandledEventArgs` which is where most hooks will inherit from in the future. (@hakusaro)
 * All `GetDataHandlers` hooks now inherit from `GetDataHandledEventArgs` which includes a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
+* Removed broken noclip detection and attempted prevention. TShock wasn't doing a good job at stopping noclip. It's always worse to claim that you do something that you can't/don't do, so removing this is better than keeping broken detection in. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

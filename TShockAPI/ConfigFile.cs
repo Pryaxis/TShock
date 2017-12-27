@@ -353,10 +353,6 @@ namespace TShockAPI
 		[Description("Ignores checking to see if player 'can' kill a projectile.")]
 		public bool IgnoreProjKill = false;
 
-		/// <summary>IgnoreNoClip - Ignores all no clip checks for players.</summary>
-		[Description("Ignores all no clip checks for players.")]
-		public bool IgnoreNoClip = false;
-
 		/// <summary>AlllowIce - Allows ice placement even where a user cannot usually build.</summary>
 		[Description("Allow ice placement even when user does not have canbuild.")]
 		public bool AllowIce = false;
