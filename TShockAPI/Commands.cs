@@ -4818,7 +4818,7 @@ namespace TShockAPI
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Players.Length, TShock.Config.MaxSlots);
 			PaginationTools.SendPage(
 				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(TShock.Utils.GetPlayers(displayIdsRequested)),
 				new PaginationTools.Settings

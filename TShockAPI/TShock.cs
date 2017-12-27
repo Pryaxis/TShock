@@ -1243,7 +1243,7 @@ namespace TShockAPI
 
 			var player = new TSPlayer(args.Who);
 
-			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
+			if (TShock.Players.Length + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
 				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
 				args.Handled = true;
@@ -1402,7 +1402,7 @@ namespace TShockAPI
 			}
 
 			// The last player will leave after this hook is executed.
-			if (Utils.ActivePlayers() == 1)
+			if (TShock.Players.Length == 1)
 			{
 				if (Config.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
@@ -1623,7 +1623,7 @@ namespace TShockAPI
 			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
-									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
+									   player.Group.Name, player.Country, TShock.Players.Length,
 									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
@@ -1631,7 +1631,7 @@ namespace TShockAPI
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+									   player.Group.Name, TShock.Players.Length, TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
