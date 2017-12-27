@@ -520,11 +520,6 @@ namespace TShockAPI
 		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
 		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
-		/// <summary>RESTLimitOnlyFailedLoginRequests - Whether or not to limit only the max failed login requests, or all login requests.</summary>
-		[Obsolete("This value is no longer used and will be removed next version.")]
-		[Description("Whether we should limit only the max failed login requests, or all login requests.")]
-		public bool RESTLimitOnlyFailedLoginRequests = true;
-
 		/// <summary>ShowBackupAutosaveMessages - Whether or not to show backup auto save messages.</summary>
 		[Description("Show backup autosave messages.")]
 		public bool ShowBackupAutosaveMessages = true;
