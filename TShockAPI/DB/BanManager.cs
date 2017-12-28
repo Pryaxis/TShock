@@ -205,24 +205,7 @@ namespace TShockAPI.DB
 		/// <param name="exceptions">If set to <c>true</c> enable throwing exceptions.</param>
 		/// <param name="banner">Banner.</param>
 		/// <param name="expiration">Expiration date.</param>
-		[Obsolete("Use AddBan2 instead of AddBan.", true)]
-		public bool AddBan(string ip, string name = "", string uuid = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
-		{
-			return AddBan2(ip, name, uuid, "", reason, exceptions, banner, expiration);
-		}
-
-		/// <summary>
-		/// Adds a ban.
-		/// </summary>
-		/// <returns><c>true</c>, if ban was added, <c>false</c> otherwise.</returns>
-		/// <param name="ip">Ip.</param>
-		/// <param name="name">Name.</param>
-		/// <param name="uuid">UUID.</param>
-		/// <param name="reason">Reason.</param>
-		/// <param name="exceptions">If set to <c>true</c> enable throwing exceptions.</param>
-		/// <param name="banner">Banner.</param>
-		/// <param name="expiration">Expiration date.</param>
-		public bool AddBan2(string ip, string name = "", string uuid = "", string accountName = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
+		public bool AddBan(string ip, string name = "", string uuid = "", string accountName = "", string reason = "", bool exceptions = false, string banner = "", string expiration = "")
 		{
 			try
 			{
