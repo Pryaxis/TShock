@@ -1003,7 +1003,6 @@ namespace TShockAPI
 			var reason = null == args.Parameters["reason"] ? "Banned via web" : args.Parameters["reason"];
 			TShock.Bans.AddBan(player.IP, player.Name, "", "", reason);
 			player.Kick(reason, true, false, null, true);
-			TShock.Utils.ForceKick(player, reason, false, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 
