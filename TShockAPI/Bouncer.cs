@@ -909,22 +909,6 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
-
-				// Noclip detection
-				if (!args.Player.HasPermission(Permissions.ignorenoclipdetection) &&
-					TSCheckNoclip(pos, args.Player.TPlayer.width, args.Player.TPlayer.height - (args.Player.TPlayer.mount.Active ? args.Player.TPlayer.mount.HeightBoost : 0)) && !TShock.Config.IgnoreNoClip
-					&& !args.Player.TPlayer.tongued)
-				{
-					var lastTileX = args.Player.LastNetPosition.X;
-					var lastTileY = args.Player.LastNetPosition.Y;
-					if (!args.Player.Teleport(lastTileX, lastTileY))
-					{
-						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
-						args.Player.Spawn();
-					}
-					args.Handled = true;
-					return;
-				}
 			}
 
 			return;

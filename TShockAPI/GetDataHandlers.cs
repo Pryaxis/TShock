@@ -550,61 +550,6 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
-		{
-			int num = (int)(Position.X / 16f);
-			int num2 = (int)((Position.X + (float)Width) / 16f);
-			int num3 = (int)(Position.Y / 16f);
-			int num4 = (int)((Position.Y + (float)Height) / 16f);
-			if (num < 0)
-			{
-				num = 0;
-			}
-			if (num2 > Main.maxTilesX)
-			{
-				num2 = Main.maxTilesX;
-			}
-			if (num3 < 0)
-			{
-				num3 = 0;
-			}
-			if (num4 > Main.maxTilesY)
-			{
-				num4 = Main.maxTilesY;
-			}
-			for (int c = num; c < num2; c++)
-			{
-				for (int d = num3; d < num4; d++)
-				{
-					if (Main.tile[c, d].liquid != 0)
-						return false;
-				}
-			}
-			for (int i = num; i < num2; i++)
-			{
-				for (int j = num3; j < num4; j++)
-				{
-					if (Main.tile[i, j] == null || Main.tileSand[Main.tile[i, j].type]
-						|| !TShock.Utils.TileSolid(i, j) || !TShock.Utils.TileSolid(i + 1, j) || !TShock.Utils.TileSolid(i - 1, j)
-						|| !TShock.Utils.TileSolid(i, j + 1) || !TShock.Utils.TileSolid(i + 1, j + 1) || !TShock.Utils.TileSolid(i - 1, j + 1)
-						|| !TShock.Utils.TileSolid(i, j - 1) || !TShock.Utils.TileSolid(i + 1, j - 1) || !TShock.Utils.TileSolid(i - 1, j - 1)
-						|| Main.tileSolidTop[(int)Main.tile[i, j].type])
-					{
-						continue;
-					}
-
-					Vector2 vector;
-					vector.X = (float)(i * 16);
-					vector.Y = (float)(j * 16);
-					if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + 16f)
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
 		/// <summary>The event args object for the HealOtherPlayer event</summary>
 		public class HealOtherPlayerEventArgs : GetDataHandledEventArgs
 		{
