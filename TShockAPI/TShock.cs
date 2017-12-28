@@ -475,7 +475,7 @@ namespace TShockAPI
 			{
 				// A user just signed in successfully despite being banned by account name.
 				// We should fix the ban database so that all of their ban info is up to date.
-				Bans.AddBan2(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
+				Bans.AddBan(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
 					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
 
 				// And then get rid of them.
@@ -885,8 +885,6 @@ namespace TShockAPI
 
 			Utils.ComputeMaxStyles();
 			Utils.FixChestStacks();
-
-			Utils.UpgradeMotD();
 
 			if (Config.UseServerName)
 			{
@@ -1724,16 +1722,6 @@ namespace TShockAPI
 		{
 			if (Config.DisableHardmode)
 				e.Handled = true;
-		}
-
-		/// <summary>Distance - Determines the distance between two vectors.</summary>
-		/// <param name="value1">value1 - The first vector location.</param>
-		/// <param name="value2">value2 - The second vector location.</param>
-		/// <returns>float - The distance between the two vectors.</returns>
-		[Obsolete("Use TShock.Utils.Distance(Vector2, Vector2) instead.", true)]
-		public static float Distance(Vector2 value1, Vector2 value2)
-		{
-			return Utils.Distance(value1, value2);
 		}
 
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>

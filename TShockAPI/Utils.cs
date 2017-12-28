@@ -52,12 +52,6 @@ namespace TShockAPI
 		/// <summary>instance - an instance of the utils class</summary>
 		private static readonly Utils instance = new Utils();
 
-		/// <summary> This regex will look for the old MotD format for colors and replace them with the new chat format. </summary>
-		private Regex motdColorRegex = new Regex(@"\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%(?<text>((?!(\%\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\%)|(\[[a-zA-Z]/[^:]+:[^\]]*\])).)*)");
-
-		/// <summary> Matches the start of a line with our legacy color format</summary>
-		private Regex startOfLineColorRegex = new Regex(@"^\%\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\%");
-
 		/// <summary>Utils - Creates a utilities object.</summary>
 		private Utils() {}
 
@@ -455,7 +449,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : null;
 		}
 
 		/// <summary>
@@ -465,7 +459,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffDescription(id) : "null";
+			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffDescription(id) : null;
 		}
 
 		/// <summary>
@@ -591,7 +585,7 @@ namespace TShockAPI
 			TShock.Regions.Reload();
 			TShock.Itembans.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
-    			TShock.TileBans.UpdateBans();
+			TShock.TileBans.UpdateBans();
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
@@ -657,7 +651,7 @@ namespace TShockAPI
 				string ip = player.IP;
 				string uuid = player.UUID;
 				string playerName = player.Name;
-				TShock.Bans.AddBan2(ip, playerName, uuid, "", reason, false, adminUserName);
+				TShock.Bans.AddBan(ip, playerName, uuid, "", reason, false, adminUserName);
 				player.Disconnect(string.Format("Banned: {0}", reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))
@@ -715,95 +709,8 @@ namespace TShockAPI
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
 
-					var legacyColorMatch = startOfLineColorRegex.Match(foo);
-					if (legacyColorMatch.Success)
-					{
-						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
-												Int32.Parse(legacyColorMatch.Groups["g"].Value),
-												Int32.Parse(legacyColorMatch.Groups["b"].Value));
-						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
-					}
-
-					bool upgraded = false;
-					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
-					if (upgraded && !containsOldFormat)
-					{
-						TShock.Log.ConsoleInfo($"You are using an old color format in file {file}.");
-						TShock.Log.ConsoleInfo("To send coloured text please use Terraria's inbuilt format of: [c/#hex:text].");
-						TShock.Log.ConsoleInfo("For example: [c/ff00aa:This is a message!].");
-						containsOldFormat = true;
-					}
-					foo = newFoo;
-
 					player.SendMessage(foo, lineColor);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Returns a string with deprecated %###,###,###% formats replaced with the new chat format colors.
-		/// </summary>
-		/// <param name="input">The input string</param>
-		/// <param name="upgradedFormat">An out parameter that denotes if this line of text was upgraded.</param>
-		/// <returns>A replaced version of the input with the new chat color format.</returns>
-		private string ReplaceDeprecatedColorCodes(string input, out bool upgradedFormat)
-		{
-			String tempString = input;
-			Match match = null;
-			bool uFormat = false;
-
-			while ((match = motdColorRegex.Match(tempString)).Success)
-			{
-				uFormat = true;
-				tempString = tempString.Replace(match.Groups[0].Value, String.Format("[c/{0:X2}{1:X2}{2:X2}:{3}]", Int32.Parse(match.Groups["r"].Value), Int32.Parse(match.Groups["g"].Value), Int32.Parse(match.Groups["b"].Value), match.Groups["text"]));
-			}
-
-			upgradedFormat = uFormat;
-			return tempString;
-		}
-
-		/// <summary>
-		/// Upgrades a legacy MotD file to the new terraria chat tags version.
-		/// </summary>
-		public void UpgradeMotD()
-		{
-			string foo = "";
-			StringBuilder motd = new StringBuilder();
-			bool informedOwner = false;
-			using (var tr = new StreamReader(FileTools.MotdPath))
-			{
-				Color lineColor;
-				while ((foo = tr.ReadLine()) != null)
-				{
-					lineColor = Color.White;
-					var legacyColorMatch = startOfLineColorRegex.Match(foo);
-					if (legacyColorMatch.Success)
-					{
-						lineColor = new Color(Int32.Parse(legacyColorMatch.Groups["r"].Value),
-												Int32.Parse(legacyColorMatch.Groups["g"].Value),
-												Int32.Parse(legacyColorMatch.Groups["b"].Value));
-						foo = foo.Replace(legacyColorMatch.Groups[0].Value, "");
-					}
-
-					bool upgraded = false;
-					string newFoo = ReplaceDeprecatedColorCodes(foo, out upgraded);
-					if (!informedOwner && upgraded)
-					{
-						informedOwner = true;
-						TShock.Log.ConsoleInfo("We have upgraded your MotD to the new format.  A backup has been created.");
-					}
-
-					if (lineColor != Color.White)
-						motd.Append(String.Format("%{0:d3},{1:d3},{2:d3}%", lineColor.R, lineColor.G, lineColor.B));
-
-					motd.AppendLine(newFoo);
-				}
-			}
-
-			if (informedOwner)
-			{
-				File.Copy(FileTools.MotdPath, String.Format("{0}_{1}.backup", FileTools.MotdPath, DateTime.Now.ToString("ddMMMyy_hhmmss")));
-				File.WriteAllText(FileTools.MotdPath, motd.ToString());
 			}
 		}
 
