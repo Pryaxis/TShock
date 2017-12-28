@@ -508,7 +508,7 @@ namespace TShockAPI
 			if (save)
 				SaveManager.Instance.SaveWorld();
 
-			TSPlayer.KickAll(true, reason);
+			TSPlayer.All.Kick(reason, true, true, null, true);
 
 			// Broadcast so console can see we are shutting down as well
 			TShock.Utils.Broadcast(reason, Color.Red);
