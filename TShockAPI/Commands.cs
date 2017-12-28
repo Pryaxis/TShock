@@ -4838,7 +4838,6 @@ namespace TShockAPI
 				else
 				{
 					args.Player.SendWarningMessage("The initial setup system is disabled. This incident has been logged.");
-					TShock.Utils.ForceKick(args.Player, "The initial setup system is disabled.", true, true);
 					TShock.Log.Warn("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP);
 					return;
 				}
