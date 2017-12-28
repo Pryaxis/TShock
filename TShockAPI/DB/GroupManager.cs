@@ -146,7 +146,6 @@ namespace TShockAPI.DB
 						Permissions.ignorekilltiledetection,
 						Permissions.ignoreliquidsetdetection,
 						Permissions.ignoremp,
-						Permissions.ignorenoclipdetection,
 						Permissions.ignorepaintdetection,
 						Permissions.ignoreplacetiledetection,
 						Permissions.ignoreprojectiledetection,
