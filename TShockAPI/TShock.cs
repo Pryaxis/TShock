@@ -481,13 +481,13 @@ namespace TShockAPI
 				// And then get rid of them.
 				if (potentialBan.Expiration == "")
 				{
-					Utils.ForceKick(args.Player, String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
-						,potentialBan.Reason), false, false);
+					args.Player.Kick(String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
+						,potentialBan.Reason), true, true);
 				}
 				else
 				{
-					Utils.ForceKick(args.Player, String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
-						potentialBan.Reason), false, false);
+					args.Player.Kick(String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
+						potentialBan.Reason), true, true);
 				}
 			}
 		}
@@ -1245,14 +1245,14 @@ namespace TShockAPI
 
 			if (TShock.Players.Length + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
-				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
+				player.Kick(Config.ServerFullNoReservedReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
+				player.Kick(Config.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1265,7 +1265,7 @@ namespace TShockAPI
 				{
 					if (Config.KickProxyUsers)
 					{
-						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
+						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
 						args.Handled = true;
 						return;
 					}
@@ -1287,7 +1287,7 @@ namespace TShockAPI
 
 			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client.", true);
+				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
 				args.Handled = true;
 				return;
 			}

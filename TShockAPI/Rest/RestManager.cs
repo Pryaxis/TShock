@@ -982,7 +982,7 @@ namespace TShockAPI
 				return ret;
 
 			TSPlayer player = (TSPlayer)ret;
-			TShock.Utils.ForceKick(player, null == args.Parameters["reason"] ? "Kicked via web" : args.Parameters["reason"], false, true);
+			player.Kick(null == args.Parameters["reason"] ? "Kicked via web" : args.Parameters["reason"], false, true, null, true);
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
@@ -1002,7 +1002,7 @@ namespace TShockAPI
 			TSPlayer player = (TSPlayer)ret;
 			var reason = null == args.Parameters["reason"] ? "Banned via web" : args.Parameters["reason"];
 			TShock.Bans.AddBan2(player.IP, player.Name, "", "", reason);
-			TShock.Utils.ForceKick(player, reason, false, true);
+			player.Kick(reason, true, false, null, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 

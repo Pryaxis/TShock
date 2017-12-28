@@ -506,7 +506,7 @@ namespace TShockAPI
 			{
 				if (player != null && player.Active)
 				{
-					ForceKick(player, reason, false, true);
+					player.Kick(reason, true, true, null, true);
 				}
 			}
 		}
@@ -547,18 +547,6 @@ namespace TShockAPI
 			TShock.ProjectileBans.UpdateBans();
     			TShock.TileBans.UpdateBans();
 			Hooks.GeneralHooks.OnReloadEvent(player);
-		}
-
-		/// <summary>
-		/// Kicks a player from the server without checking for immunetokick permission.
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="saveSSI">bool saveSSI (default: false)</param>
-		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
-		{
-			player.Kick(reason, true, silent, null, saveSSI);
 		}
 
 		/// <summary>

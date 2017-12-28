@@ -77,7 +77,7 @@ namespace TShockAPI
 
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
-				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
+				args.Player.Kick("Your client sent a blank character name.", true, true);
 				args.Handled = true;
 				return;
 			}
@@ -941,7 +941,7 @@ namespace TShockAPI
 
 			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				args.Player.Kick("Failed to shade polygon normals.", true, true);
 				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", damage);
 				args.Handled = true;
 				return;
