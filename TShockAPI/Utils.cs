@@ -497,21 +497,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Kicks all player from the server without checking for immunetokick permission.
-		/// </summary>
-		/// <param name="reason">string reason</param>
-		public void ForceKickAll(string reason)
-		{
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					player.Kick(reason, true, true, null, true);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Stops the server after kicking all players with a reason message, and optionally saving the world
 		/// </summary>
 		/// <param name="save">bool perform a world save before stop (default: true)</param>
@@ -520,12 +505,10 @@ namespace TShockAPI
 		{
 			TShock.ShuttingDown = true;
 
-			ForceKickAll(reason);
 			if (save)
 				SaveManager.Instance.SaveWorld();
 
-			// Save takes a while so kick again
-			ForceKickAll(reason);
+			TSPlayer.KickAll(true, reason);
 
 			// Broadcast so console can see we are shutting down as well
 			TShock.Utils.Broadcast(reason, Color.Red);

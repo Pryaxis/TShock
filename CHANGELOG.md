@@ -69,6 +69,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `Utils.ActivePlayers()` -- use `TShock.Players.Length` instead. (@hakusaro)
 * Moved `Utils.Kick()` to `TSPlayer` since its first argument was a `TSPlayer` object. (@hakusaro)
 * Removed `Utils.ForceKick()`. (@hakusaro)
+* Replaced `Utils.ForceKickAll()` with `TSPlayer.KickAll`. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

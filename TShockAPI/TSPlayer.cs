@@ -111,6 +111,22 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Disconnects all players from the server without checking for immunetokick permission.
+		/// </summary>
+		/// <param name="force">If the kick should bypass permission checks.</param>
+		/// <param name="reason">The reason for the kick.</param>
+		public static void KickAll(bool force, string reason)
+		{
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null && player.Active)
+				{
+					player.Kick(reason, force, true, null, true);
+				}
+			}
+		}
+
+		/// <summary>
 		/// The amount of tiles that the player has killed in the last second.
 		/// </summary>
 		public int TileKillThreshold { get; set; }
