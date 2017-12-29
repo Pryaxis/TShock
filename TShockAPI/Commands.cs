@@ -842,7 +842,7 @@ namespace TShockAPI
 				{
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
-					var group = TShock.Utils.GetGroup(account.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -1810,7 +1810,7 @@ namespace TShockAPI
 				ply[0].tempGroupTimer.Start();
 			}
 
-			Group g = TShock.Utils.GetGroup(args.Parameters[1]);
+			Group g = TShock.Groups.GetGroupByName(args.Parameters[1]);
 
 			ply[0].tempGroup = g;
 
@@ -3225,7 +3225,7 @@ namespace TShockAPI
 							args.Player.SendErrorMessage("Invalid group.");
 							return;
 						}
-						Group grp = TShock.Utils.GetGroup(args.Parameters[1]);
+						Group grp = TShock.Groups.GetGroupByName(args.Parameters[1]);
 						List<string> permissions = grp.TotalPermissions;
 
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(permissions),

@@ -144,7 +144,7 @@ namespace Rests
 				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
 			}
 
-			Group userGroup = TShock.Utils.GetGroup(userAccount.Group);
+			Group userGroup = TShock.Groups.GetGroupByName(userAccount.Group);
 			if (!userGroup.HasPermission(RestPermissions.restapi) && userAccount.Group != "superadmin")
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());

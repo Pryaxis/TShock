@@ -411,7 +411,7 @@ namespace TShockAPI
 				var players = new ArrayList();
 				foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
 				{
-					var p = PlayerFilter(tsPlayer, args.Parameters, ((args.TokenData.UserGroupName) != "" && TShock.Utils.GetGroup(args.TokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
+					var p = PlayerFilter(tsPlayer, args.Parameters, ((args.TokenData.UserGroupName) != "" && TShock.Groups.GetGroupByName(args.TokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
 					if (null != p)
 						players.Add(p);
 				}

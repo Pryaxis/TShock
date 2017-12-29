@@ -1725,7 +1725,7 @@ namespace TShockAPI
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
-					var group = TShock.Utils.GetGroup(account.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -1797,7 +1797,7 @@ namespace TShockAPI
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					var group = TShock.Utils.GetGroup(account.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;

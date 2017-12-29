@@ -480,23 +480,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Returns a Group from the name of the group
-		/// </summary>
-		/// <param name="groupName">string groupName</param>
-		public Group GetGroup(string groupName)
-		{
-			//first attempt on cached groups
-			for (int i = 0; i < TShock.Groups.groups.Count; i++)
-			{
-				if (TShock.Groups.groups[i].Name.Equals(groupName))
-				{
-					return TShock.Groups.groups[i];
-				}
-			}
-				return Group.DefaultGroup;
-		}
-
-		/// <summary>
 		/// Returns an IPv4 address from a DNS query
 		/// </summary>
 		/// <param name="hostname">string ip</param>
