@@ -2384,7 +2384,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.BanOnHardcoreDeath)
 				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+					if (!args.Player.Ban(TShock.Config.HardcoreBanReason, false, "hardcore-death"))
 						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 				}
 				else
@@ -2448,7 +2448,7 @@ namespace TShockAPI
 					{
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
-							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
+							if (!args.Player.Ban(TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
 								args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 						}
 						else

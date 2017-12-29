@@ -507,34 +507,6 @@ namespace TShockAPI
 			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
-		/// <summary>
-		/// Bans and kicks a player from the server.
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="force">bool force (default: false)</param>
-		/// <param name="adminUserName">string adminUserName (default: null)</param>
-		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
-		{
-			if (!player.ConnectionAlive)
-				return true;
-			if (force || !player.HasPermission(Permissions.immunetoban))
-			{
-				string ip = player.IP;
-				string uuid = player.UUID;
-				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, uuid, "", reason, false, adminUserName);
-				player.Disconnect(string.Format("Banned: {0}", reason));
-				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", playerName, verb, reason);
-				else
-					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, playerName, reason);
-				return true;
-			}
-			return false;
-		}
-
 		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
 		/// <param name="ban">ban - The ban object to check.</param>
 		/// <param name="byName">byName - Defines whether or not the ban should be checked by name.</param>

@@ -1574,6 +1574,32 @@ namespace TShockAPI
 			return false;
 		}
 
+		/// <summary>
+		/// Bans and disconnects the player from the server.
+		/// </summary>
+		/// <param name="reason">The reason to be displayed to the server.</param>
+		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
+		/// <param name="adminUserName">The player who initiated the ban.</param>
+		public bool Ban(string reason, bool force = false, string adminUserName = null)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetoban))
+			{
+				string ip = IP;
+				string uuid = UUID;
+				TShock.Bans.AddBan(ip, Name, uuid, "", reason, false, adminUserName);
+				Disconnect(string.Format("Banned: {0}", reason));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", Name, verb, reason);
+				else
+					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, Name, reason);
+				return true;
+			}
+			return false;
+		}
+
 		[Conditional("DEBUG")]
 		private void LogStackFrame()
 		{
