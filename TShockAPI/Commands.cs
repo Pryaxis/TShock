@@ -4820,8 +4820,26 @@ namespace TShockAPI
 			}
 
 			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Players.Length, TShock.Config.MaxSlots);
+
+			var players = new List<string>();
+
+			foreach (TSPlayer ply in TShock.Players)
+			{
+				if (ply != null && ply.Active)
+				{
+					if (displayIdsRequested)
+					{
+						players.Add(String.Format("{0} (ID: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
+					}
+					else
+					{
+						players.Add(ply.Name);
+					}
+				}
+			}
+
 			PaginationTools.SendPage(
-				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(TShock.Utils.GetPlayers(displayIdsRequested)),
+				args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(players),
 				new PaginationTools.Settings
 				{
 					IncludeHeader = false,

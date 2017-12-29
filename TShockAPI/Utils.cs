@@ -70,33 +70,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Returns a list of current players on the server
-		/// </summary>
-		/// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
-		/// <returns>List of strings with names</returns>
-		public List<string> GetPlayers(bool includeIDs)
-		{
-			var players = new List<string>();
-
-			foreach (TSPlayer ply in TShock.Players)
-			{
-				if (ply != null && ply.Active)
-				{
-					if (includeIDs)
-					{
-						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
-					}
-					else
-					{
-						players.Add(ply.Name);
-					}
-				}
-			}
-
-			return players;
-		}
-
-		/// <summary>
 		/// It's a clamp function
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -549,8 +522,18 @@ namespace TShockAPI
 						continue;
 					}
 
+					var players = new List<string>();
+
+					foreach (TSPlayer ply in TShock.Players)
+					{
+						if (ply != null && ply.Active)
+						{
+							players.Add(ply.Name);
+						}
+					}
+
 					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
+					foo = foo.Replace("%players%", String.Join(",", players));
 
 					player.SendMessage(foo, lineColor);
 				}
