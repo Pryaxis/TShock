@@ -339,7 +339,8 @@ namespace TShockAPI
 		[Token]
 		private object ServerReload(RestRequestArgs args)
 		{
-			TShock.Utils.Reload(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
+			TShock.Utils.Reload();
+			Hooks.GeneralHooks.OnReloadEvent(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
 
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}

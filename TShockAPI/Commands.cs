@@ -3798,7 +3798,8 @@ namespace TShockAPI
 
 		private static void Reload(CommandArgs args)
 		{
-			TShock.Utils.Reload(args.Player);
+			TShock.Utils.Reload();
+			Hooks.GeneralHooks.OnReloadEvent(args.Player);
 
 			args.Player.SendSuccessMessage(
 				"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");

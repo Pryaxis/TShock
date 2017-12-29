@@ -495,7 +495,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Reloads all configuration settings, groups, regions and raises the reload event.
 		/// </summary>
-		public void Reload(TSPlayer player)
+		public void Reload()
 		{
 			FileTools.SetupConfig();
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
@@ -504,7 +504,6 @@ namespace TShockAPI
 			TShock.Itembans.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
 			TShock.TileBans.UpdateBans();
-			Hooks.GeneralHooks.OnReloadEvent(player);
 		}
 
 		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
