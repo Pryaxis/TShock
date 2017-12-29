@@ -1199,7 +1199,7 @@ namespace TShockAPI
 			if (players.Count < 1)
 				args.Player.SendErrorMessage("Invalid player.");
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var message = new StringBuilder();
@@ -1272,7 +1272,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else
 			{
@@ -1355,7 +1355,7 @@ namespace TShockAPI
 						// Bad case: Players contains more than 1 person so we can't ban them
 						if (players.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+							args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 							return;
 						}
 
@@ -1666,7 +1666,7 @@ namespace TShockAPI
 			}
 			else if (matchedPlayers.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matchedPlayers.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(matchedPlayers.Select(p => p.Name));
 				return;
 			}
 
@@ -1699,7 +1699,7 @@ namespace TShockAPI
 				List<TSPlayer> players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 				if (players.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 					return;
 				}
 				else if (players.Count == 0)
@@ -1786,7 +1786,7 @@ namespace TShockAPI
 
 			if (ply.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, ply.Select(p => p.Account.Name));
+				args.Player.SendMultipleMatchError(ply.Select(p => p.Account.Name));
 			}
 
 			if (!TShock.Groups.GroupExists(args.Parameters[1]))
@@ -2326,7 +2326,7 @@ namespace TShockAPI
 			}
 			else if (npcs.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
+				args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 			}
 			else
 			{
@@ -2400,7 +2400,7 @@ namespace TShockAPI
 				if (players.Count == 0)
 					args.Player.SendErrorMessage("Invalid player!");
 				else if (players.Count > 1)
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 				else
 				{
 					var target = players[0];
@@ -2431,7 +2431,7 @@ namespace TShockAPI
 				if (players2.Count == 0)
 					args.Player.SendErrorMessage("Invalid player!");
 				else if (players2.Count > 1)
-					TShock.Utils.SendMultipleMatchError(args.Player, players2.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players2.Select(p => p.Name));
 				else if (players1.Count == 0)
 				{
 					if (args.Parameters[0] == "*")
@@ -2471,7 +2471,7 @@ namespace TShockAPI
 						args.Player.SendErrorMessage("Invalid player!");
 				}
 				else if (players1.Count > 1)
-					TShock.Utils.SendMultipleMatchError(args.Player, players1.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players1.Select(p => p.Name));
 				else
 				{
 					var source = players1[0];
@@ -2544,7 +2544,7 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("Invalid player!");
 			}
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var plr = players[0];
@@ -2583,7 +2583,7 @@ namespace TShockAPI
 
 			if (matches.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matches.Select(n => $"{n.FullName}({n.whoAmI})"));
+				args.Player.SendMultipleMatchError(matches.Select(n => $"{n.FullName}({n.whoAmI})"));
 				return;
 			}
 			if (matches.Count == 0)
@@ -2612,7 +2612,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else
 			{
@@ -2774,7 +2774,7 @@ namespace TShockAPI
 				}
 				else if (foundplr.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(foundplr.Select(p => p.Name));
 					return;
 				}
 
@@ -3265,7 +3265,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3291,7 +3291,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3336,7 +3336,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -3362,7 +3362,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
 						}
 						else
 						{
@@ -4083,7 +4083,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else
 			{
@@ -4936,7 +4936,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else if (players[0].HasPermission(Permissions.mute))
 			{
@@ -4984,7 +4984,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else if (args.Player.mute)
 			{
@@ -5033,7 +5033,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
@@ -5053,7 +5053,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
@@ -5073,7 +5073,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
@@ -5102,7 +5102,7 @@ namespace TShockAPI
 			if (players.Count == 0)
 				args.Player.SendErrorMessage("Invalid player!");
 			else if (players.Count > 1)
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				int type = 167;
@@ -5273,7 +5273,7 @@ namespace TShockAPI
 			}
 			else if (players.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			}
 			else
 			{
@@ -5304,7 +5304,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
+					args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else
@@ -5359,7 +5359,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, matchedItems.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(matchedItems.Select(i => $"{i.Name}({i.netID})"));
 				return;
 			}
 			else
@@ -5389,7 +5389,7 @@ namespace TShockAPI
 
 				if (prefixIds.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, prefixIds.Select(p => p.ToString()));
+					args.Player.SendMultipleMatchError(prefixIds.Select(p => p.ToString()));
 					return;
 				}
 				else if (prefixIds.Count == 0)
@@ -5442,7 +5442,7 @@ namespace TShockAPI
 				}
 				else if (npcs.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, npcs.Select(n => $"{n.FullName}({n.type})"));
+					args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
 				else if (args.Parameters[1].Length > 200)
@@ -5507,7 +5507,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
 			}
 			else
 			{
@@ -5538,7 +5538,7 @@ namespace TShockAPI
 					}
 					else if (players.Count > 1)
 					{
-						TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+						args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 					}
 					else
 					{
@@ -5585,7 +5585,7 @@ namespace TShockAPI
 				}
 				else if (players.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 					return;
 				}
 				else
@@ -5634,7 +5634,7 @@ namespace TShockAPI
 				}
 				else if (found.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, found.Select(f => Lang.GetBuffName(f)));
+					args.Player.SendMultipleMatchError(found.Select(f => Lang.GetBuffName(f)));
 					return;
 				}
 				id = found[0];
@@ -5670,7 +5670,7 @@ namespace TShockAPI
 			}
 			else if (foundplr.Count > 1)
 			{
-				TShock.Utils.SendMultipleMatchError(args.Player, foundplr.Select(p => p.Name));
+				args.Player.SendMultipleMatchError(foundplr.Select(p => p.Name));
 				return;
 			}
 			else
@@ -5685,7 +5685,7 @@ namespace TShockAPI
 					}
 					else if (found.Count > 1)
 					{
-						TShock.Utils.SendMultipleMatchError(args.Player, found.Select(b => Lang.GetBuffName(b)));
+						args.Player.SendMultipleMatchError(found.Select(b => Lang.GetBuffName(b)));
 						return;
 					}
 					id = found[0];
@@ -5802,7 +5802,7 @@ namespace TShockAPI
 				}
 				else if (players.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(args.Player, players.Select(p => p.Name));
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 					return;
 				}
 				else

@@ -594,23 +594,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sends the player an error message stating that more than one match was found
-		/// appending a csv list of the matches.
-		/// </summary>
-		/// <param name="ply">Player to send the message to</param>
-		/// <param name="matches">An enumerable list with the matches</param>
-		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
-		{
-			ply.SendErrorMessage("More than one match found: ");
-
-			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
-
-			lines.ForEach(ply.SendInfoMessage);
-
-			ply.SendErrorMessage("Use \"my query\" for items with spaces.");
-		}
-
-		/// <summary>
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>

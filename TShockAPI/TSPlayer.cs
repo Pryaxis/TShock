@@ -34,6 +34,7 @@ using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
+using System.Linq;
 
 namespace TShockAPI
 {
@@ -1598,6 +1599,21 @@ namespace TShockAPI
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Sends the player an error message stating that more than one match was found
+		/// appending a csv list of the matches.
+		/// </summary>
+		/// <param name="matches">An enumerable list with the matches</param>
+		public void SendMultipleMatchError(IEnumerable<object> matches)
+		{
+			SendErrorMessage("More than one match found: ");
+			
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+			lines.ForEach(SendInfoMessage);
+
+			SendErrorMessage("Use \"my query\" for items with spaces.");
 		}
 
 		[Conditional("DEBUG")]
