@@ -78,6 +78,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `Utils.HasBanExpired()` and replaced with `Bans.RemoveBanIfExpired()`. (@hakusaro)
 * Removed `Utils.SendFileToUser()` and replaced with `TSPlayer.SendFileTextAsMessage()`. (@hakusaro)
 * Removed `Utils.GetGroup()` also have you seen `Groups.GetGroupByName()`? (@hakusaro)
+* `Utils.MaxChests()` is now `Utils.HasWorldReachedMaxChests()`. (@hakusaro)
+* `Utils.GetIPv4Address()` is now `Utils.GetIPv4AddressFromHostname()`. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

@@ -627,7 +627,7 @@ namespace TShockAPI
 				&& Main.tile[tileX, tileY].type != TileID.Containers
 				&& Main.tile[tileX, tileY].type != TileID.Dressers
 				&& Main.tile[tileX, tileY].type != TileID.Containers2
-				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
+				&& (!TShock.Utils.HasWorldReachedMaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
@@ -1409,7 +1409,7 @@ namespace TShockAPI
 					}
 					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
-						if (TShock.Utils.MaxChests())
+						if (TShock.Utils.HasWorldReachedMaxChests())
 						{
 							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
 							args.Player.SendTileSquare(tileX, tileY, 3);

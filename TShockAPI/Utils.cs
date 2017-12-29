@@ -483,7 +483,7 @@ namespace TShockAPI
 		/// Returns an IPv4 address from a DNS query
 		/// </summary>
 		/// <param name="hostname">string ip</param>
-		public string GetIPv4Address(string hostname)
+		public string GetIPv4AddressFromHostname(string hostname)
 		{
 			try
 			{
@@ -502,7 +502,7 @@ namespace TShockAPI
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>
-		public bool MaxChests()
+		public bool HasWorldReachedMaxChests()
 		{
 			for (int i = 0; i < Main.chest.Length; i++)
 			{

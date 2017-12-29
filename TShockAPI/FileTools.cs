@@ -154,7 +154,7 @@ namespace TShockAPI
 					{
 						if (string.IsNullOrWhiteSpace(line))
 							continue;
-						contains = TShock.Utils.GetIPv4Address(line).Equals(ip);
+						contains = TShock.Utils.GetIPv4AddressFromHostname(line).Equals(ip);
 						if (contains)
 							return true;
 					}
