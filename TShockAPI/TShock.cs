@@ -1310,7 +1310,7 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				if (!Utils.HasBanExpired(ban))
+				if (!Bans.RemoveBanIfExpired(ban))
 				{
 					DateTime exp;
 					if (!DateTime.TryParse(ban.Expiration, out exp))

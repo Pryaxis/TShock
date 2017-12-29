@@ -479,29 +479,6 @@ namespace TShockAPI
 			TShock.TileBans.UpdateBans();
 		}
 
-		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
-		/// <param name="ban">ban - The ban object to check.</param>
-		/// <param name="byName">byName - Defines whether or not the ban should be checked by name.</param>
-		/// <returns>bool - True if the ban has expired.</returns>
-		public bool HasBanExpired(Ban ban, bool byName = false)
-		{
-			if (!string.IsNullOrWhiteSpace(ban.Expiration) && (ban.ExpirationDateTime != null) && (DateTime.UtcNow >= ban.ExpirationDateTime))
-			{
-				if (byName)
-				{
-					TShock.Bans.RemoveBan(ban.Name, true, true, false);
-				}
-				else
-				{
-					TShock.Bans.RemoveBan(ban.IP, false, false, false);
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
 		/// <summary>
 		/// Shows a file to the user.
 		/// </summary>

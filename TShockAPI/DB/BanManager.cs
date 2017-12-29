@@ -294,6 +294,20 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
+
+		/// <summary>Removes a ban if it has expired.</summary>
+		/// <param name="ban">The candidate ban to check.</param>
+		/// <returns>If the ban has been removed.</returns>
+		public bool RemoveBanIfExpired(Ban ban)
+		{
+			if (!string.IsNullOrWhiteSpace(ban.Expiration) && (ban.ExpirationDateTime != null) && (DateTime.UtcNow >= ban.ExpirationDateTime))
+			{
+				RemoveBan(ban.IP, false, false, false);
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	/// <summary>
