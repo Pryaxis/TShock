@@ -4979,12 +4979,12 @@ namespace TShockAPI
 
 		private static void Motd(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, FileTools.MotdPath);
+			args.Player.SendFileTextAsMessage(FileTools.MotdPath);
 		}
 
 		private static void Rules(CommandArgs args)
 		{
-			TShock.Utils.ShowFileToUser(args.Player, FileTools.RulesPath);
+			args.Player.SendFileTextAsMessage(FileTools.RulesPath);
 		}
 
 		private static void Whisper(CommandArgs args)

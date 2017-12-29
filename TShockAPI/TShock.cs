@@ -1637,7 +1637,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, FileTools.MotdPath);
+			player.SendFileTextAsMessage(FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")

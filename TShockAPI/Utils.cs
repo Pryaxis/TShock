@@ -480,44 +480,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Shows a file to the user.
-		/// </summary>
-		/// <param name="player">Player the file contents will be sent to</param>
-		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
-		public void ShowFileToUser(TSPlayer player, string file)
-		{
-			string foo = "";
-			bool containsOldFormat = false;
-			using (var tr = new StreamReader(file))
-			{
-				Color lineColor;
-				while ((foo = tr.ReadLine()) != null)
-				{
-					lineColor = Color.White;
-					if (string.IsNullOrWhiteSpace(foo))
-					{
-						continue;
-					}
-
-					var players = new List<string>();
-
-					foreach (TSPlayer ply in TShock.Players)
-					{
-						if (ply != null && ply.Active)
-						{
-							players.Add(ply.Name);
-						}
-					}
-
-					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", players));
-
-					player.SendMessage(foo, lineColor);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Returns a Group from the name of the group
 		/// </summary>
 		/// <param name="groupName">string groupName</param>

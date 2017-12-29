@@ -1459,6 +1459,43 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Sends the text of a given file to the player. Replacement of %map% and %players% if in the file.
+		/// </summary>
+		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
+		public void SendFileTextAsMessage(string file)
+		{
+			string foo = "";
+			bool containsOldFormat = false;
+			using (var tr = new StreamReader(file))
+			{
+				Color lineColor;
+				while ((foo = tr.ReadLine()) != null)
+				{
+					lineColor = Color.White;
+					if (string.IsNullOrWhiteSpace(foo))
+					{
+						continue;
+					}
+
+					var players = new List<string>();
+
+					foreach (TSPlayer ply in TShock.Players)
+					{
+						if (ply != null && ply.Active)
+						{
+							players.Add(ply.Name);
+						}
+					}
+
+					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+					foo = foo.Replace("%players%", String.Join(",", players));
+
+					SendMessage(foo, lineColor);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Wounds the player with the given damage.
 		/// </summary>
 		/// <param name="damage">The amount of damage the player will take.</param>
