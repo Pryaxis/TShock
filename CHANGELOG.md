@@ -68,7 +68,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@hakusaro).
 * Removed broken noclip detection and attempted prevention. TShock wasn't doing a good job at stopping noclip. It's always worse to claim that you do something that you can't/don't do, so removing this is better than keeping broken detection in. (@hakusaro)
 * Replaced `Utils.FindPlayer` with `TSPlayer.FindByNameOrID` to more appropriately be object orientated. (@hakusaro)
-* Removed `Utils.ActivePlayers()` -- use `TShock.Players.Length` instead. (@hakusaro)
+* Removed `Utils.ActivePlayers()` -- use `TSPlayer.ActivePlayers.Count` instead. (@hakusaro)
 * Moved `Utils.Kick()` to `TSPlayer` since its first argument was a `TSPlayer` object. (@hakusaro)
 * Removed `Utils.ForceKick()`. (@hakusaro)
 * Removed `Utils.GetPlayerIP()`. (@hakusaro)
