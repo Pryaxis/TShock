@@ -144,7 +144,7 @@ namespace TShockAPI
 			return new JsonData()
 			{
 				port = Terraria.Netplay.ListenPort,
-				currentPlayers = TShock.Players.Length,
+				currentPlayers = TSPlayer.ActivePlayers.Count,
 				maxPlayers = TShock.Config.MaxSlots,
 				systemRam = GetTotalSystemRam(ServerApi.RunningMono),
 				version = TShock.VersionNum.ToString(),

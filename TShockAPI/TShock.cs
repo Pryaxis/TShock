@@ -1621,7 +1621,7 @@ namespace TShockAPI
 			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
-									   player.Group.Name, player.Country, TShock.Players.Length,
+									   player.Group.Name, player.Country, TSPlayer.ActivePlayers.Count,
 									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
@@ -1629,7 +1629,7 @@ namespace TShockAPI
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Players.Length, TShock.Config.MaxSlots);
+									   player.Group.Name, TSPlayer.ActivePlayers.Count, TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
