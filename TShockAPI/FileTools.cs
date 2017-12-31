@@ -26,7 +26,7 @@ namespace TShockAPI
 	public class FileTools
 	{
 		private const string MotdFormat =
-			"This server is running TShock for Terraria.\n Type /help for a list of commands.\n%255,000,000%Current map: %map%\nCurrent players: %players%";
+			"This is [c/FF0000:%map%] on [c/00FFFF:TShock for Terraria].\n[c/00FF00:Current players:] [c/FFFF00:%players%]\nType [c/FF0000:/help] for a list of commands.\n";
 		/// <summary>
 		/// Path to the file containing the rules.
 		/// </summary>
