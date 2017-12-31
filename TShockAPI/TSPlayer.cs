@@ -75,18 +75,6 @@ namespace TShockAPI
 		public static readonly TSPlayer All = new TSPlayer("All");
 
 		/// <summary>
-		/// Gets the number of active players on the server.
-		/// </summary>
-		/// <returns>The number of active players on the server.</returns>
-		public static ICollection<TSPlayer> ActivePlayers
-		{
-			get
-			{
-				return TShock.Players.Where(p => null != p && p.TPlayer.active) as ICollection<TSPlayer>;
-			}
-		}
-
-		/// <summary>
 		/// Finds a TSPlayer based on name or ID
 		/// </summary>
 		/// <param name="plr">Player name or ID</param>
