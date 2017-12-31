@@ -1108,7 +1108,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				invasionSize = 100 + (TShock.Config.InvasionMultiplier * TSPlayer.ActivePlayers.Count);
+				invasionSize = 100 + (TShock.Config.InvasionMultiplier * TShock.Players.Length);
 			}
 
 			// Order matters
@@ -1147,7 +1147,7 @@ namespace TShockAPI
 		{
 			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(TShock.Config.ServerName) ? TShock.Config.ServerName + " - " : "",
-					empty ? 0 : TSPlayer.ActivePlayers.Count,
+					empty ? 0 : TShock.Players.Length,
 					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
 
