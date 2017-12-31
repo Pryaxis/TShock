@@ -4819,7 +4819,7 @@ namespace TShockAPI
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Players.Length, TShock.Config.MaxSlots);
+			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
 
 			var players = new List<string>();
 
