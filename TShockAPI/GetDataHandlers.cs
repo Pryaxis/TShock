@@ -1892,7 +1892,7 @@ namespace TShockAPI
 			if (OnGetSection(args.Player, args.Data, args.Data.ReadInt32(), args.Data.ReadInt32()))
 				return true;
 
-			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
+			if (TShock.Utils.GetActivePlayerCount() + 1 > TShock.Config.MaxSlots &&
 				!args.Player.HasPermission(Permissions.reservedslot))
 			{
 				args.Player.Kick(TShock.Config.ServerFullReason, true, true);

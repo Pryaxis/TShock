@@ -153,7 +153,7 @@ namespace TShockAPI
 		/// Gets the number of active players on the server.
 		/// </summary>
 		/// <returns>The number of active players on the server.</returns>
-		public int ActivePlayers()
+		public int GetActivePlayerCount()
 		{
 			return Main.player.Where(p => null != p && p.active).Count();
 		}
@@ -1117,7 +1117,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				invasionSize = 100 + (TShock.Config.InvasionMultiplier * ActivePlayers());
+				invasionSize = 100 + (TShock.Config.InvasionMultiplier * GetActivePlayerCount());
 			}
 
 			// Order matters
@@ -1151,12 +1151,12 @@ namespace TShockAPI
 		}
 
 		/// <summary>Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">If the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
+		/// <param name="empty">If the server is empty; determines if we should use Utils.GetActivePlayerCount() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
 			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(TShock.Config.ServerName) ? TShock.Config.ServerName + " - " : "",
-					empty ? 0 : ActivePlayers(),
+					empty ? 0 : GetActivePlayerCount(),
 					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
 
