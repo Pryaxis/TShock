@@ -1786,7 +1786,7 @@ namespace TShockAPI
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
 			}
-			args.Handled = false;
+			args.Handled = true;
 			return;
 		}
 
