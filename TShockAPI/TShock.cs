@@ -481,13 +481,13 @@ namespace TShockAPI
 				// And then get rid of them.
 				if (potentialBan.Expiration == "")
 				{
-					Utils.ForceKick(args.Player, String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
-						,potentialBan.Reason), false, false);
+					args.Player.Kick(String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
+						,potentialBan.Reason), true, true);
 				}
 				else
 				{
-					Utils.ForceKick(args.Player, String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
-						potentialBan.Reason), false, false);
+					args.Player.Kick(String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
+						potentialBan.Reason), true, true);
 				}
 			}
 		}
@@ -1241,16 +1241,16 @@ namespace TShockAPI
 
 			var player = new TSPlayer(args.Who);
 
-			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
+			if (Utils.GetActivePlayerCount() + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
-				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
+				player.Kick(Config.ServerFullNoReservedReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
+				player.Kick(Config.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1263,7 +1263,7 @@ namespace TShockAPI
 				{
 					if (Config.KickProxyUsers)
 					{
-						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
+						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
 						args.Handled = true;
 						return;
 					}
@@ -1285,7 +1285,7 @@ namespace TShockAPI
 
 			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client.", true);
+				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1310,7 +1310,7 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				if (!Utils.HasBanExpired(ban))
+				if (!Bans.RemoveBanIfExpired(ban))
 				{
 					DateTime exp;
 					if (!DateTime.TryParse(ban.Expiration, out exp))
@@ -1400,7 +1400,7 @@ namespace TShockAPI
 			}
 
 			// The last player will leave after this hook is executed.
-			if (Utils.ActivePlayers() == 1)
+			if (Utils.GetActivePlayerCount() == 1)
 			{
 				if (Config.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
@@ -1424,7 +1424,7 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				Utils.Kick(tsplr, "Crash attempt via long chat packet.", true);
+				tsplr.Kick("Crash attempt via long chat packet.", true);
 				args.Handled = true;
 				return;
 			}
@@ -1621,7 +1621,7 @@ namespace TShockAPI
 			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
-									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
+									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
@@ -1629,7 +1629,7 @@ namespace TShockAPI
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
@@ -1637,7 +1637,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, FileTools.MotdPath);
+			player.SendFileTextAsMessage(FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")

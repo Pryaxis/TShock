@@ -34,6 +34,7 @@ using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
+using System.Linq;
 
 namespace TShockAPI
 {
@@ -72,6 +73,43 @@ namespace TShockAPI
 		/// This player represents all the players.
 		/// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
+
+		/// <summary>
+		/// Finds a TSPlayer based on name or ID
+		/// </summary>
+		/// <param name="plr">Player name or ID</param>
+		/// <returns>A list of matching players</returns>
+		public static List<TSPlayer> FindByNameOrID(string plr)
+		{
+			var found = new List<TSPlayer>();
+			// Avoid errors caused by null search
+			if (plr == null)
+				return found;
+
+			byte plrID;
+			if (byte.TryParse(plr, out plrID) && plrID < Main.maxPlayers)
+			{
+				TSPlayer player = TShock.Players[plrID];
+				if (player != null && player.Active)
+				{
+					return new List<TSPlayer> { player };
+				}
+			}
+
+			string plrLower = plr.ToLower();
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null)
+				{
+					// Must be an EXACT match
+					if (player.Name == plr)
+						return new List<TSPlayer> { player };
+					if (player.Name.ToLower().StartsWith(plrLower))
+						found.Add(player);
+				}
+			}
+			return found;
+		}
 
 		/// <summary>
 		/// The amount of tiles that the player has killed in the last second.
@@ -1421,6 +1459,43 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Sends the text of a given file to the player. Replacement of %map% and %players% if in the file.
+		/// </summary>
+		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
+		public void SendFileTextAsMessage(string file)
+		{
+			string foo = "";
+			bool containsOldFormat = false;
+			using (var tr = new StreamReader(file))
+			{
+				Color lineColor;
+				while ((foo = tr.ReadLine()) != null)
+				{
+					lineColor = Color.White;
+					if (string.IsNullOrWhiteSpace(foo))
+					{
+						continue;
+					}
+
+					var players = new List<string>();
+
+					foreach (TSPlayer ply in TShock.Players)
+					{
+						if (ply != null && ply.Active)
+						{
+							players.Add(ply.Name);
+						}
+					}
+
+					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+					foo = foo.Replace("%players%", String.Join(",", players));
+
+					SendMessage(foo, lineColor);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Wounds the player with the given damage.
 		/// </summary>
 		/// <param name="damage">The amount of damage the player will take.</param>
@@ -1503,6 +1578,79 @@ namespace TShockAPI
 			 * in release builds.  Use a conditional call instead.
 			 */
 			LogStackFrame();
+		}
+
+		/// <summary>
+		/// Disconnects this player from the server with a reason.
+		/// </summary>
+		/// <param name="reason">The reason to display to the user and to the server on kick.</param>
+		/// <param name="force">If the kick should happen regardless of immunity to kick permissions.</param>
+		/// <param name="silent">If no message should be broadcasted to the server.</param>
+		/// <param name="adminUserName">The originator of the kick, for display purposes.</param>
+		/// <param name="saveSSI">If the player's server side character should be saved on kick.</param>
+		public bool Kick(string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetokick))
+			{
+				SilentKickInProgress = silent;
+				if (IsLoggedIn && saveSSI)
+					SaveServerCharacter();
+				Disconnect(string.Format("Kicked: {0}", reason));
+				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", Name, reason));
+				string verb = force ? "force " : "";
+				if (!silent)
+				{
+					if (string.IsNullOrWhiteSpace(adminUserName))
+						TShock.Utils.Broadcast(string.Format("{0} was {1}kicked for '{2}'", Name, verb, reason.ToLower()), Color.Green);
+					else
+						TShock.Utils.Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, Name, reason.ToLower()), Color.Green);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Bans and disconnects the player from the server.
+		/// </summary>
+		/// <param name="reason">The reason to be displayed to the server.</param>
+		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
+		/// <param name="adminUserName">The player who initiated the ban.</param>
+		public bool Ban(string reason, bool force = false, string adminUserName = null)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetoban))
+			{
+				string ip = IP;
+				string uuid = UUID;
+				TShock.Bans.AddBan(ip, Name, uuid, "", reason, false, adminUserName);
+				Disconnect(string.Format("Banned: {0}", reason));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", Name, verb, reason);
+				else
+					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, Name, reason);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Sends the player an error message stating that more than one match was found
+		/// appending a csv list of the matches.
+		/// </summary>
+		/// <param name="matches">An enumerable list with the matches</param>
+		public void SendMultipleMatchError(IEnumerable<object> matches)
+		{
+			SendErrorMessage("More than one match found: ");
+			
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+			lines.ForEach(SendInfoMessage);
+
+			SendErrorMessage("Use \"my query\" for items with spaces.");
 		}
 
 		[Conditional("DEBUG")]

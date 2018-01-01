@@ -70,52 +70,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Returns a list of current players on the server
-		/// </summary>
-		/// <param name="includeIDs">bool includeIDs - whether or not the string of each player name should include ID data</param>
-		/// <returns>List of strings with names</returns>
-		public List<string> GetPlayers(bool includeIDs)
-		{
-			var players = new List<string>();
-
-			foreach (TSPlayer ply in TShock.Players)
-			{
-				if (ply != null && ply.Active)
-				{
-					if (includeIDs)
-					{
-						players.Add(String.Format("{0} (IX: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
-					}
-					else
-					{
-						players.Add(ply.Name);
-					}
-				}
-			}
-
-			return players;
-		}
-
-		/// <summary>
-		/// Finds a player and gets IP as string
-		/// </summary>
-		/// <param name="playername">string playername</param>
-		public string GetPlayerIP(string playername)
-		{
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					if (playername.ToLower() == player.Name.ToLower())
-					{
-						return player.IP;
-					}
-				}
-			}
-			return null;
-		}
-
-		/// <summary>
 		/// It's a clamp function
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -199,46 +153,9 @@ namespace TShockAPI
 		/// Gets the number of active players on the server.
 		/// </summary>
 		/// <returns>The number of active players on the server.</returns>
-		public int ActivePlayers()
+		public int GetActivePlayerCount()
 		{
 			return Main.player.Where(p => null != p && p.active).Count();
-		}
-
-		/// <summary>
-		/// Finds a TSPlayer based on name or ID
-		/// </summary>
-		/// <param name="plr">Player name or ID</param>
-		/// <returns>A list of matching players</returns>
-		public List<TSPlayer> FindPlayer(string plr)
-		{
-			var found = new List<TSPlayer>();
-			// Avoid errors caused by null search
-			if (plr == null)
-				return found;
-
-			byte plrID;
-			if (byte.TryParse(plr, out plrID) && plrID < Main.maxPlayers)
-			{
-				TSPlayer player = TShock.Players[plrID];
-				if (player != null && player.Active)
-				{
-					return new List<TSPlayer> { player };
-				}
-			}
-
-			string plrLower = plr.ToLower();
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null)
-				{
-					// Must be an EXACT match
-					if (player.Name == plr)
-						return new List<TSPlayer> { player };
-					if (player.Name.ToLower().StartsWith(plrLower))
-						found.Add(player);
-				}
-			}
-			return found;
 		}
 
 		//Random should not be generated in a method
@@ -537,21 +454,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Kicks all player from the server without checking for immunetokick permission.
-		/// </summary>
-		/// <param name="reason">string reason</param>
-		public void ForceKickAll(string reason)
-		{
-			foreach (TSPlayer player in TShock.Players)
-			{
-				if (player != null && player.Active)
-				{
-					ForceKick(player, reason, false, true);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Stops the server after kicking all players with a reason message, and optionally saving the world
 		/// </summary>
 		/// <param name="save">bool perform a world save before stop (default: true)</param>
@@ -560,12 +462,10 @@ namespace TShockAPI
 		{
 			TShock.ShuttingDown = true;
 
-			ForceKickAll(reason);
 			if (save)
 				SaveManager.Instance.SaveWorld();
 
-			// Save takes a while so kick again
-			ForceKickAll(reason);
+			TSPlayer.All.Kick(reason, true, true, null, true);
 
 			// Broadcast so console can see we are shutting down as well
 			TShock.Utils.Broadcast(reason, Color.Red);
@@ -577,7 +477,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Reloads all configuration settings, groups, regions and raises the reload event.
 		/// </summary>
-		public void Reload(TSPlayer player)
+		public void Reload()
 		{
 			FileTools.SetupConfig();
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
@@ -586,156 +486,13 @@ namespace TShockAPI
 			TShock.Itembans.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
 			TShock.TileBans.UpdateBans();
-			Hooks.GeneralHooks.OnReloadEvent(player);
-		}
-
-		/// <summary>
-		/// Kicks a player from the server without checking for immunetokick permission.
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="saveSSI">bool saveSSI (default: false)</param>
-		public void ForceKick(TSPlayer player, string reason, bool silent = false, bool saveSSI = false)
-		{
-			Kick(player, reason, true, silent, null, saveSSI);
-		}
-
-		/// <summary>
-		/// Kicks a player from the server..
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="force">bool force (default: false)</param>
-		/// <param name="silent">bool silent (default: false)</param>
-		/// <param name="adminUserName">string adminUserName (default: null)</param>
-		/// <param name="saveSSI">bool saveSSI (default: false)</param>
-		public bool Kick(TSPlayer player, string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
-		{
-			if (!player.ConnectionAlive)
-				return true;
-			if (force || !player.HasPermission(Permissions.immunetokick))
-			{
-				string playerName = player.Name;
-				player.SilentKickInProgress = silent;
-				if (player.IsLoggedIn && saveSSI)
-					player.SaveServerCharacter();
-				player.Disconnect(string.Format("Kicked: {0}", reason));
-				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", playerName, reason));
-				string verb = force ? "force " : "";
-				if (!silent)
-				{
-					if (string.IsNullOrWhiteSpace(adminUserName))
-						Broadcast(string.Format("{0} was {1}kicked for '{2}'", playerName, verb, reason.ToLower()), Color.Green);
-					else
-						Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, playerName, reason.ToLower()), Color.Green);
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Bans and kicks a player from the server.
-		/// </summary>
-		/// <param name="player">TSPlayer player</param>
-		/// <param name="reason">string reason</param>
-		/// <param name="force">bool force (default: false)</param>
-		/// <param name="adminUserName">string adminUserName (default: null)</param>
-		public bool Ban(TSPlayer player, string reason, bool force = false, string adminUserName = null)
-		{
-			if (!player.ConnectionAlive)
-				return true;
-			if (force || !player.HasPermission(Permissions.immunetoban))
-			{
-				string ip = player.IP;
-				string uuid = player.UUID;
-				string playerName = player.Name;
-				TShock.Bans.AddBan(ip, playerName, uuid, "", reason, false, adminUserName);
-				player.Disconnect(string.Format("Banned: {0}", reason));
-				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", playerName, verb, reason);
-				else
-					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, playerName, reason);
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>HasBanExpired - Returns whether or not a ban has expired or not.</summary>
-		/// <param name="ban">ban - The ban object to check.</param>
-		/// <param name="byName">byName - Defines whether or not the ban should be checked by name.</param>
-		/// <returns>bool - True if the ban has expired.</returns>
-		public bool HasBanExpired(Ban ban, bool byName = false)
-		{
-			if (!string.IsNullOrWhiteSpace(ban.Expiration) && (ban.ExpirationDateTime != null) && (DateTime.UtcNow >= ban.ExpirationDateTime))
-			{
-				if (byName)
-				{
-					TShock.Bans.RemoveBan(ban.Name, true, true, false);
-				}
-				else
-				{
-					TShock.Bans.RemoveBan(ban.IP, false, false, false);
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Shows a file to the user.
-		/// </summary>
-		/// <param name="player">Player the file contents will be sent to</param>
-		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
-		public void ShowFileToUser(TSPlayer player, string file)
-		{
-			string foo = "";
-			bool containsOldFormat = false;
-			using (var tr = new StreamReader(file))
-			{
-				Color lineColor;
-				while ((foo = tr.ReadLine()) != null)
-				{
-					lineColor = Color.White;
-					if (string.IsNullOrWhiteSpace(foo))
-					{
-						continue;
-					}
-
-					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", GetPlayers(false)));
-
-					player.SendMessage(foo, lineColor);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns a Group from the name of the group
-		/// </summary>
-		/// <param name="groupName">string groupName</param>
-		public Group GetGroup(string groupName)
-		{
-			//first attempt on cached groups
-			for (int i = 0; i < TShock.Groups.groups.Count; i++)
-			{
-				if (TShock.Groups.groups[i].Name.Equals(groupName))
-				{
-					return TShock.Groups.groups[i];
-				}
-			}
-				return Group.DefaultGroup;
 		}
 
 		/// <summary>
 		/// Returns an IPv4 address from a DNS query
 		/// </summary>
 		/// <param name="hostname">string ip</param>
-		public string GetIPv4Address(string hostname)
+		public string GetIPv4AddressFromHostname(string hostname)
 		{
 			try
 			{
@@ -751,27 +508,10 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sends the player an error message stating that more than one match was found
-		/// appending a csv list of the matches.
-		/// </summary>
-		/// <param name="ply">Player to send the message to</param>
-		/// <param name="matches">An enumerable list with the matches</param>
-		public void SendMultipleMatchError(TSPlayer ply, IEnumerable<object> matches)
-		{
-			ply.SendErrorMessage("More than one match found: ");
-
-			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
-
-			lines.ForEach(ply.SendInfoMessage);
-
-			ply.SendErrorMessage("Use \"my query\" for items with spaces.");
-		}
-
-		/// <summary>
 		/// Checks if world has hit the max number of chests
 		/// </summary>
 		/// <returns>True if the entire chest array is used</returns>
-		public bool MaxChests()
+		public bool HasWorldReachedMaxChests()
 		{
 			for (int i = 0; i < Main.chest.Length; i++)
 			{
@@ -1377,7 +1117,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				invasionSize = 100 + (TShock.Config.InvasionMultiplier * ActivePlayers());
+				invasionSize = 100 + (TShock.Config.InvasionMultiplier * GetActivePlayerCount());
 			}
 
 			// Order matters
@@ -1411,12 +1151,12 @@ namespace TShockAPI
 		}
 
 		/// <summary>Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">If the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
+		/// <param name="empty">If the server is empty; determines if we should use Utils.GetActivePlayerCount() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
 			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(TShock.Config.ServerName) ? TShock.Config.ServerName + " - " : "",
-					empty ? 0 : ActivePlayers(),
+					empty ? 0 : GetActivePlayerCount(),
 					TShock.Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
 		}
 

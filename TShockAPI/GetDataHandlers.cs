@@ -349,7 +349,7 @@ namespace TShockAPI
 		}
 		/// <summary>
 		/// PlayerInfo - called at a PlayerInfo event
-		/// If this is cancelled, the server will ForceKick the player. If this should be changed in the future, let someone know.
+		/// If this is cancelled, the server will kick the player. If this should be changed in the future, let someone know.
 		/// </summary>
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo = new HandlerList<PlayerInfoEventArgs>();
 
@@ -1660,13 +1660,13 @@ namespace TShockAPI
 
 			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
-				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
+				args.Player.Kick("A plugin on this server stopped your login.", true, true);
 				return true;
 			}
 
 			if (name.Trim().Length == 0)
 			{
-				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
+				args.Player.Kick("You have been Bounced.", true, true);
 				return true;
 			}
 			if (args.Player.ReceivedInfo)
@@ -1694,12 +1694,12 @@ namespace TShockAPI
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!", true);
+				args.Player.Kick("You need to join with a mediumcore player or higher.", true, true);
 				return true;
 			}
 			if (TShock.Config.HardcoreOnly && difficulty < 2)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!", true);
+				args.Player.Kick("You need to join with a hardcore player.", true, true);
 				return true;
 			}
 			args.Player.Difficulty = difficulty;
@@ -1725,7 +1725,7 @@ namespace TShockAPI
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
-					var group = TShock.Utils.GetGroup(account.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -1797,7 +1797,7 @@ namespace TShockAPI
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					var group = TShock.Utils.GetGroup(account.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -1829,9 +1829,10 @@ namespace TShockAPI
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
+				args.Player.Kick("Your password did not match this character's password.", true, true);
 				return true;
 			}
+
 			if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
 			{
 				if (TShock.Config.ServerPassword == password)
@@ -1842,11 +1843,11 @@ namespace TShockAPI
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 					return true;
 				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect server password", true);
+				args.Player.Kick("Invalid server password.", true, true);
 				return true;
 			}
 
-			TShock.Utils.ForceKick(args.Player, "Bad password attempt", true);
+			args.Player.Kick("You have been Bounced.", true, true);
 			return true;
 		}
 
@@ -1891,10 +1892,10 @@ namespace TShockAPI
 			if (OnGetSection(args.Player, args.Data, args.Data.ReadInt32(), args.Data.ReadInt32()))
 				return true;
 
-			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
+			if (TShock.Utils.GetActivePlayerCount() + 1 > TShock.Config.MaxSlots &&
 				!args.Player.HasPermission(Permissions.reservedslot))
 			{
-				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason, true);
+				args.Player.Kick(TShock.Config.ServerFullReason, true, true);
 				return true;
 			}
 
@@ -2383,12 +2384,12 @@ namespace TShockAPI
 			{
 				if (TShock.Config.BanOnHardcoreDeath)
 				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
+					if (!args.Player.Ban(TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 				}
 				else
 				{
-					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
+					args.Player.Kick(TShock.Config.HardcoreKickReason, true, true, null, false);
 				}
 			}
 
@@ -2447,12 +2448,12 @@ namespace TShockAPI
 					{
 						if (TShock.Config.BanOnMediumcoreDeath)
 						{
-							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
-								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
+							if (!args.Player.Ban(TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
+								args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 						}
 						else
 						{
-							TShock.Utils.ForceKick(args.Player, TShock.Config.MediumcoreKickReason, true, false);
+							args.Player.Kick(TShock.Config.MediumcoreKickReason, true, true, null, false);
 						}
 						return true;
 					}

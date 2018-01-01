@@ -339,7 +339,8 @@ namespace TShockAPI
 		[Token]
 		private object ServerReload(RestRequestArgs args)
 		{
-			TShock.Utils.Reload(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
+			TShock.Utils.Reload();
+			Hooks.GeneralHooks.OnReloadEvent(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
 
 			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
 		}
@@ -410,7 +411,7 @@ namespace TShockAPI
 				var players = new ArrayList();
 				foreach (TSPlayer tsPlayer in TShock.Players.Where(p => null != p))
 				{
-					var p = PlayerFilter(tsPlayer, args.Parameters, ((args.TokenData.UserGroupName) != "" && TShock.Utils.GetGroup(args.TokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
+					var p = PlayerFilter(tsPlayer, args.Parameters, ((args.TokenData.UserGroupName) != "" && TShock.Groups.GetGroupByName(args.TokenData.UserGroupName).HasPermission(RestPermissions.viewips)));
 					if (null != p)
 						players.Add(p);
 				}
@@ -982,7 +983,7 @@ namespace TShockAPI
 				return ret;
 
 			TSPlayer player = (TSPlayer)ret;
-			TShock.Utils.ForceKick(player, null == args.Parameters["reason"] ? "Kicked via web" : args.Parameters["reason"], false, true);
+			player.Kick(null == args.Parameters["reason"] ? "Kicked via web" : args.Parameters["reason"], false, true, null, true);
 			return RestResponse("Player " + player.Name + " was kicked");
 		}
 
@@ -1002,7 +1003,7 @@ namespace TShockAPI
 			TSPlayer player = (TSPlayer)ret;
 			var reason = null == args.Parameters["reason"] ? "Banned via web" : args.Parameters["reason"];
 			TShock.Bans.AddBan(player.IP, player.Name, "", "", reason);
-			TShock.Utils.ForceKick(player, reason, false, true);
+			player.Kick(reason, true, false, null, true);
 			return RestResponse("Player " + player.Name + " was banned");
 		}
 
@@ -1244,7 +1245,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(name))
 				return RestMissingParam("player");
 
-			var found = TShock.Utils.FindPlayer(name);
+			var found = TSPlayer.FindByNameOrID(name);
 			switch(found.Count)
 			{
 				case 1:

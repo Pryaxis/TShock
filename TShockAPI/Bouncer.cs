@@ -77,7 +77,7 @@ namespace TShockAPI
 
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
-				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
+				args.Player.Kick("Your client sent a blank character name.", true, true);
 				args.Handled = true;
 				return;
 			}
@@ -256,7 +256,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
-					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Kick(string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
 					args.Handled = true;
 					return;
 				}
@@ -313,7 +313,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
-					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Kick(string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
 					args.Handled = true;
 					return;
 				}
@@ -627,7 +627,7 @@ namespace TShockAPI
 				&& Main.tile[tileX, tileY].type != TileID.Containers
 				&& Main.tile[tileX, tileY].type != TileID.Dressers
 				&& Main.tile[tileX, tileY].type != TileID.Containers2
-				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
+				&& (!TShock.Utils.HasWorldReachedMaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
 			{
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
@@ -925,7 +925,7 @@ namespace TShockAPI
 
 			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
+				args.Player.Kick("Failed to shade polygon normals.", true, true);
 				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", damage);
 				args.Handled = true;
 				return;
@@ -942,7 +942,7 @@ namespace TShockAPI
 			{
 				if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 				{
-					TShock.Utils.Kick(TShock.Players[id], "Death reason outside of normal bounds.", true);
+					TShock.Players[id].Kick("Death reason outside of normal bounds.", true);
 					args.Handled = true;
 					return;
 				}
@@ -1409,7 +1409,7 @@ namespace TShockAPI
 					}
 					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
-						if (TShock.Utils.MaxChests())
+						if (TShock.Utils.HasWorldReachedMaxChests())
 						{
 							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
 							args.Player.SendTileSquare(tileX, tileY, 3);

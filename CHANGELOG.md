@@ -67,6 +67,18 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * All `GetDataHandlers` hooks now inherit from `GetDataHandledEventArgs` which includes a `TSPlayer` and a `MemoryStream` of raw data. (@hakusaro)
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@hakusaro).
 * Removed broken noclip detection and attempted prevention. TShock wasn't doing a good job at stopping noclip. It's always worse to claim that you do something that you can't/don't do, so removing this is better than keeping broken detection in. (@hakusaro)
+* Replaced `Utils.FindPlayer` with `TSPlayer.FindByNameOrID` to more appropriately be object orientated. (@hakusaro)
+* Moved `Utils.Kick()` to `TSPlayer` since its first argument was a `TSPlayer` object. (@hakusaro)
+* Removed `Utils.ForceKick()`. (@hakusaro)
+* Removed `Utils.GetPlayerIP()`. (@hakusaro)
+* Moved `Utils.Ban()` to `TSPlayer.Ban()`. (@hakusaro)
+* Moved `Utils.SendMultipleMatchError()` to `TSPlayer.SendMultipleMatchError`. (@hakusaro)
+* Removed `Utils.GetPlayers()`. Iterate over the TSPlayers on the server and make your own list.
+* Removed `Utils.HasBanExpired()` and replaced with `Bans.RemoveBanIfExpired()`. (@hakusaro)
+* Removed `Utils.SendFileToUser()` and replaced with `TSPlayer.SendFileTextAsMessage()`. (@hakusaro)
+* Removed `Utils.GetGroup()` also have you seen `Groups.GetGroupByName()`? (@hakusaro)
+* `Utils.MaxChests()` is now `Utils.HasWorldReachedMaxChests()`. (@hakusaro)
+* `Utils.GetIPv4Address()` is now `Utils.GetIPv4AddressFromHostname()`. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
