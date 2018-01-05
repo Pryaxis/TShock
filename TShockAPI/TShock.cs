@@ -134,6 +134,9 @@ namespace TShockAPI
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
+		/// <summary>The TShock item ban system.</summary>
+		internal ItemBans ItemBans;
+
 		/// <summary>
 		/// TShock's Region subsystem.
 		/// </summary>
@@ -325,6 +328,7 @@ namespace TShockAPI
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
+				ItemBans = new ItemBans(this, DB);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))

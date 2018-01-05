@@ -132,6 +132,7 @@
     <Compile Include="Permissions.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Bouncer.cs" />
+    <Compile Include="ItemBans.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
