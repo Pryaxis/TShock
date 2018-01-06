@@ -34,15 +34,23 @@ using System.Data;
 
 namespace TShockAPI
 {
+  /// <summary>The TShock item ban subsystem. It handles keeping things out of people's inventories.</summary>
   internal sealed class ItemBans
   {
 
+    /// <summary>The database connection layer to for the item ban subsystem.</summary>
     private ItemManager DataModel;
 
+    /// <summary>The last time the second update process was run. Used to throttle task execution.</summary>
     private DateTime LastTimelyRun = DateTime.UtcNow;
 
+    /// <summary>A reference to the TShock plugin so we can register events.</summary>
     private TShock Plugin;
 
+    /// <summary>Creates an ItemBan system given a plugin to register events to and a database.</summary>
+    /// <param name="plugin">The executing plugin.</param>
+    /// <param name="database">The database the item ban information is stored in.</param>
+    /// <returns>A new item ban system.</returns>
     internal ItemBans(TShock plugin, IDbConnection database)
     {
       DataModel = new ItemManager(database);
@@ -51,6 +59,8 @@ namespace TShockAPI
       ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
     }
 
+    /// <summary>Called on the game update loop (the XNA tickrate).</summary>
+    /// <param name="args">The standard event arguments.</param>
     internal void OnGameUpdate(EventArgs args)
     {
       if ((DateTime.UtcNow - LastTimelyRun).TotalSeconds >= 1)
@@ -59,6 +69,8 @@ namespace TShockAPI
       }
     }
 
+    /// <summary>Called by OnGameUpdate once per second to execute tasks regularly but not too often.</summary>
+    /// <param name="args">The standard event arguments.</param>
     internal void OnSecondlyUpdate(EventArgs args)
     {
       DisableFlags flags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
@@ -85,6 +97,10 @@ namespace TShockAPI
         {
         }
       }
+
+      // Set the update time to now, so that we know when to execute next.
+      // We do this at the end so that the task can't re-execute faster than we expected.
+      // (If we did this at the start of the method, the method execution would count towards the timer.)
       LastTimelyRun = DateTime.UtcNow;
     }
 
