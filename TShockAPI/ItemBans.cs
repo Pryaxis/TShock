@@ -61,7 +61,30 @@ namespace TShockAPI
 
     internal void OnSecondlyUpdate(EventArgs args)
     {
+      DisableFlags flags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
+      foreach (TSPlayer player in TShock.Players)
+      {
+        // SSC inventory/held item check (logged out)
+        if (Main.ServerSideCharacter && !player.IsLoggedIn)
+        {
+          if (player.IsBeingDisabled())
+          {
+            player.Disable(flags: flags);
+          }
+          else if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
+          {
+            player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
+            player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
+          }
+          continue;
+        }
+
+        // Normal item ban check
+        if (!Main.ServerSideCharacter || (Main.ServerSideCharacter || player.IsLoggedIn))
+        {
+        }
+      }
       LastTimelyRun = DateTime.UtcNow;
     }
 
