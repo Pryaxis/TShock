@@ -1060,19 +1060,7 @@ namespace TShockAPI
 						player.Spawn();
 					}
 
-					if (Main.ServerSideCharacter && !player.IsLoggedIn)
-					{
-						if (player.IsBeingDisabled())
-						{
-							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
