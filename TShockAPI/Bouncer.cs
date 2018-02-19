@@ -1709,14 +1709,20 @@ namespace TShockAPI
 							Main.tile[realx, realy].frameY = newtile.FrameY;
 							changed = true;
 						}
+
 						// Landmine
 						if (tile.type == TileID.LandMine && !newtile.Active)
 						{
 							Main.tile[realx, realy].active(false);
 							changed = true;
 						}
-						// Sensors
-						if(newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
+
+						// Tile entities: sensors, item frames, training dummies
+						// here it handles all tile entities listed in `TileEntityID`
+						if ((newtile.Type == TileID.LogicSensor ||
+							newtile.Type == TileID.ItemFrame ||
+							newtile.Type == TileID.TargetDummy) &&
+							!Main.tile[realx, realy].active())
 						{
 							Main.tile[realx, realy].type = newtile.Type;
 							Main.tile[realx, realy].frameX = newtile.FrameX;
@@ -1748,6 +1754,7 @@ namespace TShockAPI
 								changed = true;
 							}
 						}
+
 						// Stone wall <-> Stone wall
 						if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
 							(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
@@ -1786,8 +1793,8 @@ namespace TShockAPI
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
 			}
+
 			args.Handled = true;
-			return;
 		}
 
 		/// <summary>
