@@ -36,6 +36,13 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
+		private ConfigFile config; //Used for UsernameHasBannedChar checks.
+
+		public void setConfig(ConfigFile configuration)
+		{
+			this.config = configuration;
+		}
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
@@ -95,8 +102,8 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
-
-			if (UsernameHasBannedChar(args.Player.Name))
+			
+			if (UsernameHasBannedChar(args.Player.Name) && this.config.KickInvalidUsernames)
 			{
 				args.Player.Kick("Illegal character in you name.", true, true);
 				args.Handled = true;
@@ -472,6 +479,11 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+		}
+
+		internal void setConfig(ConfigFile config)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>Handles Buff events.</summary>
