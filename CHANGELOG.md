@@ -81,6 +81,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * `Utils.GetIPv4Address()` is now `Utils.GetIPv4AddressFromHostname()`. (@hakusaro)
 * Fixed the disappearing problem when placing tile entities. (@mistzzt)
 
+## Tshock 4.3.26
+* Players who have names that have characters that are not on the keyboard by default E.g: ☺ or Ö are kicked (makes user management easier for kicking and banning). (@djpiper28)
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
 
