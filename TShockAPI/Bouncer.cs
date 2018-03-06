@@ -65,6 +65,20 @@ namespace TShockAPI
 			GetDataHandlers.TileEdit += OnTileEdit;
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
 		}
+		// As in a letter
+		internal Boolean UsernameHasBannedChar(String wholeusername)
+		{
+			String[] letters = wholeusername.ToLower().Select(x => x.ToString()).ToArray();
+			String[] allowedCharacters = "abcdefghijklmnopqrstuvwxyz1234567890!\"£$%^&*()-_=/\\+{}[]';@:,.<>?|#~".Select(x => x.ToString()).ToArray();
+			foreach (String letter in letters)
+			{
+				if (!allowedCharacters.Contains(letter))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
 		{
@@ -78,6 +92,13 @@ namespace TShockAPI
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
 				args.Player.Kick("Your client sent a blank character name.", true, true);
+				args.Handled = true;
+				return;
+			}
+
+			if (UsernameHasBannedChar(args.Player.Name))
+			{
+				args.Player.Kick("Illegal character in you name.", true, true);
 				args.Handled = true;
 				return;
 			}
