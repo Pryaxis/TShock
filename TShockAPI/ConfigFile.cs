@@ -30,6 +30,10 @@ namespace TShockAPI
 	/// <summary>ConfigFile - The config file class, which contains the configuration for a server that is serialized into JSON and deserialized on load.</summary>
 	public class ConfigFile
 	{
+		/// <summary>True- a username with a symbol like ☺ or ╦  will be kicked. Allowed symbols (other than numbers and letters) !2£$%^&*(){}:@~?,./;'#[]-=\|</summary>
+		[Description("When enabled a user joining with a username that has characters thataren't on the keyboard are kicked.")]
+		public bool KickInvalidUsernames = true;
+
 		/// <summary>InvasionMultiplier - The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
 		[Description("The equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
 		public int InvasionMultiplier = 1;

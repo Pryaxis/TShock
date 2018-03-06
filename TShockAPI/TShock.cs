@@ -321,6 +321,7 @@ namespace TShockAPI
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
+				Bouncer.setConfig(Config);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -331,6 +332,7 @@ namespace TShockAPI
 				var systemRam = StatTracker.GetFreeSystemRam(ServerApi.RunningMono);
 				if (systemRam > -1 && systemRam < 2048)
 				{
+					//Little note windows 10 or higher needs 4GB and that should be enough for TShock to use after windows 10 eats several GB f it.
 					Log.ConsoleError("This machine has less than 2 gigabytes of RAM free. Be advised that it might not be enough to run TShock.");
 				}
 
