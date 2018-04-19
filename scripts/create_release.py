@@ -182,7 +182,7 @@ def build_software():
 if __name__ == '__main__':
   create_release_folder()
   update_terraria_source()
-  run_bootstrapper();
+  run_bootstrapper()
   copy_dependencies()
   build_software()
   package_release()
