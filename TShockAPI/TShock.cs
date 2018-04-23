@@ -116,8 +116,6 @@ namespace TShockAPI
 		public static RestManager RestManager;
 		/// <summary>Utils - Static reference to the utilities class, which contains a variety of utility functions.</summary>
 		public static Utils Utils = Utils.Instance;
-		/// <summary>StatTracker - Static reference to the stat tracker, which sends some server metrics every 5 minutes.</summary>
-		public static StatTracker StatTracker = new StatTracker();
 		/// <summary>UpdateManager - Static reference to the update checker, which checks for updates and notifies server admins of updates.</summary>
 		public static UpdateManager UpdateManager;
 		/// <summary>Log - Static reference to the log system, which outputs to either SQL or a text file, depending on user config.</summary>
@@ -327,12 +325,6 @@ namespace TShockAPI
 					Geo = new GeoIPCountry(geoippath);
 
 				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
-
-				var systemRam = StatTracker.GetFreeSystemRam(ServerApi.RunningMono);
-				if (systemRam > -1 && systemRam < 2048)
-				{
-					Log.ConsoleError("This machine has less than 2 gigabytes of RAM free. Be advised that it might not be enough to run TShock.");
-				}
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -757,13 +749,11 @@ namespace TShockAPI
 						}
 					})
 
-				.AddFlag("--provider-token", (token) => StatTracker.ProviderToken = token)
 
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
-				.AddFlag("-dump", () => Utils.Dump())
-				.AddFlag("--stats-optout", () => StatTracker.OptOut = true);
+				.AddFlag("-dump", () => Utils.Dump());
 
 			CliParser.ParseFromSource(parms);
 		}
@@ -896,7 +886,6 @@ namespace TShockAPI
 			}
 
 			UpdateManager = new UpdateManager();
-			StatTracker.Start();
 		}
 
 		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>

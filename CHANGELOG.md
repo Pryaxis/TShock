@@ -80,6 +80,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * `Utils.MaxChests()` is now `Utils.HasWorldReachedMaxChests()`. (@hakusaro)
 * `Utils.GetIPv4Address()` is now `Utils.GetIPv4AddressFromHostname()`. (@hakusaro)
 * Fixed the disappearing problem when placing tile entities. (@mistzzt)
+* Removed the stat tracking system. (@hakusaro)
 * Updated sqlite3.dll (from 3.8.9 to 3.23.1) and Mono.Data.Sqlite.dll (from a unknown old version to 1.0.61) (@Ryozuki)
 
 ## TShock 4.3.25
