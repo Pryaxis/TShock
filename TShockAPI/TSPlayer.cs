@@ -1520,7 +1520,6 @@ namespace TShockAPI
 		{
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.Empty, Index);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
