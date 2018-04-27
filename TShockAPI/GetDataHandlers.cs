@@ -2380,17 +2380,17 @@ namespace TShockAPI
 				}
 			}
 
-			if (args.TPlayer.difficulty != 0)
+			// Handle kicks/bans on mediumcore/hardcore deaths.
+			if (args.TPlayer.difficulty != 0) // Player is not softcore
 			{
 				bool mediumcore = args.TPlayer.difficulty == 1;
-				bool shouldBan = mediumcore ? TShock.Config.BanOnMediumcoreDeath : TShock.Config.BanOnHardcoreDeath;
-				bool shouldKick = mediumcore ? TShock.Config.KickOnMediumcoreDeath : TShock.Config.KickOnHardcoreDeath;
-				string banReason = mediumcore ? TShock.Config.MediumcoreBanReason : TShock.Config.HardcoreBanReason;
-				string kickReason = mediumcore ? TShock.Config.MediumcoreKickReason : TShock.Config.HardcoreKickReason;
-				string banAdminName = mediumcore ? "mediumcore-death" : "hardcore-death";
+				bool shouldBan    = mediumcore ? TShock.Config.BanOnMediumcoreDeath  : TShock.Config.BanOnHardcoreDeath;
+				bool shouldKick   = mediumcore ? TShock.Config.KickOnMediumcoreDeath : TShock.Config.KickOnHardcoreDeath;
+				string banReason  = mediumcore ? TShock.Config.MediumcoreBanReason   : TShock.Config.HardcoreBanReason;
+				string kickReason = mediumcore ? TShock.Config.MediumcoreKickReason  : TShock.Config.HardcoreKickReason;
 
 				if(shouldBan) {
-					if (!args.Player.Ban(banReason, false, banAdminName))
+					if (!args.Player.Ban(banReason, false, "TShock"))
 						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 				}
 				else if(shouldKick) {
