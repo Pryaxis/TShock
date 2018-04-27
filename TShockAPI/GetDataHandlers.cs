@@ -2445,8 +2445,6 @@ namespace TShockAPI
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
 				return true;
 
-			args.Player.InitSpawn = true;
-
 			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
 

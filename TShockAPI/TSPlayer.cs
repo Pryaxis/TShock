@@ -228,8 +228,6 @@ namespace TShockAPI
 		/// </summary>
 		public DateTime LastThreat { get; set; }
 
-		public bool InitSpawn;
-
 		/// <summary>
 		/// Whether the player should see logs.
 		/// </summary>
