@@ -26,6 +26,9 @@ using Microsoft.Xna.Framework;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Represents the Region database manager.
+	/// </summary>
 	public class RegionManager
 	{
 		/// <summary>
