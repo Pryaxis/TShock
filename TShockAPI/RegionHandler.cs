@@ -105,7 +105,7 @@ namespace TShockAPI
 				foreach (string nameParameter in e.Player.AwaitingNameParameters)
 				{
 					// If this flag is passed the final output will include unprotected regions, i.e regions
-					// that do not have the DisableBuild flag set to false
+					// that have the DisableBuild flag set to false
 					if (nameParameter.Equals("-u", StringComparison.InvariantCultureIgnoreCase))
 					{
 						includeUnprotected = true;
