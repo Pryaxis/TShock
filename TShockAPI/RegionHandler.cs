@@ -42,6 +42,7 @@ namespace TShockAPI
 		{
 			_regionManager = new RegionManager(connection);
 
+			GetDataHandlers.GemLockToggle += OnGemLockToggle;
 			GetDataHandlers.TileEdit += OnTileEdit;
 			ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
 		}
@@ -81,6 +82,14 @@ namespace TShockAPI
 
 			// Set last execution time to this moment so we know when to execute the above code block again
 			_lastCheck = DateTime.Now;
+		}
+
+		private void OnGemLockToggle(object sender, GetDataHandlers.GemLockToggleEventArgs e)
+		{
+			if (TShock.Config.RegionProtectGemLocks)
+			{
+				e.Handled = true;
+			}
 		}
 
 		private void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs e)

@@ -3133,11 +3133,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (!TShock.Config.RegionProtectGemLocks)
-			{
-				return false;
-			}
-
 			return false;
 		}
 
