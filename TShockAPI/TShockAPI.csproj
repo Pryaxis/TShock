@@ -145,7 +145,6 @@
     <Compile Include="Rest\RestVerbs.cs" />
     <Compile Include="Rest\SecureRest.cs" />
     <Compile Include="ServerSideCharacters\ServerSideConfig.cs" />
-    <Compile Include="StatTracker.cs" />
     <Compile Include="TSServerPlayer.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="TShock.cs" />

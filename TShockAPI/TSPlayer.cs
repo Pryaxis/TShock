@@ -228,8 +228,6 @@ namespace TShockAPI
 		/// </summary>
 		public DateTime LastThreat { get; set; }
 
-		public bool InitSpawn;
-
 		/// <summary>
 		/// Whether the player should see logs.
 		/// </summary>
@@ -1520,7 +1518,6 @@ namespace TShockAPI
 		{
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.Empty, Index);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
