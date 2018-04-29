@@ -133,12 +133,12 @@ namespace TShockAPI
 						continue;
 					}
 
-					if (e.Y < region.Area.Top || e.X > region.Area.Bottom)
+					if (e.Y < region.Area.Top || e.Y > region.Area.Bottom)
 					{
 						continue;
 					}
 
-					// Do not include the current region if it has not been protected and the includeProtected flag has not been set
+					// Do not include the current region if it has not been protected and the includeUnprotected flag has not been set
 					if (!region.DisableBuild && !includeUnprotected)
 					{
 						continue;
