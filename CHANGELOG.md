@@ -82,6 +82,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed the disappearing problem when placing tile entities. (@mistzzt)
 * Removed the stat tracking system. (@hakusaro)
 * Updated sqlite3.dll (from 3.8.9 to 3.23.1) and Mono.Data.Sqlite.dll (from a unknown old version to 1.0.61) (@Ryozuki)
+* Fixed erroneous kicks and bans when using `KickOnMediumcoreDeath` and `BanOnMediumcoreDeath` options. (@DankRank)
+* Removed `TSPlayer.InitSpawn` field. (@DankRank)
+* `OnPlayerSpawn`'s player ID field is now `PlayerId`. (@DankRank)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

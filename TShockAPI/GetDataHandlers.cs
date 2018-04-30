@@ -803,7 +803,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
-			public byte PlayerID { get; set; }
+			public byte PlayerId { get; set; }
 			/// <summary>
 			/// X location of the player's spawn
 			/// </summary>
@@ -827,7 +827,7 @@ namespace TShockAPI
 			{
 				Player = player,
 				Data = data,
-				PlayerID = pid,
+				PlayerId = pid,
 				SpawnX = spawnX,
 				SpawnY = spawnY,
 			};
@@ -2380,16 +2380,21 @@ namespace TShockAPI
 				}
 			}
 
-			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+			// Handle kicks/bans on mediumcore/hardcore deaths.
+			if (args.TPlayer.difficulty != 0) // Player is not softcore
 			{
-				if (TShock.Config.BanOnHardcoreDeath)
-				{
-					if (!args.Player.Ban(TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+				bool mediumcore = args.TPlayer.difficulty == 1;
+				bool shouldBan    = mediumcore ? TShock.Config.BanOnMediumcoreDeath  : TShock.Config.BanOnHardcoreDeath;
+				bool shouldKick   = mediumcore ? TShock.Config.KickOnMediumcoreDeath : TShock.Config.KickOnHardcoreDeath;
+				string banReason  = mediumcore ? TShock.Config.MediumcoreBanReason   : TShock.Config.HardcoreBanReason;
+				string kickReason = mediumcore ? TShock.Config.MediumcoreKickReason  : TShock.Config.HardcoreKickReason;
+
+				if(shouldBan) {
+					if (!args.Player.Ban(banReason, false, "TShock"))
 						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 				}
-				else
-				{
-					args.Player.Kick(TShock.Config.HardcoreKickReason, true, true, null, false);
+				else if(shouldKick) {
+					args.Player.Kick(kickReason, true, true, null, false);
 				}
 			}
 
@@ -2439,28 +2444,6 @@ namespace TShockAPI
 
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
 				return true;
-
-			if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
-			{
-				if (args.TPlayer.difficulty == 1 && (TShock.Config.KickOnMediumcoreDeath || TShock.Config.BanOnMediumcoreDeath))
-				{
-					if (args.TPlayer.selectedItem != 50)
-					{
-						if (TShock.Config.BanOnMediumcoreDeath)
-						{
-							if (!args.Player.Ban(TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
-								args.Player.Kick("You died! Normally, you'd be banned.", true, true);
-						}
-						else
-						{
-							args.Player.Kick(TShock.Config.MediumcoreKickReason, true, true, null, false);
-						}
-						return true;
-					}
-				}
-			}
-			else
-				args.Player.InitSpawn = true;
 
 			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
