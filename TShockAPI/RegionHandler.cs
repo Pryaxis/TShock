@@ -26,7 +26,7 @@ namespace TShockAPI
 	/// Represents TShock's Region subsystem. This subsystem is in charge of executing region related logic, such as
 	/// setting temp points or invoking region events.
 	/// </summary>
-	internal sealed class RegionHandler
+	internal sealed class RegionHandler : IDisposable
 	{
 		private readonly RegionManager _regionManager;
 
@@ -41,6 +41,16 @@ namespace TShockAPI
 			GetDataHandlers.GemLockToggle += OnGemLockToggle;
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.TileEdit += OnTileEdit;
+		}
+
+		/// <summary>
+		/// Disposes the region handler.
+		/// </summary>
+		public void Dispose()
+		{
+			GetDataHandlers.GemLockToggle -= OnGemLockToggle;
+			GetDataHandlers.PlayerUpdate -= OnPlayerUpdate;
+			GetDataHandlers.TileEdit -= OnTileEdit;
 		}
 
 		private void OnGemLockToggle(object sender, GetDataHandlers.GemLockToggleEventArgs e)

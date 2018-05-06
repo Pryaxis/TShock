@@ -436,6 +436,8 @@ namespace TShockAPI
 
 				RestApi.Dispose();
 				Log.Dispose();
+
+				RegionSystem.Dispose();
 			}
 			base.Dispose(disposing);
 		}
