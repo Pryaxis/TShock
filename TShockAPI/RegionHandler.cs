@@ -15,10 +15,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
 
@@ -26,62 +24,23 @@ namespace TShockAPI
 {
 	/// <summary>
 	/// Represents TShock's Region subsystem. This subsystem is in charge of executing region related logic, such as
-	/// setting temp points.
+	/// setting temp points or invoking region events.
 	/// </summary>
 	internal sealed class RegionHandler
 	{
 		private readonly RegionManager _regionManager;
-		private DateTime _lastCheck = DateTime.Now;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="RegionHandler"/> class with the specified TShock instance and database connection.
+		/// Initializes a new instance of the <see cref="RegionHandler"/> class with the specified <see cref="RegionManager"/> instance.
 		/// </summary>
-		/// <param name="plugin">The <see cref="TShock"/> instance.</param>
-		/// <param name="connection">The database connection.</param>
-		public RegionHandler(TShock plugin, IDbConnection connection)
+		/// <param name="regionManager">The <see cref="RegionManager"/> instance.</param>
+		public RegionHandler(RegionManager regionManager)
 		{
-			_regionManager = new RegionManager(connection);
+			_regionManager = regionManager;
 
 			GetDataHandlers.GemLockToggle += OnGemLockToggle;
+			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.TileEdit += OnTileEdit;
-			ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
-		}
-
-		private void OnGameUpdate(EventArgs args)
-		{
-			// Do not perform checks unless enough time has passed since the last execution.
-			if ((DateTime.Now - _lastCheck).TotalSeconds < 1)
-			{
-				return;
-			}
-
-			foreach (var player in TShock.Players.Where(p => p?.Active == true))
-			{
-				// Store the player's last known region and update the current based on known regions at their coordinates.
-				var oldRegion = player.CurrentRegion;
-				player.CurrentRegion = _regionManager.GetTopRegion(_regionManager.InAreaRegion(player.TileX, player.TileY));
-
-				// Do not fire any hooks if the player has not left and/or entered a region.
-				if (player.CurrentRegion == oldRegion)
-				{
-					continue;
-				}
-
-				// Ensure that the player has left a region before invoking the RegionLeft event
-				if (oldRegion != null)
-				{
-					RegionHooks.OnRegionLeft(player, oldRegion);
-				}
-
-				// Ensure that the player has entered a valid region before invoking the RegionEntered event 
-				if (player.CurrentRegion != null)
-				{
-					RegionHooks.OnRegionEntered(player, player.CurrentRegion);
-				}
-			}
-
-			// Set last execution time to this moment so we know when to execute the above code block again
-			_lastCheck = DateTime.Now;
 		}
 
 		private void OnGemLockToggle(object sender, GetDataHandlers.GemLockToggleEventArgs e)
@@ -92,17 +51,46 @@ namespace TShockAPI
 			}
 		}
 
+		private void OnPlayerUpdate(object sender, GetDataHandlers.PlayerUpdateEventArgs e)
+		{
+			var player = e.Player;
+
+			// Store the player's last known region and update the current based on known regions at their coordinates.
+			var oldRegion = player.CurrentRegion;
+			player.CurrentRegion = _regionManager.GetTopRegion(_regionManager.InAreaRegion(player.TileX, player.TileY));
+
+			// Do not fire any hooks if the player has not left and/or entered a region.
+			if (player.CurrentRegion == oldRegion)
+			{
+				return;
+			}
+
+			// Ensure that the player has left a region before invoking the RegionLeft event
+			if (oldRegion != null)
+			{
+				RegionHooks.OnRegionLeft(player, oldRegion);
+			}
+
+			// Ensure that the player has entered a valid region before invoking the RegionEntered event 
+			if (player.CurrentRegion != null)
+			{
+				RegionHooks.OnRegionEntered(player, player.CurrentRegion);
+			}
+		}
+
 		private void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs e)
 		{
+			var player = e.Player;
+
 			#region Region Information Display
 
-			if (e.Player.AwaitingName)
+			if (player.AwaitingName)
 			{
 				bool includeUnprotected = false;
 				bool includeZIndexes = false;
 				bool persistentMode = false;
 
-				foreach (string nameParameter in e.Player.AwaitingNameParameters)
+				foreach (string nameParameter in player.AwaitingNameParameters)
 				{
 					// If this flag is passed the final output will include unprotected regions, i.e regions
 					// that have the DisableBuild flag set to false
@@ -149,28 +137,28 @@ namespace TShockAPI
 
 				if (output.Count == 0)
 				{
-					e.Player.SendInfoMessage(includeUnprotected
+					player.SendInfoMessage(includeUnprotected
 						? "There are no regions at this point."
 						: "There are no regions at this point, or they are not protected.");
 				}
 				else
 				{
-					e.Player.SendInfoMessage(includeUnprotected ? "Regions at this point: " : "Protected regions at this point: ");
+					player.SendInfoMessage(includeUnprotected ? "Regions at this point: " : "Protected regions at this point: ");
 
 					foreach (string line in PaginationTools.BuildLinesFromTerms(output))
 					{
-						e.Player.SendMessage(line, Color.White);
+						player.SendMessage(line, Color.White);
 					}
 				}
 
 				if (!persistentMode)
 				{
-					e.Player.AwaitingName = false;
-					e.Player.AwaitingNameParameters = null;
+					player.AwaitingName = false;
+					player.AwaitingNameParameters = null;
 				}
 
 				// Revert all tile changes and handle the event
-				e.Player.SendTileSquare(e.X, e.Y, 4);
+				player.SendTileSquare(e.X, e.Y, 4);
 				e.Handled = true;
 			}
 
@@ -178,17 +166,18 @@ namespace TShockAPI
 
 			#region TempPoints Setup
 
-			if (e.Player.AwaitingTempPoint != 0)
+			if (player.AwaitingTempPoint != 0)
 			{
 				// Set temp point coordinates to current tile coordinates
-				e.Player.TempPoints[e.Player.AwaitingTempPoint - 1].X = e.X;
-				e.Player.TempPoints[e.Player.AwaitingTempPoint - 1].Y = e.Y;
-				e.Player.SendInfoMessage($"Set temp point {e.Player.AwaitingTempPoint}.");
+				player.TempPoints[player.AwaitingTempPoint - 1].X = e.X;
+				player.TempPoints[player.AwaitingTempPoint - 1].Y = e.Y;
+				player.SendInfoMessage($"Set temp point {player.AwaitingTempPoint}.");
 
-				e.Player.AwaitingTempPoint = 0;
+				// Reset the awaiting temp point
+				player.AwaitingTempPoint = 0;
 
 				// Revert all tile changes and handle the event
-				e.Player.SendTileSquare(e.X, e.Y, 4);
+				player.SendTileSquare(e.X, e.Y, 4);
 				e.Handled = true;
 			}
 

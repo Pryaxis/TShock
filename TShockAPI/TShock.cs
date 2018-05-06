@@ -324,7 +324,7 @@ namespace TShockAPI
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
-				RegionSystem = new RegionHandler(this, DB);
+				RegionSystem = new RegionHandler(Regions);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
