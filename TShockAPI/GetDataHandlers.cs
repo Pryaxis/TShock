@@ -803,7 +803,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
-			public byte PlayerID { get; set; }
+			public byte PlayerId { get; set; }
 			/// <summary>
 			/// X location of the player's spawn
 			/// </summary>
@@ -827,7 +827,7 @@ namespace TShockAPI
 			{
 				Player = player,
 				Data = data,
-				PlayerID = pid,
+				PlayerId = pid,
 				SpawnX = spawnX,
 				SpawnY = spawnY,
 			};
