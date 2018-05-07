@@ -135,6 +135,11 @@ namespace TShockAPI
 		internal Bouncer Bouncer;
 
 		/// <summary>
+		/// TShock's Region subsystem.
+		/// </summary>
+		internal RegionHandler RegionSystem;
+
+		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
 		public static event Action Initialized;
@@ -319,6 +324,7 @@ namespace TShockAPI
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
+				RegionSystem = new RegionHandler(Regions);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -430,6 +436,8 @@ namespace TShockAPI
 
 				RestApi.Dispose();
 				Log.Dispose();
+
+				RegionSystem.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -1131,22 +1139,6 @@ namespace TShockAPI
 						{
 							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
 							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-
-					var oldRegion = player.CurrentRegion;
-					player.CurrentRegion = Regions.GetTopRegion(Regions.InAreaRegion(player.TileX, player.TileY));
-
-					if (oldRegion != player.CurrentRegion)
-					{
-						if (oldRegion != null)
-						{
-							RegionHooks.OnRegionLeft(player, oldRegion);
-						}
-
-						if (player.CurrentRegion != null)
-						{
-							RegionHooks.OnRegionEntered(player, player.CurrentRegion);
 						}
 					}
 				}

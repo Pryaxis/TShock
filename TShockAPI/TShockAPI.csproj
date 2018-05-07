@@ -98,6 +98,7 @@
     <Compile Include="Localization\EnglishLanguage.cs" />
     <Compile Include="NetItem.cs" />
     <Compile Include="PlayerData.cs" />
+    <Compile Include="RegionHandler.cs" />
     <Compile Include="Sockets\LinuxTcpSocket.cs" />
     <Compile Include="SqlLog.cs" />
     <Compile Include="TextLog.cs" />
@@ -194,6 +195,7 @@
       <Name>TerrariaServerAPI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
