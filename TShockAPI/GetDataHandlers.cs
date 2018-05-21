@@ -1714,6 +1714,8 @@ namespace TShockAPI
 			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 			args.Player.DataWhenJoined = new PlayerData(args.Player);
 			args.Player.DataWhenJoined.CopyCharacter(args.Player);
+			args.Player.PlayerData = new PlayerData(args.Player);
+			args.Player.PlayerData.CopyCharacter(args.Player);
 
 			if (account != null && !TShock.Config.DisableUUIDLogin)
 			{
