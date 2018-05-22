@@ -1488,7 +1488,8 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHealOther, HandleHealOther },
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
-					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
+					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.PlayerTeleportPortal, HandlePlayerPortalTeleport }
 				};
 		}
 
@@ -1508,6 +1509,67 @@ namespace TShockAPI
 				}
 			}
 			return false;
+		}
+
+		/// <summary>The event args object for the HealOtherPlayer event</summary>
+		public class TeleportThroughPortalEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The Terraria player index of the target player</summary>
+			public byte TargetPlayerIndex { get; set; }
+
+			/// <summary>
+			/// The position the target player will be at after going through the portal
+			/// </summary>
+			public Vector2 NewPosition { get; set; }
+
+			/// <summary>
+			/// The velocity the target player will have after going through the portal
+			/// </summary>
+			public Vector2 NewVelocity { get; set; }
+
+			/// <summary>
+			/// Index of the portal's color (for use with <see cref="Terraria.GameContent.PortalHelper.GetPortalColor(int)"/>)
+			/// </summary>
+			public int PortalColorIndex { get; set; }
+		}
+
+		/// <summary>When a player passes through a portal</summary>
+		public static HandlerList<TeleportThroughPortalEventArgs> PortalTeleport = new HandlerList<TeleportThroughPortalEventArgs>();
+
+		private static bool OnPlayerTeleportThroughPortal(TSPlayer sender, byte targetPlayerIndex, MemoryStream data, Vector2 position, Vector2 velocity, int colorIndex)
+		{
+			TeleportThroughPortalEventArgs args = new TeleportThroughPortalEventArgs
+			{
+				TargetPlayerIndex = targetPlayerIndex,
+				Data = data,
+				Player = sender,
+				NewPosition = position,
+				NewVelocity = velocity,
+				PortalColorIndex = colorIndex
+			};
+
+			PortalTeleport.Invoke(null, args);
+
+			return args.Handled;
+		}
+
+		private static bool HandlePlayerPortalTeleport(GetDataHandlerArgs args)
+		{
+			byte plr = args.Data.ReadInt8();
+			short portalColorIndex = args.Data.ReadInt16();
+			float newPositionX = args.Data.ReadSingle();
+			float newPositionY = args.Data.ReadSingle();
+			float newVelocityX = args.Data.ReadSingle();
+			float newVelocityY = args.Data.ReadSingle();
+
+			return OnPlayerTeleportThroughPortal(
+				args.Player,
+				plr,
+				args.Data,
+				new Vector2(newPositionX, newPositionY),
+				new Vector2(newVelocityX, newVelocityY),
+				portalColorIndex
+			);
 		}
 
 		private static bool HandleHealOther(GetDataHandlerArgs args)
