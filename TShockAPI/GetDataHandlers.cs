@@ -1511,7 +1511,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		/// <summary>The event args object for the HealOtherPlayer event</summary>
+		/// <summary>The event args object for the PortalTeleport event</summary>
 		public class TeleportThroughPortalEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>The Terraria player index of the target player</summary>
