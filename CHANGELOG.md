@@ -85,6 +85,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `TSPlayer.InitSpawn` field. (@DankRank)
 * `OnPlayerSpawn`'s player ID field is now `PlayerId`. (@DankRank)
 * `Utils.TryParseTime` can now take spaces (e.g., `3d 5h 2m 3s`) (@QuiCM)
+* Enabled banning unregistered users (@QuiCM)
 * Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
 
 ## TShock 4.3.25
