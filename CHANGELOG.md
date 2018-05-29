@@ -84,6 +84,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed erroneous kicks and bans when using `KickOnMediumcoreDeath` and `BanOnMediumcoreDeath` options. (@DankRank)
 * Removed `TSPlayer.InitSpawn` field. (@DankRank)
 * `OnPlayerSpawn`'s player ID field is now `PlayerId`. (@DankRank)
+* Enabled banning unregistered users (@QuiCM)
 * Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
 
 ## TShock 4.3.25
