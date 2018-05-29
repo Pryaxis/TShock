@@ -85,6 +85,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed `TSPlayer.InitSpawn` field. (@DankRank)
 * `OnPlayerSpawn`'s player ID field is now `PlayerId`. (@DankRank)
 * Enabled banning unregistered users (@QuiCM)
+* Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
