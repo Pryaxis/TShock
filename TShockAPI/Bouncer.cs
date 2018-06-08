@@ -64,6 +64,7 @@ namespace TShockAPI
 			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
 			GetDataHandlers.TileEdit += OnTileEdit;
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
+			GetDataHandlers.PortalTeleport += OnPlayerPortalTeleport;
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
@@ -1719,6 +1720,34 @@ namespace TShockAPI
 			}
 
 			args.Handled = true;
+		}
+
+		internal void OnPlayerPortalTeleport(object sender, GetDataHandlers.TeleportThroughPortalEventArgs args)
+		{
+			//Packet 96 (player teleport through portal) has no validation on whether or not the player id provided
+			//belongs to the player who sent the packet.
+			if (args.Player.Index != args.TargetPlayerIndex)
+			{
+				//If the player who sent the packet is not the player being teleported, cancel this packet
+				args.Player.Disable("Malicious portal attempt.", DisableFlags.WriteToLogAndConsole); //Todo: this message is not particularly clear - suggestions wanted
+				args.Handled = true;
+				return;
+			}
+
+			//Generic bounds checking, though I'm not sure if anyone would willingly hack themselves outside the map?
+			if (args.NewPosition.X > Main.maxTilesX || args.NewPosition.X < 0
+				|| args.NewPosition.Y > Main.maxTilesY || args.NewPosition.Y < 0)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			//May as well reject teleport attempts if the player is being throttled
+			if (args.Player.IsBeingDisabled() || args.Player.IsBouncerThrottled())
+			{
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>
