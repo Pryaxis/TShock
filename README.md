@@ -7,7 +7,7 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 
 * Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](https://travis.tshock.co/).
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
-* Join [Discord](https://discord.gg/XUJdH58) to get help, chat, and enjoy some swell Australian company.
+* Join [Telegram](https://t.me/pryaxis) to get help, chat, and enjoy some swell Australian company.
 * Download [other plugins](https://tshock.co/xf/index.php?resources/) to supercharge your server.
 
 ----
