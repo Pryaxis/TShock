@@ -76,7 +76,7 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
-				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
+				if (Regex.IsMatch(ex.Message, "Username.*not unique|UNIQUE constraint failed: Users\\.Username"))
 					throw new UserAccountExistsException(account.Name);
 				throw new UserAccountManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
