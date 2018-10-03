@@ -7,6 +7,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * API: Added hooks for item, projectile and tile bans (@deadsurgeon42)
 * API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
 * API: New WorldGrassSpread hook which shold allow corruption/crimson/hallow creep config options to work (@DeathCradle)
+* Fixed a missing case in UserManager exception handling, which caused a rather cryptic console error instead of the intended error message (@deadsurgeon42)
 * Fixed saving when one player is one the server and another one joins (@MarioE)
 * Fixed /spawnmob not spawning negative IDs (@MarioE)
 * Validated tile placement on PlaceObject; clients can no longer place frames, paintings etc with dirt blocks (@bartico6, @ProfessorXZ)
