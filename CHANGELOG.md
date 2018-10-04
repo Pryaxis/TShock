@@ -3,7 +3,6 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
-* Update tracker now uses TLS (@pandabear41) 
 * API: Added return in OnNameCollision if hook has been handled. (@Patrikkk)
 * API: Added hooks for item, projectile and tile bans (@deadsurgeon42)
 * API: Changed `PlayerHooks` permission hook mechanisms to allow negation from hooks (@deadsurgeon42)
@@ -89,6 +88,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * `Utils.TryParseTime` can now take spaces (e.g., `3d 5h 2m 3s`) (@QuiCM)
 * Enabled banning unregistered users (@QuiCM)
 * Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
+* Update tracker now uses TLS (@pandabear41) 
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
