@@ -480,9 +480,67 @@ namespace TShockAPI
 
 			if (args.Player.IsBeingDisabled())
 			{
-				args.Player.SendData(PacketTypes.NpcAddBuff, "", id);
 				args.Handled = true;
 				return;
+			}
+
+			if (!args.Player.HasPermission(Permissions.ignorenpcaddbuffdetection))
+			{
+				bool cheat = false;
+
+				if(TShock.NPCAddBuffTimeMax.ContainsKey(type))
+				{
+					if(time > TShock.NPCAddBuffTimeMax[type])
+					{
+						cheat = true;
+					}
+
+					if(npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
+					{
+						if(type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
+							type != BuffID.Wet && type != BuffID.Slimed)
+						{
+							cheat = true;
+						}
+					}
+					// Want to check voodoo doll but it may be wrong.
+					//else if(npc.netID == NPCID.Guide)
+					//{
+					//	bool hasDoll = false;
+					//	foreach (var item in args.Player.Accessories)
+					//	{
+					//		if (item.netID == ItemID.GuideVoodooDoll)
+					//		{
+					//			hasDoll = true;
+					//			break;
+					//		}
+					//	}
+					//	cheat = !hasDoll;
+					//}
+					//else if (npc.netID == NPCID.Clothier)
+					//{
+					//	bool hasDoll = false;
+					//	foreach (var item in args.Player.Accessories)
+					//	{
+					//		if (item.netID == ItemID.ClothierVoodooDoll)
+					//		{
+					//			hasDoll = true;
+					//			break;
+					//		}
+					//	}
+					//	cheat = !hasDoll;
+					//}
+				}
+				else
+				{
+					cheat = true;
+				}
+
+				if (cheat)
+				{
+					args.Player.Disable("Add buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
+					args.Handled = true;
+				}
 			}
 		}
 
