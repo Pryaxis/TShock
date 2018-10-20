@@ -1003,6 +1003,46 @@ namespace TShockAPI
 			NPCHome.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		/// <summary>
+		/// For use in a NPCAddBuff event
+		/// </summary>
+		public class NPCAddBuffEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The ID of the npc
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Buff Type
+			/// </summary>
+			public byte Type { get; set; }
+			/// <summary>
+			/// Time the buff lasts
+			/// </summary>
+			public short Time { get; set; }
+		}
+		/// <summary>
+		/// NPCAddBuff - Called when a npc is buffed
+		/// </summary>
+		public static HandlerList<NPCAddBuffEventArgs> NPCAddBuff = new HandlerList<NPCAddBuffEventArgs>();
+
+		private static bool OnNPCAddBuff(TSPlayer player, MemoryStream data, short id, byte type, short time)
+		{
+			if (NPCAddBuff == null)
+				return false;
+
+			var args = new NPCAddBuffEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Type = type,
+				Time = time
+			};
+			NPCAddBuff.Invoke(null, args);
+			return args.Handled;
+		}
 
 		/// <summary>
 		/// For use in a PlayerBuff event
@@ -1455,6 +1495,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerSlot, HandlePlayerSlot },
 					{ PacketTypes.TileGetSection, HandleGetSection },
 					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.NpcAddBuff, HandleNPCAddBuff },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
 					{ PacketTypes.ItemDrop, HandleItemDrop },
 					{ PacketTypes.UpdateItemDrop, HandleItemDrop },
@@ -2626,6 +2667,19 @@ namespace TShockAPI
 				return true;
 			}
 			return false;
+		}
+		
+		private static bool HandleNPCAddBuff(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var type = args.Data.ReadInt8();
+			var time = args.Data.ReadInt16();
+
+			if (OnNPCAddBuff(args.Player, args.Data, id, type, time))
+				return true;
+
+			args.Player.SendData(PacketTypes.NpcAddBuff, "", id);
+			return true;
 		}
 
 		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
