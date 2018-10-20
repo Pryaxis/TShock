@@ -2678,7 +2678,7 @@ namespace TShockAPI
 			if (OnNPCAddBuff(args.Player, args.Data, id, type, time))
 				return true;
 			
-			return true;
+			return false;
 		}
 
 		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
