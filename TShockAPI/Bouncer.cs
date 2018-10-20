@@ -36,6 +36,31 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
+		static Dictionary<byte, short> NPCAddBuffTimeMax = new Dictionary<byte, short>()
+		{
+			{ BuffID.Poisoned, 3600 },
+			{ BuffID.OnFire, 1200 },
+			{ BuffID.CursedInferno, 420 },
+			{ BuffID.Frostburn, 900 },
+			{ BuffID.Ichor, 1200 },
+			{ BuffID.Venom, 1260 },
+			{ BuffID.Midas, 120 },
+			{ BuffID.Wet, 1500 },
+			{ BuffID.Slimed, 1500 },
+			{ BuffID.Lovestruck, 1800 },
+			{ BuffID.Stinky, 1800 },
+			{ BuffID.SoulDrain, 30 },
+			{ BuffID.ShadowFlame, 660 },
+			{ BuffID.DryadsWard, 120 },
+			{ BuffID.BoneJavelin, 900 },
+			{ BuffID.StardustMinionBleed, 900 },
+			{ BuffID.DryadsWardDebuff, 120 },
+			{ BuffID.Daybreak, 300 },
+			{ BuffID.BetsysCurse, 600 },
+			{ BuffID.Oiled, 540 }
+		};
+
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
@@ -454,7 +479,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles NPCAddBuff events.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -484,63 +509,33 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasPermission(Permissions.ignorenpcaddbuffdetection))
+			bool cheat = false;
+
+			if (NPCAddBuffTimeMax.ContainsKey(type))
 			{
-				bool cheat = false;
-
-				if(TShock.NPCAddBuffTimeMax.ContainsKey(type))
-				{
-					if(time > TShock.NPCAddBuffTimeMax[type])
-					{
-						cheat = true;
-					}
-
-					if(npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
-					{
-						if(type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-							type != BuffID.Wet && type != BuffID.Slimed)
-						{
-							cheat = true;
-						}
-					}
-					// Want to check voodoo doll but it may be wrong.
-					//else if(npc.netID == NPCID.Guide)
-					//{
-					//	bool hasDoll = false;
-					//	foreach (var item in args.Player.Accessories)
-					//	{
-					//		if (item.netID == ItemID.GuideVoodooDoll)
-					//		{
-					//			hasDoll = true;
-					//			break;
-					//		}
-					//	}
-					//	cheat = !hasDoll;
-					//}
-					//else if (npc.netID == NPCID.Clothier)
-					//{
-					//	bool hasDoll = false;
-					//	foreach (var item in args.Player.Accessories)
-					//	{
-					//		if (item.netID == ItemID.ClothierVoodooDoll)
-					//		{
-					//			hasDoll = true;
-					//			break;
-					//		}
-					//	}
-					//	cheat = !hasDoll;
-					//}
-				}
-				else
+				if (time > NPCAddBuffTimeMax[type])
 				{
 					cheat = true;
 				}
 
-				if (cheat)
+				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
-					args.Player.Disable("Add buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
-					args.Handled = true;
+					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
+						type != BuffID.Wet && type != BuffID.Slimed)
+					{
+						cheat = true;
+					}
 				}
+			}
+			else
+			{
+				cheat = true;
+			}
+
+			if (cheat)
+			{
+				args.Player.Disable("Add buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
+				args.Handled = true;
 			}
 		}
 

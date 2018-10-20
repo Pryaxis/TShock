@@ -131,9 +131,6 @@ namespace TShockAPI
 		/// </summary>
 		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
-		/// <summary>The longest time of buffs players can add to NPCs.</summary>
-		public static Dictionary<byte, short> NPCAddBuffTimeMax;
-
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
@@ -326,7 +323,6 @@ namespace TShockAPI
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
-				NPCAddBuffTimeMax = InitNPCAddBuffTimeMax();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
 
@@ -387,34 +383,6 @@ namespace TShockAPI
 				Log.Error(ex.ToString());
 				Environment.Exit(1);
 			}
-		}
-
-		private Dictionary<byte, short> InitNPCAddBuffTimeMax()
-		{
-			var dict = new Dictionary<byte, short>();
-
-			dict.Add(BuffID.Poisoned, 3600);
-			dict.Add(BuffID.OnFire, 1200);
-			dict.Add(BuffID.CursedInferno, 420);
-			dict.Add(BuffID.Frostburn, 900);
-			dict.Add(BuffID.Ichor, 1200);
-			dict.Add(BuffID.Venom, 1260);
-			dict.Add(BuffID.Midas, 120);
-			dict.Add(BuffID.Wet, 1500);
-			dict.Add(BuffID.Slimed, 1500);
-			dict.Add(BuffID.Lovestruck, 1800);
-			dict.Add(BuffID.Stinky, 1800);
-			dict.Add(BuffID.SoulDrain, 30);
-			dict.Add(BuffID.ShadowFlame, 660);
-			dict.Add(BuffID.DryadsWard, 120);
-			dict.Add(BuffID.BoneJavelin, 900);
-			dict.Add(BuffID.StardustMinionBleed, 900);
-			dict.Add(BuffID.DryadsWardDebuff, 120);
-			dict.Add(BuffID.Daybreak, 300);
-			dict.Add(BuffID.BetsysCurse, 600);
-			dict.Add(BuffID.Oiled, 540);
-
-			return dict;
 		}
 
 		protected void CrashReporter_HeapshotRequesting(object sender, EventArgs e)

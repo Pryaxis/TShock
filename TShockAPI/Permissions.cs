@@ -169,9 +169,6 @@ namespace TShockAPI
 
 		[Description("Prevents you from being disabled by abnormal MP.")]
 		public static readonly string ignoremp = "tshock.ignore.mp";
-		
-		[Description("Prevents you from being disabled by add buffs to npcs abnormally.")]
-		public static readonly string ignorenpcaddbuffdetection = "tshock.ignore.npcaddbuff";
 
 		// tshock.item nodes
 
