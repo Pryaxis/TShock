@@ -2677,8 +2677,7 @@ namespace TShockAPI
 
 			if (OnNPCAddBuff(args.Player, args.Data, id, type, time))
 				return true;
-
-			args.Player.SendData(PacketTypes.NpcAddBuff, "", id);
+			
 			return true;
 		}
 
