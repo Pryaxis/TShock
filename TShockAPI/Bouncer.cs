@@ -509,13 +509,13 @@ namespace TShockAPI
 				return;
 			}
 
-			bool cheat = false;
+			bool detectedNPCBuffTimeCheat = false;
 
 			if (NPCAddBuffTimeMax.ContainsKey(type))
 			{
 				if (time > NPCAddBuffTimeMax[type])
 				{
-					cheat = true;
+					detectedNPCBuffTimeCheat = true;
 				}
 
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
@@ -523,18 +523,18 @@ namespace TShockAPI
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
 						type != BuffID.Wet && type != BuffID.Slimed)
 					{
-						cheat = true;
+						detectedNPCBuffTimeCheat = true;
 					}
 				}
 			}
 			else
 			{
-				cheat = true;
+				detectedNPCBuffTimeCheat = true;
 			}
 
-			if (cheat)
+			if (detectedNPCBuffTimeCheat)
 			{
-				args.Player.Disable("Add buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable("Added buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
 				args.Handled = true;
 			}
 		}
