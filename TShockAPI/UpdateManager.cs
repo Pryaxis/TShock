@@ -33,7 +33,7 @@ namespace TShockAPI
 	/// </summary>
 	public class UpdateManager
 	{
-		private const string UpdateUrl = "http://update.tshock.co/latest/";
+		private const string UpdateUrl = "https://update.tshock.co/latest/";
 		private HttpClient _client = new HttpClient();
 
 		/// <summary>

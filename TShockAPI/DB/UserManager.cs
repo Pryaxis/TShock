@@ -76,7 +76,7 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
-				if (Regex.IsMatch(ex.Message, "Username.*not unique"))
+				if (Regex.IsMatch(ex.Message, "Username.*not unique|UNIQUE constraint failed: Users\\.Username"))
 					throw new UserAccountExistsException(account.Name);
 				throw new UserAccountManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
 			}
@@ -95,13 +95,17 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				var tempuser = GetUserAccount(account);
+				// Logout any player logged in as the account to be removed
+				TShock.Players.Where(p => p?.IsLoggedIn == true && p.Account.Name == account.Name).ForEach(p => p.Logout());
+
+				UserAccount tempuser = GetUserAccount(account);
 				int affected = _database.Query("DELETE FROM Users WHERE Username=@0", account.Name);
 
 				if (affected < 1)
 					throw new UserAccountNotExistException(account.Name);
 
 				Hooks.AccountHooks.OnAccountDelete(tempuser);
+
 			}
 			catch (Exception ex)
 			{
