@@ -49,6 +49,7 @@ namespace TShockAPI
 			GetDataHandlers.PlayerAnimation += OnPlayerAnimation;
 			GetDataHandlers.NPCStrike += OnNPCStrike;
 			GetDataHandlers.ItemDrop += OnItemDrop;
+			GetDataHandlers.NPCAddBuff += OnNPCAddBuff;
 			GetDataHandlers.PlayerBuff += OnPlayerBuff;
 			GetDataHandlers.ChestItemChange += OnChestItemChange;
 			GetDataHandlers.NPCHome += OnUpdateNPCHome;
@@ -449,6 +450,37 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+		}
+		
+		/// <summary>Handles NPCAddBuff events.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnNPCAddBuff(object sender, GetDataHandlers.NPCAddBuffEventArgs args)
+		{
+			short id = args.ID;
+			byte type = args.Type;
+			short time = args.Time;
+
+			if (id >= Main.npc.Length)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			NPC npc = Main.npc[id];
+
+			if (npc == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				args.Player.SendData(PacketTypes.NpcAddBuff, "", id);
 				args.Handled = true;
 				return;
 			}
