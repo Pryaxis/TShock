@@ -534,7 +534,7 @@ namespace TShockAPI
 
 			if (detectedNPCBuffTimeCheat)
 			{
-				args.Player.Disable("Added buff to NPC abnormally.", DisableFlags.WriteToLogAndConsole);
+				args.Player.Kick("Added buff to NPC abnormally.", true);
 				args.Handled = true;
 			}
 		}
