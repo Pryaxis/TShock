@@ -36,6 +36,31 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
+		static Dictionary<byte, short> NPCAddBuffTimeMax = new Dictionary<byte, short>()
+		{
+			{ BuffID.Poisoned, 3600 },
+			{ BuffID.OnFire, 1200 },
+			{ BuffID.CursedInferno, 420 },
+			{ BuffID.Frostburn, 900 },
+			{ BuffID.Ichor, 1200 },
+			{ BuffID.Venom, 1260 },
+			{ BuffID.Midas, 120 },
+			{ BuffID.Wet, 1500 },
+			{ BuffID.Slimed, 1500 },
+			{ BuffID.Lovestruck, 1800 },
+			{ BuffID.Stinky, 1800 },
+			{ BuffID.SoulDrain, 30 },
+			{ BuffID.ShadowFlame, 660 },
+			{ BuffID.DryadsWard, 120 },
+			{ BuffID.BoneJavelin, 900 },
+			{ BuffID.StardustMinionBleed, 900 },
+			{ BuffID.DryadsWardDebuff, 120 },
+			{ BuffID.Daybreak, 300 },
+			{ BuffID.BetsysCurse, 600 },
+			{ BuffID.Oiled, 540 }
+		};
+
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
@@ -49,6 +74,7 @@ namespace TShockAPI
 			GetDataHandlers.PlayerAnimation += OnPlayerAnimation;
 			GetDataHandlers.NPCStrike += OnNPCStrike;
 			GetDataHandlers.ItemDrop += OnItemDrop;
+			GetDataHandlers.NPCAddBuff += OnNPCAddBuff;
 			GetDataHandlers.PlayerBuff += OnPlayerBuff;
 			GetDataHandlers.ChestItemChange += OnChestItemChange;
 			GetDataHandlers.NPCHome += OnUpdateNPCHome;
@@ -451,6 +477,65 @@ namespace TShockAPI
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
 				return;
+			}
+		}
+
+		/// <summary>Handles NPCAddBuff events.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnNPCAddBuff(object sender, GetDataHandlers.NPCAddBuffEventArgs args)
+		{
+			short id = args.ID;
+			byte type = args.Type;
+			short time = args.Time;
+
+			if (id >= Main.npc.Length)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			NPC npc = Main.npc[id];
+
+			if (npc == null)
+			{
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				args.Handled = true;
+				return;
+			}
+
+			bool detectedNPCBuffTimeCheat = false;
+
+			if (NPCAddBuffTimeMax.ContainsKey(type))
+			{
+				if (time > NPCAddBuffTimeMax[type])
+				{
+					detectedNPCBuffTimeCheat = true;
+				}
+
+				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
+				{
+					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
+						type != BuffID.Wet && type != BuffID.Slimed)
+					{
+						detectedNPCBuffTimeCheat = true;
+					}
+				}
+			}
+			else
+			{
+				detectedNPCBuffTimeCheat = true;
+			}
+
+			if (detectedNPCBuffTimeCheat)
+			{
+				args.Player.Kick("Added buff to NPC abnormally.", true);
+				args.Handled = true;
 			}
 		}
 
