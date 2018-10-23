@@ -550,6 +550,56 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a PlayerZone event
+		/// </summary>
+		public class PlayerZoneEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// 0 = Dungeon, 1 = Corruption,2 =Holy, 3 = Meteor, 4 = Jungle, 5 = Snow, 6 = Crimson, 7 = Water Candle
+			/// </summary>
+			public BitsByte Zone1 { get; set; }
+			/// <summary>
+			/// 0 = Peace Candle, 1 = Solar Tower, 2 = Vortex Tower, 3 = Nebula Tower, 4 = Stardust Tower, 5 = Desert, 6 = Glowshroom, 7 = Underground Desert
+			/// </summary>
+			public BitsByte Zone2 { get; set; }
+			/// <summary>
+			/// 0 = Overworld, 1 = Dirt Layer, 2 = Rock Layer, 3 = Underworld, 4 = Beach, 5 = Rain, 6 = Sandstorm
+			/// </summary>
+			public BitsByte Zone3 { get; set; }
+			/// <summary>
+			/// 0 = Old One's Army
+			/// </summary>
+			public BitsByte Zone4 { get; set; }
+		}
+		/// <summary>
+		/// PlayerZone - When the player sends it's zone/biome information to the server
+		/// </summary>
+		public static HandlerList<PlayerZoneEventArgs> PlayerZone = new HandlerList<PlayerZoneEventArgs>();
+		
+		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4)
+		{
+			if (PlayerZone == null)
+				return false;
+
+			var args = new PlayerZoneEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = plr,
+				Zone1 = zone1,
+				Zone2 = zone2,
+				Zone3 = zone3,
+				Zone4 = zone4
+			};
+			PlayerZone.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>The event args object for the HealOtherPlayer event</summary>
 		public class HealOtherPlayerEventArgs : GetDataHandledEventArgs
 		{
@@ -1479,6 +1529,7 @@ namespace TShockAPI
 				{
 					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
 					{ PacketTypes.PlayerUpdate, HandlePlayerUpdate },
+					{ PacketTypes.Zones, HandlePlayerZone },
 					{ PacketTypes.Tile, HandleTile },
 					{ PacketTypes.PlaceObject, HandlePlaceObject },
 					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
@@ -2400,6 +2451,25 @@ namespace TShockAPI
 
 			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return true;
+		}
+
+		private static bool HandlePlayerZone(GetDataHandlerArgs args)
+		{
+			if (args.Player == null || args.TPlayer == null || args.Data == null)
+			{
+				return true;
+			}
+
+			var plr = args.Data.ReadInt8();
+			BitsByte zone1 = args.Data.ReadInt8();
+			BitsByte zone2 = args.Data.ReadInt8();
+			BitsByte zone3 = args.Data.ReadInt8();
+			BitsByte zone4 = args.Data.ReadInt8();
+
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4))
+				return true;
+			
+			return false;
 		}
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
