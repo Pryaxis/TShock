@@ -1006,32 +1006,35 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlayerZone(object sender, GetDataHandlers.PlayerZoneEventArgs args)
 		{
-			bool hasSolarTower = false;
-			bool hasVortexTower = false;
-			bool hasNebulaTower = false;
-			bool hasStardustTower = false;
-			
-			// May need to optimize
-			foreach (var npc in Main.npc)
+			if(args.Zone2[1] || args.Zone2[2] || args.Zone2[3] || args.Zone2[4])
 			{
-				if (npc.netID == NPCID.LunarTowerSolar)
-					hasSolarTower = true;
-				else if (npc.netID == NPCID.LunarTowerVortex)
-					hasVortexTower = true;
-				else if (npc.netID == NPCID.LunarTowerNebula)
-					hasNebulaTower = true;
-				else if (npc.netID == NPCID.LunarTowerStardust)
-					hasStardustTower = true;
-			}
-			
-			if((args.Zone2[1] && !hasSolarTower)
-				|| (args.Zone2[2] && !hasVortexTower)
-				|| (args.Zone2[3] && !hasNebulaTower)
-				|| (args.Zone2[4] && !hasStardustTower)
-				)
-			{
-				args.Handled = true;
-				return;
+				bool hasSolarTower = false;
+				bool hasVortexTower = false;
+				bool hasNebulaTower = false;
+				bool hasStardustTower = false;
+
+				// May need to optimize
+				foreach (var npc in Main.npc)
+				{
+					if (npc.netID == NPCID.LunarTowerSolar)
+						hasSolarTower = true;
+					else if (npc.netID == NPCID.LunarTowerVortex)
+						hasVortexTower = true;
+					else if (npc.netID == NPCID.LunarTowerNebula)
+						hasNebulaTower = true;
+					else if (npc.netID == NPCID.LunarTowerStardust)
+						hasStardustTower = true;
+				}
+
+				if ((args.Zone2[1] && !hasSolarTower)
+					|| (args.Zone2[2] && !hasVortexTower)
+					|| (args.Zone2[3] && !hasNebulaTower)
+					|| (args.Zone2[4] && !hasStardustTower)
+					)
+				{
+					args.Handled = true;
+					return;
+				}
 			}
 		}
 
