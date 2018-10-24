@@ -27,497 +27,497 @@ using Rests;
 
 namespace TShockAPI
 {
-	/// <summary>ConfigFile - The config file class, which contains the configuration for a server that is serialized into JSON and deserialized on load.</summary>
+	/// <summary>The config file class, which contains the configuration for a server that is serialized into JSON and deserialized on load.</summary>
 	public class ConfigFile
 	{
-		/// <summary>InvasionMultiplier - The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
-		[Description("The equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
+		/// <summary>Determines the size of invasion events. The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
+		[Description("Determines the size of invasion events.\nThe equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
 		public int InvasionMultiplier = 1;
 
-		/// <summary>DefaultMaximumSpawns - The default max spawns per wave.</summary>
-		[Description("The default maximum mobs that will spawn per wave. Higher means more mobs in that wave.")]
+		/// <summary>The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.</summary>
+		[Description("The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.")]
 		public int DefaultMaximumSpawns = 5;
 
-		/// <summary>DefaultSpawnRate - The default spawn rate.</summary>
+		/// <summary>The delay between waves. Lower values lead to more mobs.</summary>
 		[Description("The delay between waves. Lower values lead to more mobs.")]
 		public int DefaultSpawnRate = 600;
 
-		/// <summary>ServerPort - The configured server port.</summary>
+		/// <summary>The port the server runs on.</summary>
 		[Description("The port the server runs on.")]
 		public int ServerPort = 7777;
 
-		/// <summary>EnableWhitelist - boolean if the whitelist functionality should be turned on.</summary>
-		[Description("Enable or disable the whitelist based on IP addresses in whitelist.txt.")]
+		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
+		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
 		public bool EnableWhitelist;
 
-		/// <summary>InfiniteInvasion - Whether or not infinite invasion mode should be on.</summary>
-		[Description("Enable the ability for invasion size to never decrease. Make sure to run /invade, and note that this adds 2 million+ goblins to the spawn queue for the map.")]
+		/// <summary>Enables never-ending invasion events. You still need to start the event.</summary>
+		[Description("Enables never ending invasion events. You still need to start the event, such as with the /invade command.")]
 		public bool InfiniteInvasion;
 
-		/// <summary>PvPMode - The server PvP mode (normal, always, or disabled).</summary>
-		[Description("Set the server pvp mode. Valid types are: \"normal\", \"always\" and \"disabled\".")]
+		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "disabled".</summary>
+		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\" and \"disabled\".")]
 		public string PvPMode = "normal";
 
-		/// <summary>SpawnProtection - Enables the spawn protection system.</summary>
+		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
 		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
 		public bool SpawnProtection = true;
 
-		/// <summary>SpawnProtectionRadius - The spawn protection tile radius.</summary>
-		[Description("Radius from spawn tile for SpawnProtection.")]
+		/// <summary>The tile radius around the spawn tile that is protected by the SpawnProtection setting.</summary>
+		[Description("The tile radius around the spawn tile that is protected by the SpawnProtection setting.")]
 		public int SpawnProtectionRadius = 10;
 
-		/// <summary>MaxSlots - The server's max slots.</summary>
-		[Description("Max slots for the server. If you want people to be kicked with \"Server is full\" set this to how many players you want max and then set Terraria max players to 2 higher.")]
+		/// <summary>Maximum number of clients connected at once. If lower than Terraria's setting, the server will kick excess connections.</summary>
+		[Description("Maximum number of clients connected at once.\nIf you want people to be kicked with \"Server is full\" set this to how many players you want max and then set Terraria max players to 2 higher.")]
 		public int MaxSlots = 8;
 
-		/// <summary>RangeChecks - Whether or not the anti-grief system based on range should be enabled.</summary>
-		[Description("Global protection agent for any block distance based anti-grief check.")]
+		/// <summary>Enable or disable anti-cheat range checks based on distance between the player and their block placements.</summary>
+		[Description("Enable or disable anti-cheat range checks based on distance between the player and their block placements.")]
 		public bool RangeChecks = true;
 
-		/// <summary>DisableBuild - Whether or not building should be enabled.</summary>
-		[Description("Disables any building / placing of blocks.")]
+		/// <summary>Disables any placing, or removal of blocks.</summary>
+		[Description("Disables any placing, or removal of blocks.")]
 		public bool DisableBuild;
 
-		/// <summary>SuperAdminChatRGB - The chat color for the superadmin group.</summary>
-		[Description("#.#.# = Red/Blue/Green - RGB Colors for the Admin Chat Color. Max value: 255.")]
+		/// <summary>The chat color for the superadmin group.</summary>
+		[Description("The chat color for the superadmin group.\n#.#.# = Red/Blue/Green\nMax value: 255")]
 		public int[] SuperAdminChatRGB = { 255, 255, 255 };
 
-		/// <summary>SuperAdminChatPrefix - The superadmin chat prefix.</summary>
-		[Description("Super admin group chat prefix.")]
+		/// <summary>The superadmin chat prefix.</summary>
+		[Description("The superadmin chat prefix.")]
 		public string SuperAdminChatPrefix = "(Super Admin) ";
 
-		/// <summary>SuperAdminChatSuffix - The superadmin chat suffix.</summary>
-		[Description("Super admin group chat suffix.")]
+		/// <summary>The superadmin chat suffix.</summary>
+		[Description("The superadmin chat suffix.")]
 		public string SuperAdminChatSuffix = "";
 
-		/// <summary>BackupInterval - The backup frequency in minutes.</summary>
-		[Description("Backup frequency in minutes. So, a value of 60 = 60 minutes. Backups are stored in the \\tshock\\backups folder.")]
+		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
+		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
 		public int BackupInterval;
 
-		/// <summary>BackupKeepFor - Backup max age in minutes.</summary>
-		[Description("How long backups are kept in minutes. 2880 = 2 days.")]
+		/// <summary>For how long backups are kept in minutes.</summary>
+		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
 		public int BackupKeepFor = 60;
 
-		/// <summary>RememberLeavePos - Whether or not to remember where an IP player was when they left.</summary>
-		[Description("Remembers where a player left off. It works by remembering the IP, NOT the character.\neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location. Note: Won't save after server restarts.")]
+		/// <summary>Remembers where a player left off, based on their IP. Does not persist through server restarts.</summary>
+		[Description("Remembers where a player left off, based on their IP. Does not persist through server restarts.\neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location.")]
 		public bool RememberLeavePos;
 
-		/// <summary>HardcoreOnly - Whether or not HardcoreOnly should be enabled.</summary>
-		[Description("Hardcore players ONLY. This means softcore players cannot join.")]
+		/// <summary>Prevents non-hardcore players from connecting.</summary>
+		[Description("Prevents non-hardcore players from connecting.")]
 		public bool HardcoreOnly;
 
-		/// <summary>MediumcoreOnly - Whether or not MediumCore only players should be enabled.</summary>
-		[Description("Mediumcore players ONLY. This means softcore players cannot join.")]
+		/// <summary>Prevents softcore players from connecting.</summary>
+		[Description("Prevents softcore players from connecting.")]
 		public bool MediumcoreOnly;
 
-		/// <summary>KickOnMediumcoreDeath - Whether or not to kick mediumcore players on death.</summary>
-		[Description("Kicks a mediumcore player on death.")]
+		/// <summary>Whether or not to kick mediumcore players on death.</summary>
+		[Description("Whether or not to kick mediumcore players on death.")]
 		public bool KickOnMediumcoreDeath;
 
-		/// <summary>BanOnMediumcoreDeath - Whether or not to ban mediumcore players on death.</summary>
-		[Description("Bans a mediumcore player on death.")]
+		/// <summary>Whether or not to ban mediumcore players on death.</summary>
+		[Description("Whether or not to ban mediumcore players on death.")]
 		public bool BanOnMediumcoreDeath;
 
-		/// <summary>AutoSave - Whether or not to use Terraria's built-in world auto save.</summary>
-		[Description("Enable/disable Terraria's built in auto save.")]
+		/// <summary>Enable or disable Terraria's built-in world auto save.</summary>
+		[Description("Enable or disable Terraria's built-in world auto save.")]
 		public bool AutoSave = true;
-		/// <summary>AnnounceSave - Whether or not to broadcast world saves.</summary>
-		[Description("Enable/disable save announcements.")]
+		/// <summary>Enable or disable world save announcements.</summary>
+		[Description("Enable or disable world save announcements.")]
 		public bool AnnounceSave = true;
 
-		/// <summary>MaximumLoginAttempts - Number of failed login attempts before kicking a player.</summary>
+		/// <summary>Number of failed login attempts before kicking the player.</summary>
 		[Description("Number of failed login attempts before kicking the player.")]
 		public int MaximumLoginAttempts = 3;
 
-		/// <summary>ServerName - Used when replying to a REST /status request or sent to the client.</summary>
+		/// <summary>Replaces the world name during a session if UseServerName is true.</summary>
 		[Description("Replaces the world name during a session if UseServerName is true.")]
 		public string ServerName = "";
-		/// <summary>UseServerName - Whether or not to use ServerName in place of the world name.</summary>
-		[Description("Sends ServerName in place of the world name to clients.")]
+		/// <summary>Whether or not to use ServerName in place of the world name.</summary>
+		[Description("Whether or not to use ServerName in place of the world name.")]
 		public bool UseServerName = false;
 
-		/// <summary>StorageType - The type of SQL database to use when storing data (either "sqlite" or "mysql").</summary>
-		[Description("Valid types are \"sqlite\" and \"mysql\".")]
+		/// <summary>The type of database to use when storing data (either "sqlite" or "mysql").</summary>
+		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
 		public string StorageType = "sqlite";
 
-		/// <summary>MySqlHost - The hostname and port to to use when connecting to a MySQL database.</summary>
+		/// <summary>The MySQL hostname and port to direct connections to.</summary>
 		[Description("The MySQL hostname and port to direct connections to.")]
 		public string MySqlHost = "localhost:3306";
-		/// <summary>MySqlDbName - The database name to use when connecting to a MySQL database.</summary>
-		[Description("Database name to connect to.")]
+		/// <summary>The database name to connect to when using MySQL as the database type.</summary>
+		[Description("The database name to connect to when using MySQL as the database type.")]
 		public string MySqlDbName = "";
-		/// <summary>MySqlUsername - The username for the login credentials used when connecting to a MySQL database.</summary>
-		[Description("Database username to connect with.")]
+		/// <summary>The username used when connecting to a MySQL database.</summary>
+		[Description("The username used when connecting to a MySQL database.")]
 		public string MySqlUsername = "";
-		/// <summary>MySqlPassword - The password for the login credentials used when connecting to a MySQL database.</summary>
-		[Description("Database password to connect with.")]
+		/// <summary>The password used when connecting to a MySQL database.</summary>
+		[Description("The password used when connecting to a MySQL database.")]
 		public string MySqlPassword = "";
 
-		/// <summary>MediumcoreBanReason - The reason given if banning mediumcore players on death.</summary>
-		[Description("The reason given when banning a mediumcore player on death if BanOnMediumcoreDeath is set to true.")]
+		/// <summary>The reason given if banning a mediumcore player on death.</summary>
+		[Description("The reason given if banning a mediumcore player on death.")]
 		public string MediumcoreBanReason = "Death results in a ban";
-		/// <summary>MediumcoreKickReason - The reason given if kicking mediumcore players on death.</summary>
-		[Description("The reason given when kicking a mediumcore player on death if KickOnMediumcoreDeath is set to true.")]
+		/// <summary>The reason given if kicking a mediumcore players on death.</summary>
+		[Description("The reason given if kicking a mediumcore players on death.")]
 		public string MediumcoreKickReason = "Death results in a kick";
 
-		/// <summary>EnableIPBans - Whether or not to kick players on join that match a banned IP address.</summary>
-		[Description("Enables kicking of banned users by matching their IP Address.")]
+		/// <summary>Enables kicking banned users by matching their IP Address.</summary>
+		[Description("Enables kicking banned users by matching their IP Address.")]
 		public bool EnableIPBans = true;
 
-		/// <summary>EnableUUIDBans - Whether or not to kick players on join that match a banned UUID.</summary>
-		[Description("Enables kicking of banned users by matching their client UUID.")]
+		/// <summary>Enables kicking banned users by matching their client UUID.</summary>
+		[Description("Enables kicking banned users by matching their client UUID.")]
 		public bool EnableUUIDBans = true;
 
-		/// <summary>EnableBanOnUsernames - Whether or not to kick players on join that match a banned character name.</summary>
-		[Description("Enables kicking of banned users by matching their Character Name.")]
+		/// <summary>Enables kicking banned users by matching their Character Name.</summary>
+		[Description("Enables kicking banned users by matching their Character Name.")]
 		public bool EnableBanOnUsernames;
 
-		/// <summary>DefaultRegistrationGroupName - The default group name to place newly registered users under.</summary>
-		[Description("Selects the default group name to place new registrants under.")]
+		/// <summary>The default group name to place newly registered users under.</summary>
+		[Description("The default group name to place newly registered users under.")]
 		public string DefaultRegistrationGroupName = "default";
 
-		/// <summary>DefaultGuestGroupName - The default group name to place unregistered players under.</summary>
-		[Description("Selects the default group name to place unregistered players under.")]
+		/// <summary>The default group name to place unregistered players under.</summary>
+		[Description("The default group name to place unregistered players under.")]
 		public string DefaultGuestGroupName = "guest";
 
-		/// <summary>DisableSpewLogs - Whether or not to send logs as messages to players with the log permission.</summary>
-		[Description("Force-disable printing logs to players with the log permission.")]
+		/// <summary>Disables sending logs as messages to players with the log permission.</summary>
+		[Description("Disables sending logs as messages to players with the log permission.")]
 		public bool DisableSpewLogs = true;
 
-		/// <summary>DisableSecondUpdateLogs - Prevents OnSecondUpdate() checks from writing to the log file.</summary>
+		/// <summary>Prevents OnSecondUpdate checks from writing to the log file.</summary>
 		[Description("Prevents OnSecondUpdate checks from writing to the log file.")]
 		public bool DisableSecondUpdateLogs = false;
 
-		/// <summary>HashAlgorithm - The hash algorithm used to encrypt user passwords.
+		/// <summary>The hash algorithm used to encrypt user passwords.
 		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
 		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
 		public string HashAlgorithm = "sha512";
 
-		/// <summary>ServerFullReason - The reason given when kicking players when the server is full.</summary>
-		[Description("String that is used when kicking people when the server is full.")]
+		/// <summary>The reason given when kicking players that attempt to join while the server is full.</summary>
+		[Description("The reason given when kicking players that attempt to join while the server is full.")]
 		public string ServerFullReason = "Server is full";
 
-		/// <summary>WhitelistKickReason - The reason given when kicking players for not being on the whitelist.</summary>
-		[Description("String that is used when a user is kicked due to not being on the whitelist.")]
+		/// <summary>The reason given when kicking players for not being on the whitelist.</summary>
+		[Description("The reason given when kicking players for not being on the whitelist.")]
 		public string WhitelistKickReason = "You are not on the whitelist.";
 
-		/// <summary>ServerFullNoReservedReason - The reason given when kicking players when the server is full and there are no reserved slots open.</summary>
-		[Description("String that is used when kicking people when the server is full with no reserved slots.")]
+		/// <summary>The reason given when kicking players that attempt to join while the server is full with no reserved slots available.</summary>
+		[Description("The reason given when kicking players that attempt to join while the server is full with no reserved slots available.")]
 		public string ServerFullNoReservedReason = "Server is full. No reserved slots open.";
 
-		/// <summary>SaveWorldOnCrash - Attempts to save world in the server crashes due to an unhandled exception.</summary>
-		[Description("This will save the world if Terraria crashes from an unhandled exception.")]
+		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
+		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
 		public bool SaveWorldOnCrash = true;
 
-		/// <summary>EnableGeoIP - Whether or not to announce a player's location on join.</summary>
-		[Description("This will announce a player's location on join.")]
+		/// <summary>Whether or not to announce a player's geographic location on join, based on their IP.</summary>
+		[Description("Whether or not to announce a player's geographic location on join, based on their IP.")]
 		public bool EnableGeoIP;
 
-		/// <summary>EnableTokenEndpointAuthentication - Whether or not to require token authentication for the public REST API endpoints.</summary>
-		[Description("This will turn on token requirement for the public REST API endpoints.")]
+		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
+		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
 		public bool EnableTokenEndpointAuthentication;
 
-		/// <summary>RestApiEnabled - Enable/disable the REST API.</summary>
-		[Description("Enable/disable the REST API.")]
+		/// <summary>Enable or disable the REST API.</summary>
+		[Description("Enable or disable the REST API.")]
 		public bool RestApiEnabled;
 
-		/// <summary>RestApiPort - The port used by the REST API.</summary>
-		[Description("This is the port which the REST API will listen on.")]
+		/// <summary>The port used by the REST API.</summary>
+		[Description("The port used by the REST API.")]
 		public int RestApiPort = 7878;
 
-		/// <summary>DisableTombstones - Disable tombstone dropping during death for all players.</summary>
-		[Description("Disable tombstone dropping during death for all players.")]
+		/// <summary>Disables tombstone dropping during death for all players.</summary>
+		[Description("Disables tombstone dropping during death for all players.")]
 		public bool DisableTombstones = true;
 
-		/// <summary>DisplayIPToAdmins - Displays a player's IP on join to everyone with the log permission.</summary>
-		[Description("Displays a player's IP on join to everyone who has the log permission.")]
+		/// <summary>Displays a player's IP on join to users with the log permission.</summary>
+		[Description("Displays a player's IP on join to users with the log permission.")]
 		public bool DisplayIPToAdmins;
 
-		/// <summary>KickProxyUsers - If the GeoIP service is running, this will kick users under a proxy.</summary>
-		[Description("Kicks users using a proxy as identified with the GeoIP database.")]
+		/// <summary>If GeoIP is enabled, this will kick users identified as being under a proxy.</summary>
+		[Description("If GeoIP is enabled, this will kick users identified as being under a proxy.")]
 		public bool KickProxyUsers = true;
 
-		/// <summary>DisableHardmode - If set to true, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.</summary>
-		[Description("Disables hardmode, can't never be activated. Overrides /starthardmode.")]
+		/// <summary>If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.</summary>
+		[Description("If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.")]
 		public bool DisableHardmode;
 
-		/// <summary>DisableDungeonGuardian - Disables the dungeon guardian from being spawned while sending players to their spawn point instead.</summary>
-		[Description("Disables the dungeon guardian from being spawned while sending players to their spawn point instead.")]
+		/// <summary>Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.</summary>
+		[Description("Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.")]
 		public bool DisableDungeonGuardian;
 
-		/// <summary>DisableClownBombs - Disables clown bomb projectiles from spawning.</summary>
+		/// <summary>Disables clown bomb projectiles from spawning.</summary>
 		[Description("Disables clown bomb projectiles from spawning.")]
 		public bool DisableClownBombs;
 
-		/// <summary>DisableSnowBalls - Disables snow ball projectiles from spawning.</summary>
+		/// <summary>Disables snow ball projectiles from spawning.</summary>
 		[Description("Disables snow ball projectiles from spawning.")]
 		public bool DisableSnowBalls;
 
-		/// <summary>ChatFormat - Controls the in-game chat format. {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
+		/// <summary>Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
 		[Description("Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.")]
 		public string ChatFormat = "{1}{2}{3}: {4}";
 
-		/// <summary>ChatAboveHeadsFormat - Modifies the player name when using chat above heads. Same formatting options as ChatFormat.</summary>
-		[Description("Change the player name when using chat above heads. This begins with a player name wrapped in brackets, as per Terraria's formatting. Same formatting as ChatFormat(minus the text aka {4}).")]
+		/// <summary>Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.</summary>
+		[Description("Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.")]
 		public string ChatAboveHeadsFormat = "{2}";
 
-		/// <summary>ForceTime - Can be either "normal", "day" or "night". When set to one of the latter two, the blocks other.</summary>
-		[Description("Force the world time to be normal, day, or night.")]
+		/// <summary>Forces the world time to be normal, day, or night.</summary>
+		[Description("Forces the world time to be normal, day, or night.")]
 		public string ForceTime = "normal";
 
-		/// <summary>TileKillThreshold - Disables/reverts a player if this number of tile kills is exceeded within 1 second.</summary>
-		[Description("Disables/reverts a player if this number of tile kills is exceeded within 1 second.")]
+		/// <summary>Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.</summary>
+		[Description("Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.")]
 		public int TileKillThreshold = 60;
 
-		/// <summary>TilePlaceThreshold - Disables/reverts a player if this number of tile placements is exceeded within 1 second.</summary>
-		[Description("Disables/reverts a player if this number of tile places is exceeded within 1 second.")]
+		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
+		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
 		public int TilePlaceThreshold = 20;
 
-		/// <summary>TileLiquidThreshold - Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
+		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
 		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
 		public int TileLiquidThreshold = 15;
 
-		/// <summary>ProjectileThreshold - Disables a player if this number of projectiles is created within 1 second.</summary>
+		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
 		public int ProjectileThreshold = 50;
 
-		/// <summary>HealOtherThreshold - Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
+		/// <summary>Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
 		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
 		public int HealOtherThreshold = 50;
 
-		/// <summary>ProjIgnoreShrapnel - Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
-		[Description("Ignore shrapnel from crystal bullets for projectile threshold.")]
+		/// <summary>Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
+		[Description("Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.")]
 		public bool ProjIgnoreShrapnel = true;
 
-		/// <summary>RequireLogin - Requires all players to register or login before being allowed to play.</summary>
-		[Description("Requires all players to register or login before being allowed to play.")]
+		/// <summary>Require all players to register or login before being allowed to play.</summary>
+		[Description("Require all players to register or login before being allowed to play.")]
 		public bool RequireLogin;
 
-		/// <summary>DisableInvisPvP - Whether or not to turn a player invisible if using invisibility potions during PvP.</summary>
-		[Description("Disables invisibility potions from being used in PvP (Note, can be used in the client, but the effect isn't sent to the rest of the server).")]
+		/// <summary>Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.</summary>
+		[Description("Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.")]
 		public bool DisableInvisPvP;
 
-		/// <summary>MaxRangeForDisabled - The maximum distance, in tiles, that disabled players can move from.</summary>
-		[Description("The maximum distance players disabled for various reasons can move from.")]
+		/// <summary>The maximum distance, in tiles, that disabled players can move from.</summary>
+		[Description("The maximum distance, in tiles, that disabled players can move from.")]
 		public int MaxRangeForDisabled = 10;
 
-		/// <summary>ServerPassword - The server password required to join the server.</summary>
-		[Description("Server password required to join the server.")]
+		/// <summary>The server password required to join the server.</summary>
+		[Description("The server password required to join the server.")]
 		public string ServerPassword = "";
 
-		/// <summary>RegionProtectChests - Whether or not region protection should apply to chests.</summary>
-		[Description("Protect chests with region and build permissions.")]
+		/// <summary>Whether or not region protection should apply to chests.</summary>
+		[Description("Whether or not region protection should apply to chests.")]
 		public bool RegionProtectChests;
 
-		/// <summary>RegionProtectGemLocks - Whether or not region protection should apply to gem locks.</summary>
-		[Description("Protect gem locks with region and build permissions.")]
+		/// <summary>Whether or not region protection should apply to gem locks.</summary>
+		[Description("Whether or not region protection should apply to gem locks.")]
 		public bool RegionProtectGemLocks = true;
 
-		/// <summary>DisableLoginBeforeJoin - This will prevent users from being able to login before connecting.</summary>
-		[Description("Disable users from being able to login with account password when joining.")]
+		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
+		[Description("Prevents users from being able to login before they finish connecting.")]
 		public bool DisableLoginBeforeJoin;
 
-		/// <summary>DisableUUIDLogin - This will disable automatic login through a saved client UUID.</summary>
-		[Description("Disable users from being able to login with their client UUID.")]
+		/// <summary>Prevents users from being able to login with their client UUID.</summary>
+		[Description("Prevents users from being able to login with their client UUID.")]
 		public bool DisableUUIDLogin;
 
-		/// <summary>KickEmptyUUID - Kick clients that don't send a UUID to the server.</summary>
-		[Description("Kick clients that don't send a UUID to the server.")]
+		/// <summary>Kick clients that don't send their UUID to the server.</summary>
+		[Description("Kick clients that don't send their UUID to the server.")]
 		public bool KickEmptyUUID;
 
-		/// <summary>AllowRegisterAnyUsername - Allows users to register a username that doesn't necessarily match their character name.</summary>
-		[Description("Allows users to register any username with /register.")]
+		/// <summary>Allows users to register a username that doesn't necessarily match their character name.</summary>
+		[Description("Allows users to register a username that doesn't necessarily match their character name.")]
 		public bool AllowRegisterAnyUsername;
 
-		/// <summary>AllowLoginAnyUsername - Allows users to login to any account even if the username doesn't match their character name.</summary>
-		[Description("Allows users to login with any username with /login.")]
+		/// <summary>Allows users to login to any account even if the username doesn't match their character name.</summary>
+		[Description("Allows users to login to any account even if the username doesn't match their character name.")]
 		public bool AllowLoginAnyUsername = true;
 
 		/// <summary>The maximum damage a player/NPC can inflict.</summary>
-		[Description("The maximum damage a player/npc can inflict.")]
+		[Description("The maximum damage a player/NPC can inflict.")]
 		public int MaxDamage = 1175;
 
 		/// <summary>The maximum damage a projectile can inflict.</summary>
 		[Description("The maximum damage a projectile can inflict.")]
 		public int MaxProjDamage = 1175;
 
-		/// <summary>KickOnDamageThresholdBroken - Whether or not to kick users when they surpass the MaxDamage threshold.</summary>
-		[Description("Kicks a user if set to true, if they inflict more damage then the max damage.")]
+		/// <summary>Whether or not to kick users when they surpass the MaxDamage threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the MaxDamage threshold.")]
 		public bool KickOnDamageThresholdBroken = false;
 
-		/// <summary>IgnoreProjUpdate - Ignores checking to see if player 'can' update a projectile.</summary>
-		[Description("Ignores checking to see if player 'can' update a projectile.")]
+		/// <summary>Ignores checks to see if a player 'can' update a projectile.</summary>
+		[Description("Ignores checks to see if a player 'can' update a projectile.")]
 		public bool IgnoreProjUpdate = false;
 
-		/// <summary>IgnoreProjKill - Ignores checking to see if player 'can' kill a projectile.</summary>
-		[Description("Ignores checking to see if player 'can' kill a projectile.")]
+		/// <summary>Ignores checks to see if a player 'can' kill a projectile.</summary>
+		[Description("Ignores checks to see if a player 'can' kill a projectile.")]
 		public bool IgnoreProjKill = false;
 
-		/// <summary>AlllowIce - Allows ice placement even where a user cannot usually build.</summary>
-		[Description("Allow ice placement even when user does not have canbuild.")]
+		/// <summary>Allows ice placement even where a user cannot usually build.</summary>
+		[Description("Allows ice placement even where a user cannot usually build.")]
 		public bool AllowIce = false;
 
-		/// <summary>AllowCrimsonCreep - Enables or disables crimson to spread when a world is in hardmode.</summary>
-		[Description("Allows crimson to spread when a world is hardmode.")]
+		/// <summary>Allows the crimson to spread when a world is in hardmode.</summary>
+		[Description("Allows the crimson to spread when a world is in hardmode.")]
 		public bool AllowCrimsonCreep = true;
 
-		/// <summary>AllowCorruptionCreep - Enables or disables corruption to spread when a world is in hardmode.</summary>
-		[Description("Allows corruption to spread when a world is hardmode.")]
+		/// <summary>Allows the corruption to spread when a world is in hardmode.</summary>
+		[Description("Allows the corruption to spread when a world is in hardmode.")]
 		public bool AllowCorruptionCreep = true;
 
-		/// <summary>AllowHallowCreep - Enables or disables hallow to spread when a world is in hardmode.</summary>
-		[Description("Allows hallow to spread when a world is hardmode.")]
+		/// <summary>Allows the hallow to spread when a world is in hardmode.</summary>
+		[Description("Allows the hallow to spread when a world is in hardmode.")]
 		public bool AllowHallowCreep = true;
 
-		/// <summary>StatueSpawn200 - How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.</summary>
-		[Description("How many things a statue can spawn within 200 pixels(?) before it stops spawning. Default = 3.")]
+		/// <summary>How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.\nDefault = 3.")]
 		public int StatueSpawn200 = 3;
 
-		/// <summary>StatueSpawn600 - How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.</summary>
-		[Description("How many things a statue can spawn within 600 pixels(?) before it stops spawning. Default = 6.")]
+		/// <summary>How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.\nDefault = 6.")]
 		public int StatueSpawn600 = 6;
 
-		/// <summary>StatueSpawnWorld - How many NPCs a statue can spawn before it stops spawning.</summary>
-		[Description("How many things a statue can spawn before it stops spawning. Default = 10.")]
+		/// <summary>How many NPCs a statue can spawn before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn before it stops spawning.\nDefault = 10.")]
 		public int StatueSpawnWorld = 10;
 
-		/// <summary>PreventBannedItemSpawn - Prevents banned items from being spawned with commands.</summary>
-		[Description("Prevent banned items from being /i or /give.")]
+		/// <summary>Prevent banned items from being spawned or given with commands.</summary>
+		[Description("Prevent banned items from being spawned or given with commands.")]
 		public bool PreventBannedItemSpawn = false;
 
-		/// <summary>PreventDeadModification - Prevent players from interacting with the world if dead.</summary>
-		[Description("Prevent players from interacting with the world if dead.")]
+		/// <summary>Prevent players from interacting with the world while they are dead.</summary>
+		[Description("Prevent players from interacting with the world while they are dead.")]
 		public bool PreventDeadModification = true;
 
-		/// <summary>EnableChatAboveHeads - Whether or not to display chat messages above players' heads.</summary>
-		[Description("Displays chat messages above players' heads, but will disable chat prefixes to compensate.")]
+		/// <summary>Whether or not to display chat messages above players' heads.</summary>
+		[Description("Whether or not to display chat messages above players' heads.")]
 		public bool EnableChatAboveHeads = false;
 
-		/// <summary>ForceXmas - Force Christmas-only events to occur all year.</summary>
-		[Description("Force Christmas-only events to occur all year.")]
+		/// <summary>Forces Christmas-only events to occur all year.</summary>
+		[Description("Forces Christmas-only events to occur all year.")]
 		public bool ForceXmas = false;
 
-		/// <summary>AllowAllowedGroupsToSpawnBannedItems - Allows groups on the banned item allowed list to spawn banned items even if <see cref="PreventBannedItemSpawn"/> is set to true.</summary>
-		[Description("Allows groups on the banned item allowed list to spawn banned items.")]
+		/// <summary>Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.</summary>
+		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
 		public bool AllowAllowedGroupsToSpawnBannedItems = false;
 
-		/// <summary>IgnoreChestStacksOnLoad - Allows stacks in chests to be beyond the stack limit during world load.</summary>
-		[Description("Allows stacks in chests to be beyond the stack limit.")]
+		/// <summary>Allows stacks in chests to go beyond the stack limit during world loading.</summary>
+		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
 		public bool IgnoreChestStacksOnLoad = false;
 
-		/// <summary>LogPath - The path of the directory where logs should be written to.</summary>
-		[Description("The path of the directory where logs should be written into.")]
+		/// <summary>The path to the directory where logs should be written to.</summary>
+		[Description("The path to the directory where logs should be written to.")]
 		public string LogPath = "tshock";
 
-		/// <summary>UseSqlLogs - Whether or not to save logs to a SQL database instead of a text file.</summary>
-		[Description("Save logs to an SQL database instead of a text file. Default = false.")]
+		/// <summary>Whether or not to save logs to the SQL database instead of a text file.</summary>
+		[Description("Whether or not to save logs to the SQL database instead of a text file.\nDefault = false.")]
 		public bool UseSqlLogs = false;
 
-		/// <summary>RevertToTextLogsOnSqlFailures - Number of times the SQL log must fail to insert logs before falling back to the text log.</summary>
+		/// <summary>Number of times the SQL log must fail to insert logs before falling back to the text log.</summary>
 		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log.")]
 		public int RevertToTextLogsOnSqlFailures = 10;
 
-		/// <summary>PreventInvalidPlaceStyle - Prevents players from placing tiles with an invalid style.</summary>
+		/// <summary>Prevents players from placing tiles with an invalid style.</summary>
 		[Description("Prevents players from placing tiles with an invalid style.")]
 		public bool PreventInvalidPlaceStyle = true;
 
-		/// <summary>BroadCastRGB - The RGB values used for the color of broadcast messages.</summary>
-		[Description("#.#.# = Red/Blue/Green - RGB Colors for broadcasts. Max value: 255.")]
+		/// <summary>The RGB values used for the color of broadcast messages.</summary>
+		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
 		public int[] BroadcastRGB = { 127, 255, 212 };
 
-		/// <summary>ApplicationRestTokens - A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
+		/// <summary>A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
 		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
 		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
-		/// <summary>ReservedSlots - The number of reserved slots past your max server slot that can be joined by reserved players.</summary>
-		[Description("The number of reserved slots past your max server slot that can be joined by reserved players.")]
+		/// <summary>The number of reserved slots past your max server slots that can be joined by reserved players.</summary>
+		[Description("The number of reserved slots past your max server slots that can be joined by reserved players.")]
 		public int ReservedSlots = 20;
 
-		/// <summary>LogRest - Whether or not to log REST API connections.</summary>
-		[Description("Enable/disable the REST API connection log.")]
+		/// <summary>Whether or not to log REST API connections.</summary>
+		[Description("Whether or not to log REST API connections.")]
 		public bool LogRest = false;
 
-		/// <summary>RespawnSeconds - The number of seconds a player must wait before being respawned.</summary>
+		/// <summary>The number of seconds a player must wait before being respawned.</summary>
 		[Description("The number of seconds a player must wait before being respawned.")]
 		public int RespawnSeconds = 5;
 
-		/// <summary>RespawnBossSeconds - "The number of seconds a player must wait before being respawned if there is a boss nearby.</summary>
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby.</summary>
 		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby.")]
 		public int RespawnBossSeconds = 10;
 
-		/// <summary>TilePaintThreshold - Disables a player if this number of tiles is painted within 1 second.</summary>
+		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
 		public int TilePaintThreshold = 15;
 
-		/// <summary>ForceHalloween - Forces Halloween-only events to occur all year.</summary>
-		[Description("Forces your world to be in Halloween mode regardless of the data.")]
+		/// <summary>Forces Halloween-only events to occur all year.</summary>
+		[Description("Forces Halloween-only events to occur all year.")]
 		public bool ForceHalloween = false;
 
-		/// <summary>AllowCutTilesAndBreakables - Allows players to break temporary tiles (grass, pots, etc) even if they cannot typically build in a region.</summary>
-		[Description("Allows anyone to break grass, pots, etc.")]
+		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
+		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
 		public bool AllowCutTilesAndBreakables = false;
 
-		/// <summary>CommandSpecifier - Specifies which string starts a command.
+		/// <summary>Specifies which string starts a command.
 		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command.")]
+		[Description("Specifies which string starts a command.\nNote: Will not function properly if the string length is bigger than 1.")]
 		public string CommandSpecifier = "/";
 
-		/// <summary>CommandSilentSpecifier - Specifies which string starts a command silently.
+		/// <summary>Specifies which string starts a command silently.
 		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command silently.")]
+		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
 		public string CommandSilentSpecifier = ".";
 
-		/// <summary>KickOnHardcoreDeath - Whether or not to kick a hardcore player on death.</summary>
-		[Description("Kicks a hardcore player on death.")]
+		/// <summary>Whether or not to kick hardcore players on death.</summary>
+		[Description("Whether or not to kick hardcore players on death.")]
 		public bool KickOnHardcoreDeath;
 
-		/// <summary>BanOnHardcoreDeath - Whether or not to ban a hardcore player on death.</summary>
-		[Description("Bans a hardcore player on death.")]
+		/// <summary>Whether or not to ban hardcore players on death.</summary>
+		[Description("Whether or not to ban hardcore players on death.")]
 		public bool BanOnHardcoreDeath;
 
-		/// <summary>HardcoreBanReason - The reason given when banning a hardcore player on death.</summary>
-		[Description("Bans a hardcore player on death.")]
+		/// <summary>The reason given when banning hardcore players on death.</summary>
+		[Description("The reason given when banning hardcore players on death.")]
 		public string HardcoreBanReason = "Death results in a ban";
 
-		/// <summary>HardcoreKickReason - The reason given when kicking a hardcore player on death.</summary>
-		[Description("Kicks a hardcore player on death.")]
+		/// <summary>The reason given when kicking hardcore players on death.</summary>
+		[Description("The reason given when kicking hardcore players on death.")]
 		public string HardcoreKickReason = "Death results in a kick";
 
-		/// <summary>AnonymousBossInvasions - Whether or not to announce boss spawning or invasion starts.</summary>
-		[Description("Whether bosses or invasions should be anonymously spawned.")]
+		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
+		[Description("Whether or not to announce boss spawning or invasion starts.")]
 		public bool AnonymousBossInvasions = true;
 
-		/// <summary>MaxHP - The maximum allowable HP, before equipment buffs.</summary>
-		[Description("The maximum allowable HP, before equipment buffs.")]
+		/// <summary>The maximum HP a player can have, before equipment buffs.</summary>
+		[Description("The maximum HP a player can have, before equipment buffs.")]
 		public int MaxHP = 500;
 
-		/// <summary>MaxMP - The maximum allowable MP, before equipment buffs.</summary>
-		[Description("The maximum allowable MP, before equipment buffs.")]
+		/// <summary>The maximum MP a player can have, before equipment buffs.</summary>
+		[Description("The maximum MP a player can have, before equipment buffs.")]
 		public int MaxMP = 200;
 
-		/// <summary>SaveWorldOnLastPlayerExit - Whether or not to save the world when the last player disconnects.</summary>
-		[Description("Determines if the server should save the world if the last player exits.")]
+		/// <summary>Whether or not to save the world when the last player disconnects.</summary>
+		[Description("Whether or not to save the world when the last player disconnects.")]
 		public bool SaveWorldOnLastPlayerExit = true;
 
-		/// <summary>BCryptWorkFactor - Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
+		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
 		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. The number of computational rounds is 2^n. Increase with caution. Range: 5-31.")]
 		public int BCryptWorkFactor = 7;
 
-		/// <summary>MinimumPasswordLength - The minimum password length for new user accounts.</summary>
-		[Description("The minimum password length for new user accounts. Minimum value is 4.")]
+		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
+		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
 
-		/// <summary>RESTMaximumRequestsPerInterval - The maximum REST requests in the bucket before denying requests.</summary>
+		/// <summary>The maximum REST requests in the bucket before denying requests. Minimum value is 5.</summary>
 		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
 		public int RESTMaximumRequestsPerInterval = 5;
 
-		/// <summary>RESTRequestBucketDecreaseIntervalMinutes - How often in minutes the REST requests bucket is decreased by one.</summary>
+		/// <summary>How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.</summary>
 		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
 		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
-		/// <summary>ShowBackupAutosaveMessages - Whether or not to show backup auto save messages.</summary>
-		[Description("Show backup autosave messages.")]
+		/// <summary>Whether or not to show backup auto save messages.</summary>
+		[Description("Whether or not to show backup auto save messages.")]
 		public bool ShowBackupAutosaveMessages = true;
 
 		/// <summary>
