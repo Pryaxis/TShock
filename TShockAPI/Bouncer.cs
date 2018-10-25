@@ -1012,8 +1012,7 @@ namespace TShockAPI
 				bool hasVortexTower = false;
 				bool hasNebulaTower = false;
 				bool hasStardustTower = false;
-
-				// May need to optimize
+				
 				foreach (var npc in Main.npc)
 				{
 					if (npc.netID == NPCID.LunarTowerSolar)
