@@ -83,6 +83,7 @@ namespace TShockAPI
 			GetDataHandlers.LiquidSet += OnLiquidSet;
 			GetDataHandlers.ProjectileKill += OnProjectileKill;
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
+			GetDataHandlers.PlayerZone += OnPlayerZone;
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.NewProjectile += OnNewProjectile;
 			GetDataHandlers.PlaceObject += OnPlaceObject;
@@ -998,6 +999,42 @@ namespace TShockAPI
 			}
 
 			return;
+		}
+
+		/// <summary>Handles PlayerZone events for preventing spawning NPC maliciously.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnPlayerZone(object sender, GetDataHandlers.PlayerZoneEventArgs args)
+		{
+			if(args.Zone2[1] || args.Zone2[2] || args.Zone2[3] || args.Zone2[4])
+			{
+				bool hasSolarTower = false;
+				bool hasVortexTower = false;
+				bool hasNebulaTower = false;
+				bool hasStardustTower = false;
+				
+				foreach (var npc in Main.npc)
+				{
+					if (npc.netID == NPCID.LunarTowerSolar)
+						hasSolarTower = true;
+					else if (npc.netID == NPCID.LunarTowerVortex)
+						hasVortexTower = true;
+					else if (npc.netID == NPCID.LunarTowerNebula)
+						hasNebulaTower = true;
+					else if (npc.netID == NPCID.LunarTowerStardust)
+						hasStardustTower = true;
+				}
+
+				if ((args.Zone2[1] && !hasSolarTower)
+					|| (args.Zone2[2] && !hasVortexTower)
+					|| (args.Zone2[3] && !hasNebulaTower)
+					|| (args.Zone2[4] && !hasStardustTower)
+					)
+				{
+					args.Handled = true;
+					return;
+				}
+			}
 		}
 
 		/// <summary>Bouncer's KillMe hook stops crash exploits from out of bounds values.</summary>
