@@ -904,10 +904,10 @@ namespace TShockAPI
 		}
 
 		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>
-		private DateTime LastCheck = DateTime.UtcNow;
+		internal DateTime LastCheck = DateTime.UtcNow;
 
 		/// <summary>LastSave - Used to keep track of SSC save intervals.</summary>
-		private DateTime LastSave = DateTime.UtcNow;
+		internal DateTime LastSave = DateTime.UtcNow;
 
 		/// <summary>OnUpdate - Called when ever the server ticks.</summary>
 		/// <param name="args">args - EventArgs args</param>
@@ -920,20 +920,6 @@ namespace TShockAPI
 			{
 				OnSecondUpdate();
 				LastCheck = DateTime.UtcNow;
-			}
-
-			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.ServerSideCharacterSave)
-			{
-				foreach (TSPlayer player in Players)
-				{
-					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
-					{
-
-						CharacterDB.InsertPlayerData(player);
-					}
-				}
-				LastSave = DateTime.UtcNow;
 			}
 		}
 

@@ -48,6 +48,9 @@ namespace TShockAPI
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.Password += Login;
 			GetDataHandlers.KillMe += OnKillMe;
+
+			// Setup hooks
+			ServerApi.Hooks.GameUpdate.Register(Plugin, OnGameUpdate);
 		}
 
 		internal void Login(object sender, GetDataHandledEventArgs args)
@@ -136,6 +139,23 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
 					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
+			}
+		}
+
+		internal void OnGameUpdate(EventArgs args)
+		{
+			if ((DateTime.UtcNow - Plugin.LastSave).TotalMinutes >= TShock.ServerSideCharacterConfig.ServerSideCharacterSave)
+			{
+				foreach (TSPlayer player in TShock.Players)
+				{
+					// prevent null point exceptions
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
+					{
+
+						TShock.CharacterDB.InsertPlayerData(player);
+					}
+				}
+				Plugin.LastSave = DateTime.UtcNow;
 			}
 		}
 	}
