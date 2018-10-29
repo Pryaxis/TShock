@@ -45,7 +45,41 @@ namespace TShockAPI
 			// Setup Handlers
 			GetDataHandlers.Connecting += Login;
 			GetDataHandlers.PlayerSpawn += OnSpawn;
+			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.Password += Login;
+		}
+
+		internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
+		{
+			var tplr = args.Player.TPlayer;
+			if (args.Player.Confused && Main.ServerSideCharacter && args.Player.IsLoggedIn)
+			{
+				if (tplr.controlUp)
+				{
+					tplr.controlDown = true;
+					tplr.controlUp = false;
+				}
+				else if (tplr.controlDown)
+				{
+					tplr.controlDown = false;
+					tplr.controlUp = true;
+				}
+
+				if (tplr.controlLeft)
+				{
+					tplr.controlRight = true;
+					tplr.controlLeft = false;
+				}
+				else if (tplr.controlRight)
+				{
+					tplr.controlRight = false;
+					tplr.controlLeft = true;
+				}
+
+				tplr.Update(tplr.whoAmI);
+				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
+				args.Handled = true;
+			}
 		}
 
 		internal void Login(object sender, GetDataHandledEventArgs args)
