@@ -140,6 +140,11 @@ namespace TShockAPI
 		internal RegionHandler RegionSystem;
 
 		/// <summary>
+		/// TShock's SSC subsystem.
+		/// </summary>
+		internal SSC SSC;
+
+		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
 		public static event Action Initialized;
@@ -325,6 +330,8 @@ namespace TShockAPI
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
+				if(Main.ServerSideCharacter)
+					SSC = new SSC();
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))

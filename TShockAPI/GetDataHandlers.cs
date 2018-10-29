@@ -265,6 +265,25 @@ namespace TShockAPI
 			return args.Handled;
 		}
 		
+		/// <summary>
+		/// Connecting - called at a Connecting event
+		/// </summary>
+		public static HandlerList<GetDataHandledEventArgs> Connecting = new HandlerList<GetDataHandledEventArgs>();
+		private static bool OnConnecting(TSPlayer player, MemoryStream data)
+		{
+			if (Connecting == null)
+				return false;
+
+			var args = new GetDataHandledEventArgs
+			{
+				Player = player,
+
+				Data = data
+			};
+			Connecting.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>The arguments to a GetSection packet.</summary>
 		public class GetSectionEventArgs : GetDataHandledEventArgs
 		{
@@ -934,6 +953,35 @@ namespace TShockAPI
 				Zone4 = zone4
 			};
 			PlayerZone.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a Password Event
+		/// </summary>
+		public class PasswordEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Password
+			/// </summary>
+			public string Password { get; set; }
+		}
+		/// <summary>
+		/// Password - When clients send password to server
+		/// </summary>
+		public static HandlerList<PasswordEventArgs> Password = new HandlerList<PasswordEventArgs>();
+		private static bool OnPassword(TSPlayer player, MemoryStream data, string password)
+		{
+			if (Password == null)
+				return false;
+			
+			var args = new PasswordEventArgs
+			{
+				Player = player,
+				Data = data,
+				Password = password
+			};
+			Password.Invoke(null, args);
 			return args.Handled;
 		}
 		
@@ -1944,15 +1992,8 @@ namespace TShockAPI
 					args.Player.IsLoggedIn = true;
 					args.Player.IsDisabledForSSC = false;
 
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
-					}
+					if (OnConnecting(args.Player, args.Data))
+						return true;
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
@@ -2010,23 +2051,7 @@ namespace TShockAPI
 
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
 				return true;
-
-			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
-			{
-
-				args.Player.sX = args.TPlayer.SpawnX;
-				args.Player.sY = args.TPlayer.SpawnY;
-
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
-					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
-			}
-
-			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
-			{
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
-					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
-			}
-
+			
 			args.Player.Dead = false;
 			return false;
 		}
@@ -2513,31 +2538,25 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IsDisabledForSSC = false;
 
-					if (Main.ServerSideCharacter)
+					if (OnPassword(args.Player, args.Data, password))
 					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
+						return true;
 					}
-					args.Player.LoginFailsBySsi = false;
+					else
+					{
+						if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
+							args.Player.IsDisabledForStackDetection = false;
 
-					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IsDisabledForStackDetection = false;
-
-					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IsDisabledForBannedWearable = false;
-
-
-					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
-					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
-					TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
-					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
-					return true;
+						if (args.Player.HasPermission(Permissions.usebanneditem))
+							args.Player.IsDisabledForBannedWearable = false;
+						
+						args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+						TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+						TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
+						Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+						return true;
+					}
 				}
 				args.Player.Kick("Your password did not match this character's password.", true, true);
 				return true;

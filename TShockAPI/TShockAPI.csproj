@@ -97,6 +97,7 @@
     <Compile Include="NetItem.cs" />
     <Compile Include="PlayerData.cs" />
     <Compile Include="RegionHandler.cs" />
+    <Compile Include="SSC.cs" />
     <Compile Include="Sockets\LinuxTcpSocket.cs" />
     <Compile Include="SqlLog.cs" />
     <Compile Include="TextLog.cs" />
