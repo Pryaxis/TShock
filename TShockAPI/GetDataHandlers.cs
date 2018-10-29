@@ -1990,22 +1990,24 @@ namespace TShockAPI
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IsDisabledForSSC = false;
 
 					if (OnConnecting(args.Player, args.Data))
+					{
 						return true;
-					args.Player.LoginFailsBySsi = false;
+					}
+					else
+					{
+						if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
+							args.Player.IsDisabledForStackDetection = false;
 
-					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IsDisabledForStackDetection = false;
+						if (args.Player.HasPermission(Permissions.usebanneditem))
+							args.Player.IsDisabledForBannedWearable = false;
 
-					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IsDisabledForBannedWearable = false;
-
-					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
-					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
-					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
-					return true;
+						args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
+						TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+						Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+						return true;
+					}
 				}
 			}
 			else if (account != null && !TShock.Config.DisableLoginBeforeJoin)
