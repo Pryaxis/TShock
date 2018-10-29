@@ -43,19 +43,9 @@ namespace TShockAPI
 		internal SSC()
 		{
 			// Setup Handlers
-			GetDataHandlers.PlayerSlot += Login;
 			GetDataHandlers.Connecting += Login;
 			GetDataHandlers.PlayerSpawn += OnSpawn;
 			GetDataHandlers.Password += Login;
-		}
-
-		internal void OnPlayerSlot(object sender, PlayerSlotEventArgs args)
-		{
-			if (args.Player.IgnoreSSCPackets)
-			{
-				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, args.Slot, args.Prefix);
-				args.Handled = true;
-			}
 		}
 
 		internal void Login(object sender, GetDataHandledEventArgs args)

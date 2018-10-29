@@ -1937,6 +1937,11 @@ namespace TShockAPI
 			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
 			    slot > NetItem.MaxInventory)
 				return true;
+			if (args.Player.IgnoreSSCPackets)
+			{
+				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, prefix);
+				return true;
+			}
 
 			// Garabage? Or will it cause some internal initialization or whatever?
 			var item = new Item();
