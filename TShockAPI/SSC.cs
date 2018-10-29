@@ -42,15 +42,17 @@ namespace TShockAPI
 		/// <returns>A new SSC system.</returns>
 		internal SSC()
 		{
-			// Setup Handlers
+			// Setup GetDataHandlers
 			GetDataHandlers.Connecting += Login;
 			GetDataHandlers.PlayerSpawn += OnSpawn;
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.Password += Login;
 			GetDataHandlers.KillMe += OnKillMe;
 
-			// Setup hooks
+			// Setup ServerApi Hook Handler
 			ServerApi.Hooks.GameUpdate.Register(Plugin, OnGameUpdate);
+			ServerApi.Hooks.NetGreetPlayer.Register(Plugin, OnGreetPlayer);
+			ServerApi.Hooks.ServerLeave.Register(Plugin, OnLeave);
 		}
 
 		internal void Login(object sender, GetDataHandledEventArgs args)
@@ -64,10 +66,11 @@ namespace TShockAPI
 					args.Player.PlayerData.CopyCharacter(args.Player);
 					TShock.CharacterDB.InsertPlayerData(args.Player);
 				}
+
 				args.Player.PlayerData.RestoreCharacter(args.Player);
 				args.Player.LoginFailsBySsi = false;
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				TShock.Log.ConsoleError(ex.ToString());
 
@@ -86,13 +89,15 @@ namespace TShockAPI
 				p.sX = p.TPlayer.SpawnX;
 				p.sY = p.TPlayer.SpawnY;
 
-				if (((Main.tile[p.sX, p.sY - 1].active() && Main.tile[p.sX, p.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(p.sX, p.sY - 1)))
+				if (((Main.tile[p.sX, p.sY - 1].active() && Main.tile[p.sX, p.sY - 1].type == 79)) &&
+				    (WorldGen.StartRoomCheck(p.sX, p.sY - 1)))
 					p.Teleport(p.sX * 16, (p.sY * 16) - 48);
 			}
 
 			else if ((p.sX > 0) && (p.sY > 0))
 			{
-				if (((Main.tile[p.sX, p.sY - 1].active() && Main.tile[p.sX, p.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(p.sX, p.sY - 1)))
+				if (((Main.tile[p.sX, p.sY - 1].active() && Main.tile[p.sX, p.sY - 1].type == 79)) &&
+				    (WorldGen.StartRoomCheck(p.sX, p.sY - 1)))
 					p.Teleport(p.sX * 16, (p.sY * 16) - 48);
 			}
 		}
@@ -125,7 +130,7 @@ namespace TShockAPI
 				}
 
 				tplr.Update(tplr.whoAmI);
-				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
+				NetMessage.SendData((int) PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
 				args.Handled = true;
 			}
 		}
@@ -136,7 +141,8 @@ namespace TShockAPI
 			{
 				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
 				{
-					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
+					args.Player.SendErrorMessage(
+						"You have fallen in hardcore mode, and your items have been lost forever.");
 					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
 			}
@@ -144,7 +150,8 @@ namespace TShockAPI
 
 		internal void OnGameUpdate(EventArgs args)
 		{
-			if ((DateTime.UtcNow - Plugin.LastSave).TotalMinutes >= TShock.ServerSideCharacterConfig.ServerSideCharacterSave)
+			if ((DateTime.UtcNow - Plugin.LastSave).TotalMinutes >=
+			    TShock.ServerSideCharacterConfig.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in TShock.Players)
 				{
@@ -155,7 +162,39 @@ namespace TShockAPI
 						TShock.CharacterDB.InsertPlayerData(player);
 					}
 				}
+
 				Plugin.LastSave = DateTime.UtcNow;
+			}
+		}
+
+		internal void OnGreetPlayer(GreetPlayerEventArgs args)
+		{
+			var player = TShock.Players[args.Who];
+
+			if (!player.IsLoggedIn)
+			{
+				player.IsDisabledForSSC = true;
+				player.SendErrorMessage(String.Format(
+					"Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+				player.LoginHarassed = true;
+			}
+		}
+
+		private void OnLeave(LeaveEventArgs args)
+		{
+			var tsplr = TShock.Players[args.Who];
+			if (tsplr == null)
+			{
+				return;
+			}
+
+			if (tsplr.ReceivedInfo)
+			{
+				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				{
+					tsplr.PlayerData.CopyCharacter(tsplr);
+					TShock.CharacterDB.InsertPlayerData(tsplr);
+				}
 			}
 		}
 	}
