@@ -3311,15 +3311,6 @@ namespace TShockAPI
 				}
 			}
 
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
-				{
-					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
-					TShock.CharacterDB.SeedInitialData(args.Player.Account);
-				}
-			}
-
 			return false;
 		}
 

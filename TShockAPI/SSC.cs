@@ -47,39 +47,7 @@ namespace TShockAPI
 			GetDataHandlers.PlayerSpawn += OnSpawn;
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.Password += Login;
-		}
-
-		internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
-		{
-			var tplr = args.Player.TPlayer;
-			if (args.Player.Confused && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (tplr.controlUp)
-				{
-					tplr.controlDown = true;
-					tplr.controlUp = false;
-				}
-				else if (tplr.controlDown)
-				{
-					tplr.controlDown = false;
-					tplr.controlUp = true;
-				}
-
-				if (tplr.controlLeft)
-				{
-					tplr.controlRight = true;
-					tplr.controlLeft = false;
-				}
-				else if (tplr.controlRight)
-				{
-					tplr.controlRight = false;
-					tplr.controlLeft = true;
-				}
-
-				tplr.Update(tplr.whoAmI);
-				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
-				args.Handled = true;
-			}
+			GetDataHandlers.KillMe += OnKillMe;
 		}
 
 		internal void Login(object sender, GetDataHandledEventArgs args)
@@ -123,6 +91,51 @@ namespace TShockAPI
 			{
 				if (((Main.tile[p.sX, p.sY - 1].active() && Main.tile[p.sX, p.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(p.sX, p.sY - 1)))
 					p.Teleport(p.sX * 16, (p.sY * 16) - 48);
+			}
+		}
+
+		internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
+		{
+			var tplr = args.Player.TPlayer;
+			if (args.Player.Confused && args.Player.IsLoggedIn)
+			{
+				if (tplr.controlUp)
+				{
+					tplr.controlDown = true;
+					tplr.controlUp = false;
+				}
+				else if (tplr.controlDown)
+				{
+					tplr.controlDown = false;
+					tplr.controlUp = true;
+				}
+
+				if (tplr.controlLeft)
+				{
+					tplr.controlRight = true;
+					tplr.controlLeft = false;
+				}
+				else if (tplr.controlRight)
+				{
+					tplr.controlRight = false;
+					tplr.controlLeft = true;
+				}
+
+				tplr.Update(tplr.whoAmI);
+				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
+				args.Handled = true;
+			}
+		}
+
+		internal void OnKillMe(object sender, KillMeEventArgs args)
+		{
+			if (args.Player.TPlayer.difficulty == 2 && args.Player.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
+				{
+					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
+					TShock.CharacterDB.SeedInitialData(args.Player.Account);
+				}
 			}
 		}
 	}
