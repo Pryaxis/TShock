@@ -40,8 +40,10 @@ namespace TShockAPI
 		private TShock Plugin;
 
 		/// <returns>A new SSC system.</returns>
-		internal SSC()
+		internal SSC(TShock plugin)
 		{
+			Plugin = plugin;
+
 			// Setup GetDataHandlers
 			GetDataHandlers.Connecting += Login;
 			GetDataHandlers.PlayerSpawn += OnSpawn;
