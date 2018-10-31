@@ -781,7 +781,7 @@ namespace TShockAPI
 
 			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
 			{
-				args.Player.Disable("Player does not have permission to create that projectile.", DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable(String.Format("Player does not have permission to create projectile {0}.", type), DisableFlags.WriteToLogAndConsole);
 				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
