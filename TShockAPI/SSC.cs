@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Terraria.ID;
 using TShockAPI.DB;
@@ -36,12 +37,15 @@ namespace TShockAPI
 	/// <summary>The TShock server side character subsystem.</summary>
 	internal sealed class SSC
 	{
+		/// <summary>The database connection layer to for the ssc subsystem.</summary>
+		private CharacterManager DataModel;
 		/// <summary>A reference to the TShock plugin so we can register events.</summary>
 		private TShock Plugin;
 
 		/// <returns>A new SSC system.</returns>
-		internal SSC(TShock plugin)
+		internal SSC(TShock plugin, IDbConnection database)
 		{
+			DataModel = new CharacterManager(database);
 			Plugin = plugin;
 
 			// Setup GetDataHandlers
@@ -110,7 +114,7 @@ namespace TShockAPI
 			if (args.Player.Confused && args.Player.IsLoggedIn)
 			{
 				if (tplr.controlUp)
-				{
+				{       
 					tplr.controlDown = true;
 					tplr.controlUp = false;
 				}
