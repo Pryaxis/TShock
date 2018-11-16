@@ -70,7 +70,7 @@ namespace TShockAPI
 				if (args.Player.HasPermission(Permissions.bypassssc))
 				{
 					args.Player.PlayerData.CopyCharacter(args.Player);
-					TShock.CharacterDB.InsertPlayerData(args.Player);
+					DataModel.InsertPlayerData(args.Player);
 				}
 
 				args.Player.PlayerData.RestoreCharacter(args.Player);
@@ -145,7 +145,7 @@ namespace TShockAPI
 		{
 			if (args.Player.TPlayer.difficulty == 2 && args.Player.IsLoggedIn)
 			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
+				if (DataModel.RemovePlayer(args.Player.Account.ID))
 				{
 					args.Player.SendErrorMessage(
 						"You have fallen in hardcore mode, and your items have been lost forever.");
@@ -165,7 +165,7 @@ namespace TShockAPI
 					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 
-						TShock.CharacterDB.InsertPlayerData(player);
+						DataModel.InsertPlayerData(player);
 					}
 				}
 
@@ -199,7 +199,7 @@ namespace TShockAPI
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
-					TShock.CharacterDB.InsertPlayerData(tsplr);
+					DataModel.InsertPlayerData(tsplr);
 				}
 			}
 		}

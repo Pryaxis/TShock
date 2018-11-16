@@ -331,7 +331,7 @@ namespace TShockAPI
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
 				if(Main.ServerSideCharacter)
-					SSC = new SSC(this);
+					SSC = new SSC(this, DB);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
