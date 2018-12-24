@@ -1130,6 +1130,8 @@ namespace TShockAPI
 						}
 						if (check != "none")
 							player.IsDisabledForBannedWearable = true;
+						else
+							player.IsDisabledForBannedWearable = false;
 
 						if (player.IsBeingDisabled())
 						{
