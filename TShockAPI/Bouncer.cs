@@ -1869,7 +1869,8 @@ namespace TShockAPI
 			{ BuffID.DryadsWardDebuff, 120 },
 			{ BuffID.Daybreak, 300 },
 			{ BuffID.BetsysCurse, 600 },
-			{ BuffID.Oiled, 540 }
+			{ BuffID.Oiled, 540 },
+			{ BuffID.Confused, 360 },
 		};
 		
 		/// <summary>
