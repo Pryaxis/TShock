@@ -1870,7 +1870,7 @@ namespace TShockAPI
 			{ BuffID.Daybreak, 300 },
 			{ BuffID.BetsysCurse, 600 },
 			{ BuffID.Oiled, 540 },
-			{ BuffID.Confused, 360 },
+			{ BuffID.Confused, 360 }
 		};
 		
 		/// <summary>
