@@ -3632,6 +3632,12 @@ namespace TShockAPI
 				return true;
 			}
 
+			if (type == 4 && (id < 0 || id > Main.npc.Length))
+			{
+				//Type == 4 -> 'BigMimicSpawnSmoke'. This access Main.npc without any bounds checking on Terraria's side.
+				return true;
+			}
+
 			return false;
 		}
 
