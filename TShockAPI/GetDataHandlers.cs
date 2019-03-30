@@ -1230,8 +1230,7 @@ namespace TShockAPI
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.TileKill, HandleTileKill },
-					{ PacketTypes.PlayerKillMe, HandlePlayerKillMe },
+					{ PacketTypes.PlaceChest, HandlePlaceChest },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerSpawn, HandleSpawn },
 					{ PacketTypes.ChestGetContents, HandleChestOpen },
@@ -1247,7 +1246,6 @@ namespace TShockAPI
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.PlayerDamage, HandlePlayerDamage },
 					{ PacketTypes.NpcStrike, HandleNpcStrike },
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
@@ -2893,71 +2891,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadInt8() == 0;
-			var text = args.Data.ReadString();
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				return true;
-			}
-
-			if (OnKillMe(id, direction, dmg, pvp))
-				return true;
-
-			if (text.Length > 500)
-			{
-				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
-				return true;
-			}
-
-			args.Player.Dead = true;
-			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
-
-			foreach (NPC npc in Main.npc)
-			{
-				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
-					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
-				{
-					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
-					break;
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
-			{
-				if (TShock.Config.BanOnHardcoreDeath)
-				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
-				}
-				else
-				{
-					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.User.ID))
-				{
-					TShock.CharacterDB.SeedInitialData(args.Player.User);
-				}
-			}
-
-			return false;
-		}
-
 		private static bool HandlePlayerKillMeV2(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
@@ -3149,7 +3082,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleTileKill(GetDataHandlerArgs args)
+		private static bool HandlePlaceChest(GetDataHandlerArgs args)
 		{
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
@@ -3545,76 +3478,6 @@ namespace TShockAPI
 			{
 				args.Player.IgnoreSSCPackets = false;
 				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandlePlayerDamage(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var dmg = args.Data.ReadInt16();
-			args.Data.ReadString(); // don't store damage text
-			var bits = (BitsByte)args.Data.ReadInt8();
-			var pvp = bits[0];
-			var crit = bits[1];
-
-			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
-				return true;
-
-			if (id >= Main.maxPlayers || TShock.Players[id] == null)
-			{
-				return true;
-			}
-
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
-			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
-				{
-					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
-					return true;
-				}
-				else
-				{
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
-				}
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;
