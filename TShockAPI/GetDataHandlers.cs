@@ -1246,6 +1246,7 @@ namespace TShockAPI
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
+					{ PacketTypes.NpcItemStrike, HandleNpcItemStrike },
 					{ PacketTypes.NpcStrike, HandleNpcStrike },
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
@@ -3548,6 +3549,69 @@ namespace TShockAPI
 			if (TShock.Players[id].GodMode)
 			{
 				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+			}
+
+			return false;
+		}
+
+		private static bool HandleNpcItemStrike(GetDataHandlerArgs args)
+		{
+			var npcId = args.Data.ReadInt16();
+
+			if (npcId < 0 || npcId > Main.npc.Length)
+			{
+				//Need a valid npc
+				return true;
+			}
+
+			if (Main.npc[npcId] == null || Main.npc[npcId].active == false)
+			{
+				//Only allow striking valid NPCs
+				return true;
+			}
+
+			var item = args.Player.SelectedItem ?? args.Player.ItemInHand;
+			if (item == null)
+			{
+				//Shouldn't be able to strike an NPC without holding an item
+				return true;
+			}
+
+			var direction = args.TPlayer.direction;
+			var dmg = item.damage;
+			var knockback = item.knockBack;
+
+			//Clients can spoof item damage and it won't be reflected on the server. There's no point checking item damage unless this is changed
+
+			if (OnNPCStrike(npcId, (byte)direction, (short)item.damage, item.knockBack, 0))
+			{
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if (Main.npc[npcId].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
+			{
+				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if (TShock.Config.RangeChecks &&
+				TShock.CheckRangePermission(args.Player, (int)(Main.npc[npcId].position.X / 16f), (int)(Main.npc[npcId].position.Y / 16f), 128))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
 			}
 
 			return false;
