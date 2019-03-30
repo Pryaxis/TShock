@@ -1869,7 +1869,9 @@ namespace TShockAPI
 			{ BuffID.DryadsWardDebuff, 120 },
 			{ BuffID.Daybreak, 300 },
 			{ BuffID.BetsysCurse, 600 },
-			{ BuffID.Oiled, 540 }
+			{ BuffID.Oiled, 540 },
+			{ BuffID.Confused, 360 }, // Brain of Confusion Internal Item ID: 3223
+			{ BuffID.Daybreak, 300 } // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
 		};
 		
 		/// <summary>
