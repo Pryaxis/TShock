@@ -4,6 +4,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.26
+* Removed the stat tracking system. (@hakusaro)
+
+## TShock 4.3.25
+* Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
+
+## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
 * Updated Terraria Server API to 1.3.5.3 (@WhiteXZ, @hakusaro)
 * Updated TShock core components to 1.3.5.3 (@hakusaro)
