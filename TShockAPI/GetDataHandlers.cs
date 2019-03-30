@@ -3513,8 +3513,6 @@ namespace TShockAPI
 				{
 					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
@@ -3527,22 +3525,16 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
