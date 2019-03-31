@@ -1,6 +1,6 @@
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2018 Pryaxis & TShock Contributors
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Alnitak";
+		public static readonly string VersionCodename = "Zombie";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -1130,6 +1130,8 @@ namespace TShockAPI
 						}
 						if (check != "none")
 							player.IsDisabledForBannedWearable = true;
+						else
+							player.IsDisabledForBannedWearable = false;
 
 						if (player.IsBeingDisabled())
 						{
