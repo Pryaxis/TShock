@@ -1230,8 +1230,7 @@ namespace TShockAPI
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
 					{ PacketTypes.TogglePvp, HandleTogglePvp },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.TileKill, HandleTileKill },
-					{ PacketTypes.PlayerKillMe, HandlePlayerKillMe },
+					{ PacketTypes.PlaceChest, HandlePlaceChest },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerSpawn, HandleSpawn },
 					{ PacketTypes.ChestGetContents, HandleChestOpen },
@@ -1247,7 +1246,7 @@ namespace TShockAPI
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.PlayerDamage, HandlePlayerDamage },
+					{ PacketTypes.NpcItemStrike, HandleNpcItemStrike },
 					{ PacketTypes.NpcStrike, HandleNpcStrike },
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
@@ -2861,14 +2860,6 @@ namespace TShockAPI
 
 			var type = Main.projectile[index].type;
 
-			// Players can no longer destroy projectiles that are not theirs as of 1.1.2
-			/*if (args.Player.Index != Main.projectile[index].owner && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill) // workaround for skeletron prime projectiles
-			{
-				args.Player.Disable(String.Format("Owner ({0}) and player ID ({1}) does not match to kill projectile of type: {3}", Main.projectile[index].owner, args.Player.Index, type));
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}*/
-
 			if (TShock.CheckIgnores(args.Player))
 			{
 				args.Player.RemoveProjectile(ident, owner);
@@ -2889,71 +2880,6 @@ namespace TShockAPI
 			}
 
 			args.Player.LastKilledProjectile = type;
-
-			return false;
-		}
-
-		private static bool HandlePlayerKillMe(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var dmg = args.Data.ReadInt16();
-			var pvp = args.Data.ReadInt8() == 0;
-			var text = args.Data.ReadString();
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				return true;
-			}
-
-			if (OnKillMe(id, direction, dmg, pvp))
-				return true;
-
-			if (text.Length > 500)
-			{
-				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
-				return true;
-			}
-
-			args.Player.Dead = true;
-			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
-
-			foreach (NPC npc in Main.npc)
-			{
-				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
-					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
-				{
-					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
-					break;
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
-			{
-				if (TShock.Config.BanOnHardcoreDeath)
-				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
-				}
-				else
-				{
-					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.User.ID))
-				{
-					TShock.CharacterDB.SeedInitialData(args.Player.User);
-				}
-			}
 
 			return false;
 		}
@@ -3021,6 +2947,8 @@ namespace TShockAPI
 				}
 			}
 
+			//Attempt to resolve issue where player's slected items sometime fail to stop rendering when they die (eg chainsaws)
+			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return false;
 		}
 
@@ -3149,7 +3077,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleTileKill(GetDataHandlerArgs args)
+		private static bool HandlePlaceChest(GetDataHandlerArgs args)
 		{
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
@@ -3550,76 +3478,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerDamage(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var dmg = args.Data.ReadInt16();
-			args.Data.ReadString(); // don't store damage text
-			var bits = (BitsByte)args.Data.ReadInt8();
-			var pvp = bits[0];
-			var crit = bits[1];
-
-			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
-				return true;
-
-			if (id >= Main.maxPlayers || TShock.Players[id] == null)
-			{
-				return true;
-			}
-
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
-			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
-				{
-					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
-					return true;
-				}
-				else
-				{
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
-				}
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
-			}
-
-			return false;
-		}
-
 		private static bool HandlePlayerDamageV2(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
@@ -3649,8 +3507,6 @@ namespace TShockAPI
 				{
 					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
@@ -3663,28 +3519,85 @@ namespace TShockAPI
 
 			if (TShock.CheckIgnores(args.Player))
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
 			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
 			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
 				return true;
 			}
 
 			if (TShock.Players[id].GodMode)
 			{
 				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+			}
+
+			return false;
+		}
+
+		private static bool HandleNpcItemStrike(GetDataHandlerArgs args)
+		{
+			var npcId = args.Data.ReadInt16();
+
+			if (npcId < 0 || npcId > Main.npc.Length)
+			{
+				//Need a valid npc
+				return true;
+			}
+
+			if (Main.npc[npcId] == null || Main.npc[npcId].active == false)
+			{
+				//Only allow striking valid NPCs
+				return true;
+			}
+
+			var item = args.Player.SelectedItem ?? args.Player.ItemInHand;
+			if (item == null)
+			{
+				//Shouldn't be able to strike an NPC without holding an item
+				return true;
+			}
+
+			var direction = args.TPlayer.direction;
+			var dmg = item.damage;
+			var knockback = item.knockBack;
+
+			//Clients can spoof item damage and it won't be reflected on the server. There's no point checking item damage unless this is changed
+
+			if (OnNPCStrike(npcId, (byte)direction, (short)item.damage, item.knockBack, 0))
+			{
+				return true;
+			}
+
+			if (TShock.CheckIgnores(args.Player))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if (Main.npc[npcId].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
+			{
+				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if (TShock.Config.RangeChecks &&
+				TShock.CheckRangePermission(args.Player, (int)(Main.npc[npcId].position.X / 16f), (int)(Main.npc[npcId].position.Y / 16f), 128))
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			{
+				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
+				return true;
 			}
 
 			return false;
@@ -3766,6 +3679,12 @@ namespace TShockAPI
 			if (type == 3 & !args.Player.HasPermission(Permissions.usesundial))
 			{
 				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
+				return true;
+			}
+
+			if (type == 4 && (id < 0 || id > Main.npc.Length))
+			{
+				//Type == 4 -> 'BigMimicSpawnSmoke'. This access Main.npc without any bounds checking on Terraria's side.
 				return true;
 			}
 
