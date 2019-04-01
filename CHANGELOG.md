@@ -95,6 +95,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Add NPCAddBuff data handler and bouncer (@AxeelAnder)
 * Improved config file documentation (@Enerdy)
 * Add PlayerZone data handler and bouncer (@AxeelAnder)
+* Update sqlite binaries to 32bit 3.27.2 for Windows (@hakusaro)
 * Fix banned armour checks not clearing properly (thanks @tysonstrange)
 
 ## TShock 4.3.25
