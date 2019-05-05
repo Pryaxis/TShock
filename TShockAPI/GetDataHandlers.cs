@@ -2947,8 +2947,6 @@ namespace TShockAPI
 				}
 			}
 
-			//Attempt to resolve issue where player's slected items sometime fail to stop rendering when they die (eg chainsaws)
-			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return false;
 		}
 
@@ -3480,23 +3478,26 @@ namespace TShockAPI
 
 		private static bool HandlePlayerDamageV2(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt8();
+			var targetId = args.Data.ReadInt8();
 			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
 			var dmg = args.Data.ReadInt16();
 			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var bits = (BitsByte)(args.Data.ReadByte());
-			var crit = bits[0];
-			var pvp = bits[1];
+			BitsByte bits = (BitsByte)(args.Data.ReadByte());
+			bool crit = bits[0];
+			bool pvp = bits[1];
 
-			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
-				return true;
-
-			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			if (OnPlayerDamage(targetId, direction, dmg, pvp, crit))
 			{
 				return true;
 			}
 
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			if (targetId >= Main.maxPlayers || TShock.Players[targetId] == null)
+			{
+				return true;
+			}
+
+			//Check if damage is higher than threshold, player doesn't have permission to exceed threshold, and player isn't hurting themselves
+			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && targetId != args.Player.Index)
 			{
 				if (TShock.Config.KickOnDamageThresholdBroken)
 				{
@@ -3505,16 +3506,29 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				return true;
 			}
 
-			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
+			if (pvp)
 			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
+				//Prevent another player being damaged while not in PvP
+				if (!TShock.Players[targetId].TPlayer.hostile && targetId != args.Player.Index)
+				{
+					args.Player.SendData(PacketTypes.PlayerHp, "", targetId);
+					args.Player.SendData(PacketTypes.PlayerUpdate, "", targetId);
+					return true;
+				}
+
+				//If the player death reason source player isn't empty, but doesn't match the originating player
+				if (playerDeathReason.SourcePlayerIndex != -1 && playerDeathReason.SourcePlayerIndex != args.Player.Index && targetId != args.Player.Index)
+				{
+					args.Player.SendData(PacketTypes.PlayerHp, "", targetId);
+					args.Player.SendData(PacketTypes.PlayerUpdate, "", targetId);
+					args.Player.Disable("Damage impersonation", DisableFlags.WriteToLogAndConsole);
+					return true;
+				}
 			}
 
 			if (TShock.CheckIgnores(args.Player))
@@ -3522,7 +3536,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
+			if (TShock.CheckRangePermission(args.Player, TShock.Players[targetId].TileX, TShock.Players[targetId].TileY, 100))
 			{
 				return true;
 			}
@@ -3532,9 +3546,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (TShock.Players[id].GodMode)
+			if (TShock.Players[targetId].GodMode)
 			{
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+				TShock.Players[targetId].Heal(args.TPlayer.statLifeMax);
 			}
 
 			return false;

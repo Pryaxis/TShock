@@ -744,8 +744,10 @@ namespace TShockAPI
 				y = 992;
 			}
 
-			SendTileSquare((int) (x/16), (int) (y/16), 15);
-			TPlayer.Teleport(new Vector2(x, y), style);
+			Vector2 pos = new Vector2(x*16, y*16);
+
+			RemoteClient.CheckSection(Index, pos);
+			TPlayer.Teleport(pos/16, style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
 		}
