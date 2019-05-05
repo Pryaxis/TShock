@@ -4,8 +4,16 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.27
+* Fixed an exploit in Player Death packets (Thanks to @bartico6)
+* Fixed a client crash when teleporting or warping via commands (Thanks to @bartico6)
+
 ## TShock 4.3.26
 * Removed the stat tracking system. (@hakusaro)
+* Updated SQLite binaries. (@hakusaro)
+* Removed server-sided healing when disabled. (@QuiCM)
+* Patched an exploit that allowed users to kill town NPCs (@QuiCM)
+* [API] Added a patch for the 0-length crash (@QuiCM)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
