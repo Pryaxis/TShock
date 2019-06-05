@@ -229,7 +229,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://avikav.net"><img src="https://avatars2.githubusercontent.com/u/18518861?v=4" width="100px;" alt="AviKav"/><br /><sub><b>AviKav</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/issues?q=author%3AAviKav" title="Bug reports">🐛</a> <a href="https://github.com/Pryaxis/TShock/commits?author=AviKav" title="Tests">⚠️</a></td></tr></table>
+<table><tr><td align="center"><a href="https://avikav.net"><img src="https://avatars2.githubusercontent.com/u/18518861?v=4" width="100px;" alt="AviKav"/><br /><sub><b>AviKav</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/issues?q=author%3AAviKav" title="Bug reports">🐛</a> <a href="https://github.com/Pryaxis/TShock/commits?author=AviKav" title="Tests">⚠️</a></td><td align="center"><a href="https://tshock.co"><img src="https://avatars0.githubusercontent.com/u/3332657?v=4" width="100px;" alt="Rodrigo Rente"/><br /><sub><b>Rodrigo Rente</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=AxisKriel" title="Code">💻</a> <a href="#projectManagement-AxisKriel" title="Project Management">📆</a> <a href="https://github.com/Pryaxis/TShock/commits?author=AxisKriel" title="Tests">⚠️</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
