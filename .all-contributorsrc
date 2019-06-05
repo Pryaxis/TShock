@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "AviKav",
+      "name": "AviKav",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/18518861?v=4",
+      "profile": "https://avikav.net",
+      "contributions": [
+        "bug",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "TShock",
+  "projectOwner": "Pryaxis",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
