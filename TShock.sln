@@ -1,78 +1,49 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{755F5B05-0924-47E9-9563-26EB20FE3F67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TShock", "src\TShock\TShock.csproj", "{AC834FD7-32AF-44B2-BBC3-1D58E1A6F8A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TShock.Tests", "tests\TShock.Tests\TShock.Tests.csproj", "{1BBA825D-5FBC-4FBF-881E-D4E80BF41E24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrariaServerAPI", "TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj", "{6877506E-ADC6-4142-98A6-79E4FA02855A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3971D380-ED5D-4694-AB65-73FF796BC0F7}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		COPYING = COPYING
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orion", "..\Orion\src\Orion\Orion.csproj", "{A1530CBF-496C-4302-A39D-F1A4BDA73347}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orion.Launcher", "..\Orion\src\Orion.Launcher\Orion.Launcher.csproj", "{725A4164-B02B-4312-BE07-3A88BEA43589}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Mono|Any CPU = Mono|Any CPU
-		Mono|Mixed Platforms = Mono|Mixed Platforms
-		Mono|x64 = Mono|x64
-		Mono|x86 = Mono|x86
 		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|x64.Build.0 = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|Any CPU.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|Mixed Platforms.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|x64.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|x64.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|x86.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Mono|x86.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x64.ActiveCfg = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x64.Build.0 = Release|Any CPU
-		{49606449-072B-4CF5-8088-AA49DA586694}.Release|x86.ActiveCfg = Release|Any CPU
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x64.ActiveCfg = Debug|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x64.Build.0 = Debug|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x86.ActiveCfg = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Debug|x86.Build.0 = Debug|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|Any CPU.ActiveCfg = Mono|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|Mixed Platforms.ActiveCfg = Mono|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|Mixed Platforms.Build.0 = Mono|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|x64.ActiveCfg = Mono|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|x64.Build.0 = Mono|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|x86.ActiveCfg = Mono|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Mono|x86.Build.0 = Mono|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Any CPU.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|Mixed Platforms.Build.0 = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x64.ActiveCfg = Release|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x64.Build.0 = Release|x64
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x86.ActiveCfg = Release|x86
-		{6877506E-ADC6-4142-98A6-79E4FA02855A}.Release|x86.Build.0 = Release|x86
+		{AC834FD7-32AF-44B2-BBC3-1D58E1A6F8A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC834FD7-32AF-44B2-BBC3-1D58E1A6F8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC834FD7-32AF-44B2-BBC3-1D58E1A6F8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC834FD7-32AF-44B2-BBC3-1D58E1A6F8A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBA825D-5FBC-4FBF-881E-D4E80BF41E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBA825D-5FBC-4FBF-881E-D4E80BF41E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBA825D-5FBC-4FBF-881E-D4E80BF41E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBA825D-5FBC-4FBF-881E-D4E80BF41E24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1530CBF-496C-4302-A39D-F1A4BDA73347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1530CBF-496C-4302-A39D-F1A4BDA73347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1530CBF-496C-4302-A39D-F1A4BDA73347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1530CBF-496C-4302-A39D-F1A4BDA73347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725A4164-B02B-4312-BE07-3A88BEA43589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725A4164-B02B-4312-BE07-3A88BEA43589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725A4164-B02B-4312-BE07-3A88BEA43589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725A4164-B02B-4312-BE07-3A88BEA43589}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Terraria.vsmdi
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1318327-9900-48EC-BAF2-C88EFC55B379}
 	EndGlobalSection
 EndGlobal

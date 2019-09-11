@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageId>TShock</PackageId>
+    <Authors>tshock-contributors</Authors>
+    <Company>Pryaxis</Company>
+    <Description>Provides a foundation on which to build Terraria server plugins.</Description>
+    <PackageProjectUrl>https://github.com/orgs/Pryaxis/teams/tshock-contributors</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Pryaxis/TShock</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageLicenseFile>COPYING</PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\$(Configuration)\TShock.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Orion\src\Orion\Orion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\COPYING">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo F|xcopy /y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\Orion\src\Orion.Launcher\bin\Debug\net472\plugins&quot;" />
+  </Target>
+
+</Project>
