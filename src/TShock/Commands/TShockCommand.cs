@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Orion.Events.Extensions;
+using TShock.Events.Commands;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
@@ -43,6 +45,13 @@ namespace TShock.Commands {
         }
 
         public void Invoke(ICommandSender sender, string input) {
+            if (sender is null) throw new ArgumentNullException(nameof(sender));
+            if (input is null) throw new ArgumentNullException(nameof(input));
+
+            var args = new CommandExecuteEventArgs(this, sender, input);
+            _commandService.CommandExecute?.Invoke(this, args);
+            if (args.IsCanceled()) return;
+
             throw new NotImplementedException();
         }
     }

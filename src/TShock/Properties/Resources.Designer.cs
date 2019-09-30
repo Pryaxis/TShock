@@ -59,5 +59,23 @@ namespace TShock.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is a number that is out of range of an integer..
+        /// </summary>
+        internal static string Int32Parser_IntegerOutOfRange {
+            get {
+                return ResourceManager.GetString("Int32Parser_IntegerOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid integer..
+        /// </summary>
+        internal static string Int32Parser_InvalidInteger {
+            get {
+                return ResourceManager.GetString("Int32Parser_InvalidInteger", resourceCulture);
+            }
+        }
     }
 }

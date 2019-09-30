@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
+    <value>"{0}" is a number that is out of range of an integer.</value>
+  </data>
+  <data name="Int32Parser_InvalidInteger" xml:space="preserve">
+    <value>"{0}" is not a valid integer.</value>
+  </data>
 </root>
