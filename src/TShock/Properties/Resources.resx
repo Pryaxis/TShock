@@ -123,6 +123,12 @@
   <data name="CommandParse_ArgIsByReference" xml:space="preserve">
     <value>By-reference command arguments are unsupported.</value>
   </data>
+  <data name="CommandParse_BadLongFlag" xml:space="preserve">
+    <value>Unexpected long flag "{0}".</value>
+  </data>
+  <data name="CommandParse_BadShortFlag" xml:space="preserve">
+    <value>Unexpected short flag "{0}".</value>
+  </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>
   </data>

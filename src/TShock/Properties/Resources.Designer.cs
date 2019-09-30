@@ -79,6 +79,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected long flag &quot;{0}&quot;..
+        /// </summary>
+        internal static string CommandParse_BadLongFlag {
+            get {
+                return ResourceManager.GetString("CommandParse_BadLongFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected short flag &quot;{0}&quot;..
+        /// </summary>
+        internal static string CommandParse_BadShortFlag {
+            get {
+                return ResourceManager.GetString("CommandParse_BadShortFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is a number that is out of range of an integer..
         /// </summary>
         internal static string Int32Parser_IntegerOutOfRange {

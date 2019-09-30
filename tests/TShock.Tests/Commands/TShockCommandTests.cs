@@ -61,6 +61,23 @@ namespace TShock.Commands {
             testClass.String.Should().Be(expectedString);
         }
 
+        [Theory]
+        [InlineData("", false, false)]
+        [InlineData("-x", true, false)]
+        [InlineData("-y", false, true)]
+        [InlineData("-xy", true, true)]
+        public void Invoke_Flags_IsCorrect(string input, bool expectedX, bool expectedY) {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
+            var commandSender = new Mock<ICommandSender>().Object;
+
+            command.Invoke(commandSender, input);
+
+            testClass.Sender.Should().BeSameAs(commandSender);
+            testClass.X.Should().Be(expectedX);
+            testClass.Y.Should().Be(expectedY);
+        }
+
         [Fact]
         public void Invoke_InParam_ThrowsParseException() {
             var testClass = new TestClass();
@@ -115,12 +132,14 @@ namespace TShock.Commands {
             var attribute = handler.GetCustomAttribute<CommandHandlerAttribute>();
             return new TShockCommand(_mockCommandService.Object, attribute, testClass, handler);
         }
-        
+
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Testing")]
         private class TestClass {
             public ICommandSender Sender { get; private set; }
             public int Int { get; private set; }
             public string String { get; private set; }
+            public bool X { get; private set; }
+            public bool Y { get; private set; }
 
             [CommandHandler("tshock_tests:test")]
             public void TestCommand(ICommandSender sender) {
@@ -133,10 +152,10 @@ namespace TShock.Commands {
                 Int = @int;
                 String = @string;
             }
-            
+
             [CommandHandler("tshock_tests:test_no_in")]
             public void TestCommand_NoIn(ICommandSender sender, in int x) { }
-            
+
             [CommandHandler("tshock_tests:test_no_out")]
             public void TestCommand_NoOut(ICommandSender sender, out int x) {
                 x = 0;
@@ -144,6 +163,13 @@ namespace TShock.Commands {
 
             [CommandHandler("tshock_tests:test_no_out")]
             public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
+            
+            [CommandHandler("tshock_tests:test_flags")]
+            public void TestCommand_Flags(ICommandSender sender, [Flag('x', "xxx")] bool x, [Flag('y', "yyy")] bool y) {
+                Sender = sender;
+                X = x;
+                Y = y;
+            }
         }
     }
 }

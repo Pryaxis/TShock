@@ -20,12 +20,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Orion.Events.Extensions;
+using TShock.Commands.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using TShock.Properties;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
+        private static readonly ISet<char> EmptyShortFlags = new HashSet<char>();
+
         private readonly ICommandService _commandService;
         private readonly CommandHandlerAttribute _attribute;
 
@@ -54,34 +57,74 @@ namespace TShock.Commands {
             _commandService.CommandExecute?.Invoke(this, args);
             if (args.IsCanceled()) return;
 
+            // Pass 1: Scan through the parameters and learn flags and optionals.
+            var parameters = Handler.GetParameters();
+            var validShortFlags = new HashSet<char>();
+            var validLongFlags = new HashSet<string>();
+            var validOptionals = new HashSet<string>();
+
+            void PreprocessParameter(ParameterInfo parameter) {
+                // Check for things we don't support: by-reference types.
+                if (parameter.ParameterType.IsByRef) throw new ParseException(Resources.CommandParse_ArgIsByReference);
+
+                var parameterType = parameter.ParameterType;
+
+                // If the parameter is a bool and is marked with a [Flag], we'll take note of that.
+                if (parameterType == typeof(bool)) {
+                    var attribute = parameter.GetCustomAttribute<FlagAttribute>();
+                    if (attribute != null) {
+                        validShortFlags.Add(attribute.ShortFlag);
+                        validLongFlags.Add(attribute.LongFlag);
+                    }
+                }
+
+                // If the parameter is optional, we'll take note of that.
+                if (parameter.IsOptional) {
+                    validOptionals.Add(parameter.Name);
+                }
+            }
+
+            foreach (var parameter in parameters) {
+                PreprocessParameter(parameter);
+            }
+
+
+            // Pass 2, part 1: Parse flags and optionals.
+            var input = inputString.AsSpan();
+            var shortFlags = ParseShortFlags(ref input, validShortFlags);
+
+            // Pass 2, part 2: Parse parameters.
             var parsers = _commandService.RegisteredParsers;
             var handlerArgs = new List<object>();
 
-            void CoerceParameter(ParameterInfo parameter, ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) {
-                if (parameter.ParameterType.IsByRef) throw new ParseException(Resources.CommandParse_ArgIsByReference);
-
+            void CoerceParameter(ParameterInfo parameter, ref ReadOnlySpan<char> input) {
                 var parameterType = parameter.ParameterType;
 
                 // Special case: parameter is an ICommandSender, in which case we inject sender.
                 if (parameterType == typeof(ICommandSender)) {
                     handlerArgs.Add(sender);
-                    nextInput = input;
                     return;
+                }
+
+                // Special case: parameter is a bool and is marked with a [Flag], in which case we look up shortFlags
+                // and longFlags and inject that.
+                if (parameterType == typeof(bool)) {
+                    var attribute = parameter.GetCustomAttribute<FlagAttribute>();
+                    if (attribute != null) {
+                        handlerArgs.Add(shortFlags.Contains(attribute.ShortFlag));
+                        return;
+                    }
                 }
 
                 // If we can directly parse the parameter type, then do so.
                 if (parsers.TryGetValue(parameterType, out var parser)) {
                     var options = parameter.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
-                    handlerArgs.Add(parser.Parse(input, out nextInput, options));
-                    return;
+                    handlerArgs.Add(parser.Parse(input, out input, options));
                 }
-
-                nextInput = input;
             }
 
-            var input = inputString.AsSpan();
             foreach (var parameter in Handler.GetParameters()) {
-                CoerceParameter(parameter, input, out input);
+                CoerceParameter(parameter, ref input);
             }
 
             try {
@@ -90,6 +133,33 @@ namespace TShock.Commands {
                 sender.Log.Error(ex, Resources.CommandInvoke_Exception);
                 throw new CommandException(Resources.CommandInvoke_Exception, ex);
             }
+        }
+
+        private static ISet<char> ParseShortFlags(ref ReadOnlySpan<char> input, ISet<char> validShortFlags) {
+            // Quick return if there are no valid short flags.
+            if (validShortFlags.Count == 0) return EmptyShortFlags;
+
+            var start = input.ScanFor(c => !char.IsWhiteSpace(c));
+            var end = input.ScanFor(char.IsWhiteSpace, start);
+            if (start == end || input[start] != '-')
+                return EmptyShortFlags;
+
+            ++start;
+
+            // Make sure we're not treating a long flag or an optional as a set of short flags.
+            if (start == end || input[start] == '-') return EmptyShortFlags;
+
+            var shortFlags = new HashSet<char>();
+            foreach (var c in input[start..end]) {
+                if (!validShortFlags.Contains(c)) {
+                    throw new ParseException(string.Format(Resources.CommandParse_BadShortFlag, c));
+                }
+
+                shortFlags.Add(c);
+            }
+
+            input = input[end..];
+            return shortFlags;
         }
     }
 }
