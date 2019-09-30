@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
@@ -29,8 +30,9 @@ namespace TShock.Commands.Parsers {
         /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="nextInput">The next input.</param>
+        /// <param name="options">The parse options.</param>
         /// <returns>A corresponding instance of the parse type.</returns>
         /// <exception cref="ParseException">The input could not be parsed properly.</exception>
-        new TParse Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput);
+        new TParse Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options = null);
     }
 }

@@ -15,22 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// Provides parsing support.
+    /// Provides parse options. These are strings so that parse options can easily be added by consumers.
     /// </summary>
-    public interface IArgumentParser {
+    public static class ParseOptions {
         /// <summary>
-        /// Parses the given input and returns a corresponding object along with what the next input should be.
+        /// An option which forces a string to be parsed to the end of the input.
         /// </summary>
-        /// <param name="input">The input.</param>
-        /// <param name="nextInput">The next input.</param>
-        /// <param name="options">The parse options.</param>
-        /// <returns>A corresponding object.</returns>
-        /// <exception cref="ParseException">The input could not be parsed properly.</exception>
-        object Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options = null);
+        public const string ToEndOfInput = nameof(ToEndOfInput);
     }
 }

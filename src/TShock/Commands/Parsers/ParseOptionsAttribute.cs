@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using JetBrains.Annotations;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
@@ -35,7 +35,8 @@ namespace TShock.Commands.Parsers {
         /// </summary>
         /// <param name="options">The options.</param>
         /// <exception cref="ArgumentNullException"><paramref name="options"/> is <c>null</c>.</exception>
-        public ParseOptionsAttribute(params string[] options) {
+        public ParseOptionsAttribute([ValueProvider("TShock.Commands.Parsers.ParseOptions")]
+                                     params string[] options) {
             if (options is null) throw new ArgumentNullException(nameof(options));
 
             var optionsSet = new HashSet<string>();

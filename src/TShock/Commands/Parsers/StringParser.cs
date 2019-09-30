@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TShock.Properties;
@@ -23,7 +24,12 @@ using TShock.Properties;
 namespace TShock.Commands.Parsers {
     // It'd be nice to return ReadOnlySpan<char>, but because of escape characters, we have to return copies.
     internal sealed class StringParser : IArgumentParser<string> {
-        public string Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) {
+        public string Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options = null) {
+            if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
+                nextInput = default;
+                return input.ToString();
+            }
+
             // Scan until we find some non-whitespace character.
             var start = 0;
             while (start < input.Length) {
@@ -81,7 +87,7 @@ namespace TShock.Commands.Parsers {
         }
 
         [ExcludeFromCodeCoverage]
-        object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) =>
-            Parse(input, out nextInput);
+        object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput,
+                                     ISet<string>? options) => Parse(input, out nextInput, options);
     }
 }
