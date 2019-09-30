@@ -77,5 +77,23 @@ namespace TShock.Properties {
                 return ResourceManager.GetString("Int32Parser_InvalidInteger", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reached end of input..
+        /// </summary>
+        internal static string StringParser_EndOfInput {
+            get {
+                return ResourceManager.GetString("StringParser_EndOfInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected escape character &quot;\{0}&quot;..
+        /// </summary>
+        internal static string StringParser_UnexpectedEscape {
+            get {
+                return ResourceManager.GetString("StringParser_UnexpectedEscape", resourceCulture);
+            }
+        }
     }
 }

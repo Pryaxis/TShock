@@ -123,4 +123,10 @@
   <data name="Int32Parser_InvalidInteger" xml:space="preserve">
     <value>"{0}" is not a valid integer.</value>
   </data>
+  <data name="StringParser_EndOfInput" xml:space="preserve">
+    <value>Reached end of input.</value>
+  </data>
+  <data name="StringParser_UnexpectedEscape" xml:space="preserve">
+    <value>Unexpected escape character "\{0}".</value>
+  </data>
 </root>
