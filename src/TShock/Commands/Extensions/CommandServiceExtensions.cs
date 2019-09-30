@@ -16,7 +16,6 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using JetBrains.Annotations;
 using TShock.Commands.Parsers;
 
 namespace TShock.Commands.Extensions {
@@ -33,8 +32,7 @@ namespace TShock.Commands.Extensions {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="commandService"/> or <paramref name="parser"/> are <c>null</c>.
         /// </exception>
-        public static void RegisterParser<TParse>([NotNull] this ICommandService commandService,
-                                                  [NotNull] IArgumentParser<TParse> parser) {
+        public static void RegisterParser<TParse>(this ICommandService commandService, IArgumentParser<TParse> parser) {
             if (commandService is null) throw new ArgumentNullException(nameof(commandService));
             if (parser is null) throw new ArgumentNullException(nameof(parser));
 
