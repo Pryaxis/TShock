@@ -35,13 +35,6 @@ namespace TShock.Commands {
         ILogger Log { get; }
 
         /// <summary>
-        /// Sends a message to the sender.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
-        void SendMessage(string message);
-
-        /// <summary>
         /// Sends a message to the sender with the given color.
         /// </summary>
         /// <param name="message">The message.</param>

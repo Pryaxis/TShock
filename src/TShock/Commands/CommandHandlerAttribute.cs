@@ -26,7 +26,7 @@ namespace TShock.Commands {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public sealed class CommandHandlerAttribute : Attribute {
         /// <summary>
-        /// Gets the command's name. This includes the command prefix and namespace.
+        /// Gets the command's name. This includes the command's namespace: e.g., <c>"tshock:kick"</c>.
         /// </summary>
         public string CommandName { get; }
 

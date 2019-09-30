@@ -78,14 +78,5 @@ namespace TShock.Commands {
         /// <returns>A value indicating whether the command was successfully unregistered.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
         bool UnregisterCommand(ICommand command);
-
-        /// <summary>
-        /// Unregisters the given commands and returns a value indicating success.
-        /// </summary>
-        /// <param name="commands">The commands.</param>
-        /// <returns>A value indicating whether the commands were successfully unregistered.</returns>
-        /// <exception cref="ArgumentException">An element of <paramref name="commands"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="commands"/> is <c>null</c>.</exception>
-        bool UnregisterCommands(IEnumerable<ICommand> commands);
     }
 }

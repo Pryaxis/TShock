@@ -25,11 +25,6 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommand {
         /// <summary>
-        /// Gets the command's namespace.
-        /// </summary>
-        string Namespace { get; }
-
-        /// <summary>
         /// Gets the command's name.
         /// </summary>
         string Name { get; }
