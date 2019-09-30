@@ -21,6 +21,7 @@ using Orion;
 using Orion.Events;
 using Orion.Events.Packets;
 using Orion.Players;
+using TShock.Commands;
 
 namespace TShock {
     /// <summary>
@@ -45,6 +46,8 @@ namespace TShock {
         /// <param name="playerService">The player service.</param>
         /// <exception cref="ArgumentNullException">Any of the services are <c>null</c>.</exception>
         public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService) : base(kernel) {
+            kernel.Bind<ICommandService>().To<TShockCommandService>();
+
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
         }
 
