@@ -27,9 +27,19 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommandService : IService {
         /// <summary>
+        /// Gets or sets the event handlers that occur when registering a command.
+        /// </summary>
+        EventHandlerCollection<CommandExecuteEventArgs>? CommandRegister { get; set; }
+
+        /// <summary>
         /// Gets or sets the event handlers that occur when executing a command.
         /// </summary>
         EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
+
+        /// <summary>
+        /// Gets or sets the event handlers that occur when unregistering a command.
+        /// </summary>
+        EventHandlerCollection<CommandExecuteEventArgs>? CommandUnregister { get; set; }
 
         /// <summary>
         /// Registers and returns the commands defined with the given object's command handlers.
@@ -48,12 +58,18 @@ namespace TShock.Commands {
         IReadOnlyCollection<ICommand> RegisterCommands(Type type);
 
         /// <summary>
-        /// Returns all commands with the given command name.
+        /// Returns all commands with the given command name and sub-names.
         /// </summary>
         /// <param name="commandName">The command name.</param>
+        /// <param name="commandSubNames">The command sub-names.</param>
         /// <returns>The commands with the given command name.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="commandName"/> is <c>null</c>.</exception>
-        IReadOnlyCollection<ICommand> FindCommands(string commandName);
+        /// <exception cref="ArgumentException">
+        /// An element of <paramref name="commandSubNames"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <c>null</c>.
+        /// </exception>
+        IReadOnlyCollection<ICommand> FindCommands(string commandName, params string[] commandSubNames);
 
         /// <summary>
         /// Unregisters the given command and returns a value indicating success.
