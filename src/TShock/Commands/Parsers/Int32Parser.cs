@@ -18,7 +18,7 @@
 using System;
 using TShock.Properties;
 
-namespace TShock.Commands.Parsing {
+namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
         public int Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) {
             // Scan until we find some non-whitespace character.

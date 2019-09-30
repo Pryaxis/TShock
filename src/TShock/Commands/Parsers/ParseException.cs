@@ -18,7 +18,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TShock.Commands.Parsing {
+namespace TShock.Commands.Parsers {
     /// <summary>
     /// The exception thrown when a command input cannot be parsed.
     /// </summary>

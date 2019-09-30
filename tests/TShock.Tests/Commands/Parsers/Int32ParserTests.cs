@@ -19,7 +19,7 @@ using System;
 using FluentAssertions;
 using Xunit;
 
-namespace TShock.Commands.Parsing {
+namespace TShock.Commands.Parsers {
     public class Int32ParserTests {
         [Theory]
         [InlineData("1234", 1234, "")]

@@ -17,7 +17,7 @@
 
 using System;
 
-namespace TShock.Commands.Parsing {
+namespace TShock.Commands.Parsers {
     /// <summary>
     /// Provides parsing support for a type.
     /// </summary>
