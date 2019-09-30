@@ -23,11 +23,11 @@ using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
-        public int Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options= null) {
+        public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options= null) {
             var start = input.ScanFor(c => !char.IsWhiteSpace(c));
             var end = input.ScanFor(char.IsWhiteSpace, start);
             var parse = input[start..end];
-            nextInput = input[end..];
+            input = input[end..];
 
             // Calling Parse here instead of TryParse allows us to give better error messages.
             try {
@@ -40,7 +40,6 @@ namespace TShock.Commands.Parsers {
         }
 
         [ExcludeFromCodeCoverage]
-        object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput,
-                                     ISet<string>? options) => Parse(input, out nextInput, options);
+        object IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
     }
 }

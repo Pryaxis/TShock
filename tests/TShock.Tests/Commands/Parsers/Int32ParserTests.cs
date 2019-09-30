@@ -28,20 +28,24 @@ namespace TShock.Commands.Parsers {
         [InlineData("-1234", -1234, "")]
         [InlineData("123 test", 123, " test")]
         [InlineData("    123", 123, "")]
-        public void Parse_IsCorrect(string input, int expected, string expectedNextInput) {
+        public void Parse_IsCorrect(string inputString, int expected, string expectedNextInput) {
             var parser = new Int32Parser();
+            var input = inputString.AsSpan();
 
-            parser.Parse(input, out var nextInput).Should().Be(expected);
+            parser.Parse(ref input).Should().Be(expected);
 
-            nextInput.ToString().Should().Be(expectedNextInput);
+            input.ToString().Should().Be(expectedNextInput);
         }
 
         [Theory]
         [InlineData("2147483648")]
         [InlineData("-2147483649")]
-        public void Parse_IntegerOutOfRange_ThrowsParseException(string input) {
+        public void Parse_IntegerOutOfRange_ThrowsParseException(string inputString) {
             var parser = new Int32Parser();
-            Func<int> func = () => parser.Parse(input, out _);
+            Func<int> func = () => {
+                var input = inputString.AsSpan();
+                return parser.Parse(ref input);
+            };
 
             func.Should().Throw<ParseException>().WithInnerException<OverflowException>();
         }
@@ -50,9 +54,12 @@ namespace TShock.Commands.Parsers {
         [InlineData("aaa")]
         [InlineData("123a")]
         [InlineData("1.0")]
-        public void Parse_InvalidInteger_ThrowsParseException(string input) {
+        public void Parse_InvalidInteger_ThrowsParseException(string inputString) {
             var parser = new Int32Parser();
-            Func<int> func = () => parser.Parse(input, out _);
+            Func<int> func = () => {
+                var input = inputString.AsSpan();
+                return parser.Parse(ref input);
+            };
 
             func.Should().Throw<ParseException>().WithInnerException<FormatException>();
         }

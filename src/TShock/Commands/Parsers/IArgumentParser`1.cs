@@ -25,14 +25,12 @@ namespace TShock.Commands.Parsers {
     /// <typeparam name="TParse">The parse type.</typeparam>
     public interface IArgumentParser<out TParse> : IArgumentParser {
         /// <summary>
-        /// Parses the given input and returns a corresponding instance of the parse type along with what the next
-        /// input should be.
+        /// Parses the given input and returns a corresponding instance of the parse type.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <param name="nextInput">The next input.</param>
         /// <param name="options">The parse options.</param>
         /// <returns>A corresponding instance of the parse type.</returns>
         /// <exception cref="ParseException">The input could not be parsed properly.</exception>
-        new TParse Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options = null);
+        new TParse Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
     }
 }

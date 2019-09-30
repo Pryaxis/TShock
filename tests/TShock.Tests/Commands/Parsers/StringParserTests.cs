@@ -36,20 +36,24 @@ namespace TShock.Commands.Parsers {
         [InlineData(@"\""", @"""", "")]
         [InlineData(@"\t", "\t", "")]
         [InlineData(@"\n", "\n", "")]
-        public void Parse_IsCorrect(string input, string expected, string expectedNextInput) {
+        public void Parse_IsCorrect(string inputString, string expected, string expectedNextInput) {
             var parser = new StringParser();
+            var input = inputString.AsSpan();
 
-            parser.Parse(input, out var nextInput).Should().Be(expected);
+            parser.Parse(ref input).Should().Be(expected);
 
-            nextInput.ToString().Should().Be(expectedNextInput);
+            input.ToString().Should().Be(expectedNextInput);
         }
 
         [Theory]
         [InlineData(@"\")]
         [InlineData(@"\a")]
-        public void Parse_EscapeReachesEnd_ThrowsParseException(string input) {
+        public void Parse_EscapeReachesEnd_ThrowsParseException(string inputString) {
             var parser = new StringParser();
-            Func<string> func = () => parser.Parse(input, out _);
+            Func<string> func = () => {
+                var input = inputString.AsSpan();
+                return parser.Parse(ref input);
+            };
 
             func.Should().Throw<ParseException>();
         }
@@ -57,12 +61,12 @@ namespace TShock.Commands.Parsers {
         [Fact]
         public void Parse_ToEndOfInput_IsCorrect() {
             var parser = new StringParser();
+            var input = @"blah blah ""test"" blah blah".AsSpan();
 
-            parser.Parse(@"blah blah ""test"" blah blah", out var nextInput,
-                         new HashSet<string> {ParseOptions.ToEndOfInput})
+            parser.Parse(ref input, new HashSet<string> {ParseOptions.ToEndOfInput})
                   .Should().Be(@"blah blah ""test"" blah blah");
 
-            nextInput.ToString().Should().BeEmpty();
+            input.ToString().Should().BeEmpty();
         }
     }
 }

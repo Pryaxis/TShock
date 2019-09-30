@@ -119,7 +119,7 @@ namespace TShock.Commands {
                 // If we can directly parse the parameter type, then do so.
                 if (parsers.TryGetValue(parameterType, out var parser)) {
                     var options = parameter.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
-                    handlerArgs.Add(parser.Parse(input, out input, options));
+                    handlerArgs.Add(parser.Parse(ref input, options));
                 }
             }
 

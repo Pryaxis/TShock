@@ -24,13 +24,12 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public interface IArgumentParser {
         /// <summary>
-        /// Parses the given input and returns a corresponding object along with what the next input should be.
+        /// Parses the given input and returns a corresponding object.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <param name="nextInput">The next input.</param>
         /// <param name="options">The parse options.</param>
         /// <returns>A corresponding object.</returns>
         /// <exception cref="ParseException">The input could not be parsed properly.</exception>
-        object Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options = null);
+        object Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
     }
 }
