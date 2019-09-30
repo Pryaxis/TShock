@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TShock.Commands {
     /// <summary>
@@ -24,6 +25,7 @@ namespace TShock.Commands {
     /// a method mutiple times to provide aliasing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [MeansImplicitUse]
     public sealed class CommandHandlerAttribute : Attribute {
         /// <summary>
         /// Gets the command's name. This includes the command's namespace: e.g., <c>"tshock:kick"</c>.
