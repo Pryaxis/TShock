@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using TShock.Commands.Extensions;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
@@ -30,13 +31,7 @@ namespace TShock.Commands.Parsers {
                 return input.ToString();
             }
 
-            // Scan until we find some non-whitespace character.
-            var start = 0;
-            while (start < input.Length) {
-                if (!char.IsWhiteSpace(input[start])) break;
-
-                ++start;
-            }
+            var start = input.ScanFor(c => !char.IsWhiteSpace(c));
 
             // Begin building our string character-by-character.
             var builder = new StringBuilder();

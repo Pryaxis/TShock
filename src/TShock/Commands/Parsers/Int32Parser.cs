@@ -18,27 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using TShock.Commands.Extensions;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
         public int Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput, ISet<string>? options= null) {
-            // Scan until we find some non-whitespace character.
-            var start = 0;
-            while (start < input.Length) {
-                if (!char.IsWhiteSpace(input[start])) break;
-
-                ++start;
-            }
-
-            // Now scan until we find some whitespace character.
-            var end = start;
-            while (end < input.Length) {
-                if (char.IsWhiteSpace(input[end])) break;
-
-                ++end;
-            }
-            
+            var start = input.ScanFor(c => !char.IsWhiteSpace(c));
+            var end = input.ScanFor(char.IsWhiteSpace, start);
             var parse = input[start..end];
             nextInput = input[end..];
 
