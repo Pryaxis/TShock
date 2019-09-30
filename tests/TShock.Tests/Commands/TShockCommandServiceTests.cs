@@ -21,6 +21,7 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using Orion.Events.Extensions;
+using TShock.Commands.Parsers;
 using Xunit;
 
 namespace TShock.Commands {
@@ -36,12 +37,29 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisterCommands_IsCorrect() {
+        public void RegisteredCommands_Get_IsCorrect() {
             var testClass = new TestClass();
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
             
             _commandService.RegisteredCommands.Should().BeEquivalentTo(commands);
+        }
+
+        [Fact]
+        public void RegisteredParsers_Get_IsCorrect() {
+            var parser = new Mock<IArgumentParser>().Object;
+            _commandService.RegisterParser(typeof(object), parser);
+            
+            _commandService.RegisteredParsers.Should().ContainKey(typeof(object));
+            _commandService.RegisteredParsers.Should().ContainValue(parser);
+        }
+
+        [Fact]
+        public void RegisterCommands_IsCorrect() {
+            var testClass = new TestClass();
+
+            var commands = _commandService.RegisterCommands(testClass).ToList();
+            
             commands.Should().HaveCount(3);
             foreach (var command in commands) {
                 command.HandlerObject.Should().BeSameAs(testClass);
@@ -54,6 +72,21 @@ namespace TShock.Commands {
             Func<IReadOnlyCollection<ICommand>> func = () => _commandService.RegisterCommands(null);
 
             func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RegisterParser_NullType_ThrowsArgumentNullException() {
+            var parser = new Mock<IArgumentParser>().Object;
+            Action action = () => _commandService.RegisterParser(null, parser);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RegisterParser_NullParser_ThrowsArgumentNullException() {
+            Action action = () => _commandService.RegisterParser(typeof(object), null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

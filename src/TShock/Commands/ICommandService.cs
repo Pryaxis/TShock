@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using Orion;
 using Orion.Events;
+using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
@@ -30,6 +31,11 @@ namespace TShock.Commands {
         /// Gets the registered commands.
         /// </summary>
         IEnumerable<ICommand> RegisteredCommands { get; }
+
+        /// <summary>
+        /// Gets the registered parsers.
+        /// </summary>
+        IDictionary<Type, IArgumentParser> RegisteredParsers { get; }
 
         /// <summary>
         /// Gets or sets the event handlers that occur when registering a command.
@@ -53,6 +59,16 @@ namespace TShock.Commands {
         /// <returns>The resulting commands.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="obj"/> is <c>null</c>.</exception>
         IReadOnlyCollection<ICommand> RegisterCommands(object obj);
+
+        /// <summary>
+        /// Registers the given parser as the definitive parser for the parse type.
+        /// </summary>
+        /// <param name="parseType">The parse type.</param>
+        /// <param name="parser">The parser.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="parseType"/> or <paramref name="parser"/> are <c>null</c>.
+        /// </exception>
+        void RegisterParser(Type parseType, IArgumentParser parser);
 
         /// <summary>
         /// Unregisters the given command and returns a value indicating success.

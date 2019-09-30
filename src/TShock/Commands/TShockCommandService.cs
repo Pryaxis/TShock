@@ -19,16 +19,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
+using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
         private readonly ISet<ICommand> _commands = new HashSet<ICommand>();
+        private readonly IDictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
         public IEnumerable<ICommand> RegisteredCommands => new HashSet<ICommand>(_commands);
+        public IDictionary<Type, IArgumentParser> RegisteredParsers => new Dictionary<Type, IArgumentParser>(_parsers);
         public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
         public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
@@ -55,6 +59,12 @@ namespace TShock.Commands {
             }
 
             return registeredCommands;
+        }
+
+        public void RegisterParser([NotNull] Type parseType, [NotNull] IArgumentParser parser) {
+            if (parseType is null) throw new ArgumentNullException(nameof(parseType));
+
+            _parsers[parseType] = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         public bool UnregisterCommand(ICommand command) {
