@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Orion.Events.Extensions;
+using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
@@ -44,15 +45,43 @@ namespace TShock.Commands {
             Handler = handler;
         }
 
-        public void Invoke(ICommandSender sender, string input) {
+        public void Invoke(ICommandSender sender, string inputString) {
             if (sender is null) throw new ArgumentNullException(nameof(sender));
-            if (input is null) throw new ArgumentNullException(nameof(input));
+            if (inputString is null) throw new ArgumentNullException(nameof(inputString));
 
-            var args = new CommandExecuteEventArgs(this, sender, input);
+            var args = new CommandExecuteEventArgs(this, sender, inputString);
             _commandService.CommandExecute?.Invoke(this, args);
             if (args.IsCanceled()) return;
 
-            throw new NotImplementedException();
+            var parsers = _commandService.RegisteredParsers;
+            var handlerArgs = new List<object>();
+
+            void CoerceParameter(ParameterInfo parameter, ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) {
+                var parameterType = parameter.ParameterType;
+
+                // Special case: parameter is an ICommandSender, in which case we inject sender.
+                if (parameterType == typeof(ICommandSender)) {
+                    handlerArgs.Add(sender);
+                    nextInput = input;
+                    return;
+                }
+
+                // If we can directly parse the parameter type, then do so.
+                if (parsers.TryGetValue(parameterType, out var parser)) {
+                    var options = parameter.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
+                    handlerArgs.Add(parser.Parse(input, out nextInput, options));
+                    return;
+                }
+
+                nextInput = input;
+            }
+
+            var input = inputString.AsSpan();
+            foreach (var parameter in Handler.GetParameters()) {
+                CoerceParameter(parameter, input, out input);
+            }
+
+            Handler.Invoke(HandlerObject, handlerArgs.ToArray());
         }
     }
 }
