@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
@@ -49,7 +50,8 @@ namespace TShock.Commands.Parsers {
                 throw new ParseException(string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
-
+        
+        [ExcludeFromCodeCoverage]
         object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) =>
             Parse(input, out nextInput);
     }

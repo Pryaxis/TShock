@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TShock.Properties;
 
@@ -79,6 +80,7 @@ namespace TShock.Commands.Parsers {
             return builder.ToString();
         }
 
+        [ExcludeFromCodeCoverage]
         object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) =>
             Parse(input, out nextInput);
     }
