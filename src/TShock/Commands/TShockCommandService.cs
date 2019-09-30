@@ -23,6 +23,7 @@ using JetBrains.Annotations;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
+using TShock.Commands.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
@@ -36,6 +37,11 @@ namespace TShock.Commands {
         public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
         public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
+
+        public TShockCommandService() {
+            this.RegisterParser(new Int32Parser());
+            this.RegisterParser(new StringParser());
+        }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object obj) {
             if (obj is null) throw new ArgumentNullException(nameof(obj));
