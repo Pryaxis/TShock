@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Orion;
 using Orion.Events;
 using TShock.Events.Commands;
@@ -69,6 +70,7 @@ namespace TShock.Commands {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <c>null</c>.
         /// </exception>
+        [Pure]
         IReadOnlyCollection<ICommand> FindCommands(string commandName, params string[] commandSubNames);
 
         /// <summary>
