@@ -78,5 +78,8 @@ namespace TShock.Commands.Parsers {
 
             return builder.ToString();
         }
+
+        object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) =>
+            Parse(input, out nextInput);
     }
 }

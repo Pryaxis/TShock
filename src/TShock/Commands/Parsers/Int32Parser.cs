@@ -49,5 +49,8 @@ namespace TShock.Commands.Parsers {
                 throw new ParseException(string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
+
+        object IArgumentParser.Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) =>
+            Parse(input, out nextInput);
     }
 }

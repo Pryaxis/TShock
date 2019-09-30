@@ -19,16 +19,18 @@ using System;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// Provides parsing support.
+    /// Provides parsing support for a type.
     /// </summary>
-    public interface IArgumentParser {
+    /// <typeparam name="TParse">The parse type.</typeparam>
+    public interface IArgumentParser<out TParse> : IArgumentParser {
         /// <summary>
-        /// Parses the given input and returns a corresponding object along with what the next input should be.
+        /// Parses the given input and returns a corresponding instance of the parse type along with what the next
+        /// input should be.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="nextInput">The next input.</param>
-        /// <returns>A corresponding object.</returns>
+        /// <returns>A corresponding instance of the parse type.</returns>
         /// <exception cref="ParseException">The input could not be parsed properly.</exception>
-        object Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput);
+        new TParse Parse(ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput);
     }
 }
