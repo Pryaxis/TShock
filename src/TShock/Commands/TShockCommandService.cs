@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
@@ -67,7 +66,7 @@ namespace TShock.Commands {
             return registeredCommands;
         }
 
-        public void RegisterParser([NotNull] Type parseType, [NotNull] IArgumentParser parser) {
+        public void RegisterParser(Type parseType, IArgumentParser parser) {
             if (parseType is null) throw new ArgumentNullException(nameof(parseType));
 
             _parsers[parseType] = parser ?? throw new ArgumentNullException(nameof(parser));
