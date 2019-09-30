@@ -63,7 +63,32 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_InParam_ThrowsParseException() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoIn));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, "");
 
+            action.Should().Throw<ParseException>();
+        }
+
+        [Fact]
+        public void Invoke_OutParam_ThrowsParseException() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoOut));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, "");
+
+            action.Should().Throw<ParseException>();
+        }
+
+        [Fact]
+        public void Invoke_RefParam_ThrowsParseException() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoRef));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, "");
+
+            action.Should().Throw<ParseException>();
         }
 
         [Fact]
@@ -108,6 +133,17 @@ namespace TShock.Commands {
                 Int = @int;
                 String = @string;
             }
+            
+            [CommandHandler("tshock_tests:test_no_in")]
+            public void TestCommand_NoIn(ICommandSender sender, in int x) { }
+            
+            [CommandHandler("tshock_tests:test_no_out")]
+            public void TestCommand_NoOut(ICommandSender sender, out int x) {
+                x = 0;
+            }
+
+            [CommandHandler("tshock_tests:test_no_out")]
+            public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
         }
     }
 }

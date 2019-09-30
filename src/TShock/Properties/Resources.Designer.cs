@@ -61,6 +61,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exception occurred while executing command..
+        /// </summary>
+        internal static string CommandInvoke_Exception {
+            get {
+                return ResourceManager.GetString("CommandInvoke_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By-reference command arguments are unsupported..
+        /// </summary>
+        internal static string CommandParse_ArgIsByReference {
+            get {
+                return ResourceManager.GetString("CommandParse_ArgIsByReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is a number that is out of range of an integer..
         /// </summary>
         internal static string Int32Parser_IntegerOutOfRange {

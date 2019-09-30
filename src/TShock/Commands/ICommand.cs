@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using TShock.Commands.Parsers;
 
 namespace TShock.Commands {
     /// <summary>
@@ -52,6 +53,8 @@ namespace TShock.Commands {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sender"/> or <paramref name="input"/> are <c>null</c>.
         /// </exception>
+        /// <exception cref="CommandException">The command could not be executed.</exception>
+        /// <exception cref="ParseException">The command input could not be parsed.</exception>
         void Invoke(ICommandSender sender, string input);
     }
 }

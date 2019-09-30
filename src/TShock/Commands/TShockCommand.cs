@@ -22,6 +22,7 @@ using System.Reflection;
 using Orion.Events.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
+using TShock.Properties;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
@@ -57,6 +58,8 @@ namespace TShock.Commands {
             var handlerArgs = new List<object>();
 
             void CoerceParameter(ParameterInfo parameter, ReadOnlySpan<char> input, out ReadOnlySpan<char> nextInput) {
+                if (parameter.ParameterType.IsByRef) throw new ParseException(Resources.CommandParse_ArgIsByReference);
+
                 var parameterType = parameter.ParameterType;
 
                 // Special case: parameter is an ICommandSender, in which case we inject sender.
@@ -81,7 +84,12 @@ namespace TShock.Commands {
                 CoerceParameter(parameter, input, out input);
             }
 
-            Handler.Invoke(HandlerObject, handlerArgs.ToArray());
+            try {
+                Handler.Invoke(HandlerObject, handlerArgs.ToArray());
+            } catch (Exception ex) {
+                sender.Log.Error(ex, Resources.CommandInvoke_Exception);
+                throw new CommandException(Resources.CommandInvoke_Exception, ex);
+            }
         }
     }
 }
