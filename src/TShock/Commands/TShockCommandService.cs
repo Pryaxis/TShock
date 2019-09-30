@@ -17,37 +17,52 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Orion;
 using Orion.Events;
+using Orion.Events.Extensions;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
         private readonly ISet<ICommand> _commands = new HashSet<ICommand>();
 
-        public EventHandlerCollection<CommandExecuteEventArgs>? CommandRegister { get; set; }
+        public IEnumerable<ICommand> RegisteredCommands => new HashSet<ICommand>(_commands);
+        public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
-        public EventHandlerCollection<CommandExecuteEventArgs>? CommandUnregister { get; set; }
+        public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object obj) {
-            throw new NotImplementedException();
-        }
+            if (obj is null) throw new ArgumentNullException(nameof(obj));
 
-        public IReadOnlyCollection<ICommand> RegisterCommands(Type type) {
-            throw new NotImplementedException();
-        }
+            var registeredCommands = new List<ICommand>();
 
-        public IReadOnlyCollection<ICommand> FindCommands(string commandName, params string[] commandSubNames) {
-            throw new NotImplementedException();
+            void RegisterCommand(ICommand command) {
+                var args = new CommandRegisterEventArgs(command);
+                CommandRegister?.Invoke(this, args);
+                if (args.IsCanceled()) return;
+
+                _commands.Add(command);
+                registeredCommands.Add(command);
+            }
+
+            foreach (var command in obj.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                                       .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
+                                                   (handler, attribute) => (handler, attribute))
+                                       .Select(t => new TShockCommand(this, t.attribute, obj, t.handler))) {
+                RegisterCommand(command);
+            }
+
+            return registeredCommands;
         }
 
         public bool UnregisterCommand(ICommand command) {
-            throw new NotImplementedException();
-        }
+            if (command is null) throw new ArgumentNullException(nameof(command));
 
-        private ICommand RegisterCommand(object commandHandlerObject, MethodBase commandHandler) {
-            throw new NotImplementedException();
+            var args = new CommandUnregisterEventArgs(command);
+            CommandUnregister?.Invoke(this, args);
+            return !args.IsCanceled() && _commands.Remove(command);
         }
     }
 }

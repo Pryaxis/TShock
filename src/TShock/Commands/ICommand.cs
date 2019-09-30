@@ -35,7 +35,7 @@ namespace TShock.Commands {
         IEnumerable<string> SubNames { get; }
 
         /// <summary>
-        /// Gets the object associated with the command's handler. If <c>null</c>, then the command handler is static.
+        /// Gets the object associated with the command's handler.
         /// </summary>
         object? HandlerObject { get; }
 

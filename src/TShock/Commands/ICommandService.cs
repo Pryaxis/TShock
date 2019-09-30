@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Orion;
 using Orion.Events;
 using TShock.Events.Commands;
@@ -28,9 +27,14 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommandService : IService {
         /// <summary>
+        /// Gets the registered commands.
+        /// </summary>
+        IEnumerable<ICommand> RegisteredCommands { get; }
+
+        /// <summary>
         /// Gets or sets the event handlers that occur when registering a command.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandRegister { get; set; }
+        EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
 
         /// <summary>
         /// Gets or sets the event handlers that occur when executing a command.
@@ -40,7 +44,7 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets or sets the event handlers that occur when unregistering a command.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandUnregister { get; set; }
+        EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
 
         /// <summary>
         /// Registers and returns the commands defined with the given object's command handlers.
@@ -49,29 +53,6 @@ namespace TShock.Commands {
         /// <returns>The resulting commands.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="obj"/> is <c>null</c>.</exception>
         IReadOnlyCollection<ICommand> RegisterCommands(object obj);
-
-        /// <summary>
-        /// Registers and returns the commands defined with the given type's static command handlers.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The resulting commands.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
-        IReadOnlyCollection<ICommand> RegisterCommands(Type type);
-
-        /// <summary>
-        /// Returns all commands with the given command name and sub-names.
-        /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="commandSubNames">The command sub-names.</param>
-        /// <returns>The commands with the given command name.</returns>
-        /// <exception cref="ArgumentException">
-        /// An element of <paramref name="commandSubNames"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <c>null</c>.
-        /// </exception>
-        [Pure]
-        IReadOnlyCollection<ICommand> FindCommands(string commandName, params string[] commandSubNames);
 
         /// <summary>
         /// Unregisters the given command and returns a value indicating success.
