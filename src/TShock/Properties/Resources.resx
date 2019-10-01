@@ -145,7 +145,7 @@
     <value>"{0}" is a number that is out of range of an integer.</value>
   </data>
   <data name="Int32Parser_InvalidInteger" xml:space="preserve">
-    <value>"{0}" is not a valid integer.</value>
+    <value>"{0}" is an invalid integer.</value>
   </data>
   <data name="Int32Parser_MissingInteger" xml:space="preserve">
     <value>No integer was provided.</value>

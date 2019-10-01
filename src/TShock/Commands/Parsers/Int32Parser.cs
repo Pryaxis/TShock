@@ -23,7 +23,7 @@ using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
-        public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options= null) {
+        public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
             var start = input.ScanFor(c => !char.IsWhiteSpace(c));
             if (start >= input.Length) {
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
@@ -42,9 +42,11 @@ namespace TShock.Commands.Parsers {
             try {
                 return int.Parse(parse);
             } catch (FormatException ex) {
-                throw new CommandParseException(string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);
+                throw new CommandParseException(
+                    string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);
             } catch (OverflowException ex) {
-                throw new CommandParseException(string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
+                throw new CommandParseException(
+                    string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
 

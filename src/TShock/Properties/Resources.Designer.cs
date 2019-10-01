@@ -142,7 +142,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid integer..
+        ///   Looks up a localized string similar to &quot;{0}&quot; is an invalid integer..
         /// </summary>
         internal static string Int32Parser_InvalidInteger {
             get {
