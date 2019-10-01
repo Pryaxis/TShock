@@ -23,7 +23,6 @@ using FluentAssertions;
 using Moq;
 using Orion.Events;
 using Orion.Events.Extensions;
-using Serilog;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using Xunit;
@@ -323,17 +322,10 @@ namespace TShock.Commands {
         public void Invoke_ThrowsException_ThrowsCommandException() {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Exception));
-            var mockLog = new Mock<ILogger>();
-            var mockCommandSender = new Mock<ICommandSender>();
-            mockCommandSender.SetupGet(cs => cs.Log).Returns(mockLog.Object);
-            Action action = () => command.Invoke(mockCommandSender.Object, "");
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, "");
 
             action.Should().Throw<CommandException>().WithInnerException<NotImplementedException>();
-
-            mockLog.Verify(l => l.Error(It.IsAny<NotImplementedException>(), It.IsAny<string>()));
-            mockLog.VerifyNoOtherCalls();
-            mockCommandSender.VerifyGet(cs => cs.Log);
-            mockCommandSender.VerifyNoOtherCalls();
         }
 
         [Fact]
