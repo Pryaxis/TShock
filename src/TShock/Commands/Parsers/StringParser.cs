@@ -26,6 +26,7 @@ namespace TShock.Commands.Parsers {
     // It'd be nice to return ReadOnlySpan<char>, but because of escape characters, we have to return copies.
     internal sealed class StringParser : IArgumentParser<string> {
         public string Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
+            // ToEndOfInput should have higher priority than AllowEmpty since empty strings should be permitted.
             if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
                 var result = input.ToString();
                 input = default;
@@ -35,7 +36,7 @@ namespace TShock.Commands.Parsers {
             var start = input.ScanFor(c => !char.IsWhiteSpace(c));
             if (start >= input.Length) {
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                    throw new CommandParseException(Resources.StringParser_EndOfInput);
+                    throw new CommandParseException(Resources.StringParser_MissingString);
                 }
 
                 input = default;
@@ -60,7 +61,9 @@ namespace TShock.Commands.Parsers {
 
                 // Handle escape characters.
                 if (c == '\\') {
-                    if (++end >= input.Length) throw new CommandParseException(Resources.StringParser_EndOfInput);
+                    if (++end >= input.Length) {
+                        throw new CommandParseException(Resources.StringParser_InvalidBackslash);
+                    }
 
                     var nextC = input[end];
                     if (nextC == '"' || nextC == '\\' || char.IsWhiteSpace(nextC)) {
@@ -70,7 +73,8 @@ namespace TShock.Commands.Parsers {
                     } else if (nextC == 'n') {
                         builder.Append('\n');
                     } else {
-                        throw new CommandParseException(string.Format(Resources.StringParser_UnexpectedEscape, nextC));
+                        throw new CommandParseException(
+                            string.Format(Resources.StringParser_UnrecognizedEscape, nextC));
                     }
 
                     ++end;

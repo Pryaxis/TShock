@@ -150,10 +150,13 @@
   <data name="Int32Parser_MissingInteger" xml:space="preserve">
     <value>No integer was provided.</value>
   </data>
-  <data name="StringParser_EndOfInput" xml:space="preserve">
-    <value>Unexpected end of input.</value>
+  <data name="StringParser_InvalidBackslash" xml:space="preserve">
+    <value>Invalid backslash.</value>
   </data>
-  <data name="StringParser_UnexpectedEscape" xml:space="preserve">
-    <value>Escape character "\{0}" was unexpected.</value>
+  <data name="StringParser_MissingString" xml:space="preserve">
+    <value>No string was provided.</value>
+  </data>
+  <data name="StringParser_UnrecognizedEscape" xml:space="preserve">
+    <value>Escape character "\{0}" not recognized.</value>
   </data>
 </root>

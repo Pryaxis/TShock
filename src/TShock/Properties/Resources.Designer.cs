@@ -160,20 +160,29 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected end of input..
+        ///   Looks up a localized string similar to Invalid backslash..
         /// </summary>
-        internal static string StringParser_EndOfInput {
+        internal static string StringParser_InvalidBackslash {
             get {
-                return ResourceManager.GetString("StringParser_EndOfInput", resourceCulture);
+                return ResourceManager.GetString("StringParser_InvalidBackslash", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Escape character &quot;\{0}&quot; was unexpected..
+        ///   Looks up a localized string similar to No string was provided..
         /// </summary>
-        internal static string StringParser_UnexpectedEscape {
+        internal static string StringParser_MissingString {
             get {
-                return ResourceManager.GetString("StringParser_UnexpectedEscape", resourceCulture);
+                return ResourceManager.GetString("StringParser_MissingString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Escape character &quot;\{0}&quot; not recognized..
+        /// </summary>
+        internal static string StringParser_UnrecognizedEscape {
+            get {
+                return ResourceManager.GetString("StringParser_UnrecognizedEscape", resourceCulture);
             }
         }
     }
