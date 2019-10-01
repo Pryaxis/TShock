@@ -57,7 +57,9 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="handlerObject">The object.</param>
         /// <returns>The resulting commands.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="handlerObject"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="handlerObject"/> is <see langword="null" />.
+        /// </exception>
         IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject);
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace TShock.Commands {
         /// <param name="parseType">The parse type.</param>
         /// <param name="parser">The parser.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="parseType"/> or <paramref name="parser"/> are <c>null</c>.
+        /// <paramref name="parseType"/> or <paramref name="parser"/> are <see langword="null" />.
         /// </exception>
         void RegisterParser(Type parseType, IArgumentParser parser);
 
@@ -75,7 +77,7 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>A value indicating whether the command was successfully unregistered.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null" />.</exception>
         bool UnregisterCommand(ICommand command);
     }
 }

@@ -21,7 +21,7 @@ using JetBrains.Annotations;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// An attribute that can be applied to a parameter to specify options for parsing that specific parameter.
+    /// Specifies the options with which to parse a parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class ParseOptionsAttribute : Attribute {
@@ -34,7 +34,7 @@ namespace TShock.Commands.Parsers {
         /// Initializes a new instance of the <see cref="ParseOptionsAttribute"/> class with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="options"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null" />.</exception>
         public ParseOptionsAttribute([ValueProvider("TShock.Commands.Parsers.ParseOptions")]
                                      params string[] options) {
             if (options is null) throw new ArgumentNullException(nameof(options));

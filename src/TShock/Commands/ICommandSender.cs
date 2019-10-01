@@ -17,6 +17,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Orion.Players;
 using Serilog;
 
 namespace TShock.Commands {
@@ -35,11 +36,16 @@ namespace TShock.Commands {
         ILogger Log { get; }
 
         /// <summary>
+        /// Gets the sender's player. If <see langword="null" />, then there is no associated player.
+        /// </summary>
+        IPlayer? Player { get; }
+
+        /// <summary>
         /// Sends a message to the sender with the given color.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="color">The color.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null" />.</exception>
         void SendMessage(string message, Color color);
     }
 }

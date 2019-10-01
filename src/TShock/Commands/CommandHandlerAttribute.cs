@@ -28,7 +28,7 @@ namespace TShock.Commands {
     [MeansImplicitUse]
     public sealed class CommandHandlerAttribute : Attribute {
         /// <summary>
-        /// Gets the command's name. This includes the command's namespace: e.g., <c>"tshock:kick"</c>.
+        /// Gets the command's name. This includes the command's namespace: e.g., "tshock:kick".
         /// </summary>
         public string CommandName { get; }
 
@@ -44,7 +44,7 @@ namespace TShock.Commands {
         /// <param name="commandName">The command name.</param>
         /// <param name="commandSubNames">The command sub-names.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <c>null</c>.
+        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <see langword="null" />.
         /// </exception>
         public CommandHandlerAttribute(string commandName, params string[] commandSubNames) {
             CommandName = commandName ?? throw new ArgumentNullException(nameof(commandName));

@@ -27,7 +27,7 @@ namespace TShock.Events.Commands {
         /// Initializes a new instance of the <see cref="CommandRegisterEventArgs"/> class with the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null" />.</exception>
         public CommandRegisterEventArgs(ICommand command) : base(command) { }
     }
 }

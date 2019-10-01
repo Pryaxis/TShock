@@ -19,7 +19,7 @@ using System;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// An attribute that can be applied to a <c>bool</c> parameter to specify flag parsing for that specific parameter.
+    /// Specifies that a <see langword="bool" /> parameter should have flag parsing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class FlagAttribute : Attribute {
@@ -29,7 +29,7 @@ namespace TShock.Commands.Parsers {
         public char ShortFlag { get; }
 
         /// <summary>
-        /// Gets the long form of the flag. If <c>null</c>, then there is no long flag.
+        /// Gets the long form of the flag. If <see langword="null" />, then there is no long flag.
         /// </summary>
         public string? LongFlag { get; }
 

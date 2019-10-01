@@ -30,7 +30,7 @@ namespace TShock.Commands.Extensions {
         /// <param name="commandService">The command service.</param>
         /// <param name="parser">The parser.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="commandService"/> or <paramref name="parser"/> are <c>null</c>.
+        /// <paramref name="commandService"/> or <paramref name="parser"/> are <see langword="null" />.
         /// </exception>
         public static void RegisterParser<TParse>(this ICommandService commandService, IArgumentParser<TParse> parser) {
             if (commandService is null) throw new ArgumentNullException(nameof(commandService));
