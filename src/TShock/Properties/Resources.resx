@@ -153,14 +153,8 @@
   <data name="Int32Parser_InvalidInteger" xml:space="preserve">
     <value>"{0}" is an invalid integer.</value>
   </data>
-  <data name="Int32Parser_MissingInteger" xml:space="preserve">
-    <value>No integer was provided.</value>
-  </data>
   <data name="StringParser_InvalidBackslash" xml:space="preserve">
     <value>Invalid backslash.</value>
-  </data>
-  <data name="StringParser_MissingString" xml:space="preserve">
-    <value>No string was provided.</value>
   </data>
   <data name="StringParser_UnrecognizedEscape" xml:space="preserve">
     <value>Escape character "\{0}" not recognized.</value>
