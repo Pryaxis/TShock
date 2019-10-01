@@ -27,10 +27,6 @@ using TShock.Properties;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
-        private static readonly ISet<char> EmptyShortFlags = new HashSet<char>();
-        private static readonly ISet<string> EmptyLongFlags = new HashSet<string>();
-        private static readonly IDictionary<string, object> EmptyOptionals = new Dictionary<string, object>();
-
         private readonly ICommandService _commandService;
         private readonly ISet<char> _validShortFlags = new HashSet<char>();
         private readonly ISet<string> _validLongFlags = new HashSet<string>();
