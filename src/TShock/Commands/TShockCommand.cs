@@ -210,6 +210,9 @@ namespace TShock.Commands {
                 parameters[i] = ProcessParameter(parameterInfos[i], ref input);
             }
 
+            var end = input.ScanFor(c => !char.IsWhiteSpace(c));
+            if (end < input.Length) throw new CommandParseException(Resources.CommandParse_TooManyArgs);
+
             try {
                 Handler.Invoke(HandlerObject, parameters);
             } catch (TargetInvocationException ex) {

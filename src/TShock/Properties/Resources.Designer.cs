@@ -124,6 +124,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Too many arguments were provided..
+        /// </summary>
+        internal static string CommandParse_TooManyArgs {
+            get {
+                return ResourceManager.GetString("CommandParse_TooManyArgs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is a number that is out of range of an integer..
         /// </summary>
         internal static string Int32Parser_IntegerOutOfRange {

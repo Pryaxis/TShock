@@ -29,7 +29,7 @@ namespace TShock.Commands.Parsers {
         public char ShortFlag { get; }
 
         /// <summary>
-        /// Gets the long form of the flag.
+        /// Gets the long form of the flag. If <c>null</c>, then there is no long flag.
         /// </summary>
         public string? LongFlag { get; }
 

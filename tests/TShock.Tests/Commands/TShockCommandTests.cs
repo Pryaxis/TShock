@@ -214,6 +214,18 @@ namespace TShock.Commands {
             action.Should().Throw<CommandParseException>();
         }
 
+        [Theory]
+        [InlineData("a")]
+        [InlineData("bcd")]
+        public void Invoke_TooManyArguments_ThrowsParseException(string input) {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, input);
+
+            action.Should().Throw<CommandParseException>();
+        }
+
         [Fact]
         public void Invoke_NullSender_ThrowsArgumentNullException() {
             var testClass = new TestClass();

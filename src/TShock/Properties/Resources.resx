@@ -138,6 +138,9 @@
   <data name="CommandParse_NoParserFound" xml:space="preserve">
     <value>No parser found for argument type "{0}".</value>
   </data>
+  <data name="CommandParse_TooManyArgs" xml:space="preserve">
+    <value>Too many arguments were provided.</value>
+  </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>
   </data>
