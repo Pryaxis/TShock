@@ -23,7 +23,6 @@ using Xunit;
 namespace TShock.Commands.Parsers {
     public class StringParserTests {
         [Theory]
-        [InlineData("", "", "")]
         [InlineData("test", "test", "")]
         [InlineData("test abc", "test", " abc")]
         [InlineData("       test", "test", "")]
@@ -46,6 +45,19 @@ namespace TShock.Commands.Parsers {
         }
 
         [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Parse_Empty_ThrowsParseException(string inputString) {
+            var parser = new StringParser();
+            Func<string> func = () => {
+                var input = inputString.AsSpan();
+                return parser.Parse(ref input);
+            };
+
+            func.Should().Throw<CommandParseException>();
+        }
+
+        [Theory]
         [InlineData(@"\")]
         [InlineData(@"\a")]
         public void Parse_EscapeReachesEnd_ThrowsParseException(string inputString) {
@@ -65,6 +77,16 @@ namespace TShock.Commands.Parsers {
 
             parser.Parse(ref input, new HashSet<string> {ParseOptions.ToEndOfInput})
                   .Should().Be(@"blah blah ""test"" blah blah");
+
+            input.ToString().Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Parse_AllowEmpty_IsCorrect() {
+            var parser = new StringParser();
+            var input = string.Empty.AsSpan();
+
+            parser.Parse(ref input, new HashSet<string> {ParseOptions.AllowEmpty}).Should().BeEmpty();
 
             input.ToString().Should().BeEmpty();
         }

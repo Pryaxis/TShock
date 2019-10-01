@@ -24,5 +24,10 @@ namespace TShock.Commands.Parsers {
         /// An option which forces a string to be parsed to the end of the input.
         /// </summary>
         public const string ToEndOfInput = nameof(ToEndOfInput);
+
+        /// <summary>
+        /// An option which allows a parser to parse empty input.
+        /// </summary>
+        public const string AllowEmpty = nameof(AllowEmpty);
     }
 }

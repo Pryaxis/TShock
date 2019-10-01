@@ -33,6 +33,14 @@ namespace TShock.Commands.Parsers {
             }
 
             var start = input.ScanFor(c => !char.IsWhiteSpace(c));
+            if (start >= input.Length) {
+                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
+                    throw new CommandParseException(Resources.StringParser_EndOfInput);
+                }
+
+                input = default;
+                return string.Empty;
+            }
 
             // Begin building our string character-by-character.
             var builder = new StringBuilder();
