@@ -19,7 +19,7 @@ using System;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// Specifies that a <see langword="bool" /> parameter should have flag parsing.
+    /// Specifies that a <see langword="bool" /> parameter should have flag-based parsing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class FlagAttribute : Attribute {
