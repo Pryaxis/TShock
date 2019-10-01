@@ -117,29 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandCtor_ArgIsByReference" xml:space="preserve">
-    <value>By-reference argument "{0}" is not supported.</value>
+  <data name="CommandCtor_ByRefArgType" xml:space="preserve">
+    <value>By-reference argument type "{0}" not supported.</value>
   </data>
-  <data name="CommandCtor_ArgIsPointer" xml:space="preserve">
-    <value>Pointer argument "{0}" is not supported.</value>
+  <data name="CommandCtor_PointerArgType" xml:space="preserve">
+    <value>Pointer argument type "{0}" not supported.</value>
   </data>
   <data name="CommandInvoke_Exception" xml:space="preserve">
     <value>Exception occurred while executing command.</value>
   </data>
-  <data name="CommandParse_BadLongFlag" xml:space="preserve">
-    <value>Long flag "--{0}" was unexpected.</value>
-  </data>
-  <data name="CommandParse_BadOptional" xml:space="preserve">
-    <value>Optional argument "{0}" was unexpected.</value>
-  </data>
-  <data name="CommandParse_BadShortFlag" xml:space="preserve">
-    <value>Short flag "-{0}" was unexpected.</value>
-  </data>
-  <data name="CommandParse_NoParserFound" xml:space="preserve">
-    <value>No parser found for argument type "{0}".</value>
+  <data name="CommandParse_InvalidHyphenatedArg" xml:space="preserve">
+    <value>Invalid hyphenated argument.</value>
   </data>
   <data name="CommandParse_TooManyArgs" xml:space="preserve">
     <value>Too many arguments were provided.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedArgType" xml:space="preserve">
+    <value>Argument type "{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedLongFlag" xml:space="preserve">
+    <value>Long flag "--{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedOptional" xml:space="preserve">
+    <value>Optional argument "{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedShortFlag" xml:space="preserve">
+    <value>Short flag "-{0}" not recognized.</value>
   </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>

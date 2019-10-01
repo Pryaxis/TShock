@@ -144,8 +144,8 @@ namespace TShock.Commands {
         [InlineData("-f --recursive", true, true, 10)]
         [InlineData("-r --force", true, true, 10)]
         [InlineData("--recursive --force", true, true, 10)]
-        [InlineData("--depth=1 --recursive --force", true, true, 1)]
-        [InlineData("-r --force --depth=100 ", true, true, 100)]
+        [InlineData("--depth=1 --recursive -f", true, true, 1)]
+        [InlineData("--force -r --depth=100 ", true, true, 100)]
         public void Invoke_FlagsAndOptionals_IsCorrect(string input, bool expectedForce, bool expectedRecursive,
                                                        int expectedDepth) {
             _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
