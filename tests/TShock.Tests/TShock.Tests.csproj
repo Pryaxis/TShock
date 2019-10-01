@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
     <RootNamespace>TShock</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks> 
   </PropertyGroup>
 
   <ItemGroup>

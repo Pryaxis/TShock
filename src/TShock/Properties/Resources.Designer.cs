@@ -61,6 +61,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to By-reference argument &quot;{0}&quot; is not supported..
+        /// </summary>
+        internal static string CommandCtor_ArgIsByReference {
+            get {
+                return ResourceManager.GetString("CommandCtor_ArgIsByReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pointer argument &quot;{0}&quot; is not supported..
+        /// </summary>
+        internal static string CommandCtor_ArgIsPointer {
+            get {
+                return ResourceManager.GetString("CommandCtor_ArgIsPointer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {
@@ -70,16 +88,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By-reference command arguments are unsupported..
-        /// </summary>
-        internal static string CommandParse_ArgIsByReference {
-            get {
-                return ResourceManager.GetString("CommandParse_ArgIsByReference", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unexpected long flag &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Long flag &quot;--{0}&quot; was unexpected..
         /// </summary>
         internal static string CommandParse_BadLongFlag {
             get {
@@ -88,11 +97,29 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected short flag &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Optional argument &quot;{0}&quot; was unexpected..
+        /// </summary>
+        internal static string CommandParse_BadOptional {
+            get {
+                return ResourceManager.GetString("CommandParse_BadOptional", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Short flag &quot;-{0}&quot; was unexpected..
         /// </summary>
         internal static string CommandParse_BadShortFlag {
             get {
                 return ResourceManager.GetString("CommandParse_BadShortFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No parser found for argument type &quot;{0}&quot;..
+        /// </summary>
+        internal static string CommandParse_NoParserFound {
+            get {
+                return ResourceManager.GetString("CommandParse_NoParserFound", resourceCulture);
             }
         }
         
@@ -115,7 +142,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reached end of input..
+        ///   Looks up a localized string similar to Unexpected end of input..
         /// </summary>
         internal static string StringParser_EndOfInput {
             get {
@@ -124,7 +151,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected escape character &quot;\{0}&quot;..
+        ///   Looks up a localized string similar to Escape character &quot;\{0}&quot; was unexpected..
         /// </summary>
         internal static string StringParser_UnexpectedEscape {
             get {

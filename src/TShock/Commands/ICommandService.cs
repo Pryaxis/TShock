@@ -55,10 +55,10 @@ namespace TShock.Commands {
         /// <summary>
         /// Registers and returns the commands defined with the given object's command handlers.
         /// </summary>
-        /// <param name="obj">The object.</param>
+        /// <param name="handlerObject">The object.</param>
         /// <returns>The resulting commands.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="obj"/> is <c>null</c>.</exception>
-        IReadOnlyCollection<ICommand> RegisterCommands(object obj);
+        /// <exception cref="ArgumentNullException"><paramref name="handlerObject"/> is <c>null</c>.</exception>
+        IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject);
 
         /// <summary>
         /// Registers the given parser as the definitive parser for the parse type.

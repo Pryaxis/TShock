@@ -117,17 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommandCtor_ArgIsByReference" xml:space="preserve">
+    <value>By-reference argument "{0}" is not supported.</value>
+  </data>
+  <data name="CommandCtor_ArgIsPointer" xml:space="preserve">
+    <value>Pointer argument "{0}" is not supported.</value>
+  </data>
   <data name="CommandInvoke_Exception" xml:space="preserve">
     <value>Exception occurred while executing command.</value>
   </data>
-  <data name="CommandParse_ArgIsByReference" xml:space="preserve">
-    <value>By-reference command arguments are unsupported.</value>
-  </data>
   <data name="CommandParse_BadLongFlag" xml:space="preserve">
-    <value>Unexpected long flag "{0}".</value>
+    <value>Long flag "--{0}" was unexpected.</value>
+  </data>
+  <data name="CommandParse_BadOptional" xml:space="preserve">
+    <value>Optional argument "{0}" was unexpected.</value>
   </data>
   <data name="CommandParse_BadShortFlag" xml:space="preserve">
-    <value>Unexpected short flag "{0}".</value>
+    <value>Short flag "-{0}" was unexpected.</value>
+  </data>
+  <data name="CommandParse_NoParserFound" xml:space="preserve">
+    <value>No parser found for argument type "{0}".</value>
   </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>
@@ -136,9 +145,9 @@
     <value>"{0}" is not a valid integer.</value>
   </data>
   <data name="StringParser_EndOfInput" xml:space="preserve">
-    <value>Reached end of input.</value>
+    <value>Unexpected end of input.</value>
   </data>
   <data name="StringParser_UnexpectedEscape" xml:space="preserve">
-    <value>Unexpected escape character "\{0}".</value>
+    <value>Escape character "\{0}" was unexpected.</value>
   </data>
 </root>

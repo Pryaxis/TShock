@@ -22,13 +22,6 @@ using Xunit;
 namespace TShock.Commands.Parsers {
     public class FlagAttributeTests {
         [Fact]
-        public void Ctor_NullLongFlag_ThrowsArgumentNullException() {
-            Func<FlagAttribute> func = () => new FlagAttribute('f', null);
-
-            func.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void ShortFlag_Get_IsCorrect() {
             var attribute = new FlagAttribute('f', "force");
 

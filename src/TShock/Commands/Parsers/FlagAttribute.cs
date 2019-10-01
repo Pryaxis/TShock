@@ -31,17 +31,16 @@ namespace TShock.Commands.Parsers {
         /// <summary>
         /// Gets the long form of the flag.
         /// </summary>
-        public string LongFlag { get; }
+        public string? LongFlag { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified short and long flags.
         /// </summary>
         /// <param name="shortFlag">The short flag.</param>
         /// <param name="longFlag">The long flag.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="longFlag"/> is <c>null</c>.</exception>
-        public FlagAttribute(char shortFlag, string longFlag) {
+        public FlagAttribute(char shortFlag, string? longFlag = null) {
             ShortFlag = shortFlag;
-            LongFlag = longFlag ?? throw new ArgumentNullException(nameof(longFlag));
+            LongFlag = longFlag;
         }
     }
 }

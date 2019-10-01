@@ -42,8 +42,8 @@ namespace TShock.Commands {
             this.RegisterParser(new StringParser());
         }
 
-        public IReadOnlyCollection<ICommand> RegisterCommands(object obj) {
-            if (obj is null) throw new ArgumentNullException(nameof(obj));
+        public IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject) {
+            if (handlerObject is null) throw new ArgumentNullException(nameof(handlerObject));
 
             var registeredCommands = new List<ICommand>();
 
@@ -56,10 +56,10 @@ namespace TShock.Commands {
                 registeredCommands.Add(command);
             }
 
-            foreach (var command in obj.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            foreach (var command in handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                        .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
                                                    (handler, attribute) => (handler, attribute))
-                                       .Select(t => new TShockCommand(this, t.attribute, obj, t.handler))) {
+                                       .Select(t => new TShockCommand(this, t.attribute, handlerObject, t.handler))) {
                 RegisterCommand(command);
             }
 

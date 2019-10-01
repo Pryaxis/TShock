@@ -38,7 +38,7 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets the object associated with the command's handler.
         /// </summary>
-        object? HandlerObject { get; }
+        object HandlerObject { get; }
 
         /// <summary>
         /// Gets the command's handler.
