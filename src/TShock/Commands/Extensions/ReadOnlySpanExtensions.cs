@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace TShock.Commands.Extensions {
     internal static class ReadOnlySpanExtensions {
-        public static int ScanFor(this ReadOnlySpan<char> input, Func<char, bool> predicate, int start = 0) {
+        public static int ScanFor<T>(this ReadOnlySpan<T> input, Func<T, bool> predicate, int start = 0) {
             Debug.Assert(predicate != null, "predicate != null");
 
             while (start < input.Length) {
