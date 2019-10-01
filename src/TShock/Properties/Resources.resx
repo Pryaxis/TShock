@@ -147,6 +147,9 @@
   <data name="Int32Parser_InvalidInteger" xml:space="preserve">
     <value>"{0}" is not a valid integer.</value>
   </data>
+  <data name="Int32Parser_MissingInteger" xml:space="preserve">
+    <value>No integer was provided.</value>
+  </data>
   <data name="StringParser_EndOfInput" xml:space="preserve">
     <value>Unexpected end of input.</value>
   </data>

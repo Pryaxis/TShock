@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 
@@ -35,6 +36,29 @@ namespace TShock.Commands.Parsers {
             parser.Parse(ref input).Should().Be(expected);
 
             input.ToString().Should().Be(expectedNextInput);
+        }
+        
+        [Theory]
+        [InlineData("")]
+        [InlineData("    ")]
+        public void Parse_AllowEmpty_IsCorrect(string inputString) {
+            var parser = new Int32Parser();
+            var input = inputString.AsSpan();
+
+            parser.Parse(ref input, new HashSet<string> {ParseOptions.AllowEmpty}).Should().Be(0);
+        }
+        
+        [Theory]
+        [InlineData("")]
+        [InlineData("    ")]
+        public void Parse_MissingInteger_ThrowsParseException(string inputString) {
+            var parser = new Int32Parser();
+            Func<int> func = () => {
+                var input = inputString.AsSpan();
+                return parser.Parse(ref input);
+            };
+
+            func.Should().Throw<CommandParseException>();
         }
 
         [Theory]

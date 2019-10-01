@@ -25,6 +25,15 @@ namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
         public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options= null) {
             var start = input.ScanFor(c => !char.IsWhiteSpace(c));
+            if (start >= input.Length) {
+                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
+                    throw new CommandParseException(Resources.Int32Parser_MissingInteger);
+                }
+
+                input = default;
+                return 0;
+            }
+
             var end = input.ScanFor(char.IsWhiteSpace, start);
             var parse = input[start..end];
             input = input[end..];

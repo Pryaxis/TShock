@@ -151,6 +151,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No integer was provided..
+        /// </summary>
+        internal static string Int32Parser_MissingInteger {
+            get {
+                return ResourceManager.GetString("Int32Parser_MissingInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected end of input..
         /// </summary>
         internal static string StringParser_EndOfInput {
