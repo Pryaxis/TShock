@@ -78,7 +78,7 @@ namespace TShock.Commands {
         [InlineData("1 test", 1, "test")]
         [InlineData(@"-56872 ""test abc\"" def""", -56872, "test abc\" def")]
         public void Invoke_SenderIntString_IsCorrect(string input, int expectedInt, string expectedString) {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser(),
                 [typeof(string)] = new StringParser()
             });
@@ -120,7 +120,7 @@ namespace TShock.Commands {
         [InlineData("--val=9001 1", 1, 9001, 5678)]
         [InlineData(" --val=9001     1", 1, 9001, 5678)]
         public void Invoke_Optionals_IsCorrect(string input, int expectedRequired, int expectedVal, int expectedVal2) {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()
             });
             var testClass = new TestClass();
@@ -150,7 +150,7 @@ namespace TShock.Commands {
         [InlineData("--force -r --depth=100 ", true, true, 100)]
         public void Invoke_FlagsAndOptionals_IsCorrect(string input, bool expectedForce, bool expectedRecursive,
                                                        int expectedDepth) {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()
             });
             var testClass = new TestClass();
@@ -167,7 +167,7 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_OptionalGetsRenamed() {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()
             });
             var testClass = new TestClass();
@@ -182,7 +182,7 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_AllowEmpty() {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(string)] = new StringParser()
             });
             var testClass = new TestClass();
@@ -233,7 +233,7 @@ namespace TShock.Commands {
         [InlineData("1 ")]
         [InlineData("-7345734    ")]
         public void Invoke_MissingArg_ThrowsCommandParseException(string input) {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser(),
                 [typeof(string)] = new StringParser()
             });
@@ -297,7 +297,7 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_UnexpectedArgType_ThrowsCommandParseException() {
-            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser>());
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser>());
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoByte));
             var commandSender = new Mock<ICommandSender>().Object;

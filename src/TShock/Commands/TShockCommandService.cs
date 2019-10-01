@@ -22,7 +22,6 @@ using System.Reflection;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
-using TShock.Commands.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
@@ -31,15 +30,15 @@ namespace TShock.Commands {
         private readonly ISet<ICommand> _commands = new HashSet<ICommand>();
         private readonly IDictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
-        public IEnumerable<ICommand> RegisteredCommands => new HashSet<ICommand>(_commands);
-        public IDictionary<Type, IArgumentParser> RegisteredParsers => new Dictionary<Type, IArgumentParser>(_parsers);
+        public IEnumerable<ICommand> Commands => new HashSet<ICommand>(_commands);
+        public IDictionary<Type, IArgumentParser> Parsers => new Dictionary<Type, IArgumentParser>(_parsers);
         public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
         public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
 
         public TShockCommandService() {
-            this.RegisterParser(new Int32Parser());
-            this.RegisterParser(new StringParser());
+            RegisterParser(new Int32Parser());
+            RegisterParser(new StringParser());
         }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject) {
@@ -66,10 +65,8 @@ namespace TShock.Commands {
             return registeredCommands;
         }
 
-        public void RegisterParser(Type parseType, IArgumentParser parser) {
-            if (parseType is null) throw new ArgumentNullException(nameof(parseType));
-
-            _parsers[parseType] = parser ?? throw new ArgumentNullException(nameof(parser));
+        public void RegisterParser<TParse>(IArgumentParser<TParse> parser) {
+            _parsers[typeof(TParse)] = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         public bool UnregisterCommand(ICommand command) {

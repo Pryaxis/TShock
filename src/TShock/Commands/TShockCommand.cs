@@ -105,7 +105,7 @@ namespace TShock.Commands {
 
             object ParseArgument(ref ReadOnlySpan<char> input, ParameterInfo parameterInfo) {
                 var parameterType = parameterInfo.ParameterType;
-                if (!_commandService.RegisteredParsers.TryGetValue(parameterType, out var parser)) {
+                if (!_commandService.Parsers.TryGetValue(parameterType, out var parser)) {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedArgType, parameterType));
                 }

@@ -28,14 +28,14 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommandService : IService {
         /// <summary>
-        /// Gets the registered commands.
+        /// Gets the commands.
         /// </summary>
-        IEnumerable<ICommand> RegisteredCommands { get; }
+        IEnumerable<ICommand> Commands { get; }
 
         /// <summary>
         /// Gets the registered parsers.
         /// </summary>
-        IDictionary<Type, IArgumentParser> RegisteredParsers { get; }
+        IDictionary<Type, IArgumentParser> Parsers { get; }
 
         /// <summary>
         /// Gets or sets the event handlers that occur when registering a command.
@@ -61,16 +61,14 @@ namespace TShock.Commands {
         /// <paramref name="handlerObject"/> is <see langword="null" />.
         /// </exception>
         IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject);
-
+        
         /// <summary>
-        /// Registers the given parser as the definitive parser for the parse type.
+        /// Registers the given strongly-typed parser as the definitive parser for the parse type.
         /// </summary>
-        /// <param name="parseType">The parse type.</param>
+        /// <typeparam name="TParse">The parse type.</typeparam>
         /// <param name="parser">The parser.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="parseType"/> or <paramref name="parser"/> are <see langword="null" />.
-        /// </exception>
-        void RegisterParser(Type parseType, IArgumentParser parser);
+        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null" />.</exception>
+        void RegisterParser<TParse>(IArgumentParser<TParse> parser);
 
         /// <summary>
         /// Unregisters the given command and returns a value indicating success.

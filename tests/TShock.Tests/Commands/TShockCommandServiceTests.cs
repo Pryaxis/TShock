@@ -42,16 +42,16 @@ namespace TShock.Commands {
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
             
-            _commandService.RegisteredCommands.Should().BeEquivalentTo(commands);
+            _commandService.Commands.Should().BeEquivalentTo(commands);
         }
 
         [Fact]
         public void RegisteredParsers_Get_IsCorrect() {
-            var parser = new Mock<IArgumentParser>().Object;
-            _commandService.RegisterParser(typeof(object), parser);
+            var parser = new Mock<IArgumentParser<object>>().Object;
+            _commandService.RegisterParser(parser);
             
-            _commandService.RegisteredParsers.Should().ContainKey(typeof(object));
-            _commandService.RegisteredParsers.Should().ContainValue(parser);
+            _commandService.Parsers.Should().ContainKey(typeof(object));
+            _commandService.Parsers.Should().ContainValue(parser);
         }
 
         [Fact]
@@ -75,16 +75,8 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisterParser_NullType_ThrowsArgumentNullException() {
-            var parser = new Mock<IArgumentParser>().Object;
-            Action action = () => _commandService.RegisterParser(null, parser);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void RegisterParser_NullParser_ThrowsArgumentNullException() {
-            Action action = () => _commandService.RegisterParser(typeof(object), null);
+            Action action = () => _commandService.RegisterParser<object>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -97,7 +89,7 @@ namespace TShock.Commands {
 
             _commandService.UnregisterCommand(command).Should().BeTrue();
 
-            _commandService.RegisteredCommands.Should().NotContain(command);
+            _commandService.Commands.Should().NotContain(command);
         }
 
         [Fact]
@@ -166,7 +158,7 @@ namespace TShock.Commands {
 
             _commandService.UnregisterCommand(command).Should().BeFalse();
 
-            _commandService.RegisteredCommands.Should().Contain(command);
+            _commandService.Commands.Should().Contain(command);
         }
 
         private class TestClass {
