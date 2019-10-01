@@ -129,6 +129,9 @@
   <data name="CommandParse_InvalidHyphenatedArg" xml:space="preserve">
     <value>Invalid hyphenated argument.</value>
   </data>
+  <data name="CommandParse_MissingArg" xml:space="preserve">
+    <value>Missing argument "{0}".</value>
+  </data>
   <data name="CommandParse_TooManyArgs" xml:space="preserve">
     <value>Too many arguments were provided.</value>
   </data>

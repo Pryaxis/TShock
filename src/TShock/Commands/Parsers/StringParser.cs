@@ -19,33 +19,21 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using TShock.Commands.Extensions;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
     // It'd be nice to return ReadOnlySpan<char>, but because of escape characters, we have to return copies.
     internal sealed class StringParser : IArgumentParser<string> {
         public string Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
-            // ToEndOfInput should have higher priority than AllowEmpty since empty strings should be permitted.
             if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
                 var result = input.ToString();
                 input = default;
                 return result;
             }
 
-            var start = input.ScanFor(c => !char.IsWhiteSpace(c));
-            if (start >= input.Length) {
-                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                    throw new CommandParseException(Resources.StringParser_MissingString);
-                }
-
-                input = default;
-                return string.Empty;
-            }
-
             // Begin building our string character-by-character.
             var builder = new StringBuilder();
-            var end = start;
+            var end = 0;
             var isInQuotes = false;
             while (end < input.Length) {
                 var c = input[end];
@@ -93,7 +81,12 @@ namespace TShock.Commands.Parsers {
             return builder.ToString();
         }
 
+        public string GetDefault() => string.Empty;
+
         [ExcludeFromCodeCoverage]
         object IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
+
+        [ExcludeFromCodeCoverage]
+        object IArgumentParser.GetDefault() => GetDefault();
     }
 }

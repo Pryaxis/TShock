@@ -97,6 +97,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing argument &quot;{0}&quot;..
+        /// </summary>
+        internal static string CommandParse_MissingArg {
+            get {
+                return ResourceManager.GetString("CommandParse_MissingArg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Too many arguments were provided..
         /// </summary>
         internal static string CommandParse_TooManyArgs {

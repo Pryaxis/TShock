@@ -24,18 +24,8 @@ using TShock.Properties;
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
         public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
-            var start = input.ScanFor(c => !char.IsWhiteSpace(c));
-            if (start >= input.Length) {
-                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                    throw new CommandParseException(Resources.Int32Parser_MissingInteger);
-                }
-
-                input = default;
-                return 0;
-            }
-
-            var end = input.ScanFor(char.IsWhiteSpace, start);
-            var parse = input[start..end];
+            var end = input.ScanFor(char.IsWhiteSpace);
+            var parse = input[..end];
             input = input[end..];
 
             // Calling Parse here instead of TryParse allows us to give better error messages.
@@ -50,7 +40,12 @@ namespace TShock.Commands.Parsers {
             }
         }
 
+        public int GetDefault() => 0;
+
         [ExcludeFromCodeCoverage]
         object IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
+        
+        [ExcludeFromCodeCoverage]
+        object IArgumentParser.GetDefault() => GetDefault();
     }
 }

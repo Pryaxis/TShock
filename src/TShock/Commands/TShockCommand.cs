@@ -109,13 +109,24 @@ namespace TShock.Commands {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedArgType, parameterType));
                 }
-
+                
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
+                var start = input.ScanFor(c => !char.IsWhiteSpace(c));
+                if (start >= input.Length) {
+                    if (options?.Contains(ParseOptions.AllowEmpty) != true) {
+                        throw new CommandParseException(
+                            string.Format(Resources.CommandParse_MissingArg, parameterInfo));
+                    }
+
+                    input = default;
+                    return parser.GetDefault();
+                }
+
+                input = input[start..];
                 return parser.Parse(ref input, options);
             }
 
-            void ParseShortFlags(ref ReadOnlySpan<char> input, int start) {
-                var end = input.ScanFor(char.IsWhiteSpace, start);
+            void ParseShortFlags(ref ReadOnlySpan<char> input, int start, int end) {
                 for (var i = start; i < end; ++i) {
                     var c = input[i];
                     if (!_validShortFlags.Contains(c)) {
@@ -148,7 +159,8 @@ namespace TShock.Commands {
                 }
 
                 // Skip over the '='.
-                input = input[(end + 1)..];
+                start = input.ScanFor(c => !char.IsWhiteSpace(c), end + 1);
+                input = input[start..];
                 optionals[optional] = ParseArgument(ref input, parameterInfo);
             }
 
@@ -158,7 +170,7 @@ namespace TShock.Commands {
              * - Long flags are string flags and use two hyphens: "--force".
              * - Optionals specify values with two hyphens: "--depth=10".
              */
-            void ParseHyphenatedArgs(ref ReadOnlySpan<char> input) {
+            void ParseHyphenatedArguments(ref ReadOnlySpan<char> input) {
                 while (true) {
                     var start = input.ScanFor(c => !char.IsWhiteSpace(c));
                     if (start >= input.Length || input[start] != '-') {
@@ -176,13 +188,22 @@ namespace TShock.Commands {
                         }
 
                         var end = input.ScanFor(c => char.IsWhiteSpace(c) || c == '=', start);
+                        if (start >= end) {
+                            throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                        }
+
                         if (end >= input.Length || input[end] != '=') {
                             ParseLongFlag(ref input, start, end);
                         } else {
                             ParseOptional(ref input, start, end);
                         }
                     } else {
-                        ParseShortFlags(ref input, start);
+                        var end = input.ScanFor(char.IsWhiteSpace, start);
+                        if (start >= end) {
+                            throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                        }
+
+                        ParseShortFlags(ref input, start, end);
                     }
                 }
             }
@@ -217,15 +238,18 @@ namespace TShock.Commands {
 
             var input = inputString.AsSpan();
             if (_validShortFlags.Count > 0 || _validLongFlags.Count > 0 || _validOptionals.Count > 0) {
-                ParseHyphenatedArgs(ref input);
+                ParseHyphenatedArguments(ref input);
             }
 
             for (var i = 0; i < _parameters.Length; ++i) {
                 _parameters[i] = ParseParameter(_parameterInfos[i], ref input);
             }
 
+            // Ensure that we've consumed all of the useful parts of the input.
             var end = input.ScanFor(c => !char.IsWhiteSpace(c));
-            if (end < input.Length) throw new CommandParseException(Resources.CommandParse_TooManyArgs);
+            if (end < input.Length) {
+                throw new CommandParseException(Resources.CommandParse_TooManyArgs);
+            }
 
             try {
                 Handler.Invoke(HandlerObject, _parameters);

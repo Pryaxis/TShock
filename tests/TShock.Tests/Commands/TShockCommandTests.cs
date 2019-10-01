@@ -79,7 +79,6 @@ namespace TShock.Commands {
                 [typeof(int)] = new Int32Parser(),
                 [typeof(string)] = new StringParser()
             });
-
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -178,10 +177,41 @@ namespace TShock.Commands {
             testClass.HyphenatedOptionalIsLong.Should().Be(60);
         }
 
+        [Fact]
+        public void Invoke_AllowEmpty() {
+            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+                [typeof(string)] = new StringParser()
+            });
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_AllowEmpty));
+            var commandSender = new Mock<ICommandSender>().Object;
+
+            command.Invoke(commandSender, "");
+
+            testClass.Sender.Should().BeSameAs(commandSender);
+            testClass.String.Should().BeEmpty();
+        }
+        
+        [Theory]
+        [InlineData("1 ")]
+        [InlineData("-7345734    ")]
+        public void Invoke_MissingArg_ThrowsCommandParseException(string input) {
+            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser> {
+                [typeof(int)] = new Int32Parser(),
+                [typeof(string)] = new StringParser()
+            });
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, input);
+
+            action.Should().Throw<CommandParseException>();
+        }
+
         [Theory]
         [InlineData("-xyz")]
         [InlineData("-z")]
-        public void Invoke_UnexpectedShortFlag_ThrowsParseException(string input) {
+        public void Invoke_UnexpectedShortFlag_ThrowsCommandParseException(string input) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -193,7 +223,7 @@ namespace TShock.Commands {
         [Theory]
         [InlineData("--this-is-not-ok")]
         [InlineData("--neither-is-this")]
-        public void Invoke_UnexpectedLongFlag_ThrowsParseException(string input) {
+        public void Invoke_UnexpectedLongFlag_ThrowsCommandParseException(string input) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -205,7 +235,7 @@ namespace TShock.Commands {
         [Theory]
         [InlineData("--required=123")]
         [InlineData("--not-ok=test")]
-        public void Invoke_UnexpectedOptional_ThrowsParseException(string input) {
+        public void Invoke_UnexpectedOptional_ThrowsCommandParseException(string input) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Optionals));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -215,9 +245,34 @@ namespace TShock.Commands {
         }
 
         [Theory]
+        [InlineData("-")]
+        [InlineData("- ")]
+        [InlineData("--")]
+        [InlineData("-- ")]
+        public void Invoke_InvalidHyphenatedArgs_ThrowsCommandParseException(string input) {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, input);
+
+            action.Should().Throw<CommandParseException>();
+        }
+
+        [Fact]
+        public void Invoke_UnexpectedArgType_ThrowsCommandParseException() {
+            _mockCommandService.Setup(cs => cs.RegisteredParsers).Returns(new Dictionary<Type, IArgumentParser>());
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoByte));
+            var commandSender = new Mock<ICommandSender>().Object;
+            Action action = () => command.Invoke(commandSender, "");
+
+            action.Should().Throw<CommandParseException>();
+        }
+
+        [Theory]
         [InlineData("a")]
         [InlineData("bcd")]
-        public void Invoke_TooManyArguments_ThrowsParseException(string input) {
+        public void Invoke_TooManyArguments_ThrowsCommandParseException(string input) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -278,17 +333,6 @@ namespace TShock.Commands {
                 String = @string;
             }
 
-            [CommandHandler("tshock_tests:test_no_in")]
-            public void TestCommand_NoIn(ICommandSender sender, in int x) { }
-
-            [CommandHandler("tshock_tests:test_no_out")]
-            public void TestCommand_NoOut(ICommandSender sender, out int x) {
-                x = 0;
-            }
-
-            [CommandHandler("tshock_tests:test_no_out")]
-            public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
-
             [CommandHandler("tshock_tests:test_no_ptr")]
             public unsafe void TestCommand_NoPointer(ICommandSender sender, int* x) { }
             
@@ -321,6 +365,27 @@ namespace TShock.Commands {
                 Sender = sender;
                 HyphenatedOptionalIsLong = hyphenated_optional_is_long;
             }
+            
+            [CommandHandler("tshock_tests:allow_empty")]
+            public void TestCommand_AllowEmpty(ICommandSender sender,
+                                               [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
+                Sender = sender;
+                String = @string;
+            }
+
+            [CommandHandler("tshock_tests:test_no_in")]
+            public void TestCommand_NoIn(ICommandSender sender, in int x) { }
+
+            [CommandHandler("tshock_tests:test_no_out")]
+            public void TestCommand_NoOut(ICommandSender sender, out int x) {
+                x = 0;
+            }
+
+            [CommandHandler("tshock_tests:test_no_out")]
+            public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
+            
+            [CommandHandler("tshock_tests:test_no_byte")]
+            public void TestCommand_NoByte(ICommandSender sender, byte b) { }
         }
     }
 }

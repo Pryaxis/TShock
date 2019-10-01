@@ -25,7 +25,6 @@ namespace TShock.Commands.Parsers {
         [Theory]
         [InlineData("test", "test", "")]
         [InlineData("test abc", "test", " abc")]
-        [InlineData("       test", "test", "")]
         [InlineData(@"""test""", "test", "")]
         [InlineData(@"""test abc   def""", "test abc   def", "")]
         [InlineData(@"""test abc"" def ghi", "test abc", " def ghi")]
@@ -42,19 +41,6 @@ namespace TShock.Commands.Parsers {
             parser.Parse(ref input).Should().Be(expected);
 
             input.ToString().Should().Be(expectedNextInput);
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("   ")]
-        public void Parse_Empty_ThrowsParseException(string inputString) {
-            var parser = new StringParser();
-            Func<string> func = () => {
-                var input = inputString.AsSpan();
-                return parser.Parse(ref input);
-            };
-
-            func.Should().Throw<CommandParseException>();
         }
 
         [Theory]

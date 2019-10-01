@@ -28,7 +28,6 @@ namespace TShock.Commands.Parsers {
         [InlineData("000", 0, "")]
         [InlineData("-1234", -1234, "")]
         [InlineData("123 test", 123, " test")]
-        [InlineData("    123", 123, "")]
         public void Parse_IsCorrect(string inputString, int expected, string expectedNextInput) {
             var parser = new Int32Parser();
             var input = inputString.AsSpan();
@@ -36,16 +35,6 @@ namespace TShock.Commands.Parsers {
             parser.Parse(ref input).Should().Be(expected);
 
             input.ToString().Should().Be(expectedNextInput);
-        }
-        
-        [Theory]
-        [InlineData("")]
-        [InlineData("    ")]
-        public void Parse_AllowEmpty_IsCorrect(string inputString) {
-            var parser = new Int32Parser();
-            var input = inputString.AsSpan();
-
-            parser.Parse(ref input, new HashSet<string> {ParseOptions.AllowEmpty}).Should().Be(0);
         }
         
         [Theory]
