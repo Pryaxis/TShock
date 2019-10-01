@@ -52,7 +52,7 @@ namespace TShock.Commands.Parsers {
 
                 // Handle escape characters.
                 if (c == '\\') {
-                    if (++end >= input.Length) throw new ParseException(Resources.StringParser_EndOfInput);
+                    if (++end >= input.Length) throw new CommandParseException(Resources.StringParser_EndOfInput);
 
                     var nextC = input[end];
                     if (nextC == '"' || nextC == '\\' || char.IsWhiteSpace(nextC)) {
@@ -62,7 +62,7 @@ namespace TShock.Commands.Parsers {
                     } else if (nextC == 'n') {
                         builder.Append('\n');
                     } else {
-                        throw new ParseException(string.Format(Resources.StringParser_UnexpectedEscape, nextC));
+                        throw new CommandParseException(string.Format(Resources.StringParser_UnexpectedEscape, nextC));
                     }
 
                     ++end;

@@ -47,7 +47,7 @@ namespace TShock.Commands.Parsers {
                 return parser.Parse(ref input);
             };
 
-            func.Should().Throw<ParseException>().WithInnerException<OverflowException>();
+            func.Should().Throw<CommandParseException>().WithInnerException<OverflowException>();
         }
         
         [Theory]
@@ -61,7 +61,7 @@ namespace TShock.Commands.Parsers {
                 return parser.Parse(ref input);
             };
 
-            func.Should().Throw<ParseException>().WithInnerException<FormatException>();
+            func.Should().Throw<CommandParseException>().WithInnerException<FormatException>();
         }
     }
 }

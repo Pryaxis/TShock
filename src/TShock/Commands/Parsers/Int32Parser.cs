@@ -33,9 +33,9 @@ namespace TShock.Commands.Parsers {
             try {
                 return int.Parse(parse);
             } catch (FormatException ex) {
-                throw new ParseException(string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);
+                throw new CommandParseException(string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);
             } catch (OverflowException ex) {
-                throw new ParseException(string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
+                throw new CommandParseException(string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
 

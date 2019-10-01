@@ -187,7 +187,7 @@ namespace TShock.Commands {
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
-            action.Should().Throw<ParseException>();
+            action.Should().Throw<CommandParseException>();
         }
 
         [Theory]
@@ -199,7 +199,7 @@ namespace TShock.Commands {
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
-            action.Should().Throw<ParseException>();
+            action.Should().Throw<CommandParseException>();
         }
 
         [Theory]
@@ -211,7 +211,7 @@ namespace TShock.Commands {
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
-            action.Should().Throw<ParseException>();
+            action.Should().Throw<CommandParseException>();
         }
 
         [Fact]

@@ -29,7 +29,7 @@ namespace TShock.Commands.Parsers {
         /// <param name="input">The input.</param>
         /// <param name="options">The parse options.</param>
         /// <returns>A corresponding object.</returns>
-        /// <exception cref="ParseException">The input could not be parsed properly.</exception>
+        /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
         object Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
     }
 }

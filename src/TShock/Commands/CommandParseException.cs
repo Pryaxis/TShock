@@ -18,29 +18,29 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TShock.Commands.Parsers {
+namespace TShock.Commands {
     /// <summary>
     /// The exception thrown when a command input cannot be parsed.
     /// </summary>
     [Serializable, ExcludeFromCodeCoverage]
-    public class ParseException : Exception {
+    public class CommandParseException : CommandException {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParseException"/> class.
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class.
         /// </summary>
-        public ParseException() { }
+        public CommandParseException() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParseException"/> class with the specified message.
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class with the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public ParseException(string message) : base(message) { }
+        public CommandParseException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParseException"/> class with the specified message
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class with the specified message
         /// and inner exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public ParseException(string message, Exception innerException) : base(message, innerException) { }
+        public CommandParseException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

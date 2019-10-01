@@ -113,7 +113,7 @@ namespace TShock.Commands {
                 for (var i = start; i < end; ++i) {
                     var c = input[i];
                     if (!validShortFlags.Contains(c)) {
-                        throw new ParseException(string.Format(Resources.CommandParse_BadShortFlag, c));
+                        throw new CommandParseException(string.Format(Resources.CommandParse_BadShortFlag, c));
                     }
 
                     shortFlags.Add(c);
@@ -140,7 +140,7 @@ namespace TShock.Commands {
                     if (isLongFlag) {
                         var longFlag = input[start..end].ToString();
                         if (!validLongFlags.Contains(longFlag)) {
-                            throw new ParseException(string.Format(Resources.CommandParse_BadLongFlag, longFlag));
+                            throw new CommandParseException(string.Format(Resources.CommandParse_BadLongFlag, longFlag));
                         }
 
                         longFlags.Add(longFlag);
@@ -148,12 +148,12 @@ namespace TShock.Commands {
                     } else {
                         var optional = input[start..end].ToString();
                         if (!validOptionals.TryGetValue(optional, out var parameter)) {
-                            throw new ParseException(string.Format(Resources.CommandParse_BadOptional, optional));
+                            throw new CommandParseException(string.Format(Resources.CommandParse_BadOptional, optional));
                         }
 
                         var parameterType = parameter.ParameterType;
                         if (!parsers.TryGetValue(parameterType, out var parser)) {
-                            throw new ParseException(
+                            throw new CommandParseException(
                                 string.Format(Resources.CommandParse_NoParserFound, parameterType));
                         }
                         
@@ -201,7 +201,7 @@ namespace TShock.Commands {
                 }
 
                 // Otherwise, it's impossible to parse.
-                throw new ParseException(string.Format(Resources.CommandParse_NoParserFound, parameterType));
+                throw new CommandParseException(string.Format(Resources.CommandParse_NoParserFound, parameterType));
             }
 
             var parameterInfos = Handler.GetParameters();

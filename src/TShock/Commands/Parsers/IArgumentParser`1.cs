@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
-    /// Provides parsing support for a type.
+    /// Provides type-safe parsing support.
     /// </summary>
     /// <typeparam name="TParse">The parse type.</typeparam>
     public interface IArgumentParser<out TParse> : IArgumentParser {
@@ -30,7 +30,7 @@ namespace TShock.Commands.Parsers {
         /// <param name="input">The input.</param>
         /// <param name="options">The parse options.</param>
         /// <returns>A corresponding instance of the parse type.</returns>
-        /// <exception cref="ParseException">The input could not be parsed properly.</exception>
+        /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
         new TParse Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
     }
 }

@@ -55,7 +55,7 @@ namespace TShock.Commands.Parsers {
                 return parser.Parse(ref input);
             };
 
-            func.Should().Throw<ParseException>();
+            func.Should().Throw<CommandParseException>();
         }
 
         [Fact]
