@@ -21,7 +21,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentAssertions;
 using Moq;
+using Orion.Events;
+using Orion.Events.Extensions;
+using Serilog;
 using TShock.Commands.Parsers;
+using TShock.Events.Commands;
 using Xunit;
 
 namespace TShock.Commands {
@@ -191,6 +195,40 @@ namespace TShock.Commands {
             testClass.Sender.Should().BeSameAs(commandSender);
             testClass.String.Should().BeEmpty();
         }
+
+        [Fact]
+        public void Invoke_TriggersCommandExecute() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var commandSender = new Mock<ICommandSender>().Object;
+            var isRun = false;
+            EventHandlerCollection<CommandExecuteEventArgs> commandExecute = null;
+            commandExecute += (sender, args) => {
+                isRun = true;
+                args.Command.Should().Be(command);
+                args.Input.Should().BeEmpty();
+            };
+            _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
+            
+            command.Invoke(commandSender, "");
+
+            testClass.Sender.Should().BeSameAs(commandSender);
+            isRun.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Invoke_CommandExecuteCanceled_IsCanceled() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var commandSender = new Mock<ICommandSender>().Object;
+            EventHandlerCollection<CommandExecuteEventArgs> commandExecute = null;
+            commandExecute += (sender, args) => {
+                args.Cancel();
+            };
+            _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
+
+            command.Invoke(commandSender, "failing input");
+        }
         
         [Theory]
         [InlineData("1 ")]
@@ -279,6 +317,23 @@ namespace TShock.Commands {
             Action action = () => command.Invoke(commandSender, input);
 
             action.Should().Throw<CommandParseException>();
+        }
+
+        [Fact]
+        public void Invoke_ThrowsException_ThrowsCommandException() {
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Exception));
+            var mockLog = new Mock<ILogger>();
+            var mockCommandSender = new Mock<ICommandSender>();
+            mockCommandSender.SetupGet(cs => cs.Log).Returns(mockLog.Object);
+            Action action = () => command.Invoke(mockCommandSender.Object, "");
+
+            action.Should().Throw<CommandException>().WithInnerException<NotImplementedException>();
+
+            mockLog.Verify(l => l.Error(It.IsAny<NotImplementedException>(), It.IsAny<string>()));
+            mockLog.VerifyNoOtherCalls();
+            mockCommandSender.VerifyGet(cs => cs.Log);
+            mockCommandSender.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -371,6 +426,11 @@ namespace TShock.Commands {
                                                [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
                 Sender = sender;
                 String = @string;
+            }
+            
+            [CommandHandler("tshock_tests:exception")]
+            public void TestCommand_Exception(ICommandSender sender) {
+                throw new NotImplementedException();
             }
 
             [CommandHandler("tshock_tests:test_no_in")]
