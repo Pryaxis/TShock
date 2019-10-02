@@ -16,6 +16,8 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
@@ -24,23 +26,23 @@ namespace TShock.Commands.Parsers {
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class FlagAttribute : Attribute {
         /// <summary>
-        /// Gets the short form of the flag.
+        /// Gets the flags.
         /// </summary>
-        public char ShortFlag { get; }
+        public IReadOnlyCollection<string> Flags { get; }
 
         /// <summary>
-        /// Gets the long form of the flag. If <see langword="null" />, then there is no long flag.
+        /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified flags.
         /// </summary>
-        public string? LongFlag { get; }
+        /// <param name="flag">The flag.</param>
+        /// <param name="alternateFlags">The alternate flags.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are <see langword="null" />.
+        /// </exception>
+        public FlagAttribute(string flag, params string[] alternateFlags) {
+            if (flag is null) throw new ArgumentNullException(nameof(flag));
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified short and long flags.
-        /// </summary>
-        /// <param name="shortFlag">The short flag.</param>
-        /// <param name="longFlag">The long flag.</param>
-        public FlagAttribute(char shortFlag, string? longFlag = null) {
-            ShortFlag = shortFlag;
-            LongFlag = longFlag;
+            Flags = new[] {flag}.Concat(alternateFlags ?? throw new ArgumentNullException(nameof(alternateFlags)))
+                                .ToList();
         }
     }
 }

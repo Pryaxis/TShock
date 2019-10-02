@@ -384,7 +384,7 @@ namespace TShock.Commands {
             public unsafe void TestCommand_NoPointer(ICommandSender sender, int* x) { }
             
             [CommandHandler("tshock_tests:test_flags")]
-            public void TestCommand_Flags(ICommandSender sender, [Flag('x', "xxx")] bool x, [Flag('y', "yyy")] bool y) {
+            public void TestCommand_Flags(ICommandSender sender, [Flag("x", "xxx")] bool x, [Flag("y", "yyy")] bool y) {
                 Sender = sender;
                 X = x;
                 Y = y;
@@ -399,8 +399,8 @@ namespace TShock.Commands {
             }
 
             [CommandHandler("tshock_tests:test_flags_and_optionals")]
-            public void TestCommand_FlagsAndOptionals(ICommandSender sender, [Flag('f', "force")] bool force,
-                                                      [Flag('r', "recursive")] bool recursive, int depth = 10) {
+            public void TestCommand_FlagsAndOptionals(ICommandSender sender, [Flag("f", "force")] bool force,
+                                                      [Flag("r", "recursive")] bool recursive, int depth = 10) {
                 Sender = sender;
                 Force = force;
                 Recursive = recursive;

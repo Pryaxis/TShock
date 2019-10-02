@@ -15,23 +15,31 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FluentAssertions;
 using Xunit;
 
 namespace TShock.Commands.Parsers {
     public class FlagAttributeTests {
         [Fact]
-        public void ShortFlag_Get_IsCorrect() {
-            var attribute = new FlagAttribute('f', "force");
+        public void Ctor_NullFlag_ThrowsArgumentNullException() {
+            Func<FlagAttribute> func = () => new FlagAttribute(null);
 
-            attribute.ShortFlag.Should().Be('f');
+            func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void LongFlag_Get_IsCorrect() {
-            var attribute = new FlagAttribute('f', "force");
+        public void Ctor_NullAlternateFlags_ThrowsArgumentNullException() {
+            Func<FlagAttribute> func = () => new FlagAttribute("", null);
 
-            attribute.LongFlag.Should().Be("force");
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Flags_Get_IsCorrect() {
+            var attribute = new FlagAttribute("test1", "test2", "test3");
+
+            attribute.Flags.Should().BeEquivalentTo("test1", "test2", "test3");
         }
     }
 }

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Orion.Events.Extensions;
 using TShock.Commands.Extensions;
@@ -69,10 +70,11 @@ namespace TShock.Commands {
                 // If the parameter is a bool and it is marked with FlagAttribute, we'll note it.
                 if (parameterType == typeof(bool)) {
                     var attribute = parameterInfo.GetCustomAttribute<FlagAttribute?>();
-                    if (attribute != null) {
-                        _validShortFlags.Add(attribute.ShortFlag);
-                        if (attribute.LongFlag != null) {
-                            _validLongFlags.Add(attribute.LongFlag);
+                    foreach (var flag in attribute?.Flags ?? Enumerable.Empty<string>()) {
+                        if (flag.Length == 1) {
+                            _validShortFlags.Add(flag[0]);
+                        } else {
+                            _validLongFlags.Add(flag);
                         }
                     }
                 }
@@ -223,8 +225,8 @@ namespace TShock.Commands {
                 if (parameterType == typeof(bool)) {
                     var attribute = parameterInfo.GetCustomAttribute<FlagAttribute?>();
                     if (attribute != null) {
-                        return shortFlags.Contains(attribute.ShortFlag) ||
-                               attribute.LongFlag != null && longFlags.Contains(attribute.LongFlag);
+                        return attribute.Flags.Any(f => f.Length == 1 && shortFlags.Contains(f[0]) ||
+                                                        longFlags.Contains(f));
                     }
                 }
 
