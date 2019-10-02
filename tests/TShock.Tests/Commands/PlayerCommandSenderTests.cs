@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
 using Moq;
-using Orion.Packets.World;
 using Orion.Players;
 using Xunit;
 
@@ -52,9 +50,8 @@ namespace TShock.Commands {
             ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
 
             sender.SendMessage("test");
-
-            mockPlayer.Verify(
-                p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText == "test" && cp.ChatColor == Color.White)));
+            
+            mockPlayer.Verify(p => p.SendMessage("test", Color.White));
             mockPlayer.VerifyNoOtherCalls();
         }
 
@@ -65,8 +62,7 @@ namespace TShock.Commands {
 
             sender.SendMessage("test", Color.Orange);
 
-            mockPlayer.Verify(
-                p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText == "test" && cp.ChatColor == Color.Orange)));
+            mockPlayer.Verify(p => p.SendMessage("test", Color.Orange));
             mockPlayer.VerifyNoOtherCalls();
         }
     }

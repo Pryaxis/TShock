@@ -48,6 +48,14 @@ namespace TShock.Commands {
         IPlayer? Player { get; }
 
         /// <summary>
+        /// Returns a command sender based on the given player.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        /// <returns>A command sender based on the player.</returns>
+        static ICommandSender FromPlayer(IPlayer player) =>
+            new PlayerCommandSender(player ?? throw new ArgumentNullException(nameof(player)));
+
+        /// <summary>
         /// Sends a message to the sender.
         /// </summary>
         /// <param name="message">The message.</param>
