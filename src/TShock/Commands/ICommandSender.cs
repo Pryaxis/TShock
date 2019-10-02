@@ -41,6 +41,12 @@ namespace TShock.Commands {
         IPlayer? Player { get; }
 
         /// <summary>
+        /// Sends a message to the sender.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        void SendMessage(ReadOnlySpan<char> message);
+
+        /// <summary>
         /// Sends a message to the sender with the given color.
         /// </summary>
         /// <param name="message">The message.</param>

@@ -51,10 +51,22 @@ namespace TShock.Commands {
             var mockPlayer = new Mock<IPlayer>();
             ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
 
-            sender.SendMessage("test", Color.White);
+            sender.SendMessage("test");
 
             mockPlayer.Verify(
                 p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText == "test" && cp.ChatColor == Color.White)));
+            mockPlayer.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void SendMessage_WithColor_IsCorrect() {
+            var mockPlayer = new Mock<IPlayer>();
+            ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
+
+            sender.SendMessage("test", Color.Orange);
+
+            mockPlayer.Verify(
+                p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText == "test" && cp.ChatColor == Color.Orange)));
             mockPlayer.VerifyNoOtherCalls();
         }
     }

@@ -34,6 +34,8 @@ namespace TShock.Commands {
             Player = player;
         }
 
+        public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, Color.White);
+
         public void SendMessage(ReadOnlySpan<char> message, Color color) {
             Player.SendPacket(new ChatPacket {
                 ChatColor = color,
