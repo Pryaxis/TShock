@@ -1,4 +1,4 @@
-name: MSBuild Test
+name: Build Server
 
 on: [push]
 
