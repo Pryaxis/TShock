@@ -27,11 +27,11 @@ using TShock.Events.Commands;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
-        private readonly ISet<ICommand> _commands = new HashSet<ICommand>();
-        private readonly IDictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
+        private readonly HashSet<ICommand> _commands = new HashSet<ICommand>();
+        private readonly Dictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
-        public IReadOnlyCollection<ICommand> Commands => new HashSet<ICommand>(_commands);
-        public IDictionary<Type, IArgumentParser> Parsers => new Dictionary<Type, IArgumentParser>(_parsers);
+        public IReadOnlyCollection<ICommand> Commands => _commands;
+        public IReadOnlyDictionary<Type, IArgumentParser> Parsers => _parsers;
         public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
         public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }

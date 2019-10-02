@@ -35,7 +35,7 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets the registered parsers.
         /// </summary>
-        IDictionary<Type, IArgumentParser> Parsers { get; }
+        IReadOnlyDictionary<Type, IArgumentParser> Parsers { get; }
 
         /// <summary>
         /// Gets or sets the event handlers that occur when registering a command.

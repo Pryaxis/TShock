@@ -49,9 +49,8 @@ namespace TShock.Commands {
         public void RegisteredParsers_Get_IsCorrect() {
             var parser = new Mock<IArgumentParser<object>>().Object;
             _commandService.RegisterParser(parser);
-            
-            _commandService.Parsers.Should().ContainKey(typeof(object));
-            _commandService.Parsers.Should().ContainValue(parser);
+
+            _commandService.Parsers.Should().Contain(new KeyValuePair<Type, IArgumentParser>(typeof(object), parser));
         }
 
         [Fact]
