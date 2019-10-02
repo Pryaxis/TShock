@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using TShock.Commands.Extensions;
 using TShock.Properties;
 
@@ -30,7 +31,7 @@ namespace TShock.Commands.Parsers {
 
             // Calling Parse here instead of TryParse allows us to give better error messages.
             try {
-                return int.Parse(parse);
+                return int.Parse(parse, NumberStyles.Integer, CultureInfo.InvariantCulture);
             } catch (FormatException ex) {
                 throw new CommandParseException(
                     string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);

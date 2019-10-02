@@ -65,7 +65,7 @@ namespace TShock.Commands.Parsers {
         [Theory]
         [InlineData("aaa")]
         [InlineData("123a")]
-        [InlineData("1.0")]
+        [InlineData("123.0")]
         public void Parse_InvalidInteger_ThrowsParseException(string inputString) {
             var parser = new Int32Parser();
             Func<int> func = () => {
