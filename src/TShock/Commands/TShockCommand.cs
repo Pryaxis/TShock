@@ -93,11 +93,10 @@ namespace TShock.Commands {
             }
         }
 
-        public void Invoke(ICommandSender sender, string inputString) {
+        public void Invoke(ICommandSender sender, ReadOnlySpan<char> input) {
             if (sender is null) throw new ArgumentNullException(nameof(sender));
-            if (inputString is null) throw new ArgumentNullException(nameof(inputString));
 
-            var args = new CommandExecuteEventArgs(this, sender, inputString);
+            var args = new CommandExecuteEventArgs(this, sender, input.ToString());
             _commandService.CommandExecute?.Invoke(this, args);
             if (args.IsCanceled()) return;
 
@@ -238,7 +237,6 @@ namespace TShock.Commands {
                 return ParseArgument(ref input, parameterInfo);
             }
 
-            var input = inputString.AsSpan();
             if (_validShortFlags.Count > 0 || _validLongFlags.Count > 0 || _validOptionals.Count > 0) {
                 ParseHyphenatedArguments(ref input);
             }

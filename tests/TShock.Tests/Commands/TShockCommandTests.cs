@@ -337,16 +337,6 @@ namespace TShock.Commands {
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact]
-        public void Invoke_NullInput_ThrowsArgumentNullException() {
-            var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
-            var commandSender = new Mock<ICommandSender>().Object;
-            Action action = () => command.Invoke(commandSender, null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
         private ICommand GetCommand(TestClass testClass, string methodName) {
             var handler = typeof(TestClass).GetMethod(methodName);
             var attribute = handler.GetCustomAttribute<CommandHandlerAttribute>();

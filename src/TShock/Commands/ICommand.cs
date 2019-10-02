@@ -49,11 +49,9 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="input">The input. This does not include the command's name or sub-names.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sender"/> or <paramref name="input"/> are <see langword="null" />.
-        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="sender"/> is <see langword="null" />.</exception>
         /// <exception cref="CommandException">The command could not be executed.</exception>
         /// <exception cref="CommandParseException">The command input could not be parsed.</exception>
-        void Invoke(ICommandSender sender, string input);
+        void Invoke(ICommandSender sender, ReadOnlySpan<char> input);
     }
 }
