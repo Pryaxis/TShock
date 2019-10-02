@@ -40,7 +40,7 @@ namespace TShock.Commands {
 
         private static void SendMessage(ReadOnlySpan<char> message, string colorString) {
             var output = new StringBuilder(colorString);
-
+            
             while (true) {
                 var leftBracket = message.IndexOf('[');
                 var rightBracket = leftBracket + 1 + message[(leftBracket + 1)..].IndexOf(']');

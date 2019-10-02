@@ -23,21 +23,21 @@ namespace TShock.Commands {
     public class ConsoleCommandSenderTests {
         [Fact]
         public void Name_Get_IsCorrect() {
-            ICommandSender sender = new ConsoleCommandSender();
+            var sender = ICommandSender.Console;
 
             sender.Name.Should().Be("Console");
         }
 
         [Fact]
         public void Log_Get_IsCorrect() {
-            ICommandSender sender = new ConsoleCommandSender();
+            var sender = ICommandSender.Console;
 
             sender.Log.Should().BeSameAs(Log.Logger);
         }
 
         [Fact]
         public void Player_Get_IsCorrect() {
-            ICommandSender sender = new ConsoleCommandSender();
+            var sender = ICommandSender.Console;
 
             sender.Player.Should().BeNull();
         }

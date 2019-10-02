@@ -25,6 +25,13 @@ namespace TShock.Commands {
     /// Represents a command sender. Provides the ability to communicate with the sender.
     /// </summary>
     public interface ICommandSender {
+        private static readonly ICommandSender _console = new ConsoleCommandSender();
+
+        /// <summary>
+        /// Gets a console-based command sender.
+        /// </summary>
+        static ICommandSender Console => _console;
+
         /// <summary>
         /// Gets the sender's name.
         /// </summary>
