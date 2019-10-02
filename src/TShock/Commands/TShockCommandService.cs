@@ -30,7 +30,7 @@ namespace TShock.Commands {
         private readonly ISet<ICommand> _commands = new HashSet<ICommand>();
         private readonly IDictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
-        public IEnumerable<ICommand> Commands => new HashSet<ICommand>(_commands);
+        public IReadOnlyCollection<ICommand> Commands => new HashSet<ICommand>(_commands);
         public IDictionary<Type, IArgumentParser> Parsers => new Dictionary<Type, IArgumentParser>(_parsers);
         public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }

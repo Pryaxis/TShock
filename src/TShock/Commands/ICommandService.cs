@@ -30,7 +30,7 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets the commands.
         /// </summary>
-        IEnumerable<ICommand> Commands { get; }
+        IReadOnlyCollection<ICommand> Commands { get; }
 
         /// <summary>
         /// Gets the registered parsers.
