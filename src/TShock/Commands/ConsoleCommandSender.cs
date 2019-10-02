@@ -16,9 +16,9 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
@@ -32,25 +32,21 @@ namespace TShock.Commands {
         public ILogger Log => Serilog.Log.Logger;
         public IPlayer? Player => null;
 
+        [Pure]
         private static string GetColorString(Color color) => $"\x1b[38;2;{color.R};{color.G};{color.B}m";
 
-        // This method will be **very** thoroughly tested outside of unit tests.
-        [ExcludeFromCodeCoverage]
-        public void SendMessage(string message, Color color) {
-            if (message is null) throw new ArgumentNullException(nameof(message));
-
+        public void SendMessage(ReadOnlySpan<char> message, Color color) {
             var colorString = GetColorString(color);
             var output = new StringBuilder(colorString);
-            var input = message.AsSpan();
 
             while (true) {
-                var leftBracket = input.IndexOf('[');
-                var rightBracket = leftBracket + 1 + input[(leftBracket + 1)..].IndexOf(']');
+                var leftBracket = message.IndexOf('[');
+                var rightBracket = leftBracket + 1 + message[(leftBracket + 1)..].IndexOf(']');
                 if (leftBracket < 0 || rightBracket < 0) break;
 
-                output.Append(input[..leftBracket]);
-                var inside = input[(leftBracket + 1)..rightBracket];
-                input = input[(rightBracket + 1)..];
+                output.Append(message[..leftBracket]);
+                var inside = message[(leftBracket + 1)..rightBracket];
+                message = message[(rightBracket + 1)..];
                 var colon = inside.IndexOf(':');
                 var isValidColorTag = inside.StartsWith(ColorTagPrefix, StringComparison.OrdinalIgnoreCase) &&
                                       colon > ColorTagPrefix.Length;
@@ -69,7 +65,7 @@ namespace TShock.Commands {
                 output.Append(colorString);
             }
 
-            output.Append(input).Append(ResetColorString);
+            output.Append(message).Append(ResetColorString);
             Console.WriteLine(output);
         }
     }

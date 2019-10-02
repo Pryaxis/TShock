@@ -45,7 +45,6 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="color">The color.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null" />.</exception>
-        void SendMessage(string message, Color color);
+        void SendMessage(ReadOnlySpan<char> message, Color color);
     }
 }

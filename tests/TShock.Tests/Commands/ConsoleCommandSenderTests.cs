@@ -15,9 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using FluentAssertions;
-using Microsoft.Xna.Framework;
+using Serilog;
 using Xunit;
 
 namespace TShock.Commands {
@@ -30,18 +29,17 @@ namespace TShock.Commands {
         }
 
         [Fact]
+        public void Log_Get_IsCorrect() {
+            ICommandSender sender = new ConsoleCommandSender();
+
+            sender.Log.Should().BeSameAs(Log.Logger);
+        }
+
+        [Fact]
         public void Player_Get_IsCorrect() {
             ICommandSender sender = new ConsoleCommandSender();
 
             sender.Player.Should().BeNull();
-        }
-
-        [Fact]
-        public void SendMessage_NullMessage_ThrowsArgumentNullException() {
-            ICommandSender sender = new ConsoleCommandSender();
-            Action action = () => sender.SendMessage(null, Color.White);
-
-            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

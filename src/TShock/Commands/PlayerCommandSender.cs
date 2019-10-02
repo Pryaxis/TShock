@@ -34,11 +34,11 @@ namespace TShock.Commands {
             Player = player;
         }
 
-        public void SendMessage(string message, Color color) {
+        public void SendMessage(ReadOnlySpan<char> message, Color color) {
             Player.SendPacket(new ChatPacket {
                 ChatColor = color,
                 ChatLineWidth = -1,
-                ChatText = message ?? throw new ArgumentNullException(nameof(message))
+                ChatText = message.ToString()
             });
         }
     }

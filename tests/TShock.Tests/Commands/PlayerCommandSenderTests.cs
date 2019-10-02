@@ -57,14 +57,5 @@ namespace TShock.Commands {
                 p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText == "test" && cp.ChatColor == Color.White)));
             mockPlayer.VerifyNoOtherCalls();
         }
-
-        [Fact]
-        public void SendMessage_NullMessage_ThrowsArgumentNullException() {
-            var player = new Mock<IPlayer>().Object;
-            ICommandSender sender = new PlayerCommandSender(player);
-            Action action = () => sender.SendMessage(null, Color.White);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
     }
 }
