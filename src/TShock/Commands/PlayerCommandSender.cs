@@ -18,7 +18,6 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Orion.Packets.World;
 using Orion.Players;
 using Serilog;
 
@@ -36,12 +35,7 @@ namespace TShock.Commands {
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, Color.White);
 
-        public void SendMessage(ReadOnlySpan<char> message, Color color) {
-            Player.SendPacket(new ChatPacket {
-                ChatColor = color,
-                ChatLineWidth = -1,
-                ChatText = message.ToString()
-            });
-        }
+        public void SendMessage(ReadOnlySpan<char> message, Color color) =>
+            Player.SendMessage(message.ToString(), color);
     }
 }
