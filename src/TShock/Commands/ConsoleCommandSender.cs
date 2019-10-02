@@ -33,14 +33,14 @@ namespace TShock.Commands {
         public IPlayer? Player => null;
 
         [Pure]
-        private static string GetColorString(Color color) => $"\x1b[38;2;{color.R};{color.G};{color.B}m";
+        private static string GetColorString(Color color) =>
+            FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, string.Empty);
         public void SendMessage(ReadOnlySpan<char> message, Color color) => SendMessage(message, GetColorString(color));
 
         private static void SendMessage(ReadOnlySpan<char> message, string colorString) {
             var output = new StringBuilder(colorString);
-            
             while (true) {
                 var leftBracket = message.IndexOf('[');
                 var rightBracket = leftBracket + 1 + message[(leftBracket + 1)..].IndexOf(']');
