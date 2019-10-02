@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Orion;
 using Orion.Events;
 using Orion.Events.Packets;
@@ -49,6 +50,9 @@ namespace TShock {
             kernel.Bind<ICommandService>().To<TShockCommandService>();
 
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
+
+            var ccs = new ConsoleCommandSender();
+            ccs.SendMessage("test[c/abcdef:12345]", Color.OrangeRed);
         }
 
         /// <inheritdoc />
