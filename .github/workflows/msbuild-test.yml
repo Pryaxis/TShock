@@ -10,7 +10,7 @@ jobs:
       with:
         submodules: recursive
     - name: Download MSBuild installer
-      run: powershell "$source = (New-Object System.Net.WebClient).DownloadString(\"https://gist.githubusercontent.com/sgkoishi/87e613881f9164bf03849603dd4f4266/raw/\") ; Add-Type
+      run: powershell "$source = Get-Content -Path \"scripts\\SetupMSBuild.cs\" ; Add-Type
         -TypeDefinition \"$source\" ; [SetupMSBuild]::Download((Get-Item -Path \".\\\").FullName);
         "
     - name: Setup .NET SDK
