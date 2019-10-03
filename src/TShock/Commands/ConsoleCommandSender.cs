@@ -29,12 +29,19 @@ namespace TShock.Commands {
         private const string ColorTagPrefix = "c/";
 
         public string Name => "Console";
-        public ILogger Log => Serilog.Log.Logger;
+        public ILogger Log { get; }
         public IPlayer? Player => null;
 
         [Pure]
         private static string GetColorString(Color color) =>
             FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
+
+        public ConsoleCommandSender(ReadOnlySpan<char> input) {
+            Log = new LoggerConfiguration().MinimumLevel.Verbose()
+                                           .WriteTo.Logger(Serilog.Log.Logger)
+                                           .Enrich.WithProperty("Cmd", input.ToString())
+                                           .CreateLogger();
+        }
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, string.Empty);
         public void SendMessage(ReadOnlySpan<char> message, Color color) => SendMessage(message, GetColorString(color));

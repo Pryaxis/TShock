@@ -23,47 +23,43 @@ using Xunit;
 
 namespace TShock.Commands {
     public class PlayerCommandSenderTests {
+        private readonly Mock<IPlayer> _mockPlayer = new Mock<IPlayer>();
+        private readonly ICommandSender _sender;
+
+        public PlayerCommandSenderTests() {
+            _sender = new PlayerCommandSender(_mockPlayer.Object, "test");
+        }
+
         [Fact]
         public void Name_Get_IsCorrect() {
-            var mockPlayer = new Mock<IPlayer>();
-            mockPlayer.SetupGet(p => p.Name).Returns("test");
-            ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
+            _mockPlayer.SetupGet(p => p.Name).Returns("test");
 
-            sender.Name.Should().Be("test");
+            _sender.Name.Should().Be("test");
 
-            mockPlayer.VerifyGet(p => p.Name);
-            mockPlayer.VerifyNoOtherCalls();
+            _mockPlayer.VerifyGet(p => p.Name);
+            _mockPlayer.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void Player_Get_IsCorrect() {
-            var player = new Mock<IPlayer>().Object;
-            ICommandSender sender = new PlayerCommandSender(player);
-
-            sender.Player.Should().NotBeNull();
-            sender.Player.Should().Be(player);
+            _sender.Player.Should().NotBeNull();
+            _sender.Player.Should().Be(_mockPlayer.Object);
         }
 
         [Fact]
         public void SendMessage_IsCorrect() {
-            var mockPlayer = new Mock<IPlayer>();
-            ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
-
-            sender.SendMessage("test");
+            _sender.SendMessage("test");
             
-            mockPlayer.Verify(p => p.SendMessage("test", Color.White));
-            mockPlayer.VerifyNoOtherCalls();
+            _mockPlayer.Verify(p => p.SendMessage("test", Color.White));
+            _mockPlayer.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void SendMessage_WithColor_IsCorrect() {
-            var mockPlayer = new Mock<IPlayer>();
-            ICommandSender sender = new PlayerCommandSender(mockPlayer.Object);
+            _sender.SendMessage("test", Color.Orange);
 
-            sender.SendMessage("test", Color.Orange);
-
-            mockPlayer.Verify(p => p.SendMessage("test", Color.Orange));
-            mockPlayer.VerifyNoOtherCalls();
+            _mockPlayer.Verify(p => p.SendMessage("test", Color.Orange));
+            _mockPlayer.VerifyNoOtherCalls();
         }
     }
 }

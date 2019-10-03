@@ -25,13 +25,6 @@ namespace TShock.Commands {
     /// Represents a command sender. Provides the ability to communicate with the sender.
     /// </summary>
     public interface ICommandSender {
-        private static readonly ICommandSender _console = new ConsoleCommandSender();
-
-        /// <summary>
-        /// Gets a console-based command sender.
-        /// </summary>
-        static ICommandSender Console => _console;
-
         /// <summary>
         /// Gets the sender's name.
         /// </summary>
@@ -46,14 +39,6 @@ namespace TShock.Commands {
         /// Gets the sender's player. If <see langword="null" />, then there is no associated player.
         /// </summary>
         IPlayer? Player { get; }
-
-        /// <summary>
-        /// Returns a command sender based on the given player.
-        /// </summary>
-        /// <param name="player">The player.</param>
-        /// <returns>A command sender based on the player.</returns>
-        static ICommandSender FromPlayer(IPlayer player) =>
-            new PlayerCommandSender(player ?? throw new ArgumentNullException(nameof(player)));
 
         /// <summary>
         /// Sends a message to the sender.

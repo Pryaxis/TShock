@@ -27,7 +27,7 @@ namespace TShock.Commands {
         public ILogger Log => throw new NotImplementedException();
         public IPlayer Player { get; }
 
-        public PlayerCommandSender(IPlayer player) {
+        public PlayerCommandSender(IPlayer player, ReadOnlySpan<char> input) {
             Debug.Assert(player != null, "player != null");
 
             Player = player;

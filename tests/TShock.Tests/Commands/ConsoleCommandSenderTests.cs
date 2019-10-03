@@ -16,28 +16,20 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using FluentAssertions;
-using Serilog;
 using Xunit;
 
 namespace TShock.Commands {
     public class ConsoleCommandSenderTests {
         [Fact]
         public void Name_Get_IsCorrect() {
-            var sender = ICommandSender.Console;
+            var sender = new ConsoleCommandSender("test");
 
             sender.Name.Should().Be("Console");
         }
 
         [Fact]
-        public void Log_Get_IsCorrect() {
-            var sender = ICommandSender.Console;
-
-            sender.Log.Should().BeSameAs(Log.Logger);
-        }
-
-        [Fact]
         public void Player_Get_IsCorrect() {
-            var sender = ICommandSender.Console;
+            var sender = new ConsoleCommandSender("test");
 
             sender.Player.Should().BeNull();
         }
