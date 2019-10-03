@@ -20,17 +20,31 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
+using Serilog.Events;
+using TShock.Commands.Logging;
 
 namespace TShock.Commands {
     internal sealed class PlayerCommandSender : ICommandSender {
+#if DEBUG
+        private const LogEventLevel LogLevel = LogEventLevel.Verbose;
+#else
+        private const LogEventLevel LogLevel = LogEventLevel.Error;
+#endif
+
         public string Name => Player.Name;
-        public ILogger Log => throw new NotImplementedException();
+        public ILogger Log { get; }
         public IPlayer Player { get; }
 
         public PlayerCommandSender(IPlayer player, ReadOnlySpan<char> input) {
             Debug.Assert(player != null, "player != null");
 
             Player = player;
+            Log = new LoggerConfiguration().MinimumLevel.Is(LogLevel)
+                                           .WriteTo.Sink(new PlayerLogSink(player))
+                                           .Enrich.WithProperty("Player", player.Name)
+                                           .Enrich.WithProperty("Cmd", input.ToString())
+                                           .WriteTo.Logger(Serilog.Log.Logger)
+                                           .CreateLogger();
         }
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, Color.White);

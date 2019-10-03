@@ -21,6 +21,7 @@ using Microsoft.Xna.Framework;
 using Orion;
 using Orion.Events;
 using Orion.Events.Packets;
+using Orion.Packets.World;
 using Orion.Players;
 using TShock.Commands;
 
@@ -50,9 +51,6 @@ namespace TShock {
             kernel.Bind<ICommandService>().To<TShockCommandService>();
 
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
-
-            var ccs = new ConsoleCommandSender();
-            ccs.SendMessage("test[c/abcdef:12345]", Color.OrangeRed);
         }
 
         /// <inheritdoc />
@@ -68,6 +66,9 @@ namespace TShock {
         }
 
         [EventHandler(EventPriority.Lowest)]
-        private void PacketReceiveHandler(object sender, PacketReceiveEventArgs args) { }
+        private void PacketReceiveHandler(object sender, PacketReceiveEventArgs args) {
+            var s = new PlayerCommandSender(args.Sender, "test");
+            s.SendMessage("TEST!!!!", Color.Orange);
+        }
     }
 }

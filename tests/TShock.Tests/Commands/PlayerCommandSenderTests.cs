@@ -28,6 +28,7 @@ namespace TShock.Commands {
 
         public PlayerCommandSenderTests() {
             _sender = new PlayerCommandSender(_mockPlayer.Object, "test");
+            _mockPlayer.VerifyGet(p => p.Name);
         }
 
         [Fact]

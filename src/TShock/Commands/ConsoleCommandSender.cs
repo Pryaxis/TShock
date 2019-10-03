@@ -22,9 +22,15 @@ using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
+using Serilog.Events;
 
 namespace TShock.Commands {
     internal sealed class ConsoleCommandSender : ICommandSender {
+#if DEBUG
+        private const LogEventLevel LogLevel = LogEventLevel.Verbose;
+#else
+        private const LogEventLevel LogLevel = LogEventLevel.Error;
+#endif
         private const string ResetColorString = "\x1b[0m";
         private const string ColorTagPrefix = "c/";
 
@@ -37,9 +43,9 @@ namespace TShock.Commands {
             FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
 
         public ConsoleCommandSender(ReadOnlySpan<char> input) {
-            Log = new LoggerConfiguration().MinimumLevel.Verbose()
-                                           .WriteTo.Logger(Serilog.Log.Logger)
+            Log = new LoggerConfiguration().MinimumLevel.Is(LogLevel)
                                            .Enrich.WithProperty("Cmd", input.ToString())
+                                           .WriteTo.Logger(Serilog.Log.Logger)
                                            .CreateLogger();
         }
 
