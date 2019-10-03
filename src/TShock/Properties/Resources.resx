@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandCtor_ByRefArgType" xml:space="preserve">
-    <value>By-reference argument type "{0}" not supported.</value>
-  </data>
-  <data name="CommandCtor_PointerArgType" xml:space="preserve">
-    <value>Pointer argument type "{0}" not supported.</value>
-  </data>
   <data name="CommandInvoke_Exception" xml:space="preserve">
     <value>Exception occurred while executing command.</value>
   </data>

@@ -55,16 +55,10 @@ namespace TShock.Commands {
             // Preprocessing parameters in the constructor allows us to learn the command's flags and optionals.
             void PreprocessParameter(ParameterInfo parameterInfo) {
                 var parameterType = parameterInfo.ParameterType;
-
-                // Check for types we don't support, such as by-reference and pointers.
                 if (parameterType.IsByRef) {
-                    throw new NotSupportedException(
-                        string.Format(Resources.CommandCtor_ByRefArgType, parameterType));
-                }
-
-                if (parameterType.IsPointer) {
-                    throw new NotSupportedException(
-                        string.Format(Resources.CommandCtor_PointerArgType, parameterType));
+                    throw new NotSupportedException($"By-reference argument type {parameterType} not supported.");
+                } else if (parameterType.IsPointer) {
+                    throw new NotSupportedException($"Pointer argument type {parameterType} not supported.");
                 }
 
                 // If the parameter is a bool and it is marked with FlagAttribute, we'll note it.

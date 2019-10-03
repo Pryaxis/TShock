@@ -61,24 +61,6 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By-reference argument type &quot;{0}&quot; not supported..
-        /// </summary>
-        internal static string CommandCtor_ByRefArgType {
-            get {
-                return ResourceManager.GetString("CommandCtor_ByRefArgType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pointer argument type &quot;{0}&quot; not supported..
-        /// </summary>
-        internal static string CommandCtor_PointerArgType {
-            get {
-                return ResourceManager.GetString("CommandCtor_PointerArgType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {
