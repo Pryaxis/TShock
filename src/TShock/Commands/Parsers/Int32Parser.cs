@@ -25,7 +25,7 @@ using TShock.Properties;
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {
         public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
-            var end = input.ScanFor(char.IsWhiteSpace);
+            var end = input.IndexOfOrEnd(' ');
             var parse = input[..end];
             input = input[end..];
 
@@ -40,13 +40,8 @@ namespace TShock.Commands.Parsers {
                     string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
-
-        public int GetDefault() => 0;
-
-        [ExcludeFromCodeCoverage]
-        object IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
         
         [ExcludeFromCodeCoverage]
-        object IArgumentParser.GetDefault() => GetDefault();
+        public int GetDefault() => 0;
     }
 }

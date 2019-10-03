@@ -148,6 +148,7 @@ namespace TShock.Commands {
         [InlineData("--recursive --force", true, true, 10)]
         [InlineData("--depth=1 --recursive -f", true, true, 1)]
         [InlineData("--force -r --depth=100 ", true, true, 100)]
+        [InlineData("--force -r --depth=   100 ", true, true, 100)]
         public void Invoke_FlagsAndOptionals_IsCorrect(string input, bool expectedForce, bool expectedRecursive,
                                                        int expectedDepth) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
@@ -286,6 +287,7 @@ namespace TShock.Commands {
         [InlineData("- ")]
         [InlineData("--")]
         [InlineData("-- ")]
+        [InlineData("--= ")]
         public void Invoke_InvalidHyphenatedArgs_ThrowsCommandParseException(string input) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));

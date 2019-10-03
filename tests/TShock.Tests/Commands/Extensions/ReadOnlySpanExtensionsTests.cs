@@ -22,6 +22,16 @@ using Xunit;
 namespace TShock.Commands.Extensions {
     public class ReadOnlySpanExtensionsTests {
         [Fact]
+        public void IndexOfOrEnd() {
+            "abcde".AsSpan().IndexOfOrEnd('b').Should().Be(1);
+        }
+
+        [Fact]
+        public void IndexOfOrEnd_AtEnd() {
+            "abcde".AsSpan().IndexOfOrEnd('f').Should().Be(5);
+        }
+
+        [Fact]
         public void ScanFor() {
             "abcdeA".AsSpan().ScanFor(char.IsUpper).Should().Be(5);
         }

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TShock.Commands.Parsers {
     /// <summary>
@@ -33,10 +34,17 @@ namespace TShock.Commands.Parsers {
         /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
         new TParse Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
 
+        [ExcludeFromCodeCoverage]
+        object? IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) =>
+            Parse(ref input, options);
+
         /// <summary>
         /// Gets a default instance of the parse type.
         /// </summary>
         /// <returns>A default instance of the parse type.</returns>
         new TParse GetDefault();
+
+        [ExcludeFromCodeCoverage]
+        object? IArgumentParser.GetDefault() => GetDefault();
     }
 }

@@ -80,13 +80,8 @@ namespace TShock.Commands.Parsers {
             input = input[end..];
             return builder.ToString();
         }
-
+        
+        [ExcludeFromCodeCoverage]
         public string GetDefault() => string.Empty;
-
-        [ExcludeFromCodeCoverage]
-        object IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
-
-        [ExcludeFromCodeCoverage]
-        object IArgumentParser.GetDefault() => GetDefault();
     }
 }

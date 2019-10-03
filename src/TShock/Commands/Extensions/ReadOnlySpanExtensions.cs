@@ -20,6 +20,11 @@ using System.Diagnostics;
 
 namespace TShock.Commands.Extensions {
     internal static class ReadOnlySpanExtensions {
+        public static int IndexOfOrEnd<T>(this ReadOnlySpan<T> span, T value) where T : IEquatable<T> {
+            var index = span.IndexOf(value);
+            return index >= 0 ? index : span.Length;
+        }
+
         public static int ScanFor<T>(this ReadOnlySpan<T> input, Func<T, bool> predicate, int start = 0) {
             Debug.Assert(predicate != null, "predicate != null");
 

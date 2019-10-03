@@ -102,34 +102,31 @@ namespace TShock.Commands {
 
             var shortFlags = new HashSet<char>();
             var longFlags = new HashSet<string>();
-            var optionals = new Dictionary<string, object>();
+            var optionals = new Dictionary<string, object?>();
 
-            object ParseArgument(ref ReadOnlySpan<char> input, ParameterInfo parameterInfo) {
+            object? ParseArgument(ref ReadOnlySpan<char> input, ParameterInfo parameterInfo) {
                 var parameterType = parameterInfo.ParameterType;
                 if (!_commandService.Parsers.TryGetValue(parameterType, out var parser)) {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedArgType, parameterType));
                 }
                 
+                input = input.TrimStart();
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
-                var start = input.ScanFor(c => !char.IsWhiteSpace(c));
-                if (start >= input.Length) {
-                    if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                        throw new CommandParseException(
-                            string.Format(Resources.CommandParse_MissingArg, parameterInfo));
-                    }
+                if (!input.IsEmpty) return parser.Parse(ref input, options);
 
-                    input = default;
-                    return parser.GetDefault();
+                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
+                    throw new CommandParseException(
+                        string.Format(Resources.CommandParse_MissingArg, parameterInfo));
                 }
 
-                input = input[start..];
-                return parser.Parse(ref input, options);
+                return parser.GetDefault();
             }
 
-            void ParseShortFlags(ref ReadOnlySpan<char> input, int start, int end) {
-                for (var i = start; i < end; ++i) {
-                    var c = input[i];
+            void ParseShortFlags(ref ReadOnlySpan<char> input, int space) {
+                if (space <= 1) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+
+                foreach (var c in input[1..space]) {
                     if (!_validShortFlags.Contains(c)) {
                         throw new CommandParseException(
                             string.Format(Resources.CommandParse_UnrecognizedShortFlag, c));
@@ -138,83 +135,66 @@ namespace TShock.Commands {
                     shortFlags.Add(c);
                 }
 
-                input = input[end..];
+                input = input[space..];
             }
 
-            void ParseLongFlag(ref ReadOnlySpan<char> input, int start, int end) {
-                var longFlag = input[start..end].ToString();
+            void ParseLongFlag(ref ReadOnlySpan<char> input, int space) {
+                if (space <= 2) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+
+                var longFlag = input[2..space].ToString();
                 if (!_validLongFlags.Contains(longFlag)) {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedLongFlag, longFlag));
                 }
 
-                input = input[end..];
                 longFlags.Add(longFlag);
+                input = input[space..];
             }
 
-            void ParseOptional(ref ReadOnlySpan<char> input, int start, int end) {
-                var optional = input[start..end].ToString();
+            void ParseOptional(ref ReadOnlySpan<char> input, int equals) {
+                if (equals <= 2) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+
+                var optional = input[2..equals].ToString();
                 if (!_validOptionals.TryGetValue(optional, out var parameterInfo)) {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedOptional, optional));
                 }
 
-                // Skip over the '='.
-                start = input.ScanFor(c => !char.IsWhiteSpace(c), end + 1);
-                input = input[start..];
+                input = input[(equals + 1)..];
                 optionals[optional] = ParseArgument(ref input, parameterInfo);
             }
 
             /*
              * Parse all hyphenated arguments:
-             * - Short flags are single-character flags and use one hyphen: "-f".
-             * - Long flags are string flags and use two hyphens: "--force".
-             * - Optionals specify values with two hyphens: "--depth=10".
+             * 1) Short flags are single-character flags and use one hyphen: "-f".
+             * 2) Long flags are string flags and use two hyphens: "--force".
+             * 3) Optionals specify values with two hyphens: "--depth=10".
              */
             void ParseHyphenatedArguments(ref ReadOnlySpan<char> input) {
-                while (true) {
-                    var start = input.ScanFor(c => !char.IsWhiteSpace(c));
-                    if (start >= input.Length || input[start] != '-') {
-                        input = input[start..];
-                        break;
-                    }
-
-                    if (++start >= input.Length) {
-                        throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
-                    }
-
-                    if (input[start] == '-') {
-                        if (++start >= input.Length) {
-                            throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
-                        }
-
-                        var end = input.ScanFor(c => char.IsWhiteSpace(c) || c == '=', start);
-                        if (start >= end) {
-                            throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
-                        }
-
-                        if (end >= input.Length || input[end] != '=') {
-                            ParseLongFlag(ref input, start, end);
+                input = input.TrimStart();
+                while (input.StartsWith("-")) {
+                    var space = input.IndexOfOrEnd(' ');
+                    if (input.StartsWith("--")) {
+                        var equals = input.IndexOfOrEnd('=');
+                        if (equals < space) {
+                            ParseOptional(ref input, equals);
                         } else {
-                            ParseOptional(ref input, start, end);
+                            ParseLongFlag(ref input, space);
                         }
                     } else {
-                        var end = input.ScanFor(char.IsWhiteSpace, start);
-                        if (start >= end) {
-                            throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
-                        }
-
-                        ParseShortFlags(ref input, start, end);
+                        ParseShortFlags(ref input, space);
                     }
+
+                    input = input.TrimStart();
                 }
             }
 
             /*
              * Parse a parameter:
-             * - If the parameter is an ICommandSender, then inject sender.
-             * - If the parameter is a bool and is marked with FlagAttribute, then inject the flag.
-             * - If the parameter is optional, then inject the optional or else the default value.
-             * - Otherwise, we parse the argument directly.
+             * 1) If the parameter is an ICommandSender, then inject sender.
+             * 2) If the parameter is a bool and is marked with FlagAttribute, then inject the flag.
+             * 3) If the parameter is optional, then inject the optional or else the default value.
+             * 4) Otherwise, we parse the argument directly.
              */
             object? ParseParameter(ParameterInfo parameterInfo, ref ReadOnlySpan<char> input) {
                 var parameterType = parameterInfo.ParameterType;
@@ -246,8 +226,7 @@ namespace TShock.Commands {
             }
 
             // Ensure that we've consumed all of the useful parts of the input.
-            var end = input.ScanFor(c => !char.IsWhiteSpace(c));
-            if (end < input.Length) {
+            if (!input.IsWhiteSpace()) {
                 throw new CommandParseException(Resources.CommandParse_TooManyArgs);
             }
 
