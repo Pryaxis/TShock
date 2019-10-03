@@ -25,6 +25,16 @@
         "projectManagement",
         "test"
       ]
+    },
+    {
+      "login": "sgkoishi",
+      "name": "Stargazing Koishi",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9637711?v=4",
+      "profile": "https://sgkoi.dev",
+      "contributions": [
+        "code",
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
