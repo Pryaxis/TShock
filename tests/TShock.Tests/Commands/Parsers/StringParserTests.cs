@@ -57,7 +57,7 @@ namespace TShock.Commands.Parsers {
         }
 
         [Fact]
-        public void Parse_ToEndOfInput_IsCorrect() {
+        public void Parse_ToEndOfInput() {
             var parser = new StringParser();
             var input = @"blah blah ""test"" blah blah".AsSpan();
 
@@ -68,7 +68,7 @@ namespace TShock.Commands.Parsers {
         }
 
         [Fact]
-        public void Parse_AllowEmpty_IsCorrect() {
+        public void Parse_AllowEmpty() {
             var parser = new StringParser();
             var input = string.Empty.AsSpan();
 

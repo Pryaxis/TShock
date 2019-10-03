@@ -64,7 +64,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void Invoke_Sender_IsCorrect() {
+        public void Invoke_Sender() {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;

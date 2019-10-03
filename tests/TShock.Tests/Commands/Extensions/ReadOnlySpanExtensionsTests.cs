@@ -22,12 +22,12 @@ using Xunit;
 namespace TShock.Commands.Extensions {
     public class ReadOnlySpanExtensionsTests {
         [Fact]
-        public void ScanFor_IsCorrect() {
+        public void ScanFor() {
             "abcdeA".AsSpan().ScanFor(char.IsUpper).Should().Be(5);
         }
 
         [Fact]
-        public void ScanFor_ReachesEnd_IsCorrect() {
+        public void ScanFor_ReachesEnd() {
             "abcdefghijklmnopqrstuvwxyz".AsSpan().ScanFor(char.IsUpper).Should().Be(26);
         }
     }

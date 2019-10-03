@@ -41,7 +41,7 @@ namespace TShock.Events.Commands {
         }
 
         [Fact]
-        public void Sender_Get_IsCorrect() {
+        public void Sender_Get() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
             var args = new CommandExecuteEventArgs(command, sender, "");
@@ -50,7 +50,7 @@ namespace TShock.Events.Commands {
         }
 
         [Fact]
-        public void Input_Get_IsCorrect() {
+        public void Input_Get() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
             var args = new CommandExecuteEventArgs(command, sender, "test");

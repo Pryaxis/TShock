@@ -36,14 +36,14 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void CommandName_Get_IsCorrect() {
+        public void CommandName_Get() {
             var attribute = new CommandHandlerAttribute("test");
 
             attribute.CommandName.Should().Be("test");
         }
 
         [Fact]
-        public void CommandSubNames_Get_IsCorrect() {
+        public void CommandSubNames_Get() {
             var attribute = new CommandHandlerAttribute("", "test1", "test2");
 
             attribute.CommandSubNames.Should().BeEquivalentTo("test1", "test2");

@@ -29,7 +29,7 @@ namespace TShock.Commands.Parsers {
         }
 
         [Fact]
-        public void Options_Get_IsCorrect() {
+        public void Options_Get() {
             var attribute = new ParseOptionsAttribute("test", "test2");
 
             attribute.Options.Should().BeEquivalentTo("test", "test2");

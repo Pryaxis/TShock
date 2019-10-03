@@ -37,7 +37,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisteredCommands_Get_IsCorrect() {
+        public void RegisteredCommands_Get() {
             var testClass = new TestClass();
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
@@ -46,7 +46,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisteredParsers_Get_IsCorrect() {
+        public void RegisteredParsers_Get() {
             var parser = new Mock<IArgumentParser<object>>().Object;
             _commandService.RegisterParser(parser);
 
@@ -54,7 +54,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisterCommands_IsCorrect() {
+        public void RegisterCommands() {
             var testClass = new TestClass();
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
@@ -81,7 +81,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void UnregisterCommand_IsCorrect() {
+        public void UnregisterCommand() {
             var testClass = new TestClass();
             var commands = _commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
@@ -121,7 +121,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void CommandRegister_Canceled_IsCorrect() {
+        public void CommandRegister_Canceled() {
             var testClass = new TestClass();
             _commandService.CommandRegister += (sender, args) => {
                 args.Cancel();
@@ -147,7 +147,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void CommandUnregister_Canceled_IsCorrect() {
+        public void CommandUnregister_Canceled() {
             var testClass = new TestClass();
             var commands = _commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];

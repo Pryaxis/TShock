@@ -32,7 +32,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void Name_Get_IsCorrect() {
+        public void Name_Get() {
             _mockPlayer.SetupGet(p => p.Name).Returns("test");
 
             _sender.Name.Should().Be("test");
@@ -42,13 +42,13 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void Player_Get_IsCorrect() {
+        public void Player_Get() {
             _sender.Player.Should().NotBeNull();
             _sender.Player.Should().Be(_mockPlayer.Object);
         }
 
         [Fact]
-        public void SendMessage_IsCorrect() {
+        public void SendMessage() {
             _sender.SendMessage("test");
             
             _mockPlayer.Verify(p => p.SendMessage("test", Color.White));
@@ -56,7 +56,7 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void SendMessage_WithColor_IsCorrect() {
+        public void SendMessage_WithColor() {
             _sender.SendMessage("test", Color.Orange);
 
             _mockPlayer.Verify(p => p.SendMessage("test", Color.Orange));

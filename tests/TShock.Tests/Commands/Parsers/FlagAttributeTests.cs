@@ -36,7 +36,7 @@ namespace TShock.Commands.Parsers {
         }
 
         [Fact]
-        public void Flags_Get_IsCorrect() {
+        public void Flags_Get() {
             var attribute = new FlagAttribute("test1", "test2", "test3");
 
             attribute.Flags.Should().BeEquivalentTo("test1", "test2", "test3");

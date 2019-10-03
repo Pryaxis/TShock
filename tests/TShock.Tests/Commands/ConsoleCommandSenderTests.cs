@@ -21,14 +21,14 @@ using Xunit;
 namespace TShock.Commands {
     public class ConsoleCommandSenderTests {
         [Fact]
-        public void Name_Get_IsCorrect() {
+        public void Name_Get() {
             var sender = new ConsoleCommandSender("test");
 
             sender.Name.Should().Be("Console");
         }
 
         [Fact]
-        public void Player_Get_IsCorrect() {
+        public void Player_Get() {
             var sender = new ConsoleCommandSender("test");
 
             sender.Player.Should().BeNull();
