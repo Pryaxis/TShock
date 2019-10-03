@@ -1,0 +1,41 @@
+name: Build Server
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: recursive
+    - name: Download MSBuild installer
+      run: powershell "$source = Get-Content -Path \"scripts\\SetupMSBuild.cs\" ; Add-Type
+        -TypeDefinition \"$source\" ; [SetupMSBuild]::Download((Get-Item -Path \".\\\").FullName);
+        "
+    - name: Setup .NET SDK
+      run: start /i /wait vs_BuildTools.exe --add "Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools" -p --wait --installPath "%cd%\VSBuildTools" --norestart --nocache
+    - name: OTAPI Debug
+      run: |
+        nuget.exe restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
+        ".\VSBuildTools\MSBuild\Current\Bin\MSBuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
+        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug
+        TShock.Modifications.Bootstrapper.exe
+    - name: OTAPI Release
+      run: |
+        nuget.exe restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
+        ".\VSBuildTools\MSBuild\Current\Bin\MSBuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
+        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
+        TShock.Modifications.Bootstrapper.exe
+    - name: TerrariaServerAPI
+      run: |
+        cd .\TerrariaServerAPI
+        "..\VSBuildTools\MSBuild\Current\Bin\MSBuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
+    - name: TShock
+      run: |
+        nuget.exe restore TShock.sln
+        ".\VSBuildTools\MSBuild\Current\Bin\MSBuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
+    - uses: actions/upload-artifact@master
+      with:
+        name: TShockRelease
+        path: TShockAPI\bin\Release
