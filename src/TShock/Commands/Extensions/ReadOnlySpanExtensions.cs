@@ -24,17 +24,5 @@ namespace TShock.Commands.Extensions {
             var index = span.IndexOf(value);
             return index >= 0 ? index : span.Length;
         }
-
-        public static int ScanFor<T>(this ReadOnlySpan<T> input, Func<T, bool> predicate, int start = 0) {
-            Debug.Assert(predicate != null, "predicate != null");
-
-            while (start < input.Length) {
-                if (predicate(input[start])) break;
-
-                ++start;
-            }
-
-            return start;
-        }
     }
 }

@@ -110,8 +110,7 @@ namespace TShock.Commands {
                 if (!input.IsEmpty) return parser.Parse(ref input, options);
 
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                    throw new CommandParseException(
-                        string.Format(Resources.CommandParse_MissingArg, parameterInfo));
+                    throw new CommandParseException(string.Format(Resources.CommandParse_MissingArg, parameterInfo));
                 }
 
                 return parser.GetDefault();
@@ -122,8 +121,7 @@ namespace TShock.Commands {
 
                 foreach (var c in input[1..space]) {
                     if (!_validShortFlags.Contains(c)) {
-                        throw new CommandParseException(
-                            string.Format(Resources.CommandParse_UnrecognizedShortFlag, c));
+                        throw new CommandParseException(string.Format(Resources.CommandParse_UnrecognizedShortFlag, c));
                     }
 
                     shortFlags.Add(c);
@@ -192,14 +190,13 @@ namespace TShock.Commands {
              */
             object? ParseParameter(ParameterInfo parameterInfo, ref ReadOnlySpan<char> input) {
                 var parameterType = parameterInfo.ParameterType;
-
                 if (parameterType == typeof(ICommandSender)) return sender;
 
                 if (parameterType == typeof(bool)) {
                     var attribute = parameterInfo.GetCustomAttribute<FlagAttribute?>();
                     if (attribute != null) {
                         return attribute.Flags.Any(f => f.Length == 1 && shortFlags.Contains(f[0]) ||
-                                                        longFlags.Contains(f));
+                                                   longFlags.Contains(f));
                     }
                 }
 

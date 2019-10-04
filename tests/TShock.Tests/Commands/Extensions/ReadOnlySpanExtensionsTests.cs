@@ -30,15 +30,5 @@ namespace TShock.Commands.Extensions {
         public void IndexOfOrEnd_AtEnd() {
             "abcde".AsSpan().IndexOfOrEnd('f').Should().Be(5);
         }
-
-        [Fact]
-        public void ScanFor() {
-            "abcdeA".AsSpan().ScanFor(char.IsUpper).Should().Be(5);
-        }
-
-        [Fact]
-        public void ScanFor_ReachesEnd() {
-            "abcdefghijklmnopqrstuvwxyz".AsSpan().ScanFor(char.IsUpper).Should().Be(26);
-        }
     }
 }
