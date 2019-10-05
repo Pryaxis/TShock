@@ -28,9 +28,9 @@ namespace TShock.Commands {
     [MeansImplicitUse]
     public sealed class CommandHandlerAttribute : Attribute {
         /// <summary>
-        /// Gets the command's name. This includes the command's namespace: e.g., "tshock:kick".
+        /// Gets the command's qualified name. This includes the command's namespace: e.g., "tshock:kick".
         /// </summary>
-        public string CommandName { get; }
+        public string QualifiedCommandName { get; }
 
         /// <summary>
         /// Gets the command's sub-names.
@@ -38,16 +38,45 @@ namespace TShock.Commands {
         public IEnumerable<string> CommandSubNames { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the given command name
-        /// and sub-names.
+        /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the given qualified
+        /// command name and sub-names.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="commandSubNames">The command sub-names.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <see langword="null" />.
+        /// <param name="qualifiedCommandName">
+        /// The qualified command name. This includes the namespace: e.g., "tshock:kick".
+        /// </param>
+        /// <param name="commandSubNames">The command sub-names. This can be empty.</param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="qualifiedCommandName"/> is missing the namespace or name, or contains a space.
         /// </exception>
-        public CommandHandlerAttribute(string commandName, params string[] commandSubNames) {
-            CommandName = commandName ?? throw new ArgumentNullException(nameof(commandName));
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="qualifiedCommandName"/> or <paramref name="commandSubNames"/> are <see langword="null" />.
+        /// </exception>
+        public CommandHandlerAttribute(string qualifiedCommandName, params string[] commandSubNames) {
+            if (qualifiedCommandName is null) {
+                throw new ArgumentNullException(nameof(qualifiedCommandName));
+            }
+
+            if (commandSubNames is null) {
+                throw new ArgumentNullException(nameof(commandSubNames));
+            }
+
+            var colon = qualifiedCommandName.IndexOf(':');
+            if (colon <= 0) {
+                throw new ArgumentException("Qualified command name is missing the namespace.",
+                    nameof(qualifiedCommandName));
+            }
+            
+            if (colon >= qualifiedCommandName.Length - 1) {
+                throw new ArgumentException("Qualified command name is missing the name.",
+                    nameof(qualifiedCommandName));
+            }
+
+            if (qualifiedCommandName.IndexOf(' ') >= 0) {
+                throw new ArgumentException("Qualified command name contains a space.",
+                    nameof(qualifiedCommandName));
+            }
+
+            QualifiedCommandName = qualifiedCommandName;
             CommandSubNames = commandSubNames ?? throw new ArgumentNullException(nameof(commandSubNames));
         }
     }

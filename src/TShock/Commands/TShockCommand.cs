@@ -21,10 +21,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Orion.Events.Extensions;
-using TShock.Commands.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using TShock.Properties;
+using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
@@ -35,7 +35,7 @@ namespace TShock.Commands {
         private readonly ParameterInfo[] _parameterInfos;
         private readonly object?[] _parameters;
 
-        public string Name { get; }
+        public string QualifiedName { get; }
         public IEnumerable<string> SubNames { get; }
         public object HandlerObject { get; }
         public MethodBase Handler { get; }
@@ -47,7 +47,7 @@ namespace TShock.Commands {
             Debug.Assert(handler != null, "handler != null");
 
             _commandService = commandService;
-            Name = attribute.CommandName;
+            QualifiedName = attribute.QualifiedCommandName;
             SubNames = attribute.CommandSubNames;
             HandlerObject = handlerObject;
             Handler = handler;

@@ -21,6 +21,17 @@ using Xunit;
 
 namespace TShock.Commands {
     public class CommandHandlerAttributeTests {
+        [Theory]
+        [InlineData("test")]
+        [InlineData(":test")]
+        [InlineData("test:")]
+        [InlineData(":")]
+        public void Ctor_InvalidQualifiedCommandName_ThrowsArgumentException(string qualifiedCommandName) {
+            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(qualifiedCommandName);
+
+            func.Should().Throw<ArgumentException>();
+        }
+
         [Fact]
         public void Ctor_NullCommandName_ThrowsArgumentNullException() {
             Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(null);
@@ -30,21 +41,21 @@ namespace TShock.Commands {
 
         [Fact]
         public void Ctor_NullCommandSubNames_ThrowsArgumentNullException() {
-            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute("", null);
+            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute("tshock_test:test", null);
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void CommandName_Get() {
-            var attribute = new CommandHandlerAttribute("test");
+        public void QualifiedCommandName_Get() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test");
 
-            attribute.CommandName.Should().Be("test");
+            attribute.QualifiedCommandName.Should().Be("tshock_test:test");
         }
 
         [Fact]
         public void CommandSubNames_Get() {
-            var attribute = new CommandHandlerAttribute("", "test1", "test2");
+            var attribute = new CommandHandlerAttribute("tshock_test:test", "test1", "test2");
 
             attribute.CommandSubNames.Should().BeEquivalentTo("test1", "test2");
         }

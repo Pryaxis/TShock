@@ -25,9 +25,9 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommand {
         /// <summary>
-        /// Gets the command's name.
+        /// Gets the command's qualified name. This includes the namespace: e.g., "tshock:kick".
         /// </summary>
-        string Name { get; }
+        string QualifiedName { get; }
 
         /// <summary>
         /// Gets the command's sub-names.
