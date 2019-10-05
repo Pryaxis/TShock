@@ -19,8 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using TShock.Commands.Extensions;
 using TShock.Properties;
+using TShock.Utils.Extensions;
 
 namespace TShock.Commands.Parsers {
     internal sealed class Int32Parser : IArgumentParser<int> {

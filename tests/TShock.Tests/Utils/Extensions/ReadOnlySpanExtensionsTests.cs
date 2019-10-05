@@ -16,13 +16,19 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
+using FluentAssertions;
+using Xunit;
 
-namespace TShock.Commands.Extensions {
-    internal static class ReadOnlySpanExtensions {
-        public static int IndexOfOrEnd<T>(this ReadOnlySpan<T> span, T value) where T : IEquatable<T> {
-            var index = span.IndexOf(value);
-            return index >= 0 ? index : span.Length;
+namespace TShock.Utils.Extensions {
+    public class ReadOnlySpanExtensionsTests {
+        [Fact]
+        public void IndexOfOrEnd() {
+            "abcde".AsSpan().IndexOfOrEnd('b').Should().Be(1);
+        }
+
+        [Fact]
+        public void IndexOfOrEnd_AtEnd() {
+            "abcde".AsSpan().IndexOfOrEnd('f').Should().Be(5);
         }
     }
 }
