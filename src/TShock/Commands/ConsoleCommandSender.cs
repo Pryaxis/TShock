@@ -42,10 +42,10 @@ namespace TShock.Commands {
         private static string GetColorString(Color color) =>
             FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
 
-        public ConsoleCommandSender(ReadOnlySpan<char> input) {
+        public ConsoleCommandSender(string input) {
             Log = new LoggerConfiguration()
                 .MinimumLevel.Is(LogLevel)
-                .Enrich.WithProperty("Cmd", input.ToString())
+                .Enrich.WithProperty("Cmd", input)
                 .WriteTo.Logger(Serilog.Log.Logger)
                 .CreateLogger();
         }

@@ -23,6 +23,7 @@ using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
 using Orion.Events.Players;
+using Orion.Events.Server;
 using Orion.Players;
 using Serilog;
 using TShock.Commands;
@@ -74,6 +75,8 @@ namespace TShock {
 
         /// <inheritdoc />
         protected override void Initialize() {
+            Kernel.ServerCommand += ServerCommandHandler;
+
             PlayerService.PlayerChat += PlayerChatHandler;
         }
 
@@ -82,8 +85,22 @@ namespace TShock {
             if (!disposeManaged) {
                 return;
             }
+
+            Kernel.ServerCommand -= ServerCommandHandler;
             
             PlayerService.PlayerChat -= PlayerChatHandler;
+        }
+
+        [EventHandler(EventPriority.Lowest)]
+        private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
+            args.Cancel("tshock: command executing");
+
+            var input = args.Input;
+            if (input.StartsWith('/')) {
+                input = input.Substring(1);
+            }
+
+            ExecuteCommand(new ConsoleCommandSender(input), input);
         }
 
         [EventHandler(EventPriority.Lowest)]
