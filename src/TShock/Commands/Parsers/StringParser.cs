@@ -41,7 +41,9 @@ namespace TShock.Commands.Parsers {
                 // Handle quotes.
                 if (c == '"') {
                     ++end;
-                    if (isInQuotes) break;
+                    if (isInQuotes) {
+                        break;
+                    }
 
                     isInQuotes = true;
                     continue;

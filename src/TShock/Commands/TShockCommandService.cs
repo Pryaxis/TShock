@@ -80,9 +80,8 @@ namespace TShock.Commands {
             return registeredCommands;
         }
 
-        public void RegisterParser<TParse>(IArgumentParser<TParse> parser) {
+        public void RegisterParser<TParse>(IArgumentParser<TParse> parser) =>
             _parsers[typeof(TParse)] = parser ?? throw new ArgumentNullException(nameof(parser));
-        }
 
         public ICommand FindCommand(ref ReadOnlySpan<char> input) {
             string ProcessQualifiedName(ref ReadOnlySpan<char> input) {

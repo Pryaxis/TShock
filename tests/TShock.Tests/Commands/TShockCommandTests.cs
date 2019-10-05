@@ -361,9 +361,7 @@ namespace TShock.Commands {
             public int HyphenatedOptionalIsLong { get; private set; }
 
             [CommandHandler("tshock_tests:test")]
-            public void TestCommand(ICommandSender sender) {
-                Sender = sender;
-            }
+            public void TestCommand(ICommandSender sender) => Sender = sender;
 
             [CommandHandler("tshock_tests:test_int_string")]
             public void TestCommand_Int_String(ICommandSender sender, int @int, string @string) {
@@ -413,17 +411,13 @@ namespace TShock.Commands {
             }
 
             [CommandHandler("tshock_tests:exception")]
-            public void TestCommand_Exception(ICommandSender sender) {
-                throw new NotImplementedException();
-            }
+            public void TestCommand_Exception(ICommandSender sender) => throw new NotImplementedException();
 
             [CommandHandler("tshock_tests:test_no_in")]
             public void TestCommand_NoIn(ICommandSender sender, in int x) { }
 
             [CommandHandler("tshock_tests:test_no_out")]
-            public void TestCommand_NoOut(ICommandSender sender, out int x) {
-                x = 0;
-            }
+            public void TestCommand_NoOut(ICommandSender sender, out int x) => x = 0;
 
             [CommandHandler("tshock_tests:test_no_out")]
             public void TestCommand_NoRef(ICommandSender sender, ref int x) { }

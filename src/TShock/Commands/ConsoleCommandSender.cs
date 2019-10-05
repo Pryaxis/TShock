@@ -58,7 +58,9 @@ namespace TShock.Commands {
             while (true) {
                 var leftBracket = message.IndexOf('[');
                 var rightBracket = leftBracket + 1 + message[(leftBracket + 1)..].IndexOf(']');
-                if (leftBracket < 0 || rightBracket < 0) break;
+                if (leftBracket < 0 || rightBracket < 0) {
+                    break;
+                }
 
                 output.Append(message[..leftBracket]);
                 var inside = message[(leftBracket + 1)..rightBracket];

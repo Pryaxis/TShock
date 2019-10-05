@@ -32,9 +32,7 @@ namespace TShock.Commands {
             _commandService = new TShockCommandService();
         }
 
-        public void Dispose() {
-            _commandService.Dispose();
-        }
+        public void Dispose() => _commandService.Dispose();
 
         [Fact]
         public void Commands_Get() {

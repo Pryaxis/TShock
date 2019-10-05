@@ -115,7 +115,9 @@ namespace TShock.Commands {
 
                 input = input.TrimStart();
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
-                if (!input.IsEmpty) return parser.Parse(ref input, options);
+                if (!input.IsEmpty) {
+                    return parser.Parse(ref input, options);
+                }
 
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
                     throw new CommandParseException(

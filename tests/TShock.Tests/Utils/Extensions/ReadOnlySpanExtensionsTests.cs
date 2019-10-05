@@ -22,13 +22,9 @@ using Xunit;
 namespace TShock.Utils.Extensions {
     public class ReadOnlySpanExtensionsTests {
         [Fact]
-        public void IndexOfOrEnd() {
-            "abcde".AsSpan().IndexOfOrEnd('b').Should().Be(1);
-        }
+        public void IndexOfOrEnd() => "abcde".AsSpan().IndexOfOrEnd('b').Should().Be(1);
 
         [Fact]
-        public void IndexOfOrEnd_AtEnd() {
-            "abcde".AsSpan().IndexOfOrEnd('f').Should().Be(5);
-        }
+        public void IndexOfOrEnd_AtEnd() => "abcde".AsSpan().IndexOfOrEnd('f').Should().Be(5);
     }
 }
