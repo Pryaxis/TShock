@@ -16,14 +16,11 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Moq;
 using Orion.Players;
 using Serilog;
 using Serilog.Core;
-using Serilog.Events;
 using Xunit;
 
 namespace TShock.Commands.Logging {

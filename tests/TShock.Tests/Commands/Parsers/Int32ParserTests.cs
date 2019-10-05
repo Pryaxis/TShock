@@ -35,7 +35,7 @@ namespace TShock.Commands.Parsers {
 
             input.ToString().Should().Be(expectedNextInput);
         }
-        
+
         [Theory]
         [InlineData("")]
         [InlineData("    ")]
@@ -61,7 +61,7 @@ namespace TShock.Commands.Parsers {
 
             func.Should().Throw<CommandParseException>().WithInnerException<OverflowException>();
         }
-        
+
         [Theory]
         [InlineData("aaa")]
         [InlineData("123a")]
@@ -72,7 +72,6 @@ namespace TShock.Commands.Parsers {
                 var input = inputString.AsSpan();
                 return parser.Parse(ref input);
             };
-
             func.Should().Throw<CommandParseException>().WithInnerException<FormatException>();
         }
     }

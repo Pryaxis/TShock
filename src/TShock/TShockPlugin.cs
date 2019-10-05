@@ -16,20 +16,33 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Xna.Framework;
+using System.Globalization;
 using Orion;
 using Orion.Events;
-using Orion.Events.Packets;
+using Orion.Events.Extensions;
+using Orion.Events.Players;
 using Orion.Players;
 using TShock.Commands;
+using TShock.Properties;
 
 namespace TShock {
     /// <summary>
     /// Represents the TShock plugin.
     /// </summary>
     public sealed class TShockPlugin : OrionPlugin {
+        // Map from Terraria command -> canonical command. This is used to unify Terraria and TShock commands.
+        private static readonly IDictionary<string, string> _canonicalCommands = new Dictionary<string, string> {
+            ["Say"] = "",
+            ["Emote"] = "/me ",
+            ["Party"] = "/p ",
+            ["Playing"] = "/playing ",
+            ["Roll"] = "/roll "
+        };
+
         private readonly Lazy<IPlayerService> _playerService;
+        private readonly Lazy<ICommandService> _commandService;
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
@@ -45,16 +58,19 @@ namespace TShock {
         /// </summary>
         /// <param name="kernel">The Orion kernel.</param>
         /// <param name="playerService">The player service.</param>
+        /// <param name="commandService">The command service.</param>
         /// <exception cref="ArgumentNullException">Any of the services are <see langword="null"/>.</exception>
-        public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService) : base(kernel) {
+        public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService,
+                Lazy<ICommandService> commandService) : base(kernel) {
             Kernel.Bind<ICommandService>().To<TShockCommandService>();
 
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
+            _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
         }
 
         /// <inheritdoc />
         protected override void Initialize() {
-            _playerService.Value.PacketReceive += PacketReceiveHandler;
+            _playerService.Value.PlayerChat += PlayerChatHandler;
         }
 
         /// <inheritdoc />
@@ -63,13 +79,47 @@ namespace TShock {
                 return;
             }
 
-            _playerService.Value.PacketReceive -= PacketReceiveHandler;
+            _playerService.Value.PlayerChat -= PlayerChatHandler;
         }
 
         [EventHandler(EventPriority.Lowest)]
-        private void PacketReceiveHandler(object sender, PacketReceiveEventArgs args) {
-            var s = new PlayerCommandSender(args.Sender, "test");
-            s.SendMessage("TEST!!!!", Color.Orange);
+        private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
+            if (args.IsCanceled()) {
+                return;
+            }
+
+            var chatCommand = args.ChatCommand;
+            if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
+                args.Cancel("Terraria command is invalid");
+                return;
+            }
+
+            var chat = canonicalCommand + args.ChatText;
+            if (chat.StartsWith('/')) {
+                args.Cancel("TShock command executing");
+
+                ICommandSender commandSender = new PlayerCommandSender(args.Player, chat);
+                var input = chat.AsSpan();
+                ICommand command;
+
+                try {
+                    command = _commandService.Value.FindCommand(ref input);
+                } catch (CommandParseException ex) {
+                    commandSender.SendErrorMessage(
+                        string.Format(CultureInfo.InvariantCulture, Resources.Chat_BadCommand, ex.Message));
+                    return;
+                }
+
+                try {
+                    command.Invoke(commandSender, input);
+                } catch (CommandParseException ex) {
+                    commandSender.SendErrorMessage(ex.Message);
+                    return;
+                } catch (CommandExecuteException ex) {
+                    commandSender.SendErrorMessage(ex.Message);
+                    return;
+                }
+            }
         }
     }
 }

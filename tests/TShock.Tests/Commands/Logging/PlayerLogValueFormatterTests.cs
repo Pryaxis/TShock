@@ -61,24 +61,24 @@ namespace TShock.Commands.Logging {
         public void Format_Sequence() {
             var formatter = new PlayerLogValueFormatter();
 
-            formatter.Format(new SequenceValue(new[] {new ScalarValue(1), new ScalarValue(2)}))
-                     .Should().MatchRegex(@"\[\[c/[a-fA-F0-9]{6}:1\], \[c/[a-fA-F0-9]{6}:2\]\]");
+            formatter.Format(new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2) }))
+                .Should().MatchRegex(@"\[\[c/[a-fA-F0-9]{6}:1\], \[c/[a-fA-F0-9]{6}:2\]\]");
         }
 
         [Fact]
         public void Format_Structure() {
             var formatter = new PlayerLogValueFormatter();
 
-            formatter.Format(new StructureValue(new[] {new LogEventProperty("Test", new ScalarValue(1))}))
-                     .Should().MatchRegex(@"{Test=\[c/[a-fA-F0-9]{6}:1\]}");
+            formatter.Format(new StructureValue(new[] { new LogEventProperty("Test", new ScalarValue(1)) }))
+                .Should().MatchRegex(@"{Test=\[c/[a-fA-F0-9]{6}:1\]}");
         }
 
         [Fact]
         public void Format_Structure_WithTypeTag() {
             var formatter = new PlayerLogValueFormatter();
 
-            formatter.Format(new StructureValue(new[] {new LogEventProperty("Test", new ScalarValue(1))}, "Type"))
-                     .Should().MatchRegex(@"\[c/[a-fA-F0-9]{6}:Type\] {Test=\[c/[a-fA-F0-9]{6}:1\]}");
+            formatter.Format(new StructureValue(new[] { new LogEventProperty("Test", new ScalarValue(1)) }, "Type"))
+                .Should().MatchRegex(@"\[c/[a-fA-F0-9]{6}:Type\] {Test=\[c/[a-fA-F0-9]{6}:1\]}");
         }
 
         [Fact]

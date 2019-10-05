@@ -69,7 +69,7 @@ namespace TShock.Commands {
         /// </summary>
         /// <typeparam name="TParse">The parse type.</typeparam>
         /// <param name="parser">The parser.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is ().</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null"/>.</exception>
         void RegisterParser<TParse>(IArgumentParser<TParse> parser);
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace TShock.Commands {
         /// <returns>
         /// <see langword="true"/> if <paramref name="command"/> was unregistered; otherwise, <see langword="false"/>.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is ().</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null"/>.</exception>
         bool UnregisterCommand(ICommand command);
     }
 }

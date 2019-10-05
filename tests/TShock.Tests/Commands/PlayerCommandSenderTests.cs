@@ -50,7 +50,7 @@ namespace TShock.Commands {
         [Fact]
         public void SendMessage() {
             _sender.SendMessage("test");
-            
+
             _mockPlayer.Verify(p => p.SendMessage("test", Color.White));
             _mockPlayer.VerifyNoOtherCalls();
         }

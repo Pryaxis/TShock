@@ -37,7 +37,7 @@ namespace TShock.Commands.Parsers {
         /// <param name="flag">The flag.</param>
         /// <param name="alternateFlags">The alternate flags. This may be empty.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are ().
+        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are <see langword="null"/>.
         /// </exception>
         public FlagAttribute(string flag, params string[] alternateFlags) {
             if (flag is null) {

@@ -209,7 +209,7 @@ namespace TShock.Commands {
                 args.Input.Should().BeEmpty();
             };
             _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
-            
+
             command.Invoke(commandSender, "");
 
             testClass.Sender.Should().BeSameAs(commandSender);
@@ -229,7 +229,7 @@ namespace TShock.Commands {
 
             command.Invoke(commandSender, "failing input");
         }
-        
+
         [Theory]
         [InlineData("1 ")]
         [InlineData("-7345734    ")]
@@ -374,14 +374,14 @@ namespace TShock.Commands {
 
             [CommandHandler("tshock_tests:test_no_ptr")]
             public unsafe void TestCommand_NoPointer(ICommandSender sender, int* x) { }
-            
+
             [CommandHandler("tshock_tests:test_flags")]
             public void TestCommand_Flags(ICommandSender sender, [Flag("x", "xxx")] bool x, [Flag("y", "yyy")] bool y) {
                 Sender = sender;
                 X = x;
                 Y = y;
             }
-            
+
             [CommandHandler("tshock_tests:test_optionals")]
             public void TestCommand_Optionals(ICommandSender sender, int required, int val = 1234, int val2 = 5678) {
                 Sender = sender;
@@ -404,14 +404,14 @@ namespace TShock.Commands {
                 Sender = sender;
                 HyphenatedOptionalIsLong = hyphenated_optional_is_long;
             }
-            
+
             [CommandHandler("tshock_tests:allow_empty")]
             public void TestCommand_AllowEmpty(ICommandSender sender,
                                                [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
                 Sender = sender;
                 String = @string;
             }
-            
+
             [CommandHandler("tshock_tests:exception")]
             public void TestCommand_Exception(ICommandSender sender) {
                 throw new NotImplementedException();
@@ -427,7 +427,7 @@ namespace TShock.Commands {
 
             [CommandHandler("tshock_tests:test_no_out")]
             public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
-            
+
             [CommandHandler("tshock_tests:test_no_byte")]
             public void TestCommand_NoByte(ICommandSender sender, byte b) { }
         }

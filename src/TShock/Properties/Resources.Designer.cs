@@ -61,6 +61,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. Type /help for a list of commands..
+        /// </summary>
+        internal static string Chat_BadCommand {
+            get {
+                return ResourceManager.GetString("Chat_BadCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {

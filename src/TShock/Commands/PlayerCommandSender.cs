@@ -35,7 +35,7 @@ namespace TShock.Commands {
         public ILogger Log { get; }
         public IPlayer Player { get; }
 
-        public PlayerCommandSender(IPlayer player, ReadOnlySpan<char> input) {
+        public PlayerCommandSender(IPlayer player, string input) {
             Debug.Assert(player != null, "player should not be null");
 
             Player = player;
@@ -43,7 +43,7 @@ namespace TShock.Commands {
                 .MinimumLevel.Is(LogLevel)
                 .WriteTo.Sink(new PlayerLogSink(player))
                 .Enrich.WithProperty("Player", player.Name)
-                .Enrich.WithProperty("Cmd", input.ToString())
+                .Enrich.WithProperty("Cmd", input)
                 .WriteTo.Logger(Serilog.Log.Logger)
                 .CreateLogger();
         }

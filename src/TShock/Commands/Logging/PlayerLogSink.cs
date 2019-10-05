@@ -47,7 +47,8 @@ namespace TShock.Commands.Logging {
         }
 
         public void Emit(LogEvent logEvent) {
-            var logLevel = logEvent.Level switch {
+            var logLevel = logEvent.Level switch
+            {
                 LogEventLevel.Verbose => LevelVerbose,
                 LogEventLevel.Debug => LevelDebug,
                 LogEventLevel.Information => LevelInformation,

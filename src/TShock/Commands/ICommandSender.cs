@@ -25,6 +25,8 @@ namespace TShock.Commands {
     /// Represents a command sender. Provides the ability to communicate with the sender.
     /// </summary>
     public interface ICommandSender {
+        private static readonly Color _errorColor = new Color(0xcc, 0x00, 0x00);
+
         /// <summary>
         /// Gets the sender's name.
         /// </summary>
@@ -36,21 +38,27 @@ namespace TShock.Commands {
         ILogger Log { get; }
 
         /// <summary>
-        /// Gets the sender's player. If (), then there is no associated player.
+        /// Gets the sender's player. If <see langword="null"/>, then there is no associated player.
         /// </summary>
         IPlayer? Player { get; }
 
         /// <summary>
-        /// Sends a message to the sender.
+        /// Sends a <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The message.</param>
         void SendMessage(ReadOnlySpan<char> message);
 
         /// <summary>
-        /// Sends a message to the sender with the given color.
+        /// Sends a <paramref name="message"/> to the sender with the given <paramref name="color"/>.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="color">The color.</param>
         void SendMessage(ReadOnlySpan<char> message, Color color);
+
+        /// <summary>
+        /// Sends an error <paramref name="message"/> to the sender.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        void SendErrorMessage(ReadOnlySpan<char> message) => SendMessage(message, _errorColor);
     }
 }

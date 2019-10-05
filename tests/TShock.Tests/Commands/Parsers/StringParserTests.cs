@@ -61,8 +61,8 @@ namespace TShock.Commands.Parsers {
             var parser = new StringParser();
             var input = @"blah blah ""test"" blah blah".AsSpan();
 
-            parser.Parse(ref input, new HashSet<string> {ParseOptions.ToEndOfInput})
-                  .Should().Be(@"blah blah ""test"" blah blah");
+            parser.Parse(ref input, new HashSet<string> { ParseOptions.ToEndOfInput })
+                .Should().Be(@"blah blah ""test"" blah blah");
 
             input.ToString().Should().BeEmpty();
         }
@@ -72,7 +72,7 @@ namespace TShock.Commands.Parsers {
             var parser = new StringParser();
             var input = string.Empty.AsSpan();
 
-            parser.Parse(ref input, new HashSet<string> {ParseOptions.AllowEmpty}).Should().BeEmpty();
+            parser.Parse(ref input, new HashSet<string> { ParseOptions.AllowEmpty }).Should().BeEmpty();
 
             input.ToString().Should().BeEmpty();
         }

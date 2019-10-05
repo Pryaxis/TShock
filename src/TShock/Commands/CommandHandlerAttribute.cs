@@ -43,7 +43,7 @@ namespace TShock.Commands {
         /// <paramref name="qualifiedCommandName"/> is missing the namespace or name, or contains a space.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="qualifiedCommandName"/> is ().
+        /// <paramref name="qualifiedCommandName"/> is <see langword="null"/>.
         /// </exception>
         [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
             Justification = "strings are not user-facing")]
