@@ -70,6 +70,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;/{0}&quot; is ambiguous and can refer to {1}..
+        /// </summary>
+        internal static string CommandParse_AmbiguousName {
+            get {
+                return ResourceManager.GetString("CommandParse_AmbiguousName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid hyphenated argument..
         /// </summary>
         internal static string CommandParse_InvalidHyphenatedArg {
@@ -88,6 +97,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing command name..
+        /// </summary>
+        internal static string CommandParse_MissingCommand {
+            get {
+                return ResourceManager.GetString("CommandParse_MissingCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Too many arguments were provided..
         /// </summary>
         internal static string CommandParse_TooManyArgs {
@@ -102,6 +120,15 @@ namespace TShock.Properties {
         internal static string CommandParse_UnrecognizedArgType {
             get {
                 return ResourceManager.GetString("CommandParse_UnrecognizedArgType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;/{0}&quot; is an unrecognized command..
+        /// </summary>
+        internal static string CommandParse_UnrecognizedCommand {
+            get {
+                return ResourceManager.GetString("CommandParse_UnrecognizedCommand", resourceCulture);
             }
         }
         

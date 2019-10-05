@@ -34,10 +34,11 @@ namespace TShock.Commands.Parsers {
         /// Initializes a new instance of the <see cref="ParseOptionsAttribute"/> class with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null" />.</exception>
-        public ParseOptionsAttribute([ValueProvider("TShock.Commands.Parsers.ParseOptions")]
-                                     params string[] options) {
-            if (options is null) throw new ArgumentNullException(nameof(options));
+        /// <exception cref="ArgumentNullException"><paramref name="options"/> is ().</exception>
+        public ParseOptionsAttribute([ValueProvider("TShock.Commands.Parsers.ParseOptions")] params string[] options) {
+            if (options is null) {
+                throw new ArgumentNullException(nameof(options));
+            }
 
             var optionsSet = new HashSet<string>();
             optionsSet.UnionWith(options);

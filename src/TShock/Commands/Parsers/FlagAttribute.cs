@@ -26,23 +26,29 @@ namespace TShock.Commands.Parsers {
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class FlagAttribute : Attribute {
         /// <summary>
-        /// Gets the flags.
+        /// Gets a read-only view of the flags. Flags with length 1 are treated as short flags.
         /// </summary>
         public IReadOnlyCollection<string> Flags { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified flags.
+        /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified flags. Flags with
+        /// length 1 are treated as short flags.
         /// </summary>
         /// <param name="flag">The flag.</param>
-        /// <param name="alternateFlags">The alternate flags.</param>
+        /// <param name="alternateFlags">The alternate flags. This may be empty.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are <see langword="null" />.
+        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are ().
         /// </exception>
         public FlagAttribute(string flag, params string[] alternateFlags) {
-            if (flag is null) throw new ArgumentNullException(nameof(flag));
+            if (flag is null) {
+                throw new ArgumentNullException(nameof(flag));
+            }
 
-            Flags = new[] {flag}.Concat(alternateFlags ?? throw new ArgumentNullException(nameof(alternateFlags)))
-                                .ToList();
+            if (alternateFlags is null) {
+                throw new ArgumentNullException(nameof(alternateFlags));
+            }
+
+            Flags = new[] { flag }.Concat(alternateFlags).ToList();
         }
     }
 }

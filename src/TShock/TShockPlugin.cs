@@ -21,7 +21,6 @@ using Microsoft.Xna.Framework;
 using Orion;
 using Orion.Events;
 using Orion.Events.Packets;
-using Orion.Packets.World;
 using Orion.Players;
 using TShock.Commands;
 
@@ -46,7 +45,7 @@ namespace TShock {
         /// </summary>
         /// <param name="kernel">The Orion kernel.</param>
         /// <param name="playerService">The player service.</param>
-        /// <exception cref="ArgumentNullException">Any of the services are <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Any of the services are <see langword="null"/>.</exception>
         public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService) : base(kernel) {
             kernel.Bind<ICommandService>().To<TShockCommandService>();
 
@@ -60,7 +59,9 @@ namespace TShock {
 
         /// <inheritdoc />
         protected override void Dispose(bool disposeManaged) {
-            if (!disposeManaged) return;
+            if (!disposeManaged) {
+                return;
+            }
 
             _playerService.Value.PacketReceive -= PacketReceiveHandler;
         }

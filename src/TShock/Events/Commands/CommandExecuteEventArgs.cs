@@ -31,8 +31,9 @@ namespace TShock.Events.Commands {
         public ICommandSender Sender { get; }
 
         /// <summary>
-        /// Gets or sets the input.
+        /// Gets or sets the input. This does not include the command's name.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         public string Input {
             get => _input;
             set => _input = value ?? throw new ArgumentNullException(nameof(value));
@@ -44,7 +45,7 @@ namespace TShock.Events.Commands {
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="sender">The command sender.</param>
-        /// <param name="input">The input. This does not include the command's name or sub-names.</param>
+        /// <param name="input">The input. This does not include the command's name.</param>
         public CommandExecuteEventArgs(ICommand command, ICommandSender sender, string input) : base(command) {
             Sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _input = input ?? throw new ArgumentNullException(nameof(input));

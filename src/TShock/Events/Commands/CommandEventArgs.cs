@@ -24,16 +24,22 @@ namespace TShock.Events.Commands {
     /// Provides data for command-related events.
     /// </summary>
     public abstract class CommandEventArgs : EventArgs, ICancelable {
+        private ICommand _command;
+
         /// <inheritdoc />
         public string? CancellationReason { get; set; }
 
         /// <summary>
         /// Gets or sets the command.
         /// </summary>
-        public ICommand Command { get; set; }
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        public ICommand Command {
+            get => _command;
+            set => _command = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         private protected CommandEventArgs(ICommand command) {
-            Command = command ?? throw new ArgumentNullException(nameof(command));
+            _command = command ?? throw new ArgumentNullException(nameof(command));
         }
     }
 }

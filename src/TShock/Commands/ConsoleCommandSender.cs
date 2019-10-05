@@ -43,10 +43,11 @@ namespace TShock.Commands {
             FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
 
         public ConsoleCommandSender(ReadOnlySpan<char> input) {
-            Log = new LoggerConfiguration().MinimumLevel.Is(LogLevel)
-                                           .Enrich.WithProperty("Cmd", input.ToString())
-                                           .WriteTo.Logger(Serilog.Log.Logger)
-                                           .CreateLogger();
+            Log = new LoggerConfiguration()
+                .MinimumLevel.Is(LogLevel)
+                .Enrich.WithProperty("Cmd", input.ToString())
+                .WriteTo.Logger(Serilog.Log.Logger)
+                .CreateLogger();
         }
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, string.Empty);

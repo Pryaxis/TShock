@@ -33,7 +33,7 @@ namespace TShock.Commands.Logging {
         private const string LevelError = "[c/ff005f:ERR]";
         private const string LevelFatal = "[c/ff005f:FTL]";
         private const string LevelUnknown = "[c/ff0000:UNK]";
-        
+
         private static readonly Color _textColor = new Color(0xda, 0xda, 0xda);
         private static readonly Color _exceptionColor = new Color(0xda, 0xda, 0xda);
         private static readonly PlayerLogValueFormatter _formatter = new PlayerLogValueFormatter();
@@ -41,7 +41,7 @@ namespace TShock.Commands.Logging {
         private readonly IPlayer _player;
 
         public PlayerLogSink(IPlayer player) {
-            Debug.Assert(player != null, "player != null");
+            Debug.Assert(player != null, "player should not be null");
 
             _player = player;
         }

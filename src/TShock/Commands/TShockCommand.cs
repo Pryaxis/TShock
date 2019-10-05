@@ -39,14 +39,16 @@ namespace TShock.Commands {
         public object HandlerObject { get; }
         public MethodBase Handler { get; }
 
-        public TShockCommand(ICommandService commandService, CommandHandlerAttribute attribute, object handlerObject,
-                             MethodBase handler) {
-            Debug.Assert(commandService != null, "commandService != null");
-            Debug.Assert(attribute != null, "attribute != null");
-            Debug.Assert(handler != null, "handler != null");
+        // We need to inject ICommandService so that we can trigger its CommandExecute event.
+        public TShockCommand(ICommandService commandService, string qualifiedName, object handlerObject,
+                MethodBase handler) {
+            Debug.Assert(commandService != null, "command service should not be null");
+            Debug.Assert(qualifiedName != null, "qualified name should not be null");
+            Debug.Assert(handlerObject != null, "handler object should not be null");
+            Debug.Assert(handler != null, "handler should not be null");
 
             _commandService = commandService;
-            QualifiedName = attribute.QualifiedCommandName;
+            QualifiedName = qualifiedName;
             HandlerObject = handlerObject;
             Handler = handler;
 
@@ -55,7 +57,9 @@ namespace TShock.Commands {
                 var parameterType = parameterInfo.ParameterType;
                 if (parameterType.IsByRef) {
                     throw new NotSupportedException($"By-reference argument type {parameterType} not supported.");
-                } else if (parameterType.IsPointer) {
+                }
+
+                if (parameterType.IsPointer) {
                     throw new NotSupportedException($"Pointer argument type {parameterType} not supported.");
                 }
 
@@ -86,11 +90,15 @@ namespace TShock.Commands {
         }
 
         public void Invoke(ICommandSender sender, ReadOnlySpan<char> input) {
-            if (sender is null) throw new ArgumentNullException(nameof(sender));
+            if (sender is null) {
+                throw new ArgumentNullException(nameof(sender));
+            }
 
             var args = new CommandExecuteEventArgs(this, sender, input.ToString());
             _commandService.CommandExecute?.Invoke(this, args);
-            if (args.IsCanceled()) return;
+            if (args.IsCanceled()) {
+                return;
+            }
 
             var shortFlags = new HashSet<char>();
             var longFlags = new HashSet<string>();
@@ -102,20 +110,23 @@ namespace TShock.Commands {
                     throw new CommandParseException(
                         string.Format(Resources.CommandParse_UnrecognizedArgType, parameterType));
                 }
-                
+
                 input = input.TrimStart();
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
                 if (!input.IsEmpty) return parser.Parse(ref input, options);
 
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
-                    throw new CommandParseException(string.Format(Resources.CommandParse_MissingArg, parameterInfo));
+                    throw new CommandParseException(
+                        string.Format(Resources.CommandParse_MissingArg, parameterInfo));
                 }
 
                 return parser.GetDefault();
             }
 
             void ParseShortFlags(ref ReadOnlySpan<char> input, int space) {
-                if (space <= 1) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                if (space <= 1) {
+                    throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                }
 
                 foreach (var c in input[1..space]) {
                     if (!_validShortFlags.Contains(c)) {
@@ -129,7 +140,9 @@ namespace TShock.Commands {
             }
 
             void ParseLongFlag(ref ReadOnlySpan<char> input, int space) {
-                if (space <= 2) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                if (space <= 2) {
+                    throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                }
 
                 var longFlag = input[2..space].ToString();
                 if (!_validLongFlags.Contains(longFlag)) {
@@ -142,7 +155,9 @@ namespace TShock.Commands {
             }
 
             void ParseOptional(ref ReadOnlySpan<char> input, int equals) {
-                if (equals <= 2) throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                if (equals <= 2) {
+                    throw new CommandParseException(Resources.CommandParse_InvalidHyphenatedArg);
+                }
 
                 var optional = input[2..equals].ToString();
                 if (!_validOptionals.TryGetValue(optional, out var parameterInfo)) {
@@ -188,7 +203,9 @@ namespace TShock.Commands {
              */
             object? ParseParameter(ParameterInfo parameterInfo, ref ReadOnlySpan<char> input) {
                 var parameterType = parameterInfo.ParameterType;
-                if (parameterType == typeof(ICommandSender)) return sender;
+                if (parameterType == typeof(ICommandSender)) {
+                    return sender;
+                }
 
                 if (parameterType == typeof(bool)) {
                     var attribute = parameterInfo.GetCustomAttribute<FlagAttribute?>();
@@ -222,7 +239,7 @@ namespace TShock.Commands {
             try {
                 Handler.Invoke(HandlerObject, _parameters);
             } catch (TargetInvocationException ex) {
-                throw new CommandException(Resources.CommandInvoke_Exception, ex.InnerException);
+                throw new CommandExecuteException(Resources.CommandInvoke_Exception, ex.InnerException);
             }
         }
     }

@@ -22,7 +22,6 @@ using System.Text;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
-    // It'd be nice to return ReadOnlySpan<char>, but because of escape characters, we have to return copies.
     internal sealed class StringParser : IArgumentParser<string> {
         public string Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
             if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
@@ -69,8 +68,8 @@ namespace TShock.Commands.Parsers {
                     continue;
                 }
 
-                if (char.IsWhiteSpace(c)) {
-                    if (!isInQuotes) break;
+                if (char.IsWhiteSpace(c) && !isInQuotes) {
+                    break;
                 }
 
                 builder.Append(c);
@@ -80,7 +79,7 @@ namespace TShock.Commands.Parsers {
             input = input[end..];
             return builder.ToString();
         }
-        
+
         [ExcludeFromCodeCoverage]
         public string GetDefault() => string.Empty;
     }

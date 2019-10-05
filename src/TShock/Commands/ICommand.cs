@@ -16,12 +16,11 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a command.
+    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality.
     /// </summary>
     public interface ICommand {
         /// <summary>
@@ -43,9 +42,9 @@ namespace TShock.Commands {
         /// Invokes the command as the given sender with the specified input.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="input">The input. This does not include the command's name or sub-names.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="sender"/> is <see langword="null" />.</exception>
-        /// <exception cref="CommandException">The command could not be executed.</exception>
+        /// <param name="input">The input. This does not include the command's name.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="sender"/> is ().</exception>
+        /// <exception cref="CommandExecuteException">The command could not be executed.</exception>
         /// <exception cref="CommandParseException">The command input could not be parsed.</exception>
         void Invoke(ICommandSender sender, ReadOnlySpan<char> input);
     }

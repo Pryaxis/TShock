@@ -26,17 +26,17 @@ namespace TShock.Commands.Parsers {
     /// <typeparam name="TParse">The parse type.</typeparam>
     public interface IArgumentParser<out TParse> : IArgumentParser {
         /// <summary>
-        /// Parses the given input and returns a corresponding instance of the parse type.
+        /// Parses <paramref name="input"/> and returns a corresponding <typeparamref name="TParse"/> instance.
+        /// <paramref name="input"/> will be consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
         /// <param name="options">The parse options.</param>
-        /// <returns>A corresponding instance of the parse type.</returns>
+        /// <returns>A corresponding <typeparamref name="TParse"/> instance.</returns>
         /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
         new TParse Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
 
         [ExcludeFromCodeCoverage]
-        object? IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) =>
-            Parse(ref input, options);
+        object? IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
 
         /// <summary>
         /// Gets a default instance of the parse type.

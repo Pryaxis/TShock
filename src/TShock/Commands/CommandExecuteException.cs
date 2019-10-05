@@ -23,24 +23,24 @@ namespace TShock.Commands {
     /// The exception thrown when a command could not be executed.
     /// </summary>
     [Serializable, ExcludeFromCodeCoverage]
-    public class CommandException : Exception {
+    public class CommandExecuteException : Exception {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandException"/> class.
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class.
         /// </summary>
-        public CommandException() { }
+        public CommandExecuteException() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandException"/> class with the specified message.
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public CommandException(string message) : base(message) { }
+        public CommandExecuteException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandException"/> class with the specified message
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message
         /// and inner exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public CommandException(string message, Exception innerException) : base(message, innerException) { }
+        public CommandExecuteException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

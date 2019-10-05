@@ -24,7 +24,8 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public interface IArgumentParser {
         /// <summary>
-        /// Parses the given input and returns a corresponding object.
+        /// Parses <paramref name="input"/> and returns a corresponding object. <paramref name="input"/> will be
+        /// consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
         /// <param name="options">The parse options.</param>

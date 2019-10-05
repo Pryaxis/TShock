@@ -40,7 +40,7 @@ namespace TShock.Commands.Parsers {
                     string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
             }
         }
-        
+
         [ExcludeFromCodeCoverage]
         public int GetDefault() => 0;
     }

@@ -23,8 +23,8 @@ namespace TShock.Utils.Extensions {
     /// </summary>
     public static class ReadOnlySpanExtensions {
         /// <summary>
-        /// Searches for the specified value and returns the first index of its occurrence, or the length of the span
-        /// if it is not found.
+        /// Searches for <paramref name="value"/> and returns the first index of its occurrence, or the length of the
+        /// span if it is not found.
         /// </summary>
         /// <typeparam name="T">The type of span.</typeparam>
         /// <param name="span">The span.</param>

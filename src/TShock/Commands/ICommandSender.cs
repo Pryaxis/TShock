@@ -36,7 +36,7 @@ namespace TShock.Commands {
         ILogger Log { get; }
 
         /// <summary>
-        /// Gets the sender's player. If <see langword="null" />, then there is no associated player.
+        /// Gets the sender's player. If (), then there is no associated player.
         /// </summary>
         IPlayer? Player { get; }
 

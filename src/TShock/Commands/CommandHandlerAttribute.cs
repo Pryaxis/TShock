@@ -42,7 +42,7 @@ namespace TShock.Commands {
         /// <paramref name="qualifiedCommandName"/> is missing the namespace or name, or contains a space.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="qualifiedCommandName"/> is <see langword="null" />.
+        /// <paramref name="qualifiedCommandName"/> is ().
         /// </exception>
         public CommandHandlerAttribute(string qualifiedCommandName) {
             if (qualifiedCommandName is null) {
@@ -54,7 +54,7 @@ namespace TShock.Commands {
                 throw new ArgumentException("Qualified command name is missing the namespace.",
                     nameof(qualifiedCommandName));
             }
-            
+
             if (colon >= qualifiedCommandName.Length - 1) {
                 throw new ArgumentException("Qualified command name is missing the name.",
                     nameof(qualifiedCommandName));

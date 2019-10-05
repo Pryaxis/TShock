@@ -37,16 +37,18 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void RegisteredCommands_Get() {
+        public void Commands_Get() {
             var testClass = new TestClass();
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
-            
-            _commandService.Commands.Should().BeEquivalentTo(commands);
+
+            _commandService.Commands.Keys.Should().BeEquivalentTo(
+                "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
+            _commandService.Commands.Values.Should().BeEquivalentTo(commands);
         }
 
         [Fact]
-        public void RegisteredParsers_Get() {
+        public void Parsers_Get() {
             var parser = new Mock<IArgumentParser<object>>().Object;
             _commandService.RegisterParser(parser);
 
@@ -58,11 +60,11 @@ namespace TShock.Commands {
             var testClass = new TestClass();
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
-            
-            commands.Should().HaveCount(2);
+
+            commands.Should().HaveCount(3);
             foreach (var command in commands) {
                 command.HandlerObject.Should().BeSameAs(testClass);
-                command.QualifiedName.Should().BeOneOf("tshock_tests:test", "tshock_tests:test2");
+                command.QualifiedName.Should().BeOneOf("tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
             }
         }
 
@@ -81,6 +83,42 @@ namespace TShock.Commands {
         }
 
         [Fact]
+        public void FindCommand_WithoutNamespace() {
+            var testClass = new TestClass();
+            _commandService.RegisterCommands(testClass).ToList();
+            var command = _commandService.Commands["tshock_tests:test2"];
+
+            var input = "test2".AsSpan();
+            _commandService.FindCommand(ref input).Should().BeSameAs(command);
+        }
+
+        [Fact]
+        public void FindCommand_WithNamespace() {
+            var testClass = new TestClass();
+            _commandService.RegisterCommands(testClass).ToList();
+            var command = _commandService.Commands["tshock_tests:test"];
+
+            var input = "tshock_tests:test".AsSpan();
+            _commandService.FindCommand(ref input).Should().BeSameAs(command);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("test")]
+        [InlineData("test3")]
+        [InlineData("tshock_tests:test3")]
+        public void FindCommand_InvalidCommand_ThrowsCommandParseException(string inputString) {
+            var testClass = new TestClass();
+            _commandService.RegisterCommands(testClass).ToList();
+            Action action = () => {
+                var input = inputString.AsSpan();
+                _commandService.FindCommand(ref input);
+            };
+
+            action.Should().Throw<CommandParseException>();
+        }
+
+        [Fact]
         public void UnregisterCommand() {
             var testClass = new TestClass();
             var commands = _commandService.RegisterCommands(testClass).ToList();
@@ -88,14 +126,16 @@ namespace TShock.Commands {
 
             _commandService.UnregisterCommand(command).Should().BeTrue();
 
-            _commandService.Commands.Should().NotContain(command);
+            _commandService.Commands.Keys.Should().NotContain(command.QualifiedName);
+            _commandService.Commands.Values.Should().NotContain(command);
         }
 
         [Fact]
-        public void UnregisterCommand_NonexistentCommand_ReturnsFalse() {
-            var command = new Mock<ICommand>().Object;
+        public void UnregisterCommand_CommandDoesntExist_ReturnsFalse() {
+            var mockCommand = new Mock<ICommand>();
+            mockCommand.SetupGet(c => c.QualifiedName).Returns("test");
 
-            _commandService.UnregisterCommand(command).Should().BeFalse();
+            _commandService.UnregisterCommand(mockCommand.Object).Should().BeFalse();
         }
 
         [Fact]
@@ -112,7 +152,8 @@ namespace TShock.Commands {
             _commandService.CommandRegister += (sender, args) => {
                 isRun = true;
                 args.Command.HandlerObject.Should().BeSameAs(testClass);
-                args.Command.QualifiedName.Should().BeOneOf("tshock_tests:test", "tshock_tests:test2");
+                args.Command.QualifiedName.Should().BeOneOf(
+                    "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
             };
 
             _commandService.RegisterCommands(testClass);
@@ -157,7 +198,7 @@ namespace TShock.Commands {
 
             _commandService.UnregisterCommand(command).Should().BeFalse();
 
-            _commandService.Commands.Should().Contain(command);
+            _commandService.Commands.Values.Should().Contain(command);
         }
 
         private class TestClass {
@@ -166,6 +207,9 @@ namespace TShock.Commands {
 
             [CommandHandler("tshock_tests:test2")]
             public void TestCommand2() { }
+
+            [CommandHandler("tshock_tests2:test")]
+            public void TestCommandTest() { }
         }
     }
 }

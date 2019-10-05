@@ -17,6 +17,7 @@
 
 using System;
 using FluentAssertions;
+using Moq;
 using TShock.Commands;
 using Xunit;
 
@@ -27,6 +28,23 @@ namespace TShock.Events.Commands {
             Func<CommandEventArgs> func = () => new TestCommandEventArgs(null);
 
             func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Command_Get() {
+            var command = new Mock<ICommand>().Object;
+            var args = new TestCommandEventArgs(command);
+
+            args.Command.Should().BeSameAs(command);
+        }
+
+        [Fact]
+        public void Command_SetNullValue_ThrowsArgumentNullException() {
+            var command = new Mock<ICommand>().Object;
+            var args = new TestCommandEventArgs(command);
+            Action action = () => args.Command = null;
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class TestCommandEventArgs : CommandEventArgs {

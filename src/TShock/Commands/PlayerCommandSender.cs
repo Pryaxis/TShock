@@ -36,15 +36,16 @@ namespace TShock.Commands {
         public IPlayer Player { get; }
 
         public PlayerCommandSender(IPlayer player, ReadOnlySpan<char> input) {
-            Debug.Assert(player != null, "player != null");
+            Debug.Assert(player != null, "player should not be null");
 
             Player = player;
-            Log = new LoggerConfiguration().MinimumLevel.Is(LogLevel)
-                                           .WriteTo.Sink(new PlayerLogSink(player))
-                                           .Enrich.WithProperty("Player", player.Name)
-                                           .Enrich.WithProperty("Cmd", input.ToString())
-                                           .WriteTo.Logger(Serilog.Log.Logger)
-                                           .CreateLogger();
+            Log = new LoggerConfiguration()
+                .MinimumLevel.Is(LogLevel)
+                .WriteTo.Sink(new PlayerLogSink(player))
+                .Enrich.WithProperty("Player", player.Name)
+                .Enrich.WithProperty("Cmd", input.ToString())
+                .WriteTo.Logger(Serilog.Log.Logger)
+                .CreateLogger();
         }
 
         public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, Color.White);
