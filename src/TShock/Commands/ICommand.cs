@@ -30,11 +30,6 @@ namespace TShock.Commands {
         string QualifiedName { get; }
 
         /// <summary>
-        /// Gets the command's sub-names.
-        /// </summary>
-        IEnumerable<string> SubNames { get; }
-
-        /// <summary>
         /// Gets the object associated with the command's handler.
         /// </summary>
         object HandlerObject { get; }

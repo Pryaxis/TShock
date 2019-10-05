@@ -59,7 +59,7 @@ namespace TShock.Commands {
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
             
-            commands.Should().HaveCount(3);
+            commands.Should().HaveCount(2);
             foreach (var command in commands) {
                 command.HandlerObject.Should().BeSameAs(testClass);
                 command.QualifiedName.Should().BeOneOf("tshock_tests:test", "tshock_tests:test2");
@@ -164,11 +164,8 @@ namespace TShock.Commands {
             [CommandHandler("tshock_tests:test")]
             public void TestCommand() { }
 
-            [CommandHandler("tshock_tests:test2", "sub1")]
-            public void TestCommand2_Sub1() { }
-
-            [CommandHandler("tshock_tests:test2", "sub2")]
-            public void TestCommand2_Sub2() { }
+            [CommandHandler("tshock_tests:test2")]
+            public void TestCommand2() { }
         }
     }
 }

@@ -33,15 +33,8 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void Ctor_NullCommandName_ThrowsArgumentNullException() {
+        public void Ctor_NullQualifiedCommandName_ThrowsArgumentNullException() {
             Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(null);
-
-            func.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void Ctor_NullCommandSubNames_ThrowsArgumentNullException() {
-            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute("tshock_test:test", null);
 
             func.Should().Throw<ArgumentNullException>();
         }
@@ -51,13 +44,6 @@ namespace TShock.Commands {
             var attribute = new CommandHandlerAttribute("tshock_test:test");
 
             attribute.QualifiedCommandName.Should().Be("tshock_test:test");
-        }
-
-        [Fact]
-        public void CommandSubNames_Get() {
-            var attribute = new CommandHandlerAttribute("tshock_test:test", "test1", "test2");
-
-            attribute.CommandSubNames.Should().BeEquivalentTo("test1", "test2");
         }
     }
 }

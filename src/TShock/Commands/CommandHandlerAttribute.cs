@@ -16,7 +16,6 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace TShock.Commands {
@@ -33,31 +32,21 @@ namespace TShock.Commands {
         public string QualifiedCommandName { get; }
 
         /// <summary>
-        /// Gets the command's sub-names.
-        /// </summary>
-        public IEnumerable<string> CommandSubNames { get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the given qualified
-        /// command name and sub-names.
+        /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the specified qualified
+        /// command name.
         /// </summary>
         /// <param name="qualifiedCommandName">
         /// The qualified command name. This includes the namespace: e.g., "tshock:kick".
         /// </param>
-        /// <param name="commandSubNames">The command sub-names. This can be empty.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="qualifiedCommandName"/> is missing the namespace or name, or contains a space.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="qualifiedCommandName"/> or <paramref name="commandSubNames"/> are <see langword="null" />.
+        /// <paramref name="qualifiedCommandName"/> is <see langword="null" />.
         /// </exception>
-        public CommandHandlerAttribute(string qualifiedCommandName, params string[] commandSubNames) {
+        public CommandHandlerAttribute(string qualifiedCommandName) {
             if (qualifiedCommandName is null) {
                 throw new ArgumentNullException(nameof(qualifiedCommandName));
-            }
-
-            if (commandSubNames is null) {
-                throw new ArgumentNullException(nameof(commandSubNames));
             }
 
             var colon = qualifiedCommandName.IndexOf(':');
@@ -77,7 +66,6 @@ namespace TShock.Commands {
             }
 
             QualifiedCommandName = qualifiedCommandName;
-            CommandSubNames = commandSubNames ?? throw new ArgumentNullException(nameof(commandSubNames));
         }
     }
 }

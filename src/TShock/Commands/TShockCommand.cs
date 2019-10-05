@@ -36,7 +36,6 @@ namespace TShock.Commands {
         private readonly object?[] _parameters;
 
         public string QualifiedName { get; }
-        public IEnumerable<string> SubNames { get; }
         public object HandlerObject { get; }
         public MethodBase Handler { get; }
 
@@ -48,7 +47,6 @@ namespace TShock.Commands {
 
             _commandService = commandService;
             QualifiedName = attribute.QualifiedCommandName;
-            SubNames = attribute.CommandSubNames;
             HandlerObject = handlerObject;
             Handler = handler;
 
