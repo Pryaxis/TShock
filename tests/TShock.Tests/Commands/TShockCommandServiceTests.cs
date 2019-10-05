@@ -40,9 +40,9 @@ namespace TShock.Commands {
 
             var commands = _commandService.RegisterCommands(testClass).ToList();
 
-            _commandService.Commands.Keys.Should().BeEquivalentTo(
-                "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
-            _commandService.Commands.Values.Should().BeEquivalentTo(commands);
+            _commandService.Commands.Keys.Should().Contain(
+                new[] { "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test" });
+            _commandService.Commands.Values.Should().Contain(commands);
         }
 
         [Fact]

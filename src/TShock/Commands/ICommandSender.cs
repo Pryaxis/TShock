@@ -25,7 +25,8 @@ namespace TShock.Commands {
     /// Represents a command sender. Provides the ability to communicate with the sender.
     /// </summary>
     public interface ICommandSender {
-        private static readonly Color _errorColor = new Color(0xcc, 0x00, 0x00);
+        private static readonly Color _errorColor = new Color(0xcc, 0x44, 0x44);
+        private static readonly Color _infoColor = new Color(0xff, 0xff, 0x44);
 
         /// <summary>
         /// Gets the sender's name.
@@ -60,5 +61,11 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="message">The error message.</param>
         void SendErrorMessage(ReadOnlySpan<char> message) => SendMessage(message, _errorColor);
+
+        /// <summary>
+        /// Sends an informational <paramref name="message"/> to the sender.
+        /// </summary>
+        /// <param name="message">The informational message.</param>
+        void SendInfoMessage(ReadOnlySpan<char> message) => SendMessage(message, _infoColor);
     }
 }

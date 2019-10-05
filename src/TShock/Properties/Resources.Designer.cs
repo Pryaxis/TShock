@@ -61,7 +61,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}. Type /help for a list of commands..
+        ///   Looks up a localized string similar to {0} Type /help for a list of commands..
         /// </summary>
         internal static string Chat_BadCommand {
             get {

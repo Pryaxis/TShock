@@ -24,6 +24,7 @@ using Orion.Events;
 using Orion.Events.Extensions;
 using Orion.Events.Players;
 using Orion.Players;
+using Serilog;
 using TShock.Commands;
 using TShock.Properties;
 
@@ -52,6 +53,9 @@ namespace TShock {
         [ExcludeFromCodeCoverage]
         public override string Name => "TShock";
 
+        private IPlayerService PlayerService => _playerService.Value;
+        private ICommandService CommandService => _commandService.Value;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified Orion kernel and
         /// services.
@@ -70,7 +74,7 @@ namespace TShock {
 
         /// <inheritdoc />
         protected override void Initialize() {
-            _playerService.Value.PlayerChat += PlayerChatHandler;
+            PlayerService.PlayerChat += PlayerChatHandler;
         }
 
         /// <inheritdoc />
@@ -78,8 +82,8 @@ namespace TShock {
             if (!disposeManaged) {
                 return;
             }
-
-            _playerService.Value.PlayerChat -= PlayerChatHandler;
+            
+            PlayerService.PlayerChat -= PlayerChatHandler;
         }
 
         [EventHandler(EventPriority.Lowest)]
@@ -90,35 +94,38 @@ namespace TShock {
 
             var chatCommand = args.ChatCommand;
             if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
-                args.Cancel("Terraria command is invalid");
+                args.Cancel("tshock: Terraria command is invalid");
                 return;
             }
 
             var chat = canonicalCommand + args.ChatText;
             if (chat.StartsWith('/')) {
-                args.Cancel("TShock command executing");
+                args.Cancel("tshock: command executing");
 
-                ICommandSender commandSender = new PlayerCommandSender(args.Player, chat);
-                var input = chat.AsSpan();
-                ICommand command;
+                var input = chat.Substring(1);
+                ExecuteCommand(new PlayerCommandSender(args.Player, input), input);
+            }
+        }
 
-                try {
-                    command = _commandService.Value.FindCommand(ref input);
-                } catch (CommandParseException ex) {
-                    commandSender.SendErrorMessage(
-                        string.Format(CultureInfo.InvariantCulture, Resources.Chat_BadCommand, ex.Message));
-                    return;
-                }
+        // Executes a command. input should not have the leading /.
+        private void ExecuteCommand(ICommandSender commandSender, ReadOnlySpan<char> input) {
+            Log.Information("{Sender} is executing /{Command}", commandSender.Name, input.ToString());
 
-                try {
-                    command.Invoke(commandSender, input);
-                } catch (CommandParseException ex) {
-                    commandSender.SendErrorMessage(ex.Message);
-                    return;
-                } catch (CommandExecuteException ex) {
-                    commandSender.SendErrorMessage(ex.Message);
-                    return;
-                }
+            ICommand command;
+            try {
+                command = CommandService.FindCommand(ref input);
+            } catch (CommandParseException ex) {
+                commandSender.SendErrorMessage(
+                    string.Format(CultureInfo.InvariantCulture, Resources.Chat_BadCommand, ex.Message));
+                return;
+            }
+
+            try {
+                command.Invoke(commandSender, input);
+            } catch (CommandParseException ex) {
+                commandSender.SendErrorMessage(ex.Message);
+            } catch (CommandExecuteException ex) {
+                commandSender.SendErrorMessage(ex.Message);
             }
         }
     }

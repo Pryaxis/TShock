@@ -45,6 +45,7 @@ namespace TShock.Commands {
         public TShockCommandService() {
             RegisterParser(new Int32Parser());
             RegisterParser(new StringParser());
+            RegisterCommands(this);
         }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject) {
@@ -141,6 +142,12 @@ namespace TShock.Commands {
             _qualifiedNames[name].Remove(qualifiedName);
 
             return _commands.Remove(qualifiedName);
+        }
+
+        [CommandHandler("tshock:help")]
+        public void Help(ICommandSender sender) {
+            sender.SendInfoMessage("Commands:");
+            sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{c.QualifiedName}")));
         }
     }
 }
