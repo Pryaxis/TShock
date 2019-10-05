@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Orion;
@@ -61,7 +62,7 @@ namespace TShock.Commands {
                 }
 
                 var qualifiedName = command.QualifiedName;
-                var name = qualifiedName.Substring(qualifiedName.IndexOf(':') + 1);
+                var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
                 _qualifiedNames[name] = _qualifiedNames.GetValueOrDefault(name, () => new HashSet<string>());
                 _qualifiedNames[name].Add(qualifiedName);
 
@@ -92,7 +93,7 @@ namespace TShock.Commands {
 
                 var space = input.IndexOfOrEnd(' ');
                 var maybeQualifiedName = input[..space].ToString();
-                var isQualifiedName = maybeQualifiedName.IndexOf(':') >= 0;
+                var isQualifiedName = maybeQualifiedName.IndexOf(':', StringComparison.Ordinal) >= 0;
                 input = input[space..];
                 if (isQualifiedName) {
                     return maybeQualifiedName;
@@ -101,13 +102,14 @@ namespace TShock.Commands {
                 var qualifiedNames = _qualifiedNames.GetValueOrDefault(maybeQualifiedName, () => new HashSet<string>());
                 if (qualifiedNames.Count == 0) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_UnrecognizedCommand, maybeQualifiedName));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedCommand,
+                            maybeQualifiedName));
                 }
 
                 if (qualifiedNames.Count > 1) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_AmbiguousName, maybeQualifiedName,
-                            string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_AmbiguousName,
+                            maybeQualifiedName, string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
                 }
 
                 return qualifiedNames.Single();
@@ -116,7 +118,8 @@ namespace TShock.Commands {
             var qualifiedName = ProcessQualifiedName(ref input);
             if (!_commands.TryGetValue(qualifiedName, out var command)) {
                 throw new CommandParseException(
-                    string.Format(Resources.CommandParse_UnrecognizedCommand, qualifiedName));
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedCommand,
+                        qualifiedName));
             }
 
             return command;
@@ -134,7 +137,7 @@ namespace TShock.Commands {
             }
 
             var qualifiedName = command.QualifiedName;
-            var name = qualifiedName.Substring(qualifiedName.IndexOf(':') + 1);
+            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
             _qualifiedNames[name] = _qualifiedNames.GetValueOrDefault(name, () => new HashSet<string>());
             _qualifiedNames[name].Remove(qualifiedName);
 

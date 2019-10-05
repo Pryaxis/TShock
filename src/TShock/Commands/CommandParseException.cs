@@ -22,7 +22,7 @@ namespace TShock.Commands {
     /// <summary>
     /// The exception thrown when a command input cannot be parsed.
     /// </summary>
-    [Serializable, ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]
     public class CommandParseException : Exception {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandParseException"/> class.

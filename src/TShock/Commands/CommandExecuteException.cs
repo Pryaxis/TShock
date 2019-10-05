@@ -22,7 +22,7 @@ namespace TShock.Commands {
     /// <summary>
     /// The exception thrown when a command could not be executed.
     /// </summary>
-    [Serializable, ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]
     public class CommandExecuteException : Exception {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandExecuteException"/> class.

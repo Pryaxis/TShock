@@ -34,10 +34,12 @@ namespace TShock.Commands.Parsers {
                 return int.Parse(parse, NumberStyles.Integer, CultureInfo.InvariantCulture);
             } catch (FormatException ex) {
                 throw new CommandParseException(
-                    string.Format(Resources.Int32Parser_InvalidInteger, parse.ToString()), ex);
+                    string.Format(CultureInfo.InvariantCulture, Resources.Int32Parser_InvalidInteger,
+                        parse.ToString()), ex);
             } catch (OverflowException ex) {
                 throw new CommandParseException(
-                    string.Format(Resources.Int32Parser_IntegerOutOfRange, parse.ToString()), ex);
+                    string.Format(CultureInfo.InvariantCulture, Resources.Int32Parser_IntegerOutOfRange,
+                        parse.ToString()), ex);
             }
         }
 

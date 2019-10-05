@@ -47,7 +47,7 @@ namespace TShock.Commands.Logging {
             $"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]";
 
         protected override string VisitStructureValue(Unit _, StructureValue structure) =>
-            $"{(structure.TypeTag != null ? string.Format(TypeTagFormat, structure.TypeTag) : "")}" +
+            $"{(structure.TypeTag != null ? string.Format(CultureInfo.InvariantCulture, TypeTagFormat, structure.TypeTag) : "")}" +
             $"{{{string.Join(", ", structure.Properties.Select(p => $"{p.Name}={Visit(_, p.Value)}"))}}}";
 
         protected override string VisitDictionaryValue(Unit _, DictionaryValue dictionary) =>

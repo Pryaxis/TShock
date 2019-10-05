@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace TShock.Commands {
@@ -44,12 +45,14 @@ namespace TShock.Commands {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="qualifiedCommandName"/> is ().
         /// </exception>
+        [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
+            Justification = "strings are not user-facing")]
         public CommandHandlerAttribute(string qualifiedCommandName) {
             if (qualifiedCommandName is null) {
                 throw new ArgumentNullException(nameof(qualifiedCommandName));
             }
 
-            var colon = qualifiedCommandName.IndexOf(':');
+            var colon = qualifiedCommandName.IndexOf(':', StringComparison.Ordinal);
             if (colon <= 0) {
                 throw new ArgumentException("Qualified command name is missing the namespace.",
                     nameof(qualifiedCommandName));
@@ -60,7 +63,7 @@ namespace TShock.Commands {
                     nameof(qualifiedCommandName));
             }
 
-            if (qualifiedCommandName.IndexOf(' ') >= 0) {
+            if (qualifiedCommandName.IndexOf(' ', StringComparison.Ordinal) >= 0) {
                 throw new ArgumentException("Qualified command name contains a space.",
                     nameof(qualifiedCommandName));
             }

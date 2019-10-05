@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Orion.Events.Extensions;
@@ -108,7 +109,8 @@ namespace TShock.Commands {
                 var parameterType = parameterInfo.ParameterType;
                 if (!_commandService.Parsers.TryGetValue(parameterType, out var parser)) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_UnrecognizedArgType, parameterType));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedArgType,
+                            parameterType));
                 }
 
                 input = input.TrimStart();
@@ -117,7 +119,8 @@ namespace TShock.Commands {
 
                 if (options?.Contains(ParseOptions.AllowEmpty) != true) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_MissingArg, parameterInfo));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_MissingArg,
+                            parameterInfo));
                 }
 
                 return parser.GetDefault();
@@ -130,7 +133,9 @@ namespace TShock.Commands {
 
                 foreach (var c in input[1..space]) {
                     if (!_validShortFlags.Contains(c)) {
-                        throw new CommandParseException(string.Format(Resources.CommandParse_UnrecognizedShortFlag, c));
+                        throw new CommandParseException(
+                            string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedShortFlag,
+                                c));
                     }
 
                     shortFlags.Add(c);
@@ -147,7 +152,8 @@ namespace TShock.Commands {
                 var longFlag = input[2..space].ToString();
                 if (!_validLongFlags.Contains(longFlag)) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_UnrecognizedLongFlag, longFlag));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedLongFlag,
+                            longFlag));
                 }
 
                 longFlags.Add(longFlag);
@@ -162,7 +168,8 @@ namespace TShock.Commands {
                 var optional = input[2..equals].ToString();
                 if (!_validOptionals.TryGetValue(optional, out var parameterInfo)) {
                     throw new CommandParseException(
-                        string.Format(Resources.CommandParse_UnrecognizedOptional, optional));
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedOptional,
+                            optional));
                 }
 
                 input = input[(equals + 1)..];

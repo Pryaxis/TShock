@@ -47,7 +47,7 @@ namespace TShock {
         /// <param name="playerService">The player service.</param>
         /// <exception cref="ArgumentNullException">Any of the services are <see langword="null"/>.</exception>
         public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService) : base(kernel) {
-            kernel.Bind<ICommandService>().To<TShockCommandService>();
+            Kernel.Bind<ICommandService>().To<TShockCommandService>();
 
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
         }
