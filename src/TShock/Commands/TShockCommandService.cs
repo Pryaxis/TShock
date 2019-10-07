@@ -21,10 +21,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Xna.Framework;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
 using Orion.Players;
+using Serilog;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using TShock.Properties;
@@ -32,6 +34,8 @@ using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
+        private static readonly Color _meColor = new Color(0xcd, 0x85, 0x3f);
+
         private readonly Lazy<IPlayerService> _playerService;
 
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
@@ -175,6 +179,12 @@ namespace TShock.Commands {
             } else {
                 sender.SendInfoMessage(string.Join(", ", onlinePlayers.Select(p => p.Name)));
             }
+        }
+
+        [CommandHandler("tshock:me")]
+        public void Me(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
+            PlayerService.BroadcastMessage($"*{sender.Name} {text}", _meColor);
+            Log.Information("*{Name} {Text}", sender.Name, text);
         }
     }
 }
