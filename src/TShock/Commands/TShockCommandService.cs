@@ -34,8 +34,6 @@ using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
-        private static readonly Color _meColor = new Color(0xcd, 0x85, 0x3f);
-
         private readonly Lazy<IPlayerService> _playerService;
 
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
@@ -183,7 +181,7 @@ namespace TShock.Commands {
 
         [CommandHandler("tshock:me")]
         public void Me(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
-            PlayerService.BroadcastMessage($"*{sender.Name} {text}", _meColor);
+            PlayerService.BroadcastMessage($"*{sender.Name} {text}", new Color(0xc8, 0x64, 0x00));
             Log.Information("*{Name} {Text}", sender.Name, text);
         }
     }
