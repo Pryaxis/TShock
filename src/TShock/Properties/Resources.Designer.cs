@@ -70,6 +70,33 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Commands:.
+        /// </summary>
+        internal static string Command_Help_Header {
+            get {
+                return ResourceManager.GetString("Command_Help_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players online:.
+        /// </summary>
+        internal static string Command_Playing_Header {
+            get {
+                return ResourceManager.GetString("Command_Playing_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No players online..
+        /// </summary>
+        internal static string Command_Playing_NoPlayers {
+            get {
+                return ResourceManager.GetString("Command_Playing_NoPlayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {

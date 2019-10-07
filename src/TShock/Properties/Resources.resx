@@ -153,6 +153,15 @@
   <data name="CommandParse_UnrecognizedShortFlag" xml:space="preserve">
     <value>Short flag "-{0}" not recognized.</value>
   </data>
+  <data name="Command_Help_Header" xml:space="preserve">
+    <value>Commands:</value>
+  </data>
+  <data name="Command_Playing_Header" xml:space="preserve">
+    <value>Players online:</value>
+  </data>
+  <data name="Command_Playing_NoPlayers" xml:space="preserve">
+    <value>No players online.</value>
+  </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>
   </data>

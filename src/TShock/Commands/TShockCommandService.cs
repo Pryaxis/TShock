@@ -17,12 +17,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Orion;
 using Orion.Events;
 using Orion.Events.Extensions;
+using Orion.Players;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using TShock.Properties;
@@ -30,6 +32,8 @@ using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
+        private readonly Lazy<IPlayerService> _playerService;
+
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
         private readonly Dictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
@@ -42,7 +46,11 @@ namespace TShock.Commands {
         public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
         public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
 
-        public TShockCommandService() {
+        private IPlayerService PlayerService => _playerService.Value;
+
+        public TShockCommandService(Lazy<IPlayerService> playerService) {
+            _playerService = playerService;
+
             RegisterParser(new Int32Parser());
             RegisterParser(new StringParser());
             RegisterCommands(this);
@@ -135,19 +143,38 @@ namespace TShock.Commands {
             if (args.IsCanceled()) {
                 return false;
             }
-
+            
             var qualifiedName = command.QualifiedName;
+            if (!_commands.Remove(qualifiedName)) {
+                return false;
+            }
+            
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-            _qualifiedNames[name] = _qualifiedNames.GetValueOrDefault(name, () => new HashSet<string>());
+            Debug.Assert(_qualifiedNames.ContainsKey(name));
             _qualifiedNames[name].Remove(qualifiedName);
-
-            return _commands.Remove(qualifiedName);
+            return true;
         }
 
         [CommandHandler("tshock:help")]
         public void Help(ICommandSender sender) {
-            sender.SendInfoMessage("Commands:");
+            sender.SendInfoMessage(Resources.Command_Help_Header);
             sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{c.QualifiedName}")));
+        }
+
+        [CommandHandler("tshock:playing")]
+        public void Playing(ICommandSender sender, [Flag("i")] bool showIds) {
+            var onlinePlayers = PlayerService.Players.Where(p => p.IsActive).ToList();
+            if (onlinePlayers.Count == 0) {
+                sender.SendInfoMessage(Resources.Command_Playing_NoPlayers);
+                return;
+            }
+
+            sender.SendInfoMessage(Resources.Command_Playing_Header);
+            if (showIds) {
+                sender.SendInfoMessage(string.Join(", ", onlinePlayers.Select(p => $"[{p.Index}] {p.Name}")));
+            } else {
+                sender.SendInfoMessage(string.Join(", ", onlinePlayers.Select(p => p.Name)));
+            }
         }
     }
 }

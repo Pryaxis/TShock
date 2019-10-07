@@ -21,15 +21,17 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using Orion.Events.Extensions;
+using Orion.Players;
 using TShock.Commands.Parsers;
 using Xunit;
 
 namespace TShock.Commands {
     public class TShockCommandServiceTests : IDisposable {
+        private readonly Mock<IPlayerService> _mockPlayerService = new Mock<IPlayerService>();
         private readonly ICommandService _commandService;
 
         public TShockCommandServiceTests() {
-            _commandService = new TShockCommandService();
+            _commandService = new TShockCommandService(new Lazy<IPlayerService>(() => _mockPlayerService.Object));
         }
 
         public void Dispose() => _commandService.Dispose();
