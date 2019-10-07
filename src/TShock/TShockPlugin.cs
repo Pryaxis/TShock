@@ -133,7 +133,7 @@ namespace TShock {
                 command = CommandService.FindCommand(ref input);
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(
-                    string.Format(CultureInfo.InvariantCulture, Resources.Chat_BadCommand, ex.Message));
+                    string.Format(CultureInfo.InvariantCulture, Resources.Command_BadCommand, ex.Message));
                 return;
             }
 
