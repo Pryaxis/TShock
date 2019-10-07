@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
@@ -25,9 +24,6 @@ namespace TShock.Commands {
     /// Represents a command sender. Provides the ability to communicate with the sender.
     /// </summary>
     public interface ICommandSender {
-        private static readonly Color _errorColor = new Color(0xcc, 0x44, 0x44);
-        private static readonly Color _infoColor = new Color(0xff, 0xff, 0x44);
-
         /// <summary>
         /// Gets the sender's name.
         /// </summary>
@@ -60,12 +56,12 @@ namespace TShock.Commands {
         /// Sends an error <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The error message.</param>
-        void SendErrorMessage(string message) => SendMessage(message, _errorColor);
+        void SendErrorMessage(string message) => SendMessage(message, new Color(0xcc, 0x44, 0x44));
 
         /// <summary>
         /// Sends an informational <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The informational message.</param>
-        void SendInfoMessage(string message) => SendMessage(message, _infoColor);
+        void SendInfoMessage(string message) => SendMessage(message, new Color(0xff, 0xff, 0x44));
     }
 }
