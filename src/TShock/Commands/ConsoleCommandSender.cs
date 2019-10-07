@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace TShock.Commands {
     internal sealed class ConsoleCommandSender : ICommandSender {
@@ -44,16 +45,19 @@ namespace TShock.Commands {
 
         public ConsoleCommandSender(string input) {
             Log = new LoggerConfiguration()
+                .WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Properties} {Message:lj}{NewLine}{Exception}",
+                    theme: AnsiConsoleTheme.Code)
                 .MinimumLevel.Is(LogLevel)
                 .Enrich.WithProperty("Cmd", input)
-                .WriteTo.Logger(Serilog.Log.Logger)
                 .CreateLogger();
         }
 
-        public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, string.Empty);
-        public void SendMessage(ReadOnlySpan<char> message, Color color) => SendMessage(message, GetColorString(color));
+        public void SendMessage(string message) => SendMessage(message, string.Empty);
+        public void SendMessage(string message, Color color) => SendMessage(message, GetColorString(color));
 
-        private static void SendMessage(ReadOnlySpan<char> message, string colorString) {
+        private static void SendMessage(string messageString, string colorString) {
+            var message = messageString.AsSpan();
             var output = new StringBuilder(colorString);
             while (true) {
                 var leftBracket = message.IndexOf('[');

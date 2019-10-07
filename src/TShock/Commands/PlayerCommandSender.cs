@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Orion.Players;
@@ -48,9 +47,7 @@ namespace TShock.Commands {
                 .CreateLogger();
         }
 
-        public void SendMessage(ReadOnlySpan<char> message) => SendMessage(message, Color.White);
-
-        public void SendMessage(ReadOnlySpan<char> message, Color color) =>
-            Player.SendMessage(message.ToString(), color);
+        public void SendMessage(string message) => SendMessage(message, Color.White);
+        public void SendMessage(string message, Color color) => Player.SendMessage(message, color);
     }
 }

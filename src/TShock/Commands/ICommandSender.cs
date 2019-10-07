@@ -47,25 +47,25 @@ namespace TShock.Commands {
         /// Sends a <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The message.</param>
-        void SendMessage(ReadOnlySpan<char> message);
+        void SendMessage(string message);
 
         /// <summary>
         /// Sends a <paramref name="message"/> to the sender with the given <paramref name="color"/>.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="color">The color.</param>
-        void SendMessage(ReadOnlySpan<char> message, Color color);
+        void SendMessage(string message, Color color);
 
         /// <summary>
         /// Sends an error <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The error message.</param>
-        void SendErrorMessage(ReadOnlySpan<char> message) => SendMessage(message, _errorColor);
+        void SendErrorMessage(string message) => SendMessage(message, _errorColor);
 
         /// <summary>
         /// Sends an informational <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The informational message.</param>
-        void SendInfoMessage(ReadOnlySpan<char> message) => SendMessage(message, _infoColor);
+        void SendInfoMessage(string message) => SendMessage(message, _infoColor);
     }
 }
