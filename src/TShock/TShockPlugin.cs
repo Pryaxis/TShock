@@ -87,7 +87,7 @@ namespace TShock {
             }
 
             Kernel.ServerCommand -= ServerCommandHandler;
-            
+
             PlayerService.PlayerChat -= PlayerChatHandler;
         }
 

@@ -97,6 +97,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to *{0} rolls a {1}.
+        /// </summary>
+        internal static string Command_Roll {
+            get {
+                return ResourceManager.GetString("Command_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {

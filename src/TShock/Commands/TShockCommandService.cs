@@ -38,9 +38,8 @@ namespace TShock.Commands {
 
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
         private readonly Dictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
-
-        // Map from command name -> set of qualified command names.
         private readonly IDictionary<string, ISet<string>> _qualifiedNames = new Dictionary<string, ISet<string>>();
+        private readonly Random _rand = new Random();
 
         public IReadOnlyDictionary<string, ICommand> Commands => _commands;
         public IReadOnlyDictionary<Type, IArgumentParser> Parsers => _parsers;
@@ -145,12 +144,12 @@ namespace TShock.Commands {
             if (args.IsCanceled()) {
                 return false;
             }
-            
+
             var qualifiedName = command.QualifiedName;
             if (!_commands.Remove(qualifiedName)) {
                 return false;
             }
-            
+
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
             Debug.Assert(_qualifiedNames.ContainsKey(name));
             _qualifiedNames[name].Remove(qualifiedName);
@@ -183,6 +182,16 @@ namespace TShock.Commands {
         public void Me(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
             PlayerService.BroadcastMessage($"*{sender.Name} {text}", new Color(0xc8, 0x64, 0x00));
             Log.Information("*{Name} {Text}", sender.Name, text);
+        }
+
+        [CommandHandler("tshock:roll")]
+        public void Roll(ICommandSender sender) {
+            var num = _rand.Next(1, 101);
+            // TODO: fix colors here
+            PlayerService.BroadcastMessage(
+                string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll, sender.Name, num),
+                new Color(0xff, 0xf0, 0x14));
+            Log.Information("*{Name} rolls a {Num}", sender.Name, num);
         }
     }
 }

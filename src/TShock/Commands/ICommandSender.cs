@@ -62,6 +62,6 @@ namespace TShock.Commands {
         /// Sends an informational <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The informational message.</param>
-        void SendInfoMessage(string message) => SendMessage(message, new Color(0xff, 0xff, 0x44));
+        void SendInfoMessage(string message) => SendMessage(message, new Color(0xff, 0xf0, 0x14));
     }
 }
