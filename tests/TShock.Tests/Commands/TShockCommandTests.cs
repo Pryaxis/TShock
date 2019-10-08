@@ -116,8 +116,12 @@ namespace TShock.Commands {
         [Theory]
         [InlineData("1", 1, 1234, 5678)]
         [InlineData("  1  ", 1, 1234, 5678)]
+        [InlineData("1 2", 1, 2, 5678)]
+        [InlineData("1 2 3", 1, 2, 3)]
         [InlineData("--val=9001 1", 1, 9001, 5678)]
         [InlineData(" --val=9001     1", 1, 9001, 5678)]
+        [InlineData("--val2=5678 1", 1, 1234, 5678)]
+        [InlineData(" --val2=5678     1", 1, 1234, 5678)]
         public void Invoke_Optionals_IsCorrect(string input, int expectedRequired, int expectedVal, int expectedVal2) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()

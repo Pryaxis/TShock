@@ -16,8 +16,9 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Xna.Framework;
+using System.Text.RegularExpressions;
 using Moq;
+using Orion.Packets.World;
 using Orion.Players;
 using Serilog;
 using Serilog.Core;
@@ -34,8 +35,10 @@ namespace TShock.Commands.Logging {
             _logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
         }
 
-        private void VerifyMessage(string regex) =>
-            _mockPlayer.Verify(p => p.SendMessage(It.IsRegex(regex), It.IsAny<Color>()));
+        private void VerifyMessage(string regex) {
+            _mockPlayer.Verify(p => p.SendPacket(
+                It.Is<ChatPacket>(cp => Regex.IsMatch(cp.ChatText, regex))));
+        }
 
         [Fact]
         public void Emit_Verbose() {

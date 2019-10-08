@@ -18,6 +18,7 @@
 using FluentAssertions;
 using Microsoft.Xna.Framework;
 using Moq;
+using Orion.Packets.World;
 using Orion.Players;
 using Xunit;
 
@@ -51,15 +52,17 @@ namespace TShock.Commands {
         public void SendMessage() {
             _sender.SendMessage("test");
 
-            _mockPlayer.Verify(p => p.SendMessage("test", Color.White));
+            _mockPlayer.Verify(p => p.SendPacket(
+                It.Is<ChatPacket>(cp => cp.ChatColor == Color.White && cp.ChatText == "test")));
             _mockPlayer.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void SendMessage_WithColor() {
             _sender.SendMessage("test", Color.Orange);
-
-            _mockPlayer.Verify(p => p.SendMessage("test", Color.Orange));
+            
+            _mockPlayer.Verify(p => p.SendPacket(
+                It.Is<ChatPacket>(cp => cp.ChatColor == Color.Orange && cp.ChatText == "test")));
             _mockPlayer.VerifyNoOtherCalls();
         }
     }

@@ -186,7 +186,6 @@ namespace TShock.Commands {
         [CommandHandler("tshock:roll")]
         public void Roll(ICommandSender sender) {
             var num = _rand.Next(1, 101);
-            // TODO: fix colors here
             PlayerService.BroadcastMessage(
                 string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll, sender.Name, num),
                 new Color(0xff, 0xf0, 0x14));
