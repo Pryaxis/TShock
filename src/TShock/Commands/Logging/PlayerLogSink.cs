@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -58,7 +59,8 @@ namespace TShock.Commands.Logging {
                 _ => LevelUnknown
             };
 
-            var output = new StringBuilder($"[c/6c6c6c:{logEvent.Timestamp:HH:mm:ss zz}] [{logLevel}] ");
+            var output = new StringBuilder(
+                FormattableString.Invariant($"[c/6c6c6c:{logEvent.Timestamp:HH:mm:ss zz}] [{logLevel}] "));
             foreach (var token in logEvent.MessageTemplate.Tokens) {
                 if (token is TextToken textToken) {
                     output.Append(textToken.Text);
@@ -67,7 +69,7 @@ namespace TShock.Commands.Logging {
 
                 var propertyToken = (PropertyToken)token;
                 if (!logEvent.Properties.TryGetValue(propertyToken.PropertyName, out var propertyValue)) {
-                    output.Append($"[c/ff0000:{propertyToken}]");
+                    output.Append(FormattableString.Invariant($"[c/ff0000:{propertyToken}]"));
                     continue;
                 }
 

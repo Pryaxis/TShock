@@ -188,7 +188,9 @@ namespace TShock.Commands {
 
         [CommandHandler("tshock:me")]
         public void Me(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
-            PlayerService.BroadcastMessage($"*{sender.Name} {text}", new Color(0xc8, 0x64, 0x00));
+            PlayerService.BroadcastMessage(
+                string.Format(CultureInfo.InvariantCulture, Resources.Command_Me, sender.Name, text),
+                new Color(0xc8, 0x64, 0x00));
             Log.Information("*{Name} {Text}", sender.Name, text);
         }
 

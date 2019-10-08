@@ -79,6 +79,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to *{0} {1}.
+        /// </summary>
+        internal static string Command_Me {
+            get {
+                return ResourceManager.GetString("Command_Me", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must be a player to party chat..
         /// </summary>
         internal static string Command_Party_NotAPlayer {

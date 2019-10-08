@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Serilog.Data;
@@ -45,13 +47,24 @@ namespace TShock.Commands.Logging {
             }, scalar.Value);
 
         protected override string VisitSequenceValue(Unit _, SequenceValue sequence) =>
-            $"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]";
+            FormattableString.Invariant($"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]");
 
         protected override string VisitStructureValue(Unit _, StructureValue structure) =>
-            $"{(structure.TypeTag != null ? string.Format(CultureInfo.InvariantCulture, TypeTagFormat, structure.TypeTag) : "")}" +
-            $"{{{string.Join(", ", structure.Properties.Select(p => $"{p.Name}={Visit(_, p.Value)}"))}}}";
+            FormatTypeTag(structure.TypeTag) +
+            FormattableString.Invariant(
+                $"{{{string.Join(", ", structure.Properties.Select(FormatStructureElement))}}}");
 
         protected override string VisitDictionaryValue(Unit _, DictionaryValue dictionary) =>
-            $"{{{string.Join(", ", dictionary.Elements.Select(e => $"[{Visit(_, e.Key)}]={Visit(_, e.Value)}"))}}}";
+            FormattableString.Invariant(
+                $"{{{string.Join(", ", dictionary.Elements.Select(FormatDictionaryElement))}}}");
+
+        private string FormatTypeTag(string? typeTag) =>
+            typeTag is null ? string.Empty : string.Format(CultureInfo.InvariantCulture, TypeTagFormat, typeTag);
+
+        private string FormatStructureElement(LogEventProperty p) =>
+            FormattableString.Invariant($"{p.Name}={Visit(default, p.Value)}");
+
+        private string FormatDictionaryElement(KeyValuePair<ScalarValue, LogEventPropertyValue> kvp) =>
+            FormattableString.Invariant($"[{Visit(default, kvp.Key)}]={Visit(default, kvp.Value)}");
     }
 }

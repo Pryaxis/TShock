@@ -31,38 +31,6 @@ namespace TShock.Commands {
         private readonly Mock<ICommandService> _mockCommandService = new Mock<ICommandService>();
 
         [Fact]
-        public void Ctor_InParam_ThrowsNotSupportedException() {
-            var testClass = new TestClass();
-            Func<ICommand> func = () => GetCommand(testClass, nameof(TestClass.TestCommand_NoIn));
-
-            func.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void Ctor_OutParam_ThrowsNotSupportedException() {
-            var testClass = new TestClass();
-            Func<ICommand> func = () => GetCommand(testClass, nameof(TestClass.TestCommand_NoOut));
-
-            func.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void Ctor_RefParam_ThrowsNotSupportedException() {
-            var testClass = new TestClass();
-            Func<ICommand> func = () => GetCommand(testClass, nameof(TestClass.TestCommand_NoRef));
-
-            func.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void Ctor_PointerParam_ThrowsNotSupportedException() {
-            var testClass = new TestClass();
-            Func<ICommand> func = () => GetCommand(testClass, nameof(TestClass.TestCommand_NoPointer));
-
-            func.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
         public void Invoke_Sender() {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
@@ -323,7 +291,7 @@ namespace TShock.Commands {
         public void Invoke_UnexpectedArgType_ThrowsCommandParseException() {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser>());
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoByte));
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoTestClass));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, "");
 
@@ -442,17 +410,8 @@ namespace TShock.Commands {
             [CommandHandler("tshock_tests:exception")]
             public void TestCommand_Exception(ICommandSender sender) => throw new NotImplementedException();
 
-            [CommandHandler("tshock_tests:test_no_in")]
-            public void TestCommand_NoIn(ICommandSender sender, in int x) { }
-
-            [CommandHandler("tshock_tests:test_no_out")]
-            public void TestCommand_NoOut(ICommandSender sender, out int x) => x = 0;
-
-            [CommandHandler("tshock_tests:test_no_out")]
-            public void TestCommand_NoRef(ICommandSender sender, ref int x) { }
-
-            [CommandHandler("tshock_tests:test_no_byte")]
-            public void TestCommand_NoByte(ICommandSender sender, byte b) { }
+            [CommandHandler("tshock_tests:test_no_testclass")]
+            public void TestCommand_NoTestClass(ICommandSender sender, TestClass testClass) { }
         }
     }
 }
