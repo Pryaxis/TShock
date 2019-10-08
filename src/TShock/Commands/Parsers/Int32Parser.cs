@@ -23,15 +23,20 @@ using TShock.Properties;
 using TShock.Utils.Extensions;
 
 namespace TShock.Commands.Parsers {
-    internal sealed class Int32Parser : IArgumentParser<int> {
+    /// <summary>
+    /// Parses an Int32.
+    /// </summary>
+    public sealed class Int32Parser : IArgumentParser<int> {
+        /// <inheritdoc/>
         public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
             var end = input.IndexOfOrEnd(' ');
             var parse = input[..end];
-            input = input[end..];
 
             // Calling Parse here instead of TryParse allows us to give better error messages.
             try {
-                return int.Parse(parse, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                var value = int.Parse(parse, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                input = input[end..];
+                return value;
             } catch (FormatException ex) {
                 throw new CommandParseException(
                     string.Format(CultureInfo.InvariantCulture, Resources.Int32Parser_InvalidInteger,
@@ -42,7 +47,8 @@ namespace TShock.Commands.Parsers {
                         parse.ToString()), ex);
             }
         }
-
+        
+        /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public int GetDefault() => 0;
     }

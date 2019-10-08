@@ -171,6 +171,12 @@
   <data name="Command_Roll" xml:space="preserve">
     <value>*{0} rolls a {1}</value>
   </data>
+  <data name="EnumParser_InvalidInteger" xml:space="preserve">
+    <value>"{0}" is not a valid value.</value>
+  </data>
+  <data name="EnumParser_InvalidString" xml:space="preserve">
+    <value>"{0}" is not a valid value.</value>
+  </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>
   </data>

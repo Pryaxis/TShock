@@ -223,6 +223,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid value..
+        /// </summary>
+        internal static string EnumParser_InvalidInteger {
+            get {
+                return ResourceManager.GetString("EnumParser_InvalidInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid value..
+        /// </summary>
+        internal static string EnumParser_InvalidString {
+            get {
+                return ResourceManager.GetString("EnumParser_InvalidString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is a number that is out of range of an integer..
         /// </summary>
         internal static string Int32Parser_IntegerOutOfRange {

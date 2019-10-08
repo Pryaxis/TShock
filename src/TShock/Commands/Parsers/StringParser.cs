@@ -23,7 +23,11 @@ using System.Text;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
-    internal sealed class StringParser : IArgumentParser<string> {
+    /// <summary>
+    /// Parses a string.
+    /// </summary>
+    public sealed class StringParser : IArgumentParser<string> {
+        /// <inheritdoc/>
         public string Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
             if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
                 var result = input.ToString();
@@ -83,7 +87,8 @@ namespace TShock.Commands.Parsers {
             input = input[end..];
             return builder.ToString();
         }
-
+        
+        /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public string GetDefault() => string.Empty;
     }

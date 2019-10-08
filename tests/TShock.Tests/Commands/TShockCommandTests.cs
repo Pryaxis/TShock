@@ -76,7 +76,7 @@ namespace TShock.Commands {
         [Theory]
         [InlineData("1 test", 1, "test")]
         [InlineData(@"-56872 ""test abc\"" def""", -56872, "test abc\" def")]
-        public void Invoke_SenderIntString_IsCorrect(string input, int expectedInt, string expectedString) {
+        public void Invoke_SenderIntString(string input, int expectedInt, string expectedString) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser(),
                 [typeof(string)] = new StringParser()
@@ -101,7 +101,7 @@ namespace TShock.Commands {
         [InlineData("  -xy  ", true, true)]
         [InlineData("   -x    --yyy", true, true)]
         [InlineData("--xxx --yyy", true, true)]
-        public void Invoke_Flags_IsCorrect(string input, bool expectedX, bool expectedY) {
+        public void Invoke_Flags(string input, bool expectedX, bool expectedY) {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -122,7 +122,7 @@ namespace TShock.Commands {
         [InlineData(" --val=9001     1", 1, 9001, 5678)]
         [InlineData("--val2=5678 1", 1, 1234, 5678)]
         [InlineData(" --val2=5678     1", 1, 1234, 5678)]
-        public void Invoke_Optionals_IsCorrect(string input, int expectedRequired, int expectedVal, int expectedVal2) {
+        public void Invoke_Optionals(string input, int expectedRequired, int expectedVal, int expectedVal2) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()
             });
@@ -152,7 +152,7 @@ namespace TShock.Commands {
         [InlineData("--depth=1 --recursive -f", true, true, 1)]
         [InlineData("--force -r --depth=100 ", true, true, 100)]
         [InlineData("--force -r --depth=   100 ", true, true, 100)]
-        public void Invoke_FlagsAndOptionals_IsCorrect(string input, bool expectedForce, bool expectedRecursive,
+        public void Invoke_FlagsAndOptionals(string input, bool expectedForce, bool expectedRecursive,
                                                        int expectedDepth) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()

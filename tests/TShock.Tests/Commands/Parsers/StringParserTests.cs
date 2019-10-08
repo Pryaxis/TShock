@@ -34,7 +34,7 @@ namespace TShock.Commands.Parsers {
         [InlineData(@"\""", @"""", "")]
         [InlineData(@"\t", "\t", "")]
         [InlineData(@"\n", "\n", "")]
-        public void Parse_IsCorrect(string inputString, string expected, string expectedNextInput) {
+        public void Parse(string inputString, string expected, string expectedNextInput) {
             var parser = new StringParser();
             var input = inputString.AsSpan();
 

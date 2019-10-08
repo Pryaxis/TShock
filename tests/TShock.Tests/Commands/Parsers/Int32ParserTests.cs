@@ -27,7 +27,7 @@ namespace TShock.Commands.Parsers {
         [InlineData("000", 0, "")]
         [InlineData("-1234", -1234, "")]
         [InlineData("123 test", 123, " test")]
-        public void Parse_IsCorrect(string inputString, int expected, string expectedNextInput) {
+        public void Parse(string inputString, int expected, string expectedNextInput) {
             var parser = new Int32Parser();
             var input = inputString.AsSpan();
 
