@@ -425,7 +425,7 @@ namespace TShock.Commands {
                 Sender = sender;
                 HyphenatedOptionalIsLong = hyphenated_optional_is_long;
             }
-            
+
             [CommandHandler("tshock_tests:test_params")]
             public void TestCommand_Params(ICommandSender sender, params int[] ints) {
                 Sender = sender;

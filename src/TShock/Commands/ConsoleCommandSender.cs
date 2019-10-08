@@ -26,7 +26,10 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
 namespace TShock.Commands {
-    internal sealed class ConsoleCommandSender : ICommandSender {
+    /// <summary>
+    /// Represents a console-based command sender.
+    /// </summary>
+    public sealed class ConsoleCommandSender : ICommandSender {
 #if DEBUG
         private const LogEventLevel LogLevel = LogEventLevel.Verbose;
 #else
@@ -35,28 +38,40 @@ namespace TShock.Commands {
         private const string ResetColorString = "\x1b[0m";
         private const string ColorTagPrefix = "c/";
 
+        /// <summary>
+        /// Gets the console-based command sender.
+        /// </summary>
+        public static ConsoleCommandSender Instance { get; } = new ConsoleCommandSender();
+
+        /// <inheritdoc/>
         public string Name => "Console";
+
+        /// <inheritdoc/>
         public ILogger Log { get; }
+
+        /// <inheritdoc/>
         public IPlayer? Player => null;
 
         [Pure]
         private static string GetColorString(Color color) =>
             FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
 
-        public ConsoleCommandSender(string input) {
+        private ConsoleCommandSender() {
             Log = new LoggerConfiguration()
                 .WriteTo.Console(
                     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Properties} {Message:lj}{NewLine}{Exception}",
                     theme: AnsiConsoleTheme.Code)
                 .MinimumLevel.Is(LogLevel)
-                .Enrich.WithProperty("Cmd", input)
                 .CreateLogger();
         }
 
-        public void SendMessage(string message) => SendMessage(message, string.Empty);
-        public void SendMessage(string message, Color color) => SendMessage(message, GetColorString(color));
+        /// <inheritdoc/>
+        public void SendMessage(string message) => SendMessageImpl(message, string.Empty);
 
-        private static void SendMessage(string messageString, string colorString) {
+        /// <inheritdoc/>
+        public void SendMessage(string message, Color color) => SendMessageImpl(message, GetColorString(color));
+
+        private static void SendMessageImpl(string messageString, string colorString) {
             var message = messageString.AsSpan();
             var output = new StringBuilder(colorString);
             while (true) {

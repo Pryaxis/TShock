@@ -99,7 +99,7 @@ namespace TShock {
                 input = input.Substring(1);
             }
 
-            ExecuteCommand(new ConsoleCommandSender(input), input);
+            ExecuteCommand(ConsoleCommandSender.Instance, input);
         }
 
         [EventHandler(EventPriority.Lowest)]
@@ -119,7 +119,7 @@ namespace TShock {
                 args.Cancel("tshock: command executing");
 
                 var input = chat.Substring(1);
-                ExecuteCommand(new PlayerCommandSender(args.Player, input), input);
+                ExecuteCommand(new PlayerCommandSender(args.Player), input);
             }
         }
 

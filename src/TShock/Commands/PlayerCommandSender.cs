@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Diagnostics;
+using System;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
@@ -23,31 +23,42 @@ using Serilog.Events;
 using TShock.Commands.Logging;
 
 namespace TShock.Commands {
-    internal sealed class PlayerCommandSender : ICommandSender {
+    /// <summary>
+    /// Represents a player-based command sender.
+    /// </summary>
+    public sealed class PlayerCommandSender : ICommandSender {
 #if DEBUG
         private const LogEventLevel LogLevel = LogEventLevel.Verbose;
 #else
         private const LogEventLevel LogLevel = LogEventLevel.Error;
 #endif
 
+        /// <inheritdoc/>
         public string Name => Player.Name;
+
+        /// <inheritdoc/>
         public ILogger Log { get; }
+
+        /// <inheritdoc/>
         public IPlayer Player { get; }
 
-        public PlayerCommandSender(IPlayer player, string input) {
-            Debug.Assert(player != null, "player should not be null");
-
-            Player = player;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlayerCommandSender"/> class with the specified player.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="player"/> is <see langword="null"/>.</exception>
+        public PlayerCommandSender(IPlayer player) {
+            Player = player ?? throw new ArgumentNullException(nameof(player));
             Log = new LoggerConfiguration()
                 .MinimumLevel.Is(LogLevel)
                 .WriteTo.Sink(new PlayerLogSink(player))
-                .Enrich.WithProperty("Player", player.Name)
-                .Enrich.WithProperty("Cmd", input)
-                .WriteTo.Logger(Serilog.Log.Logger)
                 .CreateLogger();
         }
 
+        /// <inheritdoc/>
         public void SendMessage(string message) => SendMessage(message, Color.White);
+
+        /// <inheritdoc/>
         public void SendMessage(string message, Color color) => Player.SendMessage(message, color);
     }
 }

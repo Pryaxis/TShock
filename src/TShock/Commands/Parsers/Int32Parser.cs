@@ -47,7 +47,7 @@ namespace TShock.Commands.Parsers {
                         parse.ToString()), ex);
             }
         }
-        
+
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public int GetDefault() => 0;

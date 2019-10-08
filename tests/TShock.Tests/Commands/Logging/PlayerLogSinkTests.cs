@@ -35,10 +35,8 @@ namespace TShock.Commands.Logging {
             _logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
         }
 
-        private void VerifyMessage(string regex) {
-            _mockPlayer.Verify(p => p.SendPacket(
-                It.Is<ChatPacket>(cp => Regex.IsMatch(cp.ChatText, regex))));
-        }
+        private void VerifyMessage(string regex) => _mockPlayer.Verify(p => p.SendPacket(
+            It.Is<ChatPacket>(cp => Regex.IsMatch(cp.ChatText, regex))));
 
         [Fact]
         public void Emit_Verbose() {
@@ -106,17 +104,11 @@ namespace TShock.Commands.Logging {
 
         [Fact]
         public void Emit_WithException() {
-            static void Exception1() {
-                Exception2();
-            }
+            static void Exception1() => Exception2();
 
-            static void Exception2() {
-                Exception3();
-            }
+            static void Exception2() => Exception3();
 
-            static void Exception3() {
-                throw new NotImplementedException();
-            }
+            static void Exception3() => throw new NotImplementedException();
 
             Exception exception = null;
             try {

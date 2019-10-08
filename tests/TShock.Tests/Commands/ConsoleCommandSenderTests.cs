@@ -22,14 +22,14 @@ namespace TShock.Commands {
     public class ConsoleCommandSenderTests {
         [Fact]
         public void Name_Get() {
-            var sender = new ConsoleCommandSender("test");
+            ICommandSender sender = ConsoleCommandSender.Instance;
 
             sender.Name.Should().Be("Console");
         }
 
         [Fact]
         public void Player_Get() {
-            var sender = new ConsoleCommandSender("test");
+            ICommandSender sender = ConsoleCommandSender.Instance;
 
             sender.Player.Should().BeNull();
         }

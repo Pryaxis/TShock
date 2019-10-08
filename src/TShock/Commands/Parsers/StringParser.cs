@@ -87,7 +87,7 @@ namespace TShock.Commands.Parsers {
             input = input[end..];
             return builder.ToString();
         }
-        
+
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public string GetDefault() => string.Empty;

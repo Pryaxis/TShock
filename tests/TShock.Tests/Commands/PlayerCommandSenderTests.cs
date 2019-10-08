@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
 using Moq;
@@ -28,8 +29,14 @@ namespace TShock.Commands {
         private readonly ICommandSender _sender;
 
         public PlayerCommandSenderTests() {
-            _sender = new PlayerCommandSender(_mockPlayer.Object, "test");
-            _mockPlayer.VerifyGet(p => p.Name);
+            _sender = new PlayerCommandSender(_mockPlayer.Object);
+        }
+
+        [Fact]
+        public void Ctor_NullPlayer_ThrowsArgumentNullException() {
+            Func<PlayerCommandSender> func = () => new PlayerCommandSender(null);
+
+            func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -60,7 +67,7 @@ namespace TShock.Commands {
         [Fact]
         public void SendMessage_WithColor() {
             _sender.SendMessage("test", Color.Orange);
-            
+
             _mockPlayer.Verify(p => p.SendPacket(
                 It.Is<ChatPacket>(cp => cp.ChatColor == Color.Orange && cp.ChatText == "test")));
             _mockPlayer.VerifyNoOtherCalls();
