@@ -153,7 +153,7 @@ namespace TShock.Commands {
         [InlineData("--force -r --depth=100 ", true, true, 100)]
         [InlineData("--force -r --depth=   100 ", true, true, 100)]
         public void Invoke_FlagsAndOptionals(string input, bool expectedForce, bool expectedRecursive,
-                                                       int expectedDepth) {
+                int expectedDepth) {
             _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
                 [typeof(int)] = new Int32Parser()
             });
@@ -167,6 +167,25 @@ namespace TShock.Commands {
             testClass.Force.Should().Be(expectedForce);
             testClass.Recursive.Should().Be(expectedRecursive);
             testClass.Depth.Should().Be(expectedDepth);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("1", 1)]
+        [InlineData("1  2", 1, 2)]
+        [InlineData("    -1  2   -5", -1, 2, -5)]
+        public void Invoke_Params(string input, params int[] expectedInts) {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
+                [typeof(int)] = new Int32Parser()
+            });
+            var testClass = new TestClass();
+            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Params));
+            var commandSender = new Mock<ICommandSender>().Object;
+
+            command.Invoke(commandSender, input);
+
+            testClass.Sender.Should().BeSameAs(commandSender);
+            testClass.Ints.Should().BeEquivalentTo(expectedInts);
         }
 
         [Fact]
@@ -362,6 +381,7 @@ namespace TShock.Commands {
             public bool Recursive { get; private set; }
             public int Depth { get; private set; }
             public int HyphenatedOptionalIsLong { get; private set; }
+            public int[] Ints { get; private set; }
 
             [CommandHandler("tshock_tests:test")]
             public void TestCommand(ICommandSender sender) => Sender = sender;
@@ -393,7 +413,7 @@ namespace TShock.Commands {
 
             [CommandHandler("tshock_tests:test_flags_and_optionals")]
             public void TestCommand_FlagsAndOptionals(ICommandSender sender, [Flag("f", "force")] bool force,
-                                                      [Flag("r", "recursive")] bool recursive, int depth = 10) {
+                    [Flag("r", "recursive")] bool recursive, int depth = 10) {
                 Sender = sender;
                 Force = force;
                 Recursive = recursive;
@@ -405,10 +425,16 @@ namespace TShock.Commands {
                 Sender = sender;
                 HyphenatedOptionalIsLong = hyphenated_optional_is_long;
             }
+            
+            [CommandHandler("tshock_tests:test_params")]
+            public void TestCommand_Params(ICommandSender sender, params int[] ints) {
+                Sender = sender;
+                Ints = ints;
+            }
 
             [CommandHandler("tshock_tests:allow_empty")]
             public void TestCommand_AllowEmpty(ICommandSender sender,
-                                               [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
+                    [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
                 Sender = sender;
                 String = @string;
             }

@@ -105,28 +105,26 @@ namespace TShock.Commands {
             var longFlags = new HashSet<string>();
             var optionals = new Dictionary<string, object?>();
 
-            object? ParseArgument(ref ReadOnlySpan<char> input, ParameterInfo parameterInfo, object? defaultValue) {
-                var parameterType = parameterInfo.ParameterType;
+            object? ParseArgument(ref ReadOnlySpan<char> input, ParameterInfo parameterInfo, Type? typeHint = null) {
+                var parameterType = typeHint ?? parameterInfo.ParameterType;
                 if (!_commandService.Parsers.TryGetValue(parameterType, out var parser)) {
                     throw new CommandParseException(
                         string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedArgType,
                             parameterType));
                 }
 
-                input = input.TrimStart();
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
                 if (!input.IsEmpty) {
                     return parser.Parse(ref input, options);
                 }
 
-                var allowsEmpty = defaultValue != null || options?.Contains(ParseOptions.AllowEmpty) == true;
-                if (!allowsEmpty) {
+                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
                     throw new CommandParseException(
                         string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_MissingArg,
                             parameterInfo));
                 }
 
-                return defaultValue ?? parser.GetDefault();
+                return parser.GetDefault();
             }
 
             void ParseShortFlags(ref ReadOnlySpan<char> input, int space) {
@@ -176,7 +174,8 @@ namespace TShock.Commands {
                 }
 
                 input = input[(equals + 1)..];
-                optionals[optional] = ParseArgument(ref input, parameterInfo, null);
+                input = input.TrimStart();
+                optionals[optional] = ParseArgument(ref input, parameterInfo);
             }
 
             /*
@@ -225,17 +224,37 @@ namespace TShock.Commands {
                     }
                 }
 
-                object? defaultValue = null;
+                if (parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null) {
+                    var elementType = parameterType.GetElementType();
+
+                    var list = new List<object?>();
+                    input = input.TrimStart();
+                    while (!input.IsEmpty) {
+                        list.Add(ParseArgument(ref input, parameterInfo, elementType));
+                        input = input.TrimStart();
+                    }
+
+                    var array = Array.CreateInstance(elementType, list.Count);
+                    for (var i = 0; i < list.Count; ++i) {
+                        array.SetValue(list[i], i);
+                    }
+
+                    return array;
+                }
+
+                input = input.TrimStart();
                 if (parameterInfo.IsOptional) {
                     var optional = parameterInfo.Name.Replace('_', '-');
                     if (optionals.TryGetValue(optional, out var value)) {
                         return value;
                     }
 
-                    defaultValue = parameterInfo.DefaultValue;
+                    if (input.IsEmpty) {
+                        return parameterInfo.DefaultValue;
+                    }
                 }
 
-                return ParseArgument(ref input, parameterInfo, defaultValue);
+                return ParseArgument(ref input, parameterInfo);
             }
 
             if (_validShortFlags.Count > 0 || _validLongFlags.Count > 0 || _validOptionals.Count > 0) {
