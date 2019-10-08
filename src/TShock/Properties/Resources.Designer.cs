@@ -79,6 +79,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must be a player to party chat..
+        /// </summary>
+        internal static string Command_Party_NotAPlayer {
+            get {
+                return ResourceManager.GetString("Command_Party_NotAPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not in a team!.
+        /// </summary>
+        internal static string Command_Party_NotInTeam {
+            get {
+                return ResourceManager.GetString("Command_Party_NotInTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Players online:.
         /// </summary>
         internal static string Command_Playing_Header {

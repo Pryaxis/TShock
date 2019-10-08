@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Orion.Events.Extensions;
+using Orion.Events;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using TShock.Properties;

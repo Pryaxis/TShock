@@ -22,7 +22,6 @@ using System.Reflection;
 using FluentAssertions;
 using Moq;
 using Orion.Events;
-using Orion.Events.Extensions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 using Xunit;

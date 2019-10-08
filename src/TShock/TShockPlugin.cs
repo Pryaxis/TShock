@@ -21,7 +21,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Orion;
 using Orion.Events;
-using Orion.Events.Extensions;
 using Orion.Events.Players;
 using Orion.Events.Server;
 using Orion.Players;

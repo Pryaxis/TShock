@@ -24,7 +24,6 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using Orion;
 using Orion.Events;
-using Orion.Events.Extensions;
 using Orion.Players;
 using Serilog;
 using TShock.Commands.Parsers;
@@ -192,6 +191,28 @@ namespace TShock.Commands {
                 string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll, sender.Name, num),
                 new Color(0xff, 0xf0, 0x14));
             Log.Information("*{Name} rolls a {Num}", sender.Name, num);
+        }
+
+        [CommandHandler("tshock:p")]
+        public void Party(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
+            var player = sender.Player;
+            if (player is null) {
+                sender.SendErrorMessage(Resources.Command_Party_NotAPlayer);
+                return;
+            }
+
+            var team = player.Team;
+            if (team == PlayerTeam.None) {
+                sender.SendErrorMessage(Resources.Command_Party_NotInTeam);
+                return;
+            }
+
+            var teamColor = team.Color();
+            var teamPlayers = PlayerService.Players.Where(p => p.IsActive && p.Team == team);
+            foreach (var teamPlayer in teamPlayers) {
+                teamPlayer.SendMessageFrom(player, text, teamColor);
+            }
+            Log.Information("<{Player} (to {Team} team)> {Text}", player.Name, team, text);
         }
     }
 }

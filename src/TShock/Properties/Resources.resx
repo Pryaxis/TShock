@@ -156,6 +156,12 @@
   <data name="Command_Help_Header" xml:space="preserve">
     <value>Commands:</value>
   </data>
+  <data name="Command_Party_NotAPlayer" xml:space="preserve">
+    <value>You must be a player to party chat.</value>
+  </data>
+  <data name="Command_Party_NotInTeam" xml:space="preserve">
+    <value>You are not in a team!</value>
+  </data>
   <data name="Command_Playing_Header" xml:space="preserve">
     <value>Players online:</value>
   </data>
