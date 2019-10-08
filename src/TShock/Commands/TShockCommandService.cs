@@ -150,7 +150,7 @@ namespace TShock.Commands {
             }
 
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-            Debug.Assert(_qualifiedNames.ContainsKey(name));
+            Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
             _qualifiedNames[name].Remove(qualifiedName);
             return true;
         }
@@ -158,7 +158,16 @@ namespace TShock.Commands {
         [CommandHandler("tshock:help")]
         public void Help(ICommandSender sender) {
             sender.SendInfoMessage(Resources.Command_Help_Header);
-            sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{c.QualifiedName}")));
+
+            string FormatCommandName(ICommand command) {
+                var qualifiedName = command.QualifiedName;
+                var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
+                Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
+
+                return "/" + (_qualifiedNames[name].Count > 1 ? qualifiedName : name);
+            }
+
+            sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(FormatCommandName)));
         }
 
         [CommandHandler("tshock:playing")]
