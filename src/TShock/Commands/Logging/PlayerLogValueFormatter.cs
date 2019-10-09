@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using Serilog.Data;
@@ -32,9 +33,11 @@ namespace TShock.Commands.Logging {
         private const string NumberFormat = "[c/b5cea8:{0}]";
         private const string ScalarFormat = "[c/86c691:{0}]";
         private const string TypeTagFormat = "[c/4ec9b0:{0}] ";
-
+        
+        [Pure]
         public string Format(LogEventPropertyValue value) => Visit(default, value);
 
+        [Pure]
         protected override string VisitScalarValue(Unit _, ScalarValue scalar) =>
             string.Format(CultureInfo.InvariantCulture, scalar.Value switch {
                 null => NullFormat,
@@ -44,25 +47,31 @@ namespace TShock.Commands.Logging {
                 var n when n.GetType().IsPrimitive || n is decimal => NumberFormat,
                 _ => ScalarFormat
             }, scalar.Value);
-
+        
+        [Pure]
         protected override string VisitSequenceValue(Unit _, SequenceValue sequence) =>
             FormattableString.Invariant($"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]");
-
+        
+        [Pure]
         protected override string VisitStructureValue(Unit _, StructureValue structure) =>
             FormatTypeTag(structure.TypeTag) +
             FormattableString.Invariant(
                 $"{{{string.Join(", ", structure.Properties.Select(FormatStructureElement))}}}");
-
+        
+        [Pure]
         protected override string VisitDictionaryValue(Unit _, DictionaryValue dictionary) =>
             FormattableString.Invariant(
                 $"{{{string.Join(", ", dictionary.Elements.Select(FormatDictionaryElement))}}}");
-
+        
+        [Pure]
         private string FormatTypeTag(string? typeTag) =>
             typeTag is null ? string.Empty : string.Format(CultureInfo.InvariantCulture, TypeTagFormat, typeTag);
-
+        
+        [Pure]
         private string FormatStructureElement(LogEventProperty p) =>
             FormattableString.Invariant($"{p.Name}={Visit(default, p.Value)}");
-
+        
+        [Pure]
         private string FormatDictionaryElement(KeyValuePair<ScalarValue, LogEventPropertyValue> kvp) =>
             FormattableString.Invariant($"[{Visit(default, kvp.Key)}]={Visit(default, kvp.Value)}");
     }

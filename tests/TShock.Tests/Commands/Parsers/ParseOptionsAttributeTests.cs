@@ -22,10 +22,24 @@ using Xunit;
 namespace TShock.Commands.Parsers {
     public class ParseOptionsAttributeTests {
         [Fact]
-        public void Ctor_NullOptions_ThrowsArgumentNullException() {
+        public void Ctor_NullOption_ThrowsArgumentNullException() {
             Func<ParseOptionsAttribute> func = () => new ParseOptionsAttribute(null);
 
             func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Ctor_NullOptions_ThrowsArgumentNullException() {
+            Func<ParseOptionsAttribute> func = () => new ParseOptionsAttribute("", null);
+
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Ctor_OptionsNullElement_ThrowsArgumentException() {
+            Func<ParseOptionsAttribute> func = () => new ParseOptionsAttribute("", "test", null);
+
+            func.Should().Throw<ArgumentException>();
         }
 
         [Fact]

@@ -54,18 +54,15 @@ namespace TShock.Commands {
 
             var colon = qualifiedCommandName.IndexOf(':', StringComparison.Ordinal);
             if (colon <= 0) {
-                throw new ArgumentException("Qualified command name is missing the namespace.",
-                    nameof(qualifiedCommandName));
+                throw new ArgumentException("Parameter is missing namespace.", nameof(qualifiedCommandName));
             }
 
             if (colon >= qualifiedCommandName.Length - 1) {
-                throw new ArgumentException("Qualified command name is missing the name.",
-                    nameof(qualifiedCommandName));
+                throw new ArgumentException("Parameter is missing name.", nameof(qualifiedCommandName));
             }
 
             if (qualifiedCommandName.IndexOf(' ', StringComparison.Ordinal) >= 0) {
-                throw new ArgumentException("Qualified command name contains a space.",
-                    nameof(qualifiedCommandName));
+                throw new ArgumentException("Parameter contains a space.", nameof(qualifiedCommandName));
             }
 
             QualifiedCommandName = qualifiedCommandName;

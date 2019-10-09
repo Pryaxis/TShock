@@ -36,6 +36,13 @@ namespace TShock.Commands.Parsers {
         }
 
         [Fact]
+        public void Ctor_AlternateFlagsNullElement_ThrowsArgumentException() {
+            Func<FlagAttribute> func = () => new FlagAttribute("", "test", null);
+
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
         public void Flags_Get() {
             var attribute = new FlagAttribute("test1", "test2", "test3");
 

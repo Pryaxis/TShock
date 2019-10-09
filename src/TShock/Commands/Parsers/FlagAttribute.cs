@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace TShock.Commands.Parsers {
@@ -36,9 +37,14 @@ namespace TShock.Commands.Parsers {
         /// </summary>
         /// <param name="flag">The flag.</param>
         /// <param name="alternateFlags">The alternate flags. This may be empty.</param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="alternateFlags"/> contains a <see langword="null"/> element.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are <see langword="null"/>.
         /// </exception>
+        [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
+            Justification = "strings are not user-facing")]
         public FlagAttribute(string flag, params string[] alternateFlags) {
             if (flag is null) {
                 throw new ArgumentNullException(nameof(flag));
@@ -46,6 +52,10 @@ namespace TShock.Commands.Parsers {
 
             if (alternateFlags is null) {
                 throw new ArgumentNullException(nameof(alternateFlags));
+            }
+
+            if (alternateFlags.Any(f => f == null)) {
+                throw new ArgumentException("Array contains null element.", nameof(alternateFlags));
             }
 
             Flags = new[] { flag }.Concat(alternateFlags).ToList();
