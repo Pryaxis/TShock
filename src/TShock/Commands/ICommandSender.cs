@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
@@ -43,6 +44,7 @@ namespace TShock.Commands {
         /// Sends a <paramref name="message"/> to the sender.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
         void SendMessage(string message);
 
         /// <summary>
@@ -50,18 +52,52 @@ namespace TShock.Commands {
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="color">The color.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
         void SendMessage(string message, Color color);
+    }
 
+    /// <summary>
+    /// Provides extensions for the <see cref="ICommandSender"/> interface.
+    /// </summary>
+    public static class CommandSenderExtensions {
         /// <summary>
-        /// Sends an error <paramref name="message"/> to the sender.
+        /// Sends an error <paramref name="message"/> to the <paramref name="sender"/>.
         /// </summary>
+        /// <param name="sender">The sender.</param>
         /// <param name="message">The error message.</param>
-        void SendErrorMessage(string message) => SendMessage(message, new Color(0xcc, 0x44, 0x44));
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="sender"/> or <paramref name="message"/> are <see langword="null"/>.
+        /// </exception>
+        public static void SendErrorMessage(this ICommandSender sender, string message) {
+            if (sender is null) {
+                throw new ArgumentNullException(nameof(sender));
+            }
+
+            if (message is null) {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            sender.SendMessage(message, new Color(0xcc, 0x44, 0x44));
+        }
 
         /// <summary>
-        /// Sends an informational <paramref name="message"/> to the sender.
+        /// Sends an informational <paramref name="message"/> to the <paramref name="sender"/>.
         /// </summary>
+        /// <param name="sender">The sender.</param>
         /// <param name="message">The informational message.</param>
-        void SendInfoMessage(string message) => SendMessage(message, new Color(0xff, 0xf0, 0x14));
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="sender"/> or <paramref name="message"/> are <see langword="null"/>.
+        /// </exception>
+        public static void SendInfoMessage(this ICommandSender sender, string message) {
+            if (sender is null) {
+                throw new ArgumentNullException(nameof(sender));
+            }
+
+            if (message is null) {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            sender.SendMessage(message, new Color(0xff, 0xf0, 0x14));
+        }
     }
 }

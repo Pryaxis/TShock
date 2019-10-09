@@ -39,7 +39,7 @@ namespace TShock.Commands {
         MethodBase Handler { get; }
 
         /// <summary>
-        /// Invokes the command as <paramref name="sender"/> with <paramref name="input"/>.
+        /// Invokes the command as a <paramref name="sender"/> with the <paramref name="input"/>.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="input">The input. This does not include the command's name.</param>

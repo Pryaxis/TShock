@@ -53,13 +53,13 @@ namespace TShock.Commands {
         EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
 
         /// <summary>
-        /// Registers and returns the commands defined with <paramref name="handlerObject"/>'s command handlers. Command
-        /// handlers are specified using the <see cref="CommandHandlerAttribute"/> attribute.
+        /// Registers and returns the commands defined with the <paramref name="handlerObject"/>'s command handlers.
+        /// Command handlers are specified using the <see cref="CommandHandlerAttribute"/> attribute.
         /// </summary>
         /// <param name="handlerObject">The object.</param>
         /// <returns>The resulting commands.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="handlerObject"/> is ().
+        /// <paramref name="handlerObject"/> is <see langword="null"/>.
         /// </exception>
         IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject);
 
@@ -73,8 +73,8 @@ namespace TShock.Commands {
         void RegisterParser<TParse>(IArgumentParser<TParse> parser);
 
         /// <summary>
-        /// Finds and returns a command with <paramref name="input"/>. A command name (possibly qualified) will be
-        /// extracted and tested from <paramref name="input"/>.
+        /// Finds and returns a command with the <paramref name="input"/>. A command name (possibly qualified) will be
+        /// extracted and tested from the <paramref name="input"/>.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>The command.</returns>
@@ -82,7 +82,7 @@ namespace TShock.Commands {
         ICommand FindCommand(ref ReadOnlySpan<char> input);
 
         /// <summary>
-        /// Unregisters <paramref name="command"/> and returns a value indicating success.
+        /// Unregisters the <paramref name="command"/> and returns a value indicating success.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>
