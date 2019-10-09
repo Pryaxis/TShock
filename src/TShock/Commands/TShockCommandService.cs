@@ -54,6 +54,7 @@ namespace TShock.Commands {
             _playerService = playerService;
 
             RegisterParser(new Int32Parser());
+            RegisterParser(new DoubleParser());
             RegisterParser(new StringParser());
             RegisterCommands(this);
         }
@@ -90,7 +91,7 @@ namespace TShock.Commands {
 
         public ICommand FindCommand(string commandName) {
             if (string.IsNullOrEmpty(commandName)) {
-                throw new CommandNotFoundException(Resources.CommandFind_MissingCommand);
+                throw new CommandNotFoundException(Resources.CommandNotFound_MissingCommand);
             }
 
             var qualifiedName = GetQualifiedName(commandName);
@@ -119,6 +120,8 @@ namespace TShock.Commands {
             _qualifiedNames[name].Remove(qualifiedName);
             return true;
         }
+
+        // TODO: write tests for /help, /playing, /me, /roll, /p 
 
         [CommandHandler(nameof(Resources.Command_Help),
             HelpText = nameof(Resources.Command_Help_HelpText),
@@ -225,7 +228,7 @@ namespace TShock.Commands {
             if (isQualifiedName) {
                 if (!_commands.ContainsKey(maybeQualifiedName)) {
                     throw new CommandNotFoundException(
-                        string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_UnrecognizedCommand,
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
                             maybeQualifiedName));
                 }
 
@@ -235,13 +238,13 @@ namespace TShock.Commands {
             var qualifiedNames = _qualifiedNames.GetValueOrDefault(maybeQualifiedName, () => new HashSet<string>());
             if (qualifiedNames.Count == 0) {
                 throw new CommandNotFoundException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_UnrecognizedCommand,
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
                         maybeQualifiedName));
             }
 
             if (qualifiedNames.Count > 1) {
                 throw new CommandNotFoundException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_AmbiguousName,
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_AmbiguousName,
                         maybeQualifiedName, string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
             }
 

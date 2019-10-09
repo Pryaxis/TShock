@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandFind_AmbiguousName" xml:space="preserve">
+  <data name="CommandExecute_Exception" xml:space="preserve">
+    <value>Exception occurred while executing command.</value>
+  </data>
+  <data name="CommandNotFound_AmbiguousName" xml:space="preserve">
     <value>"/{0}" is ambiguous and can refer to {1}.</value>
   </data>
-  <data name="CommandFind_MissingCommand" xml:space="preserve">
+  <data name="CommandNotFound_MissingCommand" xml:space="preserve">
     <value>Missing command name. Type /help for a list of commands.</value>
   </data>
-  <data name="CommandFind_UnrecognizedCommand" xml:space="preserve">
+  <data name="CommandNotFound_UnrecognizedCommand" xml:space="preserve">
     <value>Command "/{0}" is not recognized. Type /help for a list of commands.</value>
-  </data>
-  <data name="CommandInvoke_Exception" xml:space="preserve">
-    <value>Exception occurred while executing command.</value>
   </data>
   <data name="CommandParse_InvalidHyphenatedArg" xml:space="preserve">
     <value>Invalid hyphenated argument.</value>
@@ -216,11 +216,8 @@
   <data name="Command_Roll_UsageText" xml:space="preserve">
     <value>Usage: /{0}</value>
   </data>
-  <data name="EnumParser_InvalidInteger" xml:space="preserve">
-    <value>"{0}" is not a valid value.</value>
-  </data>
-  <data name="EnumParser_InvalidString" xml:space="preserve">
-    <value>"{0}" is not a valid value.</value>
+  <data name="DoubleParser_InvalidDouble" xml:space="preserve">
+    <value>"{0}" is an invalid number.</value>
   </data>
   <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
     <value>"{0}" is a number that is out of range of an integer.</value>

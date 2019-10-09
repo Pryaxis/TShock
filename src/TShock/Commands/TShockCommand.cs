@@ -267,7 +267,7 @@ namespace TShock.Commands {
             try {
                 Handler.Invoke(HandlerObject, _parameters);
             } catch (TargetInvocationException ex) {
-                throw new CommandExecuteException(Resources.CommandInvoke_Exception, ex.InnerException);
+                throw new CommandExecuteException(Resources.CommandExecute_Exception, ex.InnerException);
             }
         }
     }

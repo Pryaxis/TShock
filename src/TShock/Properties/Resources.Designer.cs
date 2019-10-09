@@ -259,38 +259,38 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exception occurred while executing command..
+        /// </summary>
+        internal static string CommandExecute_Exception {
+            get {
+                return ResourceManager.GetString("CommandExecute_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;/{0}&quot; is ambiguous and can refer to {1}..
         /// </summary>
-        internal static string CommandFind_AmbiguousName {
+        internal static string CommandNotFound_AmbiguousName {
             get {
-                return ResourceManager.GetString("CommandFind_AmbiguousName", resourceCulture);
+                return ResourceManager.GetString("CommandNotFound_AmbiguousName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Missing command name. Type /help for a list of commands..
         /// </summary>
-        internal static string CommandFind_MissingCommand {
+        internal static string CommandNotFound_MissingCommand {
             get {
-                return ResourceManager.GetString("CommandFind_MissingCommand", resourceCulture);
+                return ResourceManager.GetString("CommandNotFound_MissingCommand", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Command &quot;/{0}&quot; is not recognized. Type /help for a list of commands..
         /// </summary>
-        internal static string CommandFind_UnrecognizedCommand {
+        internal static string CommandNotFound_UnrecognizedCommand {
             get {
-                return ResourceManager.GetString("CommandFind_UnrecognizedCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception occurred while executing command..
-        /// </summary>
-        internal static string CommandInvoke_Exception {
-            get {
-                return ResourceManager.GetString("CommandInvoke_Exception", resourceCulture);
+                return ResourceManager.GetString("CommandNotFound_UnrecognizedCommand", resourceCulture);
             }
         }
         
@@ -358,20 +358,11 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid value..
+        ///   Looks up a localized string similar to &quot;{0}&quot; is an invalid number..
         /// </summary>
-        internal static string EnumParser_InvalidInteger {
+        internal static string DoubleParser_InvalidDouble {
             get {
-                return ResourceManager.GetString("EnumParser_InvalidInteger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid value..
-        /// </summary>
-        internal static string EnumParser_InvalidString {
-            get {
-                return ResourceManager.GetString("EnumParser_InvalidString", resourceCulture);
+                return ResourceManager.GetString("DoubleParser_InvalidDouble", resourceCulture);
             }
         }
         
