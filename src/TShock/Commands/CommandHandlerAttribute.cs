@@ -64,18 +64,10 @@ namespace TShock.Commands {
         /// Gets or sets the resource type to load localizable strings from. If <see langword="null"/>, then no
         /// localization will occur.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         public Type? ResourceType {
             get => _resourceType;
             set => _resourceType = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        [return: NotNullIfNotNull("str")]
-        private string? GetResourceStringMaybe(string? str) {
-            if (str is null) {
-                return null;
-            }
-
-            return _resourceType != null ? ResourceHelper.LoadResource<string>(_resourceType, str) : str;
         }
 
         /// <summary>
@@ -96,6 +88,15 @@ namespace TShock.Commands {
             }
 
             _qualifiedName = qualifiedName;
+        }
+
+        [return: NotNullIfNotNull("str")]
+        private string? GetResourceStringMaybe(string? str) {
+            if (str is null) {
+                return null;
+            }
+
+            return _resourceType != null ? ResourceHelper.LoadResource<string>(_resourceType, str) : str;
         }
     }
 }
