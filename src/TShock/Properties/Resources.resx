@@ -150,9 +150,6 @@
   <data name="CommandParse_UnrecognizedShortFlag" xml:space="preserve">
     <value>Short flag "-{0}" not recognized.</value>
   </data>
-  <data name="Command_BadCommand" xml:space="preserve">
-    <value>{0} Type /help for a list of commands.</value>
-  </data>
   <data name="Command_Help" xml:space="preserve">
     <value>tshock:help</value>
   </data>
@@ -230,6 +227,18 @@
   </data>
   <data name="Int32Parser_InvalidInteger" xml:space="preserve">
     <value>"{0}" is an invalid integer.</value>
+  </data>
+  <data name="Log_Command_Me_Message" xml:space="preserve">
+    <value>*{Name} {Text}</value>
+  </data>
+  <data name="Log_Command_P_Message" xml:space="preserve">
+    <value>&lt;{Player} (to {Team} team)&gt; {Text}</value>
+  </data>
+  <data name="Log_Command_Roll_Message" xml:space="preserve">
+    <value>*{Name} rolls a {Num}</value>
+  </data>
+  <data name="Log_ExecutingCommand" xml:space="preserve">
+    <value>{Sender} is executing command /{Command}</value>
   </data>
   <data name="StringParser_InvalidBackslash" xml:space="preserve">
     <value>Invalid backslash.</value>

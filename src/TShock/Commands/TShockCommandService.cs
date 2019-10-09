@@ -183,7 +183,7 @@ namespace TShock.Commands {
             PlayerService.BroadcastMessage(
                 string.Format(CultureInfo.InvariantCulture, Resources.Command_Me_Message, sender.Name, text),
                 new Color(0xc8, 0x64, 0x00));
-            Log.Information("*{Name} {Text}", sender.Name, text);
+            Log.Information(Resources.Log_Command_Me_Message, sender.Name, text);
         }
 
         [CommandHandler(nameof(Resources.Command_Roll),
@@ -195,7 +195,7 @@ namespace TShock.Commands {
             PlayerService.BroadcastMessage(
                 string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll_Message, sender.Name, num),
                 new Color(0xff, 0xf0, 0x14));
-            Log.Information("*{Name} rolls a {Num}", sender.Name, num);
+            Log.Information(Resources.Log_Command_Roll_Message, sender.Name, num);
         }
 
         [CommandHandler(nameof(Resources.Command_P),
@@ -220,7 +220,7 @@ namespace TShock.Commands {
             foreach (var teamPlayer in teamPlayers) {
                 teamPlayer.SendMessageFrom(player, text, teamColor);
             }
-            Log.Information("<{Player} (to {Team} team)> {Text}", player.Name, team, text);
+            Log.Information(Resources.Log_Command_P_Message, player.Name, team, text);
         }
 
         // Gets the qualified command name for a possibly-qualified command name.

@@ -125,7 +125,7 @@ namespace TShock {
 
         // Executes a command. input should not have the leading /.
         private void ExecuteCommand(ICommandSender commandSender, ReadOnlySpan<char> input) {
-            Log.Information("{Sender} is executing /{Command}", commandSender.Name, input.ToString());
+            Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input.ToString());
 
             try {
                 var command = CommandService.FindCommand(ref input);

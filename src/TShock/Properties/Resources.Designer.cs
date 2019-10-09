@@ -61,15 +61,6 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Type /help for a list of commands..
-        /// </summary>
-        internal static string Command_BadCommand {
-            get {
-                return ResourceManager.GetString("Command_BadCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to tshock:help.
         /// </summary>
         internal static string Command_Help {
@@ -399,6 +390,42 @@ namespace TShock.Properties {
         internal static string Int32Parser_InvalidInteger {
             get {
                 return ResourceManager.GetString("Int32Parser_InvalidInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *{Name} {Text}.
+        /// </summary>
+        internal static string Log_Command_Me_Message {
+            get {
+                return ResourceManager.GetString("Log_Command_Me_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;{Player} (to {Team} team)&gt; {Text}.
+        /// </summary>
+        internal static string Log_Command_P_Message {
+            get {
+                return ResourceManager.GetString("Log_Command_P_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *{Name} rolls a {Num}.
+        /// </summary>
+        internal static string Log_Command_Roll_Message {
+            get {
+                return ResourceManager.GetString("Log_Command_Roll_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {Sender} is executing command /{Command}.
+        /// </summary>
+        internal static string Log_ExecutingCommand {
+            get {
+                return ResourceManager.GetString("Log_ExecutingCommand", resourceCulture);
             }
         }
         
